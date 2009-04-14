@@ -9,7 +9,6 @@ Release 1.1.11
 
 Release 1.1.10
 --------------
-
 - Moved Payload deserialisation code out of PayloadFactory and into JMSMessageFactory
 
 
