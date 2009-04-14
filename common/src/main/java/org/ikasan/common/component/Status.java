@@ -1,7 +1,7 @@
 /*
  * $Id: Status.java 16606 2009-04-09 08:07:33Z mitcje $
  * $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/common/src/main/java/org/ikasan/common/component/Status.java $
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -32,26 +32,26 @@ import java.util.Date;
 /**
  * Status class for setting and getting the component status
  * at runtime.
- * 
- * @author Jeff Mitchell
+ *
+ * @author Ikasan Development Team
  */
 public class Status
     implements Serializable
 {
     /** Serial ID */
     private static final long serialVersionUID = -327855826132075594L;
-    
+
     /** componentState enum */
     private final ComponentState componentState;
-    
+
     /** status last update time */
     private final Long lastUpdateTime;
 
     /**
      * Creates a new instance of <code>Spec</code>
      * with the specified component status and last updated time.
-     * @param componentState 
-     * @param lastUpdateTime 
+     * @param componentState
+     * @param lastUpdateTime
      */
     public Status(final ComponentState componentState,
                   final Long lastUpdateTime)
@@ -86,11 +86,11 @@ public class Status
     public boolean equals(Status status)
     {
         if (status == null) return false;
-        
+
         if (this.componentState.equals(status.componentState) &&
            this.lastUpdateTime.equals(status.lastUpdateTime) )
             return true;
-        
+
         return false;
     }
 
@@ -101,12 +101,12 @@ public class Status
      */
     public Long diffLastUpdateTime(Status status)
     {
-        return this.lastUpdateTime - status.lastUpdateTime; 
+        return this.lastUpdateTime - status.lastUpdateTime;
     }
 
     /**
      * Runs this class for test.
-     * @param args 
+     * @param args
      */
     public static void main(String args[])
     {
@@ -122,7 +122,7 @@ public class Status
             System.out.println("Thread was woken early");
             e.printStackTrace();
         }
-        
+
         Status futureStatus = new Status(ComponentState.UNKNOWN,
                                          new Date().getTime());
         if(currentStatus.equals(futureStatus))
@@ -137,7 +137,7 @@ public class Status
                     + futureStatus.toString());
 
         System.out.println(futureStatus.diffLastUpdateTime(currentStatus));
-        
+
     }
 
 }
