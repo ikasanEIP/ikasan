@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!-- 
+# //
+# //
+# // $Id: FileFilter.hbm.xml 16785 2009-04-24 10:56:05Z mitcje $
+# // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/connector-ftp/src/main/resources/FileFilter.hbm.xml $
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+  <class name="org.ikasan.connector.basefiletransfer.persistence.FileFilter"
+    table="FileFilter">
+
+    <id name="id" type="int" column="Id">
+      <generator class="identity" />
+    </id>
+
+    <properties name="fileFilterId" unique="true">
+      <property name="clientId" type="java.lang.String" column="ClientId" not-null="true" />
+      <property name="criteria" type="java.lang.String" column="Criteria" not-null="true" />
+      <property name="lastModified" type="java.util.Date" column="LastModified" not-null="true" />
+      <property name="lastAccessed" type="java.util.Date" column="LastAccessed" not-null="true" />
+      <property name="size" type="int" column="Size" not-null="true" />
+      <property name="createdDateTime" type="java.util.Date" column="CreatedDateTime" not-null="true" />
+    </properties>
+
+  </class>
+
+</hibernate-mapping>

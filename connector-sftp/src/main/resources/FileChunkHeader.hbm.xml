@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!-- 
+# //
+# //
+# // $Id: FileChunkHeader.hbm.xml 16794 2009-04-24 13:27:17Z mitcje $
+# // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/connector-sftp/src/main/resources/FileChunkHeader.hbm.xml $
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+  <class name="org.ikasan.connector.util.chunking.model.FileChunkHeader" 
+    table="FileChunkHeader">
+
+    <id name="id" type="long" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="sequenceLength" type="long" column="SequenceLength" not-null="true" />
+    <property name="internalMd5Hash" type="java.lang.String" column="InternalMd5Hash" not-null="false" />
+    <property name="externalMd5Hash" type="java.lang.String" column="ExternalMd5Hash" not-null="false" />
+    <property name="fileName" type="java.lang.String" column="FileName" not-null="true" />
+    <property name="chunkTimeStamp" type="long" column="ChunkTimeStamp" not-null="true" /> 
+    <property name="clientId" type="java.lang.String" column="ClientId" not-null="false" />  
+
+
+   
+  </class>
+
+</hibernate-mapping>

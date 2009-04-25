@@ -1,0 +1,15 @@
+Release Notes
+=============
+The following TLAs are used:-
+NBC - Not Backward Compatible with previous version of the framework.
+
+
+Release 1.2.5
+--------------------
+ - Updated to use ikasan-connector-sftp-classes 1-2-5.
+ - Removed MinLocalPort and MaxLocalPort. See ikasan-connector-ftp-classes 1-2-5
+release notes for details.
+
+Previous Releases
+--------------------
+<<see ikasan-1.2reNotes.txt for some older changes >>

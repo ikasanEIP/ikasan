@@ -1,0 +1,21 @@
+Release Notes
+=============
+The following TLAs are used:-
+NBC - Not Backward Compatible with previous version of the framework.
+
+Release 1.2.4
+--------------------
+ - HibernateBaseFileTransferDaoImpl logger.info changed to logger.debug to reduce log noise.
+
+Release 1.2.3
+--------------------
+ - AbstractBaseFileTransferTransactionalResourceCommand and HibernateBaseFileTransferDaoImpl logger.info changed logger.debug to reduce log noise.
+
+ - Bug Fix: Apache recommends using completePendingCommand() after storeFileStream(). This causes issues with
+ printWorkingDirectory returning 'null' if not called. To fix this the stream writing has moved from the DeliverFileCommand
+ into the FileTransferClient implementation as we should not be changing the FileTransferClient interface - this fix is private to this client.
+
+
+Previous Releases
+--------------------
+<<see ikasan-1.2reNotes.txt for some older changes >>

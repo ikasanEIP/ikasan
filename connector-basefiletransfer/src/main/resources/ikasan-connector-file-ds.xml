@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE datasources
+    PUBLIC "-//JBoss//DTD JBOSS JCA Config 1.5//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-ds_1_5.dtd">
+<!--
+/*
+ * $Id: ikasan-connector-file-ds.xml 16767 2009-04-23 12:37:52Z mitcje $
+ * $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/connector-basefiletransfer/src/main/resources/ikasan-connector-file-ds.xml $
+ *
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
+ * or see the FSF site: http://www.fsfeurope.org/.
+ * ====================================================================
+ */
+ -->
+<datasources>
+
+  <!--
+   * No Transaction Datasource configuration.
+  -->
+  <no-tx-datasource>
+    <jndi-name>ikasan/connector/file/ds</jndi-name>
+    <use-java-context>true</use-java-context>
+    <connection-url>jdbc:sybase:Tds:${connector.file.database.svcname}:${connector.file.database.port}/${connector.file.database.name}</connection-url>
+    <driver-class>com.sybase.jdbc3.jdbc.SybDataSource</driver-class>
+    <!-- TODO This name will change - The security domain -->
+    <!--<security-domain>${connector.file.datasource.name}EncryptionPolicy</security-domain>-->
+    <user-name>${connector.file.database.username}</user-name>
+    <password>${connector.file.database.password}</password>
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </no-tx-datasource>
+
+  <!--
+   * Local Transaction Datasource configuration
+  -->
+  <local-tx-datasource>
+    <jndi-name>ikasan/connector/fileLocal/localds</jndi-name>
+    <use-java-context>true</use-java-context>
+    <connection-url>jdbc:sybase:Tds:${connector.file.database.svcname}:${connector.file.database.port}/${connector.file.database.name}</connection-url>
+    <driver-class>com.sybase.jdbc3.jdbc.SybDataSource</driver-class>
+    <!-- TODO This name will change - The security domain -->
+    <!--<security-domain>${connector.file.datasource.name}EncryptionPolicy</security-domain>-->
+    <user-name>${connector.file.database.username}</user-name>
+    <password>${connector.file.database.password}</password>
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </local-tx-datasource>
+
+  <!--
+   * Transactional Datasource configuration
+   * Persistence of sequence numbers must be within scope of the transaction
+  -->
+  <xa-datasource>
+    <jndi-name>ikasan/connector/fileXA/xads</jndi-name>
+    <use-java-context>true</use-java-context>
+    <track-connection-by-tx />
+    <xa-datasource-class>com.sybase.jdbc3.jdbc.SybXADataSource</xa-datasource-class>
+    <xa-datasource-property name="DatabaseName">${connector.file.xa.database.name}</xa-datasource-property>
+    <xa-datasource-property name="ServerName">${connector.file.xa.database.svcname}</xa-datasource-property>
+    <xa-datasource-property name="PortNumber">${connector.file.xa.database.port}</xa-datasource-property>
+    <user-name>${connector.file.database.username}</user-name>
+    <password>${connector.file.database.password}</password>
+    <!-- TODO This name will change - The security domain -->
+    <!--<security-domain>${connector.file.datasource.name}EncryptionPolicy</security-domain>-->
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </xa-datasource>
+
+</datasources>

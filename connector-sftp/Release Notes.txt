@@ -1,0 +1,23 @@
+Release Notes
+=============
+The following TLAs are used:-
+NBC - Not Backward Compatible with previous version of the framework.
+
+
+Release 1.2.5
+--------------------
+ - Provide default Boolean and Integer values to the ConnectionSpec rather than null values. 
+Clients do not then have to override all members of the Spec
+
+ - Adding a socket connection timeout value to the connection spec.
+ 
+ - Instead of specifying the local port, bind socket to 0 (will be determined at runtime)
+ 
+ - Remove local ports range
+ 
+ - Ignoring BindExceptions: the connector will attempt to bind to a local port for 0xFFFF times before giving up.
+
+
+Previous Releases
+--------------------
+<<see ikasan-1.2reNotes.txt for some older changes >>
