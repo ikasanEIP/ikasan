@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- 
+# //
+# //
+# // $Id: WiretapEventImpl.hbm.xml 16808 2009-04-27 07:28:17Z mitcje $
+# // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/framework/src/main/resources/WiretapEventImpl.hbm.xml $
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<!--  
+    This is the hibernate mapping configuration for wiretapEvent persistence.
+    @author Ikasan Development Team 
+ -->
+<hibernate-mapping>
+	 
+	<class
+		name="org.ikasan.framework.event.wiretap.model.WiretapEvent"
+		table="IkasanWiretap">
+
+        <id name="id" type="java.lang.Long" column="Id">
+            <generator class="identity" />
+        </id>
+		
+        <property name="moduleName"        type="java.lang.String" 
+                  column="ModuleName"      not-null="true" />
+        <property name="flowName"          type="java.lang.String" 
+                  column="FlowName"        not-null="true" />
+        <property name="componentName"     type="java.lang.String" 
+                  column="ComponentName"   not-null="true" />
+        <property name="eventId"           type="java.lang.String" 
+                  column="EventId"         not-null="true" />
+        <property name="payloadId"         type="java.lang.String" 
+                  column="PayloadId"       not-null="true" />
+        <property name="payloadContent"    type="java.lang.String" 
+                  column="PayloadContent"  not-null="true" />
+        <property name="created"           type="java.util.Date" 
+                  column="CreatedDateTime" not-null="true" />
+        <property name="updated"           type="java.util.Date" 
+                  column="UpdatedDateTime" not-null="true" />
+        <property name="expiry"           type="java.util.Date" 
+                  column="Expiry" 		  not-null="true" />
+
+	</class>
+	
+</hibernate-mapping>
