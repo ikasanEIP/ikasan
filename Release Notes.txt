@@ -3,10 +3,23 @@ Release Notes
 The following TLAs are used:-
 NBC - Not Backward Compatible with previous version of the framework.
 
+Release 0.17.0
+--------------------
+
+
 Release 0.16.0
 --------------------
  - Changed MessageDrivenInitiatorFactoryBean to enable subscription to queues.
+ - Refactored Schedule driven Initiators and JMS Driven Initiators to share common base class encapsulating much state functionality
+ - Changed all Initiators to be stopped following Initialisation, and to be started when appropriate by the ModuleInitialisationService
+ - Added persistence of start and stop calls to ModuleService to be considered during startup
+ - Added options to defer Destination JNDI lookup for both JMS publishers and subscribers to runtime, rather than initialisation time to break dependecies on JMS servers
+ - Changed JMS Initiators to detect failures setting up listener container (ie failure to poll server) to drop into Recovery mode
  
+Release 0.15.3
+--------------------
+- New PayloadPublisher implementation: JMSPayloadPublisher. Publishes a payload to jms destination either as MapMessage or TextMessage.
+
 Release 0.15.2
 --------------------
 - Added XMLValidatorRouter validates each of the incoming payloads and routes based on result:valid or invalid.
