@@ -34,7 +34,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-framework</artifactId>
 	<packaging>jar</packaging>
-	<version>0.16.0</version>
+	<version>0.16.1-SNAPSHOT</version>
 	<name>Ikasan Framework</name>
 	<organization>
 		<name>Ikasan</name>
