@@ -35,6 +35,7 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.naming.NamingException;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
@@ -42,7 +43,9 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.PayloadOperationException;
 import org.ikasan.common.factory.JMSMessageFactory;
 import org.ikasan.common.security.IkasanSecurityConf;
+import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.JMSEventPublisherPlugin;
+import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
  * Publishes a <code>Payload</code> to a JMS {@link Destination} either as a
@@ -67,6 +70,9 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /** Converter to a <code>javax.jms.Message</code> */
     private JMSMessageFactory jmsMessageFactory;
+    
+    /** JMS destination factory to use if destination not directly supplied */
+    private JndiDestinationFactory jndiDestinationFactory;
 
     /** JMS Message Time to live */
     private Long timeToLive;
@@ -125,8 +131,36 @@ public class JMSPayloadPublisher implements PayloadPublisher
         this.ikasanSecurityConf = ikasanSecurityConf;
     }
 
+    /**
+     * Constructor
+     * 
+     * @param jndiDestinationFactory used for looking up the destination on demand
+     * @param connectionFactory The connection factory
+     * @param jmsMessageFactory The JMS message serializer
+     * @param ikasanSecurityConf THe security configuration
+     */
+    public JMSPayloadPublisher(JndiDestinationFactory jndiDestinationFactory, ConnectionFactory connectionFactory, JMSMessageFactory jmsMessageFactory,
+            IkasanSecurityConf ikasanSecurityConf)
+    {
+        super();
+        this.jndiDestinationFactory = jndiDestinationFactory;
+        this.connectionFactory = connectionFactory;
+        this.jmsMessageFactory = jmsMessageFactory;
+        this.ikasanSecurityConf = ikasanSecurityConf;
+    }
+    
     public void publish(Payload payload) throws ResourceException
     {
+        Destination thisDestination;
+        try
+        {
+            thisDestination = destination!=null?destination:jndiDestinationFactory.getDestination(true);
+        }
+        catch (NamingException e1)
+        {
+            throw new ResourceException("NamingException caught whilst attempting to find destination with jndiName["+jndiDestinationFactory.getJndiName()+"], environment["+jndiDestinationFactory.getEnvironment()+"]", e1);
+        }
+        
         Connection connection = null;
         try
         {
@@ -141,7 +175,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
             {
                 message = this.jmsMessageFactory.payloadToMapMessage(payload, session);
             }
-            MessageProducer messageProducer = session.createProducer(destination);
+            MessageProducer messageProducer = session.createProducer(thisDestination);
             if (timeToLive != null)
             {
                 messageProducer.setTimeToLive(timeToLive.longValue());

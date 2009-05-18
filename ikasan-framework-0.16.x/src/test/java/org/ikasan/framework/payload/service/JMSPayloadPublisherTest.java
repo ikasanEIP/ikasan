@@ -26,6 +26,9 @@
  */
 package org.ikasan.framework.payload.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -33,14 +36,17 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.naming.NamingException;
 import javax.resource.ResourceException;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.PayloadOperationException;
 import org.ikasan.common.factory.JMSMessageFactory;
 import org.ikasan.common.security.IkasanSecurityConf;
+import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 /**
@@ -119,6 +125,11 @@ public class JMSPayloadPublisherTest extends TestCase
      * EventSerialisationException
      */
     final PayloadOperationException payloadOperationException = new PayloadOperationException();
+    
+    /**
+     * mock of the jndiDestinationFactory
+     */
+    final JndiDestinationFactory jndiDestinationFactory = mockery.mock(JndiDestinationFactory.class);
 
     /**
      * Test method for
@@ -359,5 +370,71 @@ public class JMSPayloadPublisherTest extends TestCase
         {
             assertTrue("underlyingException should be the JMSException", jmsException.equals(p.getCause()));
         }
+    }
+    
+    public void testPublish_willUtiliseDestinationFactoryWhenSupplied() throws NamingException, JMSException, ResourceException {
+
+
+        mockery.checking(new Expectations()
+        {
+            {
+                one(payload).getId();
+                will(returnValue("dummy id list"));
+                
+                one(jndiDestinationFactory).getDestination(true);
+                will(returnValue(destination));
+                one(jmsConnectionFactory).createConnection();
+                will(returnValue(connection));
+                one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
+                will(returnValue(session));
+                one(jmsMessageFactory).payloadToMapMessage(payload, session);
+                will(returnValue(mapMessage));
+                one(session).createProducer(destination);
+                will(returnValue(messageProducer));
+                one(messageProducer).send(mapMessage);
+                one(connection).close();
+            }
+        });
+        
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(jndiDestinationFactory, jmsConnectionFactory, jmsMessageFactory,
+                null);
+        publisher.publish(payload);
+        
+        mockery.assertIsSatisfied();
+    }
+    
+    public void testPublish_willThrowResourceExceptionForNamingException() throws NamingException{
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(jndiDestinationFactory, jmsConnectionFactory, jmsMessageFactory,
+                null);
+        
+        final NamingException namingException = new NamingException();
+        final String jndiName = "jndiName";
+        final Map<?,?> environment = new HashMap<String, String>();
+        
+        mockery.checking(new Expectations()
+        {
+            {
+            	one(jndiDestinationFactory).getJndiName();
+            	will(returnValue(jndiName));
+            	
+            	one(jndiDestinationFactory).getEnvironment();
+            	will(returnValue(environment));
+            	
+                one(jndiDestinationFactory).getDestination(true);
+                will(throwException(namingException));
+            }
+        });
+        
+        ResourceException thrownException = null;
+        try {
+			publisher.publish(payload);
+			fail("ResourceException should have been thrown for NamingException");
+		} catch (ResourceException e) {
+			thrownException = e;
+		}
+		Assert.assertNotNull("ResourceException should have been thrown for NamingException", thrownException);
+    	Assert.assertEquals("underlying exception should have been NamingException",namingException, thrownException.getCause());
+    
+    	mockery.assertIsSatisfied();
     }
 }
