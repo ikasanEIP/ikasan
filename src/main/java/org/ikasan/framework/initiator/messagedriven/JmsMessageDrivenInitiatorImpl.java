@@ -59,10 +59,13 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
 
 
     /**
-     * Delay between listener setup attempts
+     * default Delay between listener setup attempts
      */
     private static final int LISTENER_SETUP_FAILURE_RETRY_DELAY = 10000;
     
+    /**
+     * Delay between listener setup attempts
+     */
     private int listenerSetupFailureRetryDelay;
 
 
