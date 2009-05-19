@@ -9,6 +9,7 @@ Release 0.17.0
 Release 0.16.1
 --------------------
  - added support for JndiDestinationFactory to JMSPayloadPublisher
+ - defaulted maxRetries for message driven initiator listener setup failure to indefinite, and added setter method to allow overrides to default values
 
 Release 0.16.0
 --------------------
