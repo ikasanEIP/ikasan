@@ -6,6 +6,9 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 0.17.0
 --------------------
 
+Release 0.16.2
+--------------------
+
 Release 0.16.1
 --------------------
  - added support for JndiDestinationFactory to JMSPayloadPublisher
