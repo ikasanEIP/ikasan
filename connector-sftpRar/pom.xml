@@ -32,14 +32,14 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-connector-sftp</artifactId>
   <packaging>rar</packaging>
-  <version>1.2.6</version>
+  <version>1.2.7-SNAPSHOT</version>
   <name>Connector SFTP Resource Adapter</name>
   <url>http://www.ikasan.org</url>
   <dependencies>
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-sftp-classes</artifactId>
-      <version>1.2.6</version>
+      <version>1.2.7-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <distributionManagement>
