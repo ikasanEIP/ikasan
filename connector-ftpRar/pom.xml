@@ -35,14 +35,14 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-connector-ftp</artifactId>
   <packaging>rar</packaging>
-  <version>1.2.10</version>
+  <version>1.2.11-SNAPSHOT</version>
   <name>Connector FTP Resource Adapter</name>
   <url>http://www.ikasan.org</url>
   <dependencies>
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-ftp-classes</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.11-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <distributionManagement>
