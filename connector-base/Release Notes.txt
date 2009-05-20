@@ -1,0 +1,12 @@
+Release Notes
+=============
+The following TLAs are used:-
+NBC - Not Backward Compatible with previous version of the framework.
+
+Release 1.1.7
+--------------------
+ - Port to SF.
+
+Previous Releases
+--------------------
+<<see ikasan-1.2reNotes.txt for some older changes >>
