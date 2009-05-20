@@ -6,6 +6,12 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.4.3
 --------------------
  - Official release to SF. 
+ - Bumped dependent project versions up to official releases as follows,
+   ikasan-common-1.1.12
+   ikasan-client-connection-1.0.1
+   ikasan-connector-base-1.1.7
+   ikasan-connector-basefiletransfer-1.2.5
+   ikasan-framework-0.16.0
 
 Release 1.4.2
 --------------------
