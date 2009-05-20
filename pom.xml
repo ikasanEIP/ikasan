@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-connector-basefiletransfer</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.5</version>
+  <version>1.2.6-SNAPSHOT</version>
   <name>Connector Base Filetransfer</name>
   <organization>
     <name>Ikasan</name>
