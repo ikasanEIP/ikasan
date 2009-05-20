@@ -6,6 +6,9 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.2.5
 --------------------
  - Port to SF.
+ - Bumped dependent project versions up to official releases as follows,
+   ikasan-common-1.1.12
+   ikasan-connector-base-1.1.7
 
 Release 1.2.4
 --------------------
