@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <groupId>org.ikasan</groupId>
+     <artifactId>ikasan-project</artifactId>
+     <version>1.0</version>
+     <packaging>pom</packaging>
+
+     <name>Ikasan Projects Parent Project</name>
+     <modules>
+       <module>client-connection</module>
+       <module>client-filetransfer</module>
+       <module>common</module>
+       <module>connector-base</module>
+       <module>connector-basefiletransfer</module>
+       <module>connector-ftp</module>
+       <module>connector-ftpRar</module>
+       <module>connector-sftp</module>
+       <module>connector-sftpRar</module>
+       <module>framework</module>
+	   <module>webconsole</module>
+     </modules>
+
+</project>
+
