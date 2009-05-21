@@ -53,7 +53,7 @@ public class JMSConstants
     /** Port argument */
     public final static String PORT_ARG = "port"; //$NON-NLS-1$
     /** Server Instance Name argument */
-    public final static String TOPIC_NAME_ARG = "topicname"; //$NON-NLS-1$
+    public final static String DESTINATION_NAME_ARG = "destinationname"; //$NON-NLS-1$
     /** Events file name argument */
     public final static String EVENTS_FILE_NAME_ARG = "eventsfile"; //$NON-NLS-1$
     /** Payload name argument */
