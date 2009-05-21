@@ -3,6 +3,8 @@ Release Notes for Ikasan Webconsole
 
 Release 0.4
 -----------
+- Removed the now redundant ear artefacts
+- Refactored the war artefacts to live directly under the root project of webconsole - no need for separation as a war
 
 Release 0.3
 -----------
