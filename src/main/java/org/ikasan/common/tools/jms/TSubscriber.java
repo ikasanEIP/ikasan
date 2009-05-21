@@ -160,7 +160,7 @@ public class TSubscriber extends AbstractJMSHandler
             con = getConnection(JMSToolsUtils.isAuthenticated());
             if (JMSToolsUtils.isQueue())
             {
-                String queueName = JMSToolsUtils.getTopicName();
+                String queueName = JMSToolsUtils.getDestinationName();
                 Queue sourceQueue = (Queue) this.ctx.lookup(JMSConstants.QUEUE_KEY_PREFIX + queueName);
                 session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 consumer = session.createConsumer(sourceQueue);
@@ -180,7 +180,7 @@ public class TSubscriber extends AbstractJMSHandler
             }
             else
             {
-                String topicName = JMSToolsUtils.getTopicName();
+                String topicName = JMSToolsUtils.getDestinationName();
                 Topic sourceTopic = (Topic) ctx.lookup(JMSConstants.TOPIC_KEY_PREFIX + topicName);
                 if (JMSToolsUtils.isDurable())
                 {
