@@ -35,7 +35,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-webconsole-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
 
 	<name>ikasan :: webconsole : Parent Project</name>
 
