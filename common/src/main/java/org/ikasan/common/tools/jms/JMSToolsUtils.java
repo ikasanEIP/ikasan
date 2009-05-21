@@ -66,8 +66,8 @@ public class JMSToolsUtils {
     /** The port */
     private static String port = null;
 
-    /** The topic name */
-    private static String topicName = null;
+    /** The destination name */
+    private static String destinationName = null;
 
     /** The file name that holds the event we're publishing */
     private static String eventsFile = null;
@@ -117,7 +117,7 @@ public class JMSToolsUtils {
     /** default - publish as a map message */
     private static String jmsMsgType = JMSConstants.JMS_MAP_MESSAGE_TYPE;
     
-    /** content to publish from command line param */
+    /** content to publish from command line parameter */
     private static String payloadContent;
     
     /**
@@ -162,7 +162,7 @@ public class JMSToolsUtils {
      * This method parses the arguments passed in from the command line and
      * creates appropriate hooks for accessing the values.
      * 
-     * @param args
+     * @param args - Arguments to process
      */
     public static void processArgs(String args[])
     {
@@ -171,7 +171,7 @@ public class JMSToolsUtils {
         opt.addOption(JMSConstants.PROPERTIES_ARG, true, "Name (without .properties extension) of the jms tool properties file."); //$NON-NLS-1$        
         opt.addOption(JMSConstants.SERVER_INSTANCE_NAME_ARG, true, "Name of the Server Instance."); //$NON-NLS-1$
         opt.addOption(JMSConstants.PORT_ARG, true, "Name of the Port."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.TOPIC_NAME_ARG, true, "Name of the Topic/Queue."); //$NON-NLS-1$
+        opt.addOption(JMSConstants.DESTINATION_NAME_ARG, true, "Name of the Topic/Queue."); //$NON-NLS-1$
         opt.addOption(JMSConstants.EVENTS_FILE_NAME_ARG, true, "Name of the file that holds the event we're publishing."); //$NON-NLS-1$
         opt.addOption(JMSConstants.PAYLOAD_NAME_ARG, true, "Name of the payload."); //$NON-NLS-1$
         opt.addOption(JMSConstants.PAYLOAD_ENCODING_ARG, true, "Encoding of the payload."); //$NON-NLS-1$
@@ -216,8 +216,8 @@ public class JMSToolsUtils {
                 {
                     port = cl.getOptionValue(JMSConstants.PORT_ARG);
                 }
-                // Topic has to be specified
-                topicName = cl.getOptionValue(JMSConstants.TOPIC_NAME_ARG);
+                // Destination has to be specified
+                destinationName = cl.getOptionValue(JMSConstants.DESTINATION_NAME_ARG);
                 // TODO split this from subscriber work
                 if (cl.hasOption(JMSConstants.EVENTS_FILE_NAME_ARG))
                 {
@@ -325,7 +325,7 @@ public class JMSToolsUtils {
      * Return a context
      * 
      * @return The Context
-     * @throws NamingException
+     * @throws NamingException - JNDI exception
      */
     public static Context getContext()
             throws NamingException
@@ -371,12 +371,12 @@ public class JMSToolsUtils {
         logger
             .info("Port [" + port + "]."); //$NON-NLS-1$//$NON-NLS-2$
 
-        if (topicName == null)
+        if (destinationName == null)
         {
-            logger.warn("Target Topic was null"); //$NON-NLS-1$
+            logger.warn("Target Destination was null"); //$NON-NLS-1$
         }
         logger
-            .info("Topic Name [" + topicName + "]."); //$NON-NLS-1$//$NON-NLS-2$
+            .info("Destination Name [" + destinationName + "]."); //$NON-NLS-1$//$NON-NLS-2$
 
         if (eventsFile == null)
         {
@@ -437,12 +437,12 @@ public class JMSToolsUtils {
     }
     
     /**
-     * Get the topic name
-     * @return The topic name
+     * Get the destination name
+     * @return The destination name
      */
-    public static String getTopicName()
+    public static String getDestinationName()
     {
-        return topicName;
+        return destinationName;
     }
 
     /**
