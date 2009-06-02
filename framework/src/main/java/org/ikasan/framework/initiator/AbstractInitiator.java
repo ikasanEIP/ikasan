@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -82,8 +83,20 @@ public abstract class AbstractInitiator implements Initiator
     /** Count of how many times this Initiator has retried */
     protected Integer retryCount = null;
     
+    /**
+     * Service for logging errors in a heavyweight fashion
+     */
+    protected ErrorLoggingService errorLoggingService;
+    
 
     /**
+	 * @param errorLoggingService the errorLoggingService to set
+	 */
+	public void setErrorLoggingService(ErrorLoggingService errorLoggingService) {
+		this.errorLoggingService = errorLoggingService;
+	}
+
+	/**
      * Constructor
      * 
      * @param moduleName The name of the module

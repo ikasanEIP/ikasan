@@ -147,6 +147,9 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         }
         catch (ResourceException e)
         {
+        	if (errorLoggingService!=null){
+        		errorLoggingService.logError(e, moduleName, name);
+        	}
             this.handleAction(this.getExceptionHandler().invoke(this.getName(), e));
         }
     }
