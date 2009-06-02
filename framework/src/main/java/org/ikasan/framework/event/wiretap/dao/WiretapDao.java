@@ -48,7 +48,7 @@ public interface WiretapDao
     public void save(WiretapEvent wiretapEvent);
 
     /**
-     * Find the paging for the wiretap seearch results
+     * Find the paging for the wiretap search results
      * 
      * @param moduleNames - The list of module names
      * @param componentName - The component name
