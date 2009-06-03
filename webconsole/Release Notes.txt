@@ -5,6 +5,7 @@ Release 0.4
 -----------
 - Removed the now redundant ear artefacts
 - Refactored the war artefacts to live directly under the root project of webconsole - no need for separation as a war
+- Added screens for view of the ErrorLog
 
 Release 0.3
 -----------
