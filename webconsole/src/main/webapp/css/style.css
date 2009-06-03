@@ -90,6 +90,7 @@ input.controlButton {
 .listTable {
 	border: 1px solid #E1E1E1;
 	border-collapse: collapse;
+	float: left;
 }
 
 .listTable thead tr {
