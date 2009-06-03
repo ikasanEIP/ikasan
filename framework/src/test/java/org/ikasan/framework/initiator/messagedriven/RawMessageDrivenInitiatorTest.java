@@ -37,7 +37,12 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.exception.IkasanExceptionActionImpl;
+import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -59,6 +64,8 @@ public class RawMessageDrivenInitiatorTest {
 	PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
 	
 	Flow flow = mockery.mock(Flow.class);
+	
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
 		
 	
 	TextMessage textMessage = mockery.mock(TextMessage.class);
@@ -102,7 +109,7 @@ public class RawMessageDrivenInitiatorTest {
             }
         });
         
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
 		rawDrivenInitiator.onMessage(textMessage);
 	
 	}
@@ -115,23 +122,42 @@ public class RawMessageDrivenInitiatorTest {
 	 */
 	@Test
 	public void testOnMessageDoesNotHandleMapMessage() throws JMSException {
-		UnsupportedOperationException exception = null;
 		
+		final IkasanExceptionAction stopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+		final MessageListenerContainer messageListenerContainer = mockery.mock(MessageListenerContainer.class);
+        
+        
+        final RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow,exceptionHandler, payloadFactory);
+       
+        
         mockery.checking(new Expectations()
         {
             {
+            	allowing(messageListenerContainer).setListenerSetupExceptionListener(rawDrivenInitiator);
+            	
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
+            	
+            	
+            	one(exceptionHandler).invoke(with(equal(name)), (Throwable) with(an(UnsupportedOperationException.class)));
+            	will(returnValue(stopAction));
+            	
+            	one(messageListenerContainer).stop();
             }
         });
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
-		try{
+		rawDrivenInitiator.setMessageListenerContainer(messageListenerContainer);
+        
+		AbortTransactionException exception = null;
+        try{
 			rawDrivenInitiator.onMessage(mapMessage);
 			Assert.fail("should have thrown UnsupportedOperationException");
-		} catch(UnsupportedOperationException unsupportedOperationException){
-				exception = unsupportedOperationException;
+		} catch(AbortTransactionException abortTransactionException){
+				exception = abortTransactionException;
 		}
 		
-		Assert.assertNotNull("should have thrown UnsupportedOperationException", exception);
+		Assert.assertNotNull("should have thrown AbortTransactionException", exception);
+		
+		mockery.assertIsSatisfied();
+		
 	}
 
 

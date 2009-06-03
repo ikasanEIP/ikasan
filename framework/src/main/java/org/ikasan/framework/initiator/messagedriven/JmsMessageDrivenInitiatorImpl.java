@@ -26,6 +26,8 @@
  */
 package org.ikasan.framework.initiator.messagedriven;
 
+import java.util.List;
+
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -36,6 +38,7 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
@@ -87,10 +90,11 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
+     * @param exceptionHandler for handlingExceptions
      */
-    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
+    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
     }
     
     public String getType(){
@@ -129,19 +133,15 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
                 event = handleBytesMessage((BytesMessage) message);
             }
         }
-        catch (JMSException jmsException)
-        {
-            stopInError();
-            throw new RuntimeException(jmsException);
-        }
-        catch (EventSerialisationException eventSerialisationException)
-        {
-            stopInError();
-            throw new RuntimeException(eventSerialisationException);
+        catch (Throwable eventSourcingThrowable){
+        	handleEventSourcingThrowable(eventSourcingThrowable);
         }
         IkasanExceptionAction action = flow.invoke(event);
         handleAction(action);
     }
+    
+
+
 
 
     protected void completeRetryCycle()
