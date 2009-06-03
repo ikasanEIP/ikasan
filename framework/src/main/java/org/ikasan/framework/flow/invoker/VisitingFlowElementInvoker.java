@@ -333,12 +333,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         }
         catch (Throwable throwable)
         {
-            IkasanExceptionAction ikasanExceptionAction = exceptionHandler.invoke(flowElement.getComponentName(),
-                event, throwable);
-            if (!ikasanExceptionAction.getType().equals(IkasanExceptionActionType.CONTINUE))
-            {
-                result = ikasanExceptionAction;
-            }
+            result = exceptionHandler.invoke(flowElement.getComponentName(),event, throwable);
         }
         return result;
     }
@@ -364,12 +359,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         }
         catch (Throwable throwable)
         {
-            IkasanExceptionAction ikasanExceptionAction = exceptionHandler.invoke(flowElement.getComponentName(),
-                event, throwable);
-            if (!ikasanExceptionAction.getType().equals(IkasanExceptionActionType.CONTINUE))
-            {
-                result = ikasanExceptionAction;
-            }
+            result = exceptionHandler.invoke(flowElement.getComponentName(),event, throwable);
         }
         return result;
     }

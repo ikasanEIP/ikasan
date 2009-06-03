@@ -106,7 +106,7 @@ public class IkasanExceptionHandlerImplTest
 
     /** action for NumberFormatException */
     private static IkasanExceptionAction numberFormatExceptionAction = 
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.CONTINUE,
+        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY,
                 new Long(10), new Integer(10));
     /** resolution for NumberFormatException */
     private static IkasanExceptionResolution numberFormatExceptionResolution = 
