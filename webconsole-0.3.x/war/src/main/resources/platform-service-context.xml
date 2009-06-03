@@ -248,5 +248,5 @@
     
 
 	
-	<bean id="groovyWebShellService" class="org.ikasan.framework.shell.service.GroovyConsoleShellServiceImpl"  />
+	
 </beans>
