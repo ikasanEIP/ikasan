@@ -41,6 +41,7 @@
 		<param-value>
 			/WEB-INF/classes/platform-environment-context.xml
             /WEB-INF/classes/platform-datasource-context.xml
+            /WEB-INF/classes/platform-dataaccess-context.xml
 			/WEB-INF/classes/platform-service-context.xml
             /WEB-INF/applicationContext-security.xml
    </param-value>

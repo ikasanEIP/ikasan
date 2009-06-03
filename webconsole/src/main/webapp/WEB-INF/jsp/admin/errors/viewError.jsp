@@ -30,22 +30,107 @@
 # // Author:  Ikasan Development Team
 # // 
 --%>
-
 <div class="middle">
 
-<h2>This is the admin home</h2>
+<h2>Error Occurrence :: <c:out value="${error.id}" /></h2>
 
-<p>
-From here you can:
-<ul>
-    <li><a href="scheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
-    
-</ul>
-</p>
+<table id="errorOccurrence" class="keyValueTable">
+	<tr>
+		<th>
+			Module Name
+		</th>
+		<td>
+			<c:out value="${error.moduleName}" />
+		</td>
+	</tr>
+	
+	<c:if test="${!empty error.flowName}">
+	<tr>
+		<th>
+			Flow Name
+		</th>
+		<td>
+			<c:out value="${error.flowName}" />
+		</td>
+	</tr>
+	</c:if>
+	
+	<c:if test="${!empty error.flowElementName}">
+	<tr>
+		<th>
+			Flow Element Name
+		</th>
+		<td>
+			<c:out value="${error.flowElementName}" />
+		</td>
+	</tr>
+	</c:if>
+	
+	<c:if test="${!empty error.initiatorName}">
+	<tr>
+		<th>
+			Initiator Name
+		</th>
+		<td>
+			<c:out value="${error.initiatorName}" />
+		</td>
+	</tr>
+	</c:if>
+	
+	<tr>
+		<th>
+			Error Detail
+		</th>
+		<td>
+			<c:out value="${error.errorDetail}" />
+		</td>
+	</tr>
+	
+	<c:if test="${!empty error.currentEvent}">
+	<tr>
+		<th>
+			Current Event
+		</th>
+		<td>
+			<c:out value="${error.currentEvent}" />
+		</td>
+	</tr>
+	</c:if>
+	
+	<c:if test="${!empty error.eventId}">
+	<tr>
+		<th>
+			Original Event
+		</th>
+		<td>
+			<c:out value="${error.eventId}" />
+		</td>
+	</tr>
+	</c:if>
+	
+	<tr>
+		<th>
+			Time Logged
+		</th>
+		<td>
+			<fmt:formatDate value="${error.logTime}"
+                                pattern="dd/MM/yyyy h:mma"/>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Expiry
+		</th>
+		<td>
+			<fmt:formatDate value="${error.expiry}"
+                                pattern="dd/MM/yyyy h:mma"/>
+		</td>
+	</tr>
+</table>
+
 
 </div>
+
 
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
