@@ -1,8 +1,9 @@
 Release Notes for Ikasan Webconsole
 ===================================
 
-Release 0.4
------------
+Release 0.3.1
+-------------
+- resolved #26 removing erroneous spring bean definition from platform service xml
 
 Release 0.3
 -----------
