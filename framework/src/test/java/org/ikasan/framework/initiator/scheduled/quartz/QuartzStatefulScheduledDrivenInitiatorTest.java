@@ -94,8 +94,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
     final IkasanExceptionAction rollforwardStopAction =
         new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
-    final IkasanExceptionAction continueAction =
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.CONTINUE);
     final IkasanExceptionAction skipAction =
         new IkasanExceptionActionImpl(IkasanExceptionActionType.SKIP_EVENT);
     final String initiatorName = "initiatorName";
@@ -399,82 +397,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         assertTrue(sdi.isError());
     }
 
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
-     * flow invocation returning a 'CONTINUE' action.
-     * 
-     * @throws ResourceException
-     */
-    @Test
-    public void test_successful_ExecuteWithReturnedContinueAction() 
-        throws ResourceException
-    {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
-        // set expectations
-        classMockery.checking(new Expectations()
-        {
-            {
-                // return 'continue' ikasanExceptionAction from the flow invocation
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(continueAction));
-            }
-        });
-    
-        // set common expectations
-        this.setEventExpectations();
 
-        setExpectationsForResume(false);
-    
-        // invoke initiator
-        sdi.invoke();
-    
-    }
 
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on 
-     * multiple (3) events with the second event returning a 'CONTINUE' action.
-     * 
-     * NOTE: The nature of a CONTINUE midway through multiple events results
-     * in all events being processed and the initiator state being set to the
-     * worse case outcome based on state priority.
-     * 
-     * @throws ResourceException
-     */
-    @Test
-    public void test_successful_ExecuteMultipleEventsWithReturnedContinueAction() 
-        throws ResourceException
-    {
-        int numOfEvents = 3;
 
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
-        // set expectations
-        classMockery.checking(new Expectations()
-        {
-            {
-                // first event return 'null' action
-                exactly(1).of(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-                // second event returns 'continue' action
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(continueAction));
-                // third event return 'null' action
-                exactly(1).of(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-            }
-        });
-    
-        // set common expectations
-        this.setMultipleEventExpectations(numOfEvents);
-
-        setExpectationsForResume(false);
-        
-        // invoke initiator
-        sdi.invoke();
-    
-
-    }
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
@@ -888,120 +813,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
     }
 
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
-     * flow invocation returning a 'ROLLBACK_RETRY' action followed by 
-     * a subsequent 'CONTINUE' action.
-     * 
-     * @throws ResourceException
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_successful_RollbackRetryActionFollowedByContinueAction() 
-        throws ResourceException, SchedulerException
-    {
-        QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator();
-
-        // first pass
-        classMockery.checking(new Expectations()
-        {
-            {
-                // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(rollbackRetryAction));
-            }
-        });
-        setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
-        
-        
-        // invoke initiator
-        invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
-         
-        //everything cool so far?
-        classMockery.assertIsSatisfied(); 
-        
-        // second pass
-        classMockery.checking(new Expectations()
-        {
-            {
-                // return 'continue' ikasanExceptionAction from the flow invocation
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(continueAction));
-            }
-        });
-        setEventExpectations();
-        setExpectationsForResume(true);       
-        
-        // invoke initiator on retry (recovering)
-        scheduledDrivenInitiator.invoke();
 
 
-    }
 
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on
-     * multiple events (3) with the second event returning a 'ROLLBACK_RETRY' action 
-     * followed by this second event returning a subsequent 'CONTINUE' action.
-     * 
-     * @throws ResourceException
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_successful_MultipleEventRollbackRetryActionFollowedByContinueAction() 
-        throws ResourceException, SchedulerException
-    {
-
-        int numOfEvents = 3;
-
-        QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator();
-
-        // first pass
-        classMockery.checking(new Expectations()
-        {
-            {
-                // first event returns 'null'
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-
-                // second event returns 'rollbackRetry' ikasanExceptionAction from the flow invocation
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(rollbackRetryAction));
-            }
-        });
-        setMultipleEventExpectations(numOfEvents);
-        setExpectationsForHandleRetryAction(false);
-        
-        
-        // invoke initiator
-        invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
-         
-        //everything cool so far?
-        classMockery.assertIsSatisfied(); 
-        
-        // second pass
-        classMockery.checking(new Expectations()
-        {
-            {
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-
-                // return 'continue' ikasanExceptionAction from the flow invocation
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(continueAction));
-
-                // third event returns 'null'
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-            }
-        });
-        setMultipleEventExpectations(numOfEvents);
-        setExpectationsForResume(true);       
-        
-        // invoke initiator on retry (recovering)
-        scheduledDrivenInitiator.invoke();
-        
-    }
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a

@@ -40,9 +40,9 @@ public enum IkasanExceptionActionType
     /** Rollback the operation and retry the flow on the same event */
     ROLLBACK_RETRY(true, false, "Operation will rollback and retry.", 3),
     /** Skip over this event and continue with the next event. */
-    SKIP_EVENT(false, false, "Operation will skip the event causing this exception and move on to the next event.", 2),
-    /** Do nothing - simply continue with this event from where you are and ignore the exception. */
-    CONTINUE(false, false, "Operation will continue and exception will be ignored.", 1), ;
+    SKIP_EVENT(false, false, "Operation will skip the event causing this exception and move on to the next event.", 2);
+//    /** Do nothing - simply continue with this event from where you are and ignore the exception. */
+//    CONTINUE(false, false, "Operation will continue and exception will be ignored.", 1), ;
     
     /** Rollback flag */
     private boolean rollback;
