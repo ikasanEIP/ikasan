@@ -3,6 +3,7 @@ package org.ikasan.framework.initiator;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -54,7 +55,7 @@ public class AbstractInitiatorTest
     /**
      * System under test
      */
-    private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow);
+    private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow,null);
     
 
     
@@ -206,9 +207,9 @@ public class AbstractInitiatorTest
 
         private boolean stopInitiatorCalled = false;
 
-        public MockInitiator(String moduleName, String name, Flow flow)
+        public MockInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
         {
-            super(moduleName, name, flow);
+            super(moduleName, name, flow, exceptionHandler);
         }
 
         public void setRunning(boolean running){

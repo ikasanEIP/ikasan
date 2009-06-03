@@ -46,11 +46,6 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
     
     /** Logger */
     private static Logger logger = Logger.getLogger(AbstractInvocationDrivenInitiator.class);
-
-    /**
-     * TODO - use the exception handler in the flow rather than having specific reference in the initiator
-     */
-    private IkasanExceptionHandler exceptionHandler;
     
     /**
      * Used for sourcing the Events that will be played
@@ -70,7 +65,7 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
      */
     public AbstractInvocationDrivenInitiator(String name, String moduleName, Flow flow, IkasanExceptionHandler exceptionHandler, EventProvider eventProvider)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
         this.exceptionHandler = exceptionHandler;
         this.eventProvider = eventProvider;
         notifyMonitorListeners();
@@ -115,17 +110,7 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
     }
 
 
-	/**
-	 * Handles Errors that occur whilst attempting to source the Event(s) to play
-	 * 
-	 * @param eventSourcingThrowable
-	 */
-	protected void handleEventSourcingThrowable(Throwable eventSourcingThrowable) {
-		if (errorLoggingService!=null){
-			errorLoggingService.logError(eventSourcingThrowable, moduleName, name);
-		}
-		handleAction(exceptionHandler.invoke(name, eventSourcingThrowable));
-	}
+
 
 
 

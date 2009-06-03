@@ -30,6 +30,7 @@ import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
@@ -62,12 +63,13 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param moduleName - name of the module
      * @param name - name of this initiator
      * @param flow - flow to invoke
+     * @param exceptionHandler for handlingExceptions
      * @param jmsMessageEventSerialiser - The serialiser for the JMS message
      */
-    public EventMessageDrivenInitiator(String moduleName, String name, Flow flow,
+    public EventMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler,
             JmsMessageEventSerialiser jmsMessageEventSerialiser)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
         this.jmsMessageEventSerialiser = jmsMessageEventSerialiser;
     }
 

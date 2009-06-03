@@ -440,7 +440,7 @@ public class JmsMessageDrivenInitiatorImplTest
         
         public StubJmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
         {
-            super(moduleName, name, flow);
+            super(moduleName, name, flow, null);
         }
 
         @Override

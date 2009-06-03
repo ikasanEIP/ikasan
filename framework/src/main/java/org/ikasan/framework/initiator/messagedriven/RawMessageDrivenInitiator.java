@@ -35,6 +35,7 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
 
 /**
@@ -65,11 +66,12 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param moduleName - name of the module
      * @param name - name of this initiator
      * @param flow - flow to invoke
+     * @param exceptionHandler for handlingExceptions
      * @param payloadFactory - means for creating new <code>Payload</code>s
      */
-    public RawMessageDrivenInitiator(String moduleName, String name, Flow flow, PayloadFactory payloadFactory)
+    public RawMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler, PayloadFactory payloadFactory)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
         this.payloadFactory = payloadFactory;
     }
 

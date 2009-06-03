@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
@@ -83,6 +84,8 @@ public abstract class AbstractInitiator implements Initiator
     /** Count of how many times this Initiator has retried */
     protected Integer retryCount = null;
     
+    protected IkasanExceptionHandler exceptionHandler;
+    
     /**
      * Service for logging errors in a heavyweight fashion
      */
@@ -102,12 +105,14 @@ public abstract class AbstractInitiator implements Initiator
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
+     * @param exceptionHandler for handling exceptions
      */
-    public AbstractInitiator(String moduleName, String name, Flow flow)
+    public AbstractInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
         this.moduleName = moduleName;
         this.name = name;
         this.flow = flow;
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -380,6 +385,18 @@ public abstract class AbstractInitiator implements Initiator
         return stopping;
     }
     
+	/**
+	 * Handles Errors that occur whilst attempting to source the Event(s) to play
+	 * 
+	 * @param eventSourcingThrowable
+	 */
+	protected void handleEventSourcingThrowable(Throwable eventSourcingThrowable) {
+		if (errorLoggingService!=null){
+			errorLoggingService.logError(eventSourcingThrowable, moduleName, name);
+		}
+		handleAction(exceptionHandler.invoke(name, eventSourcingThrowable));
+	}
+	
     /**
      * Provides access to the implementation class specific logger instance
      * 
