@@ -63,8 +63,6 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     /** name for the retry trigger when it exists */
     private static final String RETRY_TRIGGER_NAME = "retry_trigger";
 
-    /** Ikasan Event provider instance for this initiator */
-    protected EventProvider eventProvider;
 
     /** Quartz scheduler */
     protected Scheduler scheduler;
@@ -88,10 +86,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     public QuartzStatefulScheduledDrivenInitiator(String initiatorName, String moduleName, EventProvider eventProvider, Flow flow,
             IkasanExceptionHandler exceptionHandler)
     {
-        super(initiatorName, moduleName, flow, exceptionHandler);
-        this.eventProvider = eventProvider;
-        
-        
+        super(initiatorName, moduleName, flow, exceptionHandler, eventProvider);
     }
 
     /**
@@ -107,15 +102,13 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     }
 
     /**
-     * Internal method for getting payloads, creating the event and invoking the flow.
+     * Internal method for invoking the flow.
      */
     @Override
-    protected void invokeFlow()
+    protected void invokeFlow(List<Event>events)
     {
-        // invoke flow
-        try
-        {
-            List<Event> events = this.eventProvider.getEvents();
+ 
+        //invoke flow routine
             if (events == null || events.size() == 0)
             {
                 this.handleAction(null);
@@ -144,15 +137,10 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
                 }
             }
             this.handleAction(precedentAction);
-        }
-        catch (ResourceException e)
-        {
-        	if (errorLoggingService!=null){
-        		errorLoggingService.logError(e, moduleName, name);
-        	}
-            this.handleAction(this.getExceptionHandler().invoke(this.getName(), e));
-        }
+        
     }
+
+
 
     @Override
     protected void startRetryCycle(Integer maxAttempts, long delay) throws InitiatorOperationException
