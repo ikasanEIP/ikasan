@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -208,6 +209,25 @@ public abstract class AbstractInitiator implements Initiator
             notifyMonitorListeners();
 
     }
+    
+    /**
+	 * Flow invocation routine.
+	 * 
+	 * Attempts to play each Event down the flow in sequence, interrupted only if an exception action
+	 * is encountered. 
+	 */
+	protected void invokeFlow(List<Event> events) {
+		IkasanExceptionAction exceptionAction = null;
+		if (events != null && !events.isEmpty()) {
+			for (Event event : events) {
+				exceptionAction = flow.invoke(event);
+				if (exceptionAction != null) {
+					break;
+				}
+			}
+		}
+		handleAction(exceptionAction);
+	}
   
     /**
      * Handle the returned action from the flow invocation

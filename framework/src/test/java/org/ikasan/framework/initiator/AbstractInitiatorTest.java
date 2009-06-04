@@ -1,14 +1,21 @@
 package org.ikasan.framework.initiator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.exception.IkasanExceptionActionImpl;
+import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
@@ -53,11 +60,33 @@ public class AbstractInitiatorTest
     private Flow flow = mockery.mock(Flow.class);
     
     /**
+     * List of Events to play
+     */
+    private List<Event> eventsToPlay = new ArrayList<Event>();
+    
+    /**
+     * mocked Event to play
+     */
+    private Event event1 = mockery.mock(Event.class, "Event1");
+    
+    /**
+     * mocked Event to play
+     */
+    private Event event2 = mockery.mock(Event.class, "Event2");
+    
+    /**
      * System under test
      */
     private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow,null);
     
-
+  
+    /**
+     * Constructor
+     */
+    public AbstractInitiatorTest(){
+    	eventsToPlay.add(event1);
+    	eventsToPlay.add(event2);
+    }
     
     @Test
     public void testConstructor(){
@@ -172,7 +201,147 @@ public class AbstractInitiatorTest
         Assert.assertTrue("completeRetry should have been called on concrete implemetation when handling a null action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
     }
     
+    /**
+     * Tests that invocation of invokeFlow with a null Event List will only result in completing any retry, nothing more
+     */
+    @Test
+    public void testInvokeFlow_withNullEventList_willCompleteRetryIfRecovering(){
+        ((MockInitiator)abstractInitiator).setRecovering(true);
+        Assert.assertFalse("just checking that our mock implementation has not had completeRetry called on it before", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
+
+        //invoke the method that will result in invokeFlow being called
+        ((MockInitiator)abstractInitiator).invokeInvokeFlow(null);
+        Assert.assertTrue("completeRetry should have been called on concrete implemetation when handling a null action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
+
+    }
     
+    /**
+     * Tests that invocation of invokeFlow with an empty Event List will only result in completing any retry, nothing more
+     */
+    @Test
+    public void testInvokeFlow_withEmptyEventList_willCompleteRetryIfRecovering(){
+        ((MockInitiator)abstractInitiator).setRecovering(true);
+        Assert.assertFalse("just checking that our mock implementation has not had completeRetry called on it before", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
+
+        //invoke the method that will result in invokeFlow being called
+        ((MockInitiator)abstractInitiator).invokeInvokeFlow(new ArrayList<Event>());
+        Assert.assertTrue("completeRetry should have been called on concrete implemetation when handling a null action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
+    }
+    
+    /**
+     * Tests that invocation of invokeFlow with a 2 Event List will:
+     * 	1) invoke the flow cleanly with each in turn
+     *  2) not get an exception for either
+     *  3) handle the null action scenario by completing any retry 
+     */
+    @Test
+    public void testInvokeFlow_withTwoEventsResultingInNoActions_willCompleteRetryIfRecovering(){
+        ((MockInitiator)abstractInitiator).setRecovering(true);
+        Assert.assertFalse("just checking that our mock implementation has not had completeRetry called on it before", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
+        
+        final Sequence sequence = mockery.sequence("invocationSequence"); 
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(event1);
+                inSequence(sequence);
+                will(returnValue(null));
+                
+                one(flow).invoke(event2);
+                inSequence(sequence);
+                will(returnValue(null));
+            }
+        });
+        
+        
+        //invoke the method that will result in invokeFlow being called
+        ((MockInitiator)abstractInitiator).invokeInvokeFlow(eventsToPlay);
+        Assert.assertTrue("completeRetry should have been called on concrete implemetation when handling a null action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
+    
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Tests that invocation of invokeFlow with a 2 Event List, where the first Event fails will
+     * 	1) invoke the flow with the first Event only
+     *  2) get an exceptionAction back for the firstEvent
+     *  3) handle action
+     */
+    @Test
+    public void testInvokeFlow_withTwoEventsFirstFailing_willHandleAction(){        
+        final Sequence sequence = mockery.sequence("invocationSequence"); 
+        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(event1);
+                inSequence(sequence);
+                will(returnValue(exceptionAction));
+                
+            }
+        });
+        
+        
+        //invoke the method that will result in invokeFlow being called
+        AbortTransactionException abortTransactionException = null;
+        try{
+	        ((MockInitiator)abstractInitiator).invokeInvokeFlow(eventsToPlay);
+	        Assert.fail();
+        }catch(AbortTransactionException exception){
+        	abortTransactionException = exception;
+        }
+        Assert.assertNotNull(abortTransactionException);
+        
+        //check that the action was handled
+        Assert.assertTrue("Initiator should now be stopping, if the exceptionAction was handled",abstractInitiator.isStopping());
+        
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Tests that invocation of invokeFlow with a 2 Event List, where the second Event fails will
+     * 	1) invoke the flow with the both Events
+     *  2) get an exceptionAction back for the second event only
+     *  3) handle action
+     */
+    @Test
+    public void testInvokeFlow_withTwoEventsSecondFailing_willHandleAction(){        
+        final Sequence sequence = mockery.sequence("invocationSequence"); 
+        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(event1);
+                inSequence(sequence);
+                will(returnValue(null));
+                
+                one(flow).invoke(event2);
+                inSequence(sequence);
+                will(returnValue(exceptionAction));
+                
+            }
+        });
+        
+        
+        //invoke the method that will result in invokeFlow being called
+        AbortTransactionException abortTransactionException = null;
+        try{
+	        ((MockInitiator)abstractInitiator).invokeInvokeFlow(eventsToPlay);
+	        Assert.fail();
+        }catch(AbortTransactionException exception){
+        	abortTransactionException = exception;
+        }
+        Assert.assertNotNull(abortTransactionException);
+        
+        //check that the action was handled
+        Assert.assertTrue("Initiator should now be stopping, if the exceptionAction was handled",abstractInitiator.isStopping());
+        
+        mockery.assertIsSatisfied();
+    }
     
     class MockInitiator extends AbstractInitiator implements Initiator{
         
@@ -190,6 +359,10 @@ public class AbstractInitiatorTest
 
         public void invokeHandleAction(IkasanExceptionAction ikasanExceptionAction){
             handleAction(ikasanExceptionAction);
+        }
+        
+        public void invokeInvokeFlow(List<Event>events){
+            invokeFlow(events);
         }
         
         
