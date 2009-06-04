@@ -114,10 +114,10 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
 
 
 
-    /**
-     * Invoke the flow with each of the sourced Events
-     */
-    protected abstract void invokeFlow(List<Event> events);
+//    /**
+//     * Invoke the flow with each of the sourced Events
+//     */
+//    protected abstract void invokeFlow(List<Event> events);
 
 
 

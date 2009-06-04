@@ -92,8 +92,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY);
     final IkasanExceptionAction rollbackStopAction =
         new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
-    final IkasanExceptionAction rollforwardStopAction =
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
+//    final IkasanExceptionAction rollforwardStopAction =
+//        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
     final IkasanExceptionAction skipAction =
         new IkasanExceptionActionImpl(IkasanExceptionActionType.SKIP_EVENT);
     final String initiatorName = "initiatorName";
@@ -314,88 +314,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         assertTrue(sdi.getState().isError());
     }
 
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
-     * flow invocation returning a 'STOP_ROLLFORWARD' action.
-     * 
-     * @throws ResourceException
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_successful_ExecuteWithReturnedStopRollForwardAction() 
-        throws ResourceException, SchedulerException
-    {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
-        // set expectations
-        classMockery.checking(new Expectations()
-        {
-            {
-                // return 'rollforwardStop' ikasanExceptionAction from the flow invocation
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(rollforwardStopAction));
-            }
-        });
 
-        // set common expectations
-        this.setEventExpectations();
-       
-        setExpectationsForHandleStopAction(false);
 
-        // invoke initiator
-        sdi.invoke();
 
-        // check is in error
-        assertTrue(sdi.isError());
-    }
-
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on 
-     * multiple (3) events with the second event causing a 'STOP_ROLLFORWARD' action.
-     * 
-     * NOTE: The nature of a ROLLFORWARD midway through multiple events results
-     * in all events being processed and the initiator state being set to the
-     * worse case outcome based on state priority.
-     * 
-     * @throws ResourceException
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_successful_ExecuteMultipleEventsWithReturnedStopRollForwardAction() 
-        throws ResourceException, SchedulerException
-    {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
-        int numOfEvents = 3;
-        
-        // 
-        // set expectations
-        classMockery.checking(new Expectations()
-        {
-            {
-                // first event return 'null' action
-                exactly(1).of(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-                // second event returns 'rollforwardStop' action
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(rollforwardStopAction));
-                // third event return 'null' action
-                exactly(1).of(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-            }
-        });
-
-        // set common expectations
-        this.setMultipleEventExpectations(numOfEvents);
-        
-        setExpectationsForHandleStopAction(false);
-        
-        // invoke initiator
-        sdi.invoke();
-
-        // check initiator status is error
-        assertTrue(sdi.isError());
-    }
 
 
 
@@ -433,49 +354,49 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         sdi.invoke();
     }
 
-    /**
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on 
-     * multiple (3) events with the second event returning a 'SKIP' action.
-     * 
-     * NOTE: The nature of a SKIP midway through multiple events results
-     * in all events being processed and the initiator state being set to the
-     * worse case outcome based on state priority.
-     * 
-     * @throws ResourceException
-     */
-    @Test
-    public void test_successful_ExecuteMultipleEventsWithReturnedSkipEventAction() 
-        throws ResourceException
-    {
-        int numOfEvents = 3;
-
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
-        // set expectations
-        classMockery.checking(new Expectations()
-        {
-            {
-                // first event return 'null' action
-                exactly(1).of(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-                // second event returns 'continue' action
-                one(flow).invoke(with(any(Event.class)));
-                will(returnValue(skipAction));
-                // third event return 'null' action
-                exactly(1).of(flow).invoke(with(any(Event.class)));
-                will(returnValue(null));
-            }
-        });
-    
-        // set common expectations
-        this.setMultipleEventExpectations(numOfEvents);
-        
-        //SKIP and continue are handle together
-        setExpectationsForResume(false);
-    
-        // invoke initiator
-        sdi.invoke();
-    }
+//    /**
+//     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on 
+//     * multiple (3) events with the second event returning a 'SKIP' action.
+//     * 
+//     * NOTE: The nature of a SKIP midway through multiple events results
+//     * in all events being processed and the initiator state being set to the
+//     * worse case outcome based on state priority.
+//     * 
+//     * @throws ResourceException
+//     */
+//    @Test
+//    public void test_successful_ExecuteMultipleEventsWithReturnedSkipEventAction() 
+//        throws ResourceException
+//    {
+//        int numOfEvents = 3;
+//
+//        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+//        
+//        // set expectations
+//        classMockery.checking(new Expectations()
+//        {
+//            {
+//                // first event return 'null' action
+//                exactly(1).of(flow).invoke(with(any(Event.class)));
+//                will(returnValue(null));
+//                // second event returns 'continue' action
+//                one(flow).invoke(with(any(Event.class)));
+//                will(returnValue(skipAction));
+//                // third event return 'null' action
+//                exactly(1).of(flow).invoke(with(any(Event.class)));
+//                will(returnValue(null));
+//            }
+//        });
+//    
+//        // set common expectations
+//        this.setMultipleEventExpectations(numOfEvents);
+//        
+//        //SKIP and continue are handle together
+//        setExpectationsForResume(false);
+//    
+//        // invoke initiator
+//        sdi.invoke();
+//    }
 
 
 

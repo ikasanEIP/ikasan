@@ -40,6 +40,7 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorState;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -76,7 +77,7 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private TextMessage textMessage = mockTextMessage();
 
-    private IkasanExceptionAction rollForwardStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
+    //private IkasanExceptionAction rollForwardStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
 
     private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
 
@@ -194,6 +195,8 @@ public class JmsMessageDrivenInitiatorImplTest
             }
         });
         stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
+        
+        
         mockery.assertIsSatisfied();
     }
 
@@ -228,12 +231,20 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             {
                 one(flow).invoke(eventFromTextMessage);
-                will(returnValue(rollForwardStopAction));
+                will(returnValue(rollbackStopAction));
                 one(messageListenerContainer).stop();
             }
         });
         monitorExpectsStoppedInError();
-        stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
+        AbortTransactionException abortTransactionException = null;
+        try{
+        	stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
+        	fail();
+        } catch(AbortTransactionException exception){
+        	abortTransactionException = exception;
+        }
+        Assert.assertNotNull(abortTransactionException);
+        
         mockery.assertIsSatisfied();
     }
 

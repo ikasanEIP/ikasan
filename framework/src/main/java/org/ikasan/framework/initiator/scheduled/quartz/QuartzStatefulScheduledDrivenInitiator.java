@@ -101,44 +101,6 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         
     }
 
-    /**
-     * Internal method for invoking the flow.
-     */
-    @Override
-    protected void invokeFlow(List<Event>events)
-    {
- 
-        //invoke flow routine
-            if (events == null || events.size() == 0)
-            {
-                this.handleAction(null);
-                return;
-            }
-            // Within the event handling we need to accommodate for a
-            // single event outcome action; and for batched events outcome
-            // action.
-            // The batched events have multiple potential outcome actions,
-            // therefore, we need to use the highest precedent outcome action.
-            IkasanExceptionAction precedentAction = null;
-            for (Event event : events)
-            {
-                IkasanExceptionAction action = this.getFlow().invoke(event);
-                if (action != null)
-                {
-                    if (precedentAction == null || action.getType().isHigherPrecedence(precedentAction.getType()))
-                    {
-                        precedentAction = action;
-                        if (precedentAction.getType().isRollback())
-                        {
-                            // if rollback then we may as well get out now
-                            break;
-                        }
-                    }
-                }
-            }
-            this.handleAction(precedentAction);
-        
-    }
 
 
 

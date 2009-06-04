@@ -26,6 +26,7 @@
  */
 package org.ikasan.framework.initiator.messagedriven;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.BytesMessage;
@@ -108,36 +109,36 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      */
     public void onMessage(Message message)
     {
-        Event event = null;
+    	List<Event> events = new ArrayList<Event>();
+
         try
         {
             logger.info("received message with id [" + message.getJMSMessageID() + "]");
             if (message instanceof TextMessage)
             {
-                event = handleTextMessage((TextMessage) message);
+            	events.add(handleTextMessage((TextMessage) message));
             }
             else if (message instanceof MapMessage)
             {
-                event = handleMapMessage((MapMessage) message);
+            	events.add(handleMapMessage((MapMessage) message));
             }
             else if (message instanceof ObjectMessage)
             {
-                event = handleObjectMessage((ObjectMessage) message);
+            	events.add(handleObjectMessage((ObjectMessage) message));
             }
             else if (message instanceof StreamMessage)
             {
-                event = handleStreamMessage((StreamMessage) message);
+            	events.add(handleStreamMessage((StreamMessage) message));
             }
             else if (message instanceof BytesMessage)
             {
-                event = handleBytesMessage((BytesMessage) message);
+            	events.add(handleBytesMessage((BytesMessage) message));
             }
         }
         catch (Throwable eventSourcingThrowable){
         	handleEventSourcingThrowable(eventSourcingThrowable);
         }
-        IkasanExceptionAction action = flow.invoke(event);
-        handleAction(action);
+        invokeFlow(events);
     }
     
 
