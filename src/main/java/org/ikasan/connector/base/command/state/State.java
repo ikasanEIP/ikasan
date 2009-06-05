@@ -29,7 +29,7 @@ package org.ikasan.connector.base.command.state;
 /**
  * Trivial class to encapsulate a State
  * 
- * @author Ikasan Team
+ * @author Ikasan Development Team
  */
 public class State
 {
