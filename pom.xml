@@ -108,8 +108,8 @@
   <licenses>
     <license>
       <name>The Lesser GNU Public License, Version 3.0</name>
-      <url>http://www.gnu.org/licenses/LICENSE-3.0.txt</url>
-      <distribution>repo</distribution>
+      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <distribution>manual</distribution>
     </license>
   </licenses>
   <mailingLists>
