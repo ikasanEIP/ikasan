@@ -47,7 +47,7 @@ import org.ikasan.common.component.Spec;
 /**
  * This is a utility class to aid JMS tools
  * 
- * @author Martijn Verburg
+ * @author Ikasan Development Team
  */
 public class JMSToolsUtils { 
 

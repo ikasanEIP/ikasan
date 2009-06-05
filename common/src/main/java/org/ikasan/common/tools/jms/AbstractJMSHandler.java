@@ -47,7 +47,7 @@ import org.ikasan.common.security.PolicyConfigurator;
  * Abstract class grouping all common aspects of the standalone
  * JMS interaction.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public abstract class AbstractJMSHandler { 
 

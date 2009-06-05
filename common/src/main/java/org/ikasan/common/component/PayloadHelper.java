@@ -129,7 +129,7 @@ import org.apache.log4j.Logger;
  * }<br/>
  * </code></p>
  * <br/>
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class PayloadHelper
 {

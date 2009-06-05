@@ -36,7 +36,7 @@ import org.ikasan.common.ExceptionType;
  * exception at the point it is thrown.
  * If no ExceptionType is specified a default of UNDEFINED will be used.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class CommonException
     extends ResourceException

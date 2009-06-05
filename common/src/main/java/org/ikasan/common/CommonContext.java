@@ -31,7 +31,7 @@ import javax.naming.NamingException;
 /**
  * Common context provides the base interface for all context access.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */  
 public interface CommonContext
 { 

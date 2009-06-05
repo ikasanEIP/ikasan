@@ -55,7 +55,7 @@ import org.ikasan.common.factory.JMSMessageFactory;
  * 
  * TODO Nasty hack to get queues working should be refactored
  * 
- * @author Jeff Mitchell (jeff.mitchell@ikasan.org)
+ * @author Ikasan Development Team
  */
 public class TSubscriber extends AbstractJMSHandler
 {

@@ -427,7 +427,7 @@ public class DeliverBatchCommandTest extends TestCase
     }
 
     /**
-     * @author verbma
+     * @author Ikasan Development Team
      */
     class TempPathMatcher extends BaseMatcher<String>
     {

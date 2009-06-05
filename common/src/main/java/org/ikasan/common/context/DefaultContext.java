@@ -41,7 +41,7 @@ import org.ikasan.common.CommonRuntimeException;
  * This class fronts the context access and provides simple methods for
  * lookups, binds, unbinds and rebinds for objects within the current context.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class DefaultContext
     implements CommonContext

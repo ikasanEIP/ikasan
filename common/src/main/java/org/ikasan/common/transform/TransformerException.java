@@ -32,7 +32,7 @@ package org.ikasan.common.transform;
  * different transformation classes to wrap exceptions that occur during the
  * transformation process.
  *
- * @author Herodotos Koukkides
+ * @author Ikasan Development Team
  *
  */
 public class TransformerException extends Exception

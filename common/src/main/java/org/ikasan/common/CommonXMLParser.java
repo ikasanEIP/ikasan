@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 /**
  * Common XML Parser provides the base interface for all XML parsing.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  * @deprecated - This has been deprecated, use DocumentBuilderFactory instead
  */  
 @Deprecated

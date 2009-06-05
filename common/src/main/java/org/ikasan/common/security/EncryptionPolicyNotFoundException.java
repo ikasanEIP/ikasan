@@ -32,7 +32,7 @@ import org.ikasan.common.ExceptionType;
 /**
  * Unable to find the encryption policy for security within this module.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class EncryptionPolicyNotFoundException
     extends CommonException

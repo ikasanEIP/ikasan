@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 /**
  * Java representation of the IkasanSecurity XML configuration file.
  * 
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public abstract class AbstractIkasan
 {

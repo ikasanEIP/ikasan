@@ -41,7 +41,7 @@ import org.ikasan.common.util.ResourceUtils;
  * part of Ikasan allowing authentication and authorisation of Ikasan resources. This configuration provides the basis
  * for this security.
  * 
- * @author <a href="mailto:info@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public class IkasanSecurityConfImpl implements IkasanSecurityConf
 {

@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 /**
  * This class provides XStream converter for <code>Blowfish</code> algorithm.
  *
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public class BlowfishConverter
     extends AlgorithmConverter

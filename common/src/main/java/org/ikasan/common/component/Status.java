@@ -33,7 +33,7 @@ import java.util.Date;
  * Status class for setting and getting the component status
  * at runtime.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class Status
     implements Serializable

@@ -62,7 +62,7 @@ import org.apache.log4j.Logger;
  * CLASSPATH=$CLASSPATH:$JBOSS_HOME/server/log4j-1.2.14.jar NOTE: log4j.jar is
  * version dependent use above or later
  * 
- * @author Jeff Mitchell (jeff.mitchell@ikasan.org)
+ * @author Ikasan Development Team
  */
 public class TPublisher extends AbstractJMSHandler
 {

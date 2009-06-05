@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Interface for consuming checksum files of a known algorithm to extract the checksum value
  * 
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public interface ChecksumSupplier

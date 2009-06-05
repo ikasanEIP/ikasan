@@ -34,7 +34,7 @@ import org.xml.sax.SAXParseException;
  * This class extends <code>org.xml.sax.SAXParseException</code>
  * that encapsulates an XML parse warning.
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  *
  */
 public class WarningSAXParseException

@@ -41,7 +41,7 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
 /**
  * Payload XML serialiser/deserialiser
  * 
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public class PayloadXmlSerializer implements XMLSerializer<Payload>

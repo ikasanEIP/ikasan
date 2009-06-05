@@ -71,7 +71,7 @@ import org.apache.log4j.Logger;
  * 
  * TODO:  Split out the main method into its own client
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class DateUtils
 {

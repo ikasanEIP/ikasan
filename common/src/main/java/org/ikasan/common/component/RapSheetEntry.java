@@ -38,7 +38,7 @@ import org.ikasan.common.ExceptionType;
  * A list of RapSheetEntries is passed to the ExceptionHandler to provide
  * additional historic details of this beans encountered FCEs.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  * 
  */
 public class RapSheetEntry

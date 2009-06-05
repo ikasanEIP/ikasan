@@ -270,7 +270,7 @@ public class DeliverBatchCommand extends AbstractBaseFileTransferTransactionalRe
     /**
      * Simple Id default Id generator
      * 
-     * @author duncro
+     * @author Ikasan Development Team
      * 
      */
     class DefaultIdGenerator implements UniqueIdGenerator

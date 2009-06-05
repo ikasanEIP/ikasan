@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  * This class provides very simple static utility methods for adjusting poll
  * timers based on requirements of the caller.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class PollDancer
 {

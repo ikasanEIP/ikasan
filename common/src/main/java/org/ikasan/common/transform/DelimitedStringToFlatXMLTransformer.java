@@ -74,7 +74,7 @@ import org.ikasan.common.xml.transform.DefaultDOMSerializer;
  * TODO: Add the ability to escape '=' characters as part of the value a
  * name-value pair
  * 
- * @author Herodotos Koukkides
+ * @author Ikasan Development Team
  * 
  */
 public class DelimitedStringToFlatXMLTransformer

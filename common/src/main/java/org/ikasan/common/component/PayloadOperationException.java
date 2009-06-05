@@ -32,7 +32,7 @@ import org.ikasan.common.ExceptionType;
 /**
  * Payload operation exception
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class PayloadOperationException
     extends CommonException

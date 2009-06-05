@@ -32,7 +32,7 @@ import org.ikasan.common.ExceptionType;
 /**
  * Envelope operation exception
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class EnvelopeOperationException
     extends CommonException

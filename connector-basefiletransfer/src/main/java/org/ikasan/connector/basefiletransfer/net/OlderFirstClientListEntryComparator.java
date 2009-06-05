@@ -33,7 +33,7 @@ import java.util.Comparator;
  * {@link Comparator} for <code>ClientListEntry</code> that compares two such
  * objects based on their last modified dates.
  * 
- * @author Ikasan Developement Team 
+ * @author Ikasan Development Team 
  * 
  */
 public class OlderFirstClientListEntryComparator implements Comparator<ClientListEntry>

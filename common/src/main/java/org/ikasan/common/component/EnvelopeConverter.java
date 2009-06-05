@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 /**
  * This class provides a default exception message structure. <p/>
  * 
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class EnvelopeConverter extends PayloadConverter
 {
