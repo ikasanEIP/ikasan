@@ -24,16 +24,25 @@
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
 
--- ====================================================================
--- Table creation script for the Ikasan framework platform services.
---
--- ====================================================================
+-- Drop tables
+IF OBJECT_ID('FlowEventTriggerParameters') IS NOT NULL
+BEGIN
+    DROP TABLE FlowEventTriggerParameters
+    IF OBJECT_ID('FlowEventTriggerParameters') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FlowEventTriggerParameters >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE FlowEventTriggerParameters >>>'
+END
+IF OBJECT_ID('FlowEventTrigger') IS NOT NULL
+BEGIN
+    DROP TABLE FlowEventTrigger
+    IF OBJECT_ID('FlowEventTrigger') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FlowEventTrigger >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE FlowEventTrigger >>>'
+END
 
--- ====================================================================
--- Wiretap platform services tables.
--- The following tables support the wiretap event auditing as 
--- dynamic insertions for event tracking within a flow.
--- ====================================================================
+
 -- FlowEventTrigger
 CREATE TABLE FlowEventTrigger
 (
@@ -54,12 +63,15 @@ IF OBJECT_ID('FlowEventTrigger') IS NOT NULL
 ELSE
     PRINT '<<< FAILED CREATING TABLE FlowEventTrigger >>>'
     
+
+
+
 -- FlowEventTriggerParameters
 CREATE TABLE FlowEventTriggerParameters
 (
     TriggerId          NUMERIC NOT NULL,
     ParamName          VARCHAR(128)  NOT NULL,
-    ParamValue         VARCHAR(128) 
+    ParamValue            VARCHAR(128) 
 )
   ALTER TABLE FlowEventTriggerParameters
     ADD CONSTRAINT FlowEventTriggerParam_Id_FK
@@ -70,52 +82,6 @@ IF OBJECT_ID('FlowEventTrigger') IS NOT NULL
 ELSE
     PRINT '<<< FAILED CREATING TABLE FlowEventTriggerParameters >>>'
     
--- Wiretap event persistence
-CREATE TABLE IkasanWiretap
-(
-    Id                  NUMERIC IDENTITY NOT NULL,
-    ModuleName          VARCHAR(128)  NOT NULL,
-    FlowName            VARCHAR(128)  NOT NULL,
-    ComponentName       VARCHAR(128)  NOT NULL,
-    EventId             VARCHAR(64)   NOT NULL,
-    PayloadId           VARCHAR(64)   NOT NULL,
-    PayloadContent      TEXT          NOT NULL,
-    CreatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
-    UpdatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
-    Expiry              DATETIME      NOT NULL
-)
-LOCK DATAROWS
-WITH IDENTITY_GAP=1
-
-CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)
-
-IF OBJECT_ID('IkasanWiretap') IS NOT NULL
-    PRINT '<<< CREATED TABLE IkasanWiretap >>>'
-ELSE
-    PRINT '<<< FAILED CREATING TABLE IkasanWiretap >>>'
+  
     
 
--- ====================================================================
--- Initiator state persistence command table.
--- This table persists the status of an initiator i.e. running/stopped
--- between server bounces.
--- ====================================================================
-CREATE TABLE InitiatorCommand
-(
-    Id                  NUMERIC IDENTITY NOT NULL,
-    ModuleName          VARCHAR(128)  NOT NULL,
-    InitiatorName       VARCHAR(128)  NOT NULL,
-    Action              VARCHAR(64)   NOT NULL,
-    Actor               VARCHAR(64)   NOT NULL,
-    SubmittedTime       DATETIME      DEFAULT getDate() NOT NULL
-)
-LOCK DATAROWS
-WITH IDENTITY_GAP=1
-
-CREATE UNIQUE INDEX InitiatorCommand01u ON InitiatorCommand(Id)
-
-IF OBJECT_ID('InitiatorCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE InitiatorCommand >>>'
-ELSE
-    PRINT '<<< FAILED CREATING TABLE InitiatorCommand >>>'
-    
