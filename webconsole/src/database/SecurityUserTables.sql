@@ -24,40 +24,14 @@
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
 
-IF OBJECT_ID('UsersAuthorities') IS NOT NULL
-BEGIN
-    DROP TABLE UsersAuthorities
-    IF OBJECT_ID('UsersAuthorities') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE UsersAuthorities >>>'
-    ELSE
-        PRINT '<<< DROPPED TABLE UsersAuthorities >>>'     
-END
-GO
+-- ====================================================================
+-- Table creation script for the Ikasan Webconsole services.
+--
+-- ====================================================================
 
-
-IF OBJECT_ID('Authorities') IS NOT NULL
-BEGIN
-    DROP TABLE Authorities
-    IF OBJECT_ID('Authorities') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE Authorities >>>'
-    ELSE
-        PRINT '<<< DROPPED TABLE Authorities >>>'     
-END
-GO
-
-IF OBJECT_ID('Users') IS NOT NULL
-BEGIN
-    DROP TABLE Users
-    IF OBJECT_ID('Users') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE Users >>>'
-    ELSE
-        PRINT '<<< DROPPED TABLE Users >>>'     
-END
-GO
-
-
-
-
+-- ====================================================================
+-- Webconsole user authorities tables.
+-- ====================================================================
 CREATE TABLE Users(
     Id       NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     Username VARCHAR(50) NOT NULL UNIQUE,
@@ -66,7 +40,11 @@ CREATE TABLE Users(
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
-GO
+
+IF OBJECT_ID('Users') IS NOT NULL
+    PRINT '<<< CREATED TABLE Users >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE Users >>>'
 
 
 CREATE TABLE Authorities (
@@ -76,7 +54,12 @@ CREATE TABLE Authorities (
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
-GO
+
+IF OBJECT_ID('Authorities') IS NOT NULL
+    PRINT '<<< CREATED TABLE Authorities >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE Authorities >>>'
+
 
 CREATE TABLE UsersAuthorities (
     UserId NUMERIC NOT NULL,
@@ -87,5 +70,9 @@ CREATE TABLE UsersAuthorities (
 )     
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
-GO    
-   
+    
+IF OBJECT_ID('UsersAuthorities') IS NOT NULL
+    PRINT '<<< CREATED TABLE UsersAuthorities >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE UsersAuthorities >>>'
+
