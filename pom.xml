@@ -45,9 +45,9 @@
   <description>The common library for the Ikasan Enterprise Integration Platform</description>
   <developers>
     <developer>
-      <id>verbma</id>
+      <id>karianna</id>
       <name>Martijn Verburg</name>
-      <organization>Ikasan Ltd</organization>
+      <organization>Ikasan Development Team</organization>
       <organizationUrl>http://www.ikasan.org</organizationUrl>
       <roles>
         <role>developer</role>
@@ -55,9 +55,9 @@
       <timezone>0</timezone>
     </developer>
     <developer>
-      <id>duncro</id>
+      <id>magicduncan</id>
       <name>Ross Duncan</name>
-      <organization>Ikasan Ltd</organization>
+      <organization>Ikasan Development Team</organization>
       <organizationUrl>http://www.ikasan.org</organizationUrl>
       <roles>
         <role>developer</role>
@@ -67,7 +67,7 @@
     <developer>
       <id>mitcje</id>
       <name>Jeff Mitchell</name>
-      <organization>Ikasan Ltd</organization>
+      <organization>Ikasan Development Team</organization>
       <organizationUrl>http://www.ikasan.org</organizationUrl>
       <roles>
         <role>developer</role>
@@ -77,7 +77,7 @@
     <developer>
       <id>hasasu</id>
       <name>Summer Hasani</name>
-      <organization>Ikasan Ltd</organization>
+      <organization>Ikasan Development Team</organization>
       <organizationUrl>http://www.ikasan.org</organizationUrl>
       <roles>
         <role>developer</role>
@@ -87,7 +87,7 @@
     <developer>
       <id>suetju</id>
       <name>Junichi Suetake</name>
-      <organization>Ikasan Ltd</organization>
+      <organization>Ikasan Development Team</organization>
       <organizationUrl>http://www.ikasan.org</organizationUrl>
       <roles>
         <role>developer</role>
@@ -97,7 +97,7 @@
     <developer>
       <id>koukhe</id>
       <name>Herodotos Koukkides</name>
-      <organization>Ikasan Ltd</organization>
+      <organization>Ikasan Development Team</organization>
       <organizationUrl>http://www.ikasan.org</organizationUrl>
       <roles>
         <role>developer</role>
@@ -105,7 +105,6 @@
       <timezone>0</timezone>
     </developer>
   </developers>
-  <!--
   <licenses>
     <license>
       <name>The Lesser GNU Public License, Version 3.0</name>
@@ -113,24 +112,31 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  -->
-  <!--
   <mailingLists>
     <mailingList>
+      <name>Ikasan Users</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
+    </mailingList>
+    <mailingList>
       <name>Ikasan Development</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/jajuk-i18n</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/jajuk-i18n</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=jajuk-i18n</archive>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
+    </mailingList>
+    <mailingList>
+      <name>Ikasan Announce</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
     </mailingList>
   </mailingLists>
-  -->
-  <!--
   <issueManagement>
-    <url>http://sourceforge.net/tracker/?group_id=91412</url>
+    <url>https://apps.sourceforge.net/trac/ikasaneip/</url>
   </issueManagement>
-  -->
   <scm>
-    <connection>scm:svn:svn+ssh://svc-vcsp/architecture/ikasan/trunk/common</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/common</connection>
   </scm>
   <build>
     <!-- Std plugins -->
@@ -182,7 +188,7 @@
         <configuration>
           <type>date</type>
           <dates>
-            <date implementation="java.lang.String">2008-05-06</date>
+            <date implementation="java.lang.String">2009-05-19</date>
           </dates>
           <dateFormat>yyyy-MM-dd</dateFormat>
         </configuration>
@@ -311,6 +317,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <!-- 
   <distributionManagement>
     <repository>
       <id>ext-releases</id>
@@ -322,4 +329,5 @@
       <url> file:///opt/platform/maven-platform/tomcat/apache-tomcat-5.5.26/webapps/ROOT/ikasan-common </url>
     </site>
   </distributionManagement>
+   -->
 </project>
