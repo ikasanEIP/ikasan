@@ -40,6 +40,7 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -92,8 +93,7 @@ public class EventMessageDrivenInitiatorTest {
             	
                 one(jmsMessageEventSerialiser).fromMapMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
-                
-                one(flow).invoke(event);
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 will(returnValue(null));
             }
         });

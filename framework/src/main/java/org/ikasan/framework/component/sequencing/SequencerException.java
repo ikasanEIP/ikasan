@@ -31,7 +31,7 @@ package org.ikasan.framework.component.sequencing;
  * 
  * @author Ikasan Development Team
  */
-public class SequencerException extends Exception
+public class SequencerException extends RuntimeException
 {
     /** serialVersionUID */
     private static final long serialVersionUID = -6107850100714275149L;

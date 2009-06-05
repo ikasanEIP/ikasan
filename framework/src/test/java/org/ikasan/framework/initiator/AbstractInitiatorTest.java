@@ -12,6 +12,7 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -75,9 +76,14 @@ public class AbstractInitiatorTest
     private Event event2 = mockery.mock(Event.class, "Event2");
     
     /**
+     * mocked exception handler
+     */
+    private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
+    
+    /**
      * System under test
      */
-    private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow,null);
+    private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow,exceptionHandler);
     
   
     /**
@@ -243,11 +249,11 @@ public class AbstractInitiatorTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(event1);
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event1)));
                 inSequence(sequence);
                 will(returnValue(null));
                 
-                one(flow).invoke(event2);
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event2)));
                 inSequence(sequence);
                 will(returnValue(null));
             }
@@ -272,13 +278,17 @@ public class AbstractInitiatorTest
         final Sequence sequence = mockery.sequence("invocationSequence"); 
         final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
         
-        
+        final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(event1);
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event1)));
                 inSequence(sequence);
+                will(throwException(throwable));
+                
+                one(exceptionHandler).invoke(with(any(String.class)), (Event) with(equal(event1)), (Throwable) with(equal(throwable)));
                 will(returnValue(exceptionAction));
+                inSequence(sequence);
                 
             }
         });
@@ -311,17 +321,22 @@ public class AbstractInitiatorTest
         final Sequence sequence = mockery.sequence("invocationSequence"); 
         final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
         
+        final Throwable throwable = new RuntimeException();
         
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(event1);
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event1)));
                 inSequence(sequence);
                 will(returnValue(null));
                 
-                one(flow).invoke(event2);
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event2)));                
                 inSequence(sequence);
+                will(throwException(throwable));
+                
+                one(exceptionHandler).invoke(with(any(String.class)), (Event) with(equal(event2)), (Throwable) with(equal(throwable)));
                 will(returnValue(exceptionAction));
+                inSequence(sequence);
                 
             }
         });

@@ -31,7 +31,7 @@ package org.ikasan.framework.component.endpoint;
  * @author Ikasan Development Team
  *
  */
-public class EndpointException extends Exception
+public class EndpointException extends RuntimeException
 {
 
     /**

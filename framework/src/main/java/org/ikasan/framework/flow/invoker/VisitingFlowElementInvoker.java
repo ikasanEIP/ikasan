@@ -40,6 +40,7 @@ import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.FlowComponent;
 import org.ikasan.framework.flow.FlowElement;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
 
@@ -53,8 +54,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /** logger instance */
     private static final Logger logger = Logger.getLogger(VisitingFlowElementInvoker.class);
 
-    /** Exception Handler for interpreting any exceptions thrown during component invocation */
-    private IkasanExceptionHandler exceptionHandler;
 
     /** The flow event listener */
     private FlowEventListener flowEventListener;
@@ -69,25 +68,23 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         this.flowEventListener = flowEventListener;
     }
 
-    /**
-     * Constructor
-     * 
-     * @param exceptionHandler The Exception Handler to use for this flow
-     */
-    public VisitingFlowElementInvoker(IkasanExceptionHandler exceptionHandler)
-    {
-        this.exceptionHandler = exceptionHandler;
-    }
+
 
     /*
      * (non-Javadoc)
      * 
      * @see flow.visitinginvoker.FlowElementInvoker#invoke(event.Event, flow.FlowElement)
      */
-    public IkasanExceptionAction invoke(Event event, String moduleName, String flowName, FlowElement flowElement)
+    public void invoke(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName, FlowElement flowElement)
     {
+    	
+    	System.out.println("invoked with:"+flowElement);
+    	
         while (flowElement != null)
         {
+        	System.out.println("looping on:"+flowElement);
+        	flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+        	
             if (logger.isInfoEnabled())
             {
                 logger.info("Invoking [" + flowElement.getComponentName() + "] of [" + flowName + "] " + event.idToString());
@@ -96,11 +93,8 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             FlowComponent flowComponent = flowElement.getFlowComponent();
             if (flowComponent instanceof Transformer)
             {
-                IkasanExceptionAction result = handleTransformer(event, moduleName, flowName, flowElement);
-                if (result != null)
-                {
-                    return result;
-                }
+                handleTransformer(event, moduleName, flowName, flowElement);
+
                 // sort out the next element
                 FlowElement previousFlowElement = flowElement;
                 flowElement = getDefaultTransition(flowElement);
@@ -114,40 +108,26 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             }
             else if (flowComponent instanceof Endpoint)
             {
-                IkasanExceptionAction result = handleEndpoint(event, moduleName, flowName, flowElement);
-                if (result != null)
-                {
-                    return result;
-                }
+                handleEndpoint(event, moduleName, flowName, flowElement);
+
                 flowElement = getDefaultTransition(flowElement);
             }
             else if (flowComponent instanceof Router)
             {
-                IkasanExceptionAction result = handleRouter(event, moduleName, flowName, flowElement);
-                if (result != null)
-                {
-                    return result;
-                }
+                handleRouter(flowInvocationContext, event, moduleName, flowName, flowElement);
                 break;
             }
             else if (flowComponent instanceof Sequencer)
             {
-                IkasanExceptionAction result = handleSequencer(event, moduleName, flowName, flowElement);
-                if (result != null)
-                {
-                    return result;
-                }
+                handleSequencer(flowInvocationContext, event, moduleName, flowName, flowElement);
                 break;
             }
             else
             {
-                logger.error("Unhandled FlowComponent type:" + flowComponent.getClass());
-                return new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+                throw new RuntimeException("Unhandled FlowComponent type:" + flowComponent.getClass());
             }
         }
-        // if we get this far, then there were no problems, and thus not
-        // IkasanExceptionAction to return
-        return null;
+
     }
 
     /**
@@ -157,15 +137,12 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
-     * @return IkasanExceptionAction if any problem occurs
      */
-    private IkasanExceptionAction handleSequencer(Event event, String moduleName, String flowName,
+    private void handleSequencer(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName,
             FlowElement flowElement)
     {
         Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
-        IkasanExceptionAction result = null;
-        try
-        {
+
             List<Event> events = sequencer.onEvent(event);
             if (events!=null){
                 notifyListenersAfterSequencerElement(events, moduleName, flowName, flowElement);
@@ -182,19 +159,10 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             {
                 for (Event constituentEvent : events)
                 {
-                    result = this.invoke(spawnEvent(constituentEvent), moduleName, flowName, nextFlowElement);
-                    if (result != null)
-                    {
-                        break;
-                    }
+                    invoke(flowInvocationContext, spawnEvent(constituentEvent), moduleName, flowName, nextFlowElement);
+
                 }
             }
-        }
-        catch (Throwable throwable)
-        {
-            result = exceptionHandler.invoke(flowElement.getComponentName(), event, throwable);
-        }
-        return result;
     }
 
     /**
@@ -277,39 +245,29 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
-     * @return IkasanExceptionAction if any problem occurs
      */
-    private IkasanExceptionAction handleRouter(Event event, String moduleName, String flowName, FlowElement flowElement)
+    private void handleRouter(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName, FlowElement flowElement)
     {
         Router router = (Router) flowElement.getFlowComponent();
-        IkasanExceptionAction result = null;
-        try
+
+
+        List<String> targetNames = router.onEvent(event);
+        notifyListenersAfterElement(event, moduleName, flowName, flowElement);
+        for (String targetName : targetNames)
         {
-            List<String> targetNames = router.onEvent(event);
-            notifyListenersAfterElement(event, moduleName, flowName, flowElement);
-            for (String targetName : targetNames)
+            final FlowElement nextFlowElement = flowElement.getTransition(targetName);
+            if (nextFlowElement == null)
             {
-                final FlowElement nextFlowElement = flowElement.getTransition(targetName);
-                if (nextFlowElement == null)
-                {
-                    logger.error("router is last element in flow!");
-                    throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                            + "] contains a Router, but it does not have a transition mapped for that Router's target["
-                            + targetName + "] "
-                            + "All Router targets must be mapped to transitions in their enclosing FlowElement");
-                }
-                result = this.invoke(spawnEvent(event), moduleName, flowName, nextFlowElement);
-                if (result != null)
-                {
-                    break;
-                }
+                logger.error("router is last element in flow!");
+                throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
+                        + "] contains a Router, but it does not have a transition mapped for that Router's target["
+                        + targetName + "] "
+                        + "All Router targets must be mapped to transitions in their enclosing FlowElement");
             }
+            invoke(flowInvocationContext, spawnEvent(event), moduleName, flowName, nextFlowElement);
+
         }
-        catch (Throwable throwable)
-        {
-            result = exceptionHandler.invoke(flowElement.getComponentName(), event, throwable);
-        }
-        return result;
+        
     }
 
     /**
@@ -319,23 +277,14 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
-     * @return IkasanExceptionAction if any problem occurs
      */
-    private IkasanExceptionAction handleEndpoint(Event event, String moduleName, String flowName,
+    private void handleEndpoint(Event event, String moduleName, String flowName,
             FlowElement flowElement)
     {
-        IkasanExceptionAction result = null;
         Endpoint endpoint = (Endpoint) flowElement.getFlowComponent();
-        try
-        {
-            endpoint.onEvent(event);
-            notifyListenersAfterElement(event, moduleName, flowName, flowElement);
-        }
-        catch (Throwable throwable)
-        {
-            result = exceptionHandler.invoke(flowElement.getComponentName(),event, throwable);
-        }
-        return result;
+        endpoint.onEvent(event);
+        notifyListenersAfterElement(event, moduleName, flowName, flowElement);
+
     }
 
     /**
@@ -345,23 +294,15 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
-     * @return IkasanExceptionAction if any problem occurs
      */
-    private IkasanExceptionAction handleTransformer(Event event, String moduleName, String flowName,
+    private void handleTransformer(Event event, String moduleName, String flowName,
             FlowElement flowElement)
     {
-        IkasanExceptionAction result = null;
         Transformer transformer = (Transformer) flowElement.getFlowComponent();
-        try
-        {
-            transformer.onEvent(event);
-            notifyListenersAfterElement(event, moduleName, flowName, flowElement);
-        }
-        catch (Throwable throwable)
-        {
-            result = exceptionHandler.invoke(flowElement.getComponentName(),event, throwable);
-        }
-        return result;
+
+        transformer.onEvent(event);
+        notifyListenersAfterElement(event, moduleName, flowName, flowElement);
+
     }
 
     /**
@@ -372,9 +313,16 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @return new Event, representing the original
      * @throws CloneNotSupportedException Exception if we could not clone the event
      */
-    private Event spawnEvent(Event originalEvent) throws CloneNotSupportedException
+    private Event spawnEvent(Event originalEvent) 
     {
-        return originalEvent.clone();
+        Event clone = null;
+        
+        try {
+			clone=originalEvent.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+		return clone;
     }
 
     /**
