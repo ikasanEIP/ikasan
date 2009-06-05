@@ -30,7 +30,7 @@ package org.ikasan.common;
  * Interface required to allow enums to be extended as part of the
  * exception classes within which they are implemented.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public interface ExceptionType
 {

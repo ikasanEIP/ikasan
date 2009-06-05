@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class for Checksum activities
  * 
- * @author verbma
+ * @author Ikasan Development Team
  */
 public class ChecksumUtils
 {

@@ -39,7 +39,7 @@ import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
 /**
  * This class represents the '<code>Policy</code>'.
  * 
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public class EncryptionPolicy
 {

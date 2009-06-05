@@ -143,7 +143,7 @@ public class ChunkingRetrieveFileCommandTest extends TestCase
     /**
      * Simple mock
      * 
-     * @author duncro
+     * @author Ikasan Development Team
      */
     class MockFileChunkDao implements FileChunkDao
     {

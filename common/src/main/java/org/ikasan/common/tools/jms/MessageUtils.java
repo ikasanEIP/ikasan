@@ -46,7 +46,7 @@ import org.ikasan.common.xml.serializer.PayloadXmlSerializer;
  * 
  * TODO: This is a quick implementation - could be made more elaborate.
  * 
- * @author koukhe
+ * @author Ikasan Development Team
  *
  */
 public class MessageUtils

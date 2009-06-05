@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * for the associated component group. The enum description and id are there for
  * potential logging and future use.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public enum CommonExceptionType 
     implements ExceptionType

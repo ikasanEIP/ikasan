@@ -30,7 +30,7 @@ package org.ikasan.common.xml.serializer;
 /**
  * Interface for a generic XML serialiser/deserializer
  * 
- * @author Ross Duncan
+ * @author Ikasan Development Team
  * @param <E> 
  */
 public interface XMLSerializer<E>

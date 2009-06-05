@@ -29,7 +29,7 @@ package org.ikasan.common.tools.jms;
 /**
  * This class holds constants used throughout the monitor code base
  * 
- * @author verbma
+ * @author Ikasan Development Team
  */
 public class JMSConstants
 {

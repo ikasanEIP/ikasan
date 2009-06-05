@@ -29,7 +29,7 @@ package org.ikasan.common.security;
 /**
  * Interface defining the Ikasan runtime security configuration.
  * 
- * @author <a href="mailto:info@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public interface IkasanSecurityConf
 {

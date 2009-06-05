@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
  * than simple attributes will need to extend this class and implement the xstream
  * marshalling as appropriate.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class AlgorithmConverter
     implements Converter

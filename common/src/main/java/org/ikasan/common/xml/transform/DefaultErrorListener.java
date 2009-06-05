@@ -35,7 +35,7 @@ import javax.xml.transform.TransformerException;
  * <code>javax.xml.transform.ErrorListener</code>
  * to report errors during transformation.
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  *
  */
 public class DefaultErrorListener

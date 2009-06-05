@@ -42,7 +42,7 @@ import java.security.NoSuchAlgorithmException;
  * Also note that calling any of the digest methods resets 
  * the digest itself to its initial state
  * 
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public class Md5Checksum implements DigestChecksum {

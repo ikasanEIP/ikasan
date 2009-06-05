@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
 /**
  * Java representation of the Ikasan XML configuration file.
  * 
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public class Ikasan
     extends AbstractIkasan

@@ -49,7 +49,7 @@ import junit.framework.JUnit4TestAdapter;
 /**
  * EnvelopeHelper JUnit test class
  *
- * @author Ikasan Team
+ * @author Ikasan Development Team
  */
 public class EnvelopeTest
 {

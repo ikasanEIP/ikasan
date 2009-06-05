@@ -40,7 +40,7 @@ import org.ikasan.common.configuration.Entry;
  * within which Ikasan is running, so this must always work, or be very vocal 
  * where exceptions are encountered.
  * 
- * @author <a href="mailto:info@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public class IkasanEnvImpl
     implements IkasanEnv

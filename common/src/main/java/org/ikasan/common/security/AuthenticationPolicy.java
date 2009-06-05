@@ -29,7 +29,7 @@ package org.ikasan.common.security;
 /**
  * Interface defining the operations on an AuthenticationPolicy.
  * 
- * @author <a href="mailto:info@ikasan.org">Madhu Konda</a>
+ * @author Ikasan Development Team
  */
 public interface AuthenticationPolicy
 {

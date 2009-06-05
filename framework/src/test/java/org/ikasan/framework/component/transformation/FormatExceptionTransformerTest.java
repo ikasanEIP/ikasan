@@ -191,7 +191,7 @@ public class FormatExceptionTransformerTest
     
     /**
      * Inner class used to test the Abstract class of FormatExceptionTransformer.
-     * @author Iksaan Developmnet Team
+     * @author Ikasan Development Team
      *
      */
     public class RealFormatExceptionTransformer

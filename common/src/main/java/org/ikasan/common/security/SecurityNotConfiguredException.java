@@ -33,7 +33,7 @@ import org.ikasan.common.ExceptionType;
  * An attempt has been made to use Ikasan security without providing the 
  * required security configuration.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class SecurityNotConfiguredException
     extends CommonException

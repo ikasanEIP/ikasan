@@ -41,7 +41,7 @@ import org.junit.Test;
 /**
  * This test class supports the XStream converter for <code>AlgorithmConverterTest</code>.
  *
- * @author <a href="jeff.mitchell:info@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public class AlgorithmConverterTest
 {

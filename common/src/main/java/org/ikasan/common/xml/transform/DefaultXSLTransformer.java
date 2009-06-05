@@ -101,7 +101,7 @@ import org.ikasan.common.CommonXSLTransformer;
  *    }
  * </pre>
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  *
  */
 public class DefaultXSLTransformer

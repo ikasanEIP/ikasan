@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  * Simple behavioural class that encapsulates the logic of performing a masking
  * String substitution on a String where a known mask and pattern to match exist
  * 
- * @author duncro
+ * @author Ikasan Development Team
  * 
  */
 public class StringMasker

@@ -35,7 +35,7 @@ import org.hibernate.SessionFactory;
 /**
  * Common persistence provides the base interface for all component persistence.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */  
 public interface CommonPersistenceFactory
 { 

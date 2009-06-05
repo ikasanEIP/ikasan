@@ -346,7 +346,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * 
      * This needs to happen in a separate thread.
      * 
-     * @author duncro
+     * @author Ikasan Development Team
      * 
      */
     private class Anesthetist extends Thread

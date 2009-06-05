@@ -32,7 +32,7 @@ import java.io.Serializable;
  * ScheduleInfo class.
  * @deprecated - This has been deprecated TODO replace with?
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 @Deprecated
 public class ScheduleInfo

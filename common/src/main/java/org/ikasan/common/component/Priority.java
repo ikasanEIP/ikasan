@@ -29,7 +29,7 @@ package org.ikasan.common.component;
 /**
  * DeliveryProperties allows indirect setting of properties on the JMS.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public enum Priority
 {

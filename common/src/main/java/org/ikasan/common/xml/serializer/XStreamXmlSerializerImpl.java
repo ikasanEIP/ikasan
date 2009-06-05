@@ -37,7 +37,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * Implementation of the XMLSerializer interface that uses XStream as the
  * underlying serializer/deserializer
  * 
- * @author duncro
+ * @author Ikasan Development Team
  * 
  */
 public class XStreamXmlSerializerImpl implements XMLSerializer<Object>

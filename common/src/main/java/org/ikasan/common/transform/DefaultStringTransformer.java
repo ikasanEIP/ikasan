@@ -36,7 +36,7 @@ import org.ikasan.common.CommonStringTransformer;
 /**
  * Default implementation of the Payload interface.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class DefaultStringTransformer
     implements Serializable, CommonStringTransformer

@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 /**
  * A utility class for general resource IO activities
  * 
- * @author Jeff MItchell
+ * @author Ikasan Development Team
  */
 public class ResourceUtils
 {

@@ -29,7 +29,7 @@ package org.ikasan.common.security;
 /**
  * Ikasan Password Credential constants.
  * 
- * @author <a href="mailto:info@ikasan.org">Madhu Konda</a>
+ * @author Ikasan Development Team
  */
 public class IkasanPasswordCredentialConst
 {

@@ -34,7 +34,7 @@ import javax.xml.transform.TransformerException;
  * This class extends <code>javax.xml.transform.TransformerException</code>
  * as fatal error exception that occured during the transformation process.
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  *
  */
 public class FatalErrorTransformerException

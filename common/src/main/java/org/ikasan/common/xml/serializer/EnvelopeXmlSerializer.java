@@ -43,7 +43,7 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
 /**
  * Envelope XML serialiser/deserialiser
  * 
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public class EnvelopeXmlSerializer implements XMLSerializer<Envelope>

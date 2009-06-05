@@ -44,7 +44,7 @@ import junit.framework.JUnit4TestAdapter;
 /**
  * PayloadHelper JUnit test class
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  *
  */
 public class PayloadTest

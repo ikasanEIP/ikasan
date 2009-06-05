@@ -36,7 +36,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 /**
  * This class provides XStream converter for the <code>Entry</code> class.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class EntryConverter
     implements Converter
