@@ -31,7 +31,7 @@ package org.ikasan.framework.component.transformation;
  * 
  * @author Ikasan Development Team
  */
-public class TransformationException extends Exception
+public class TransformationException extends RuntimeException
 {
     /** serialVersionUID */
     private static final long serialVersionUID = 5643215546008399313L;

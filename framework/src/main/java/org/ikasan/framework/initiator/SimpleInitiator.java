@@ -28,13 +28,13 @@ package org.ikasan.framework.initiator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
-import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * Experimental implementation of <code>Initiator</code> that is invoked directly with content
@@ -43,34 +43,24 @@ import org.springframework.beans.factory.BeanNameAware;
  * @author Ikasan Development Team
  *
  */
-public class SimpleInitiator implements Initiator, BeanNameAware
+public class SimpleInitiator extends AbstractInitiator implements Initiator
 {
     public static final String SIMPLE_INITIATOR_TYPE = "SimpleInitiator";
 
+    private static final Logger logger = Logger.getLogger(SimpleInitiator.class);
+    
     /**
      * Is this open to business?
      */
     private boolean available = false;
 
-    /**
-     * Name of Initiator
-     */
-    private String initiatorName;
 
     /**
-     * Name of Module
-     */
-    private String moduleName;
-
-    /**
-     * factory for instantiatng Payloads
+     * factory for instantiating Payloads
      */
     private PayloadFactory payloadFactory;
 
-    /**
-     * Flow to invoke
-     */
-    private Flow flow;   
+
     
     /**
      * Constructor
@@ -80,12 +70,10 @@ public class SimpleInitiator implements Initiator, BeanNameAware
      * @param payloadFactory
      * @param flow
      */
-    public SimpleInitiator(String moduleName, PayloadFactory payloadFactory, Flow flow)
+    public SimpleInitiator(String initiatorName, String moduleName, PayloadFactory payloadFactory, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
-        super();
-        this.moduleName = moduleName;
+        super(moduleName, initiatorName, flow, exceptionHandler);
         this.payloadFactory = payloadFactory;
-        this.flow = flow;
     }
     
     public boolean initiate(String payloadName, Spec spec, String srcSystem, String payloadContent)
@@ -99,14 +87,11 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(singlePayload);
-        Event event = new Event(payloads, moduleName, initiatorName);
-        IkasanExceptionAction exceptionAction = flow.invoke(event);
-        //TODO better error handling
-        if (exceptionAction!=null){
-            throw new RuntimeException("Could not invoke flow:"+flow.getName());
-        }
-        
-        return (exceptionAction==null);
+
+        List<Event>events = new ArrayList<Event>();
+        events.add(new Event(payloads, moduleName, name));
+        invokeFlow(events);
+        return true;
         
     }
     
@@ -131,14 +116,7 @@ public class SimpleInitiator implements Initiator, BeanNameAware
     }
 
 
-    /**
-     * @param payloadFactory
-     */
-    public SimpleInitiator(PayloadFactory payloadFactory)
-    {
-        super();
-        this.payloadFactory = payloadFactory;
-    }
+ 
 
 
 
@@ -150,13 +128,7 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         return flow;
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.initiator.Initiator#getName()
-     */
-    public String getName()
-    {
-        return initiatorName;
-    }
+
 
     /* (non-Javadoc)
      * @see org.ikasan.framework.initiator.Initiator#isError()
@@ -202,14 +174,7 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         available = false;
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
-     */
-    public void setBeanName(String beanName)
-    {
-        initiatorName = beanName;
-        
-    }
+
 
     /* (non-Javadoc)
      * @see org.ikasan.framework.initiator.Initiator#getState()
@@ -226,4 +191,51 @@ public class SimpleInitiator implements Initiator, BeanNameAware
     {
         return SIMPLE_INITIATOR_TYPE;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#cancelRetryCycle()
+	 */
+	@Override
+	protected void cancelRetryCycle() {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#completeRetryCycle()
+	 */
+	@Override
+	protected void completeRetryCycle() {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#getLogger()
+	 */
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#startInitiator()
+	 */
+	@Override
+	protected void startInitiator() throws InitiatorOperationException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#startRetryCycle(java.lang.Integer, long)
+	 */
+	@Override
+	protected void startRetryCycle(Integer maxAttempts, long delay)
+			throws InitiatorOperationException {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#stopInitiator()
+	 */
+	@Override
+	protected void stopInitiator() throws InitiatorOperationException {
+	}
 }

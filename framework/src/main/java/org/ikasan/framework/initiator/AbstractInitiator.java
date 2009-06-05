@@ -33,6 +33,7 @@ import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
 
 /**
@@ -220,10 +221,19 @@ public abstract class AbstractInitiator implements Initiator
 		IkasanExceptionAction exceptionAction = null;
 		if (events != null && !events.isEmpty()) {
 			for (Event event : events) {
-				exceptionAction = flow.invoke(event);
-				if (exceptionAction != null) {
+				FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
+				try{
+					flow.invoke(flowInvocationContext,event);
+				}catch (Throwable throwable){
+					String lastComponentName = flowInvocationContext.getLastComponentName();
+//					if (errorLoggingService!=null){
+//						errorLoggingService.logError(throwable, moduleName, flow.getName(), lastComponentName, event);
+//					}
+					exceptionAction = exceptionHandler.invoke(lastComponentName, event, throwable);
 					break;
 				}
+				
+
 			}
 		}
 		handleAction(exceptionAction);

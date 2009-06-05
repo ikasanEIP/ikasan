@@ -42,6 +42,7 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -104,7 +105,8 @@ public class RawMessageDrivenInitiatorTest {
                 one(payload).getSrcSystem();
                 will(returnValue("srcSystem"));
                 
-                one(flow).invoke((Event) with(an(Event.class)));
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(an(Event.class)));
+
                 will(returnValue(null));
             }
         });
