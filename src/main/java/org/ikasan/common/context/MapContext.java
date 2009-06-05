@@ -36,7 +36,7 @@ import org.ikasan.common.CommonContext;
 /**
  * Simple map fronting as a context for test operations.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class MapContext implements CommonContext
 {

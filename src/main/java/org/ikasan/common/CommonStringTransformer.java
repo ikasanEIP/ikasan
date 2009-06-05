@@ -34,7 +34,7 @@ import javax.xml.transform.TransformerException;
 /**
  * Common String Transformer provides the base interface for all String Transformation.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */  
 public interface CommonStringTransformer
 { 

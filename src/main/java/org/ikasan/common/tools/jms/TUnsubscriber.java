@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
  *          -subscriptionname <subscription-name>
  *          -durable
  *          
- * @author Summer
+ * @author Ikasan Development Team
  */
 public class TUnsubscriber 
     extends AbstractJMSHandler

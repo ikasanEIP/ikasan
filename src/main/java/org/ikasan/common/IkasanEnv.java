@@ -29,7 +29,7 @@ package org.ikasan.common;
 /**
  * Interface defining the Ikasan runtime environment configuration.
  * 
- * @author <a href="mailto:info@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public interface IkasanEnv
 {

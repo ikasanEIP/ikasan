@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
 /**
  * unit tests for the {@link org.ikasan.common.util.Env} class.
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class EnvTest
     extends TestCase

@@ -35,7 +35,7 @@ import org.ikasan.common.CommonExceptionType;
 import org.ikasan.common.CommonRuntimeException;
 
 /**
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public class ClassInstantiationUtils

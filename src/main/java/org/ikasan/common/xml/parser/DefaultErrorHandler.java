@@ -35,7 +35,7 @@ import org.xml.sax.SAXParseException;
  * This class implements interface <code>org.xml.sax.ErrorHandler</code>
  * to report errors while parsing XML documents.
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class DefaultErrorHandler
     implements ErrorHandler

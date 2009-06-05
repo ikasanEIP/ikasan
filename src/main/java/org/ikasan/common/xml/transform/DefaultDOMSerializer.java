@@ -73,7 +73,7 @@ import org.w3c.dom.Node;
  *
  * </pre>
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  * @version $Id$
  */
 public class DefaultDOMSerializer

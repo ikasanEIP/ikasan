@@ -43,7 +43,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 /**
  * This class provides a default exception message structure. <p/>
  * 
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class PayloadConverter
     implements Converter

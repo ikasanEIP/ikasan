@@ -29,7 +29,7 @@ package org.ikasan.common.util;
 /**
  * A utility class for File activities
  * 
- * @author verbma
+ * @author Ikasan Development Team
  */
 public class FileUtils
 {

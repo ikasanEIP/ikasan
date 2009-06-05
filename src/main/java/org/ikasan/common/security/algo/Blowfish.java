@@ -42,7 +42,7 @@ import com.thoughtworks.xstream.XStream;
 /**
  * This class represents the (<code>Blowfish</code>) algorithm.
  * 
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public class Blowfish extends Algorithm
 {

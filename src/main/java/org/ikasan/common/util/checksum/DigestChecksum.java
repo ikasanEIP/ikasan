@@ -31,7 +31,7 @@ import java.math.BigInteger;
 /**
  * Definition of a Digest backed DigestChecksum calculator
  *  
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public interface DigestChecksum {

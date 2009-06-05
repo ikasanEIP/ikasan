@@ -41,7 +41,7 @@ import org.ikasan.common.MetaDataInterface;
 
 /**
  * The EnvelopeHelper class 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class EnvelopeHelper
 {

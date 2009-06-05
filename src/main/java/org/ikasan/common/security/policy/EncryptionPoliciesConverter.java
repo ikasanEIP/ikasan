@@ -37,7 +37,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 /**
  * This class provides XStream converter for the <code>Policy</code> class.
  *
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public class EncryptionPoliciesConverter
     implements Converter

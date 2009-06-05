@@ -47,7 +47,7 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * extended to create a concrete implementation for an algorithm such as PBE or
  * Blowfish.
  * 
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public abstract class Algorithm
 {

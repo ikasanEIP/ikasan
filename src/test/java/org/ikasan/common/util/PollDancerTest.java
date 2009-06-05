@@ -34,7 +34,7 @@ import junit.framework.JUnit4TestAdapter;
 /**
  * Poll Dancer Test Class
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  *
  */
 public class PollDancerTest

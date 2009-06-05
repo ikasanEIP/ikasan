@@ -44,7 +44,7 @@ import org.ikasan.common.ResourceLoader;
  * Provides a basic implementation of Hibernate persistence behind 
  * the Persistence interface.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class HibernatePersistence
     implements CommonPersistenceFactory

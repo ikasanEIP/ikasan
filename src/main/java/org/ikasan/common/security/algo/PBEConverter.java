@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 /**
  * This class provides XStream converter for <code>PBE</code> algorithm.
  *
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public class PBEConverter
     extends AlgorithmConverter

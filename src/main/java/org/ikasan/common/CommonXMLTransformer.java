@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
 /**
  * Common XML Transformer provides the base interface for all XML Transformation.
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */  
 public interface CommonXMLTransformer
 { 

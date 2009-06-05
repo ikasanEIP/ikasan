@@ -39,7 +39,7 @@ import org.junit.Test;
 /**
  * Test class for ConfigFactory.
  * 
- * @author <a href="mailto:info@ikasan.org">Madhu Konda</a>
+ * @author Ikasan Development Team
  */
 public class ConfigFactoryTest
 {

@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 /**
  * This class provides XStream converter for an <code>Ikasan</code> class.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public abstract class AbstractIkasanConverter
     implements Converter

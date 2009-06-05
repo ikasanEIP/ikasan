@@ -29,7 +29,7 @@ package org.ikasan.common.component;
 /**
  * Enumeration of formats used within the Payload object.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public enum Format
 {

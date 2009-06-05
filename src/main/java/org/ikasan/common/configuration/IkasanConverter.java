@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 /**
  * This class provides XStream converter for an <code>Ikasan</code> class.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class IkasanConverter
     extends AbstractIkasanConverter

@@ -34,7 +34,7 @@ import org.ikasan.common.ExceptionType;
  * exception at the point it is raised.
  * If no ExceptionType is specified a default of UNDEFINED will be used.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class CommonRuntimeException
     extends RuntimeException

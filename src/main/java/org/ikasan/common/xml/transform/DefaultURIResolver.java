@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  * that can be called by the processor to turn a URI used in
  * document(), xsl:import, or xsl:include into a Source object.
  *
- * @author Jun Suetake
+ * @author Ikasan Development Team
  *
  */
 public class DefaultURIResolver

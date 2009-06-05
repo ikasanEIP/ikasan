@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
  * 
  * Useful for reading md5 checksum files and extracting the checksum value
  * 
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public class Md5ChecksumSupplier implements ChecksumSupplier

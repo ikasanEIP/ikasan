@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
  * test/src/conf - for router_1_0.xsd
  * test/src/conf/routerInJar.jar - for routerInJar_1_0.xsd
  *
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class DefaultEntityResolverTest
 {

@@ -53,7 +53,7 @@ import com.thoughtworks.xstream.XStream;
  * 
  * Similarly, in order to perform decryption, you need the same passphrase.
  * 
- * @author <a href="mailto:jeff.mitchell@ikasan.org">Jeff Mitchell</a>
+ * @author Ikasan Development Team
  */
 public class PBE extends Algorithm
 {

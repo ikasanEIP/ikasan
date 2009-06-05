@@ -51,7 +51,7 @@ import junit.framework.JUnit4TestAdapter;
 /**
  * This test class supports the XStream converter for <code>PolicyConverter</code>.
  *
- * @author <a href="jeff.mitchell:info@ikasan.org">Ikasan Development Team</a>
+ * @author Ikasan Development Team
  */
 public class EncryptionPoliciesConverterTest
 {

@@ -33,7 +33,7 @@ import org.ikasan.common.ExceptionType;
  * Unknown Mesage Content exception - thrown if we cannot determine the
  * incoming message content to be an Envelope or a Payload.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public class UnknownMessageContentException
     extends CommonException

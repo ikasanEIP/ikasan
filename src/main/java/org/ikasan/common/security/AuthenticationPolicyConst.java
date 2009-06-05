@@ -30,7 +30,7 @@ package org.ikasan.common.security;
  * AuthenticationPolicy constants defining defaults and literals
  * as the AuthenticationPolicy often gets instantiated from a Map.
  * 
- * @author <a href="mailto:info@ikasan.org">Madhu Konda</a>
+ * @author Ikasan Development Team
  */
 public class AuthenticationPolicyConst
 {

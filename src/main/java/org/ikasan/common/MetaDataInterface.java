@@ -30,7 +30,7 @@ package org.ikasan.common;
  * Default meta-data required operations across all transport containers
  * such as Payload and Envelope.
  * 
- * @author Jeff Mitchell
+ * @author Ikasan Development Team
  */
 public interface MetaDataInterface
 {

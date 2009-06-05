@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 
 /**
  * Test class for the StringMasker class
- * @author duncro
+ * @author Ikasan Development Team
  *
  */
 public class StringMaskerTest extends TestCase

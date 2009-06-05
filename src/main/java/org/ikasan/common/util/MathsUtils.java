@@ -35,7 +35,7 @@ import java.math.BigDecimal;
 /**
  * This class provides miscellaneous maths specific utilities.
  * 
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class MathsUtils
 {

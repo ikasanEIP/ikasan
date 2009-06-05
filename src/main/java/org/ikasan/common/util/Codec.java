@@ -34,7 +34,7 @@ import org.apache.commons.codec.binary.Hex;
 /**
  * This convenient class wraps apache's commons codec.
  * 
- * @author Jun Suetake
+ * @author Ikasan Development Team
  */
 public class Codec
 {
