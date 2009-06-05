@@ -117,7 +117,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
     /**
      * Mock InputStream to throw an IOException on read
      * 
-     * @author duncro
+     * @author Ikasan Development Team
      * 
      */
     class MockInputStream extends InputStream
