@@ -510,17 +510,7 @@ public class ResourceLoader implements ServiceLocator
         return (CommonContext) ClassInstantiationUtils.instantiate(this.contextImplClass, paramTypes, params);
     }
 
-    /**
-     * Get a new instance of the ConnectorPersistence
-     * 
-     * @return ConnectorPersistence
-     */
-    public CommonPersistenceFactory getPersistenceFactory()
-    {
-        logger.debug("Get persistenceFactory singleton based on class [" //$NON-NLS-1$
-                + this.persistenceImplClass + "]"); //$NON-NLS-1$
-        return (CommonPersistenceFactory) ClassInstantiationUtils.getSingleton(this.persistenceImplClass);
-    }
+
 
     /**
      * Get a new instance of the CommonXMLParser
