@@ -240,12 +240,12 @@
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>j2ee</artifactId>
-      <version>1.4_03</version>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+    	<groupId>geronimo-spec</groupId>
+    	<artifactId>geronimo-spec-j2ee</artifactId>
+    	<version>1.4-rc3</version>
+		<scope>provided</scope>
+	</dependency> 
     <!-- Needed for XML to Object serialisiation -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
