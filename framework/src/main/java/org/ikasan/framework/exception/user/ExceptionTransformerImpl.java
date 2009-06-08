@@ -174,8 +174,8 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
         {
             params.put("timestamp", exceptionContext.getEvent().getFormattedTimestamp());
             params.put("timezone", exceptionContext.getEvent().getTimezone());
-            params.put("originalEvent", getOriginalEvent(xstream, exceptionContext.getEvent().getOriginalPayloads(),
-                externalExceptionDef));
+//            params.put("originalEvent", getOriginalEvent(xstream, exceptionContext.getEvent().getOriginalPayloads(),
+//                externalExceptionDef));
             params.put("exceptionEvent", getExceptionEvent(xstream, exceptionContext.getEvent().getPayloads(),
                 externalExceptionDef));
         }
