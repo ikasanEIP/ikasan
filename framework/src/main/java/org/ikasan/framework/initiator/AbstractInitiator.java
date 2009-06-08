@@ -226,9 +226,9 @@ public abstract class AbstractInitiator implements Initiator
 					flow.invoke(flowInvocationContext,event);
 				}catch (Throwable throwable){
 					String lastComponentName = flowInvocationContext.getLastComponentName();
-//					if (errorLoggingService!=null){
-//						errorLoggingService.logError(throwable, moduleName, flow.getName(), lastComponentName, event);
-//					}
+					if (errorLoggingService!=null){
+						errorLoggingService.logError(throwable, moduleName, flow.getName(), lastComponentName, event);
+					}
 					exceptionAction = exceptionHandler.invoke(lastComponentName, event, throwable);
 					break;
 				}
@@ -331,9 +331,12 @@ public abstract class AbstractInitiator implements Initiator
     
     private boolean retryWouldExceedLimit(Integer maxAttempts, Integer attemptCount)
     {
-        Integer thisAttemptCount = attemptCount==null?0:attemptCount;
+    	
+        Integer thisAttemptCount = attemptCount==null?-1:attemptCount;
         
-        return (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts <= thisAttemptCount+1);
+        boolean retryWouldExceed = (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts<=thisAttemptCount+1);
+
+        return retryWouldExceed;
     }
 
 

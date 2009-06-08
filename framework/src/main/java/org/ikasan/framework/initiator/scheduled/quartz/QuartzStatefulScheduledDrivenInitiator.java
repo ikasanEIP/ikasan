@@ -195,7 +195,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
      */
     private void cancelRetryTrigger() throws InitiatorOperationException
     {
-        retryCount = 0;
+        retryCount = null;
         
         try
         {
