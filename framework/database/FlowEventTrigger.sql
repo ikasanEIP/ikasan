@@ -58,6 +58,7 @@ WITH IDENTITY_GAP=1
 
 CREATE UNIQUE INDEX FlowEventTrigger01u ON FlowEventTrigger(Id)
 
+
 IF OBJECT_ID('FlowEventTrigger') IS NOT NULL
     PRINT '<<< CREATED TABLE FlowEventTrigger >>>'
 ELSE
@@ -77,6 +78,9 @@ CREATE TABLE FlowEventTriggerParameters
     ADD CONSTRAINT FlowEventTriggerParam_Id_FK
     FOREIGN KEY (TriggerId)
     REFERENCES FlowEventTrigger (Id)  
+    
+CREATE UNIQUE INDEX FlowEventTriggerParameters01u ON FlowEventTriggerParameters(TriggerId,ParamName,ParamValue)
+
 IF OBJECT_ID('FlowEventTrigger') IS NOT NULL
     PRINT '<<< CREATED TABLE FlowEventTriggerParameters >>>'
 ELSE
