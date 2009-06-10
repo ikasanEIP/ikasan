@@ -8,7 +8,9 @@ Release 0.17.0
 
 Release 0.16.2
 --------------------
-
+ - Added MonitorEmailNotifier. A new MonitorListener implementation that sends emails when Initiator is in error to a preconfigured recipient list.
+ - Changed MessageDrivenInitiatorFactoryBean to enable Point-To-Point JMS domain support. Default is Pub/Sub.
+ 
 Release 0.16.1
 --------------------
  - added support for JndiDestinationFactory to JMSPayloadPublisher
