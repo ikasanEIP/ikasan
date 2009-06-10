@@ -26,7 +26,6 @@
  */
 package org.ikasan.framework.monitor;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
@@ -52,9 +51,6 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
     /** Mail sender address*/
     private String from;
 
-    /** Mail subject*/
-    private String subject;
-
     /** Mail body*/
     private String body;
 
@@ -70,7 +66,6 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
      * 
      * @param name Monitor name
      * @param mailSender Mail sender
-     * @param from email sender
      * @param to email recipient
      * @param environment The runtime environment
      */
@@ -80,15 +75,6 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
         this.mailSender = mailSender;
         this.to = to;
         this.environment = environment;
-    }
-
-    /** 
-     * Setter for mail message subject.
-     * @param subject email subject
-     */
-    public void setSubject(String subject)
-    {
-        this.subject = subject;
     }
 
     /**
@@ -102,7 +88,7 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
 
     /**
      * Setter for mail 
-     * @param from
+     * @param from sender email address
      */
     public void setFrom(String from)
     {
@@ -116,7 +102,7 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
      * 
      * @param multipart boolean flag
      */
-    public void setMultiparty(boolean multipart)
+    public void setMultipart(boolean multipart)
     {
         this.multipart = multipart;
     }
@@ -133,28 +119,34 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
                 helper.setFrom(this.from);
             }
             helper.setTo(this.to);
-            helper.setSubject("[" + this.environment + "]." + this.subject);
+            helper.setSubject("[" + this.environment + "] Initiator Email Notifier");
             if (state != null)
             {
                 if (state.equals("stoppedInError"))
                 {
-                    helper.setText(this.body);
+                    if (this.body != null)
+                    {
+                        helper.setText(this.body);
+                    }
+                    else
+                    {
+                        helper.setText(this.getName() + " is reporting status [" + state + "] and requires manual intervention.");
+                        
+                    }
                     this.mailSender.send(email);
-                    logger.info("monitor mail sent tp [" + this.to + "].");
                 }
-                //otherwise don't bother 
+                //otherwise don't bother
             }
             else
             {
-                helper.setText("Status unknown!!");
+                helper.setText(this.getName() + " reporting unknown status. There might be a problem.");
                 this.mailSender.send(email);
-                logger.info("monitor mail sent tp [" + this.to + "].");
             }
         }
-        catch (MessagingException e)
+        catch (Throwable t)
         {
             //Don't want to disrupt the flow so just log the exception at this point.
-            logger.warn("Monitor failed!!!");
+            logger.warn("Monitor failed to create email notification.");
         }
     }
 }
