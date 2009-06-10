@@ -1,9 +1,9 @@
-<!-- 
+<!--
 # //
 # //
 # // $Id: pom.xml 17284 2009-05-15 13:26:30Z duncro $
 # // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/framework/pom.xml $
-# // 
+# //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -21,13 +21,13 @@
 # // Lesser General Public License for more details.
 # //
 # // You should have received a copy of the GNU Lesser General Public
-# // License along with this software; if not, write to the 
-# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // License along with this software; if not, write to the
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
 # // or see the FSF site: http://www.fsfeurope.org/.
 # // ====================================================================
 # //
 # // Author:  Ikasan Development Team
-# // 
+# //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -205,11 +205,25 @@
 			<version>2.3</version>
 			<scope>provided</scope>
 		</dependency>
+   		<!-- email -->
+    	<dependency>
+    		<groupId>org.apache.geronimo.specs</groupId>
+    		<artifactId>geronimo-javamail_1.4_spec</artifactId>
+      		<version>1.2</version>
+      		<scope>provided</scope>
+		</dependency>
+		<!-- java activation framework required for email in Java5 -->
+    	<dependency>
+      		<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-activation_1.1_spec</artifactId>
+      		<version>1.0.1</version>
+      		<scope>provided</scope>
+    	</dependency>
 		<!-- J2EE -->
 		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>j2ee</artifactId>
-			<version>1.4_03</version>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-j2ee_1.4_spec</artifactId>
+			<version>1.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
