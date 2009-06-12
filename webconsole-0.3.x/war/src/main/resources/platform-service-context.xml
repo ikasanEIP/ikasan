@@ -236,6 +236,8 @@
     </tx:advice>
     
     
+
+
     
   <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
     <property name="transactionManagerName" value="java:/TransactionManager"/>
