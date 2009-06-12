@@ -51,7 +51,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Ikasan Development Team
  */
-public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDrivenInitiator implements InitializingBean
+public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDrivenInitiator implements QuartzSchedulerInitiator
 {
     private static final String INITIATOR_JOB_NAME = "initiatorJob";
 
@@ -446,12 +446,4 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         this.triggers = triggers;
     }
 
-    public void afterPropertiesSet() throws Exception
-    {
-        
-         
-
-
-   
-    }
 }

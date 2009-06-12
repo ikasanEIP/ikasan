@@ -100,4 +100,11 @@ public interface Initiator
      * @return Flow
      */
     public Flow getFlow();
+    
+    /**
+     * Accessor for retryCount
+     * 
+     * @return no of attempts made to retry
+     */
+    public Integer getRetryCount();
 }

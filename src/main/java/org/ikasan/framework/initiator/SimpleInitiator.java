@@ -226,4 +226,12 @@ public class SimpleInitiator implements Initiator, BeanNameAware
     {
         return SIMPLE_INITIATOR_TYPE;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.Initiator#getRetryCount()
+	 */
+	public Integer getRetryCount() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
