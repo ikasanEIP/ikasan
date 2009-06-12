@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# //
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    
+    <bean id="module"
+        class="org.ikasan.framework.module.SimpleModule">
+        <constructor-arg value="${project.name}-${module.name}" />
+        <constructor-arg>
+            <list>
+            	<ref bean="channelAdapterFlowInitiator"/>
+            </list>
+        </constructor-arg>
+        <property name="description">
+            <value>This is an example of an ftp source module that picks up newly discovered files from an ftp server </value>
+        </property>
+    </bean>
+
+
+
+  <!-- =========================================================================== -->
+  <!--                   Channel Adapter Flow Initiator                            -->
+  <!-- =========================================================================== -->
+
+
+  <bean id="channelAdapterFlowInitiator"
+    class="org.ikasan.framework.initiator.scheduled.quartz.QuartzStatefulScheduledDrivenInitiator">
+    <!-- initiator name -->
+    <constructor-arg value="channelAdapterFlowInitiator"/>
+    <!-- module name -->
+    <constructor-arg value="${project.name}-${module.name}"/>
+    <!-- event provider -->
+    <constructor-arg ref="ftpEventProvider"/>
+    <!-- flow to invoke -->
+    <constructor-arg ref="channelAdapterFlow"/>
+    <!-- initiator exception handler -->
+    <!-- <constructor-arg ref="exceptionHandler" /> -->
+    <!-- <constructor-arg><null/></constructor-arg>-->
+    <constructor-arg>
+        <bean class="org.ikasan.framework.component.LoggingExceptionHandlerImpl"/>
+    </constructor-arg>
+     <property name="triggers">
+	    <list>
+	       <bean class="org.quartz.CronTrigger">
+	           <property name="name" value="every10SecondsTrigger" />
+	           <property name="cronExpression" value="0/10 * * * * ?" />
+	       </bean>
+	       <bean class="org.quartz.CronTrigger">
+               <property name="name" value="every7SecondsTrigger" />
+               <property name="cronExpression" value="0/7 * * * * ?" />
+           </bean>
+	    </list>
+     </property>
+    <property name="scheduler" ref="channelAdapterFlowScheduler"/>
+    </bean>
+
+  <bean id="channelAdapterFlowScheduler"
+    class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+      <property name="schedulerName" value="channelAdapterFlowScheduler"/>
+      <property name="jobFactory" ref="channelAdapterFlowJobFactory"/>
+  </bean>
+
+  <bean id="channelAdapterFlowJobFactory"
+    class="org.ikasan.framework.initiator.scheduled.quartz.IkasanJobFactory">
+     <constructor-arg ref="channelAdapterFlowInitiator"/>
+  </bean>
+  
+    <!-- transaction configuration for InvocationDrivenInitiators -->
+    <aop:config>
+        <aop:pointcut id="initiatorInvocation" expression="execution(* org.ikasan.framework.initiator.InvocationDrivenInitiator.invoke(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="initiatorInvocation" />
+    </aop:config>
+
+</beans>
