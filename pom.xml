@@ -267,6 +267,12 @@
 			<artifactId>hibernate</artifactId>
 			<version>3.2.0.ga</version>
 			<scope>provided</scope>
+			<exclusions>
+              <exclusion>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+              </exclusion>
+            </exclusions>		
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
