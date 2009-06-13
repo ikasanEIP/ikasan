@@ -155,12 +155,12 @@
     </plugins>
   </reporting>
   <dependencies>
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>j2ee</artifactId>
-      <version>1.4_03</version>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+    	<groupId>geronimo-spec</groupId>
+    	<artifactId>geronimo-spec-j2ee</artifactId>
+    	<version>1.4-rc3</version>
+		<scope>provided</scope>
+	</dependency> 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
