@@ -218,29 +218,35 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>1.1.12</version>
+      <version>1.1.13</version>
       <scope>provided</scope>
     </dependency>
     <!-- Used for the common connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-base</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.8-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>j2ee</artifactId>
-      <version>1.4_03</version>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+    	<groupId>geronimo-spec</groupId>
+    	<artifactId>geronimo-spec-j2ee</artifactId>
+    	<version>1.4-rc3</version>
+		<scope>provided</scope>
+	</dependency> 
     <!-- For persisting information about the connector such as chunking large messages -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
       <version>3.2.0.ga</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- Needed for logging -->
     <dependency>
