@@ -215,21 +215,21 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>1.1.12</version>
+      <version>1.1.13</version>
       <scope>provided</scope>
     </dependency>
     <!-- Used for the common connector functionality for the ikasan platform. TODO Can we get this through basefiletransfer?-->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-base</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.8-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>1.2.5</version>
+      <version>1.2.6-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- The FTP library -->
@@ -240,18 +240,24 @@
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>j2ee</artifactId>
-      <version>1.4_03</version>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+    	<groupId>geronimo-spec</groupId>
+    	<artifactId>geronimo-spec-j2ee</artifactId>
+    	<version>1.4-rc3</version>
+		<scope>provided</scope>
+	</dependency> 
     <!-- For persisting information about the connector such as chunking large messages -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
       <version>3.2.0.ga</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- Needed for logging -->
     <dependency>
@@ -270,12 +276,18 @@
     <!-- TODO - This is provided by the base connector, we should not declare it here? -->
     <!-- TODO remove dependency on JBoss/Arjuna? Used for txns -->
     <dependency>
-      <groupId>jboss.jbossts</groupId>
-      <artifactId>jbossjta</artifactId>
-      <version>4.3.0.GA</version>
+      <groupId>org.jboss.transaction</groupId>
+      <artifactId>jboss-jta</artifactId>
+      <version>4.2.3.SP7</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency>  
   </dependencies>
+  <repositories>
+    <repository>
+      <id>jboss</id>
+      <url>http://repository.jboss.com/maven2</url>
+    </repository>
+  </repositories>
   <distributionManagement>
     <repository>
       <id>ext-releases</id>
