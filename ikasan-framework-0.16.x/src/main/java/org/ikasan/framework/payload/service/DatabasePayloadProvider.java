@@ -88,7 +88,16 @@ public class DatabasePayloadProvider implements PayloadProvider
             throw new IllegalArgumentException("Destructive Read and housekeeping are mutually exclusive");
         }
         this.dao = dao;
+        if (this.dao == null)
+        {
+            throw new IllegalArgumentException("dao cannot be 'null'");
+        }
+
         this.payloadFactory = payloadFactory;
+        if (this.payloadFactory == null)
+        {
+            throw new IllegalArgumentException("payloadFactory cannot be 'null'");
+        }
         this.housekeeper = databasePayloadHouseKeepingMatcher;
         this.destructiveRead = destructiveRead;
         this.payloadSpec = payloadSpec;
@@ -103,9 +112,9 @@ public class DatabasePayloadProvider implements PayloadProvider
     public List<Payload> getNextRelatedPayloads()
     {
         List<Payload> result = null;
-        logger.info("about to request unconsumed from dao");
+        logger.debug("about to request unconsumed from dao");
         List<DatabasePayload> unconsumedPayloads = dao.findUnconsumed();
-        logger.info("back from request for unconsumed from dao");
+        logger.debug("back from request for unconsumed from dao");
         if (!unconsumedPayloads.isEmpty())
         {
             result = new ArrayList<Payload>();
@@ -132,12 +141,12 @@ public class DatabasePayloadProvider implements PayloadProvider
         // housekeeping, if configured
         if (housekeeper != null)
         {
-            logger.info("attempting to housekeep");
+            logger.debug("attempting to housekeep");
             housekeeper.housekeep();
         }
         else
         {
-            logger.info("housekeeping not configured");
+            logger.debug("housekeeping not configured");
         }
         return result;
     }
