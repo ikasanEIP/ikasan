@@ -47,6 +47,23 @@ import org.jmock.Mockery;
 public class DatabasePayloadProviderTest extends TestCase
 {
     /**
+     * Test invalid constructor
+     */
+    public void testConstructor_withNullDao()
+    {
+        try
+        {
+            new DatabasePayloadProvider(null, null, null, false, null, null);
+        }
+        catch (Exception e)
+        {
+            assertTrue(
+                "Exception thrown by constructor should be IllegalArgumentException",
+                (e instanceof IllegalArgumentException));
+        }
+    }
+
+    /**
      * Test valid constructor
      */
     public void testConstructor_acceptsValidArguments()
@@ -56,17 +73,20 @@ public class DatabasePayloadProviderTest extends TestCase
             .mock(DatabaseHousekeeper.class);
         final PayloadFactory payloadFactory = mockery
             .mock(PayloadFactory.class);
+        final DatabasePayloadDao databaseEventDao = mockery
+        .mock(DatabasePayloadDao.class);
+
         boolean destructiveRead = false;
         final Spec payloadSpec = Spec.TEXT_PLAIN;
         final String payloadSrcSystem = "testSrcSystem";
         
         // housekeeping but not destructive read
-        new DatabasePayloadProvider(null, payloadFactory,
+        new DatabasePayloadProvider(databaseEventDao, payloadFactory,
             databaseEventHouseKeepingMatcher, destructiveRead,
             payloadSpec, payloadSrcSystem);
         // not housekeeping but destructive read
         destructiveRead = true;
-        new DatabasePayloadProvider(null, payloadFactory, null, destructiveRead,
+        new DatabasePayloadProvider(databaseEventDao, payloadFactory, null, destructiveRead,
                 payloadSpec, payloadSrcSystem);
     }
 
@@ -80,12 +100,15 @@ public class DatabasePayloadProviderTest extends TestCase
             .mock(DatabaseHousekeeper.class);
         final PayloadFactory payloadFactory = mockery
             .mock(PayloadFactory.class);
+        final DatabasePayloadDao databaseEventDao = mockery
+        .mock(DatabasePayloadDao.class);
+
         final Spec payloadSpec = Spec.TEXT_PLAIN;
         final String payloadSrcSystem = "testSrcSystem";
         try
         {
             boolean destructiveRead = true;
-            new DatabasePayloadProvider(null, payloadFactory,
+            new DatabasePayloadProvider(databaseEventDao, payloadFactory,
                 databaseEventHouseKeepingMatcher, destructiveRead,
                 payloadSpec, payloadSrcSystem);
             fail("Exception should have been thrown by constructor as housekeeping and destructive reading are mutuallly exclusive");
