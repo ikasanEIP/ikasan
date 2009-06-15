@@ -96,9 +96,13 @@ public class BaseFileTransferCommandJUnitHelper
      */
     public static ClientListEntry createEntry(String uri, long size, Date lastModified) throws URISyntaxException
     {
+    	
+    	
         ClientListEntry clientListEntry = new ClientListEntry();
         clientListEntry.setClientId("TestClient"); //$NON-NLS-1$
+        System.out.println("about to create uri with:"+uri);
         clientListEntry.setUri(new URI(uri));
+        System.out.println("success");
         clientListEntry.setName(uri);
         clientListEntry.setDtLastModified(lastModified);
         clientListEntry.setDtLastAccessed(new Date());

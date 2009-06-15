@@ -26,6 +26,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import java.io.File;
 import java.net.URISyntaxException;
 
 import javax.resource.ResourceException;
@@ -431,7 +432,8 @@ public class RetrieveFileCommandTest extends TestCase
         final String renameExtension = ".ren";//$NON-NLS-1$
         final String srcPath = entry.getUri().getPath();
         final String renamePath = srcPath + renameExtension;
-        final String movePath = archiveDir + "/" + fileName;//$NON-NLS-1$
+        final String movePath = archiveDir + File.separator + fileName;//$NON-NLS-1$
+        
 
         context.checking(new Expectations()
         {
@@ -441,7 +443,7 @@ public class RetrieveFileCommandTest extends TestCase
                 one(client).get(entry);
                 will(returnValue(file));
                 one(client).ensureConnection();
-                one(client).rename(srcPath, renamePath);
+                one(client).rename(platformFriendly(srcPath), platformFriendly(renamePath));
                 //one(client).rename(srcPath, movePath);
             }
         });
@@ -466,7 +468,7 @@ public class RetrieveFileCommandTest extends TestCase
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
        
-        assertEquals("source path stored in command should match that from the list entry", srcPath, command.getSourcePath()); //$NON-NLS-1$
+        assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
 
         assertEquals("command state should be executed", //$NON-NLS-1$
             AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
@@ -480,6 +482,16 @@ public class RetrieveFileCommandTest extends TestCase
     }
 
     /**
+     * Fix paths to allow tests to run on Windows or UNIX
+     * 
+     * @param path
+     * @return
+     */
+    private String platformFriendly(String path) {
+		return new File(path).getPath();
+	}
+
+	/**
      * Tests that the commit function works correctly with moving the file.
      * 
      * @throws ResourceException -
@@ -509,7 +521,7 @@ public class RetrieveFileCommandTest extends TestCase
         final BaseFileTransferMappedRecord file = new BaseFileTransferMappedRecord();
         final String renameExtension = ".ren";//$NON-NLS-1$
         final String srcPath = entry.getUri().getPath();
-        final String movePath = archiveDir + "/" + fileName;//$NON-NLS-1$
+        final String movePath = archiveDir + File.separator + fileName;//$NON-NLS-1$
 
         context.checking(new Expectations()
         {
@@ -519,7 +531,7 @@ public class RetrieveFileCommandTest extends TestCase
                 one(client).get(entry);
                 will(returnValue(file));
                 one(client).ensureConnection();
-                one(client).rename(srcPath, movePath);
+                one(client).rename(platformFriendly(srcPath), platformFriendly(movePath));
             }
         });
         // mock the dao
@@ -542,7 +554,7 @@ public class RetrieveFileCommandTest extends TestCase
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
 
-        assertEquals("source path stored in command should match that from the list entry", srcPath, command.getSourcePath()); //$NON-NLS-1$
+        assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
         
         assertEquals("command state should be executed", //$NON-NLS-1$
             AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command.getState());
@@ -618,7 +630,7 @@ public class RetrieveFileCommandTest extends TestCase
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         
-        assertEquals("source path stored in command should match that from the list entry", srcPath, command.getSourcePath()); //$NON-NLS-1$
+        assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
         
         command.rollback();
         
