@@ -26,6 +26,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,7 @@ public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
             URISyntaxException
     {
         setTransactionalResource(fileTransferClient);
-        final String directoryPath = "parentDir/subDir";
+        final String directoryPath = "parentDir"+File.pathSeparator+"subDir";
         final String fileName = "fileName";
         final ClientListEntry clientListEntry = new ClientListEntry();
         clientListEntry.setName(fileName);
@@ -100,7 +101,7 @@ public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
             URISyntaxException
     {
         setTransactionalResource(fileTransferClient);
-        final String directoryPath = "parentDir/subDir";
+        final String directoryPath = "parentDir"+File.separator+"subDir";
         final String fileName = "fileName";
         final ClientListEntry similarClientListEntry = new ClientListEntry();
         similarClientListEntry.setName("similar-fileName");
