@@ -107,7 +107,7 @@ public class XsltUtils
         }
 
         String serializedXml = new String(outputStream.toByteArray());
-        logger.info("Serialized xml = [" + serializedXml + "].");
+        logger.debug("Serialized xml = [" + serializedXml + "].");
         return serializedXml;
     }
 }
