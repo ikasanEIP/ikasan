@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>1.1.11</version>
+			<version>1.1.13</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -272,7 +272,7 @@
                 <groupId>javax.transaction</groupId>
                 <artifactId>jta</artifactId>
               </exclusion>
-            </exclusions>		
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
