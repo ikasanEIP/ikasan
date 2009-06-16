@@ -27,6 +27,8 @@
 package org.ikasan.framework.initiator.scheduled.quartz;
 
 import org.ikasan.framework.initiator.AbortTransactionException;
+import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
+import org.ikasan.framework.initiator.InvocationDrivenInitiator;
 import org.quartz.JobExecutionContext;
 import org.quartz.StatefulJob;
 
@@ -39,14 +41,14 @@ import org.quartz.StatefulJob;
 public class QuartzStatefulJob implements StatefulJob
 {
     /** Must have a handle on to the initiator we will invoke */
-    private QuartzStatefulScheduledDrivenInitiator initiator;
+    private InvocationDrivenInitiator initiator;
 
     /**
      * Constructor
      * 
      * @param initiator The initiator
      */
-    public QuartzStatefulJob(QuartzStatefulScheduledDrivenInitiator initiator)
+    public QuartzStatefulJob(InvocationDrivenInitiator initiator)
     {
         this.initiator = initiator;
     }
