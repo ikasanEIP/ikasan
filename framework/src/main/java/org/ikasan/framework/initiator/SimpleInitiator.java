@@ -238,4 +238,12 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
 	@Override
 	protected void stopInitiator() throws InitiatorOperationException {
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.Initiator#getRetryCount()
+	 */
+	public Integer getRetryCount() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>1.1.11</version>
+			<version>1.1.13</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -205,11 +205,25 @@
 			<version>2.3</version>
 			<scope>provided</scope>
 		</dependency>
+   		<!-- email -->
+    	<dependency>
+    		<groupId>org.apache.geronimo.specs</groupId>
+    		<artifactId>geronimo-javamail_1.4_spec</artifactId>
+      		<version>1.2</version>
+      		<scope>provided</scope>
+		</dependency>
+		<!-- java activation framework required for email in Java5 -->
+    	<dependency>
+      		<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-activation_1.1_spec</artifactId>
+      		<version>1.0.1</version>
+      		<scope>provided</scope>
+    	</dependency>
 		<!-- J2EE -->
 		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>j2ee</artifactId>
-			<version>1.4_03</version>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-j2ee_1.4_spec</artifactId>
+			<version>1.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -251,7 +265,7 @@
 		<dependency>
 			<groupId>quartz</groupId>
 			<artifactId>quartz</artifactId>
-			<version>1.6.0</version>
+			<version>1.5.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -265,6 +279,12 @@
 			<artifactId>hibernate</artifactId>
 			<version>3.2.0.ga</version>
 			<scope>provided</scope>
+			<exclusions>
+              <exclusion>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+              </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>

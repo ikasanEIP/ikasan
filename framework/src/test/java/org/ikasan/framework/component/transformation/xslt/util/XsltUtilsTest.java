@@ -61,8 +61,9 @@ public class XsltUtilsTest
     @Test
     public void test_serialize() throws SAXException, IOException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException
     {
-        String incomingXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<test>\n<group>\n<value>whatever</value>\n</group>\n</test>";
-        String expected = "<test>\n<group>\n<value>whatever</value>\n</group>\n</test>\n";
+        String eol = System.getProperty("line.separator");
+        String incomingXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><test><group><value>whatever</value></group></test>";
+        String expected = "<test>" + eol + "<group>" + eol + "<value>whatever</value>" + eol + "</group>" + eol + "</test>" + eol;
 
         InputStream is = new ByteArrayInputStream(incomingXml.getBytes());
         Document testXmlDom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);

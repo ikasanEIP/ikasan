@@ -40,7 +40,8 @@ import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * This class helps create Message Driven Initiators 
+ * This class helps create Message Driven Initiators
+ * 
  * @author Ikasan Development Team
  */
 public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameAware
@@ -56,12 +57,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 
     /** Destination */
     private Destination destination;
-    
+
     /** DestinationResolver */
     private DestinationResolver destinationResolver;
-    
+
     /**
-     * JndiName of the destination for use with the destinationResolver if destination is not directly supplied
+     * JndiName of the destination for use with the destinationResolver if
+     * destination is not directly supplied
      */
     private String destinationName;
 
@@ -87,7 +89,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     private JmsMessageDrivenInitiator initiator;
 
     /** Whether the subscription to JMS destination is durable. Default is true. */
-    private boolean isSubscriptionDurable =  true;
+    private boolean isSubscriptionDurable = true;
+
+    /**
+     * Which JMS domain to use. Default is true for Publish/Subscribe domain
+     * (Topics). Set to <code>false</code> for Point-to-Point domain (Queues).
+     */
+    private boolean pubSubDomain = true;
 
     /**
      * @param moduleName the moduleName to set
@@ -107,11 +115,21 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 
     /**
      * Whether a subscription to jms destination is durable.
+     * 
      * @param isSubscriptionDurable the boolean value to set
      */
     public void setIsSubscriptionDurable(boolean isSubscriptionDurable)
     {
         this.isSubscriptionDurable = isSubscriptionDurable;
+    }
+
+    /**
+     * Which type of destination to resolve.
+     * @param pubSubDomain <code>true</code> for pub/sub domain, <code>false</code> for point-to-point domain.
+     */
+    public void setPubSubDomain(boolean pubSubDomain)
+    {
+        this.pubSubDomain = pubSubDomain;
     }
 
     /**
@@ -121,18 +139,20 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     {
         this.destination = destination;
     }
-    
+
     /**
      * @param destinationResolver to set
      */
-    public void setDestinationResolver(DestinationResolver destinationResolver){
+    public void setDestinationResolver(DestinationResolver destinationResolver)
+    {
         this.destinationResolver = destinationResolver;
     }
-    
+
     /**
      * @param destinationName to set
      */
-    public void setDestinationName(String destinationName){
+    public void setDestinationName(String destinationName)
+    {
         this.destinationName = destinationName;
     }
 
@@ -184,7 +204,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             {
                 throw new IllegalArgumentException("connectionFactory is mandatory for JmsMessageDrivenInitiator creation");
             }
-            if (destination == null && destinationResolver==null)
+            if (destination == null && destinationResolver == null)
             {
                 throw new IllegalArgumentException("either destination or destinationResolver is mandatory for JmsMessageDrivenInitiator creation");
             }
@@ -195,31 +215,31 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             SpringMessageListenerContainer springMessageListenerContainer = new SpringMessageListenerContainer();
             springMessageListenerContainer.setBeanName(this.moduleName + "-" + this.name);
             springMessageListenerContainer.setConnectionFactory(connectionFactory);
-            if (destination!=null){
+            if (destination != null)
+            {
                 springMessageListenerContainer.setDestination(destination);
-            } else{
+            }
+            else
+            {
                 springMessageListenerContainer.setDestinationResolver(destinationResolver);
                 springMessageListenerContainer.setDestinationName(destinationName);
-                springMessageListenerContainer.setPubSubDomain(true);
+                springMessageListenerContainer.setPubSubDomain(this.pubSubDomain);
             }
-            
             springMessageListenerContainer.setMessageListener(initiator);
             springMessageListenerContainer.setTransactionManager(transactionManager);
             springMessageListenerContainer.setSessionTransacted(true);
             springMessageListenerContainer.setSubscriptionDurable(this.isSubscriptionDurable);
             springMessageListenerContainer.setDurableSubscriptionName(moduleName + "-" + name + "-durableSubscription");
             ((JmsMessageDrivenInitiatorImpl) initiator).setMessageListenerContainer(springMessageListenerContainer);
-            
-            
             springMessageListenerContainer.setAutoStartup(false);
             springMessageListenerContainer.afterPropertiesSet();
-
         }
         return initiator;
     }
 
     /**
      * Constructor the JMS message driven initiator
+     * 
      * @return A JMS message driven initiator
      */
     private JmsMessageDrivenInitiator constructInitiator()
