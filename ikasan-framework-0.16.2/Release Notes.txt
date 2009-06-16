@@ -1,0 +1,414 @@
+Release Notes
+=============
+The following TLAs are used:-
+NBC - Not Backward Compatible with previous version of the framework.
+
+Release 0.17.0
+--------------------
+
+Release 0.16.2
+--------------------
+ - Added MonitorEmailNotifier. A new MonitorListener implementation that sends emails when Initiator is in error to a preconfigured recipient list.
+ - Changed MessageDrivenInitiatorFactoryBean to enable Point-To-Point JMS domain support. Default is Pub/Sub.
+ - Updated DatabasePayloadProvider to check for nulls on the constructor and reduce logging noise by changing some INFOs to DEBUG.
+ 
+Release 0.16.1
+--------------------
+ - added support for JndiDestinationFactory to JMSPayloadPublisher
+ - defaulted maxRetries for message driven initiator listener setup failure to indefinite, and added setter method to allow overrides to default values
+
+Release 0.16.0
+--------------------
+ - Changed MessageDrivenInitiatorFactoryBean to enable subscription to queues.
+ - Refactored Schedule driven Initiators and JMS Driven Initiators to share common base class encapsulating much state functionality
+ - Changed all Initiators to be stopped following Initialisation, and to be started when appropriate by the ModuleInitialisationService
+ - Added persistence of start and stop calls to ModuleService to be considered during startup
+ - Added options to defer Destination JNDI lookup for both JMS publishers and subscribers to runtime, rather than initialisation time to break dependecies on JMS servers
+ - Changed JMS Initiators to detect failures setting up listener container (ie failure to poll server) to drop into Recovery mode
+ 
+Release 0.15.3
+--------------------
+- New PayloadPublisher implementation: JMSPayloadPublisher. Publishes a payload to jms destination either as MapMessage or TextMessage.
+
+Release 0.15.2
+--------------------
+- Added XMLValidatorRouter validates each of the incoming payloads and routes based on result:valid or invalid.
+- Refactored the transformation steps in ExtendedXsltTransformer into a protected method. 
+
+Release 0.15.1
+--------------------
+ - Fixed gap in Monitoring to ensure monitor is notified of initiator state immediately on registration with the initiator.
+ Previously (0.15.0 [1]) this was addressed (incorrectly) in the monitor itself by binding an initial state.
+ 
+Release 0.15.0
+--------------------
+ - [1] Ensure the JNDI Monitor binds to the JNDI on creation rather than waiting for event notification;
+ - Added support for dynamic JMS message priority setting within the flow through a simple setter method on the JMS publisher;
+ - Added XPathSelectorRouter which uses a single xpath expression to return a node value subsequently used for routing;
+ - Added toString() to Event in support of the wiretap event logging;
+ - Changed WiretapEvent search to specify multiple modules to include
+ - Moved ModuleContainer into Framework from WebConsole
+ - Added check for module reader ability when viewing wiretap events. When ACL security is enabled this will prevent unauthorised users seeing wiretap data
+ - Added maxResults property to DatabasePayloadDao. This sets the maximum number of result objects to be retrieved; default is 1.
+ - Moved Security package into framework from WebConsole
+ - Bug fix to EventAggregatingSequencer. This should only return a single Event, not a List<Event>;
+ - New sequencer for splitting an incoming event with multiple payloads into multiple outgoing events with one payload each;
+ - New Transformer (FormatExceptionTransformer) for formatting any Java Exception into content of a payload for subsequent presentation downstream;
+ - New transformation util (XsltUtils) that provides static xsl utility method to serialize a node set to String.
+ - Added 'From' and 'Until' date/time restrictions to wiretap event search
+ - Changed Wiretap Triggers to set timeToLive in minutes not milliseconds
+ 
+Release 0.14.0
+--------------------
+ - Removed previous EJB code base
+ - New XMLReaderTransformer class. This provides a transformer for non-XML to XML payload content based on the supplied XMLReader instance. This type of transform was previously mixed in with subsequently applying an XSL (in ExtendedXsltTransformer). The XSLT transformer is still relevant if you want to transform non-XML to bespokeXML then to another XML in one component. However, where you just want non-XML to XML use XMLReaderTransformer.
+ - New interface for EventAggregator. This sits under Event as a service and should be implemented for any Event aggregation components.
+ - Changed Flow/VistingInvokerFlow to know about moduleName, and to pass this and the flowName on to the invoker.
+ - Note that you will now need to pass moduleName in on the flow's constructor
+ - Added notions of FlowEventJobs and Triggers for things that need to happen at various points in the flow, but shouldnt actually affect the flow itself or any of the Event data
+ - Added LoggingEventJob (FlowEventJob)
+ - Added WiretapEventJob (FlowEventJob)
+ - Added notion of FlowEventListener that is notified at various points during flow execution - specifically before and after FlowElement visitation
+ - Added JobAwareFlowEventListener, implementation of FlowEventListener that can be configured with predefined jobs, and triggers added either statically or dynamically
+ - Added TriggerDao for persistence of Triggers, also Hibernate implementation of this
+ - Changed XMLValidator class to use a DocumentBuilderFactory rather than a CommonXMLParser.
+ - Changed ExceptionTransformerImpl class to use a DocumentBuilderFactory rather than a CommonXMLParser.
+ - Removed XSLTransformer class
+ - Added paging for WiretapEventSearch
+ - Added transient properties to WiretapEventHeader to allow for next and previous WiretapEvents to be referenced
+ - Changed XPathBooleanRouter class to use a DocumentBuilderFactory rather than a CommonXMLParser
+ - New ExceptionThrowingErrorHandler. This is the defualt implementation of javax.xml.sax.ErrorHandler - required by the DocumentBuilderFactory.
+ 
+Release 0.13.1
+--------------------
+ - changed Event exception from CommonException to Throwable.
+ 
+Release 0.13.0
+--------------------
+ - changed FlowElement to expose its transitions
+ - changed Flow to know its name, and expose it
+ - changed VisitingInvokerFlow to be able to generate a flat listing of all related FlowElements
+ - changed Initiator interface to expose Flow
+ - changed Module interface to expose all flows by name
+ - changed ResourceLoader and ModuleFactoryBean to allow an existing parent ApplicationContext to be passed in for hte creation of the module's context
+ - created WiretapService for encapsulation and sharing of Wiretap related functions
+ - added JmsMessageEventSerialiser for managing the serialisation/deserialisation of an Event to a JMS Message. 
+   Also added implementation JmsMessageEventSerialiserEnvelopeImpl which encapsulates the existing implementation which performs this serialisation through the intermediate use of the Envelope class.
+        Note:JMSEventPublisherPlugin now takes one of these as opposed to Envelope/Payload factories
+ - added MessageDrivenInitiators in two flavours:
+    1) EventMessageDrivenInitiator accepts a JMS Message and creates a Event based on the content of the Message being a previously serialised Event - ie this is for consuming from an internal topic.
+    2) RawMessageDrivenInitator accepts a JMS Message, and creates entirely new Payload and Event, making no assumptions about the content of the Message itself
+ - deprecated FlowModule in favour of SimpleModule (previously AbstractModule) which is Initiator aware
+ - refactored Initiators to introduce ContextDrivenInitiator interface for invoke(InitiatorContext context).
+    Note that AOP configuration must now point to this Interface rather than Initiator.invoke(...)
+ - wiretapEndpoint component added. First implementation focuses on persistence (Hibernate) of payloads to a database.
+ - EventWiretapEndpoint has been deprecated - use wiretapEndpoint instead.
+ - Updated Quartz Scheduled Driven initiator to ensure a recovery cycle is cleanly
+   stopped when an external initiator stop (i.e. from webConsole) is invoked.
+ - Bug Fix: MonitorJNDINotifier was failing on binding the url names when we removed 
+ the MDB entries. MDB entries by default bound the full url names, hence, were created 
+ up front for the MonitorJNDINotifier. Without MDB these JNDI bindings were not present
+ and must be created by the monitor.
+ - Updated IkasanExceptionResolver to output the thrown exception's stackTrace when it fails all matches 
+   on exception matching. This is extremely useful for supporting issues causing the flows to stop.
+ - Implemented EventProvider to allow flexibility of payloads to be grouped into one event (MultiPayloadPerEventProvider) or
+   across multiple events (SinglePayloadPerEventProvider). Full support for this is in the QuartzScheduledDrivenInitiator.
+ - Updated MonitorJNDINOtifier to ensure a default state of 'unknown' is reported on instantiation. This should be
+   overridden at runtime by the module configuration.
+ 
+ 
+Release 0.12.2
+--------------------
+ - added HolidayCalendarFactory bean to allow ease of configuration of Quartz holiday calendars in Spring
+
+Release 0.12.1
+--------------------
+ - fixed bug in FileSystemPayloadPublisher with binary files not being correctly handled
+ - added setTimeToLive property to JMSEventPayloadPublisherPlugin for optional message expiry
+ - bug fix to initiator transaction demarcation using Spring. Transaction was not previously being started. 
+ - completed scheduled driven initiator.
+ 
+Release 0.12.0
+--------------------
+ - added RecipientListRouter (see EAI patterns) for broadcasting an Event to multiple downstream
+   FlowComponents
+ - added limited support for InputStream oriented payload publication
+
+Release 0.11.1 (never released, changes rolled into 0.12.0)
+--------------------
+ - changed ExtendedXslTransformer to allow an optional payloadName to be set. This is used
+ to update all trnasformed Payload's names following XSL Transformation
+
+Release 0.11.0
+--------------------
+ - Added support to DatabasePayloadDao to allow just the Ids of unconsumed payloads
+ to be returned, and also for DatabasePayloads to be accessed by id
+
+
+ - BUGFIX - UserExceptionHandling (namely ExceptionTransformerImpl) was trying to 
+ access attributes of an event in the ExceptionContext when event is 'null'. 
+ This results in a NullPointer and failure to publish the user exception. 
+ The event population in the ExceptionContext is optional as the event may 
+ not have yet been created when the exception occurs. 
+ Amended the UserExceptionHandling event access to only pull out event 
+ attributes if the event is present.
+
+ - Added additional params to the Enums for IkasanExceptionActionTypes to 
+ allow easy identification of the consequence on the flow and the transaction.
+ This may be later revisited to split out actual class representations for the 
+ IkasanExceptionAction.
+ 
+ - Added support for scheduling outside of the EJB container. At present this
+ has been implemented with Quartz (1.6.0). Support for EJB timers is still present in
+ the code, but has been deprecated. Quartz based timers replace the use of EJB Timers
+ for component business timers and also retry timers in the event of a rollback/retry
+ scenario.
+ 
+ - Initiator implementation first cut wrapping Quartz timers. 
+ This has been completed as an independent implementation from the 
+ quartz timers specified above to allow compatibility for this release. 
+ The quick implementation for Quartz timers (above) will be deprecated 
+ in the next few releases (target release deprecation in 0.12.0).
+ 
+ - Added functional-test-utils as standard jMock classes for each component operation.
+ These classes contain static methods standard to a component to allow re-use of defined 
+ JMock expectations within the scope of project functional tests. The functional-test-utils
+ must be built separately and creates an ikasan-framework-functional-test-utils-<version>.jar.
+
+ - Added TransformationDataLookup and other xstl accessible util functionality in the form of
+ static java methods
+ 
+ - Added FileSystemPayloadPublisher.  See Javadoc for the class for details.  It is basically 
+ a simple Filesystem writer that takes an output directory and proceeds to 
+ write a given payload to that directory (using the payload name as the file name).
+
+ - added functionality for reading/transforming delimited content to XML with the help of
+ a stylesheet
+ 
+ - Event overrides the getName method from its MetaData parent class. It will return the primary payload
+ name, or, if the event has no payloads, the event's name.
+ 
+ - EventNameRouter will now route an event based on expected name or a regular expression
+ 
+ 
+Release 0.10.0 [NBC]
+--------------------
+ - Added ExtendedXslTransformer component, capable of being injected with alternate implementations
+ of the XMLReader interface. This allows for non XML files to be transformed by TRaX.
+ - Added a FixedLengthFlatFileReader implementation of XMLReader for parsing flat file content with 
+ fixed length fields
+
+ - Removed ExternalExceptionDefinition.exceptionRef instance variable from the class.
+ The externalRef is used to relate the userException to an externalException representation.
+ This is still the case and is still configured as part of the Spring config to create 
+ this relationship, but as this is not required in the externalException class it has been removed.
+ This change makes this release incompatible to projects based on the previous version.
+
+ - Amended log4j properties test resource to the ALL level to ensure
+ maximum code coverage in unit testing.
+
+ - Added to unit tests for the VisitingFlowElementInvoker to ensure any
+ non-null IkasanExceptionActions are correctly returned to the caller.
+
+ - Amended the unit tests within UserExceptionHandlerImplTest.java
+ which had a dependency on an XML server supplying the XSD for validation.
+ Have turned off validation as this is not within the scope of this test.
+ 
+ + Released 22/08/08
+ - Eclipse Warnings still at 14 (excluding deprecation)
+ - Unit Test line coverage is at 24%
+ - There are 121 TODOs/FIXMEs to be analysed
+ - The POM needs to be enhanced once this project is properly ikasan
+ - No packages have package.html for Javadoc
+ 
+
+Release 0.9.3
+-------------
+[Defect 88] Bug Fix to VisitingFlowElementInvoker. This was ignoring the returned 
+ IkasanExceptionAction on any exceptions generated within a routing component.
+
+Removed the workaround for MDB rollback/stop and subsequent immediate redelivery.
+This workaround is not required with JBM-1.4 as a redelivery delay can be configured
+at the server level.
+
+ + Released 07/08/08
+ - Eclipse Warnings still at 22 (excluding deprecation)
+ - Unit Test line coverage is still at 18%
+ - There are 122 TODOs/FIXMEs to be analysed
+ - The POM needs to be enhanced once this project is properly ikasan
+ - No packages have package.html for Javadoc
+ 
+Release 0.9.2
+-------------
+ - added a default Event sequencing component to support tokenised splitting
+ of Events (org.ikasan.framework.component.sequencing.TokenizingSplitter).
+ 
+ - added a default Event transformation component to support XPath routing
+ (org.ikasan.framework.component.routing.XPathBooleanRouter).
+ 
+ - added a default Event transformation component to support XML validation
+ (org.ikasan.framework.component.transformation.XMLValidator).
+ 
+ - added a default Event transformation component to support stylesheet 
+ transformations (org.ikasan.framework.component.transformation.XSLTransformer).
+ 
+ - changed Module interface to remove getPluginFlow(String flowName) method as PluginFlows no longer need to be exposed outside of the Module
+
+ - refactored SimpleModule to abstract out AbstractModule and AbstractExceptionActionHandlingModule
+
+ - created new Flow, FlowComponent, FlowElement interfaces along with a VisitingFlowInvoker
+
+ - created FlowModule to call the new Flow infrastructure
+
+ - Removed redundant SimpleUserExceptionHandler
+
+ - Eclipse Warnings fixed, down to 22 (excluding deprecation)
+ - Eclipse Validation Errors and Warnings are at 72, these should be investigated
+ - Unit Test line coverage is 18%
+ - There are 128 TODOs/FIXMEs to be analysed
+ - The POM needs to be enhanced once this project is properly ikasan
+ - No packages have package.html for Javadoc
+
+Release 0.9.1
+-------------
+
+
+Releases Pre 0.9.0
+------------------
+Ikasan 1.2
+=============
+
+The following changes are incorporated within this release.
+
+
+Enhancenments
+_____________
+
+
+Refactored common client connector code
+---------------------------------------
+Refactored common client connector code into an abstract ConnectionHandlerBean class. This allows the framework to better control the common connector functionality in the same manner that the SessionFlowBean controls the common handler code. All connector clients must extend the ConnectionHandlerBean rather than the SessionFlowBean.
+
+The following connector clients have been updated/not updated in the framework package:
+
+- JDBCHandlerBean               (Jeff changed, to be reviewed by Martijn)
+- SFTPHandlerBean               (TODO)
+- SFTPHandlerBeanSrc            (Summer changed)
+- SFTPHandlerBeanTgt            (Summer changed)
+- FTPHandlerBean                (TODO)
+- Stratus connector client      (Hero changed)
+- Trax2Gateway connector client (Jeff changed)
+
+
+Connector State Implementation
+------------------------------
+A standard interface has been added to connectors to allow clients to query the state of that connector. The state of a connector can be:
+
+- UNKNOWN
+- DISCONNECTED
+- CONNECTED
+- SESSION_OPEN
+- SESSION_CLOSED
+
+Clients can query the connector and based on the returned state make a more informed decision of updating the componentState in the JNDI.
+ 
+Currently implemented for TRAX2Gateway connector. Other connectors (Stratus -Hero, SFTP/FTP/Gateway -Ross/Martijn/Summer, JDBC -Martijn) are pending updates from the responsible developer.
+
+
+onStop Lifecycle invocation
+------------------------------
+onStop() lifecycle method now invoked from the FrameworkControllerException handling. Additionally, timer cancellation is also handled at the SessionFlowBean level rather than leaving this to the derived class. So, if you are currently cancelling timers in your code on the onStopHandler this can be removed as the SessionFlowBean onStop now does this.
+
+
+Ikasan Framework Auto-recover on start-up
+--------------------------------------------
+Currently the framework will not enter an auto-recover cycle if any failure occurs on initial server startup. The Framework has been amended to allow the onStart and onSchedule to act on the defined exceptionResolver.xml on failure rather than just stopping regardless. The action (stop, retry, continue, skip) is now dictated by the exceptionResolver. NOTE: To acheive this I have had to expand the synchronised code in the onStart.
+
+
+Ikasan Framework Controller Exception (inflight Event added)
+-------------------------------------------------------------
+Added the inflight event to the thrown FCE to allow the logging of the event and payload ids when a Stop, Retry, or skip is handled. NOTE: These ids are still displayed when a dummy event is created - this may require a future enhancement if it proves confusing.
+
+
+SFTP Connector enhancements
+-------------------------------------------------------------
+See FTP and SFTP support.xls
+
+
+New FTP Connector
+-------------------------------------------------------------
+See FTP and SFTP support.xls
+- Also involved taking out much of SFTP code sharing it across both FTP and SFTP 
+
+
+Maven Build
+-------------------------------------------------------------
+Introdcued the beginnings of Maven support for the project, several core ikasan aretefacts can now be built using Maven
+
+
+Ikasan package structure
+-------------------------------------------------------------
+Some Ikasan packages are now correctly in their org.ikasan (common, framework and platform), there are many more packages to go.
+
+
+Client Connector
+-------------------------------------------------------------
+Introduced the concept of a 'client to a connector' package in order to resolve dependencies in Ikasan, 
+connectors that have been split/not yet split are:
+
+- FTP (done)
+- SFTP (done)
+- Stratus (TBD)
+- Trax2Gateway (TBD)
+- JDBC (TBD)
+- (S)FTPGateway (TBD)
+
+
+Removed HAR dependency
+-------------------------------------------------------------
+Removed the dependcy on .har deployment, connectors that have been split/not yet split are:
+
+- FTP (done)
+- SFTP (done)
+- Stratus (TBD)
+- Trax2Gateway (TBD)
+- JDBC (TBD)
+- (S)FTPGateway (TBD)
+
+
+Improved deployment
+-------------------------------------------------------------
+Connectors are now deployed 'correctly' as an independant RAR that then gets utilised by Component groups, 
+connectors that have been split/not yet split are:
+
+- FTP (done)
+- SFTP (done)
+- Stratus (TBD)
+- Trax2Gateway (TBD)
+- JDBC (TBD)
+- (S)FTPGateway (TBD)
+
+
+Bug Fixes
+_____________
+
+ComponentState to be refreshed on connector failure / recovery
+----------------------------------------------------------------
+Previously Stratus and Trax2Gateway connectors would report a recover componentState, but not refresh back to a happy state after recovery. This has now been fixed for Stratus and Trax2Gateway. SFTP and JDBC should be checked (Martijn & Ross to undertake).
+
+
+ejbTimers not cancelled on non-transactional methods
+----------------------------------------------------------------
+Previously ejbTimers were only being cancelled when transactions were active, 
+ie method configured to be transactional. This left timers outstanding on non-transactional
+methods. This is now fixed and timers are cancelled through the invocation of the
+onStop() method regardless. NOTE: This also means that onStop is called both when a
+component is STOPPING and when a component is going into a RETRY cycle. The latter
+of which doesn't call the stopThread and reschedules the component for execution.
+
+
+Eclipse warnings
+----------------------------------------------------------------
+Over 2000 eclipse warnings were fixed including major javadoc additions and corrections and corrections to 
+a host of common programming problems (potential NPEs etc etc)
+
