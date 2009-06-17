@@ -107,12 +107,12 @@
 				<value>Trigger.hbm.xml</value>
 			</list>
 		</property>
-		<property name="hibernateProperties">
-			<value>
-				hibernate.dialect=org.hibernate.dialect.SybaseDialect
-				hibernate.jdbc.use_get_generated_keys=false
-			</value>
-		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
+	
+	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true"/>
+		<property name="location" value="classpath:ikasan-hibernate.properties"/>
 	</bean>
 	
 	<bean id="initiatorCommandHibernateSessionFactory"
@@ -123,12 +123,7 @@
                 <value>InitiatorCommand.hbm.xml</value>
             </list>
         </property>
-        <property name="hibernateProperties">
-            <value>
-                hibernate.dialect=org.hibernate.dialect.SybaseDialect
-                hibernate.jdbc.use_get_generated_keys=false
-            </value>
-        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
     

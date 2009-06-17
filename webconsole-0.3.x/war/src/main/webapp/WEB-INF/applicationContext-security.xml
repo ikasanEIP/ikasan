@@ -76,12 +76,7 @@
                 <beans:value>org/ikasan/framework/security/model/Authority.hbm.xml</beans:value>
             </beans:list>
         </beans:property>
-        <beans:property name="hibernateProperties">
-            <beans:value>
-                hibernate.dialect=org.hibernate.dialect.SybaseDialect
-                hibernate.jdbc.use_get_generated_keys=false
-            </beans:value>
-        </beans:property>
+        <beans:property name="hibernateProperties" ref="platformHibernateProperties"/>
     </beans:bean>
 
 	<!-- Automatically receives AuthenticationEvent messages -->
