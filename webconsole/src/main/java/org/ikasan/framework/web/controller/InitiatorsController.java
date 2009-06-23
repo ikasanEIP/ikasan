@@ -10,6 +10,7 @@ import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.SimpleInitiator;
 import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl;
 import org.ikasan.framework.initiator.scheduled.quartz.QuartzStatefulScheduledDrivenInitiator;
+import org.ikasan.framework.initiator.scheduled.quartz.QuartzSchedulerInitiator;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.web.command.PayloadCommand;
@@ -88,7 +89,7 @@ public class InitiatorsController
         else if (initiator.getType().equals(
             QuartzStatefulScheduledDrivenInitiator.QUARTZ_SCHEDULE_DRIVEN_INITIATOR_TYPE))
         {
-            QuartzStatefulScheduledDrivenInitiator quartzStatefulScheduledDrivenInitiator = (QuartzStatefulScheduledDrivenInitiator) initiator;
+            QuartzSchedulerInitiator quartzStatefulScheduledDrivenInitiator = (QuartzSchedulerInitiator) initiator;
             Map<org.quartz.Trigger, String> triggers = new HashMap<org.quartz.Trigger, String>();
             Scheduler scheduler = quartzStatefulScheduledDrivenInitiator.getScheduler();
             for (String triggerGroupName : scheduler.getTriggerGroupNames())

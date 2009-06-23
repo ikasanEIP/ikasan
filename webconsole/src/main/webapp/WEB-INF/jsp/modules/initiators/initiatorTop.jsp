@@ -8,7 +8,7 @@
 <p>Current status is:</p>
 <span id="initiatorStateControl" class="initiatorState-<c:out value="${initiator.state.name}" />"><c:out value="${initiator.state.name}" /></span>
 
-    <security:authorize ifAllGranted="ROLE_ADMIN">
+    <security:authorize ifAllGranted="ADMIN_${moduleName}">
         <c:choose>
             <c:when test="${initiator.running}">
               <c:url var="initiatorLink" value="initiator.htm">

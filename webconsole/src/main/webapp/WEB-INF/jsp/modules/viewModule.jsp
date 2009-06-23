@@ -122,7 +122,7 @@
 					</c:choose>
 				</td>
 				<td>	
-					<security:authorize ifAllGranted="ROLE_ADMIN">
+					<security:authorize ifAllGranted="ADMIN_${moduleName}">
     	 				<c:choose>
     						<c:when test="${initiator.running}">
     						  <c:url var="initiatorLink" value="initiator.htm">
