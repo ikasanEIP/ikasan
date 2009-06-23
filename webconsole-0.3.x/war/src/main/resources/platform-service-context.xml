@@ -243,7 +243,5 @@
     <!-- common transaction services end here   -->
     <!-- ###################################### -->
     
-
-	<bean id="groovyWebShellService" class="org.ikasan.framework.shell.service.GroovyConsoleShellServiceImpl"  />
 	
 </beans>
