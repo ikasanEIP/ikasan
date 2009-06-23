@@ -1,6 +1,19 @@
 Release Notes for Ikasan Webconsole
 ===================================
 
+Release 0.3.2
+-------------
+- #51 changed all direct references to QuarzScheduleDrivenInitiator to refer to this through its interfaces
+- #52 downgraded quartz version used at compile time to allow this to be resolved externally
+- #53 changed dependency on j2ee to use the geronimo spec jar
+- #59 upgraded dependency on common to the released version 1.1.13
+- #66 externalised hibernate properties into a separate properties file loaded from the classpath
+- #71 created table schemas and data scripts for mysql
+- #75 added ikasan.properties to WebConsole as it is the defacto platform
+- #83 upgraded to the now released framework-0.16.2
+- #81 changed security handling of module admins to allow module admins to stop and start Initaitors
+- #73 Added configuration for the email notifier
+
 Release 0.3.1
 -------------
 - resolved #26 removing erroneous spring bean definition from platform service xml
