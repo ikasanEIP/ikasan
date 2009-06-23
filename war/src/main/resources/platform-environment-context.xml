@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 # //
 # //
 # // $Id$
 # // $URL$
-# // 
+# //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -22,13 +22,13 @@
 # // Lesser General Public License for more details.
 # //
 # // You should have received a copy of the GNU Lesser General Public
-# // License along with this software; if not, write to the 
-# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // License along with this software; if not, write to the
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
 # // or see the FSF site: http://www.fsfeurope.org/.
 # // ====================================================================
 # //
 # // Author:  Ikasan Development Team
-# // 
+# //
 -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
@@ -65,5 +65,13 @@
         <property name="jndiTemplate" ref="jmsJndiTemplate"/>
     </bean>
 
+	<bean id="mailHost"
+		class="java.lang.String">
+		<constructor-arg value="${monitor.email.host}" />
+	</bean>
 
+	<bean id="distributionList"
+		class="java.lang.String">
+		<constructor-arg value="${monitor.email.distribution}" />
+	</bean>
 </beans>
