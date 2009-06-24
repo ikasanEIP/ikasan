@@ -6,6 +6,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 0.17.0
 --------------------
  - added ErrorLoggingService
+ - added sonatype repository distribution management in the pom.xml
 
 Release 0.16.2
 --------------------
