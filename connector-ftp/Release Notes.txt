@@ -5,6 +5,10 @@ NBC - Not Backward Compatible with previous version of the framework.
 
 Release 1.2.10
 --------------------
+ - added sonatype repository distribution management in the pom.xml
+ 
+Release 1.2.10
+--------------------
  - Port to SF.
  - Bumped dependent project versions up to official releases as follows,
    ikasan-common-1.1.12
