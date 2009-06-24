@@ -1,6 +1,11 @@
 Release Notes for Ikasan Webconsole
 ===================================
 
+
+Release 0.3.3
+-------------
+- added sonatype repository distribution management in the pom.xml
+
 Release 0.3.2
 -------------
 - #51 changed all direct references to QuarzScheduleDrivenInitiator to refer to this through its interfaces
