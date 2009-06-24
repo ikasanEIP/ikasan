@@ -3,6 +3,10 @@ Release Notes
 The following TLAs are used:-
 NBC - Not Backward Compatible with previous version of the framework.
 
+Release 1.1.8
+--------------------
+ - added sonatype repository distribution management in the pom.xml
+ 
 Release 1.1.7
 --------------------
  - Port to SF.
