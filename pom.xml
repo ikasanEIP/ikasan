@@ -46,10 +46,15 @@
     </dependency>
   </dependencies>
   <distributionManagement>
-    <repository>
-      <id>ext-releases</id>
-      <name>managed-external-libraries</name>
-      <url> file:///opt/platform/maven-platform/repositories/managed-external-libraries </url>
-    </repository>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
   </distributionManagement>
 </project>
