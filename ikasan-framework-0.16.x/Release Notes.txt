@@ -6,6 +6,10 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 0.17.0
 --------------------
 
+Release 0.16.3
+--------------------
+- added sonatype repository distribution management in the pom.xml
+
 Release 0.16.2
 --------------------
  - Added MonitorEmailNotifier. A new MonitorListener implementation that sends emails when Initiator is in error to a preconfigured recipient list.
