@@ -67,8 +67,18 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     {
         // empty
     }
+    
+    private Long persistenceId;
 
-    /**
+    public Long getPersistenceId() {
+		return persistenceId;
+	}
+
+	public void setPersistenceId(Long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
+
+	/**
      * Default constructor Creates a new instance of <code>Payload</code> with the empty data content.
      * 
      * @param name Name of the payload
@@ -105,7 +115,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         this.charset = Charset.defaultCharset().toString();
         this.checksumAlg = DEFAULT_CHECKSUM_ALG;
         this.checksum = this.calculateChecksum();
-        this.size = new Long(content.length);
         if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
     }
 
@@ -131,7 +140,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         this.encoding = payload.getEncoding();
         this.format = payload.getFormat();
         this.charset = payload.getCharset();
-        this.size = payload.getSize();
         this.checksumAlg = payload.getChecksumAlg();
         this.checksum = payload.getChecksum();
         this.srcSystem = payload.getSrcSystem();
@@ -150,7 +158,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         this.content = content;
         if (logger.isDebugEnabled()) logger.debug("Content set to [" + this.content + "]."); //$NON-NLS-1$//$NON-NLS-2$
         this.setChecksum();
-        this.size = new Long(content.length);
     }
 
     /**
@@ -187,24 +194,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         return this.content;
     }
 
-    /**
-     * Utility setter for <code>size</code>. When this setter is used, the size is automatically set to the size of the
-     * <code>content</code> byte array.
-     * 
-     * If the <code>content</code> is empty to null, the size is set to zero.
-     */
-    @Override
-    public void setSize()
-    {
-        if (this.content != null && this.content.length > 0)
-            this.size = new Long(this.content.length);
-        else
-        {
-            logger.warn("Payload content null or empty. Size set to [0]."); //$NON-NLS-1$
-            this.size = new Long(0L);
-        }
-        if (logger.isDebugEnabled()) logger.debug("Size set to [" + this.size + "]."); //$NON-NLS-1$//$NON-NLS-2$
-    }
 
     /**
      * Method used to calculate the checksum of the <code>content</code> byte array. By default, the checksum is
@@ -271,27 +260,19 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
      * @return A formatted <code>String</code> representing the <code>Payload</code> object.
      */
     @Override
-    public String toString(int cLength)
+    public String toString()
     {
         StringBuilder sb = new StringBuilder(512);
         sb.append(super.toString());
         sb.append("Content  = [");//$NON-NLS-1$
-        sb.append(new String(this.content));
+        if (content!=null){
+        	sb.append(new String(this.content));
+        }
         sb.append("]\n");//$NON-NLS-1$
         return sb.toString();
     }
 
-    /**
-     * Wrapper method for <code>toString(int length)</code> which defaults <code>length</code> to the length of the
-     * content.
-     * 
-     * @return A string representation of the complete payload (fields and content).
-     */
-    @Override
-    public String toString()
-    {
-        return toString(this.content.length);
-    }
+    
 
     /**
      * Test equality of two payload instances based on the lifetime identifier.
@@ -348,10 +329,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
         clone.setContent(copiedContent);
-        if (this.getSize() != null)
-        {
-            clone.setSize(new Long(this.getSize()));
-        }
         clone.setChecksum();
         return clone;
     }
@@ -369,4 +346,15 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         spawned.setTimestamp(generateTimestamp());
         return spawned;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.MetaDataInterface#getSize()
+	 */
+	public Long getSize() {
+		int size = 0;
+		if (content!=null){
+			size = content.length;
+		}
+		return Long.valueOf(size);
+	}
 }
