@@ -368,20 +368,6 @@ public class EnvelopeConverter extends PayloadConverter
                 String value = reader.getValue();
                 envelope.setCharset(value);
             }
-            // Size
-            else if (nodeName.equals("size")) //$NON-NLS-1$
-            {
-                String value = reader.getValue();
-                try
-                {
-                    Long longVal = new Long(value);
-                    envelope.setSize(longVal);
-                }
-                catch (NumberFormatException e)
-                {
-                    throw new ConversionException(e);
-                }
-            }
             // checksum
             else if (nodeName.equals("checksum")) //$NON-NLS-1$
             {

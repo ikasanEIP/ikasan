@@ -83,7 +83,6 @@ public class DefaultEnvelope extends MetaData implements Envelope
         // Primary Payload populated fields
         this.setPayloads(payloadList);
         // These values are _not_ already set by the setPayloads call above
-        this.size = new Long(payload.toString().length());
         this.spec = null;
         this.encoding = Encoding.NOENC.toString();
         this.format = null;
@@ -113,10 +112,6 @@ public class DefaultEnvelope extends MetaData implements Envelope
         // setting the payloads also updates the envelope header
         // Primary Payload populated fields
         this.setPayloads(payloads);
-        for (Payload pl : payloads)
-        {
-            this.size = this.size + (pl.toString().length());
-        }
         // These values are _not_ already set by the setPayloads call above
         this.spec = null;
         this.encoding = Encoding.NOENC.toString();
@@ -221,15 +216,16 @@ public class DefaultEnvelope extends MetaData implements Envelope
         return "Envelope Id[" + this.getId() + "] "; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.common.component.MetaData#setSize()
-     */
-    @Override
-    public void setSize()
-    {
-        this.size = 0L;
-        logger.debug("Size set to [" + this.size + "]. To be Implemented"); //$NON-NLS-1$//$NON-NLS-2$
-    }
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.MetaDataInterface#getSize()
+	 */
+	public Long getSize() {
+		long size=0;
+		for (Payload payload : payloads){
+			size = size + payload.getSize();
+		}
+		return size;
+	}
+
+
 }
