@@ -153,7 +153,7 @@ public class PayloadTest
             + " SPEC=\"text/xml\""
             + " ENCODING=\"noenc\""
             + " CHARSET=\"windows-1252\"" 
-            + " SIZE=\"100\""
+            + " SIZE=\"14\""
             + " CHECKSUM=\"999\""
             + " CHECKSUM_ALG=\"MD5\""
             + " SRC_SYSTEM=\"JUnit\""
@@ -171,7 +171,6 @@ public class PayloadTest
         this.payload.setId("testID");
         this.payload.setPriority(new Integer(4));
         this.payload.setSchemaInstanceNSURI("http://www.w3.org/2001/XMLSchema-instance");
-        this.payload.setSize(new Long(100));
         this.payload.setTargetSystems("testTargetSystems");
         this.payload.setTimestamp(new Long(1184160349580L));
         this.payload.setTimestampFormat(MetaDataInterface.DEFAULT_TIMESTAMP_FORMAT);
@@ -253,8 +252,7 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), clonePayload.getCharset());
 
-        Assert.assertFalse(this.payload.getSize() == clonePayload.getSize());
-        Assert.assertEquals(this.payload.getSize(), clonePayload.getSize());
+        Assert.assertTrue(this.payload.getSize() == clonePayload.getSize());
 
         Assert.assertEquals(this.payload.getChecksum(), clonePayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), clonePayload.getChecksumAlg());
@@ -336,8 +334,7 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), spawnPayload.getCharset());
 
-        Assert.assertFalse(this.payload.getSize() == spawnPayload.getSize());
-        Assert.assertEquals(this.payload.getSize(), spawnPayload.getSize());
+        Assert.assertTrue(this.payload.getSize() == spawnPayload.getSize());
 
         Assert.assertEquals(this.payload.getChecksum(), spawnPayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), spawnPayload.getChecksumAlg());
