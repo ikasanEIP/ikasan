@@ -121,10 +121,6 @@ public class EventTest
         Assert.assertEquals(clone.getCharset(),
                 this.event.getCharset());
         
-        Assert.assertTrue(clone.getSize() != this.event.getSize());
-        Assert.assertEquals(clone.getSize(),
-                this.event.getSize());
-        
         Assert.assertEquals(clone.getChecksum(),
                 this.event.getChecksum());
         
@@ -208,10 +204,6 @@ public class EventTest
         
         Assert.assertEquals(spawned.getCharset(),
                 this.event.getCharset());
-        
-        Assert.assertTrue(spawned.getSize() != this.event.getSize());
-        Assert.assertEquals(spawned.getSize(),
-                this.event.getSize());
         
         Assert.assertEquals(spawned.getChecksum(),
                 this.event.getChecksum());

@@ -1,5 +1,4 @@
 /*
- * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -22,27 +21,75 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.framework.event.exclusion.dao;
+package org.ikasan.framework.event.exclusion.model;
 
-import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.component.Event;
 
 /**
  * @author The Ikasan Development Team
  *
  */
-public interface ExcludedEventDao{
-
-	/**
-	 * Saves an <code>ExcludedEvent</code> to persistent storage
-	 * 
-	 * @param excludedEvent
-	 */
-	public void save(ExcludedEvent excludedEvent);
+public class ExcludedEvent {
 	
 	/**
-	 * Loads an <code>ExcludedEvent</code> to persistent storage
-	 * 
-	 * @param excludedEventId
+	 * unique identifier set by ORM
 	 */
-	public ExcludedEvent load(Long excludedEventId);
+	private Long id;
+	
+	/**
+	 * Event being excluded
+	 */
+	private Event event;
+	
+	
+	/**
+	 * default constructor required by ORM
+	 */
+	@SuppressWarnings("unused")
+	private ExcludedEvent(){}
+
+	/**
+	 * @param event
+	 */
+	public ExcludedEvent(Event event) {
+		this.event=event;
+	}
+
+	/**
+	 * Accessor for id
+	 * 
+	 * @return id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * Mutator for id
+	 * 
+	 * @param id
+	 */
+	@SuppressWarnings("unused")
+	private void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * Accessor for event
+	 * 
+	 * @return event
+	 */
+	public Event getEvent() {
+		return event;
+	}
+
+	/**
+	 * Mutator for event
+	 * 
+	 * @param event
+	 */
+	public void setEvent(Event event) {
+		this.event = event;
+	}
+
 }
