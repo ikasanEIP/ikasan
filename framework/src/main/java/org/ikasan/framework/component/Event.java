@@ -61,7 +61,11 @@ public class Event extends MetaData implements Cloneable
     /** Event contained payloads */
     private List<Payload> payloads = null;
 
-
+    
+    /**
+     * private Default constructor requried by ORM
+     */
+    private Event(){}
 
     /**
      * New Event based on no incoming args. This will create an Event with an
@@ -108,7 +112,6 @@ public class Event extends MetaData implements Cloneable
         this.encoding = envelope.getEncoding();
         this.format = envelope.getFormat();
         this.charset = envelope.getCharset();
-        this.size = envelope.getSize();
         this.checksum = envelope.getChecksum();
         this.checksumAlg = envelope.getChecksumAlg();
         this.srcSystem = envelope.getSrcSystem();
@@ -134,9 +137,6 @@ public class Event extends MetaData implements Cloneable
         }
         if (this.getPriority() != null){
         	clone.setPriority(new Integer(this.getPriority()));
-        }
-        if (this.getSize() != null){
-        	clone.setSize(new Long(this.getSize()));
         }
 
         // populate actual payload(s)
@@ -389,15 +389,6 @@ public class Event extends MetaData implements Cloneable
         return null;
     }
 
-    @Override
-    // TODO - check this implementation
-    public void setSize()
-    {
-        // TODO Auto-generated method stub
-    }
-
-
-
     /**
      * If this event has payloads, return the primary payload's name.
      * Otherwise, return event name. 
@@ -439,7 +430,6 @@ public class Event extends MetaData implements Cloneable
         envelope.setEncoding(getEncoding());
         envelope.setFormat(getFormat());
         envelope.setCharset(getCharset());
-        envelope.setSize(getSize());
         envelope.setChecksum(getChecksum());
         envelope.setChecksumAlg(getChecksumAlg());
         envelope.setSrcSystem(getSrcSystem());

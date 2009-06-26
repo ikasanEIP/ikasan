@@ -25,24 +25,28 @@
 package org.ikasan.framework.event.exclusion.dao;
 
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
  * @author The Ikasan Development Team
  *
  */
-public interface ExcludedEventDao{
+public class HibernateExcludedEventDao extends HibernateDaoSupport implements ExcludedEventDao{
 
-	/**
-	 * Saves an <code>ExcludedEvent</code> to persistent storage
-	 * 
-	 * @param excludedEvent
+	/* (non-Javadoc)
+	 * @see org.ItemDao#save(org.Item)
 	 */
-	public void save(ExcludedEvent excludedEvent);
-	
-	/**
-	 * Loads an <code>ExcludedEvent</code> to persistent storage
-	 * 
-	 * @param excludedEventId
+	public void save(ExcludedEvent excldudedEvent) {
+		getHibernateTemplate().save(excldudedEvent);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.event.exclusion.dao.ExcludedEventDao#load(java.lang.Long)
 	 */
-	public ExcludedEvent load(Long excludedEventId);
+	public ExcludedEvent load(Long excludedEventId) {
+
+		return (ExcludedEvent) getHibernateTemplate().get(ExcludedEvent.class, excludedEventId);
+	}
+
 }
