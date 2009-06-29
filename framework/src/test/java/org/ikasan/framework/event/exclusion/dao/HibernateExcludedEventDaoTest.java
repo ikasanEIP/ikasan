@@ -25,6 +25,7 @@ package org.ikasan.framework.event.exclusion.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -62,7 +63,9 @@ public class HibernateExcludedEventDaoTest {
 		
 		//set up an event to exclude
 		Event event = new Event("componentGroupName", null);
-
+		String moduleName = "moduleName";
+		String flowName = "flowName";
+		
 		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
 		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
 		
@@ -74,7 +77,8 @@ public class HibernateExcludedEventDaoTest {
 		event.setPayloads(payloads);
 		
 		
-		ExcludedEvent excludedEvent = new ExcludedEvent(event);
+		ExcludedEvent excludedEvent = new ExcludedEvent(event,moduleName, flowName, new Date());
+
 		
 		//save the excluded event
 		excludedEventDao.save(excludedEvent);
@@ -87,7 +91,12 @@ public class HibernateExcludedEventDaoTest {
 		//now try to reload the ExcludedEvent
 		ExcludedEvent reloadedExcludedEvent = excludedEventDao.load(excludedEvent.getId());
 		
+		//check that the fields of ExcludedEvent were reloaded successfully
+		Assert.assertTrue("reloaded moduleName should be same size as original moduleName", excludedEvent.getModuleName().equals(reloadedExcludedEvent.getModuleName()));
+		Assert.assertTrue("reloaded flowName should be same size as original flowName", excludedEvent.getFlowName().equals(reloadedExcludedEvent.getFlowName()));
+		Assert.assertTrue("reloaded exclusionTime should be same size as original exclusionTime", excludedEvent.getExclusionTime().equals(reloadedExcludedEvent.getExclusionTime()));
 		
+
 		Event reloadedEvent = reloadedExcludedEvent.getEvent();
 		List<Payload> reloadedPayloads = reloadedEvent.getPayloads();
 		

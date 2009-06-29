@@ -1,13 +1,37 @@
-/**
- * 
+/*
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the 
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * or see the FSF site: http://www.fsfeurope.org/.
+ * ====================================================================
  */
 package org.ikasan.framework.event.exclusion.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
+import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
@@ -59,11 +83,16 @@ public class ExcludedEventServiceImplTest {
 	
 	@Test
 	public void testExcludeEvent(){
+		final String moduleName = "moduleName";
+		final String flowName = "flowName";
+		
 		final Sequence sequence = mockery.sequence("invocationSequence");
 		
 		mockery.checking(new Expectations()
         {
             {
+            	one(excludedEventDao).save(with(new ExcludedEventMatcher(new ExcludedEvent(excludedEvent,moduleName, flowName, new Date()))));
+            	inSequence(sequence);
             	one(excludedEventListener1).notifyExcludedEvent(excludedEvent);
             	inSequence(sequence);
             	one(excludedEventListener2).notifyExcludedEvent(excludedEvent);
@@ -71,10 +100,59 @@ public class ExcludedEventServiceImplTest {
             }
         });
 		
-		excludedEventService.excludeEvent(excludedEvent);
+		excludedEventService.excludeEvent(excludedEvent, moduleName, flowName);
 		
 		mockery.assertIsSatisfied();
 	}
 	
+	public class ExcludedEventMatcher extends TypeSafeMatcher<ExcludedEvent> {
+
+		private ExcludedEvent excludedEvent;
+		
+		
+		/**
+		 * @param expectedErrorOccurrence
+		 */
+		public ExcludedEventMatcher(ExcludedEvent expectedExcludedEvent) {
+			this.excludedEvent = expectedExcludedEvent;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.junit.matchers.TypeSafeMatcher#matchesSafely(java.lang.Object)
+		 */
+		@Override
+		public boolean matchesSafely(ExcludedEvent item) {
+			boolean result = true;
+			
+			if (!same(excludedEvent.getEvent(),item.getEvent())){
+				result = false;
+			}
+			if (!same(excludedEvent.getModuleName(),item.getModuleName())){
+				result = false;
+			}
+			if (!same(excludedEvent.getFlowName(),item.getFlowName())){
+				result = false;
+			}
+			
+			return result;
+		}
+
+
+		/* (non-Javadoc)
+		 * @see org.hamcrest.SelfDescribing#describeTo(org.hamcrest.Description)
+		 */
+		public void describeTo(Description arg0) {}
+	
+		private boolean same(Object thisOne, Object thatOne){
+			if (thisOne==null||thatOne==null){
+				if ((thisOne==null)==(thatOne==null)){
+					return true;
+				}
+				return false;
+			}
+			return thisOne.equals(thatOne);
+		}
+		
+	}
 
 }

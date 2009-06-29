@@ -30,8 +30,6 @@
 # // Author:  Ikasan Development Team
 # // 
 -->
-
-
 <hibernate-mapping  default-access="field">
 
 <class name="org.ikasan.framework.event.exclusion.model.ExcludedEvent" table="EXCLUDED_EVENT" >
@@ -40,20 +38,34 @@
 	<id name="id" type="long" column="EXCLUDED_EVENT_ID">
 		<generator class="identity"/>
 	</id>
+	
+	<!-- Excluded Event fields -->
+	<property name="moduleName" >
+		<column name="MODULE_NAME" length="255"/>
+	</property>
+	
+	<property name="flowName">
+		<column name="FlOW_NAME" length="255"/>
+	</property>
+	
+	<property name="exclusionTime" column="EXCLUSION_TIME" />
+
 
     
 
-
+	<!-- The Event itself -->
 	<component name="event" >
 		<property name="componentGroupName" column="componentGroupName"  />
 
 		<!-- Use a standard parent/child relationship for payloads, this a persistent list -->
 		<list name="payloads" cascade="all" lazy="false">
+		
 			<key not-null="true"> <!-- NOT NULL has to be here! -->
 	            <column name="EXCLUDED_EVENT_ID"/>
 	        </key>
 	        <list-index column="PAYLOAD_POSITION"/>
-			<one-to-many class="org.ikasan.common.component.DefaultPayload"/>
+			<one-to-many class="org.ikasan.common.component.DefaultPayload"/>			
+			
 		</list>
 	</component>
 	
