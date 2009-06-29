@@ -64,6 +64,7 @@
         <property name="transactionManager" ref="transactionManager"/>
         <property name="flow" ref="deliveryFlow"/>
         <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
+        <property name="exceptionHandler" ref="loggingExceptionHandler"/>
     </bean>
     
 
