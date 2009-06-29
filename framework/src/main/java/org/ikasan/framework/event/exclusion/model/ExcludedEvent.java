@@ -23,6 +23,8 @@
  */
 package org.ikasan.framework.event.exclusion.model;
 
+import java.util.Date;
+
 import org.ikasan.framework.component.Event;
 
 /**
@@ -41,6 +43,20 @@ public class ExcludedEvent {
 	 */
 	private Event event;
 	
+	/**
+	 * Name of the module from which the event is being excluded
+	 */
+	private String moduleName;
+
+	/**
+	 * Name of the flow from which the event is being excluded
+	 */
+	private String flowName;
+	
+	/**
+	 * Date/time of event exclusion
+	 */
+	private Date exclusionTime;
 	
 	/**
 	 * default constructor required by ORM
@@ -49,10 +65,18 @@ public class ExcludedEvent {
 	private ExcludedEvent(){}
 
 	/**
-	 * @param event
+	 * Constructor
+	 * 
+	 * @param event - the event being excluded
+	 * @param moduleName - module from which event is excluded
+	 * @param flowName - flow from which event is excluded
+	 * @param exclusionTime - date/time of event exclusion
 	 */
-	public ExcludedEvent(Event event) {
+	public ExcludedEvent(Event event, String moduleName, String flowName, Date exclusionTime) {
 		this.event=event;
+		this.moduleName=moduleName;
+		this.flowName=flowName;
+		this.exclusionTime = exclusionTime;
 	}
 
 	/**
@@ -88,8 +112,66 @@ public class ExcludedEvent {
 	 * 
 	 * @param event
 	 */
-	public void setEvent(Event event) {
+	@SuppressWarnings("unused")
+	private void setEvent(Event event) {
 		this.event = event;
+	}
+	
+	/**
+	 * Accessor for moduleName
+	 * 
+	 * @return moduleName
+	 */
+	public String getModuleName() {
+		return moduleName;
+	}
+
+	/**
+	 * Mutator for moduleName
+	 * 
+	 * @param moduleName
+	 */
+	@SuppressWarnings("unused")
+	private void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+	/**
+	 * Accessor for flowName
+	 * 
+	 * @return flowName
+	 */
+	public String getFlowName() {
+		return flowName;
+	}
+
+	/**
+	 * Mutator for flowName
+	 * 
+	 * @param flowName
+	 */
+	@SuppressWarnings("unused")
+	private void setFlowName(String flowName) {
+		this.flowName = flowName;
+	}
+
+	/**
+	 * Accessor for exclusionTime
+	 * 
+	 * @return exclusionTime
+	 */
+	public Date getExclusionTime() {
+		return exclusionTime;
+	}
+
+	/**
+	 * Mutator for exclusionTime
+	 * 
+	 * @param exclusionTime
+	 */
+	@SuppressWarnings("unused")
+	private void setExclusionTime(Date exclusionTime) {
+		this.exclusionTime = exclusionTime;
 	}
 
 }
