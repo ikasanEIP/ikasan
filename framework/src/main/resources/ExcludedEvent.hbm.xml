@@ -32,38 +32,46 @@
 -->
 <hibernate-mapping  default-access="field">
 
-<class name="org.ikasan.framework.event.exclusion.model.ExcludedEvent" table="EXCLUDED_EVENT" >
+<class name="org.ikasan.framework.event.exclusion.model.ExcludedEvent" table="ExcludedEvent" >
 
     <!-- Common id property -->
-	<id name="id" type="long" column="EXCLUDED_EVENT_ID">
+	<id name="id" type="long" column="Id">
 		<generator class="identity"/>
 	</id>
 	
 	<!-- Excluded Event fields -->
 	<property name="moduleName" >
-		<column name="MODULE_NAME" length="255"/>
+		<column name="ModuleName" length="255" not-null="true"/>
 	</property>
 	
 	<property name="flowName">
-		<column name="FlOW_NAME" length="255"/>
+		<column name="FlowName" length="255" not-null="true"/>
 	</property>
 	
-	<property name="exclusionTime" column="EXCLUSION_TIME" />
+	<property name="exclusionTime" column="ExclusionTime" not-null="true"/>
 
 
     
 
 	<!-- The Event itself -->
 	<component name="event" >
-		<property name="componentGroupName" column="componentGroupName"  />
+	
+		<property name="id" >
+			<column name="EventId" length="255" not-null="true"/>
+		</property>
+		<property name="componentGroupName" column="ComponentGroupName"  />
+		<property name="componentName" column="ComponentName"  />
+		<property name="priority" column="Priority"  />
+		<property name="timestamp" column="Timestamp"  />
+
 
 		<!-- Use a standard parent/child relationship for payloads, this a persistent list -->
 		<list name="payloads" cascade="all" lazy="false">
 		
 			<key not-null="true"> <!-- NOT NULL has to be here! -->
-	            <column name="EXCLUDED_EVENT_ID"/>
+	            <column name="ExcludedEventId"/>
 	        </key>
-	        <list-index column="PAYLOAD_POSITION"/>
+	        <list-index column="PayloadPosition"/>
 			<one-to-many class="org.ikasan.common.component.DefaultPayload"/>			
 			
 		</list>

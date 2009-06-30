@@ -27,11 +27,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
+import org.ikasan.framework.management.search.PagedSearchResult;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
@@ -153,6 +157,42 @@ public class ExcludedEventServiceImplTest {
 			return thisOne.equals(thatOne);
 		}
 		
+	}
+	
+	@Test
+	public void testList(){
+		
+		final PagedSearchResult<ExcludedEvent> listing = new ArrayListPagedSearchResult<ExcludedEvent>(new ArrayList<ExcludedEvent>(),0,25);
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).findExcludedEvents(0, 25);will(returnValue( listing));
+            }
+        });
+		
+		PagedSearchResult<ExcludedEvent> result = excludedEventService.getExcludedEvents(0, 25);
+		Assert.assertEquals("resultant list should be that returned from dao", listing, result);
+		
+		mockery.assertIsSatisfied();
+	}
+	
+	@Test 
+	public void testGetExcludedEvent(){
+		final long excludedEventId = 1l;
+		final ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
+		
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            }
+        });
+		
+		Assert.assertEquals("ExcludedEvent returned by getExcludedEvent should be that returned by dao method ", excludedEvent, excludedEventService.getExcludedEvent(excludedEventId));
+		
+		mockery.assertIsSatisfied();
 	}
 
 }

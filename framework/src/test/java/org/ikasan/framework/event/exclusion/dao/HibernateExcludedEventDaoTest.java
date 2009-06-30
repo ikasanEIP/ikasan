@@ -53,6 +53,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration
 public class HibernateExcludedEventDaoTest {
 
+	private String moduleName = "moduleName";
+	
+	private String flowName = "flowName";
 	
 	
 	@Autowired
@@ -63,9 +66,7 @@ public class HibernateExcludedEventDaoTest {
 		
 		//set up an event to exclude
 		Event event = new Event("componentGroupName", null);
-		String moduleName = "moduleName";
-		String flowName = "flowName";
-		
+
 		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
 		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
 		
@@ -102,8 +103,6 @@ public class HibernateExcludedEventDaoTest {
 		
 		//check that all the important fields from all the payloads survived
 		assertPayloadsEquivalent(payloads, reloadedPayloads);
-		
-		
 	}
 
 	/**
@@ -127,5 +126,64 @@ public class HibernateExcludedEventDaoTest {
 		Assert.assertTrue("reloaded Payload content should be same size as original payload content", Arrays.equals(payload.getContent(), reloadedPayload.getContent()));
 		Assert.assertTrue("reloaded Payload spec should be same size as original payload spec", payload.getSpec().equals(reloadedPayload.getSpec()));
 		Assert.assertTrue("reloaded Payload srcSystem should be same size as original payload srcSystem", payload.getSrcSystem().equals(reloadedPayload.getSrcSystem()));
+	}
+	
+	@Test
+	public void testFindExcludedEvents(){
+		//first create some data
+		ExcludedEvent excludedEvent1 = new ExcludedEvent(createEvent(),moduleName, flowName, new Date());
+		excludedEventDao.save(excludedEvent1);
+		
+		ExcludedEvent excludedEvent2 = new ExcludedEvent(createEvent(),moduleName, flowName, new Date());
+		excludedEventDao.save(excludedEvent2);	
+		
+		//now see if we can find it
+		List<ExcludedEvent> found = excludedEventDao.findExcludedEvents(0, 25);
+		
+		Assert.assertTrue("result list should contain excludedEvent1",listingContainsEntry(excludedEvent1, found));
+		Assert.assertTrue("result list should contain excludedEvent2",listingContainsEntry(excludedEvent2, found));
+		
+	}
+
+	private boolean listingContainsEntry(ExcludedEvent entry,
+			List<ExcludedEvent> found) {
+		boolean result = false;
+		for (ExcludedEvent excludedEvent : found){
+			if (excludedEvent.getId().equals(entry.getId())){
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+	
+	@Test
+	public void testGetExcludedEvent(){
+		Assert.assertNull("getExcludedEvent with non existant id should return null", excludedEventDao.getExcludedEvent(-1));
+	
+		//setup an excluded event in the db
+		ExcludedEvent excludedEvent = new ExcludedEvent(createEvent(),moduleName,flowName, new Date());
+		excludedEventDao.save(excludedEvent);
+		
+		//try to reload it
+		ExcludedEvent reloadedEvent = excludedEventDao.getExcludedEvent(excludedEvent.getId());
+		Assert.assertNotNull("getExcludedEvent should return event for valid id", reloadedEvent);
+	
+	}
+	
+	public Event createEvent(){
+		Event event = new Event("componentGroupName", null);
+
+		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
+		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
+		
+		
+		List<Payload> payloads = new ArrayList<Payload>();
+		payloads.add(payload1);
+		payloads.add(payload2);
+		
+		event.setPayloads(payloads);
+		return event;
+	
 	}
 }

@@ -24,7 +24,11 @@
  */
 package org.ikasan.framework.event.exclusion.dao;
 
+import java.util.List;
+
+import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.management.search.PagedSearchResult;
 
 /**
  * @author The Ikasan Development Team
@@ -45,4 +49,23 @@ public interface ExcludedEventDao{
 	 * @param excludedEventId
 	 */
 	public ExcludedEvent load(Long excludedEventId);
+
+	/**
+	 * Perform a paged search for <code>ExcludedEvent</code>s
+	 * 
+	 * @param pageNo
+	 * @param pageSize
+	 * 
+	 * @return PagedSearchResult
+	 */
+	public PagedSearchResult<ExcludedEvent> findExcludedEvents(int pageNo, int pageSize);
+
+	/**
+	 * Retrieves an ExcludedEvent by id
+	 * 
+	 * @param id
+	 * @return ExcludedEvent
+	 */
+	public ExcludedEvent getExcludedEvent(long excludedEventId);
+
 }

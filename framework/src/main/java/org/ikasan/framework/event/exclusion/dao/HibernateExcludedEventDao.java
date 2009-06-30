@@ -24,7 +24,16 @@
  */
 package org.ikasan.framework.event.exclusion.dao;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
+import org.ikasan.framework.management.search.PagedSearchResult;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
@@ -46,6 +55,38 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 	 */
 	public ExcludedEvent load(Long excludedEventId) {
 
+		return (ExcludedEvent) getHibernateTemplate().get(ExcludedEvent.class, excludedEventId);
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public PagedSearchResult<ExcludedEvent> findExcludedEvents(final int pageNo, final int pageSize) {
+		return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria criteria = session.createCriteria(ExcludedEvent.class);
+
+ 
+                criteria.setMaxResults(pageSize);
+                int firstResult = (pageNo*pageSize);
+				criteria.setFirstResult(firstResult);
+                //criteria.addOrder(Order.desc("id"));
+                List<ExcludedEvent> results = criteria.list();
+                criteria.setProjection(Projections.rowCount());
+                Integer rowCount = 0;
+                List<Integer> rowCountList = criteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+                return new ArrayListPagedSearchResult<ExcludedEvent>(results, firstResult, rowCount);
+            }
+        });
+	}
+
+
+	public ExcludedEvent getExcludedEvent(long excludedEventId) {
 		return (ExcludedEvent) getHibernateTemplate().get(ExcludedEvent.class, excludedEventId);
 	}
 

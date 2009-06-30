@@ -1,5 +1,6 @@
 /*
  * ====================================================================
+
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
@@ -24,6 +25,8 @@
 package org.ikasan.framework.event.exclusion.service;
 
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.management.search.PagedSearchResult;
 
 /**
  * @author The Ikasan Development Team
@@ -40,5 +43,23 @@ public interface ExcludedEventService {
 	 * @param flowName
 	 */
 	public void excludeEvent(Event event, String moduleName, String flowName);
+
+	/**
+	 * Returns a paged listing of ExcludedEvent
+	 * 
+	 * @param pageNo - 0 or greater, index into the list of all possible results
+	 * @param pageSize - 0 or greater, no of excludedEvents to return on a page
+	 * 
+	 * @return PagedSearchResult<ExcludedEvent>
+	 */
+	public PagedSearchResult<ExcludedEvent> getExcludedEvents(int pageNo, int pageSize);
+
+	/**
+	 * Retrieve an ExcludedEvent specified by its Id
+	 * 
+	 * @param excludedEventId
+	 * @return ExcludedEvent
+	 */
+	public ExcludedEvent getExcludedEvent(long excludedEventId);
 
 }
