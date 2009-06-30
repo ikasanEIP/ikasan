@@ -31,17 +31,19 @@
 -->
 <hibernate-mapping  default-access="field">
 
-<class name="org.ikasan.common.component.DefaultPayload" table="EXCLUDED_PAYLOAD" mutable="false">
+<class name="org.ikasan.common.component.DefaultPayload" table="ExcludedPayload" mutable="false">
 
 	<!-- Common id property. -->
-	<id name="persistenceId" type="long" column="PERSISTENCE_ID">
+	<id name="persistenceId" type="long" column="PersistenceId">
 		<generator class="identity"/>
 	</id>
-	<property name="id" column="PAYLOAD_ID"/>
-	<property name="content" column="CONTENT"/>
-	<property name="spec" column="SPEC"/>
-	<property name="srcSystem" column="SRC_SYSTEM"/>
-
+	<property name="id" column="PayloadId"/>
+	<property name="name" column="Name"/>
+	<property name="content" column="Content"  />
+	<property name="spec" column="Spec"/>
+	<property name="srcSystem" column="SrcSytem"/>
+	<property name="priority" column="Priority"  />
+	<property name="timestamp" column="Timestamp"  />
 
 
 </class>
