@@ -387,6 +387,9 @@ form.fancydataform fieldset li {
 	width: 100%;
 }
 
+#exclusionsSearchResults {
+	width: 100%;
+}
 #flowEventTriggerParameters {
 	width: 100%;
 }
