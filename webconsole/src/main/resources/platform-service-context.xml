@@ -87,6 +87,15 @@
 		<constructor-arg ref="errorOccurrenceDao" />
 	</bean>
 	
+	<bean id="excludedEventService" class="org.ikasan.framework.event.exclusion.service.ExcludedEventServiceImpl">
+		<constructor-arg ref="excludedEventDao" />
+		<constructor-arg>
+			<list>
+				<!-- listeners will go here... -->
+			</list>
+		</constructor-arg>
+	</bean>
+	
 
     
 	<bean id="platformScheduler"

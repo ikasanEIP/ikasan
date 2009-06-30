@@ -1,10 +1,5 @@
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+<%@ include file="/WEB-INF/jsp/top.jsp"%>
 <%-- 
-# //
-# //
-# // $Id$
-# // $URL$
-# // 
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -30,23 +25,17 @@
 # // Author:  Ikasan Development Team
 # // 
 --%>
+<div class="subnavcontainer">
+	<ul>
+		<li><a href="<c:url value='search.htm'/>">Search Events</a></li>
+		
+        <c:if test="${wiretapEvent != null}">
 
-<div class="middle">
+            <li> -> 
+                <a href="searchResults.htm">Search Results</a>
+            </li>
 
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="scheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
-    <li><a href="exclusions/list.htm">View Excluded Events</a></li>
-    
-</ul>
-</p>
-
+        </c:if>
+		
+	</ul>
 </div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>

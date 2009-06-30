@@ -63,6 +63,11 @@
 		class="org.ikasan.framework.error.dao.HibernateErrorOccurrenceDao">
 		<property name="sessionFactory" ref="errorLoggingHibernateSessionFactory" />
 	</bean>
+	
+	<bean id="excludedEventDao"
+		class="org.ikasan.framework.event.exclusion.dao.HibernateExcludedEventDao">
+		<property name="sessionFactory" ref="excludedEventHibernateSessionFactory" />
+	</bean>
 
 	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="ignoreResourceNotFound" value="true"/>
@@ -102,6 +107,29 @@
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+    
+    <bean id="excludedEventHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>ExcludedEvent.hbm.xml</value>
+                <value>ExcludedPayload.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+        <!-- <property name="hibernateProperties" >
+        	<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="ignoreResourceNotFound" value="true"/>
+				<property name="location" value="classpath:ikasan-hibernate.properties"/>
+				<property name="properties">
+					<props>
+					<prop key="hibernate.hbm2ddl.auto">create</prop>
+					</props>
+				</property>
+			</bean>
+        </property>-->
     </bean>
     
 	</beans>
