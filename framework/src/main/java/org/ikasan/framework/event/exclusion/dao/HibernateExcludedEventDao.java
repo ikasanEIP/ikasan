@@ -90,4 +90,9 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 		return (ExcludedEvent) getHibernateTemplate().get(ExcludedEvent.class, excludedEventId);
 	}
 
+
+	public void delete(ExcludedEvent excludedEvent) {
+		getHibernateTemplate().delete(excludedEvent);
+	}
+
 }

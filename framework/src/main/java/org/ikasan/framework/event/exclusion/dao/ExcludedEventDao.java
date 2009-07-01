@@ -68,4 +68,12 @@ public interface ExcludedEventDao{
 	 */
 	public ExcludedEvent getExcludedEvent(long excludedEventId);
 
+	
+	/**
+	 * Deletes excluded event
+	 * 
+	 * @param excludedEvent
+	 */
+	public void delete(ExcludedEvent excludedEvent);
+
 }
