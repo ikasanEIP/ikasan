@@ -27,12 +27,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.framework.module.Module;
+import org.ikasan.framework.module.service.ModuleService;
 
 /**
  * @author The Ikasan Development Service
@@ -44,16 +51,27 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 
 	private ExcludedEventDao excludedEventDao;
 	
+	private ModuleService moduleService;
+	
+	/**
+	 * Only used for debugging the transaction status
+	 */
+	private TransactionManager transactionManager;
+	
 	private Logger logger = Logger.getLogger(ExcludedEventServiceImpl.class);
+	
+	
 	
 	/**
 	 * @param excludedEventDao
 	 * @param listeners
+	 * @param moduleService
 	 */
 	public ExcludedEventServiceImpl(ExcludedEventDao excludedEventDao,
-			List<ExcludedEventListener> listeners) {
+			List<ExcludedEventListener> listeners, ModuleService moduleService) {
 		this.excludedEventDao = excludedEventDao;
 		excludedEventListeners.addAll(listeners);
+		this.moduleService = moduleService;
 	}
 
 	/* (non-Javadoc)
@@ -87,4 +105,53 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 		return excludedEventDao.getExcludedEvent(excludedEventId);
 	}
 
+	/* (non-Javadoc)
+	 * 
+	 * synchronously resubmit, not handling any errors, simply allowing any exception to propogate
+	 * 
+	 * 
+	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#resubmit(long)
+	 */
+	public void resubmit(long excludedEventId) {
+		
+		if (transactionManager!=null){
+			try {
+				int status = transactionManager.getStatus();
+				if (Status.STATUS_ACTIVE!=status){
+					logger.warn("Warning! Resubmission invoked outside of an active transaction!");
+				} 
+			} catch (SystemException e) {
+				logger.error(e);
+			}
+		}
+		
+        
+		ExcludedEvent excludedEvent = getExcludedEvent(excludedEventId);
+		
+		if (excludedEvent==null){
+			throw new IllegalArgumentException("unknown ExcludedEvent id:"+excludedEventId);
+		}
+		
+		Module module = moduleService.getModule(excludedEvent.getModuleName());
+		if (module==null){
+			throw new IllegalArgumentException("unknown Module:"+excludedEvent.getModuleName());
+		}	
+			
+	    Flow flow = module.getFlows().get(excludedEvent.getFlowName());
+	    if (flow==null){ 
+			throw new IllegalArgumentException("unknown Flow"+excludedEvent.getFlowName());
+		}
+		
+	    //invoke the flow with the Event. Any exceptions are left to propagate
+	    flow.invoke(new FlowInvocationContext(), excludedEvent.getEvent());
+	   
+	    
+	    //cleanup the excludedEvent
+	    excludedEventDao.delete(excludedEvent);
+	    
+	}
+
+	public void setTransactionManager(TransactionManager transactionManager){
+		this.transactionManager = transactionManager;
+	}
 }
