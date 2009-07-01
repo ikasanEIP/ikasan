@@ -62,4 +62,17 @@ public interface ExcludedEventService {
 	 */
 	public ExcludedEvent getExcludedEvent(long excludedEventId);
 
+	
+	/**
+	 * Synchronously attempts to resubmit an ExcludedEvent specified by id
+	 * 
+	 * 
+	 * 
+	 * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if referenced
+	 * 	module or flow are not available
+	 * 
+	 * @param excludedEventId
+	 */
+	public void resubmit(long excludedEventId);
+
 }

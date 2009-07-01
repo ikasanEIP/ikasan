@@ -25,7 +25,9 @@ package org.ikasan.framework.event.exclusion.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -34,8 +36,12 @@ import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.framework.module.Module;
+import org.ikasan.framework.module.service.ModuleService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
@@ -70,6 +76,7 @@ public class ExcludedEventServiceImplTest {
     
     private ExcludedEventListener excludedEventListener2 = mockery.mock(ExcludedEventListener.class, "excludedEventListener2");
 	
+    private ModuleService moduleService = mockery.mock(ModuleService.class);
 	/**
 	 * Class under test
 	 */
@@ -82,7 +89,7 @@ public class ExcludedEventServiceImplTest {
 		List<ExcludedEventListener> listeners = new ArrayList<ExcludedEventListener>();
 		listeners.add(excludedEventListener1);
 		listeners.add(excludedEventListener2);
-		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao, listeners);
+		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao, listeners,moduleService);
 	}
 	
 	@Test
@@ -194,5 +201,88 @@ public class ExcludedEventServiceImplTest {
 		
 		mockery.assertIsSatisfied();
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testResubmit_withNonExistantExcludedEvent_willThrowIllegalArgumentException(){
+		final long excludedEventId = 1l;
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(null));
+            }
+        });
+		excludedEventService.resubmit(excludedEventId);
+		mockery.assertIsSatisfied();
+	
+	}
 
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testResubmit_withExcludedEventFromUnknownModule_willThrowIllegalArgumentException(){
+		final long excludedEventId = 1l;
+		final String moduleName = "unknownModule";
+		
+		final ExcludedEvent excludedEvent = new ExcludedEvent(null, moduleName, null, null);
+		
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(moduleService).getModule(moduleName);will(returnValue(null));
+            }
+        });
+		excludedEventService.resubmit(excludedEventId);
+		mockery.assertIsSatisfied();
+	}
+	
+	@Test
+	public void testResubmit_withSuccessfulResubmission_willDeleteExcludedEvent(){
+		final long excludedEventId = 1l;
+		final String moduleName = "moduleName";
+		final String flowName = "unknownFlow";
+		final Event event = mockery.mock(Event.class);
+		
+		final ExcludedEvent excludedEvent = new ExcludedEvent(event, moduleName, flowName, null);
+		final Module module = mockery.mock(Module.class);
+		final Flow flow = mockery.mock(Flow.class);
+		final Map<String, Flow> flows = new HashMap<String,Flow>();
+		flows.put(flowName, flow);
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(moduleService).getModule(moduleName);will(returnValue(module));
+            	one(module).getFlows();will(returnValue(flows));
+            	one(flow).invoke(with(any(FlowInvocationContext.class)), with(equal(event)));
+            	one(excludedEventDao).delete(excludedEvent);
+            }
+        });
+		
+		excludedEventService.resubmit(excludedEventId);
+		mockery.assertIsSatisfied();
+	}
+	
+	public void testResubmit_withExcludedEventFromUnknownFlow_willThrowIllegalArgumentException(){
+		final long excludedEventId = 1l;
+		final String moduleName = "moduleName";
+		final String flowName = "unknownFlow";
+		
+		final ExcludedEvent excludedEvent = new ExcludedEvent(null, moduleName, flowName, null);
+		final Module module = mockery.mock(Module.class);
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(moduleService).getModule(moduleName);will(returnValue(module));
+            	one(module).getFlows();will(returnValue(new HashMap<String,Flow>()));
+            }
+        });
+		excludedEventService.resubmit(excludedEventId);
+		mockery.assertIsSatisfied();
+	}
+	
 }
