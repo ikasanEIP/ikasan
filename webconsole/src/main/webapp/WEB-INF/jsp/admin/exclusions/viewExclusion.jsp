@@ -173,6 +173,17 @@
 	</table>
 	</c:forEach>
 
+	<tr>
+		<td colspan="2">
+		  <c:url var="resubmitLink" value="exclusion.htm">
+                <c:param name="excludedEventId" value="${excludedEvent.id}"/>
+                <c:param name="action" value="resubmit"/>
+              </c:url>
+              <form:form action="${resubmitLink}" method="post">
+                <input type="submit" value="Resubmit" class="controlButton"/>
+              </form:form>
+		</td>
+	</tr>
 
 </div>
 
