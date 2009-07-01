@@ -70,7 +70,7 @@
             <tr>
                 <td>
                     
-                    <a href="viewExcludedEvent.htm?excludedEventId=<c:out value="${exclusion.id}" />">
+                    <a href="exclusion.htm?excludedEventId=<c:out value="${exclusion.id}" />">
                         <c:out value="${exclusion.id}" />
                     </a>
                 </td>           

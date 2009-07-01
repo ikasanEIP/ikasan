@@ -94,8 +94,16 @@
 				<!-- listeners will go here... -->
 			</list>
 		</constructor-arg>
+		<constructor-arg ref="moduleService" />
+		<property name="transactionManager" ref="rawTransactionManager" />
 	</bean>
 	
+	<!-- transaction configuration for excludedEventService -->
+    <aop:config>
+        <aop:pointcut id="initiatorInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.resubmit(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="initiatorInvocation" />
+    </aop:config>
+
 
     
 	<bean id="platformScheduler"
@@ -226,6 +234,10 @@
   <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
     <property name="transactionManagerName" value="java:/TransactionManager"/>
     <property name="userTransactionName" value="UserTransaction"/>
+  </bean>
+  
+  <bean id="rawTransactionManager" class="org.springframework.jndi.JndiObjectFactoryBean">
+  	<property name="jndiName" value="java:/TransactionManager"/>
   </bean>
 
     <!-- ###################################### -->

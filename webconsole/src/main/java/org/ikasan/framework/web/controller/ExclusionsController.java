@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -90,10 +91,31 @@ public class ExclusionsController
      * @param model - The model (map)
      * @return excludedEvent view
      */
-    @RequestMapping("viewExcludedEvent.htm")
+    @RequestMapping(value="exclusion.htm", method=RequestMethod.GET)
     public String view(@RequestParam long excludedEventId, ModelMap model)
     {
         model.addAttribute("excludedEvent", excludedEventService.getExcludedEvent(excludedEventId));
         return "admin/exclusions/viewExclusion";
+    }
+    
+	/**
+     * Handle Resubmission request POST
+     * 
+     * @param model - The model (map)
+     * @return excludedEvent view
+     */
+    @RequestMapping(value="exclusion.htm", method=RequestMethod.POST)
+    public String requestResubmission(@RequestParam long excludedEventId, ModelMap model)
+    {
+    	boolean success = true;
+    	try{
+    	excludedEventService.resubmit(excludedEventId);
+    	} catch(Throwable throwable){
+    		logger.error("Exception caught trying to resubmit",throwable);
+    		success=false;
+    	}
+    	logger.info("Resubmission "+(success?"successful":"failed")+"for excludedEvent id:"+excludedEventId);
+
+    	return "redirect:list.htm";
     }
 }
