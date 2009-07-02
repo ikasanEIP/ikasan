@@ -68,14 +68,19 @@ public class UnzipSplitterTest
         }
     };
 
-    /** Incoming payload */
-    private Payload payload;
+	/**
+	 * ModuleName
+	 */
+	private final String moduleName = "moduleName";
+	
+	/**
+	 * ComponentName
+	 */
+	private final String componentName = "componentName";
 
-    /** Incoming event */
-    private Event event;
 
     /** The splitter to be tested. */
-    private UnzipSplitter splitter;
+    private UnzipSplitter splitter = new UnzipSplitter();
 
     /**
      * Setup runs before each test
@@ -95,25 +100,34 @@ public class UnzipSplitterTest
      */
     @Test
     public void test_successfullUnzippingIntoTwoPayloads() throws SequencerException, IOException
-    {
+    {   	
         final byte[] zippedFileData = this.loadFile("unzipTestZip");
         final byte[] firstFileData = this.loadFile("secondTxt");
         final String firstFileName = "second.txt";
         final byte[] secondFileData = this.loadFile("firstTxt");
         final String secondFileName = "unziptest/first.txt";
-        this.payload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test", zippedFileData);
-        this.event = new Event("finCal", "finCal-calendarSrc");
-        this.event.setPayload(this.payload);
-        this.splitter = new UnzipSplitter();
-        List<Event> newEvents = this.splitter.onEvent(this.event);
+        
+        //create the original payload
+        Payload payload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test", zippedFileData);
+        
+        //create the original Event
+        Event event = new Event("finCal", "finCal-calendarSrc",null,payload);
+
+        //call the method under test
+        List<Event> newEvents = splitter.onEvent(event, moduleName, componentName);
+         
+        //Assert that everything is in order on the resultant events
         Assert.assertTrue(newEvents.size() == 2);
         for (int i = 0; i < newEvents.size(); i++)
         {
-            Assert.assertTrue(newEvents.get(i).getPayloads().size() == 1);
+            Assert.assertTrue("each new Event should only have 1 payload",newEvents.get(i).getPayloads().size() == 1);
         }
+        //check the first event
         Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getName());
         Assert.assertEquals(firstFileName, newEvents.get(0).getName());
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(0).getPayloads().get(0).getContent()));
+        
+        //check the second event
         Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getName());
         Assert.assertEquals(secondFileName, newEvents.get(1).getName());
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(1).getPayloads().get(0).getContent()));
@@ -134,28 +148,46 @@ public class UnzipSplitterTest
         final String firstFileName = "second.txt";
         final byte[] secondFileData = this.loadFile("firstTxt");
         final String secondFileName = "unziptest/first.txt";
-        this.payload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test", zippedFileData);
-        Payload anotherPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test",
+        
+        //create the original payloads
+        Payload firstOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test", zippedFileData);
+        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test",
             zippedFileData);
-        this.event = new Event("finCal", "finCal-calendarSrc");
-        this.event.setPayload(this.payload);
-        this.event.setPayload(anotherPayload);
-        this.splitter = new UnzipSplitter();
-        List<Event> newEvents = this.splitter.onEvent(this.event);
+        List<Payload> payloads = new ArrayList<Payload>();
+        payloads.add(firstOriginalPayload);
+        payloads.add(secondOriginalPayload);
+        
+        //create the original event
+        Event event = new Event("finCal", "finCal-calendarSrc",null,payloads);
+//        event.setPayload(this.payload);
+//        event.setPayload(secondOriginalPayload);
+
+        //call the method under test
+        List<Event> newEvents = splitter.onEvent(event, moduleName, componentName);
+        
+        //Assert that everything is in order on the resultant events
         Assert.assertTrue(newEvents.size() == 4);
         for (int i = 0; i < newEvents.size(); i++)
         {
-            Assert.assertTrue(newEvents.get(i).getPayloads().size() == 1);
+            Assert.assertTrue("each new Event should only have 1 payload",newEvents.get(i).getPayloads().size() == 1);
         }
+        
+        //check the first event/payload
         Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getName());
         Assert.assertEquals(firstFileName, newEvents.get(0).getName());
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(0).getPayloads().get(0).getContent()));
+        
+        //check the second event/payload       
         Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getName());
         Assert.assertEquals(secondFileName, newEvents.get(1).getName());
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(1).getPayloads().get(0).getContent()));
+        
+        //check the third event/payload
         Assert.assertEquals(firstFileName, newEvents.get(2).getPayloads().get(0).getName());
         Assert.assertEquals(firstFileName, newEvents.get(2).getName());
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(2).getPayloads().get(0).getContent()));
+        
+        //check the fourth event/payload
         Assert.assertEquals(secondFileName, newEvents.get(3).getPayloads().get(0).getName());
         Assert.assertEquals(secondFileName, newEvents.get(3).getName());
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(3).getPayloads().get(0).getContent()));
@@ -177,10 +209,11 @@ public class UnzipSplitterTest
         final CloneNotSupportedException payloadCloningException = new CloneNotSupportedException(
             "Exception while cloning payload.");
         final byte[] zippedFileData = this.loadFile("unzipTestZip");
-        payload = this.classMockery.mock(Payload.class, "incomingPayload");
-        event = this.classMockery.mock(Event.class, "incomingEvent");
-        payloads.add(this.payload);
-        this.splitter = new UnzipSplitter();
+        final Payload payload = classMockery.mock(Payload.class, "incomingPayload");
+        final Event event = classMockery.mock(Event.class, "incomingEvent");
+        payloads.add(payload);
+
+        
         this.classMockery.checking(new Expectations()
         {
             {
@@ -200,7 +233,7 @@ public class UnzipSplitterTest
              * cloning exception.
              */
             @SuppressWarnings("unused")
-            List<Event> events = this.splitter.onEvent(this.event);
+            List<Event> events = splitter.onEvent(event, moduleName, componentName);
             Assert.fail("Splitting fails due to CloningNotSupportedException being thrown when spawning payload.");
         }
         catch (SequencerException e)
@@ -209,70 +242,7 @@ public class UnzipSplitterTest
         }
     }
 
-    /**
-     * Test unsuccessful incoming event with one payload split into one event with two payloads. Clonning the two
-     * payloads will be successful. CloneNotSupportedException will be thrown when cloning first event.
-     * 
-     * @throws CloneNotSupportedException Thrown when cloning <code>Event</code>
-     * @throws IOException Thrown when error reading in test zipped files
-     */
-    // cannot qualify mocked objects with 'this' within anonymous class
-    @SuppressWarnings( { "unqualified-field-access", "synthetic-access" })
-    @Test
-    public void test_unsuccessfulUnzipSplitterEventCloningException() throws CloneNotSupportedException, IOException
-    {
-        final List<Payload> payloads = new ArrayList<Payload>();
-        final CloneNotSupportedException eventCloningException = new CloneNotSupportedException(
-            "Exception while cloning event.");
-        final byte[] zippedFileData = this.loadFile("unzipTestZip");// bb0.array();
-        final byte[] firstFileData = this.loadFile("secondTxt");
-        final String firstFileName = "second.txt";
-        final byte[] secondFileData = this.loadFile("firstTxt");
-        final String secondFileName = "unziptest/first.txt";
-        this.payload = this.classMockery.mock(Payload.class, "incomingPayload");
-        this.event = this.classMockery.mock(Event.class, "incomingEvent");
-        payloads.add(this.payload);
-        this.splitter = new UnzipSplitter();
-        final Payload firstNewPayload = this.classMockery.mock(Payload.class, "firstNewPayload");
-        final Payload secondNewPayload = this.classMockery.mock(Payload.class, "secondNewPayload");
-        this.classMockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(event).idToString();
-                exactly(2).of(payload).getId();
-                exactly(1).of(event).getPayloads();
-                will(returnValue(payloads));
-                exactly(1).of(payload).getContent();
-                will(returnValue(zippedFileData));
-                exactly(1).of(payload).spawn();
-                will(returnValue(firstNewPayload));
-                exactly(1).of(firstNewPayload).setContent(firstFileData);
-                exactly(1).of(firstNewPayload).setName(firstFileName);
-                exactly(1).of(firstNewPayload).getId();
-                exactly(1).of(payload).spawn();
-                will(returnValue(secondNewPayload));
-                exactly(1).of(secondNewPayload).setContent(secondFileData);
-                exactly(1).of(secondNewPayload).setName(secondFileName);
-                exactly(1).of(secondNewPayload).getId();
-                exactly(1).of(event).spawn();
-                will(throwException(eventCloningException));
-            }
-        });
-        try
-        {
-            /**
-             * This event list is never actually returned as a <code>CloningNotSupportedException</code> was thrown when
-             * cloning exception.
-             */
-            @SuppressWarnings("unused")
-            List<Event> events = this.splitter.onEvent(this.event);
-            Assert.fail("Splitting fails due to CloningNotSupportedException being thrown when spawning payload.");
-        }
-        catch (SequencerException e)
-        {
-            Assert.assertEquals(eventCloningException, e.getCause());
-        }
-    }
+
 
     /**
      * Load test files from classpath.

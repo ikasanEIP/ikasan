@@ -94,7 +94,7 @@ public class SinglePayloadPerEventProvider implements EventProvider
         List<Event> events = new ArrayList<Event>();
         for (Payload payload : payloads)
         {
-            Event event = new Event(payload, this.moduleName, this.componentName);
+            Event event = new Event(this.moduleName, this.componentName, null,payload);
             events.add(event);
         }
         return events;

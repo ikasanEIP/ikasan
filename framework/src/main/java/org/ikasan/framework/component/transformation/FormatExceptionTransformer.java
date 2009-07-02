@@ -120,7 +120,7 @@ public abstract class FormatExceptionTransformer implements Transformer
 
             // replace event payloads with the new payload
             payloads.clear();
-            event.setPayload(payload);
+            //event.setPayload(payload); - RJD dont think this is needed as the payload is already on the event
         }
         catch (TransformerException e)
         {

@@ -91,7 +91,7 @@ public class TokenizingSplitter implements Sequencer
      * @throws SequencerException Wrapper for CloneNotSupportedException thrown when cloning <code>Event</code>/
      *             <code>Payload</code>
      */
-    public List<Event> onEvent(Event event) throws SequencerException
+    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
     {
         List<Event> returnedEvents = new ArrayList<Event>();
         // TODO - we may need to pop the parent id on each of the spawned events.
@@ -109,12 +109,12 @@ public class TokenizingSplitter implements Sequencer
             {
                 // Get the tokenized list
                 List<Payload> newPayloads = tokenizeToPayloads(payload);
-                for (Payload newPayload : newPayloads)
+                for (int i=0;i<newPayloads.size();i++)
                 {
                     // Create new independent event and clear existing payloads
-                    Event newEvent = event.spawn();
-                    newEvent.getPayloads().clear();
-                    newEvent.setPayload(newPayload);
+                	Payload newPayload = newPayloads.get(i);
+                    Event newEvent = event.spawnChild(moduleName, componentName, i, newPayload);
+
                     // Event to the Event list to be returned
                     returnedEvents.add(newEvent);
                     if (logger.isInfoEnabled())

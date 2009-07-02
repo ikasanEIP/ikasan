@@ -26,10 +26,12 @@
  */
 package org.ikasan.framework.error.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.junit.Test;
 
@@ -52,7 +54,7 @@ public class ErrorOccurrenceTest {
 		Throwable cause = new NullPointerException();
 		Throwable throwable = new Throwable(cause);
 		
-		Event event = new Event(null, null);
+		Event event = new Event(null, null, null,new ArrayList<Payload>());
 		
 		
 		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, event, moduleName, flowName, flowElementName, expiry);

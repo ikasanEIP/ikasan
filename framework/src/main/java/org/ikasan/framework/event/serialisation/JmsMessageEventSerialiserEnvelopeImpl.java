@@ -75,10 +75,11 @@ public class JmsMessageEventSerialiserEnvelopeImpl implements JmsMessageEventSer
     public Event fromMapMessage(MapMessage mapMessage, String moduleName, String componentName)
             throws EventSerialisationException
     {
-        Event event = new Event(moduleName, componentName);
+        Event event = null;
         try
         {
             Envelope envelope = envelopeFactory.fromMessage(mapMessage);
+            event = new Event(envelope.getId());
             List<Payload> payloads = envelope.getPayloads();
             event.setPayloads(payloads);
             event.setEventAttribsFromEnvelope(envelope);

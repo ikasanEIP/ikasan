@@ -105,6 +105,7 @@ public class JmsMessageEventSerialiserEnvelopeImplTest
         payloads.add(payload2);
         String moduleName = "moduleName";
         String componentName = "componentName";
+        String id="envelopeId";
         mockery.checking(new Expectations()
         {
             {
@@ -159,8 +160,9 @@ public class JmsMessageEventSerialiserEnvelopeImplTest
             }
         });
         Event event = jmsMessageEventSerialiserEnvelopeImpl.fromMapMessage(mapMessage, moduleName, componentName);
-        Assert.assertEquals(moduleName, event.getComponentGroupName());
-        Assert.assertEquals(componentName, event.getComponentName());
+//        Assert.assertEquals(moduleName, event.getComponentGroupName());
+//        Assert.assertEquals(componentName, event.getComponentName());
+        Assert.assertEquals(id, event.getId());
     }
 
     /**

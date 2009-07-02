@@ -60,12 +60,11 @@ public class EventAggregatingSequencer implements Sequencer
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event, java.lang.String, java.lang.String)
      */
-    public List<Event> onEvent(Event event) throws SequencerException
+    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
     {
         try
         {

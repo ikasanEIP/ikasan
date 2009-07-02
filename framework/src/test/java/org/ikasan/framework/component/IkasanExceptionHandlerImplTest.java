@@ -36,6 +36,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.ikasan.common.CommonExceptionType;
 import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.ExceptionType;
+import org.ikasan.common.Payload;
 import org.ikasan.framework.exception.DefaultExceptionDefinition;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -183,7 +184,7 @@ public class IkasanExceptionHandlerImplTest
         
         //
         // create a dummy event
-        event = new Event(moduleName, componentName);
+        event = new Event(null,null,null,new ArrayList<Payload>());
     }
 
     /**

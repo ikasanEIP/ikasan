@@ -65,7 +65,7 @@ public class HibernateExcludedEventDaoTest {
 	public void testSaveAndLoad(){
 		
 		//set up an event to exclude
-		Event event = new Event("componentGroupName", null);
+		
 
 		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
 		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
@@ -75,8 +75,7 @@ public class HibernateExcludedEventDaoTest {
 		payloads.add(payload1);
 		payloads.add(payload2);
 		
-		event.setPayloads(payloads);
-		
+		Event event = new Event(null, null, null,payloads);
 		
 		ExcludedEvent excludedEvent = new ExcludedEvent(event,moduleName, flowName, new Date());
 
@@ -172,7 +171,7 @@ public class HibernateExcludedEventDaoTest {
 	}
 	
 	public Event createEvent(){
-		Event event = new Event("componentGroupName", null);
+
 
 		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
 		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
@@ -182,7 +181,7 @@ public class HibernateExcludedEventDaoTest {
 		payloads.add(payload1);
 		payloads.add(payload2);
 		
-		event.setPayloads(payloads);
+		Event event = new Event(null, null, null,payloads);
 		return event;
 	
 	}
