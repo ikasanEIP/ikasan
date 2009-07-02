@@ -93,10 +93,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY);
     final IkasanExceptionAction rollbackStopAction =
         new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
-//    final IkasanExceptionAction rollforwardStopAction =
-//        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
-    final IkasanExceptionAction skipAction =
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.SKIP_EVENT);
+    
     final String initiatorName = "initiatorName";
     final String moduleName = "moduleName";
 
