@@ -143,7 +143,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     {
         Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
 
-            List<Event> events = sequencer.onEvent(event);
+            List<Event> events = sequencer.onEvent(event, moduleName, flowElement.getComponentName());
             if (events!=null){
                 notifyListenersAfterSequencerElement(events, moduleName, flowName, flowElement);
             }

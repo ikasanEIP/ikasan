@@ -59,8 +59,8 @@
 		<property name="id" >
 			<column name="EventId" length="255" not-null="true"/>
 		</property>
-		<property name="componentGroupName" column="ComponentGroupName"  />
-		<property name="componentName" column="ComponentName"  />
+		<!-- <property name="componentGroupName" column="ComponentGroupName"  />
+		<property name="componentName" column="ComponentName"  />-->
 		<property name="priority" column="Priority"  />
 		<property name="timestamp" column="Timestamp"  />
 

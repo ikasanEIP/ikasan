@@ -37,6 +37,7 @@ import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
@@ -70,7 +71,15 @@ public class SinglePayloadPerEventSplitterTest
     final List<Payload> spawnedEventPayloads = classMockery.mock(List.class, "spawnedEventPayloads");
 
     /** Mock payload */
-    final Payload payload = classMockery.mock(Payload.class, "spawnedEvent");
+    final Payload payload1 = classMockery.mock(Payload.class, "payload1");
+    /** Mock payload */
+    final Payload payload2 = classMockery.mock(Payload.class, "payload2");
+    /** Mock payload */
+    final Payload payload3 = classMockery.mock(Payload.class, "payload3");
+    
+    final String moduleName = "moduleName";
+    
+    final String componentName ="componentName";
 
     /**
      * Setup runs before each test
@@ -93,7 +102,8 @@ public class SinglePayloadPerEventSplitterTest
         throws ResourceException, SequencerException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(payload);
+        payloads.add(payload1);
+
         
         // 
         // set expectations
@@ -109,8 +119,10 @@ public class SinglePayloadPerEventSplitterTest
         });
 
         SinglePayloadPerEventSplitter singlePayloadPerEventSplitter = new SinglePayloadPerEventSplitter();
-        List<Event> events = singlePayloadPerEventSplitter.onEvent(event);
+        List<Event> events = singlePayloadPerEventSplitter.onEvent(event, moduleName, componentName);
         assertTrue(events.size() == 1);
+        
+        classMockery.assertIsSatisfied();
     }
 
     /**
@@ -126,9 +138,11 @@ public class SinglePayloadPerEventSplitterTest
         throws ResourceException, SequencerException, CloneNotSupportedException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(payload);
-        payloads.add(payload);
-        payloads.add(payload);
+        payloads.add(payload1);
+        payloads.add(payload2);
+        payloads.add(payload3);
+        
+        final Sequence sequence = classMockery.sequence("invocationSequence");
         
         // 
         // set expectations
@@ -137,34 +151,30 @@ public class SinglePayloadPerEventSplitterTest
             {
                 // get the event's payloads
                 one(event).getPayloads();
+                inSequence(sequence);
                 will(returnValue(payloads));
 
                 // spawn one event for each payload
-                exactly(3).of(event).spawn();
+                one(event).spawnChild(moduleName, componentName, 0, payload1);
+                inSequence(sequence);
                 will(returnValue(spawnedEvent));
 
-                // clear each new event's existing payloads
-                exactly(3).of(spawnedEvent).getPayloads();
-                will(returnValue(spawnedEventPayloads));
-                exactly(3).of(spawnedEventPayloads).clear();
-
-                // add the new event's payload
-                exactly(3).of(spawnedEvent).setPayload(payload);
+                one(event).spawnChild(moduleName, componentName, 1, payload2);
+                inSequence(sequence);
+                will(returnValue(spawnedEvent));
+                
+                one(event).spawnChild(moduleName, componentName, 2, payload3);
+                inSequence(sequence);
+                will(returnValue(spawnedEvent));
             }
         });
 
         SinglePayloadPerEventSplitter singlePayloadPerEventSplitter = new SinglePayloadPerEventSplitter();
-        List<Event> events = singlePayloadPerEventSplitter.onEvent(event);
+        List<Event> events = singlePayloadPerEventSplitter.onEvent(event, moduleName, componentName);
         assertTrue(events.size() == 3);
-    }
-
-    /**
-     * Teardown after each test
-     */
-    @After
-    public void tearDown()
-    {
-        // check all expectations were satisfied
+        
         classMockery.assertIsSatisfied();
     }
+
+
 }

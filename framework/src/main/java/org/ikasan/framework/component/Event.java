@@ -31,11 +31,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Envelope;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.MetaData;
 import org.ikasan.common.component.PayloadHelper;
-import org.ikasan.common.component.Priority;
 import org.ikasan.common.factory.EnvelopeFactory;
 
 /**
@@ -50,12 +48,7 @@ public class Event extends MetaData implements Cloneable
     private static final long serialVersionUID = 1L;
     /** Logger instance */
     private static Logger logger = Logger.getLogger(Event.class);
-    /** Event constants */
-    public static String UNDEFINED = "UNDEFINED"; //$NON-NLS-1$
-    /** Component Group Name currently handling the Event */
-    private String componentGroupName = null;
-    /** Component in the Component Group Name handling the Event */
-    private String componentName = null;
+
 
 
     /** Event contained payloads */
@@ -65,44 +58,84 @@ public class Event extends MetaData implements Cloneable
     /**
      * private Default constructor requried by ORM
      */
-    private Event(){}
-
+    @SuppressWarnings("unused")
+	private Event(){}
+    
     /**
-     * New Event based on no incoming args. This will create an Event with an
-     * empty payload list.
+     * Constructor for new Events
      * 
-     * @param componentGroupName
-     * @param componentName
-     */
-    public Event(String componentGroupName, String componentName)
-    {
-        //
-        // pass an empty payload arraylist
-        this(new ArrayList<Payload>(), componentGroupName, componentName);
-        this.name = Event.UNDEFINED;
-    }
-
-    /**
-     * New event createed from the incoming Envelope.
+     * To be used only for origination of new Events.
+     * Not to used for deserialising serialised Events
      * 
-     * @param envelope
-     * @param componentGroupName
-     * @param componentName
+     * 
+     * @param originatingModuleName
+     * @param originatingComponentName
+     * @param initiatorGeneratedId
      */
-    public Event(final Envelope envelope, String componentGroupName, String componentName)
-    {
-        this(envelope.getPayloads(), componentGroupName, componentName);
-        setEventAttribsFromEnvelope(envelope);
+    private Event(String originatingModuleName, String originatingComponentName, String originatorGeneratedId){
+    	this.id=originatingModuleName+"_"+originatingComponentName+"_"+originatorGeneratedId;
+    	this.timestamp=generateTimestamp();
+    } 
+    
+    /**
+     * Constructor for new Events
+     * 
+     * To be used only for origination of new Events.
+     * Not to used for deserialising serialised Events
+     * 
+     * 
+     * @param originatingModuleName
+     * @param originatingComponentName
+     * @param originatorGeneratedId
+     * @param payloads
+     */
+    public Event(String originatingModuleName, String originatingComponentName, String originatorGeneratedId, List<Payload> payloads){
+    	this(originatingModuleName,originatingComponentName,originatorGeneratedId);
+    	this.payloads=new ArrayList<Payload>(payloads);
     }
+    
+    /**
+     * Constructor for new Events
+     * 
+     * To be used only for origination of new Events.
+     * Not to used for deserialising serialised Events
+     * 
+     * 
+     * @param originatingModuleName
+     * @param originatingInitiatorName
+     * @param initiatorGeneratedId
+     * @param payload
+     */
+    public Event(String originatingModuleName, String originatingComponentName, String originatorGeneratedId, Payload payload){
+    	this(originatingModuleName,originatingComponentName,originatorGeneratedId);
+    	List<Payload> payloads = new ArrayList<Payload>();
+    	payloads.add(payload);
+    	this.payloads=new ArrayList<Payload>(payloads);
+    } 
 
     /**
+     * Constructor for reconstituting Events
+     * 
+     * To be used only for reconstitution of previously serialised Events.
+     * Not to used for originating new Events
+     * 
+     * TODO - RD - probably want to expand the constructor arguments here to everything required when reconstituting
+     *        this would enable us to privatise all the field mutators, leaving a much safer object
+     * 
+     * @param id
+     */
+    public Event(String id) {
+		this.id=id;
+	}
+
+
+	/**
      * Sets the event from an envelope
      * 
      * @param envelope
      */
     public void setEventAttribsFromEnvelope(final Envelope envelope)
     {
-        this.id = envelope.getId();
         this.timestamp = envelope.getTimestamp();
         this.timestampFormat = envelope.getTimestampFormat();
         this.timezone = envelope.getTimezone();
@@ -150,174 +183,37 @@ public class Event extends MetaData implements Cloneable
         return clone;
     }
 
-    /**
-     * Returns a completely new instance of the payload with a deep copy of all
-     * fields with the exception of id and timestamp which are populated with
-     * new values to reflect that this is a distinctly new instance from the
-     * original. Note the subtle difference in comparison with clone() which
-     * does not change any fields from their original values.
-     * 
-     * @return spawned Event
-     * @throws CloneNotSupportedException
-     * 
-     */
-    public Event spawn() throws CloneNotSupportedException
-    {
-        Event spawned = this.clone();
-        spawned.setId(generateId());
-        spawned.setTimestamp(generateTimestamp());
-        return spawned;
-    }
-
-    /**
-     * Event Constructor
-     * 
-     * @param payload
-     * @param componentGroupName
-     * @param componentName
-     */
-    public Event(final Payload payload, String componentGroupName, String componentName)
-    {
-        this(payload, true, componentGroupName, componentName);
-    }
-
-    /**
-     * Event Constructor
-     * 
-     * @param payload
-     * @param keepOriginal
-     * @param componentGroupName
-     * @param componentName
-     */
-    private Event(final Payload payload, final boolean keepOriginal, String componentGroupName, String componentName)
-    {
-        this(componentGroupName, componentName);
-        this.setPayload(payload);
-
-    }
 
 
 
-    /**
-     * Event constructor based on incoming payload list and specified option of
-     * keeping an original copy of the incoming payloads within the event.
-     * 
-     * @param payloads
-     * @param componentGroupName
-     * @param componentName
-     */
-    public Event(final List<Payload> payloads, String componentGroupName, String componentName)
-    {
-        //
-        // timestamp it immediately
-        this.timestamp = generateTimestamp();
-        this.timestampFormat = MetaDataInterface.DEFAULT_TIMESTAMP_FORMAT;
-        this.timezone = MetaDataInterface.DEFAULT_TIMEZONE;
-        this.name = Event.UNDEFINED;
-        this.id = generateId();
-
-        // populate actual payload(s)
-        this.payloads = new ArrayList<Payload>();
-        this.payloads.addAll(payloads);
-
-        // initialise the events current component details
-        this.setComponentGroupName(componentGroupName);
-        this.setComponentName(componentName);
-
-        // set priority to default if no payload defined; otherwise
-        // set the priority to the priority of the highest incoming payload
-        Payload pl = getPayloadHighestPriority();
-        if (pl == null){
-            this.priority = new Integer(Priority.NORMAL.getLevel());
-        }
-        else{
-            this.priority = pl.getPriority();
-        }
-       
-        
-        
-        logger.info("Created " + this.idToString() //$NON-NLS-1$
-                + "within [" + this.getComponentName() + "] [" //$NON-NLS-1$//$NON-NLS-2$
-                + this.getComponentGroupName() + "]."); //$NON-NLS-1$
-    }
-
-
-
-    /**
-     * Sets component group name.
-     * 
-     * @param componentGroupName
-     */
-    public final void setComponentGroupName(final String componentGroupName)
-    {
-        this.componentGroupName = componentGroupName;
-        logger.debug("Component group name set to [" //$NON-NLS-1$
-                + this.componentGroupName + "]."); //$NON-NLS-1$
-    }
-
-    /**
-     * Returns component group name.
-     * 
-     * @return String
-     * 
-     */
-    public final String getComponentGroupName()
-    {
-        logger.debug("Returning component group name [" //$NON-NLS-1$
-                + this.componentGroupName + "]..."); //$NON-NLS-1$
-        return this.componentGroupName;
-    }
-
-    /**
-     * Sets component name.
-     * 
-     * @param componentName
-     */
-    public final void setComponentName(final String componentName)
-    {
-        this.componentName = componentName;
-        logger.debug("Component name set to [" + this.componentName + "]."); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    /**
-     * Returns component name.
-     * 
-     * @return componentName
-     */
-    public final String getComponentName()
-    {
-        logger.debug("Returning component name [" + this.componentName + "]..."); //$NON-NLS-1$ //$NON-NLS-2$
-        return this.componentName;
-    }
-
-    /**
-     * Adds a payload or replaces if exists.
-     * 
-     * If the payload already exists, it is overwritten. If it is a new payload
-     * it is simply added to the end of the payload array list.
-     * 
-     * @param payload
-     */
-    public void setPayload(final Payload payload)
-    {
-        int index = this.payloads.indexOf(payload);
-        if (index < 0)
-        {
-            this.payloads.add(payload);
-            logger.debug("First payload added at index [" //$NON-NLS-1$
-                    + this.payloads.indexOf(payload) + "]."); //$NON-NLS-1$
-            // This is the primary payload, so set the name, spec and srcSystem
-            logger.debug("Setting name, spec and srcSystem on event from primary payload."); //$NON-NLS-1$
-            this.name = payload.getName();
-            this.spec = payload.getSpec();
-            this.srcSystem = payload.getSrcSystem();
-        }
-        else
-        {
-            this.payloads.set(index, payload);
-            logger.debug("Payload set at index [" + index + "]."); //$NON-NLS-1$//$NON-NLS-2$
-        }
-    }
+//    /**
+//     * Adds a payload or replaces if exists.
+//     * 
+//     * If the payload already exists, it is overwritten. If it is a new payload
+//     * it is simply added to the end of the payload array list.
+//     * 
+//     * @param payload
+//     */
+//    public void setPayload(final Payload payload)
+//    {
+//        int index = this.payloads.indexOf(payload);
+//        if (index < 0)
+//        {
+//            this.payloads.add(payload);
+//            logger.debug("First payload added at index [" //$NON-NLS-1$
+//                    + this.payloads.indexOf(payload) + "]."); //$NON-NLS-1$
+//            // This is the primary payload, so set the name, spec and srcSystem
+//            logger.debug("Setting name, spec and srcSystem on event from primary payload."); //$NON-NLS-1$
+//            this.name = payload.getName();
+//            this.spec = payload.getSpec();
+//            this.srcSystem = payload.getSrcSystem();
+//        }
+//        else
+//        {
+//            this.payloads.set(index, payload);
+//            logger.debug("Payload set at index [" + index + "]."); //$NON-NLS-1$//$NON-NLS-2$
+//        }
+//    }
 
     /**
      * Returns a list of payloads.
@@ -337,12 +233,13 @@ public class Event extends MetaData implements Cloneable
      */
     public void setPayloads(List<Payload> payloadList)
     {
-        logger.debug("Setting payload list..."); //$NON-NLS-1$
-        //
-        // iterate over existing entries
-        for (Payload payload : payloadList){
-            setPayload(payload);
-        }
+//        logger.debug("Setting payload list..."); //$NON-NLS-1$
+//        //
+//        // iterate over existing entries
+//        for (Payload payload : payloadList){
+//            setPayload(payload);
+//        }
+    	this.payloads=payloadList;
     }
 
 
@@ -374,8 +271,6 @@ public class Event extends MetaData implements Cloneable
         return "id=[" + this.id + "] "
                 + "priority=[" + this.priority + "] "
                 + "timestamp=[" + this.timestamp + "] "
-                + "componentGroupName=[" + this.componentGroupName + "] "
-                + "componentName=[" + this.componentName + "] "
                 + "payload=[" + this.payloads + "] ";
     }
 
@@ -438,34 +333,19 @@ public class Event extends MetaData implements Cloneable
         return envelope;
     }
     
-    /**
-     * Return the highest priority Payload from the list passed in
-     *
-     * @param payloadList
-     * @return the highest priority Payload from the list passed in
-     */
-    private  Payload getPayloadHighestPriority()
-    {
-        Payload priorityPayload = null;
+    
 
-        // Iterate over payloads
-        for (Payload payload : payloads)
-        {
-            // Populate first time through
-            if (priorityPayload == null)
-            {
-                priorityPayload = payload;
-            }
+	public Event spawnChild(String moduleName, String componentName, int siblingNo,
+			List<Payload> payloads) {
+		Event event = new Event(moduleName, componentName, "#"+getId()+"."+siblingNo,payloads);
+		event.setPriority(getPriority());
+		return event;
+	}
 
-            // Update only if we find a higher priority
-            if (payload.getPriority().compareTo(priorityPayload.getPriority()) > 0)
-            {
-                priorityPayload = payload;
-            }
-        }
-
-        return priorityPayload;
-    }
-
-
+	public Event spawnChild(String moduleName, String componentName, int siblingNo,
+			Payload payload) {
+		List<Payload>payloads = new ArrayList<Payload>();
+		payloads.add(payload);
+		return spawnChild(moduleName, componentName, siblingNo, payloads);
+	}
 }

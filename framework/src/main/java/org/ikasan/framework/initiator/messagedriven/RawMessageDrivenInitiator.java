@@ -89,8 +89,8 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
         Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
             MetaDataInterface.UNDEFINED, message.getText().getBytes());
         //
-        Event event = new Event(moduleName, name);
-        event.setPayload(payload);
+        Event event = new Event(moduleName, name,message.getJMSMessageID(),payload);
+
         return event;
     }
 

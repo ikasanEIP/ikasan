@@ -76,7 +76,7 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
         this.payloadFactory = payloadFactory;
     }
     
-    public boolean initiate(String payloadName, Spec spec, String srcSystem, String payloadContent)
+    public boolean initiate(String payloadName, Spec spec, String srcSystem, String payloadContent, String originationId)
     {
         if (!available){
             throw new IllegalStateException("Initiator is not available for business");
@@ -84,12 +84,9 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
         
         Payload singlePayload = payloadFactory.newPayload(payloadName, spec, srcSystem, payloadContent.getBytes());  
         
-        
-        List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(singlePayload);
 
         List<Event>events = new ArrayList<Event>();
-        events.add(new Event(payloads, moduleName, name));
+        events.add(new Event(moduleName, name, originationId, singlePayload));
         invokeFlow(events);
         return true;
         

@@ -140,12 +140,14 @@ public class UserExceptionHandlerImplTest
     public void testInvokeWithConfiguredPublishableAndDuplicateFilteringButIsNotDuplicateTransformsAndPublishes() throws Exception
     {
     	//create and configure the ExceptionHandler
-        UserExceptionDefinition ued = new UserExceptionDefinition(new Integer(999), new Integer(0), "TestExternalExceptionDefRef");
-        ued.setPublishable(new Boolean(true));
-        ued.setDropDuplicate(true);
-        ued.setDropDuplicatePeriod(dropDuplicatePeriod);
+        UserExceptionDefinition userExceptionDefinition = new UserExceptionDefinition(new Integer(999), new Integer(0), "TestExternalExceptionDefRef");
+        userExceptionDefinition.setPublishable(new Boolean(true));
+        userExceptionDefinition.setDropDuplicate(true);
+        userExceptionDefinition.setDropDuplicatePeriod(dropDuplicatePeriod);
+        
         Map<String, UserExceptionDefinition> userExceptionDefsMap = new HashMap<String, UserExceptionDefinition>();
-        userExceptionDefsMap.put(testResolutionId, ued);
+        userExceptionDefsMap.put(testResolutionId, userExceptionDefinition);
+        
         Map<String, ExternalExceptionDefinition> externalExceptionDefsMap = new HashMap<String, ExternalExceptionDefinition>();
         ExternalExceptionDefinition externalExceptionDefinition = ExternalExceptionDefinition.getDefaultExternalExceptionDefinition();
         externalExceptionDefsMap.put("TestExternalExceptionDefRef", externalExceptionDefinition);
@@ -261,7 +263,7 @@ public class UserExceptionHandlerImplTest
         this.classMockery.checking( new Expectations()
         {
             {
-                one(payloadFactory).newPayload("emrException",Spec.TEXT_XML, null, transformedException.getBytes());will(returnValue(exceptionPayload));
+                one(payloadFactory).newPayload("emrException",Spec.TEXT_XML, "userExceptionHandler", transformedException.getBytes());will(returnValue(exceptionPayload));
             	allowing(exceptionPayload).getPriority();
 				will(returnValue(payloadPriority));
 				
