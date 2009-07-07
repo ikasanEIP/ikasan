@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+<%@ include file="/WEB-INF/jsp/admin/errors/errorsTop.jsp"%>
 <%-- 
 # //
 # //

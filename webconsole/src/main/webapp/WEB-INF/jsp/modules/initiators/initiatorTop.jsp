@@ -38,4 +38,8 @@
 
 <h2><c:out value="${initiator.name}" /></h2>
 
+<p>
+	Exclusions Noted:${initiator.exclusions}
+</p>
+
 

@@ -1,5 +1,10 @@
 <%@ include file="/WEB-INF/jsp/top.jsp"%>
 <%-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -27,7 +32,7 @@
 --%>
 <div class="subnavcontainer">
 	<ul>
-		<li><a href="<c:url value='search.htm'/>">Search Events</a></li>
+		<li><a href="<c:url value='search.htm'/>">Search Errors</a></li>
 		
         <c:if test="${searchResultsUrl != null}">
 

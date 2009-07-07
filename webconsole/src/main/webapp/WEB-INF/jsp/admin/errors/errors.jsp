@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+<%@ include file="/WEB-INF/jsp/admin/errors/errorsTop.jsp"%>
 <%-- 
 # //
 # //
@@ -37,11 +37,21 @@
 <div id="searchResultsHeader">
     
     <c:url var="nextPageLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
     	<c:param name="page" value="${page+1}"/>
+    	<c:param name="orderBy" value="${orderBy}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
     </c:url>
     
     <c:url var="previousPageLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
     	<c:param name="page" value="${page-1}"/>
+    	<c:param name="orderBy" value="${orderBy}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
     </c:url>
     
 
@@ -58,19 +68,60 @@
     
 
 </div> <!--end searchResultsHeader -->
+
+    <c:url var="idLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="id"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+    
+    <c:url var="moduleLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="moduleName"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+    
+    <c:url var="flowLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="flowName"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+    
+    <c:url var="logTimeLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="logTime"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+
 <table id="loggedErrors" class="listTable">
     <thead>
         <tr>
-            <th>Module</th>
-            <th>Flow/Initiator Name</th>
+            <th><a href="<c:out value="${idLink}" escapeXml="true" />">Id</a></th>
+            <th><a href="<c:out value="${moduleLink}" escapeXml="true" />">Module</a></th>
+            <th><a href="<c:out value="${flowLink}" escapeXml="true" />">Flow</a></th>
             <th>Summary</th>
-            <th>Time Logged</th>
+			<th><a href="<c:out value="${logTimeLink}" escapeXml="true" />">Time Logged</a></th>
         </tr>
     </thead>
 
     <tbody>
-        <c:forEach items="${loggedErrors}" var="error">
-            <tr>           
+        <c:forEach items="${results}" var="error">
+            <c:url var="viewErrorLink" value="viewError.htm">   	
+    			<c:param name="errorId" value="${error.id}"/>
+    			<c:param name="searchResultsUrl" value="${searchResultsUrl}"/>
+    		</c:url>
+            <tr>      
+                <td>
+                	<a href="<c:out value="${viewErrorLink}" escapeXml="true" />"><c:out value="${error.id}" /></a>
+                </td>                 
                 <td>
                     <c:out value="${error.moduleName}" />
                 </td>
@@ -83,9 +134,10 @@
                     </c:if>
                 </td>
                 <td>
-                	<a href="viewError.htm?errorId=<c:out value="${error.id}" />">
-                    	<c:out value="${error.errorSummary}" />
-                   </a>
+                	<a href="<c:out value="${viewErrorLink}" escapeXml="true" />">
+                		<c:out value="${error.errorSummary}" />
+                	</a>
+   
                 </td>
                 <td>
                     <c:out value="${error.logTime}" />

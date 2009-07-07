@@ -33,11 +33,21 @@
 <div id="searchResultsHeader">
     
     <c:url var="nextPageLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
     	<c:param name="page" value="${page+1}"/>
+    	<c:param name="orderBy" value="${orderBy}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
     </c:url>
     
     <c:url var="previousPageLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
     	<c:param name="page" value="${page-1}"/>
+    	<c:param name="orderBy" value="${orderBy}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
     </c:url>
     
 
@@ -54,25 +64,61 @@
     
 
 </div> <!--end searchResultsHeader -->
+    
+    
+    
+    <c:url var="idLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="id"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+    
+    <c:url var="moduleLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="moduleName"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+    
+    <c:url var="flowLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="flowName"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+    
+    <c:url var="exclusionTimeLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="orderBy" value="exclusionTime"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    </c:url>
+
 
 <table id="exclusionsSearchResults" class="listTable">
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Module</th>
-            <th>Flow</th>
-            <th>Exclusion Time</th>
+            <th><a href="<c:out value="${idLink}" escapeXml="true" />">Id</a></th>
+            <th><a href="<c:out value="${moduleLink}" escapeXml="true" />">Module</a></th>
+            <th><a href="<c:out value="${flowLink}" escapeXml="true" />">Flow</a></th>
+            <th><a href="<c:out value="${exclusionTimeLink}" escapeXml="true" />">Exclusion Time</a></th>
         </tr>
     </thead>
 
     <tbody>
-        <c:forEach items="${exclusions}" var="exclusion">
+        <c:forEach items="${results}" var="exclusion">
+            <c:url var="viewExclusionLink" value="exclusion.htm">   	
+    			<c:param name="excludedEventId" value="${exclusion.id}"/>
+    			<c:param name="searchResultsUrl" value="${searchResultsUrl}"/>
+    		</c:url>
             <tr>
                 <td>
-                    
-                    <a href="exclusion.htm?excludedEventId=<c:out value="${exclusion.id}" />">
-                        <c:out value="${exclusion.id}" />
-                    </a>
+                	<a href="<c:out value="${viewExclusionLink}" escapeXml="true" />"><c:out value="${exclusion.id}" /></a>
                 </td>           
                 <td>
                     <c:out value="${exclusion.moduleName}" />

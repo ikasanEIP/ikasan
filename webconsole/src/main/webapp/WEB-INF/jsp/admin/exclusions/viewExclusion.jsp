@@ -29,6 +29,9 @@
 --%>
 <div class="middle">
 
+
+
+
 <h2>Excluded Event :: <c:out value="${excludedEvent.id}" /></h2>
 
 <table id="excludedEvent" class="keyValueTable">
@@ -87,22 +90,6 @@
 		</th>
 		<td>
 			<c:out value="${excludedEvent.event.timestamp}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Component Group Name
-		</th>
-		<td>
-			<c:out value="${excludedEvent.event.componentGroupName}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Component Name
-		</th>
-		<td>
-			<c:out value="${excludedEvent.event.componentName}" />
 		</td>
 	</tr>
 	
