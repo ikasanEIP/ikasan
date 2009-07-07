@@ -46,16 +46,14 @@ CREATE TABLE ExcludedEvent
     FlowName           varchar(255)  NOT NULL,
     ExclusionTime      datetime      NOT NULL,
     EventId            varchar(255)  NOT NULL,
-    ComponentGroupName varchar(255)  NULL,
-    ComponentName varchar(255)  NULL,
     Priority        numeric(19,0)  NULL,
     Timestamp       numeric(19,0)  NULL,
     CONSTRAINT ExcludedEv_125240472
     PRIMARY KEY CLUSTERED (Id)
-    WITH RESERVEPAGEGAP=0,
-         MAX_ROWS_PER_PAGE=0
+
 )
 LOCK DATAROWS
+WITH IDENTITY_GAP=1
 go
 IF OBJECT_ID('ExcludedEvent') IS NOT NULL
     PRINT '<<< CREATED TABLE ExcludedEvent >>>'
@@ -80,10 +78,9 @@ CREATE TABLE ExcludedPayload
     PayloadPosition int            NULL,
     CONSTRAINT ExcludedPa_445241612
     PRIMARY KEY CLUSTERED (PersistenceId)
-    WITH RESERVEPAGEGAP=0,
-         MAX_ROWS_PER_PAGE=0
 )
 LOCK DATAROWS
+WITH IDENTITY_GAP=1
 go
 IF OBJECT_ID('ExcludedPayload') IS NOT NULL
     PRINT '<<< CREATED TABLE ExcludedPayload >>>'
