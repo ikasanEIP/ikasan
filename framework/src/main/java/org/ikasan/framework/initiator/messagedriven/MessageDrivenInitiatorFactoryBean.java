@@ -31,13 +31,17 @@ import javax.jms.Destination;
 
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.messagedriven.spring.SpringMessageListenerContainer;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.w3c.dom.events.EventException;
 
 /**
  * This class helps create Message Driven Initiators
@@ -84,6 +88,12 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 
     /** The type of object */
     private Class<? extends JmsMessageDrivenInitiatorImpl> objectType;
+    
+    /** The error logging service */
+    private ErrorLoggingService errorLoggingService;
+    
+    /** The excludedEvent service */
+    private ExcludedEventService excludedEventService;
 
     /** The message initiator */
     private JmsMessageDrivenInitiator initiator;
@@ -194,7 +204,23 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     {
         this.payloadFactory = payloadFactory;
     }
+    
+    /**
+     * @param excludedEventService the excludedEventService to set
+     */   
+	public void setExcludedEventService(
+			ExcludedEventService excludedEventService) {
+		this.excludedEventService = excludedEventService;
+	}
 
+    /**
+     * @param errorLoggingService the errorLoggingService to set
+     */   
+	public void setErrorLoggingService(
+			ErrorLoggingService errorLoggingService) {
+		this.errorLoggingService = errorLoggingService;
+	}
+	
     public Object getObject() throws Exception
     {
         if (initiator == null)
@@ -233,6 +259,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             ((JmsMessageDrivenInitiatorImpl) initiator).setMessageListenerContainer(springMessageListenerContainer);
             springMessageListenerContainer.setAutoStartup(false);
             springMessageListenerContainer.afterPropertiesSet();
+            
         }
         return initiator;
     }
@@ -277,6 +304,8 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
         {
             thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
         }
+        ((AbstractInitiator)thisInitiator).setExcludedEventService(excludedEventService);
+        ((AbstractInitiator)thisInitiator).setErrorLoggingService(errorLoggingService);
         return thisInitiator;
     }
 
@@ -294,4 +323,6 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     {
         this.name = beanName;
     }
+
+
 }

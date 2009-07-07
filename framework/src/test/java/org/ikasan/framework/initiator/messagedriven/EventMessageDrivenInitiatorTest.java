@@ -93,6 +93,7 @@ public class EventMessageDrivenInitiatorTest {
             	
                 one(jmsMessageEventSerialiser).fromMapMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
+                one(event).getId();will(returnValue("eventId"));
                 one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 will(returnValue(null));
             }

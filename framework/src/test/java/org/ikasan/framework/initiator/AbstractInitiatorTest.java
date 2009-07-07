@@ -10,6 +10,7 @@ import org.hamcrest.Description;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
@@ -90,6 +91,10 @@ public class AbstractInitiatorTest
     private ErrorLoggingService errorLoggingService = mockery.mock(ErrorLoggingService.class);
     
     /**
+     * mocked excluded event service
+     */
+    private ExcludedEventService excludedEventService = mockery.mock(ExcludedEventService.class);
+    /**
      * An arbitrary name for a component in the flow
      */
     final String componentName = "componentName";
@@ -100,6 +105,8 @@ public class AbstractInitiatorTest
     final String flowName = "flowName";
     
     final IkasanExceptionAction rollbackStopAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+    
+    final IkasanExceptionAction excludeAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.EXCLUDE);
     
     final long retryDelay = 1000;
     
@@ -118,6 +125,8 @@ public class AbstractInitiatorTest
     public AbstractInitiatorTest(){
     	eventsToPlay.add(event1);
     	eventsToPlay.add(event2);
+    	abstractInitiator.setExcludedEventService(excludedEventService);
+    	
     }
     
     @Test
@@ -234,7 +243,7 @@ public class AbstractInitiatorTest
         
 
         //invoke handeAction with null
-        ((MockInitiator)abstractInitiator).handleAction(null);
+        ((MockInitiator)abstractInitiator).handleAction(null,null);
         Assert.assertTrue("completeRetry should have been called on concrete implemetation when handling a null action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
     }
     
@@ -251,7 +260,7 @@ public class AbstractInitiatorTest
         //invoke handeAction with stopAction
     	AbortTransactionException abortTransactionException = null;
     	try{
-        	((MockInitiator)abstractInitiator).handleAction(rollbackStopAction);
+        	((MockInitiator)abstractInitiator).handleAction(rollbackStopAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
     	} catch(AbortTransactionException exception){
     		abortTransactionException = exception;
@@ -273,7 +282,7 @@ public class AbstractInitiatorTest
         //invoke handeAction with stopAction
     	AbortTransactionException abortTransactionException = null;
     	try{
-        	((MockInitiator)abstractInitiator).handleAction(rollbackStopAction);
+        	((MockInitiator)abstractInitiator).handleAction(rollbackStopAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
     	} catch(AbortTransactionException exception){
     		abortTransactionException = exception;
@@ -285,7 +294,56 @@ public class AbstractInitiatorTest
     	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
     	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
     	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
-    }  
+    }
+    
+    
+    /**
+     * Tests that handling an EXCLUDE action will note the exclusion before rolling back
+     */
+    @Test
+    public void testHandleAction_withExcludeAction_willNoteExclusion(){
+    	final String currentEventId = "currentEventId";
+    	
+        //invoke handeAction with excludeAction
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(excludeAction,currentEventId);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+        
+    	Assert.assertTrue("this event should be noted for exclusion following handling of an Exclude action for this event", abstractInitiator.getExclusions().contains(currentEventId));
+    }
+    
+    /**
+     * Tests that handling an EXCLUDE action will stop and rollback if exclusions are not supported
+     */
+    @Test
+    public void testHandleAction_withExcludeAction_willStopAndRollbackIfExclusionsNotSupported(){
+    	final String currentEventId = "currentEventId";
+    	
+    	//set the excludedEventService to null on the initiator
+    	abstractInitiator.setExcludedEventService(null);
+    	
+        //invoke handeAction with excludeAction
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(excludeAction,currentEventId);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+        
+    	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
+    	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+   }
+    
+
+    
+    
     
     /**
      * Tests that handling a retry action on a recovering initiator will increment the retry count and rollback
@@ -301,7 +359,7 @@ public class AbstractInitiatorTest
         //invoke handeAction with retry (once) action
     	AbortTransactionException abortTransactionException = null;
     	try{
-        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryTwiceAction);
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryTwiceAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
     	} catch(AbortTransactionException exception){
     		abortTransactionException = exception;
@@ -324,7 +382,7 @@ public class AbstractInitiatorTest
         //invoke handeAction with retry (once) action
     	AbortTransactionException abortTransactionException = null;
     	try{
-        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction);
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
     	} catch(AbortTransactionException exception){
     		abortTransactionException = exception;
@@ -353,7 +411,7 @@ public class AbstractInitiatorTest
         //invoke handeAction with retry (once) action
     	AbortTransactionException abortTransactionException = null;
     	try{
-        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction);
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
     	} catch(AbortTransactionException exception){
     		abortTransactionException = exception;
@@ -365,7 +423,7 @@ public class AbstractInitiatorTest
     	//invoke again, as the first retry. This time, receiving the rollbackRetryOnce, should cause it to stop in error as it has already now retried its one time
     	abortTransactionException = null;
     	try{
-        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction);
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
     	} catch(AbortTransactionException exception){
     		abortTransactionException = exception;
@@ -381,7 +439,27 @@ public class AbstractInitiatorTest
 
     }
     
-    
+    @Test
+    public void testInvokeFlow_withEventNotedForExclusion_willExcludeEventAndInvokeNullAction(){
+    	//set up the initiator as if it had previously noted to exclude event1
+    	((MockInitiator)abstractInitiator).addExclusion("event1");
+    	
+        final Sequence sequence = mockery.sequence("invocationSequence"); 
+
+        //expect event1 to be excluded
+        expectEventExclusion(event1, sequence, "event1");
+        
+        //expect flow to be invoked with event 2
+        expectFlowInvocationSuccess(event2, sequence, "event2");
+        
+        ((MockInitiator)abstractInitiator).invokeInvokeFlow(eventsToPlay);
+        
+        Assert.assertFalse("event1 should no longer be noted for exclusion following its exclusion", abstractInitiator.getExclusions().contains("event1"));
+        mockery.assertIsSatisfied();
+    	
+    	
+    	
+    }
     
     /**
      * Tests that invocation of invokeFlow with a null Event List will invoke the handleAction(null) routine
@@ -427,10 +505,10 @@ public class AbstractInitiatorTest
         final Sequence sequence = mockery.sequence("invocationSequence"); 
 
         //expect event1 to be played cleanly
-        expectFlowInvocationSuccess(event1, sequence);
+        expectFlowInvocationSuccess(event1, sequence, "event1");
         
         //followed by event2 to be played cleanly
-        expectFlowInvocationSuccess(event2, sequence);
+        expectFlowInvocationSuccess(event2, sequence, "event2");
         
         //invoke the method that will result in invokeFlow being called
         ((MockInitiator)abstractInitiator).invokeInvokeFlow(eventsToPlay);
@@ -453,7 +531,7 @@ public class AbstractInitiatorTest
         final Sequence sequence = mockery.sequence("invocationSequence");
         
         //expect the first event to get played, but fail resulting in an exceptionAction
-        expectFlowInvocationFailure(event1, sequence, exceptionAction);
+        expectFlowInvocationFailure(event1, sequence, exceptionAction, "event1");
         
         
         //invoke the method that will result in invokeFlow being called
@@ -483,13 +561,14 @@ public class AbstractInitiatorTest
 	 * @param exceptionAction
 	 */
 	private void expectFlowInvocationFailure(final Event event,
-			final Sequence sequence, final IkasanExceptionAction exceptionAction) {
+			final Sequence sequence, final IkasanExceptionAction exceptionAction, final String eventId) {
 
         final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
             	//invoke the flow will update the flow invocation context before failing
+            	one(event).getId();will(returnValue(eventId));
                 one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 inSequence(sequence);
                 will(doAll(addComponentNameToContext(componentName), throwException(throwable)));
@@ -526,10 +605,10 @@ public class AbstractInitiatorTest
 
         
         //first expect event 1 played successfully
-        expectFlowInvocationSuccess(event1, sequence);
+        expectFlowInvocationSuccess(event1, sequence, "event1");
         
         //secondly expect event 2 be played, but fail producing an errorAction
-        expectFlowInvocationFailure(event2, sequence, rollbackStopAction);
+        expectFlowInvocationFailure(event2, sequence, rollbackStopAction, "event2");
         
         
         //invoke the method that will result in invokeFlow being called
@@ -552,14 +631,36 @@ public class AbstractInitiatorTest
 	 * @param event 
 	 * @param sequence
 	 */
-	private void expectFlowInvocationSuccess(final Event event, final Sequence sequence) {
+	private void expectFlowInvocationSuccess(final Event event, final Sequence sequence, final String eventId) {
 		mockery.checking(new Expectations()
         {
             {
             	//event gets played successfully
+            	one(event).getId();will(returnValue(eventId));
                 one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 inSequence(sequence);
                 will(returnValue(null)); 
+            }
+        });
+	}
+	
+	/**
+	 * @param event 
+	 * @param sequence
+	 */
+	private void expectEventExclusion(final Event event, final Sequence sequence, final String eventId) {
+		mockery.checking(new Expectations()
+        {
+            {
+            	//event gets played successfully
+            	one(event).getId();
+                inSequence(sequence);
+                will(returnValue(eventId));
+                one(flow).getName();
+                will(returnValue(flowName));
+                inSequence(sequence);
+                one(excludedEventService).excludeEvent(event, moduleName, flowName);
+                inSequence(sequence);
             }
         });
 	}
@@ -602,7 +703,7 @@ public class AbstractInitiatorTest
 
 
         public void invokeHandleAction(IkasanExceptionAction ikasanExceptionAction){
-            handleAction(ikasanExceptionAction);
+            handleAction(ikasanExceptionAction,null);
         }
         
         public void invokeInvokeFlow(List<Event>events){
@@ -657,10 +758,10 @@ public class AbstractInitiatorTest
         
         
         @Override
-		protected void handleAction(IkasanExceptionAction action) {
+		protected void handleAction(IkasanExceptionAction action, String currentEventId) {
 			handleActionCalled=true;
 			handleActionArgument = action;
-			super.handleAction(action);
+			super.handleAction(action, currentEventId);
 		}
 
         public boolean isHandleActionCalled(){
@@ -754,6 +855,15 @@ public class AbstractInitiatorTest
             startRetryMaxAttemptsArgument = maxAttempts;
             startRetryDelayArgument = delay;
             
+        }
+        
+        /**
+         * Mutator to allow exclusions to be explicitly added
+         * 
+         * @param eventId
+         */
+        public void addExclusion(String eventId){
+        	exclusions.add(eventId);
         }
         
     }

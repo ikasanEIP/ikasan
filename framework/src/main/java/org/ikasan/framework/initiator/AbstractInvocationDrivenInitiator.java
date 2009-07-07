@@ -31,6 +31,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorSubject;
