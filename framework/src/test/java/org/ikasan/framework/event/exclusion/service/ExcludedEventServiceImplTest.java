@@ -170,15 +170,18 @@ public class ExcludedEventServiceImplTest {
 	public void testList(){
 		
 		final PagedSearchResult<ExcludedEvent> listing = new ArrayListPagedSearchResult<ExcludedEvent>(new ArrayList<ExcludedEvent>(),0,25);
+		final String moduleName = "moduleName";
+		final String flowName = "flowName";
+		
 		
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).findExcludedEvents(0, 25);will(returnValue( listing));
+            	one(excludedEventDao).findExcludedEvents(0, 25, "orderByField", true, moduleName, flowName);will(returnValue( listing));
             }
         });
 		
-		PagedSearchResult<ExcludedEvent> result = excludedEventService.getExcludedEvents(0, 25);
+		PagedSearchResult<ExcludedEvent> result = excludedEventService.getExcludedEvents(0, 25, "orderByField",true, moduleName, flowName);
 		Assert.assertEquals("resultant list should be that returned from dao", listing, result);
 		
 		mockery.assertIsSatisfied();

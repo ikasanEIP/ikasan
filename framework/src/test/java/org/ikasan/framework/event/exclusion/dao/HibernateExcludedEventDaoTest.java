@@ -137,7 +137,7 @@ public class HibernateExcludedEventDaoTest {
 		excludedEventDao.save(excludedEvent2);	
 		
 		//now see if we can find it
-		List<ExcludedEvent> found = excludedEventDao.findExcludedEvents(0, 25);
+		List<ExcludedEvent> found = excludedEventDao.findExcludedEvents(0, 25, null,true, moduleName, flowName);
 		
 		Assert.assertTrue("result list should contain excludedEvent1",listingContainsEntry(excludedEvent1, found));
 		Assert.assertTrue("result list should contain excludedEvent2",listingContainsEntry(excludedEvent2, found));
