@@ -47,7 +47,7 @@ public interface ErrorOccurrenceDao {
 	 * Retrieves an ErrorOccurrence by ids
 	 * 
 	 * @param id
-	 * @return
+	 * @return specified ErrorOccurrence
 	 */
 	public ErrorOccurrence getErrorOccurrence(Long id);
 
@@ -55,12 +55,16 @@ public interface ErrorOccurrenceDao {
 	/**
 	 * Perform a paged search for <code>ErrorOccurrence</code>s
 	 * 
-	 * @param pageNo
+	 * @param pageNo 
 	 * @param pageSize
+	 * @param orderBy
+	 * @param orderAscending
+	 * @param moduleName
+	 * @param flowName
 	 * 
 	 * @return PagedSearchResult
 	 */
-	public PagedSearchResult<ErrorOccurrence> findErrorOccurrences(int pageNo, int pageSize);
+	public PagedSearchResult<ErrorOccurrence> findErrorOccurrences(int pageNo, int pageSize, String orderBy, boolean orderAscending,String moduleName, String flowName);
 	
     /**
      * Deletes all ErrorOccurrences that have surpassed their expiry

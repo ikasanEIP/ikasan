@@ -55,10 +55,12 @@ public interface ErrorLoggingService {
 	 * 
 	 * @param pageNo - 0 or greater, index into the list of all possible results
 	 * @param pageSize - 0 or greater, no of errors to return on a page
+	 * @param flowName 
+	 * @param moduleName 
 	 * 
 	 * @return PagedSearchResult<ErrorOccurrence>
 	 */
-	public PagedSearchResult<ErrorOccurrence> getErrors(int pageNo, int pageSize);
+	public PagedSearchResult<ErrorOccurrence> getErrors(int pageNo, int pageSize, String orderBy, boolean orderAscending,String moduleName, String flowName);
 
 	/**
 	 * Logs an Error caused before there was an Event
