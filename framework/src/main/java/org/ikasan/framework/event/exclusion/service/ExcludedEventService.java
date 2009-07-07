@@ -49,10 +49,14 @@ public interface ExcludedEventService {
 	 * 
 	 * @param pageNo - 0 or greater, index into the list of all possible results
 	 * @param pageSize - 0 or greater, no of excludedEvents to return on a page
+	 * @param orderBy - field to order by
+	 * @param orderAscending - in ascending order?
+	 * @param flowName - restrict by flowName if supplied
+	 * @param moduleName - restrict by moduleName if supplied
 	 * 
 	 * @return PagedSearchResult<ExcludedEvent>
 	 */
-	public PagedSearchResult<ExcludedEvent> getExcludedEvents(int pageNo, int pageSize);
+	public PagedSearchResult<ExcludedEvent> getExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
 
 	/**
 	 * Retrieve an ExcludedEvent specified by its Id

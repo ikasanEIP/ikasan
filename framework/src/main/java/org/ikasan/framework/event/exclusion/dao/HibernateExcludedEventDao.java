@@ -29,7 +29,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
@@ -60,7 +62,7 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 
 
 	@SuppressWarnings("unchecked")
-	public PagedSearchResult<ExcludedEvent> findExcludedEvents(final int pageNo, final int pageSize) {
+	public PagedSearchResult<ExcludedEvent> findExcludedEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,final String moduleName, final String flowName) {
 		return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
@@ -71,7 +73,21 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
                 criteria.setMaxResults(pageSize);
                 int firstResult = (pageNo*pageSize);
 				criteria.setFirstResult(firstResult);
-                //criteria.addOrder(Order.desc("id"));
+				if (orderBy!=null){
+					if(orderAscending){
+						criteria.addOrder(Order.asc(orderBy));
+					} else{
+						 criteria.addOrder(Order.desc(orderBy));
+					}
+				}
+				if (moduleName!=null){
+					criteria.add(Restrictions.eq("moduleName", moduleName));
+				}
+				if (flowName!=null){
+					criteria.add(Restrictions.eq("flowName", flowName));
+				}
+				
+				
                 List<ExcludedEvent> results = criteria.list();
                 criteria.setProjection(Projections.rowCount());
                 Integer rowCount = 0;

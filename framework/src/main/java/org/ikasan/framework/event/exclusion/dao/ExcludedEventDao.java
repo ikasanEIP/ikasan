@@ -55,10 +55,14 @@ public interface ExcludedEventDao{
 	 * 
 	 * @param pageNo
 	 * @param pageSize
+	 * @param orderBy
+	 * @param orderAscending 
+	 * @param flowName 
+	 * @param moduleName 
 	 * 
 	 * @return PagedSearchResult
 	 */
-	public PagedSearchResult<ExcludedEvent> findExcludedEvents(int pageNo, int pageSize);
+	public PagedSearchResult<ExcludedEvent> findExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
 
 	/**
 	 * Retrieves an ExcludedEvent by id
