@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
@@ -47,6 +48,10 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	
 	private static final long MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
+	/**
+	 * Logger instance
+	 */
+	private Logger logger = Logger.getLogger(DefaultErrorLoggingServiceImpl.class);
 
 	/**
 	 * Maximum time for ErrorOccurrences to be kept. After this time they may be housekept
@@ -120,6 +125,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * @param errorOccurrence
 	 */
 	private void persistAndNotifyListeners(ErrorOccurrence errorOccurrence) {
+		logger.info("logging error");
 		errorOccurrenceDao.save(errorOccurrence);
 		if (errorOccurrenceListeners!=null){
 			for (ErrorOccurrenceListener errorOccurrenceListener : errorOccurrenceListeners){
@@ -131,7 +137,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	/* (non-Javadoc)
 	 * @see org.ikasan.framework.error.service.ErrorLoggingService#getErrors()
 	 */
-	public PagedSearchResult<ErrorOccurrence> getErrors(int pageNo, int pageSize) {
+	public PagedSearchResult<ErrorOccurrence> getErrors(int pageNo, int pageSize, String orderBy, boolean orderAscending,String moduleName, String flowName) {
 		if (pageNo<0){
 			throw new IllegalArgumentException("pageNo must be >= 0");
 		}
@@ -139,7 +145,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 			throw new IllegalArgumentException("pageSize must be > 0");
 		}
 		
-		return errorOccurrenceDao.findErrorOccurrences(pageNo, pageSize);
+		return errorOccurrenceDao.findErrorOccurrences(pageNo, pageSize, orderBy, orderAscending, moduleName, flowName);
 	}
 
 	/* (non-Javadoc)
