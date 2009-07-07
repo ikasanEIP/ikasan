@@ -193,6 +193,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
                 one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 will(returnValue(null));
             }
@@ -236,6 +237,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 will(throwException(throwable));
             	
@@ -286,6 +288,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
                 will(throwException(throwable));
             	
@@ -334,6 +337,7 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             {
             	//flow invocation fails
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
                 inSequence(sequence);
                 will(throwException(throwable));
@@ -417,6 +421,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
                 inSequence(sequence);
                 will(returnValue(null));
@@ -442,6 +447,7 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             {
             	//flow invocation fails
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 inSequence(sequence);
                 will(throwException(throwable));
