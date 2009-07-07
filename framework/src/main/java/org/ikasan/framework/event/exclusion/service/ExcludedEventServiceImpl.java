@@ -90,15 +90,16 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 
 	}
 
-	public PagedSearchResult<ExcludedEvent> getExcludedEvents(int pageNo, int pageSize) {
+	public PagedSearchResult<ExcludedEvent> getExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName) {
 		if (pageNo<0){
 			throw new IllegalArgumentException("pageNo must be >= 0");
 		}
 		if (pageSize<1){
 			throw new IllegalArgumentException("pageSize must be > 0");
 		}
+		//TODO validate the orderBy field - must be one of [id|moduleName|flowName|exclusionTime]
 		
-		return excludedEventDao.findExcludedEvents(pageNo, pageSize);
+		return excludedEventDao.findExcludedEvents(pageNo, pageSize, orderBy, orderAscending,  moduleName, flowName);
 	}
 
 	public ExcludedEvent getExcludedEvent(long excludedEventId) {
