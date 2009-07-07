@@ -121,4 +121,18 @@ public class MasterDetailControllerUtil {
 		return input!=null?input:0;
 	}
 
+	/**
+	 * Returns the input value or null for an empty String
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public static String nullForEmpty(String input) {
+		String result = input;
+		if (input!=null && "".equals(input)){
+			result = null;
+		}
+		return result;
+	}
+
 }
