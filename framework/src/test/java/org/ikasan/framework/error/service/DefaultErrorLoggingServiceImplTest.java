@@ -191,12 +191,12 @@ public class DefaultErrorLoggingServiceImplTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testGetErrors_withInvalidPageNo_willThrowIllegalArgumentException(){	
-		errorLoggingServiceImpl.getErrors(-2, 10);
+		errorLoggingServiceImpl.getErrors(-2, 10, "id", true, null, null);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testGetErrors_withInvalidPageSize_willThrowIllegalArgumentException(){	
-		errorLoggingServiceImpl.getErrors(0, 0);
+		errorLoggingServiceImpl.getErrors(0, 0,"id", true, null, null);
 	}
 	
 	@Test
@@ -208,12 +208,12 @@ public class DefaultErrorLoggingServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(errorOccurrenceDao).findErrorOccurrences(pageNo, pageSize);will(returnValue(resultList));
+            	one(errorOccurrenceDao).findErrorOccurrences(pageNo, pageSize, "id", true, null, null);will(returnValue(resultList));
              }
         });
 		
 		
-		Assert.assertEquals(resultList, errorLoggingServiceImpl.getErrors(pageNo, pageSize));
+		Assert.assertEquals(resultList, errorLoggingServiceImpl.getErrors(pageNo, pageSize, "id", true, null, null));
 	
 		mockery.assertIsSatisfied();
 	}
