@@ -23,6 +23,11 @@
  */
 package org.ikasan.framework.web.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
@@ -42,7 +47,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/exclusions/*.htm")
 
-public class ExclusionsController
+public class ExclusionsController  
 {
 
     /** The user service to use */
@@ -70,20 +75,29 @@ public class ExclusionsController
      * @return "modules/modules"
      */
     @RequestMapping("list.htm")
-    public String listExclusions(@RequestParam(required=false) Integer page, ModelMap model)
-    {
+    public String listExclusions(
 
-    	int pageNo = page!=null?page:0;
+    		@RequestParam(required=false) String moduleName, 
+    		@RequestParam(required=false) String flowName,
+    		HttpServletRequest request,
+    		@RequestParam(required=false) Integer page, 
+    		@RequestParam(required=false) String orderBy,
+    		@RequestParam(required=false) Boolean orderAsc,
+    		ModelMap model)
+    {
+    	//perform the paged search
+        PagedSearchResult<ExcludedEvent> pagedResult = excludedEventService.getExcludedEvents(MasterDetailControllerUtil.defaultZero(page), 25, MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), moduleName, flowName );
+
+    	//search restriction params
+    	Map<String, Object> searchParams = new HashMap<String, Object>();
+    	MasterDetailControllerUtil.addParam(searchParams,"moduleName", moduleName);
+    	MasterDetailControllerUtil.addParam(searchParams,"flowName", flowName);
     	
-    	model.addAttribute("page", pageNo);
-        PagedSearchResult<ExcludedEvent> pagedResult = excludedEventService.getExcludedEvents(pageNo, 25);
-		model.addAttribute("exclusions", pagedResult);
-		model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
-		model.addAttribute("lastPage", pagedResult.isLastPage());
-		model.addAttribute("resultSize", pagedResult.getResultSize());
-		model.addAttribute("size", pagedResult.size());
+    	MasterDetailControllerUtil.addPagedModelAttributes(MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), model, MasterDetailControllerUtil.defaultZero(page), pagedResult,
+				request, searchParams);
         return "admin/exclusions/exclusions";
     }
+
 
 	/**
      * Display ExcludedEvent
@@ -92,9 +106,12 @@ public class ExclusionsController
      * @return excludedEvent view
      */
     @RequestMapping(value="exclusion.htm", method=RequestMethod.GET)
-    public String view(@RequestParam long excludedEventId, ModelMap model)
+    public String view(@RequestParam long excludedEventId,  
+    		@RequestParam(required=false) String searchResultsUrl, 
+    		ModelMap model)
     {
         model.addAttribute("excludedEvent", excludedEventService.getExcludedEvent(excludedEventId));
+        model.addAttribute("searchResultsUrl", searchResultsUrl);
         return "admin/exclusions/viewExclusion";
     }
     

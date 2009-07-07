@@ -3,8 +3,14 @@
  */
 package org.ikasan.framework.web.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,17 +46,27 @@ public class ErrorLogController {
      * @return errors view
      */
     @RequestMapping("list.htm")
-    public String listErrors(@RequestParam(required=false) Integer page, ModelMap model)
+    public String listErrors(
+    		@RequestParam(required=false) String moduleName, 
+    		@RequestParam(required=false) String flowName,
+    		HttpServletRequest request,
+    		@RequestParam(required=false) Integer page, 
+    		@RequestParam(required=false) String orderBy,
+    		@RequestParam(required=false) Boolean orderAsc,
+    		ModelMap model)
     {
-    	int pageNo = page!=null?page:0;
+
+
+    	//perform the paged search
+         PagedSearchResult<ErrorOccurrence> pagedResult = errorLoggingService.getErrors(MasterDetailControllerUtil.defaultZero(page), 25,MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), moduleName, flowName);
+
+    	//search restriction params
+    	Map<String, Object> searchParams = new HashMap<String, Object>();
+    	MasterDetailControllerUtil.addParam(searchParams,"moduleName", moduleName);
+    	MasterDetailControllerUtil.addParam(searchParams,"flowName", flowName);
     	
-    	model.addAttribute("page", pageNo);
-        PagedSearchResult<ErrorOccurrence> errors = errorLoggingService.getErrors(pageNo, 25);
-		model.addAttribute("loggedErrors", errors);
-		model.addAttribute("firstResultIndex", errors.getFirstResultIndex());
-		model.addAttribute("lastPage", errors.isLastPage());
-		model.addAttribute("resultSize", errors.getResultSize());
-		model.addAttribute("size", errors.size());
+    	MasterDetailControllerUtil.addPagedModelAttributes(MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), model, MasterDetailControllerUtil.defaultZero(page), pagedResult,
+				request, searchParams);
         return "admin/errors/errors";
     }
     
@@ -61,9 +77,15 @@ public class ErrorLogController {
      * @return errors view
      */
     @RequestMapping("viewError.htm")
-    public String view(@RequestParam long errorId, ModelMap model)
+    public String view(@RequestParam long errorId, 
+    		@RequestParam(required=false) String searchResultsUrl, 
+    		ModelMap model)
     {
         model.addAttribute("error", errorLoggingService.getErrorOccurrence(errorId));
+        model.addAttribute("searchResultsUrl", searchResultsUrl);
         return "admin/errors/viewError";
     }
+    
+    
+    
 }
