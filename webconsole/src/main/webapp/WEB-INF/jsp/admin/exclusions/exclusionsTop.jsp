@@ -27,15 +27,17 @@
 --%>
 <div class="subnavcontainer">
 	<ul>
-		<li><a href="<c:url value='search.htm'/>">Search Events</a></li>
-		
-        <c:if test="${searchResultsUrl != null}">
-
-            <li> -> 
-                <a href="<c:out value="${searchResultsUrl}" />"/>Search Results</a>
+		<li>            		
+					<c:choose>
+						<c:when test="${searchResultsUrl != null}">
+                			<a href="<c:out value="${searchResultsUrl}" />">
+                		</c:when>
+                		<c:otherwise>
+                			<a href="<c:url value="list.htm"/>">
+                		</c:otherwise>
+                	</c:choose>
+                			Search Results</a>
             </li>
-
-        </c:if>
 		
 	</ul>
 </div>

@@ -39,6 +39,9 @@ public class ErrorLogController {
 		super();
 		this.errorLoggingService = errorLoggingService;
 	}
+	
+    
+    
 	/**
      * List all errorOccurrences
      * 
@@ -58,7 +61,7 @@ public class ErrorLogController {
 
 
     	//perform the paged search
-         PagedSearchResult<ErrorOccurrence> pagedResult = errorLoggingService.getErrors(MasterDetailControllerUtil.defaultZero(page), 25,MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), moduleName, flowName);
+         PagedSearchResult<ErrorOccurrence> pagedResult = errorLoggingService.getErrors(MasterDetailControllerUtil.defaultZero(page), 25,MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), MasterDetailControllerUtil.nullForEmpty(moduleName), MasterDetailControllerUtil.nullForEmpty(flowName));
 
     	//search restriction params
     	Map<String, Object> searchParams = new HashMap<String, Object>();

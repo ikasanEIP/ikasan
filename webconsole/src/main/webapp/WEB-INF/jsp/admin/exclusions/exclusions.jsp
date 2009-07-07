@@ -30,42 +30,37 @@
 
 <h2>Excluded Events</h2>
 
-<div id="searchResultsHeader">
-    
-    <c:url var="nextPageLink" value="list.htm">
-		<c:forEach var="entry" items="${searchParams}">
-			<c:param name="${entry.key}" value="${entry.value}"/>
-		</c:forEach>    	
-    	<c:param name="page" value="${page+1}"/>
-    	<c:param name="orderBy" value="${orderBy}"/>
-    	<c:param name="orderAsc" value="${orderAsc}"/>
-    </c:url>
-    
-    <c:url var="previousPageLink" value="list.htm">
-		<c:forEach var="entry" items="${searchParams}">
-			<c:param name="${entry.key}" value="${entry.value}"/>
-		</c:forEach>    	
-    	<c:param name="page" value="${page-1}"/>
-    	<c:param name="orderBy" value="${orderBy}"/>
-    	<c:param name="orderAsc" value="${orderAsc}"/>
-    </c:url>
-    
+<form method="get" action="${resultsLink}" class="dataform fancydataform" >
+	<fieldset>
+    	<legend>Search</legend>
+    	<ol>
+  			<li>
+		    	<label for="moduleName">Module Name</label>
+				<input id="moduleName" type="text" name="moduleName" size="30" value="${searchParams["moduleName"]}"/>
+			</li>
+  			<li>
+		    	<label for="flowName">Flow Name</label>
+				<input id="flowName" type="text" name="flowName" size="30" value="${searchParams["flowName"]}"/>
+			</li>
+  			<li>
+		    	<label for="orderBy">Order By</label>
+				<select id="orderBy" name="orderBy"    >
+					<option value="id"  <c:if test="${orderBy=='id'}">selected="selected"</c:if>  >Id</option>
+					<option value="moduleName" <c:if test="${orderBy=='moduleName'}">selected="selected"</c:if>>Module</option>					
+					<option value="flowName" <c:if test="${orderBy=='flowName'}">selected="selected"</c:if>>Flow</option>
+					<option value="exclusionTime" <c:if test="${orderBy=='exclusionTime'}">selected="selected"</c:if>>Exclusion Time</option>
+				</select>
+				<label for="orderBy">Ascending</label>
+				<input id="orderAsc" type="checkbox" name="orderAsc" <c:if test="${orderAsc=='true'}">checked="checked"</c:if>/>
+			</li>
+		</ol>
+	</fieldset>
+	<p>
+		<input type="submit" value="Search for Exclusions" class="controlButton"/>
+	</p>
+</form>
 
-    
-    <span id="currentlyShowing">Showing <c:out value="${firstResultIndex+1}"/> to <c:out value="${firstResultIndex + size}"/> of <c:out value="${resultSize}"/> results</span>
-    <span id="navigationControls" >
-            <c:if test="${page gt 0}">
-                <a href="<c:out value="${previousPageLink}" escapeXml="true" />">Previous</a>&nbsp;
-            </c:if>
-            <c:if test="${!lastPage}">
-                <a href="<c:out value="${nextPageLink}" escapeXml="true" />">Next</a>
-            </c:if>
-    </span>
-    
-
-</div> <!--end searchResultsHeader -->
-    
-    
+<%@ include file="/WEB-INF/jsp/pagedResultsHeader.jsp"%>
     
     <c:url var="idLink" value="list.htm">
 		<c:forEach var="entry" items="${searchParams}">

@@ -86,7 +86,7 @@ public class ExclusionsController
     		ModelMap model)
     {
     	//perform the paged search
-        PagedSearchResult<ExcludedEvent> pagedResult = excludedEventService.getExcludedEvents(MasterDetailControllerUtil.defaultZero(page), 25, MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), moduleName, flowName );
+        PagedSearchResult<ExcludedEvent> pagedResult = excludedEventService.getExcludedEvents(MasterDetailControllerUtil.defaultZero(page), 25, MasterDetailControllerUtil.resolveOrderBy(orderBy), MasterDetailControllerUtil.defaultFalse(orderAsc), MasterDetailControllerUtil.nullForEmpty(moduleName), MasterDetailControllerUtil.nullForEmpty(flowName ));
 
     	//search restriction params
     	Map<String, Object> searchParams = new HashMap<String, Object>();
