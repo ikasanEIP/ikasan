@@ -87,6 +87,12 @@
 		<constructor-arg ref="errorOccurrenceDao" />
 	</bean>
 	
+	<!-- transaction configuration for errorLoggingService -->
+    <aop:config>
+        <aop:pointcut id="errorLoggingInvocation" expression="execution(* org.ikasan.framework.error.service.ErrorLoggingService.logError(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorLoggingInvocation" />
+    </aop:config>
+	
 	<bean id="excludedEventService" class="org.ikasan.framework.event.exclusion.service.ExcludedEventServiceImpl">
 		<constructor-arg ref="excludedEventDao" />
 		<constructor-arg>
