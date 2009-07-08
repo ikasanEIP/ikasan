@@ -51,6 +51,10 @@ WITH IDENTITY_GAP=1
 
 CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)
 
+CREATE INDEX IkasanWiretap02i ON IkasanWiretap(ModuleName, FlowName, ComponentName, EventId, PayloadId, PayloadContent, CreatedDateTime)
+
+CREATE INDEX IkasanWiretap03i ON IkasanWiretap(Expiry)
+
 IF OBJECT_ID('IkasanWiretap') IS NOT NULL
     PRINT '<<< CREATED TABLE IkasanWiretap >>>'
 ELSE
