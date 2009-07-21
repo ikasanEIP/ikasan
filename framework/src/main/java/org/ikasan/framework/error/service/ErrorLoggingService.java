@@ -27,6 +27,8 @@
 
 package org.ikasan.framework.error.service;
 
+import java.util.List;
+
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.management.search.PagedSearchResult;
@@ -83,4 +85,12 @@ public interface ErrorLoggingService {
      * Causes all <code>ErrorOccurrence</code>s that are deemed to be too old to be deleted
      */
 	public void housekeep();
+
+	/**
+	 * Returns all ErrorOccurrences for the event specified by its id
+	 * 
+	 * @param eventId
+	 * @return List of ErrorOccurrences for the specified event
+	 */
+	public List<ErrorOccurrence> getErrorOccurrences(String eventId);
 }
