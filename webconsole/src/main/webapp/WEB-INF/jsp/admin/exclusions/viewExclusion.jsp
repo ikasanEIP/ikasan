@@ -159,9 +159,23 @@
 	</tr>	
 	</table>
 	</c:forEach>
+	
+	<h2>Error Occurrences</h2>
+	<ol id="excludedEventErrorOccurrences" >
+	<c:forEach items="${errorOccurrences}" var="errorOccurrence" >
+	    <c:url var="errorLink" value="../errors/viewError.htm">
+            <c:param name="errorId" value="${errorOccurrence.id}"/>
+        </c:url>
+		<li>
+			<a href="<c:out value="${errorLink}"/>"><c:out value="${errorOccurrence.logTime}"/></a> : 
+			<c:out value="${errorOccurrence.moduleName}"/>-<c:out value="${errorOccurrence.flowElementName}"/>
+		</li>
+	</c:forEach>
+	</ol>
+	
+	
 
-	<tr>
-		<td colspan="2">
+	<p>
 		  <c:url var="resubmitLink" value="exclusion.htm">
                 <c:param name="excludedEventId" value="${excludedEvent.id}"/>
                 <c:param name="action" value="resubmit"/>
@@ -169,9 +183,7 @@
               <form:form action="${resubmitLink}" method="post">
                 <input type="submit" value="Resubmit" class="controlButton"/>
               </form:form>
-		</td>
-	</tr>
-
+	</p>
 </div>
 
 

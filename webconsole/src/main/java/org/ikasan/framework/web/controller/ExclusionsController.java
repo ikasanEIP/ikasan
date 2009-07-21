@@ -24,11 +24,14 @@
 package org.ikasan.framework.web.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.management.search.PagedSearchResult;
@@ -52,6 +55,9 @@ public class ExclusionsController
 
     /** The user service to use */
     private ExcludedEventService excludedEventService;
+    
+    /** Error error logging service     */
+    private ErrorLoggingService errorLoggingService;
 
     /** Logger for this class */
     private Logger logger = Logger.getLogger(ExclusionsController.class);
@@ -60,12 +66,14 @@ public class ExclusionsController
      * Constructor
      * 
      * @param excludedEventService - The ExcludedEventService to use
+     * @param errorLoggingService - The ErrorLoggingService to use
      */
     @Autowired
-    public ExclusionsController(ExcludedEventService excludedEventService)
+    public ExclusionsController(ExcludedEventService excludedEventService, ErrorLoggingService errorLoggingService)
     {
         super();
         this.excludedEventService = excludedEventService;
+        this.errorLoggingService = errorLoggingService;
     }
 
     /**
@@ -110,10 +118,18 @@ public class ExclusionsController
     		@RequestParam(required=false) String searchResultsUrl, 
     		ModelMap model)
     {
-        model.addAttribute("excludedEvent", excludedEventService.getExcludedEvent(excludedEventId));
+        ExcludedEvent excludedEvent = excludedEventService.getExcludedEvent(excludedEventId);
+		if (excludedEvent.getEvent()!=null){
+	        List<ErrorOccurrence> errorOccurrences = errorLoggingService.getErrorOccurrences(excludedEvent.getEvent().getId());
+	        model.addAttribute("errorOccurrences", errorOccurrences);
+		}
+		
+		model.addAttribute("excludedEvent", excludedEvent);
         model.addAttribute("searchResultsUrl", searchResultsUrl);
         return "admin/exclusions/viewExclusion";
     }
+
+
     
 	/**
      * Handle Resubmission request POST
