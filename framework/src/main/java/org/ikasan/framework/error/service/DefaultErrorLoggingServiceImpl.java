@@ -180,4 +180,11 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 		this.errorTimeToLiveDays = errorTimeToLiveDays;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.error.service.ErrorLoggingService#getErrorOccurrences(java.lang.String)
+	 */
+	public List<ErrorOccurrence> getErrorOccurrences(String eventId) {
+		return errorOccurrenceDao.getErrorOccurrences(eventId);
+	}
+
 }

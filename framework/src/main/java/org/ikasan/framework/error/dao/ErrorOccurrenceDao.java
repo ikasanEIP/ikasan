@@ -26,6 +26,8 @@
  */
 package org.ikasan.framework.error.dao;
 
+import java.util.List;
+
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.management.search.PagedSearchResult;
 
@@ -70,4 +72,12 @@ public interface ErrorOccurrenceDao {
      * Deletes all ErrorOccurrences that have surpassed their expiry
      */
     public void deleteAllExpired();
+
+	/**
+	 * Returns all ErrorOccurrences with the specified eventId
+	 * 
+	 * @param eventId
+	 * @return List of ErrorOccurrence 
+	 */
+	public List<ErrorOccurrence> getErrorOccurrences(String eventId);
 }

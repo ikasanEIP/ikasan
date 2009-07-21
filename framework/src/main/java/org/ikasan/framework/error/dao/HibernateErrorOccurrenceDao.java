@@ -50,7 +50,10 @@ public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements 
     /** Query used for housekeeping */
     private static final String HOUSEKEEP_QUERY = "delete ErrorOccurrence e where e.expiry <= ?";
     
-	/* (non-Javadoc)
+    /** Query used for finding all ErrorOccurrences for the specifiend event */
+    private static final String FOR_EVENT_QUERY = "from ErrorOccurrence e where e.eventId = ?";
+	
+    /* (non-Javadoc)
 	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#save(org.ikasan.framework.error.model.ErrorOccurrence)
 	 */
 	public void save(ErrorOccurrence errorOccurrence) {
@@ -114,6 +117,13 @@ public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements 
     {
         getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#getErrorOccurrences(java.lang.String)
+	 */
+	public List<ErrorOccurrence> getErrorOccurrences(String eventId) {
+		return getHibernateTemplate().find(FOR_EVENT_QUERY, eventId);
+	}
 
 
 }
