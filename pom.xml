@@ -259,13 +259,7 @@
       <version>2.5.5</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Used for ToStringBuilder and more -->
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.2</version>
-      <scope>provided</scope>
-    </dependency>
+    
     <!-- TODO Investigate wrapping this one day, used to interact with LastResourceCommit -->
     <dependency>
       <groupId>org.jboss.transaction</groupId>
