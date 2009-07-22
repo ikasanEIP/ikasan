@@ -70,13 +70,16 @@
 	<bean id="abstractHibernateSessionFactory"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" abstract="true">
 		<property name="mappingResources" ref="hibernateMappingResources" />
-		<property name="hibernateProperties">
-          <props>
-            <prop key="hibernate.dialect">org.hibernate.dialect.SybaseDialect</prop>
-            <prop key="hibernate.jdbc.use_get_generated_keys">false</prop>
-          </props>
+		<property name="hibernateProperties" >
+			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="ignoreResourceNotFound" value="true"/>
+				<property name="location" value="classpath:ikasan-hibernate.properties"/>
+				
+			</bean>
 		</property>
 	</bean>
+	
+
 
     <bean id="xaTx-BaseFileTransferHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" parent="abstractHibernateSessionFactory">

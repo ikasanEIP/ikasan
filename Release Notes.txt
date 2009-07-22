@@ -3,6 +3,10 @@ Release Notes
 The following TLAs are used:-
 NBC - Not Backward Compatible with previous version of the framework.
 
+Release 1.2.11
+--------------------
+ - externalised hibernate session factory properties
+
 Release 1.2.10
 --------------------
  - added sonatype repository distribution management in the pom.xml
