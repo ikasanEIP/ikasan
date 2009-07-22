@@ -64,8 +64,14 @@
         <constructor-arg value="<replace-me>" />
     </bean>
   
-
-    
+    <bean id="jmsUsername" class="java.lang.String">
+          <constructor-arg value="unused" />
+    </bean>
+    <bean id="jmsPassword" class="java.lang.String">
+        <constructor-arg value="unused" />
+    </bean>  
+  
+    <!-- 
     <bean id="jmsUsername" class="java.lang.String">
           <constructor-arg value="<replace-me>" />
     </bean>
@@ -73,5 +79,5 @@
     <bean id="jmsPassword" class="java.lang.String">
     	<constructor-arg value="<replace-me>" />
     </bean>
-
+ -->
 </beans>
