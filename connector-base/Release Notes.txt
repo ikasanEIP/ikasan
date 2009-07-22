@@ -6,6 +6,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.1.8
 --------------------
  - added sonatype repository distribution management in the pom.xml
+ - changed toString method implementations to not rely on commons-lang, removing this dependency
  
 Release 1.1.7
 --------------------

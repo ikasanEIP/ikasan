@@ -173,10 +173,12 @@ public class TransactionJournalImpl implements TransactionJournal
 
             try
             {
+            	logger.info("about to try to save xid");
                 dao.save(xidImpl);
             }
             catch (TransactionalResourceCommandPersistenceException e)
             {
+            	logger.error(e);
                 throw new TransactionJournalingException("Exception persisting Xid", e); //$NON-NLS-1$
             }
         }
