@@ -34,22 +34,22 @@
     <jndi-name>demoFileDelivery/ftpXAConnectionFactory</jndi-name>
     <xa-transaction/>
     <track-connection-by-tx/>
-    <rar-name>demoFileDelivery-app-0.16.2-SNAPSHOT.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar</rar-name>
+    <rar-name>demoFileDelivery-app-0.16.2.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar</rar-name>
     <connection-definition>javax.resource.cci.ConnectionFactory</connection-definition>
     <min-pool-size>1</min-pool-size>
     <max-pool-size>1</max-pool-size>
     <idle-timeout-minutes>180</idle-timeout-minutes>
-    <depends>jboss.jca:service=RARDeployment,name='demoFileDelivery-app-0.16.2-SNAPSHOT.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar'</depends>
+    <depends>jboss.jca:service=RARDeployment,name='demoFileDelivery-app-0.16.2.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar'</depends>
   </tx-connection-factory>
 
   <no-tx-connection-factory>
     <jndi-name>demoFileDelivery/ftpConnectionFactory</jndi-name>
-    <rar-name>demoFileDelivery-app-0.16.2-SNAPSHOT.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar</rar-name>
+    <rar-name>demoFileDelivery-app-0.16.2.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar</rar-name>
     <connection-definition>javax.resource.cci.ConnectionFactory</connection-definition>
     <min-pool-size>1</min-pool-size>
     <max-pool-size>1</max-pool-size>
     <idle-timeout-minutes>0</idle-timeout-minutes>
-<depends>jboss.jca:service=RARDeployment,name='demoFileDelivery-app-0.16.2-SNAPSHOT.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar'</depends>
+    <depends>jboss.jca:service=RARDeployment,name='demoFileDelivery-app-0.16.2.ear#ikasan-connector-ftp-1.2.11-SNAPSHOT.rar'</depends>
   </no-tx-connection-factory>
 
 </connection-factories>

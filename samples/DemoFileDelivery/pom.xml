@@ -31,7 +31,7 @@
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoFileDelivery-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.16.2-SNAPSHOT</version>
+  <version>0.16.2</version>
 
 	<name>demoFileDelivery :: Parent Project</name>
 
