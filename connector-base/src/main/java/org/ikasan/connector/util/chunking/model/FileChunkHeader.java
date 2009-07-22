@@ -29,8 +29,6 @@ package org.ikasan.connector.util.chunking.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import org.ikasan.common.xml.serializer.XMLSerializer;
 import org.ikasan.common.xml.serializer.XStreamXmlSerializerImpl;
 
@@ -211,9 +209,17 @@ public class FileChunkHeader
     @Override
     public String toString()
     {
-        return new ToStringBuilder(this).append("id", this.id).append("sequenceLength", this.sequenceLength).append( //$NON-NLS-1$ //$NON-NLS-2$
-            "fileName", this.fileName).append("internalMd5Hash", this.internalMd5Hash).append("chunkTimeStamp",   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-            this.chunkTimeStamp).append("externalMd5Hash", this.externalMd5Hash).toString(); //$NON-NLS-1$
+    	StringBuffer sb = new StringBuffer("FileChunkHeader [");
+    	sb.append("id");sb.append(this.id);sb.append(",");
+    	sb.append("sequenceLength");sb.append(this.sequenceLength);sb.append(",");
+    	sb.append("fileName");sb.append(this.fileName);sb.append(",");
+    	sb.append("internalMd5Hash");sb.append(this.internalMd5Hash);sb.append(",");
+    	sb.append("chunkTimeStamp");sb.append(this.chunkTimeStamp);sb.append(",");
+    	sb.append("externalMd5Hash");sb.append(this.externalMd5Hash);
+
+    	sb.append("]");
+    	return sb.toString();
+
     }
 
     /**

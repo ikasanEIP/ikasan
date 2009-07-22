@@ -32,8 +32,6 @@ import java.util.Set;
 
 import javax.transaction.xa.Xid;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * Local Implementation of the <code>Xid</code> interface
  * 
@@ -231,11 +229,17 @@ public class XidImpl implements Xid
     @Override
     public String toString()
     {
-        return new ToStringBuilder(this).append("formattedGlobalTransactionId", this.getFormattedGlobalTransactionId())
-            .append("formattedBranchQualifier", this.getFormattedBranchQualifier()).append("commands", this.commands)
-            .append("formatId", this.formatId).append("state", this.state).append("branchQualifier",
-                this.branchQualifier).append("globalTransactionId", this.globalTransactionId).append("id", this.id)
-            .toString();
+    	StringBuffer sb = new StringBuffer("XidImpl [");
+    	sb.append("formattedGlobalTransactionId");sb.append( this.getFormattedGlobalTransactionId());sb.append(",");
+    	sb.append("formattedBranchQualifier");sb.append(  this.getFormattedBranchQualifier());sb.append(",");
+    	sb.append("commands");sb.append(this.commands);sb.append(",");
+    	
+        sb.append("formatId");sb.append( this.formatId);sb.append(",");
+        sb.append("state");sb.append(this.state);sb.append(",");
+        sb.append("id");sb.append(this.id);
+    	sb.append("]");
+    	return sb.toString();
+    	
     }
 
     /**
