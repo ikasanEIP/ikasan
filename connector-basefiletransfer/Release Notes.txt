@@ -6,6 +6,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.2.6
 --------------------
  - added sonatype repository distribution management in the pom.xml
+ - updated to depend on connector-base-1.1.8
  
 Release 1.2.5
 --------------------
