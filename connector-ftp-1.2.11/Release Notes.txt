@@ -1,0 +1,51 @@
+Release Notes
+=============
+The following TLAs are used:-
+NBC - Not Backward Compatible with previous version of the framework.
+
+Release 1.2.11
+--------------------
+ - externalised hibernate session factory properties
+ - updated dependency on connector-basefiletransfer to 1.2.6
+ - updated dependency on connector-base to 1.1.8
+
+Release 1.2.10
+--------------------
+ - added sonatype repository distribution management in the pom.xml
+ 
+Release 1.2.10
+--------------------
+ - Port to SF.
+ - Bumped dependent project versions up to official releases as follows,
+   ikasan-common-1.1.12
+   ikasan-connector-base-1.1.7
+   ikasan-connector-basefiletransfer-1.2.5
+   
+
+Release 1.2.9
+--------------------
+ - FTPManagedConnectionFactory logger.info changed logger.debug to reduce log noise.
+ - FTPConnectionImpl changed to ensure we do not try to sort empty ClientListEntry lists.
+ - FTPConnectionImpl was trying to chronologically sort an empty file list. Check implemented to ensure list is not empty prior to sort.
+ - Adding socket and data timeout to connection to connection spec. Default values are 0 ms (infinite).
+ 
+Release 1.2.8
+--------------------
+ - Bug Fix: Apache recommends using completePendingCommand() after storeFileStream(). This causes issues with
+ printWorkingDirectory returning 'null' if not called. To fix this the stream writing has moved from the DeliverFileCommand
+ into the FileTransferProtocolClient implementation as we should not be changing the FileTransferClient interface - this fix is private to this client.
+
+ - Provide default Boolean and Integer values to the ConnectionSpec rather than null values. 
+Clients do not then have to override all members of the Spec
+
+ - Adding a socket connection timeout value to the connection spec.
+ 
+ - Instead of specifying the local port, bind socket to 0 (will be determined at runtime)
+ 
+ - Remove local ports range
+ 
+ - Ignoring BindExceptions: the connector will attempt to bind to a local port for 0xFFFF times before giving up.
+
+Previous Releases
+--------------------
+<<see ikasan-1.2reNotes.txt for some older changes >>
