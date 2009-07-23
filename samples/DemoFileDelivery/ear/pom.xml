@@ -382,7 +382,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-connector-ftp</artifactId>
-			<version>1.2.11-SNAPSHOT</version>
+			<version>1.2.11</version>
 			<scope>provided</scope>
 			<type>rar</type>
 		</dependency>	
