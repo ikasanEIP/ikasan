@@ -394,4 +394,13 @@
 		</dependency>
 		
 	</dependencies>
+	
+		<repositories>
+			<repository>
+			<id>jboss</id>
+			<name>JBoss Inc. Repository</name>
+			<url>http://repository.jboss.com/maven2/</url>
+		</repository>
+		
+	</repositories>
 </project>
