@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-client-filetransfer</artifactId>
   <packaging>jar</packaging>
-  <version>1.4.4-SNAPSHOT</version>
+  <version>1.4.4</version>
   <name>Client Filetransfer</name>
   <organization>
     <name>Ikasan</name>
