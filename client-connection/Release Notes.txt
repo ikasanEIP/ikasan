@@ -7,6 +7,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.0.2
 --------------------
  - added sonatype repository distribution management in the pom.xml
+ - changed j2ee dependency to use geronimo spec jar
  
 Release 1.0.1
 --------------------
