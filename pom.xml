@@ -343,7 +343,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-client-filetransfer</artifactId>
-			<version>1.4.3</version>
+			<version>1.4.4</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
