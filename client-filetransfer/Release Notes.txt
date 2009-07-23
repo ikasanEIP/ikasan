@@ -6,6 +6,13 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.4.4
 --------------------
  - added sonatype repository distribution management in the pom.xml
+ - changed dependency on j2ee jar to geronimo spec variant
+ - Bumped dependent project versions up to official releases as follows:
+   ikasan-common-1.1.13
+   ikasan-client-connection-1.0.2
+   ikasan-connector-base-1.1.6
+   ikasan-connector-basefiletransfer-1.2.6
+   ikasan-framework-0.16.2
  
 Release 1.4.3
 --------------------
