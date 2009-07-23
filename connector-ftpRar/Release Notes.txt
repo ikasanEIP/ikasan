@@ -6,6 +6,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.2.11
 --------------------
  - added sonatype repository distribution management in the pom.xml
+ - updated dependency following its release
  
 Release 1.2.10
 --------------------
