@@ -6,6 +6,8 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.2.11
 --------------------
  - externalised hibernate session factory properties
+ - updated dependency on connector-basefiletransfer to 1.2.6
+ - updated dependency on connector-base to 1.1.8
 
 Release 1.2.10
 --------------------
