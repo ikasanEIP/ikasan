@@ -6,6 +6,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 Release 1.3.0
 -------------
  - combined in the classes from the connector-ftp project
+ - updated to latest versions of connector-base and connector-basefiletransfer
 
 
 
