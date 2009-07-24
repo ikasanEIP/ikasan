@@ -5,6 +5,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 
 Release 1.1.9
 --------------------
+- removed redundant logging
 
 
 Release 1.1.8
