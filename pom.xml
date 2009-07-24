@@ -12,7 +12,6 @@
        <module>common</module>
        <module>connector-base</module>
        <module>connector-basefiletransfer</module>
-       <module>connector-ftp</module>
        <module>connector-ftpRar</module>
        <module>connector-sftp</module>
        <module>connector-sftpRar</module>
