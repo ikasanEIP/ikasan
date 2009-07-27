@@ -46,6 +46,24 @@
          $("#untilTime").val('00:00:00');
         });
       });
+
+    /* 
+     * A function to check/uncheck all checkboxes in a form.
+     * 
+     * Credit to Shawn Olson & http://www.shawnolson.net
+     */
+    function checkUncheckAll(theElement) {
+        var theForm = theElement.form
+        var z = 0;
+        for(z = 0; z < theForm.length; z++)
+        {
+            if(theForm[z].type == 'checkbox' && theForm[z].name != '(de)select all')
+            {
+                theForm[z].checked = theElement.checked;
+            }
+        }
+    }
+
   </script>
 
 <div class="middle">
@@ -59,10 +77,20 @@
         <ol>
             <li>
                 <label for="modules"><fmt:message key="wiretap_events_module"/></label>
+                <form:checkbox path="modules" value="(de)select all" onclick="checkUncheckAll(this);"/> (de)select all
                 <div id="eventSearchModuleCheckboxes" class="multiSelectCheckboxes">            
-                <c:forEach items="${modules}" var="module"> 
-                    <form:checkbox path="modules" value="${module.name}"/><c:out value="${module.name}"/><br>
-                </c:forEach>
+                <table>
+                    <tr>
+                        <td><strong>Module Name</strong></td>
+                        <td><strong>Position in Flow(s)</strong></td>
+                    </tr>
+                    <c:forEach items="${modules}" var="module">
+                    <tr>
+                        <td valign="top"><form:checkbox path="modules" value="${module.name}" /> <c:out value="${module.name}"/></td>
+                        <td valign="top"><c:out value="${module.description}" escapeXml="false" /></td>
+                    </tr>
+                    </c:forEach>
+                </table>
                 </div>
             </li>
           
