@@ -3,6 +3,10 @@ Release Notes
 The following TLAs are used:-
 NBC - Not Backward Compatible with previous version of the framework.
 
+Release 1.3.0
+--------------------
+ - assimilated connector-sftp project
+ - externalised hibernate properties
 
 Release 1.2.7
 --------------------
