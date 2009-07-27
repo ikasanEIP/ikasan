@@ -26,20 +26,26 @@
 # //
 # // 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.ikasan.demo</groupId>
-  <artifactId>demoSftpDelivery-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>0.16.2</version>
 
-	<name>demoSftpDelivery :: Parent Project</name>
+<server>
+	<loader-repository>
+		jboss.messaging:loader=ScopedLoaderRepository
+		<loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+	</loader-repository>
 
-     <modules>
-       <module>sftpSource</module>
-       <module>sftpTarget</module>
-       <module>war</module>
-       <module>ear</module>
-     </modules>
+  <!--  demo.sftpDelivery.fileChannel -->
+  <mbean code="org.jboss.jms.server.destination.TopicService"
+    name="jboss.messaging.destination:service=Topic,name=demo.sftpDelivery.fileChannel"
+    xmbean-dd="xmdesc/Topic-xmbean.xml">
+    <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+    <depends>jboss.messaging:service=PostOffice</depends>
+    <attribute name="FullSize">100</attribute>
+    <attribute name="PageSize">99</attribute>
+    <attribute name="DownCacheSize">99</attribute>
+  </mbean>
 
-</project>
+
+
+
+
+</server>

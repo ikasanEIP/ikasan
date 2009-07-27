@@ -30,54 +30,46 @@
 
 <beans>
 
-    <!-- source ftp system specs -->
-    <bean id="sourceFtpUserName" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+    
+    <bean id="knownHostsFileName" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
-    <bean id="sourceFtpPassword" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+    
+    
+    
+    
+    <bean id="sourceSftpPrivateKeyFilename" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
-    <bean id="sourceFtpPort" class="java.lang.Integer">
-        <constructor-arg value="<replace-me>" />
+    
+    <bean id="sourceSftpHostName" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
-    <bean id="sourceFtpHostName" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+    
+    <bean id="sourceSftpUserName" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
+    
     <bean id="srcDirectory" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+        <constructor-arg value="<replace_me>" />
     </bean>
     
-    <!-- target ftp system specs -->
-    <bean id="targetFtpUserName" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+    
+    <bean id="destinationSftpPrivateKeyFilename" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
-    <bean id="targetFtpPassword" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+    
+    <bean id="destinationSftpHostName" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
-    <bean id="targetFtpPort" class="java.lang.Integer">
-        <constructor-arg value="<replace-me>" />
+    
+    <bean id="destinationSftpUserName" class="java.lang.String">
+        <constructor-arg value="<replace_me>" />
     </bean>
-    <bean id="targetFtpHostName" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
-    </bean>
+    
     <bean id="destDirectory" class="java.lang.String">
-        <constructor-arg value="<replace-me>" />
+        <constructor-arg value="<replace_me>" />
     </bean>
-  
-    <bean id="jmsUsername" class="java.lang.String">
-          <constructor-arg value="unused" />
-    </bean>
-    <bean id="jmsPassword" class="java.lang.String">
-        <constructor-arg value="unused" />
-    </bean>  
-  
-    <!-- 
-    <bean id="jmsUsername" class="java.lang.String">
-          <constructor-arg value="<replace-me>" />
-    </bean>
-    
-    <bean id="jmsPassword" class="java.lang.String">
-    	<constructor-arg value="<replace-me>" />
-    </bean>
- -->
+
+
 </beans>

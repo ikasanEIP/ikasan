@@ -27,8 +27,7 @@
 # // 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
@@ -36,30 +35,54 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 
-  <!-- 'public' topics -->   
-  <bean id="fileChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.sftpDelivery.fileChannel"/>
-  </bean>
-  <bean id="fileChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="fileChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
- 
- 
+	<bean id="moduleName" class="java.lang.String">
+		<constructor-arg value="${project.name}-${module.name}" />
+	</bean>
+	
+    <bean id="loggingExceptionHandler" class="org.ikasan.framework.component.LoggingExceptionHandlerImpl">
+            <property name="errorAction">
+                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    <constructor-arg value="ROLLBACK_RETRY" />
+                    <constructor-arg value="10000" />
+                    <constructor-arg value="10" />
+                </bean>
+            </property>
+        </bean>
 
-   <!-- Connection Factories -->
-  <bean id="jmsConnectionFactory"
-      class="org.springframework.jndi.JndiObjectFactoryBean">
-      <property name="jndiName" value="java:/JmsXA" />
-      <property name="lookupOnStartup" value="false" />
-      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
-  </bean>
-  
-  <!-- <bean id="secureJmsConnectionFactory" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-      <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-      <property name="username" ref="jmsUsername"/>
-      <property name="password" ref="jmsPassword"/>
-  </bean>-->
+
+	<bean id="flowElementInvoker"
+		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
+		<!-- <constructor-arg ref="exceptionHandler" />-->
+		<constructor-arg ref="loggingExceptionHandler"/>
+
+		<property name="flowEventListener" ref="flowEventListener" />
+	</bean>
+
+
+
+	<!-- delivery Flow -->
+
+
+	<bean id="deliveryFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
+		<constructor-arg value="deliveryFlow" />
+		<constructor-arg ref="moduleName" />
+		<constructor-arg ref="sftpPublishingElement" />
+		<constructor-arg ref="flowElementInvoker" />
+
+	</bean>
+
+
+    <bean id="sftpPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="sftpPublishingStep" />
+        <constructor-arg ref="sftpPublishingEndpoint" />
+        <property name="description">
+          <value>Publishes the sourced file to an sftp endpoint</value>
+        </property>
+    </bean>
+    
+    
+    
+	
+
 
 </beans>

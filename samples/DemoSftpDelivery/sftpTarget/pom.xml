@@ -26,20 +26,33 @@
 # //
 # // 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.ikasan.demo</groupId>
-  <artifactId>demoSftpDelivery-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>0.16.2</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.ikasan.demo</groupId>
+		<artifactId>demoSftpDelivery-parent</artifactId>
+		<version>0.16.2</version>
+	</parent>
+	<artifactId>demoSftpDelivery-sftpTarget-jar</artifactId>
+	<packaging>jar</packaging>
 
-	<name>demoSftpDelivery :: Parent Project</name>
 
-     <modules>
-       <module>sftpSource</module>
-       <module>sftpTarget</module>
-       <module>war</module>
-       <module>ear</module>
-     </modules>
+	<name>demoSftpDelivery :: sftpTarget : jar</name>
 
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<filters>
+			<filter>../project.properties</filter>
+			<filter>./module.properties</filter>
+		</filters>
+	</build>
 </project>
+
