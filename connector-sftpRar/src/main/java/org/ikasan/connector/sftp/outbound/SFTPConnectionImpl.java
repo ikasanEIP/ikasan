@@ -94,7 +94,7 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implements BaseFileTransferConnection
 {
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(SFTPConnection.class);
+    private static Logger logger = Logger.getLogger(SFTPConnectionImpl.class);
     
     /** The application context */
     private static Map<String, ApplicationContext> contextMap = new HashMap<String, ApplicationContext>();
@@ -226,8 +226,8 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
 
         ExecutionContext executionContext = new ExecutionContext();
         // Pass through the client Id
-        logger.info("Got clientId [" + clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        logger.info("Source = [" + sourceDir+ "] moveOnSuccess = [" + moveOnSuccess + "] and archive dir = [" + moveOnSuccessNewPath + "].");
+        logger.debug("Got clientId [" + clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("Source = [" + sourceDir+ "] moveOnSuccess = [" + moveOnSuccess + "] and archive dir = [" + moveOnSuccessNewPath + "].");
         executionContext.put(ExecutionContext.CLIENT_ID, clientId);
 
         BaseFileTransferDao baseFileTransferDao = (BaseFileTransferDao) getContext().getBean("baseFileTransferDao");
