@@ -48,13 +48,18 @@ public class WiretapSearchCriteria implements Serializable
     /** Logger for the class */
     private Logger logger = Logger.getLogger(WiretapSearchCriteria.class);
 
-    /** Constructor */
-    public WiretapSearchCriteria()
+    /** 
+     * Constructor
+     * 
+     * @param moduleNames - Set of module names (will ensure that check boxes are pre-checked)
+     */
+    public WiretapSearchCriteria(Set<String> moduleNames)
     {
         this.ddMMyyyyFormat = new SimpleDateFormat("dd/MM/yyyy");
         this.ddMMyyyyFormat.setLenient(false);
         this.HHmmss = new SimpleDateFormat("HH:mm:ss");
         this.HHmmss.setLenient(false);
+        this.modules = moduleNames;
     }
 
     /** Simple date format definition for days months and years */

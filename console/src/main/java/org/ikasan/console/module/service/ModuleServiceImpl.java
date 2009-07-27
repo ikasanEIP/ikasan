@@ -59,11 +59,13 @@ public class ModuleServiceImpl implements ModuleService
     public List<Module> getModules()
     {
         List<Module> modules = new ArrayList<Module>();
-        Module module = null;
+        SimpleModule module = null;
         // trade01EAI modules
         module = new SimpleModule("dias-positionSrc");
+        module.setDescription("<strong>dias-positionSrc</strong> --> msgBroker-riskPosition --> risk-marsPositionTgt");
         modules.add(module);
         module = new SimpleModule("dias-valuationSrc");
+        module.setDescription("<strong>dias-valuationSrc</strong> --> msgBroker-riskValuation --> risk-marsValuationTgt");
         modules.add(module);
         module = new SimpleModule("hongKongMurex-tradeSrc");
         modules.add(module);
@@ -72,6 +74,8 @@ public class ModuleServiceImpl implements ModuleService
         module = new SimpleModule("mhtny-custodyWeb");
         modules.add(module);
         module = new SimpleModule("msgBroker-riskPosition");
+        module.setDescription("dias-positionSrc --> <strong>msgBroker-riskPosition<strong> --> risk-marsPositionTgt<br>" +
+        		"murex-positionSrc --> <strong>msgBroker-riskPosition<strong> --> risk-marsPositionTgt");
         modules.add(module);
         module = new SimpleModule("msgBroker-riskValuation");
         modules.add(module);
@@ -108,6 +112,8 @@ public class ModuleServiceImpl implements ModuleService
         module = new SimpleModule("intellimatch-positionTgt");
         modules.add(module);
         module = new SimpleModule("jvbridge-staticSrc");
+        module.setDescription("<strong>jvbridge-staticSrc</strong> --> msgBroker-static --> risk-marsStaticTgt<br>" +
+        "<strong>jvbridge-staticSrc</strong> --> msgBroker-static --> stratus-staticTgt<br>");
         modules.add(module);
         module = new SimpleModule("jvbridge-staticTgt");
         modules.add(module);
