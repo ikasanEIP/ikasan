@@ -301,7 +301,7 @@ public class SFTPClient implements FileTransferClient
 
         // Checking the connection state,
         String msg = new String("Checking connection status... "); //$NON-NLS-1$
-        logger.info(msg + "[" + (isConnected() ? "connected" : "disconnected") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        logger.debug(msg + "[" + (isConnected() ? "connected" : "disconnected") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         // and acting accordingly.
         if (isConnected())
         {
@@ -356,7 +356,7 @@ public class SFTPClient implements FileTransferClient
                     + "] retries, but ClientConnectionException was not thrown!!"); //$NON-NLS-1$
         }
 
-        logger.info("Session and channel connected!"); //$NON-NLS-1$
+        logger.debug("Session and channel connected!"); //$NON-NLS-1$
     }
 
     /**
@@ -374,7 +374,7 @@ public class SFTPClient implements FileTransferClient
     {
         this.jsch = new JSch();
         String msg = new String("Attempting connection to [" + remoteHostname + "]..."); //$NON-NLS-1$ //$NON-NLS-2$
-        logger.info(msg);
+        logger.debug(msg);
         try
         {
             JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
@@ -390,7 +390,7 @@ public class SFTPClient implements FileTransferClient
             this.session.connect(this.connectionTimeout);
             if (this.localHostname != null)
             {
-                echoConfig(Level.INFO);
+                echoConfig(Level.DEBUG);
                 for (int i = 0; i < DEFAULT_MAXIMUM_LOCAL_PORT; i++)
                 {
                     try
@@ -471,7 +471,7 @@ public class SFTPClient implements FileTransferClient
             logger.debug("Disconnecting Session..."); //$NON-NLS-1$
             this.session.disconnect();
         }
-        logger.info("Disconnecting... [OK]"); //$NON-NLS-1$
+        logger.debug("Disconnecting... [OK]"); //$NON-NLS-1$
     }
 
     /**

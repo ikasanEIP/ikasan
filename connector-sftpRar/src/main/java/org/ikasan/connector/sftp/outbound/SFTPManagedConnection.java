@@ -229,11 +229,11 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
             {
                 logger.debug("Closing SFTP connection!"); //$NON-NLS-1$
                 this.sftpClient.disconnect();
-                logger.info("Disconnected from SFTP host."); //$NON-NLS-1$
+                logger.debug("Disconnected from SFTP host."); //$NON-NLS-1$
             }
             else
             {
-                logger.info("Client was already disconnected.  Closing Session aborted."); //$NON-NLS-1$
+                logger.debug("Client was already disconnected.  Closing Session aborted."); //$NON-NLS-1$
             }
         }
     }

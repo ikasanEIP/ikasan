@@ -154,7 +154,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
             throws ResourceException
     {
-        logger.info("Called createManagedConnection"); //$NON-NLS-1$
+        logger.debug("Called createManagedConnection"); //$NON-NLS-1$
 
         // Set the connection properties if they exist
         if (cri != null)
@@ -189,9 +189,9 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     @Override
     public ManagedConnection matchManagedConnections(Set connections, Subject subject, ConnectionRequestInfo info)
     {
-        logger.info("Called matchManagedConnection()");
+        logger.debug("Called matchManagedConnection()");
         int size = connections.size();
-        logger.info("Number of connections considered = [" + size + "].");
+        logger.debug("Number of connections considered = [" + size + "].");
         Iterator<?> it = connections.iterator();
         SFTPConnectionRequestInfo scri = (SFTPConnectionRequestInfo) info;
         while (it.hasNext())
@@ -217,7 +217,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
                 }
             }
         }
-        logger.info("No matched Connection for object.");
+        logger.debug("No matched Connection for object.");
         return null;
     }
 
@@ -235,7 +235,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
             this.knownHostsFilename.hashCode() +
             this.privateKeyFilename.hashCode() +
             this.clientID.hashCode();
-        logger.info("HashCode = [" + hashCode + "].");
+        logger.debug("HashCode = [" + hashCode + "].");
         return  hashCode;
     }
 
@@ -259,7 +259,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
         if (object instanceof SFTPManagedConnectionFactory)
         {
-            logger.info("Object is a SFTPManagedConnectionFactory"); //$NON-NLS-1$
+            logger.debug("Object is a SFTPManagedConnectionFactory"); //$NON-NLS-1$
             SFTPManagedConnectionFactory smcf = (SFTPManagedConnectionFactory) object;
             return compareSMCF(smcf);
         }
@@ -283,11 +283,11 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
             this.privateKeyFilename.equals(scri.getPrivateKeyFilename()) &&
             this.clientID.equals(scri.getClientID()))
         {
-            logger.info("Current connection properties matches CRI. Returning [true]."); //$NON-NLS-1$
+            logger.debug("Current connection properties matches CRI. Returning [true]."); //$NON-NLS-1$
             return true;
         }
         // Default else
-        logger.info("Current connection properties do not match CRI. Returning [false]."); //$NON-NLS-1$
+        logger.debug("Current connection properties do not match CRI. Returning [false]."); //$NON-NLS-1$
         return false;
     }
 
@@ -324,11 +324,11 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
             this.privateKeyFilename.equals(smcf.privateKeyFilename) &&
             this.clientID.equals(smcf.clientID))
         {
-            logger.info("Object is equal. Returning [true]."); //$NON-NLS-1$
+            logger.debug("Object is equal. Returning [true]."); //$NON-NLS-1$
             return true;
         }
         // Default else
-        logger.info("Object is not equal. Returning [false]."); //$NON-NLS-1$
+        logger.debug("Object is not equal. Returning [false]."); //$NON-NLS-1$
         return false;
     }
 
@@ -350,7 +350,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
         {
             logger.debug("CRI was not null, so we override ra.xml values."); //$NON-NLS-1$
             SFTPConnectionRequestInfo scri = (SFTPConnectionRequestInfo) cri;
-            logger.info("CRI \n" + scri);
+            logger.debug("CRI \n" + scri);
             // Client ID sits on the EISManagedConnectionFactory
             if (scri.getClientID() != null)
             {
@@ -472,7 +472,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     {
         CommonEnvironment env = (CommonEnvironment)this.context.getBean("env");
         String localHost = env.expandEnvVar(rtLocalHost);
-        logger.info("Setting localhost to [" + localHost + "].");
+        logger.debug("Setting localhost to [" + localHost + "].");
         if (localHost != null && localHost.length() > 0)
         {
             this.localHostname = localHost;
