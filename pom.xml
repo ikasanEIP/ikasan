@@ -13,7 +13,6 @@
        <module>connector-base</module>
        <module>connector-basefiletransfer</module>
        <module>connector-ftpRar</module>
-       <module>connector-sftp</module>
        <module>connector-sftpRar</module>
        <module>framework</module>
 	   <module>webconsole</module>
