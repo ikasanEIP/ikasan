@@ -35,31 +35,32 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	<bean id="${project.name}-${module.name}"
+		class="org.ikasan.framework.module.loader.ModuleFactoryBean">
+		<constructor-arg>
+			<list>
+				<value>${project.name}-environmentalisation.xml</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+			    <value>${project.name}-${module.name}-module-config.xml</value>
+			    <value>${project.name}-${module.name}-flow-config.xml</value>
+			    <value>${project.name}-${module.name}-component-config.xml</value>
+			    <value>${project.name}-${module.name}-messaging-config.xml</value>
+				
+			</list>
+		</constructor-arg>
+		
+		<constructor-arg ref="ikasanConfDir"/>
+		<constructor-arg value="module" />
+	</bean>
+	
+    <bean id="ikasanConfDir" factory-bean="resourceLoader"
+        factory-method="getIkasanConfigurationDirectory" />
 
-  <!-- 'public' topics -->   
-  <bean id="fileChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.sftpDelivery.fileChannel"/>
-  </bean>
-  <bean id="fileChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="fileChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
- 
- 
-
-   <!-- Connection Factories -->
-  <bean id="jmsConnectionFactory"
-      class="org.springframework.jndi.JndiObjectFactoryBean">
-      <property name="jndiName" value="java:/JmsXA" />
-      <property name="lookupOnStartup" value="false" />
-      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
-  </bean>
-  
-  <!-- <bean id="secureJmsConnectionFactory" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-      <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-      <property name="username" ref="jmsUsername"/>
-      <property name="password" ref="jmsPassword"/>
-  </bean>-->
+    <bean id="resourceLoader"
+        class="org.ikasan.framework.ResourceLoader"
+        factory-method="getInstance"/>
 
 </beans>

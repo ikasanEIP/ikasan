@@ -55,14 +55,14 @@
 				<!-- ConnectionSpec -->
 				<constructor-arg>
 				    <bean id="sftpConnectionSpec"
-				        class="org.ikasan.connector.ftp.outbound.SFTPConnectionSpec">
+				        class="org.ikasan.connector.sftp.outbound.SFTPConnectionSpec">
 				        <property name="cleanupJournalOnComplete" value="true" />
 				        <property name="clientID" value="${module.name}" />
-				        <property name="knownHostsFilename" ref="sftpSourceKnownHostsFileName" />
+				        <property name="knownHostsFilename" ref="knownHostsFileName" />
 				        <property name="maxRetryAttempts" value="3" />
 				        <property name="privateKeyFilename" ref="sourceSftpPrivateKeyFilename" />
 				        <property name="remoteHostname" ref="sourceSftpHostName" />
-				        <property name="remotePort" ref="sourceSftpPort" />
+				        <property name="remotePort" value="22" />
 				        <property name="username" ref="sourceSftpUserName" />
 				    </bean>
 				</constructor-arg>
@@ -87,7 +87,7 @@
 		<constructor-arg>
 			<bean class="org.ikasan.framework.plugins.JMSEventPublisherPlugin">
 				<constructor-arg ref="fileChannel" />
-				<constructor-arg ref="secureJmsConnectionFactory" />
+				<constructor-arg ref="jmsConnectionFactory" />
 				<constructor-arg ref="jmsMessageEventSerialiser" />
 				<constructor-arg>
 					<null />

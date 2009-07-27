@@ -27,39 +27,45 @@
 # // 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+    
+    <bean id="module"
+        class="org.ikasan.framework.module.SimpleModule">
+        <constructor-arg value="${project.name}-${module.name}" />
+        <constructor-arg>
+            <list>
+            	<ref bean="deliveryFlowInitiator"/>
+            </list>
+        </constructor-arg>
+        <property name="description">
+            <value>This is an example of an sftp target module that delivers a payload as file to an sftp server </value>
+        </property>
+    </bean>
 
-  <!-- 'public' topics -->   
-  <bean id="fileChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.sftpDelivery.fileChannel"/>
-  </bean>
-  <bean id="fileChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="fileChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
- 
- 
 
-   <!-- Connection Factories -->
-  <bean id="jmsConnectionFactory"
-      class="org.springframework.jndi.JndiObjectFactoryBean">
-      <property name="jndiName" value="java:/JmsXA" />
-      <property name="lookupOnStartup" value="false" />
-      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
-  </bean>
-  
-  <!-- <bean id="secureJmsConnectionFactory" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-      <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-      <property name="username" ref="jmsUsername"/>
-      <property name="password" ref="jmsPassword"/>
-  </bean>-->
+
+  <!-- =========================================================================== -->
+  <!--                   Delivery Flow Initiator                                     -->
+  <!-- =========================================================================== -->
+    
+    <bean id="deliveryFlowInitiator" class="org.ikasan.framework.initiator.messagedriven.MessageDrivenInitiatorFactoryBean">
+        <property name="moduleName" ref="moduleName"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <!-- Using destinationName, and destinationResolver to allow late lookup of jms Destination-->
+        <property name="destinationResolver" ref="jmsJndiDestinationResolver"/>
+        <property name="destinationName" ref="fileChannelName" />
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="flow" ref="deliveryFlow"/>
+        <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
+    </bean>
+    
+
 
 </beans>

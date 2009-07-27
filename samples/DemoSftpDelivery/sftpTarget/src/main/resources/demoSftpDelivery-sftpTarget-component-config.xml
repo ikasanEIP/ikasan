@@ -27,8 +27,7 @@
 # // 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
@@ -36,30 +35,42 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 
-  <!-- 'public' topics -->   
-  <bean id="fileChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.sftpDelivery.fileChannel"/>
-  </bean>
-  <bean id="fileChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="fileChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
- 
- 
 
-   <!-- Connection Factories -->
-  <bean id="jmsConnectionFactory"
-      class="org.springframework.jndi.JndiObjectFactoryBean">
-      <property name="jndiName" value="java:/JmsXA" />
-      <property name="lookupOnStartup" value="false" />
-      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
-  </bean>
-  
-  <!-- <bean id="secureJmsConnectionFactory" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-      <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-      <property name="username" ref="jmsUsername"/>
-      <property name="password" ref="jmsPassword"/>
-  </bean>-->
+	<bean id="sftpPublishingEndpoint"
+		class="org.ikasan.framework.component.endpoint.PayloadPublisherEndpoint">
+		<constructor-arg>
+			<bean class="org.ikasan.framework.payload.service.FileTransferPayloadPublisher">
+				<constructor-arg ref="destDirectory" />
+				<constructor-arg value=".temp" />
+				<!-- ConnectionFactory -->
+				<constructor-arg >
+					    <bean id="fileTransferConnectionFactory"
+					        class="org.springframework.jndi.JndiObjectFactoryBean">
+					        <property name="jndiName"
+					            value="java:/${project.name}/sftpXAConnectionFactory" />
+					    </bean>
+				</constructor-arg>
+				<!-- ConnectionSpec -->
+				<constructor-arg>
+				    <bean id="sftpConnectionSpec"
+				        class="org.ikasan.connector.sftp.outbound.SFTPConnectionSpec">
+				        <property name="cleanupJournalOnComplete" value="true" />
+				        <property name="clientID" value="${module.name}" />
+				        <property name="knownHostsFilename" ref="knownHostsFileName" />
+				        <property name="maxRetryAttempts" value="3" />
+				        <property name="privateKeyFilename" ref="destinationSftpPrivateKeyFilename" />
+				        <property name="remoteHostname" ref="destinationSftpHostName" />
+				        <property name="remotePort" value="22" />
+				        <property name="username" ref="destinationSftpUserName" />
+				    </bean>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+
+
+
+
 
 </beans>

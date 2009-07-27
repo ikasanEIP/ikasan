@@ -56,10 +56,6 @@
       <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
   </bean>
   
-  <!-- <bean id="secureJmsConnectionFactory" class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-      <property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-      <property name="username" ref="jmsUsername"/>
-      <property name="password" ref="jmsPassword"/>
-  </bean>-->
+
 
 </beans>
