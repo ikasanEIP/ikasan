@@ -62,14 +62,14 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_createsErrorForNoModules()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(null);
         failsValidation(wiretapSearchCriteria, "modules");
     }
     
     @Test
     public void testValidate_createsErrorForNoFromTimeWhenFromDateSupplied()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setFromDate("12/12/1965");
         failsValidation(wiretapSearchCriteria, "fromTime");
@@ -78,7 +78,7 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_passesValidationWithValidFromDateAndTime()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setFromDate("12/12/1965");
         wiretapSearchCriteria.setFromTime("12:20:00");
@@ -88,7 +88,7 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_createsErrorFromTimeWhenInvalidFromTimeSupplied()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setFromDate("12/12/1965");
         wiretapSearchCriteria.setFromTime("invalid");
@@ -98,7 +98,7 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_createsErrorForNoUntilTimeWhenUntilDateSupplied()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setUntilDate("12/12/1965");
         failsValidation(wiretapSearchCriteria, "untilTime");
@@ -107,7 +107,7 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_passesValidationWithValidUntilDateAndTime()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setUntilDate("12/12/1965");
         wiretapSearchCriteria.setUntilTime("12:20:00");
@@ -131,7 +131,7 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_createsErrorUntilTimeWhenInvalidUntilTimeSupplied()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setUntilDate("12/12/1965");
         wiretapSearchCriteria.setUntilTime("invalid");
@@ -141,7 +141,7 @@ public class WiretapSearchCriteriaValidatorTest
     @Test
     public void testValidate_createsErrorIfFromDateTimeAfterUntilDateTime()
     {
-        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria();
+        WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(someModules);
         wiretapSearchCriteria.setModules(someModules);
         wiretapSearchCriteria.setUntilDate("12/12/1965");
         wiretapSearchCriteria.setUntilTime("12:30:00");

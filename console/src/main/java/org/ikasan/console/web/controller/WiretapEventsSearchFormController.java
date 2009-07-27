@@ -27,7 +27,9 @@
 package org.ikasan.console.web.controller;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -113,7 +115,14 @@ public class WiretapEventsSearchFormController
             "searchCriteria");
         if (searchCriteria == null)
         {
-            searchCriteria = new WiretapSearchCriteria();
+            List<Module> modules = this.moduleService.getModules();
+            Set<String> moduleNames = new HashSet<String>();
+            for (Module module:modules)
+            {
+                moduleNames.add(module.getName());
+            }
+            moduleNames.add("(de)select all"); 
+            searchCriteria = new WiretapSearchCriteria(moduleNames);
         }
         model.addAttribute("searchCriteria", searchCriteria);
         return "events/wiretapEvents";
