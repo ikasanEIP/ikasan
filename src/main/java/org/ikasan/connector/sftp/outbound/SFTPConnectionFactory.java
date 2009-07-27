@@ -179,7 +179,7 @@ public class SFTPConnectionFactory extends EISConnectionFactoryImpl
         // Allocate a connection, passing in the ConnectionRequestInfo
         logger.debug("About to allocate a connection."); //$NON-NLS-1$
         ConnectionManager cm = this.getConnectionManager();
-        logger.info("ConnectionManager of type [" + cm.getClass() + "].");  //$NON-NLS-1$//$NON-NLS-2$
+        logger.debug("ConnectionManager of type [" + cm.getClass() + "].");  //$NON-NLS-1$//$NON-NLS-2$
 
         ManagedConnectionFactory mcf = this.getManagedConnectionFactory();
         Object object = cm.allocateConnection(mcf, sftpConnectionRequestInfo); 
