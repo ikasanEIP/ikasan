@@ -5,6 +5,7 @@ NBC - Not Backward Compatible with previous version of the framework.
 
 Release 1.1.10
 --------------------
+- updated dependency on jta jar to be scope=provided
 
 Release 1.1.9
 --------------------
