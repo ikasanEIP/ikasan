@@ -31,29 +31,30 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
   http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd" version="1.5">
 
-  <display-name>FTP Resource Adapter</display-name>
+  <display-name>SFTP Resource Adapter</display-name>
   <vendor-name></vendor-name>
   <eis-type></eis-type>
   <resourceadapter-version>1.0</resourceadapter-version>
   <resourceadapter>
 
-    <resourceadapter-class>org.ikasan.connector.ftp.outbound.FTPResourceAdapter</resourceadapter-class>
+    <resourceadapter-class>org.ikasan.connector.sftp.outbound.SFTPResourceAdapter</resourceadapter-class>
 
     <outbound-resourceadapter>
       <connection-definition>
-        <managedconnectionfactory-class>org.ikasan.connector.ftp.outbound.FTPManagedConnectionFactory</managedconnectionfactory-class>
+        <managedconnectionfactory-class>org.ikasan.connector.sftp.outbound.SFTPManagedConnectionFactory</managedconnectionfactory-class>
 
-        <!-- FTP host we are connecting to -->
+        <!-- SFTP host we are connecting to -->
         <config-property>
           <config-property-name>RemoteHostname</config-property-name>
           <config-property-type>java.lang.String</config-property-type>
           <config-property-value>Default Remote Hostname</config-property-value>
         </config-property>
 
+        <!-- SFTP port number we are connecting to -->
         <config-property>
           <config-property-name>RemotePort</config-property-name>
           <config-property-type>java.lang.Integer</config-property-type>
-          <config-property-value>21</config-property-value>
+          <config-property-value>22</config-property-value>
         </config-property>
 
         <config-property>
@@ -62,41 +63,41 @@
           <config-property-value>${ikasan.connector.local.host.name}</config-property-value>
         </config-property>
 
-        <!-- FTP username we are connecting with -->
+        <!-- SFTP KnownHostsFilename we are connecting with -->
+        <config-property>
+          <config-property-name>KnownHostsFilename</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default Known Hosts File Name</config-property-value>
+        </config-property>
+
+        <!-- SFTP privateKeyFilename we are connecting with -->
+        <config-property>
+          <config-property-name>PrivateKeyFilename</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default Private Key File Name</config-property-value>
+        </config-property>
+
+        <!-- SFTP username we are connecting with -->
         <config-property>
           <config-property-name>Username</config-property-name>
           <config-property-type>java.lang.String</config-property-type>
           <config-property-value>Default Username</config-property-value>
         </config-property>
 
-        <!-- FTP password we are connecting with -->
-        <config-property>
-          <config-property-name>Password</config-property-name>
-          <config-property-type>java.lang.String</config-property-type>
-          <config-property-value>Default Password</config-property-value>
-        </config-property>
-
-        <!-- FTP client Id we are connecting with -->
+        <!-- SFTP client Id we are connecting with -->
         <config-property>
           <config-property-name>ClientID</config-property-name>
           <config-property-type>java.lang.String</config-property-type>
           <config-property-value>Default ClientID</config-property-value>
         </config-property>
 
-        <!-- FTP client system key -->
-        <config-property>
-          <config-property-name>SystemKey</config-property-name>
-          <config-property-type>java.lang.String</config-property-type>
-          <config-property-value>Default SystemKey</config-property-value>
-        </config-property>
-
         <connectionfactory-interface>javax.resource.cci.ConnectionFactory</connectionfactory-interface>
-        <connectionfactory-impl-class>org.ikasan.connector.ftp.outbound.FTPConnectionFactory</connectionfactory-impl-class>
+        <connectionfactory-impl-class>org.ikasan.connector.sftp.outbound.SFTPConnectionFactory</connectionfactory-impl-class>
         <connection-interface>javax.resource.cci.Connection</connection-interface>
-	    <connection-impl-class>org.ikasan.connector.ftp.outbound.FTPConnectionImpl</connection-impl-class>
+	    <connection-impl-class>org.ikasan.connector.sftp.outbound.SFTPConnectionImpl</connection-impl-class>
       </connection-definition>
 
-      <!-- We are using XATransaction -->
+      <!-- We are using XATRansaction -->
       <transaction-support>XATransaction</transaction-support>
       <reauthentication-support>false</reauthentication-support>
     </outbound-resourceadapter>

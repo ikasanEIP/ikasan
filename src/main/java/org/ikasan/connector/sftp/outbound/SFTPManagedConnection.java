@@ -24,8 +24,9 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Iterator;
 
@@ -44,10 +45,10 @@ import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;
 import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnection;
-import org.ikasan.connector.ftp.net.FileTransferProtocolClient;
+import org.ikasan.connector.sftp.net.SFTPClient;
 
 /**
- * This EJB implements the ManagedConnection for the FTP resource adapter. This
+ * This EJB implements the ManagedConnection for the SFTP resource adapter. This
  * is a representation of a real, physical connection to the server, so it has
  * an object instance variable which remains allocated to a server for the life
  * of this object. This class is responsible for creating virtual connections,
@@ -60,23 +61,24 @@ import org.ikasan.connector.ftp.net.FileTransferProtocolClient;
  * 
  * @author Ikasan Development Team
  */
-public class FTPManagedConnection extends TransactionalCommandConnection implements Serializable
+public class SFTPManagedConnection extends TransactionalCommandConnection implements Serializable
 {
+
     /** Generated GUID */
-    private static final long serialVersionUID = 8623781620439053263L;
+    private static final long serialVersionUID = -4346795065043603050L;
 
     /** The logger instance. */
-    public static Logger logger = Logger.getLogger(FTPManagedConnection.class);
+    public static Logger logger = Logger.getLogger(SFTPManagedConnection.class);
 
     /** Common library used by both inbound and outbound connectors */
-    private FileTransferProtocolClient ftpClient;
+    private SFTPClient sftpClient;
 
     /**
      * Handle to the managed connection factory, overrides the default
      * ManagedConnectipnFactory provided by the EISManagedConnection so that we
      * don't have to cast back lots of times
      */
-    protected FTPManagedConnectionFactory managedConnectionFactory;
+    protected SFTPManagedConnectionFactory managedConnectionFactory;
 
     /**
      * Constructor, sets the managed connection factory and the hibernate filter
@@ -84,14 +86,14 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      * 
      * client ID sits on EISManagedConnection
      * 
-     * @param managedConnectionFactory The managed connection factory providing
-     *            this managed connection
+     * @param managedConnectionFactory
      */
-    public FTPManagedConnection(FTPManagedConnectionFactory managedConnectionFactory)
+    public SFTPManagedConnection(SFTPManagedConnectionFactory managedConnectionFactory)
     {
         logger.debug("Called constructor."); //$NON-NLS-1$
         this.managedConnectionFactory = managedConnectionFactory;
         this.clientID = this.managedConnectionFactory.getClientID();
+
         instanceCount++;
         instanceOrdinal = instanceCount;
     }
@@ -99,34 +101,33 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     /**
      * Set the managed connection factory
      * 
-     * @param managedConnectionFactory Set the managed connection factory
-     *            providing this managed connection
+     * @param managedConnectionFactory
      */
     @Override
     public void setManagedConnectionFactory(ManagedConnectionFactory managedConnectionFactory)
     {
-        this.managedConnectionFactory = (FTPManagedConnectionFactory) managedConnectionFactory;
+        this.managedConnectionFactory = (SFTPManagedConnectionFactory) managedConnectionFactory;
     }
 
     /**
-     * Get the FTP managed connection factory
+     * Get the SFTP managed connection factory
      */
     @Override
-    public FTPManagedConnectionFactory getManagedConnectionFactory()
+    public SFTPManagedConnectionFactory getManagedConnectionFactory()
     {
         logger.debug("Called getManagedConnectionFactory"); //$NON-NLS-1$
         return this.managedConnectionFactory;
     }
 
     /**
-     * Create a virtual connection (a FTPConnection object) and add it to the
-     * list of managed instances before returning it to the client.
+     * Create a virtual connection (a BaseFileTransferConnection object) and 
+     * add it to the list of managed instances before returning it to the client.
      */
     @Override
     public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
     {
         logger.debug("Called getConnection()"); //$NON-NLS-1$
-        BaseFileTransferConnection connection = new FTPConnectionImpl(this);
+        BaseFileTransferConnection connection = new SFTPConnectionImpl(this);
         addConnection(connection);
         return connection;
     }
@@ -142,17 +143,21 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     public void destroy() throws ResourceException
     {
         logger.debug("Called destroy()"); //$NON-NLS-1$
+
         // Don't destroy twice
-        if(this.destroyed)
+        if (this.destroyed)
         {
             logger.debug("Already destroyed, returning"); //$NON-NLS-1$
             return;
         }
+
         // TODO Doesn't the app server already call this first?
         cleanup();
+
         // TODO: This is a badly named worded method, closeSession kills the
         // physical connection
         closeSession();
+
         this.destroyed = true;
     }
 
@@ -173,11 +178,11 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         Iterator<?> it = this.connections.iterator();
         while (it.hasNext())
         {
-            BaseFileTransferConnection fc = (BaseFileTransferConnection) it.next();
+            BaseFileTransferConnection sc = (BaseFileTransferConnection) it.next();
             // We have no specific implementation for invalidate at this stage
             // It therefore defaults to EISManagedConnection.invalidate()
             // which sets the managedConnection to null
-            fc.invalidate();
+            sc.invalidate();
         }
         this.connections.clear();
     }
@@ -185,112 +190,93 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     // ////////////////////////////////////////
     // Connection API Calls
     // ////////////////////////////////////////
+
     /**
      * openSession initiates the physical connection to the server and logs us
-     * in. This method is called by FTPManagedConnectionFactory immediately
+     * in. This method is called by SFTPManagedConnectionFactory immediately
      * after creating the instance of this class.
      * 
-     * In this implementation of an FTP connector there is no real concept of a
+     * In this implementation of an SFTP connector there is no real concept of a
      * session (a connection is made per method call), openSession is left here
-     * as it initialises the ftpClient and also provides a starting point for
+     * as it initialises the sftpClient and also provides a starting point for
      * true session functionality to be added if required
      * 
-     * @throws ResourceException Exception thrown by Connector
+     * @throws ResourceException
      */
     public void openSession() throws ResourceException
     {
         logger.debug("Called openSession."); //$NON-NLS-1$
-        createFTPClient();
-        this.ftpClient.echoConfig(Level.DEBUG);
+        createSFTPClient();
+        this.sftpClient.echoConfig(Level.INFO);
     }
 
-    /*
-     * Helper Methods /
-     */
+    /* **************************************************************************
+     * Helper Methods /*
+     * *************************************************************************/
+
     /**
-     * Close the FileTransferProtocolClient session
+     * Close the SFTPClient session
      */
     protected void closeSession()
     {
-        if(this.ftpClient == null)
+        if (this.sftpClient == null)
         {
-            logger.debug("FTPClient is null.  Closing Session aborted."); //$NON-NLS-1$
+            logger.info("SFTPClient is null.  Closing Session aborted."); //$NON-NLS-1$
         }
-        else
+        else 
         {
-            if(this.ftpClient.isConnected())
+            if (this.sftpClient.isConnected())
             {
-                logger.debug("Closing FTP connection!"); //$NON-NLS-1$
-                this.ftpClient.disconnect();
-                logger.debug("Disconnected from FTP host."); //$NON-NLS-1$
+                logger.debug("Closing SFTP connection!"); //$NON-NLS-1$
+                this.sftpClient.disconnect();
+                logger.debug("Disconnected from SFTP host."); //$NON-NLS-1$
             }
             else
             {
-                logger.info("Client was already disconnected.  Closing Session aborted."); //$NON-NLS-1$
+                logger.debug("Client was already disconnected.  Closing Session aborted."); //$NON-NLS-1$
             }
         }
     }
 
     /**
-     * Creates the FileTransferProtocolClient based off the properties from the
+     * Creates the SFTPClient based off the properties from the
      * ConnectionRequestInfo, and opens the connection
      * 
-     * @throws ResourceException Exception thrown by connector
+     * @throws ResourceException
      */
-    private void createFTPClient() throws ResourceException
+    private void createSFTPClient() throws ResourceException
     {
-        logger.debug("Called createFTPClient \n" //$NON-NLS-1$
-                + "active   [" + this.managedConnectionFactory.isActive() + "]\n" //$NON-NLS-1$//$NON-NLS-2$            
+        logger.debug("Called createSFTPClient \n" //$NON-NLS-1$
                 + "host     [" + this.managedConnectionFactory.getRemoteHostname() + "]\n" //$NON-NLS-1$//$NON-NLS-2$
-                + "maxretry [" + this.managedConnectionFactory.getMaxRetryAttempts() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "password [" + this.managedConnectionFactory.getPassword() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
                 + "port     [" + this.managedConnectionFactory.getRemotePort() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
+                + "pvkey    [" + this.managedConnectionFactory.getPrivateKeyFilename() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
+                + "kwnhost  [" + this.managedConnectionFactory.getKnownHostsFilename() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
+                + "maxretry [" + this.managedConnectionFactory.getMaxRetryAttempts() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
                 + "user     [" + this.managedConnectionFactory.getUsername() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        // Active
-        boolean active = this.managedConnectionFactory.isActive();
-        // Hostname
-        String remoteHostname = null;
-        if(this.managedConnectionFactory.getRemoteHostname() != null)
+
+        // Private key file
+        File privateKey = null;
+        try
         {
-            remoteHostname = this.managedConnectionFactory.getRemoteHostname();
+            privateKey = new File(this.managedConnectionFactory.getPrivateKeyFilename());
         }
-        else
+        catch (NullPointerException e)
         {
-            throw new ResourceException("Remote hostname is null."); //$NON-NLS-1$
+            throw new ResourceException("privateKeyFilename is null", e); //$NON-NLS-1$
         }
-        // Max retry attempts (Integer unboxes to int)
-        int maxRetryAttempts;
-        if(this.managedConnectionFactory.getMaxRetryAttempts() != null)
+        // Known Hosts file
+        File knownHosts = null;
+        try
         {
-            maxRetryAttempts = this.managedConnectionFactory.getMaxRetryAttempts();
+            knownHosts = new File(this.managedConnectionFactory.getKnownHostsFilename());
         }
-        else
+        catch (NullPointerException e)
         {
-            throw new ResourceException("max retry attempts is null"); //$NON-NLS-1$
-        }
-        // Password
-        String password;
-        if(this.managedConnectionFactory.getPassword() != null)
-        {
-            password = this.managedConnectionFactory.getPassword();
-        }
-        else
-        {
-            throw new ResourceException("password is null"); //$NON-NLS-1$
-        }
-        // Port (Integer unboxes to int)
-        int remotePort;
-        if(this.managedConnectionFactory.getRemotePort() != null)
-        {
-            remotePort = this.managedConnectionFactory.getRemotePort();
-        }
-        else
-        {
-            throw new ResourceException("Remote port is null"); //$NON-NLS-1$
+            throw new ResourceException("knownHostsFilename is null", e); //$NON-NLS-1$
         }
         // Username
         String username = null;
-        if(this.managedConnectionFactory.getUsername() != null)
+        if (this.managedConnectionFactory.getUsername() != null)
         {
             username = this.managedConnectionFactory.getUsername();
         }
@@ -298,59 +284,82 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         {
             throw new ResourceException("username is null"); //$NON-NLS-1$
         }
+        // Remote hostname
+        String remoteHostname = null;
+        if (this.managedConnectionFactory.getRemoteHostname() != null)
+        {
+            remoteHostname = this.managedConnectionFactory.getRemoteHostname();
+        }
+        else
+        {
+            throw new ResourceException("remote hostname is null"); //$NON-NLS-1$
+        }
+        // Remote port (Integer unboxes to int)
+        int remotePort;
+        if (this.managedConnectionFactory.getRemotePort() != null)
+        {
+            remotePort = this.managedConnectionFactory.getRemotePort();
+        }
+        else
+        {
+            throw new ResourceException("port is null"); //$NON-NLS-1$
+        }
+        // Max retry attempts (Integer unboxes to int)
+        int maxRetryAttempts;
+        if (this.managedConnectionFactory.getMaxRetryAttempts() != null)
+        {
+            maxRetryAttempts = this.managedConnectionFactory.getMaxRetryAttempts();
+        }
+        else
+        {
+            throw new ResourceException("max retry attempts is null"); //$NON-NLS-1$
+        }
+        //Local hostname
         String localHostname = null;
         if(this.managedConnectionFactory.getLocalHostname() != null)
         {
             localHostname = this.managedConnectionFactory.getLocalHostname();
         }
-        String systemKey = this.managedConnectionFactory.getSystemKey();
-        Integer connectionTimeout = this.managedConnectionFactory.getConnectionTimeout();
-        Integer dataTimeout = this.managedConnectionFactory.getDataTimeout();
-        Integer soTimeout = this.managedConnectionFactory.getSocketTimeout();
 
-        // Create a FileTransferProtocolClient
-        this.ftpClient = new FileTransferProtocolClient(active, remoteHostname, localHostname, maxRetryAttempts, password, remotePort, username, systemKey,
-            connectionTimeout, dataTimeout, soTimeout);
+        String preferredAuthentications = this.managedConnectionFactory.getPreferredAuthentications();
+
+        Integer connectionTimeout = this.managedConnectionFactory.getConnectionTimeout();
+
+        //Create a SFTPClient
+        this.sftpClient = new SFTPClient(privateKey, knownHosts, username, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
         try
         {
-            this.ftpClient.validateConstructorArgs();
+            this.sftpClient.validateConstructorArgs();
         }
         catch (ClientInitialisationException e)
         {
             throw new ResourceException(e);
         }
+
         // attempts to open the connection
         try
         {
-            ftpClient.connect();
+            sftpClient.connect();
         }
         catch (ClientConnectionException e)
         {
-            throw new ResourceException("Failed to open connection when creating FTPManagedConnection", e); //$NON-NLS-1$
-        }
-        // attempts to login
-        try
-        {
-            ftpClient.login();
-        }
-        catch (ClientConnectionException e)
-        {
-            throw new ResourceException("Failed to login when creating FTPManagedConnection", e); //$NON-NLS-1$
+            throw new ResourceException("Failed to open connection when creating SFTPManagedConnection", e); //$NON-NLS-1$
         }
     }
 
     // /////////////////////////////////////
     // TXN API calls
     // /////////////////////////////////////
+
     /**
      * Get any MetaData associated with this managed connection, e.g. The
      * maximum number of connections allowed
      */
     @Override
-    public FTPManagedConnectionMetaData getMetaData()
+    public SFTPManagedConnectionMetaData getMetaData()
     {
         logger.debug("Called getMetaData()"); //$NON-NLS-1$
-        return new FTPManagedConnectionMetaData(this);
+        return new SFTPManagedConnectionMetaData(this);
     }
 
     /**
@@ -361,18 +370,18 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     {
         logger.debug("Called associateConnection()"); //$NON-NLS-1$
         this.throwIfDestroyed();
-        if(connection instanceof FTPConnection)
+        if (connection instanceof BaseFileTransferConnection)
         {
-            BaseFileTransferConnection fc = (BaseFileTransferConnection) connection;
-            TransactionalCommandConnection fmc = fc.getManagedConnection();
+            BaseFileTransferConnection sc = (BaseFileTransferConnection) connection;
+            TransactionalCommandConnection smc = sc.getManagedConnection();
             // If it's already associated with us then leave
-            if(fmc == this)
+            if (smc == this)
             {
                 return;
             }
-            fmc.removeConnection(fc);
-            addConnection(fc);
-            fc.setManagedConnection(this);
+            smc.removeConnection(sc);
+            addConnection(sc);
+            sc.setManagedConnection(this);
         }
         else
         {
@@ -381,7 +390,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     }
 
     /**
-     * Deal with forgetting this unit of work as a txn, in this case do nothing
+     * Deal with forgetting this unti of work as a txn, in this case do nothing
      * 
      * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#forget(javax.transaction.xa.Xid)
      */
@@ -446,13 +455,13 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     @Override
     protected TransactionalResource getTransactionalResource()
     {
-        return ftpClient;
+        return sftpClient;
     }
 
     /**
      * Hook method to allow any connector specific post rollback functionality
      * 
-     * @param arg0 Transaction Id
+     * @param arg0
      */
     @Override
     protected void postRollback(Xid arg0)
@@ -463,7 +472,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     /**
      * Hook method to allow any connector specific post commit functionality
      * 
-     * @param arg0 Transaction Id
+     * @param arg0
      */
     @Override
     protected void postCommit(Xid arg0)
@@ -476,4 +485,5 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     {
         return managedConnectionFactory.isCleanupJournalOnComplete();
     }
+    
 }

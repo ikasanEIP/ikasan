@@ -24,39 +24,38 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.outbound.*;
 
 /**
- * This is the implementation of the metadata for the FTP resource adapter.
+ * This is the implementation of the metadata for the SFTP resource adapter.
  * 
  * @author Ikasan Development Team
  */  
-public class FTPManagedConnectionMetaData extends EISManagedConnectionMetaData 
+public class SFTPManagedConnectionMetaData extends EISManagedConnectionMetaData 
 {
-    /** Max number of connections, we support only 1 for FTP */
+    /** Max number of connections, we support only 1 for SFTP */
     private static final int MAX_NUMBER_OF_CONNECTIONS = 1;
     
-    /** The managed connection that this meta data is associated with */
+    /** The managed connection that this meta data is assocaited with */
     TransactionalCommandConnection smc;
 
     /**
-     * Store a reference to the FTPManagedConnection object 
+     * Store a reference to the SFTPManagedConnection object 
      * from which this metadata is derived
      *  
-     * @param smc - reference to the FTPManagedConnection object 
-     * from which this metadata is derived
+     * @param smc 
      */ 
-    public FTPManagedConnectionMetaData(TransactionalCommandConnection smc) 
+    public SFTPManagedConnectionMetaData(TransactionalCommandConnection smc) 
     { 
         this.smc = smc; 
     } 
 
     public String getEISProductName() 
     { 
-        return "FTP Server";  //$NON-NLS-1$
+        return "SFTP Server";  //$NON-NLS-1$
     } 
 
     public String getEISProductVersion() 

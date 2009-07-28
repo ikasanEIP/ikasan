@@ -24,12 +24,12 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
 import org.ikasan.connector.base.outbound.*;
 
 /**
- * This class implements a default connection manager for the FTP resource
+ * This class implements a default connection manager for the SFTP resource
  * adapter. This class is only used when the resource adapter is applied
  * outside the context of an application server. When an application server
  * is used, it will undoubtedly want to take control of connection
@@ -37,7 +37,7 @@ import org.ikasan.connector.base.outbound.*;
  * implementation as an argument to the createConnectionFactory method.
  * @author Ikasan Development Team
  */ 
-public class FTPConnectionManager extends EISConnectionManager
+public class SFTPConnectionManager extends EISConnectionManager
 { 
     /** serial UID */
     private static final long serialVersionUID = 8137685806596273652L;

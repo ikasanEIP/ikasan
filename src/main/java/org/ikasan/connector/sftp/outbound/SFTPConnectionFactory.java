@@ -24,7 +24,7 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
@@ -40,35 +40,35 @@ import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnection
 import org.apache.log4j.Logger;
 
 /**
- * This class implements the ConnectionFactory for the FTP resource
+ * This class implements the ConnectionFactory for the SFTP resource
  * adapter. Clients get an instance of this class by doing a JNDI
  * lookup.
  * 
  * @author Ikasan Development Team
  */
-public class FTPConnectionFactory extends EISConnectionFactoryImpl
+public class SFTPConnectionFactory extends EISConnectionFactoryImpl
 {
     /** GUID for serialisation */
     private static final long serialVersionUID = -2362713339278565934L;
 
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(FTPConnectionFactory.class);
+    private static Logger logger = Logger.getLogger(SFTPConnectionFactory.class);
 
     /**
-     * This Constructor is called when the FTPManagedConnectionFactory
+     * This Constructor is called when the SFTPManagedConnectionFactory
      * instantiates this object. It passes in a reference to itself and
      * to the connection manager. The connection manager will, in
      * practice, be a class passed into the resource adapter by the
      * Application Server.
      * 
      * It then calls passes this off to the another constructor passing in 
-     * null for a FTPConnectionRequestInfo (because at this stage in the 
+     * null for a SFTPConnectionRequestInfo (because at this stage in the 
      * Application Server startup, we haven't got one)
      * 
-     * @param managedConnectionFactory The FTP managed connection factory 
+     * @param managedConnectionFactory The SFTP managed connection factory 
      * @param connectionManager The connection Manager 
      */
-    public FTPConnectionFactory(ManagedConnectionFactory managedConnectionFactory,
+    public SFTPConnectionFactory(ManagedConnectionFactory managedConnectionFactory,
                                  ConnectionManager connectionManager)
     {
         this(managedConnectionFactory, connectionManager, null);
@@ -82,20 +82,20 @@ public class FTPConnectionFactory extends EISConnectionFactoryImpl
      * We simple save the connectionManager in an instance variable, 
      * and delegate getConnection() calls to it.
      * 
-     * @param managedConnectionFactory - The managed connection factory for this connection factory 
+     * @param managedConnectionFactory
      * @param connectionManager - null if not supplied by caller
      * @param connectionRequestInfo - null if called by the Application Server
      */
-    public FTPConnectionFactory(ManagedConnectionFactory managedConnectionFactory,
+    public SFTPConnectionFactory(ManagedConnectionFactory managedConnectionFactory,
                                  ConnectionManager connectionManager,
                                  ConnectionRequestInfo connectionRequestInfo)
     {
-        logger.debug("Called FTPConnectionFactory constructor"); //$NON-NLS-1$
+        logger.debug("Called SFTPConnectionFactory constructor"); //$NON-NLS-1$
         this.setManagedConnectionFactory(managedConnectionFactory); 
         
         // If connectionManager is not passed by the Application Server or the 
         // calling program, we need to create one
-        ConnectionManager ftpConnectionManager = connectionManager;
+        ConnectionManager sftpConnectionManager = connectionManager;
         if (connectionManager == null) 
         {
             logger.warn("connectionManager param is null. " //$NON-NLS-1$
@@ -103,10 +103,10 @@ public class FTPConnectionFactory extends EISConnectionFactoryImpl
             + "by the Application Server. Inform development if this was not " //$NON-NLS-1$
             + "intentional. Creating new ConnectionManager outside of the " //$NON-NLS-1$
             + "Application Server."); //$NON-NLS-1$
-            ftpConnectionManager = new FTPConnectionManager(); 
+            sftpConnectionManager = new SFTPConnectionManager(); 
         } 
         
-        this.setConnectionManager(ftpConnectionManager);
+        this.setConnectionManager(sftpConnectionManager);
         this.setConnectionRequestInfo(connectionRequestInfo);
     }
 
@@ -151,8 +151,8 @@ public class FTPConnectionFactory extends EISConnectionFactoryImpl
         throws ResourceException
     {
 
-        FTPConnectionSpec spec = new FTPConnectionSpec();        
-        ConnectionRequestInfo ftpConnectionRequestInfo = null;
+        SFTPConnectionSpec spec = new SFTPConnectionSpec();
+        ConnectionRequestInfo sftpConnectionRequestInfo = null;
         
         if (connectionSpec != null)
         {
@@ -160,24 +160,29 @@ public class FTPConnectionFactory extends EISConnectionFactoryImpl
                 + connectionSpec.toString() + "]"); //$NON-NLS-1$
 
             // Check that the connection spec is OK, if not throw an error
-            if(!(connectionSpec instanceof FTPConnectionSpec))
+            if(!(connectionSpec instanceof SFTPConnectionSpec))
             {
                 throw new ResourceException("Invalid ConnectionSpec. Received [" //$NON-NLS-1$
                         + connectionSpec.getClass().getName() + "], expected [" //$NON-NLS-1$
                         + spec.getClass().getName() + "]"); //$NON-NLS-1$
             }
-            spec = (FTPConnectionSpec)connectionSpec;
             
             // Create the CRI from the connection spec
-            ftpConnectionRequestInfo = this.connectionSpecToCRI(connectionSpec);
-            logger.debug("CRI: [" + ftpConnectionRequestInfo.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            sftpConnectionRequestInfo = this.connectionSpecToCRI(connectionSpec);
+            logger.debug("CRI: [" + sftpConnectionRequestInfo.toString() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        else
+        {
+            logger.debug("No connection spec passed through."); //$NON-NLS-1$
         }
         
         // Allocate a connection, passing in the ConnectionRequestInfo
         logger.debug("About to allocate a connection."); //$NON-NLS-1$
-        Object object = this.getConnectionManager()
-                            .allocateConnection(this.getManagedConnectionFactory(), 
-                                                ftpConnectionRequestInfo); 
+        ConnectionManager cm = this.getConnectionManager();
+        logger.debug("ConnectionManager of type [" + cm.getClass() + "].");  //$NON-NLS-1$//$NON-NLS-2$
+
+        ManagedConnectionFactory mcf = this.getManagedConnectionFactory();
+        Object object = cm.allocateConnection(mcf, sftpConnectionRequestInfo); 
         
         // If the connection is not a BaseFileTransferConnection then error 
         if(! (object instanceof BaseFileTransferConnection) )
@@ -199,25 +204,25 @@ public class FTPConnectionFactory extends EISConnectionFactoryImpl
     private ConnectionRequestInfo connectionSpecToCRI(ConnectionSpec spec)
     {
         logger.debug("Converting Connection Spec to CRI"); //$NON-NLS-1$
-        FTPConnectionSpec ftpConnectionSpec = (FTPConnectionSpec)spec;
-        FTPConnectionRequestInfo fcri = new FTPConnectionRequestInfo();
-        if (ftpConnectionSpec != null)
+        SFTPConnectionSpec sftpConnectionSpec = (SFTPConnectionSpec)spec;
+        SFTPConnectionRequestInfo scri = new SFTPConnectionRequestInfo();
+        if (sftpConnectionSpec != null)
         {
-            fcri.setActive(ftpConnectionSpec.getActive());
-            fcri.setCleanupJournalOnComplete(ftpConnectionSpec.getCleanupJournalOnComplete());
-            fcri.setClientID(ftpConnectionSpec.getClientID());
-            fcri.setRemoteHostname(ftpConnectionSpec.getRemoteHostname());
-            fcri.setMaxRetryAttempts(ftpConnectionSpec.getMaxRetryAttempts());
-            fcri.setPassword(ftpConnectionSpec.getPassword());
-            fcri.setRemotePort(ftpConnectionSpec.getRemotePort());
-            fcri.setUsername(ftpConnectionSpec.getUsername());
-            fcri.setPollTime(ftpConnectionSpec.getPollTime());
-            fcri.setSystemKey(ftpConnectionSpec.getSystemKey());
-            fcri.setConnectionTimeout(ftpConnectionSpec.getConnectionTimeout());
-            fcri.setDataTimeout(ftpConnectionSpec.getDataTimeout());
-            fcri.setSocketTimeout(ftpConnectionSpec.getSocketTimeout());
+            scri.setCleanupJournalOnComplete(sftpConnectionSpec.getCleanupJournalOnComplete());
+            scri.setClientID(sftpConnectionSpec.getClientID());
+            scri.setRemoteHostname(sftpConnectionSpec.getRemoteHostname());
+            scri.setKnownHostsFilename(sftpConnectionSpec.getKnownHostsFilename());
+            scri.setMaxRetryAttempts(sftpConnectionSpec.getMaxRetryAttempts());
+            scri.setRemotePort(sftpConnectionSpec.getRemotePort());
+            scri.setPrivateKeyFilename(sftpConnectionSpec.getPrivateKeyFilename());
+            scri.setUsername(sftpConnectionSpec.getUsername());
+            scri.setRemoteHostname(sftpConnectionSpec.getRemoteHostname());
+            scri.setRemotePort(sftpConnectionSpec.getRemotePort());
+            scri.setPollTime(sftpConnectionSpec.getPollTime());
+            scri.setPreferredAuthentications(sftpConnectionSpec.getPreferredAuthentications());
+            scri.setConnectionTimeout(sftpConnectionSpec.getConnectionTimeout());
         }
-        return fcri;
+        return scri;
     }
     
 }

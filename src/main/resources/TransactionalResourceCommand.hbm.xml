@@ -52,7 +52,7 @@
     <property name="executionTimestamp" type="java.lang.String" column="ExecutionTimestamp" not-null="false" />
 
     <!-- subclasses without extra fields -->
-	<subclass name="org.ikasan.connector.basefiletransfer.outbound.command.FileDiscoveryCommand" discriminator-value="FileDiscovery" />
+    <subclass name="org.ikasan.connector.basefiletransfer.outbound.command.FileDiscoveryCommand" discriminator-value="FileDiscovery" />
     <subclass name="org.ikasan.connector.basefiletransfer.outbound.command.ChecksumDeliveredCommand" discriminator-value="ChecksumDelivered" />
 
     <!-- subclasses with extra fields -->

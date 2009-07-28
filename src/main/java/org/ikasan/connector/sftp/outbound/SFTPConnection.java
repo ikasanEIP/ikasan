@@ -24,15 +24,15 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
 /**
- * This interface defines the functions for the FTP source/target virtual
+ * This interface defines the functions for the SFTP source/target virtual
  * connection to the EIS.
  * 
  * @author Ikasan Development Team
  */
-public interface FTPConnection
+public interface SFTPConnection
 {
-    // TODO May not need this interface any longer
+    // TODO May not need this interface any longer 
 }

@@ -35,7 +35,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-  <class name="org.ikasan.connector.base.command.XidImpl" 
+  <class name="org.ikasan.connector.base.command.XidImpl"
     table="Xid" >
 
     <id name="id" type="long" column="Id">
@@ -45,8 +45,8 @@
     <property name="state" type="java.lang.String" column="State" not-null="true" />
     <property name="globalTransactionIdString" type="java.lang.String" column="GlobalTransactionId" not-null="true" />
     <property name="branchQualifierString" type="java.lang.String" column="BranchQualifier" not-null="true" />
-    <property name="formatId" type="java.lang.Integer" column="FormatId" not-null="true" /> 
-    <property name="clientId" type="java.lang.String" column="ClientId" not-null="true" /> 
+    <property name="formatId" type="java.lang.Integer" column="FormatId" not-null="true" />
+    <property name="clientId" type="java.lang.String" column="ClientId" not-null="true" />
     <property name="createdDateTime" type="java.util.Date" column="CreatedDateTime" not-null="true" />
     <property name="lastUpdatedDateTime" type="java.util.Date" column="LastUpdatedDateTime" not-null="true" />
   </class>

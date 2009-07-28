@@ -24,7 +24,7 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.connector.base.outbound.EISResourceAdapter;
 
 /**
- * This class extends the outbound EISResourceAdapter with FTP specific 
+ * This class extends the outbound EISResourceAdapter with SFTP specific 
  * implementation.  As this is an outbound ResourceAdapter, we don't actually 
  * need to provide any endpointActiviation or endpointDeactivation 
  * implementation here.
@@ -46,13 +46,13 @@ import org.ikasan.connector.base.outbound.EISResourceAdapter;
  * 
  * @author Ikasan Development Team
  */
-public class FTPResourceAdapter extends EISResourceAdapter
+public class SFTPResourceAdapter extends EISResourceAdapter
 {
    
     /**
      * The logger instance.
      */
-    private static Logger logger = Logger.getLogger(FTPResourceAdapter.class);
+    private static Logger logger = Logger.getLogger(SFTPResourceAdapter.class);
 
     /**
      * This is a callback method invoked by the application server when an 
@@ -69,17 +69,17 @@ public class FTPResourceAdapter extends EISResourceAdapter
     public void endpointActivation(MessageEndpointFactory endpointFactory,
                                    ActivationSpec spec)
     {
-        logger.debug("FTP Endpoint activated."); //$NON-NLS-1$
+        logger.debug("SFTP Endpoint activated."); //$NON-NLS-1$
     }
 
     /**
-     * Release any FTP resources.
+     * Release any SFTP resources.
      */
     @Override
     public void endpointDeactivation(MessageEndpointFactory endpointFactory,
                                      ActivationSpec spec)
     {
-        logger.debug("FTP Endpoint de-activated (stopped). " //$NON-NLS-1$
+        logger.debug("SFTP Endpoint de-activated (stopped). " //$NON-NLS-1$
                   + "Re-deploy to activate once again!"); //$NON-NLS-1$
         logger.debug("Connector released."); //$NON-NLS-1$
     }
@@ -88,7 +88,7 @@ public class FTPResourceAdapter extends EISResourceAdapter
      * When an Application server comes back after a crash, it calls this method
      * by giving the ActivationSpecs so that the adatper can find the 
      * XAResources that has uncommitted/withhold transactions, for the 
-     * FTPesourceAdapter this is null
+     * SFTPesourceAdapter this is null
      */
     @Override
     public XAResource[] getXAResources(ActivationSpec[] specs)

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -24,7 +24,7 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.connector.ftp.outbound;
+package org.ikasan.connector.sftp.outbound;
 
 // Imported log4j classes
 import org.apache.log4j.Logger;
@@ -32,47 +32,57 @@ import org.apache.log4j.Logger;
 import org.ikasan.connector.base.outbound.EISConnectionProperties;
 
 /**
- * FTPConnectionProperties defines enumeration types for the session 
+ * SFTPConnectionProperties defines enumeration types for the session
  * configuration.
- * 
+ *
  * @author Ikasan Development Team
  */
-public enum FTPConnectionProperties
+public enum SFTPConnectionProperties
     implements EISConnectionProperties
 {
-    /** Active mode */
-    ACTIVE_PASSIVE("active"),
+
+    // User session properties
     /** Cleanup Journal On Complete */
     CLEANUP_JOURNAL_ON_COMPLETE("cleanupJournalOnComplete"), //$NON-NLS-1$
+    /** Component Group Name */
+    COMPONENT_GROUP("componentGroup"),
+    /** Component Status URL */
+    COMPONENT_STATUS_URL("componentStatusURL"),
     /** Host */
     HOST("hostname"), //$NON-NLS-1$
+    /** Known hosts file */
+    KNOWN_HOSTS("knownHosts"), //$NON-NLS-1$
     /** Maximum number of error/retry attempts before dropping the line */
     MAX_RETRIES("maxRetries"), //$NON-NLS-1$
-    /** Password */
-    PASSWORD("password"), //$NON-NLS-1$
+    /** No Trasaction Connection Factory Handle */
+    NO_TXN_CF_HANDLE("sftpNoTxnConnectionFactoryHandle"),
     /** Client poll time */
     POLLTIME("pollTime"), //$NON-NLS-1$
     /** Port */
     PORT("port"), //$NON-NLS-1$
+    /** Private key file */
+    PRIVATE_KEY("privateKey"), //$NON-NLS-1$
     /** Username */
-    USERNAME("username"); //$NON-NLS-1$
+    USERNAME("username"), //$NON-NLS-1$
+    /** XA Connection Factory Handle */
+    XA_CF_HANDLE("sftpXAConnectionFactoryHandle");
 
     /** Serialize ID */
     private static final long serialVersionUID = 1L;
 
     /** The logger instance. */
-    private Logger logger = Logger.getLogger(FTPConnectionProperties.class);
+    private Logger logger = Logger.getLogger(SFTPConnectionProperties.class);
 
     /** Property Name */
     private final String name;
 
     /**
-     * Creates a new instance of <code>FTPConnectionProperties</code>
+     * Creates a new instance of <code>SFTPConnectionProperties</code>
      * with the specified property name.
-     * 
-     * @param name Property name 
+     *
+     * @param name Property name
      */
-    private FTPConnectionProperties(final String name)
+    private SFTPConnectionProperties(final String name)
     {
         this.name = name;
         logger.debug("Created " + this.getClass().getName() //$NON-NLS-1$
