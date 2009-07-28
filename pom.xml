@@ -268,10 +268,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    <groupId>geronimo-spec</groupId>
-    <artifactId>geronimo-spec-jta</artifactId>
-    <version>1.0.1B-rc4</version>
-</dependency> 
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-jta</artifactId>
+      <version>1.0.1B-rc4</version>
+      <scope>provided</scope>
+    </dependency> 
     <!-- Used for creating test objects -->
     <dependency>
       <groupId>org.jmock</groupId>
