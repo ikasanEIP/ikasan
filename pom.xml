@@ -36,7 +36,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-connector-filetransfer-parent</artifactId>
-		<version>1.3.1-SNAPSHOT</version>
+		<version>1.3.1</version>
 	</parent>
 	<artifactId>ikasan-connector-ftpRar</artifactId>
 	<packaging>rar</packaging>
