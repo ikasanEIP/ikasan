@@ -5,6 +5,8 @@ NBC - Not Backward Compatible with previous version of the framework.
 
 Release 1.2.8
 --------------------
+- removed 'provided' scope from dependency on connector-base
+
 
 Release 1.2.7
 --------------------
