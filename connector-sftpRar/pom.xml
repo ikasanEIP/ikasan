@@ -39,6 +39,9 @@
 
   <name>Connector SFTP Resource Adapter</name>
 
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/connector-sftpRar</connection>
+    </scm>
   
   <dependencies>
     <!-- The SFTP library -->
