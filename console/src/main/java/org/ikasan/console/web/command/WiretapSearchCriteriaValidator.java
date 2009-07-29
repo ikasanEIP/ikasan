@@ -29,6 +29,7 @@ package org.ikasan.console.web.command;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.validation.Errors;
@@ -54,13 +55,14 @@ public class WiretapSearchCriteriaValidator implements Validator
     /** A representation day/month/year */
     private SimpleDateFormat ddMMyyyyFormat;
 
-    /** A representation hour/minutes/seconds */    
+    /** A representation hour/minutes/seconds */
     private SimpleDateFormat HHmmss;
 
     /**
      * Warning suppressed because .equals method does not support Generics
      * 
      * (non-Javadoc)
+     * 
      * @see org.springframework.validation.Validator#supports(java.lang.Class)
      */
     @SuppressWarnings("unchecked")
@@ -72,28 +74,45 @@ public class WiretapSearchCriteriaValidator implements Validator
     /**
      * Validate the WiretapSearchCriteria
      * 
-     * @param object - WiretapSearchCriteria to validate 
+     * @param object - WiretapSearchCriteria to validate
      * @param errors - Errors to 'return' (if any).
      */
-    public void validate(Object object, Errors errors)
+    public void validate(Object object, List<String> errors)
     {
         WiretapSearchCriteria wiretapSearchCriteria = (WiretapSearchCriteria) object;
         Set<String> modules = wiretapSearchCriteria.getModules();
         if (modules == null || modules.isEmpty())
         {
-            errors.reject("modules", "You need to select at least one module");
+            errors.add("You need to select at least one module");
         }
         validateDateAndTime(errors, wiretapSearchCriteria.getFromDate(), "fromDate", wiretapSearchCriteria.getFromTime(), "fromTime");
         validateDateAndTime(errors, wiretapSearchCriteria.getUntilDate(), "untilDate", wiretapSearchCriteria.getUntilTime(), "untilTime");
-        if (!errors.hasErrors() && !isEmpty(wiretapSearchCriteria.getFromDate()) && !isEmpty(wiretapSearchCriteria.getUntilDate()))
+        if (!errors.isEmpty() && !isEmpty(wiretapSearchCriteria.getFromDate()) && !isEmpty(wiretapSearchCriteria.getUntilDate()))
         {
-            // if both from and until date times are populated, check if until
+            // If both from and until date times are populated, check if until
             // is not before from
-            Date fromDateTime = wiretapSearchCriteria.getFromDateTime();
-            Date untilDateTime = wiretapSearchCriteria.getUntilDateTime();
-            if (fromDateTime.compareTo(untilDateTime) > 0)
+            // TODO Shift this code into the wireTap search criteria when setting the date time there
+            Date fromDateTime = null;
+            Date untilDateTime = null;
+            try
             {
-                errors.reject("untilDate", "Until cannot be before From");
+                fromDateTime = wiretapSearchCriteria.getFromDateTime();
+            }
+            catch (ParseException e)
+            {
+                errors.add("From Date/Time was not parseable, please choose a valid date from the date picker");
+            }
+            try
+            {
+                untilDateTime = wiretapSearchCriteria.getUntilDateTime();
+            }
+            catch (ParseException e)
+            {
+                errors.add("Until Date/Time was not parseable, please choose a valid date from the date picker");
+            }
+            if (fromDateTime != null && untilDateTime != null && fromDateTime.compareTo(untilDateTime) > 0)
+            {
+                errors.add("Until date/time cannot be before From date/time");
             }
         }
     }
@@ -107,18 +126,18 @@ public class WiretapSearchCriteriaValidator implements Validator
      * @param timeFieldValue - time field to check
      * @param timeFieldName - time field name
      */
-    private void validateDateAndTime(Errors errors, String dateFieldValue, String dateFieldName, String timeFieldValue, String timeFieldName)
+    private void validateDateAndTime(List<String> errors, String dateFieldValue, String dateFieldName, String timeFieldValue, String timeFieldName)
     {
         // check that neither or both fields are supplied
         if (!isEmpty(dateFieldValue) ^ !isEmpty(timeFieldValue))
         {
             if (isEmpty(dateFieldValue))
             {
-                errors.reject(dateFieldName, dateFieldName + " must be supplied if " + timeFieldName + " has been set");
+                errors.add(dateFieldName + " must be supplied if " + timeFieldName + " has been set");
             }
             else
             {
-                errors.reject(timeFieldName, timeFieldName + " must be supplied if " + dateFieldName + " has been set");
+                errors.add(timeFieldName + " must be supplied if " + dateFieldName + " has been set");
             }
         }
         if (!isEmpty(dateFieldValue))
@@ -132,11 +151,13 @@ public class WiretapSearchCriteriaValidator implements Validator
             {
                 validDate = false;
             }
-            if (dateFieldValue.length()!=10){
-                validDate=false;
+            if (dateFieldValue.length() != 10)
+            {
+                validDate = false;
             }
-            if (!validDate){
-                errors.reject(dateFieldName, dateFieldName + " must be supplied as dd/MM/yyyy");
+            if (!validDate)
+            {
+                errors.add(dateFieldName + " must be supplied as dd/MM/yyyy");
             }
         }
         if (!isEmpty(timeFieldValue))
@@ -147,7 +168,7 @@ public class WiretapSearchCriteriaValidator implements Validator
             }
             catch (ParseException e)
             {
-                errors.reject(timeFieldName, timeFieldName + " must be supplied as HH:mm:ss, eg 00:30:00 for 12:30.00am");
+                errors.add(timeFieldName + " must be supplied as HH:mm:ss, eg 00:30:00 for 12:30.00am");
             }
         }
     }
@@ -161,5 +182,10 @@ public class WiretapSearchCriteriaValidator implements Validator
     private boolean isEmpty(String fieldValue)
     {
         return fieldValue == null || "".equals(fieldValue);
+    }
+
+    public void validate(Object arg0, Errors arg1)
+    {
+        // TODO Auto-generated method stub
     }
 }

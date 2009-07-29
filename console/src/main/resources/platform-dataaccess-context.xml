@@ -49,7 +49,7 @@
     <!-- Session Factory for the wiretapDao -->
     <bean id="wiretapHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
         <property name="mappingResources">
             <list>
                 <value>WiretapEventImpl.hbm.xml</value>
@@ -58,13 +58,13 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
-    <!-- TODO Shift to a datasources file, The Ikasan console XA datasource -->
-    <bean id="ikasanAdminXaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <!-- TODO Shift to a datasources file, The Ikasan console No Tx datasource ()-->
+    <bean id="ikasanAdminNoTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <!-- TODO Should really be a separate datasource? -->
-        <property name="jndiName" value="java:/ikasan/admin/xads" />
+        <property name="jndiName" value="java:/ikasan/admin/ds" />
     </bean>
 
-    <!-- TODO Shift to a datasources file, The Ikasan console Local Tx datasource -->
+    <!-- TODO Shift to a datasources file, The Ikasan console Local Tx datasource (used by security) -->
     <bean id="ikasanAdminLocalTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <!-- TODO Should really be a separate datasource? -->    
         <property name="jndiName" value="java:/ikasan/admin/localds" />

@@ -30,12 +30,19 @@
 --%>
 <%@ include file="/WEB-INF/jsp/top.jsp"%>
 
-<div class="subnavcontainer">
-	<ul>
-		<li><a href="<c:url value='search.htm'/>"><fmt:message key="menu_search_events_link"/></a></li>
-		
-        <c:if test="${wiretapEvent != null}">
-            <li> -> <a href="searchResults.htm"><fmt:message key="menu_search_results_link"/></a></li>
-        </c:if>
-	</ul>
-</div>
+    <div class="subnavcontainer">
+        <a name="top" />
+        <ul>
+            <li>
+                <c:choose>
+                    <c:when test="${searchResultsUrl != null}">
+                        <a href="<c:out value="${searchResultsUrl}" />">
+                    </c:when>
+                    <c:otherwise>
+                        <a href="<c:url value="list.htm?newSearch=true"/>">
+                    </c:otherwise>
+                </c:choose>
+                        <fmt:message key="menu_search_results_link"/></a>
+            </li>
+        </ul>
+    </div>
