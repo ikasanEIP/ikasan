@@ -77,7 +77,6 @@
 			<a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
 				</c:when>
 				<c:otherwise>
-			<fmt:message key="wiretap_event_previous"/>
 				</c:otherwise>
 			</c:choose>
 			&nbsp;
@@ -86,7 +85,6 @@
 			<a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
 				</c:when>
 				<c:otherwise>
-			<fmt:message key="wiretap_event_next"/>
 				</c:otherwise>
 			</c:choose>					
 		</td>
