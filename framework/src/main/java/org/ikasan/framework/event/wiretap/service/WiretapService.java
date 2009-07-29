@@ -32,21 +32,27 @@ import java.util.Set;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
 import org.ikasan.framework.event.wiretap.model.WiretapEvent;
+import org.ikasan.framework.management.search.PagedSearchResult;
 
 /**
- * This Service allows <code>Event</code>s to be dumped out at runtime for later retrieval and inspection
+ * This Service allows <code>Event</code>s to be dumped out at runtime for later
+ * retrieval and inspection
  * 
  * @author Ikasan Development Team
  */
 public interface WiretapService
 {
     /**
-     * Allows previously stored Events to be searched for.
+     * @deprecated - Use other findWiretapEvents instead
      * 
-     * By default the search has no restrictions. Specifying any of the arguments as anything other than null will cause
-     * the search to be restricted by an exact match on that field
+     *             Allows previously stored Events to be searched for.
      * 
-     * @param moduleNames - Set of names of modules to include in search - must contain at least one moduleName
+     *             By default the search has no restrictions. Specifying any of
+     *             the arguments as anything other than null will cause the
+     *             search to be restricted by an exact match on that field
+     * 
+     * @param moduleNames - Set of names of modules to include in search - must
+     *            contain at least one moduleName
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -56,13 +62,35 @@ public interface WiretapService
      * @param pageSize - how many results to return in the result
      * @param pageNo - page index into the greater result set
      * 
+     * @throws IllegalArgumentException - if moduleNames is null or empty
+     * @return List of <code>WiretapEventHeader</code> representing the result
+     *         of the search
+     */
+    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String componentName, String eventId, String payloadId, Date fromDate,
+            Date untilDate, String payloadContent, int pageSize, int pageNo);
+
+    /**
+     * Allows previously stored Events to be searched for.
+     * 
+     * @param pageNo - page index into the greater result set
+     * @param pageSize - how many results to return in the result
+     * @param orderBy - The field to order by
+     * @param orderAscending - Ascending flag
+     * @param moduleNames - Set of names of modules to include in search - must
+     *            contain at least one moduleName
+     * @param componentName - The name of the component
+     * @param eventId - The Event Id
+     * @param payloadId - The Payload Id
+     * @param fromDate - Include only events after fromDate
+     * @param untilDate - Include only events before untilDate
+     * @param payloadContent - The Payload content
      * 
      * @throws IllegalArgumentException - if moduleNames is null or empty
-     * @return List of <code>WiretapEventHeader</code> representing the result of the search
-     *
+     * @return List of <code>WiretapEventHeader</code> representing the result
+     *         of the search
      */
-    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String componentName,
-            String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent, int pageSize, int pageNo);
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
+            String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
 
     /**
      * Retrieve a specific <code>WiretapEvent</code> by Id
@@ -73,19 +101,22 @@ public interface WiretapService
     public WiretapEvent getWiretapEvent(Long wiretapEventId);
 
     /**
-     * dumps a snapshot of an <code>Event</code> at runtime in the form of one or more <code>WiretapEvent</code>s - one
-     * for every <code>Payload</code> contained
+     * dumps a snapshot of an <code>Event</code> at runtime in the form of one
+     * or more <code>WiretapEvent</code>s - one for every <code>Payload</code>
+     * contained
      * 
      * @param event - Event to snapshot
      * @param componentName - name of the component
      * @param moduleName - name of the <code>Module</code>
      * @param flowName - name of the <code>Flow</code>
-     * @param timeToLive - no of minutes from now until <code>WiretapEvents</code> should expire
+     * @param timeToLive - no of minutes from now until
+     *            <code>WiretapEvents</code> should expire
      */
     public void tapEvent(Event event, String componentName, String moduleName, String flowName, Long timeToLive);
 
     /**
-     * Causes all <code>WiretapEvent</code>s that are past their expiry to be deleted
+     * Causes all <code>WiretapEvent</code>s that are past their expiry to be
+     * deleted
      */
     public void housekeep();
 }
