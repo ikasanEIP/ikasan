@@ -134,6 +134,21 @@ input.controlButton {
 	padding: 2px 2px;
 }
 
+.border {
+	border: 1px solid #E1E1E1;
+	padding: 0px 0px;
+}
+
+.searchTable {
+    border: 1px solid #E1E1E1;
+    /* border-collapse: collapse; */
+}
+
+.searchTable thead tr {
+    background: #F6F9FB;
+    padding: 2px 2px;
+}
+
 /* Styles for tables that keys/values horizontally */
 .keyValueTable {
 	border: 1px solid #E1E1E1;
