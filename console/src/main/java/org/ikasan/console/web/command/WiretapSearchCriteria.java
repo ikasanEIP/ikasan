@@ -33,10 +33,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
-import org.apache.log4j.Logger;
 
 /**
  * Command class capturing the Wiretap search criteria fields
+ * 
+ * TODO Does it really need to be Serializable?
  * 
  * @author Ikasan Development Team
  */
@@ -45,9 +46,12 @@ public class WiretapSearchCriteria implements Serializable
     /** serialVersionUID */
     private static final long serialVersionUID = 3595514737829632181L;
 
-    /** Logger for the class */
-    private Logger logger = Logger.getLogger(WiretapSearchCriteria.class);
+    /** Simple date format definition for days months and years */
+    private SimpleDateFormat ddMMyyyyFormat;
 
+    /** Simple date format definition for hours minutes and seconds */
+    private SimpleDateFormat HHmmss;
+    
     /** 
      * Constructor
      * 
@@ -61,12 +65,6 @@ public class WiretapSearchCriteria implements Serializable
         this.HHmmss.setLenient(false);
         this.modules = moduleNames;
     }
-
-    /** Simple date format definition for days months and years */
-    private SimpleDateFormat ddMMyyyyFormat;
-
-    /** Simple date format definition for hours minutes and seconds */
-    private SimpleDateFormat HHmmss;
 
     /**
      * Get the serial uid
@@ -293,11 +291,11 @@ public class WiretapSearchCriteria implements Serializable
      * Get the from date time object
      * 
      * @return from date_time object
+     * @throws ParseException - Exception if we could not parse the date
      */
-    public Date getFromDateTime()
+    public Date getFromDateTime() throws ParseException
     {
         Date createDateTime = createDateTime(this.fromDate, this.fromTime);
-        this.logger.info("From datetime:" + createDateTime);
         return createDateTime;
     }
 
@@ -305,11 +303,11 @@ public class WiretapSearchCriteria implements Serializable
      * Get the to date time object
      * 
      * @return to date_time object
+     * @throws ParseException - Exception if we could not parse the date
      */
-    public Date getUntilDateTime()
+    public Date getUntilDateTime() throws ParseException
     {
         Date createDateTime = createDateTime(this.untilDate, this.untilTime);
-        this.logger.info("Until datetime:" + createDateTime);
         return createDateTime;
     }
 
@@ -319,16 +317,16 @@ public class WiretapSearchCriteria implements Serializable
      * @param dateString - The date component
      * @param timeString - the time component
      * @return A Java representation of the Date
+     * 
+     * @throws ParseException - Exception if we cannot parse the date 
      */
-    private Date createDateTime(String dateString, String timeString)
+    private Date createDateTime(String dateString, String timeString) throws ParseException
     {
         if (dateString == null || "".equals(dateString))
         {
             return null;
         }
         Calendar calendar = new GregorianCalendar();
-        try
-        {
             Date time = this.HHmmss.parse(timeString);
             Calendar timeCalendar = new GregorianCalendar();
             timeCalendar.setTime(time);
@@ -336,11 +334,6 @@ public class WiretapSearchCriteria implements Serializable
             calendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY));
             calendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
             calendar.set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND));
-        }
-        catch (ParseException e)
-        {
-            throw new RuntimeException(e);
-        }
         return calendar.getTime();
     }
 }
