@@ -162,6 +162,7 @@
         </c:forEach>
        	<c:param name="orderBy" value="id"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>       	
     </c:url>
 
     <c:url var="moduleLink" value="list.htm">
@@ -172,6 +173,7 @@
         </c:forEach>
        	<c:param name="orderBy" value="moduleName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>       	
     </c:url>
 
     <c:url var="flowLink" value="list.htm">
@@ -182,6 +184,7 @@
         </c:forEach>
        	<c:param name="orderBy" value="flowName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>       	
     </c:url>
 
     <c:url var="componentLink" value="list.htm">
@@ -192,26 +195,7 @@
         </c:forEach>
         <c:param name="orderBy" value="componentName"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
-    </c:url>
-
-    <c:url var="eventIdLink" value="list.htm">
-        <c:forEach var="entry" items="${searchParams}">
-            <c:forEach var="entryValue" items="${entry.value}">
-               <c:param name="${entry.key}" value="${entryValue}"/>
-            </c:forEach>
-        </c:forEach>
-        <c:param name="orderBy" value="eventId"/>
-        <c:param name="orderAsc" value="${!orderAsc}"/>
-    </c:url>
-
-    <c:url var="payloadIdLink" value="list.htm">
-        <c:forEach var="entry" items="${searchParams}">
-            <c:forEach var="entryValue" items="${entry.value}">
-               <c:param name="${entry.key}" value="${entryValue}"/>
-            </c:forEach>
-        </c:forEach>
-        <c:param name="orderBy" value="payloadId"/>
-        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>
     </c:url>
 
     <c:url var="createdDateTimeLink" value="list.htm">
@@ -222,6 +206,7 @@
         </c:forEach>
         <c:param name="orderBy" value="created"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>        
     </c:url>
 
     <c:if test="${resultSize > 0}">
