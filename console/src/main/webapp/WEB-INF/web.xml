@@ -10,6 +10,7 @@
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
+      /WEB-INF/classes/platform-datasources-context.xml
       /WEB-INF/classes/platform-dataaccess-context.xml
       /WEB-INF/classes/platform-service-context.xml
       /WEB-INF/applicationContext-security.xml
