@@ -228,12 +228,11 @@
         <table id="wiretapSearchResults" class="listTable">
             <thead>
                 <tr>
-                    <th><a href="<c:out value="${idLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_id"/></a></th>
-                    <th><a href="<c:out value="${moduleLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_module"/></th>
-                    <th><a href="<c:out value="${flowLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_flow"/></th>
-                    <th><a href="<c:out value="${componentLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_component"/></th>
-                    <%-- <th><a href="<c:out value="${eventIdLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_event_id"/></a> / <a href="<c:out value="${payloadIdLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_payload_id"/></a></th> --%>
-                    <th><a href="<c:out value="${createdDateTimeLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_created_date_time"/></a></th>
+                    <th><a href="<c:out value="${idLink}#results" escapeXml="true" />"><fmt:message key="wiretap_event_results_id"/></a></th>
+                    <th><a href="<c:out value="${moduleLink}#results" escapeXml="true" />"><fmt:message key="wiretap_event_results_module"/></th>
+                    <th><a href="<c:out value="${flowLink}#results" escapeXml="true" />"><fmt:message key="wiretap_event_results_flow"/></th>
+                    <th><a href="<c:out value="${componentLink}#results" escapeXml="true" />"><fmt:message key="wiretap_event_results_component"/></th>
+                    <th><a href="<c:out value="${createdDateTimeLink}#results" escapeXml="true" />"><fmt:message key="wiretap_event_results_created_date_time"/></a></th>
                 </tr>
             </thead>
 
@@ -248,7 +247,6 @@
                         <td><c:out value="${event.moduleName}" /></td>
                         <td><c:out value="${event.flowName}" /></td>
                         <td><c:out value="${event.componentName}" /></td>
-                        <%-- <td><c:out value="${event.eventId}" /><br><c:out value="${event.payloadId}" /></td> --%>
                         <td><c:out value="${event.created}" /></td>
                     </tr>
                 </c:forEach>
