@@ -34,10 +34,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.ikasan.console.web.controller.MasterDetailControllerUtil;
+
 /**
  * Command class capturing the Wiretap search criteria fields
- * 
- * TODO Does it really need to be Serializable?
  * 
  * @author Ikasan Development Team
  */
@@ -51,11 +52,15 @@ public class WiretapSearchCriteria implements Serializable
 
     /** Simple date format definition for hours minutes and seconds */
     private SimpleDateFormat HHmmss;
-    
-    /** 
+
+    /** The logger */
+    private Logger logger = Logger.getLogger(WiretapSearchCriteria.class);
+
+    /**
      * Constructor
      * 
-     * @param moduleNames - Set of module names (will ensure that check boxes are pre-checked)
+     * @param moduleNames - Set of module names (will ensure that check boxes
+     *            are pre-checked)
      */
     public WiretapSearchCriteria(Set<String> moduleNames)
     {
@@ -154,7 +159,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public void setComponentName(String componentName)
     {
-        this.componentName = componentName;
+        this.componentName = MasterDetailControllerUtil.nullForEmpty(componentName);
     }
 
     /**
@@ -164,7 +169,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public void setEventId(String eventId)
     {
-        this.eventId = eventId;
+        this.eventId = MasterDetailControllerUtil.nullForEmpty(eventId);
     }
 
     /**
@@ -174,7 +179,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public void setPayloadContent(String payloadContent)
     {
-        this.payloadContent = payloadContent;
+        this.payloadContent = MasterDetailControllerUtil.nullForEmpty(payloadContent);
     }
 
     /**
@@ -184,7 +189,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public void setPayloadId(String payloadId)
     {
-        this.payloadId = payloadId;
+        this.payloadId = MasterDetailControllerUtil.nullForEmpty(payloadId);
     }
 
     /**
@@ -291,23 +296,32 @@ public class WiretapSearchCriteria implements Serializable
      * Get the from date time object
      * 
      * @return from date_time object
-     * @throws ParseException - Exception if we could not parse the date
      */
-    public Date getFromDateTime() throws ParseException
+    public Date getFromDateTime()
     {
-        Date createDateTime = createDateTime(this.fromDate, this.fromTime);
-        return createDateTime;
+        return getDateTime(this.fromDate, this.fromTime);
     }
 
     /**
      * Get the to date time object
      * 
      * @return to date_time object
-     * @throws ParseException - Exception if we could not parse the date
      */
-    public Date getUntilDateTime() throws ParseException
+    public Date getUntilDateTime()
     {
-        Date createDateTime = createDateTime(this.untilDate, this.untilTime);
+        return getDateTime(this.untilDate, this.untilTime);
+    }
+
+    /**
+     * Helper method to get the date_time, avoids code duplication
+     * 
+     * @param date - Date part
+     * @param time - Time part
+     * @return Date/time
+     */
+    private Date getDateTime(String date, String time)
+    {
+        Date createDateTime = createDateTime(date, time);
         return createDateTime;
     }
 
@@ -317,16 +331,16 @@ public class WiretapSearchCriteria implements Serializable
      * @param dateString - The date component
      * @param timeString - the time component
      * @return A Java representation of the Date
-     * 
-     * @throws ParseException - Exception if we cannot parse the date 
      */
-    private Date createDateTime(String dateString, String timeString) throws ParseException
+    private Date createDateTime(String dateString, String timeString)
     {
         if (dateString == null || "".equals(dateString))
         {
             return null;
         }
         Calendar calendar = new GregorianCalendar();
+        try
+        {
             Date time = this.HHmmss.parse(timeString);
             Calendar timeCalendar = new GregorianCalendar();
             timeCalendar.setTime(time);
@@ -334,6 +348,11 @@ public class WiretapSearchCriteria implements Serializable
             calendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY));
             calendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
             calendar.set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND));
+        }
+        catch (ParseException pe)
+        {
+            logger.debug("Silently swallowing ParseException here as we catch this " + "issue and repoprt it to the user in a later validation stage.");
+        }
         return calendar.getTime();
     }
 }

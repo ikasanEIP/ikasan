@@ -27,7 +27,6 @@
 package org.ikasan.console.web.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,9 +55,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 /**
- * This class is the Controller for the Wiretap search form
- * 
- * TODO Comment correctly, split out the search criteria etc
+ * This class is the Controller for the WiretapEvent Search Form
  * 
  * @author Ikasan Development Team
  */
@@ -146,23 +143,16 @@ public class WiretapEventsSearchFormController
             return newSearchURL;
         }
         
-        logger.info("Form values that came in:");
-        logger.info("New Search Flag [" + newSearch + "]");
-        logger.info("Page [" + page + "]");
-        logger.info("Order By [" + orderBy + "]");
-        logger.info("Order Ascending Flag [" + orderAsc + "]");
-        logger.info("Select All Flag [" + selectAll + "]");
-        logger.info("Module Names [" + moduleNames + "]");
-        logger.info("Component Name [" + componentName + "]");
-        logger.info("Event Id [" + eventId + "]");
-        logger.info("Payload Id [" + payloadId + "]");
-        logger.info("From Date String [" + fromDateString + "]");
-        logger.info("From Time String [" + fromTimeString + "]");
-        logger.info("Until Date String [" + untilDateString + "]");
-        logger.info("Until Time String [" + untilTimeString + "]");
-        logger.info("Payload Content [" + payloadContent + "]");
+        // Log the search criteria coming in
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Form values that came in:");
+            logSearch(newSearch, page, orderBy, orderAsc, selectAll, moduleNames, componentName,
+                eventId, payloadId, fromDateString, fromTimeString, untilDateString, 
+                untilTimeString, payloadContent);
+        }
         
-        // Set the search criteria
+        // Set the search criteria from the values that came in
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(moduleNames);
         wiretapSearchCriteria.setComponentName(componentName);
         wiretapSearchCriteria.setEventId(eventId);
@@ -184,61 +174,31 @@ public class WiretapEventsSearchFormController
         
         // Setup the generic search criteria
         int pageNo = MasterDetailControllerUtil.defaultZero(page);
-        // TODO Make pageSize a user driven variable
         int pageSize = 25;
         String orderByField = MasterDetailControllerUtil.resolveOrderBy(orderBy);
         boolean orderAscending = MasterDetailControllerUtil.defaultFalse(orderAsc);
-        // boolean selAll = MasterDetailControllerUtil.defaultTrue(selectAll);
-        // TODO Could move this into the wiretap search criteria, but have to
-        // Make sure we don't magically validate someone's poor input
-        String compName = MasterDetailControllerUtil.nullForEmpty(componentName);
-        String evtId = MasterDetailControllerUtil.nullForEmpty(eventId);
-        String ploadId = MasterDetailControllerUtil.nullForEmpty(payloadId);
-        // TODO Shift this code into the wireTap search criteria when setting the date time there
-        Date fromDate = null;
-        Date untilDate = null;
-        try
-        {
-            fromDate = wiretapSearchCriteria.getFromDateTime();
-        }
-        catch (ParseException e)
-        {
-            errors.add("From Date/Time was not parseable, please choose a valid date from the date picker");
-            noErrors = false;
-        }
-        try
-        {
-            untilDate = wiretapSearchCriteria.getUntilDateTime();
-        }
-        catch (ParseException e)
-        {
-            errors.add("Until Date/Time was not parseable, please choose a valid date from the date picker");
-            noErrors = false;
-        }
-        fromDate = MasterDetailControllerUtil.nullForEmpty(fromDate);
-        untilDate = MasterDetailControllerUtil.nullForEmpty(untilDate);
-        String content = MasterDetailControllerUtil.nullForEmpty(payloadContent);
 
-        logger.info("******************************");
-        logger.info("Executing a Search with:");
-        logger.info("Page [" + pageNo + "]");
-        logger.info("Page Size [" + pageSize + "]");
-        logger.info("Order By [" + orderByField + "]");
-        logger.info("Order Ascending Flag [" + orderAscending + "]");
-        logger.info("Module Names [" + moduleNames + "]");
-        logger.info("Component Name [" + compName + "]");
-        logger.info("Event Id [" + evtId + "]");
-        logger.info("Payload Id [" + ploadId + "]");
-        logger.info("From Date/Time [" + fromDate + "]");
-        logger.info("Until Date/Time [" + untilDate + "]");
-        logger.info("Payload Content [" + content + "]");
-        
+        Date fromDate = wiretapSearchCriteria.getFromDateTime();
+        Date untilDate = wiretapSearchCriteria.getUntilDateTime();
+
+        // Log the search criteria we're sending down
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Executing Search with:");
+            logSearch(newSearch, pageNo, orderByField, orderAscending, selectAll, moduleNames, componentName,
+                eventId, payloadId, fromDateString, fromTimeString, untilDateString, 
+                untilTimeString, payloadContent);
+            logger.debug("Page Size [" + pageSize + "]");
+            logger.debug("From Date/Time [" + fromDate + "]");
+            logger.debug("Until Date/Time [" + untilDate + "]");
+        }
+
         // Perform the paged search
         PagedSearchResult<WiretapEvent> pagedResult = null;
         if (noErrors)
         {
-            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSize, orderByField, orderAscending, moduleNames, compName,
-                evtId, ploadId, fromDate, untilDate, content);
+            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSize, orderByField, orderAscending, moduleNames, componentName,
+                eventId, payloadId, fromDate, untilDate, payloadContent);
         }
 
         // Store the search parameters used
@@ -252,31 +212,7 @@ public class WiretapEventsSearchFormController
         MasterDetailControllerUtil.addParam(searchParams, "untilDateString", untilDateString);
         MasterDetailControllerUtil.addParam(searchParams, "untilTimeString", untilTimeString);
         MasterDetailControllerUtil.addParam(searchParams, "payloadContent", payloadContent);
-        // MasterDetailControllerUtil.addPagedModelAttributes(orderByField, orderAscending, selAll, model, pageNo, pagedResult, request, searchParams);        
         MasterDetailControllerUtil.addPagedModelAttributes(orderByField, orderAscending, selectAll, model, pageNo, pagedResult, request, searchParams);
-
-        logger.info("******************************");
-        logger.info("Storing the Search Parameters:");
-        logger.info("Order By [" + orderByField + "]");
-        logger.info("Order Ascending Flag [" + orderAscending + "]");
-        // logger.info("Select All Flag [" + selAll + "]");
-        logger.info("Select All Flag [" + selectAll + "]");
-        Set<?> keys = model.keySet();
-        Object value = null;
-        for (Object key:keys)
-        {
-            value = model.get(key);
-            // logger.info("Model Value [" + value.toString() + "]");
-        }
-        logger.info("Page [" + pageNo + "]");
-        // logger.info("Paged Result [" + pagedResult + "]");
-        logger.info("Request [" + request + "]");
-        for (String key:searchParams.keySet())
-        {
-            logger.info("Search Parameter key [" + key + "] value [" + searchParams.get(key) + "]");    
-        }
-        logger.info("Search Parameters [" + searchParams + "]");
-        logger.info("******************************");
         
         // Return back to the combined search / search results view
         return "events/wiretapEvents";
@@ -316,7 +252,6 @@ public class WiretapEventsSearchFormController
     public ModelAndView viewEvent(@RequestParam("eventId") long eventId, @RequestParam(required = false) String searchResultsUrl, ModelMap modelMap)
     {
         this.logger.info("inside viewEvent, eventId=[" + eventId + "]");
-        // TODO Make this occur purely in the view and not in the controller
         WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
         String payloadContent = wiretapEvent.getPayloadContent();
         String prettyXMLContent = "";
@@ -337,8 +272,7 @@ public class WiretapEventsSearchFormController
     }
 
     /**
-     * Helper method to determine if payload content is XML TODO Find formal way
-     * of proving that it is XML
+     * Helper method to determine if payload content is XML
      * 
      * @param payloadContent - The content to check
      * @return true of the content is XML
@@ -375,4 +309,47 @@ public class WiretapEventsSearchFormController
         }
         return null;
     }
+    
+    /**
+     * Log the search
+     * 
+     * @param newSearch - The newSearch flag
+     * @param page - page index into the greater result set
+     * @param orderBy - The field to order by
+     * @param orderAsc - Ascending flag
+     * @param selectAll - Select all boolean
+     * @param moduleNames - Set of names of modules to include in search
+     * @param componentName - The name of the component
+     * @param eventId - The Event Id
+     * @param payloadId - The Payload Id
+     * @param fromDateString - fromDate String
+     * @param fromTimeString - fromTime String
+     * @param untilDateString - untilDate String
+     * @param untilTimeString - untilTime String
+     * @param payloadContent - The Payload content
+     */
+    private void logSearch(Boolean newSearch, Integer page, String orderBy,
+            Boolean orderAsc, Boolean selectAll,
+            Set<String> moduleNames, String componentName,
+            String eventId, String payloadId,
+            String fromDateString, String fromTimeString,
+            String untilDateString, String untilTimeString,
+            String payloadContent)
+    {
+        logger.debug("New Search Flag [" + newSearch + "]");
+        logger.debug("Page [" + page + "]");
+        logger.debug("Order By [" + orderBy + "]");
+        logger.debug("Order Ascending Flag [" + orderAsc + "]");
+        logger.debug("Select All Flag [" + selectAll + "]");
+        logger.debug("Module Names [" + moduleNames + "]");
+        logger.debug("Component Name [" + componentName + "]");
+        logger.debug("Event Id [" + eventId + "]");
+        logger.debug("Payload Id [" + payloadId + "]");
+        logger.debug("From Date String [" + fromDateString + "]");
+        logger.debug("From Time String [" + fromTimeString + "]");
+        logger.debug("Until Date String [" + untilDateString + "]");
+        logger.debug("Until Time String [" + untilTimeString + "]");
+        logger.debug("Payload Content [" + payloadContent + "]");
+    }
+    
 }

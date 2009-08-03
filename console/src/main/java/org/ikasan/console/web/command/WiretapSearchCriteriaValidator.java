@@ -80,36 +80,23 @@ public class WiretapSearchCriteriaValidator implements Validator
     public void validate(Object object, List<String> errors)
     {
         WiretapSearchCriteria wiretapSearchCriteria = (WiretapSearchCriteria) object;
+        
+        // Validate the modules (need to select at least one)
         Set<String> modules = wiretapSearchCriteria.getModules();
         if (modules == null || modules.isEmpty())
         {
             errors.add("You need to select at least one module");
         }
+        
+        // Validate the Date and Time
         validateDateAndTime(errors, wiretapSearchCriteria.getFromDate(), "fromDate", wiretapSearchCriteria.getFromTime(), "fromTime");
         validateDateAndTime(errors, wiretapSearchCriteria.getUntilDate(), "untilDate", wiretapSearchCriteria.getUntilTime(), "untilTime");
         if (!errors.isEmpty() && !isEmpty(wiretapSearchCriteria.getFromDate()) && !isEmpty(wiretapSearchCriteria.getUntilDate()))
         {
             // If both from and until date times are populated, check if until
             // is not before from
-            // TODO Shift this code into the wireTap search criteria when setting the date time there
-            Date fromDateTime = null;
-            Date untilDateTime = null;
-            try
-            {
-                fromDateTime = wiretapSearchCriteria.getFromDateTime();
-            }
-            catch (ParseException e)
-            {
-                errors.add("From Date/Time was not parseable, please choose a valid date from the date picker");
-            }
-            try
-            {
-                untilDateTime = wiretapSearchCriteria.getUntilDateTime();
-            }
-            catch (ParseException e)
-            {
-                errors.add("Until Date/Time was not parseable, please choose a valid date from the date picker");
-            }
+            Date fromDateTime = wiretapSearchCriteria.getFromDateTime();
+            Date untilDateTime = wiretapSearchCriteria.getUntilDateTime();
             if (fromDateTime != null && untilDateTime != null && fromDateTime.compareTo(untilDateTime) > 0)
             {
                 errors.add("Until date/time cannot be before From date/time");
@@ -184,8 +171,13 @@ public class WiretapSearchCriteriaValidator implements Validator
         return fieldValue == null || "".equals(fieldValue);
     }
 
-    public void validate(Object arg0, Errors arg1)
+    /**
+     * Unused
+     * 
+     * @see org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors)
+     */
+    public void validate(@SuppressWarnings("unused") Object arg0, @SuppressWarnings("unused") Errors arg1)
     {
-        // TODO Auto-generated method stub
+        // Unused on purpose, we're providing our own version.
     }
 }

@@ -55,16 +55,16 @@ public class ModuleAfterInvocationProvider extends AbstractModuleAfterInvocation
     }
 
     /**
-     * TODO comment properly - Decide if the object should be authenticated
+     * Decide whether a user has access to view a certain module
      * 
      * @param authentication - The authentication scheme
-     * @param object - The object to authenticate, not used!
+     * @param object - Not used!
      * @param config - The configuration attribute to check
      * @param returnedObject - The return object to seed
      * @return A list of authorised objects or 
      * @throws AccessDeniedException - Access was denied 
      */
-    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config,
+    public Object decide(Authentication authentication, @SuppressWarnings("unused") Object object, ConfigAttributeDefinition config,
             Object returnedObject) throws AccessDeniedException
     {
         Iterator<?> iter = config.getConfigAttributes().iterator();
