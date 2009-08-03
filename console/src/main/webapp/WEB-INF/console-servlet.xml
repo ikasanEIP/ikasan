@@ -20,12 +20,12 @@
     <!-- Helper bean for using annotations with Spring MVC -->
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
-    <!-- The resource bundle for the Ikasan console -->
+    <!-- The resource bundles for the Ikasan console -->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <!-- Look for a file called messages.properties -->
         <property name="basename" value="messages"/>
     </bean>
-    
+
     <!-- 
         Resolves views, basically takes the view returned by the Controller and looks up 
         that but under the /WEB-INF/jsp/ directory with a .jsp suffix

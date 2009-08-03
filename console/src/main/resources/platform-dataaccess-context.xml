@@ -58,23 +58,10 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
-    <!-- TODO Shift to a datasources file, The Ikasan console No Tx datasource ()-->
-    <bean id="ikasanAdminNoTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <!-- TODO Should really be a separate datasource? -->
-        <property name="jndiName" value="java:/ikasan/admin/ds" />
-    </bean>
-
-    <!-- TODO Shift to a datasources file, The Ikasan console Local Tx datasource (used by security) -->
-    <bean id="ikasanAdminLocalTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <!-- TODO Should really be a separate datasource? -->    
-        <property name="jndiName" value="java:/ikasan/admin/localds" />
-    </bean>
-
     <!-- The hibernate properties to use for this platform -->
     <bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="ignoreResourceNotFound" value="true"/>
-        <!-- TODO Find a way not to have this hard coded -->
-        <property name="location" value="classpath:ikasan-hibernate.properties.sybase"/>
+        <property name="location" value="classpath:ikasan-hibernate.properties"/>
     </bean>
   
 </beans>
