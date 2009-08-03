@@ -33,7 +33,7 @@
   <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.1.custom.css'/>" rel="stylesheet" />
   <script type="text/javascript" src="<c:url value='/js/jquery-ui-1.7.1.custom.min.js'/>"></script>
   <script type="text/javascript">
-      
+
       /* jquery date picker assistance */
       $(document).ready(function()
       {
@@ -78,11 +78,11 @@
                 <span class="errorMessages"><c:out value="${error}" /></span><br>
             </c:forEach>
         </c:if>
-   
+
         <!-- The Search criteria for the user to search with -->
-    	<fieldset>
-        	<legend><fmt:message key="wiretap_events_search"/></legend>
-        	<ol>
+        <fieldset>
+            <legend><fmt:message key="wiretap_events_search"/></legend>
+            <ol>
                 <li>
                     <label for="modules"><fmt:message key="wiretap_events_module"/></label>
                     <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
@@ -145,41 +145,41 @@
                     <label for="orderAsc">Ascending</label>
                     <input id="orderAsc" type="checkbox" name="orderAsc" <c:if test="${orderAsc=='true'}">checked="checked"</c:if>/>
                 </li>
-    		</ol>
-    	</fieldset>
-    	<p>
-    		<input type="submit" value="Search for Events" class="controlButton"/>
-    	</p>
+            </ol>
+        </fieldset>
+        <p>
+            <input type="submit" value="Search for Events" class="controlButton"/>
+        </p>
     </form>
 
     <%@ include file="/WEB-INF/jsp/pagedResultsHeader.jsp"%>
     
     <c:url var="idLink" value="list.htm">
-    	<c:forEach var="entry" items="${searchParams}">
+        <c:forEach var="entry" items="${searchParams}">
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-    	</c:forEach>    	
+        </c:forEach>
        	<c:param name="orderBy" value="id"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
-        
+
     <c:url var="moduleLink" value="list.htm">
-    	<c:forEach var="entry" items="${searchParams}">
+        <c:forEach var="entry" items="${searchParams}">
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-    	</c:forEach>    	
+        </c:forEach>
        	<c:param name="orderBy" value="moduleName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
-        
+
     <c:url var="flowLink" value="list.htm">
-    	<c:forEach var="entry" items="${searchParams}">
+        <c:forEach var="entry" items="${searchParams}">
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-    	</c:forEach>    	
+        </c:forEach>
        	<c:param name="orderBy" value="flowName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
@@ -189,7 +189,7 @@
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-        </c:forEach>        
+        </c:forEach>
         <c:param name="orderBy" value="componentName"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
@@ -199,7 +199,7 @@
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-        </c:forEach>        
+        </c:forEach>
         <c:param name="orderBy" value="eventId"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
@@ -209,7 +209,7 @@
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-        </c:forEach>        
+        </c:forEach>
         <c:param name="orderBy" value="payloadId"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
@@ -219,13 +219,12 @@
             <c:forEach var="entryValue" items="${entry.value}">
                <c:param name="${entry.key}" value="${entryValue}"/>
             </c:forEach>
-        </c:forEach>        
+        </c:forEach>
         <c:param name="orderBy" value="created"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
     </c:url>
-        
+
     <c:if test="${resultSize > 0}">
-    
         <table id="wiretapSearchResults" class="listTable">
             <thead>
                 <tr>
@@ -237,10 +236,10 @@
                     <th><a href="<c:out value="${createdDateTimeLink}" escapeXml="true" />"><fmt:message key="wiretap_event_results_created_date_time"/></a></th>
                 </tr>
             </thead>
-        
+
             <tbody>
                 <c:forEach items="${results}" var="event">
-                    <c:url var="viewEventLink" value="viewEvent.htm">       
+                    <c:url var="viewEventLink" value="viewEvent.htm">
                         <c:param name="eventId" value="${event.id}"/>
                         <c:param name="searchResultsUrl" value="${searchResultsUrl}"/>
                     </c:url>

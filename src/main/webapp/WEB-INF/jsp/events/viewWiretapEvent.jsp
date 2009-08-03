@@ -69,7 +69,27 @@
 	</tr>	
 	
 	<tr>
-		<th><fmt:message key="wiretap_event_payload_id"/></th>
+		<th><fmt:message key="wiretap_event_payload_id"/>
+		<%--
+		          <c:choose>
+                <c:when test="${wiretapEvent.previousByPayload != null}">
+            <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
+                </c:when>
+                <c:otherwise>
+                </c:otherwise>
+            </c:choose>
+            &nbsp;
+            <c:choose>
+                <c:when test="${wiretapEvent.nextByPayload != null}">
+            <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
+                </c:when>
+                <c:otherwise>
+                </c:otherwise>
+            </c:choose>
+            --%>                 
+		
+		
+		</th>
 		<td><c:out value="${wiretapEvent.payloadId}" /></td>
 		<td>
 	 		<c:choose>
@@ -93,7 +113,6 @@
     <tr>
         <th><fmt:message key="wiretap_event_payload_content_xml"/></th>
         <c:choose>
-            <%-- TODO have a proper XML detection method --%>
             <c:when test='${fn:startsWith(wiretapEvent.payloadContent, "<?xml")}'>
                 <td colspan="2">
                     <!-- This link will open in a new window, see /js/ikasan.js for details -->

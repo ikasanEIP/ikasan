@@ -27,6 +27,7 @@
 package org.ikasan.console.module.service;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.ikasan.console.module.service.ModuleServiceImpl;
 import org.ikasan.framework.module.Module;
@@ -40,22 +41,40 @@ import org.junit.Assert;
  */
 public class ModuleServiceImplTest
 {
+    /** List of module names and descriptions */ 
+    private Properties modulesList = new Properties();
+    
     /** The ModuleImplService we want to test */
     private ModuleServiceImpl moduleImplService = new ModuleServiceImpl();
     
-    /** Test that the getModules() call returns null */
+    /** Test that a 'successful' call of getModules() returns a not null list of 1 */
     @Test
     public void testGetModules()
     {
+        // Seed the Module Service
+        modulesList.put("moduleName", "moduleValue");
+        this.moduleImplService.setModulesList(modulesList);
+        // Get the modules
         List<Module> modules = this.moduleImplService.getModules();
+        // Make sure there is one valid Module in the list
         Assert.assertNotNull(modules);
-        // TODO Further tests
+        Assert.assertEquals(1, modules.size());
+        // Check the key and value of that single module
+        Module module = modules.get(0);
+        Assert.assertEquals("moduleName", module.getName());
+        Assert.assertEquals("moduleValue", module.getDescription());
     }
 
+    /** Test that the getModules() call returns null if there are no modules */
+    @Test
+    public void testGetNullModules()
+    {
+        List<Module> modules = this.moduleImplService.getModules();
+        Assert.assertNull(modules);
+    }
+    
     /** 
-     * Test that the getModule(String moduleName) call returns null
-     * 
-     *  TODO: Improve test cases
+     * Test that the getModule(String moduleName) call always returns null
      */
     @Test
     public void testGetModule()
@@ -64,13 +83,13 @@ public class ModuleServiceImplTest
         Assert.assertNull(module);
         module = this.moduleImplService.getModule("");
         Assert.assertNull(module);
+        module = this.moduleImplService.getModule(null);
+        Assert.assertNull(module);
     }
 
     /** 
      * Test that the stopInitiator(String moduleName, String initiatorName, String actor) 
      * call does nothing.
-     * 
-     * TODO How can we assert this?
      */
     @Test
     public void testStopInitiator()
@@ -81,8 +100,6 @@ public class ModuleServiceImplTest
     /** 
      * Test that the startInitiator(String moduleName, String initiatorName, String actor) 
      * call does nothing.
-     * 
-     * TODO How can we assert this?
      */
     @Test
     public void testStartInitiator()

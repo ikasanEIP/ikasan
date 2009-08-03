@@ -41,49 +41,20 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="modulesList" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="location">
-            <value>classpath:modules.properties</value>
-        </property>
+    <!-- The Ikasan console No Tx datasource -->
+    <bean id="ikasanAdminNoTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/ikasan/admin/ds" />
     </bean>
 
-    <!-- The console specific Module Service (gets a module list from a properties file) -->
-    <bean id="moduleService" class="org.ikasan.console.module.service.ModuleServiceImpl" >
-        <property name="modulesList" ref="modulesList" />
-    </bean> 
-    
-    <!-- The Wiretap Service -->
-	<bean id="wiretapService" class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="wiretapDao" />
-		<constructor-arg ref="moduleService" />
-	</bean>
-	
-  	<!-- ###################################### -->
-  	<!-- Common transaction services start here -->
-    <!-- ###################################### -->  	
-  	
-  	<!-- Transaction advice requiring a new transaction on entry -->
-    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRES_NEW"/>
-        </tx:attributes>
-    </tx:advice>
-    
-    <!-- Transaction advice requiring a transaction on entry -->
-    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED"/>
-        </tx:attributes>
-    </tx:advice>
-     
-    <!-- Transaction Manager definition for user transactions -->
-    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
-       <property name="transactionManagerName" value="java:/TransactionManager"/>
-       <property name="userTransactionName" value="UserTransaction"/>
+    <!-- The Ikasan console Local Tx datasource (used by security) -->
+    <bean id="ikasanAdminLocalTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/ikasan/admin/localds" />
+    </bean>
+
+    <!-- The hibernate properties to use for this platform -->
+    <bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="location" value="classpath:ikasan-hibernate.properties"/>
     </bean>
   
-    <!-- #################################### -->
-    <!-- Common transaction services end here -->
-    <!-- #################################### -->
-    
 </beans>

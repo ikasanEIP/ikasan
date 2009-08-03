@@ -58,19 +58,18 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
     Logger logger = Logger.getLogger(AfterInvocationModuleCollectionFilteringProvider.class);
 
     /**
-     * TODO comment properly - Decide if the AFTER_MODULE_COLLECTION_READ should be authenticated
+     * Decide if the user has rights to invoke actions on a Module
      * 
      * @param authentication - The authentication scheme
-     * @param object - The object to authenticate, not used!
+     * @param object - Not used!
      * @param config - The configuration attribute to check
      * @param returnedObject - The return object to seed
      * @return A list of authorised objects or 
      * @throws AccessDeniedException - Access was denied 
      */
-    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config,
+    public Object decide(Authentication authentication, @SuppressWarnings("unused") Object object, ConfigAttributeDefinition config,
             Object returnedObject) throws AccessDeniedException
     {
-        // TODO Would be nice to enforce <ConfigAttribute> generic
         Iterator<?> iter = config.getConfigAttributes().iterator();
         while (iter.hasNext())
         {

@@ -25,7 +25,6 @@ package org.ikasan.console.web.controller;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,8 +61,7 @@ public class MasterDetailControllerUtil
      * @param orderBy - The field we are ordering by
      * @param orderAsc - Flag to determine if we are ordering by ascending value
      *            or not
-     * @param selectAll - Select All flag, TODO not 100% ideal as we could have multiple 
-     *                    select all situations on a form  
+     * @param selectAll - Select All flag  
      * @param model - The model we are displaying (the data)
      * @param pageNo - The page number we are on
      * @param pagedResult - The paged result page
@@ -171,20 +169,6 @@ public class MasterDetailControllerUtil
         {
             result = null;
         }
-        return result;
-    }
-
-    /**
-     * Returns the input value or null for an empty Date
-     *
-     * TODO Is this method even useful?
-     * 
-     * @param input - input
-     * @return null for an empty Date as default
-     */
-    public static Date nullForEmpty(Date input)
-    {
-        Date result = input;
         return result;
     }
 

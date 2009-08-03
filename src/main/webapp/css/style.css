@@ -1,29 +1,29 @@
 /* Every element is treated to padding and margin of 0 */
 * {
-	padding: 0px;
-	margin: 0px;
+    padding: 0px;
+    margin: 0px;
 }
 
 /* Body */
 body {
-	background: #F0F0F0;
-	font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+    background: #F0F0F0;
+    font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
 }
 
 /* All anchor tags have a different colour but are not underlined */
 a {
-	color: #3B6EBF;
-	text-decoration: none;
+    color: #3B6EBF;
+    text-decoration: none;
 }
 
 /* When you hover over an anchor tag, underline it */
 a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 /* Error messages should be in red */
 .errorMessages {
-	color: #FF0000;
+    color: #FF0000;
 }
 
 /* White whenever we need it */
@@ -45,7 +45,7 @@ h1 {
 }
 
 h2 {
-	height: 25px;
+    height: 25px;
     font-size: 17px;
     padding-left: 17px;
     color: #FFFFFF;
@@ -89,40 +89,40 @@ input.controlButton {
 }
 
 .breadcrumbs {
-	background: #F6F9FB;
-	border-bottom: 1px solid #E1E1E1;
-	padding: 5px;
+    background: #F6F9FB;
+    border-bottom: 1px solid #E1E1E1;
+    padding: 5px;
 }
 
 .middle {
     font-size: .74em;
     line-height: 1.5em;
-	padding: 1% 0%;
-	text-align: justify;
+    padding: 1% 0%;
+    text-align: justify;
 }
 
 .left {
-	float: left;
-	width: 420px;
-	margin-right: 10px;
+    float: left;
+    width: 420px;
+    margin-right: 10px;
 }
 
 .right {
-	float: right;
-	width: 420px;
-	margin-left: 10px;
+    float: right;
+    width: 420px;
+    margin-left: 10px;
 }
 
 .singleColumn {
-	float: left;
-	width: 860px;
+    float: left;
+    width: 860px;
 }
 
 /* Styles for tables that list vertically*/
 .listTable {
-	border: 1px solid #E1E1E1;
-	border-collapse: collapse;
-	float: left;
+    border: 1px solid #E1E1E1;
+    border-collapse: collapse;
+    float: left;
 }
 
 .listTable thead tr {
@@ -395,4 +395,8 @@ form.fancydataform fieldset li {
 
 .top{
     vertical-align: top;
+}
+
+.nowrap{
+    white-space: nowrap;
 }
