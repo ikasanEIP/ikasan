@@ -149,10 +149,10 @@ public class JMSEventPublisherPlugin implements EventInvocable
             {
                 messageProducer.setTimeToLive(timeToLive.longValue());
             }
-            if (this.priority != null)
-            {
-                messageProducer.setPriority(this.priority);
-            }
+            
+            //use the configured priority if present, otherwise the Event priority
+            //note MUST explicitly set priority on the messageProducer, as setting on the message gets ignored
+            messageProducer.setPriority(priority!=null?priority:event.getPriority());
             messageProducer.send(mapMessage);
             logger.info("successfully sent message to destination [" + thisDestination + "]. " + event.idToString());
         }
