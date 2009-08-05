@@ -92,6 +92,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
      * (Topics). Set to <code>false</code> for Point-to-Point domain (Queues).
      */
     private boolean pubSubDomain = true;
+    
+    /**
+     * Configures the initiator to reuse the priority from the message on the created Event
+     * 
+     * Only applicable to RawMessageDrivenInitiators
+     */
+    private boolean respectPriority = false;
 
     /**
      * @param moduleName the moduleName to set
@@ -183,6 +190,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     {
         this.payloadFactory = payloadFactory;
     }
+    
+	/**
+	 * @param respectPriority the respectPriority to setS
+	 */
+	public void setRespectPriority(boolean respectPriority) {
+		this.respectPriority = respectPriority;
+	}
 
     public Object getObject() throws Exception
     {
@@ -261,6 +275,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
         else
         {
             thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+            ((RawMessageDrivenInitiator)thisInitiator).setRespectPriority(respectPriority);
         }
         return thisInitiator;
     }
@@ -279,4 +294,6 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     {
         this.name = beanName;
     }
+
+
 }

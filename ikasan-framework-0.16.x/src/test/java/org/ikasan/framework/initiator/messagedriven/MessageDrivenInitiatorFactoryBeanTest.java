@@ -215,6 +215,35 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
         JmsMessageDrivenInitiator initiator = (JmsMessageDrivenInitiator) messageDrivenInitiatorFactoryBean.getObject();
         Assert.assertTrue("RawMessageDrivenInitiator should be returned if serialiser supplied", (initiator instanceof RawMessageDrivenInitiator));
+        
+        Assert.assertFalse("RawMessageDrivenInitiator should not respect message priority by default", ((RawMessageDrivenInitiator)initiator).isRespectPriority());
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Test creation of a RawMessageDrivenInitiator configured to respect priority
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetObject_returnsAPriorityRespectingRawMessageDrivenInitiatorWhenPayloadFactorySuppliedAndPriorityRespectEnabled() throws Exception
+    {
+        MessageDrivenInitiatorFactoryBean messageDrivenInitiatorFactoryBean = new MessageDrivenInitiatorFactoryBean();
+        messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
+        messageDrivenInitiatorFactoryBean.setBeanName("name");
+        messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
+        messageDrivenInitiatorFactoryBean.setConnectionFactory(connectionFactory);
+        messageDrivenInitiatorFactoryBean.setDestination(topic);
+        messageDrivenInitiatorFactoryBean.setTransactionManager(transactionManager);
+        messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
+        
+        //tell the factory bean to respect priority
+        messageDrivenInitiatorFactoryBean.setRespectPriority(true);
+        JmsMessageDrivenInitiator initiator = (JmsMessageDrivenInitiator) messageDrivenInitiatorFactoryBean.getObject();
+        Assert.assertTrue("RawMessageDrivenInitiator should be returned if serialiser supplied", (initiator instanceof RawMessageDrivenInitiator));
+        
+        Assert.assertTrue("RawMessageDrivenInitiator should respect message priority as configured", ((RawMessageDrivenInitiator)initiator).isRespectPriority());
         mockery.assertIsSatisfied();
     }
 

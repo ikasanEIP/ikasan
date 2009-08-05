@@ -9,6 +9,8 @@ Release 0.17.0
 Release 0.16.3
 --------------------
 - added sonatype repository distribution management in the pom.xml
+- Changed RawMessageDrivenInitiator, and associated factory bean to allow for configurable respect of message priority (http://open.jira.com/browse/IKASAN-113)
+- Changed JMSEventPublisherPlugin to correctly set the message priority based on that of the Event, where not otherwise explicitly configured (http://open.jira.com/browse/IKASAN-115)
 
 Release 0.16.2
 --------------------

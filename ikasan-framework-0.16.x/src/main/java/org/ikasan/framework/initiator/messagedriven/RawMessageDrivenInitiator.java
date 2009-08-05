@@ -58,8 +58,14 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * Factory for constructing Payloads
      */
     protected PayloadFactory payloadFactory;
-
+    
     /**
+     * Respect the priority of received messages by setting this on the Event
+     */
+    private boolean respectPriority;
+
+
+	/**
      * Constructor
      * 
      * @param moduleName - name of the module
@@ -88,6 +94,11 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
             MetaDataInterface.UNDEFINED, message.getText().getBytes());
         //
         Event event = new Event(moduleName, name);
+        
+        //resuse the message's priority if we are configured to respect it
+        if (respectPriority){
+        	event.setPriority(message.getJMSPriority());
+        }
         event.setPayload(payload);
         return event;
     }
@@ -99,4 +110,21 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     {
         return logger;
     }
+    
+
+    /**
+     * Respect the priority of received messages by setting this on the Event
+	 * @param respectPriority
+	 */
+	public void setRespectPriority(boolean respectPriority) {
+		this.respectPriority = respectPriority;
+	}
+
+	/**
+	 * Accessor for respectPriority
+	 * @return respectPriority
+	 */
+	public boolean isRespectPriority() {
+		return respectPriority;
+	}
 }
