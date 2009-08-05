@@ -86,7 +86,7 @@ public class SimpleSubscriber implements SessionAwareMessageListener
 
     public void onMessage(Message message, Session session) throws JMSException
     {
-    	logger.info("received message");
+    	logger.info("received message with priority:"+message.getJMSPriority());
         
         messagesReceived.add(new MessageMemeneto(message));
         logger.info("received message, now holding "+messagesReceived.size()+" messages");

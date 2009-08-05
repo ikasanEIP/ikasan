@@ -128,15 +128,9 @@
 		</property>
 	</bean>
 	
-	<bean id="jmsTemplate"
-		class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory">
-			<ref bean="jmsConnectionFactory" />
-		</property>
-	</bean>
 	
 	<bean id="jmsTextMessagePubliser"
 		class="org.ikasan.demo.jms.JmsTextMessagePublisher">
-		<constructor-arg ref="jmsTemplate"/>
+		<constructor-arg ref="jmsConnectionFactory"/>
 	</bean>
 </beans>

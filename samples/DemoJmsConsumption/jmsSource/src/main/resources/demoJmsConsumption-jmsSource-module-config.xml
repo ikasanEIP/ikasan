@@ -67,6 +67,7 @@
         <property name="transactionManager" ref="transactionManager"/>
         <property name="flow" ref="rawMessageFlow"/>
         <property name="payloadFactory" ref="payloadFactory"/>
+        <property name="respectPriority" value="true"/>
     </bean>
     
     

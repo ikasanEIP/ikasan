@@ -1,10 +1,10 @@
 package org.ikasan.demo.jms;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
@@ -13,13 +13,14 @@ import org.springframework.jms.core.MessageCreator;
 public class JmsTextMessagePublisher {
 
 	
-    private JmsTemplate jmsTemplate;
+    private ConnectionFactory connectionFactory;
 
 
 
-    public JmsTextMessagePublisher(JmsTemplate jmsTemplate) {
+
+    public JmsTextMessagePublisher(ConnectionFactory connectionFactory) {
 		super();
-		this.jmsTemplate = jmsTemplate;
+		this.connectionFactory = connectionFactory;
 	}
 
 
@@ -28,14 +29,14 @@ public class JmsTextMessagePublisher {
       try
     {
 
+    	JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
+    	jmsTemplate.setPriority(priority);
+    	jmsTemplate.setExplicitQosEnabled(true);
+    	  
         jmsTemplate.send(destination, new MessageCreator(){
-
 			public Message createMessage(Session session) throws JMSException {
-				TextMessage textMessage = session.createTextMessage();
-				textMessage.setText(messageText);
-				textMessage.setJMSPriority(priority);
-				return textMessage;
-			}});
+				return  session.createTextMessage(messageText);
+		}});
 
     }
     catch (JmsException e)

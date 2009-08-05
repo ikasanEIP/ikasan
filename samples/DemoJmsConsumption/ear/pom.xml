@@ -32,7 +32,7 @@
 	<parent>
 		<groupId>org.ikasan.demo</groupId>
 		<artifactId>demoJmsConsumption-parent</artifactId>
-		<version>0.16.2</version>
+		<version>0.16.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>demoJmsConsumption-app</artifactId>
 	<packaging>ear</packaging>
