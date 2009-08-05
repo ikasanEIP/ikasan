@@ -32,6 +32,8 @@ import javax.jms.TextMessage;
 
 import junit.framework.Assert;
 
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
@@ -49,6 +51,8 @@ import org.junit.Test;
  *
  */
 public class RawMessageDrivenInitiatorTest {
+
+	private static final int DEFAULT_PRIORITY = 4;
 
 	private String moduleName = "moduleName";
 	
@@ -72,11 +76,43 @@ public class RawMessageDrivenInitiatorTest {
 	 */
 	@Test
 	public void testOnMessageHandlesTextMessage() throws JMSException {
+		createExpectations(false, DEFAULT_PRIORITY);
+        
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+		rawDrivenInitiator.onMessage(textMessage);
+	
+	}
+
+	
+	
+	/**
+	 * Tests that JMS Message priority is propogated to the Event if configured
+	 * 
+	 * @throws JMSException
+	 */
+	@Test
+	public void testOnMessageRespectsPriorityWhenConfigured() throws JMSException {
+
+		
+		final int messagePriority = 8;
+		
+        createExpectations(true, messagePriority);
+        
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        rawDrivenInitiator.setRespectPriority(true);
+        rawDrivenInitiator.onMessage(textMessage);
+	
+	}
+
+
+
+	private void createExpectations(final boolean respectingPriority, final int messagePriority)
+			throws JMSException {
+		
 		final String textMessageText = "textMessageText";
 		final Payload payload = mockery.mock(Payload.class);
 		
-		
-        mockery.checking(new Expectations()
+		mockery.checking(new Expectations()
         {
             {
             	
@@ -85,6 +121,11 @@ public class RawMessageDrivenInitiatorTest {
             	
                 one(textMessage).getText();
                 will(returnValue(textMessageText));
+                
+                if (respectingPriority){
+	                one(textMessage).getJMSPriority();
+	                will(returnValue(messagePriority));
+                }
                 
                 one(payloadFactory).newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
                 will(returnValue(payload));
@@ -97,14 +138,10 @@ public class RawMessageDrivenInitiatorTest {
                 one(payload).getSrcSystem();
                 will(returnValue("srcSystem"));
                 
-                one(flow).invoke((Event) with(an(Event.class)));
+                one(flow).invoke((Event) with(new EventMatcher(messagePriority)));
                 will(returnValue(null));
             }
         });
-        
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
-		rawDrivenInitiator.onMessage(textMessage);
-	
 	}
 
 	
@@ -132,6 +169,33 @@ public class RawMessageDrivenInitiatorTest {
 		}
 		
 		Assert.assertNotNull("should have thrown UnsupportedOperationException", exception);
+	}
+	
+	class EventMatcher extends TypeSafeMatcher<Event>{
+
+		private int priority;
+			
+		
+		public EventMatcher(int priority) {
+			super();
+			this.priority = priority;
+		}
+
+		@Override
+		public boolean matchesSafely(Event event) {
+			boolean result = true;
+			
+			if (event.getPriority()!=priority){
+				result=false;
+			}
+			
+			return result;
+		}
+
+		public void describeTo(Description arg0) {
+			
+		}
+		
 	}
 
 
