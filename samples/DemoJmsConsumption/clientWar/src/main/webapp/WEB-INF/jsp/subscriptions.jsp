@@ -3,25 +3,31 @@
 
 <form:form>
 	<fieldset>
+	<table>
 	<c:forEach items="${channelNames}" var="channelName">
+		<tr>
 
-	<p>
 		
 		<c:choose>
 			<c:when test="${subscriptions[channelName]==null}">
-				<c:out value="${channelName}"/>
-				<button name="subscribe" type="submit" value="${channelName}">Subscribe</button>
+				<td><button name="subscribe" type="submit" value="${channelName}">Subscribe</button></td>
+				<td><c:out value="${channelName}"/></td>
+				<td>&nbsp;</td>
 			</c:when>	
 			<c:otherwise>
-				<a href="subscription.htm?channel=<c:out value="${channelName}"/>">
+				<td>&nbsp;</td>
+				<td><a href="subscription.htm?channel=<c:out value="${channelName}"/>">
 					<c:out value="${channelName}"/>
 				</a>
-				<button name="unsubscribe" type="submit" value="${channelName}">Unsubscribe</button>
+				</td>
+				<td><button name="unsubscribe" type="submit" value="${channelName}">Unsubscribe</button></td>
 			</c:otherwise>		
 		</c:choose>
-	</p>
+
+		</tr>
 	</c:forEach>
-	
+	</table>
+
 	
 	</fieldset>
 </form:form>
