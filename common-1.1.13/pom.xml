@@ -1,9 +1,9 @@
-<!-- 
+<!--
 # //
 # //
 # // $Id$
 # // $URL$
-# // 
+# //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -21,20 +21,20 @@
 # // Lesser General Public License for more details.
 # //
 # // You should have received a copy of the GNU Lesser General Public
-# // License along with this software; if not, write to the 
-# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // License along with this software; if not, write to the
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
 # // or see the FSF site: http://www.fsfeurope.org/.
 # // ====================================================================
 # //
 # // Author:  Ikasan Development Team
-# // 
+# //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-common</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.14-SNAPSHOT</version>
+  <version>1.1.13</version>
   <name>Ikasan Common</name>
   <organization>
     <name>Ikasan Ltd</name>
@@ -240,12 +240,12 @@
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
-	<dependency>
-    	<groupId>geronimo-spec</groupId>
-    	<artifactId>geronimo-spec-j2ee</artifactId>
-    	<version>1.4-rc3</version>
-		<scope>provided</scope>
-	</dependency> 
+  <dependency>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-j2ee</artifactId>
+      <version>1.4-rc3</version>
+    <scope>provided</scope>
+  </dependency>
     <!-- Needed for XML to Object serialisiation -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
@@ -311,19 +311,6 @@
     </dependency>
   </dependencies>
   <distributionManagement>
-      <repository>
-          <id>ikasaneip-releases</id>
-          <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-      </repository>
-      <snapshotRepository>
-          <id>ikasaneip-snapshots</id>
-          <name>Ikasan EIP Snapshot Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
-  <!-- 
-  <distributionManagement>
     <repository>
       <id>ext-releases</id>
       <name>managed-external-libraries</name>
@@ -334,5 +321,4 @@
       <url> file:///opt/platform/maven-platform/tomcat/apache-tomcat-5.5.26/webapps/ROOT/ikasan-common </url>
     </site>
   </distributionManagement>
-   -->
 </project>
