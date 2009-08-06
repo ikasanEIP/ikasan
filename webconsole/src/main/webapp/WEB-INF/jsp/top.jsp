@@ -59,7 +59,8 @@
 	<ul id="mainNavigation">
 		<li><a href="<c:url value='/home.htm'/>">Home</a></li>
 		<li><a href="<c:url value='/modules/list.htm'/>">Modules</a></li>
-		<li><a href="<c:url value='/events/search.htm'/>">Events</a></li>
+		<%-- Event search has moved to the global console --%>
+		<%-- <li><a href="<c:url value='/events/search.htm'/>">Events</a></li> --%>
 		<security:authorize ifAllGranted="ROLE_ADMIN">
 		  <li><a href="<c:url value='/admin/admin.htm'/>">Admin</a></li>
 		</security:authorize>
