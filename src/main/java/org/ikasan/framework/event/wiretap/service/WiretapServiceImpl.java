@@ -35,6 +35,7 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.wiretap.dao.WiretapDao;
 import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
 import org.ikasan.framework.event.wiretap.model.WiretapEvent;
+import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.service.ModuleService;
 
 /**
@@ -46,10 +47,10 @@ public class WiretapServiceImpl implements WiretapService
 {
     /** Data access object for the persistence of <code>WiretapEvent</code> */
     private WiretapDao wiretapDao;
-    
+
     /** Logger for this class */
     private static Logger logger = Logger.getLogger(WiretapServiceImpl.class);
-    
+
     /**
      * Container for modules
      */
@@ -69,30 +70,102 @@ public class WiretapServiceImpl implements WiretapService
         logger.info("created");
     }
 
-    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent, int pageSize, int pageNo)
+    /**
+     * Allows previously stored Events to be searched for.
+     * 
+     * @param pageNo - page index into the greater result set
+     * @param pageSize - how many results to return in the result
+     * @param orderBy - The field to order by
+     * @param orderAscending - Ascending flag
+     * @param moduleNames - Set of names of modules to include in search - must
+     *            contain at least one moduleName
+     * @param componentName - The name of the component
+     * @param eventId - The Event Id
+     * @param payloadId - The Payload Id
+     * @param fromDate - Include only events after fromDate
+     * @param untilDate - Include only events before untilDate
+     * @param payloadContent - The Payload content
+     * 
+     * @throws IllegalArgumentException - if moduleNames is null or empty
+     * @return List of <code>WiretapEventHeader</code> representing the result
+     *         of the search
+     */
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
+            String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
     {
-        if (moduleNames ==null || moduleNames.isEmpty()){
-            throw new IllegalArgumentException("moduleNames must be nonEmpty");
+        if (pageNo < 0)
+        {
+            throw new IllegalArgumentException("pageNo must be >= 0");
         }
-        
-        
-        return wiretapDao.findPaging(moduleNames, componentName, eventId, payloadId, fromDate, untilDate, payloadContent, pageSize, (pageSize*(pageNo-1)));        
+        if (pageSize < 1)
+        {
+            throw new IllegalArgumentException("pageSize must be > 0");
+        }
+        return wiretapDao.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, componentName, eventId, payloadId, fromDate, untilDate,
+            payloadContent);
     }
 
+    /**
+     * Allows previously stored Events to be searched for.
+     * 
+     * @deprecated Use other findWiretapEvents method
+     * 
+     * @param pageNo - page index into the greater result set
+     * @param pageSize - how many results to return in the result
+     * @param moduleNames - Set of names of modules to include in search - must
+     *            contain at least one moduleName
+     * @param componentName - The name of the component
+     * @param eventId - The Event Id
+     * @param payloadId - The Payload Id
+     * @param fromDate - Include only events after fromDate
+     * @param untilDate - Include only events before untilDate
+     * @param payloadContent - The Payload content
+     * 
+     * @throws IllegalArgumentException - if moduleNames is null or empty
+     * @return List of <code>WiretapEventHeader</code> representing the result
+     *         of the search
+     */
+    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String componentName, String eventId, String payloadId, Date fromDate,
+            Date untilDate, String payloadContent, int pageSize, int pageNo)
+    {
+        if (moduleNames == null || moduleNames.isEmpty())
+        {
+            throw new IllegalArgumentException("moduleNames must be nonEmpty");
+        }
+        return wiretapDao.findPaging(moduleNames, componentName, eventId, payloadId, fromDate, untilDate, payloadContent, pageSize, (pageSize * (pageNo - 1)));
+    }
+
+    /**
+     * Get a wireTap event given its Id
+     * 
+     * @param wiretapEventId - The Id to search with
+     * @return The WiretapEvent
+     */
     public WiretapEvent getWiretapEvent(Long wiretapEventId)
     {
         WiretapEvent wiretapEvent = wiretapDao.findById(wiretapEventId);
-        
-        if (wiretapEvent!=null){
-            //before returning wiretapEvent, check that we can access the assocated module
-            //this is an easier security check that access controlling every WiretapEvent individually
-            //If the user can 'read' the module, then they are allowed to read its associated WiretapEvents
+        if (wiretapEvent != null)
+        {
+            // before returning wiretapEvent, check that we can access the
+            // associated module
+            // this is an easier security check that access controlling every
+            // WiretapEvent individually
+            // If the user can 'read' the module, then they are allowed to read
+            // its associated WiretapEvents
             moduleService.getModule(wiretapEvent.getModuleName());
         }
-        
         return wiretapEvent;
     }
 
+    /**
+     * Wiretap an Event
+     * 
+     * @param event - Event to be wiretapped
+     * @param componentName - The component this Event is currently in
+     * @param moduleName - The module this Event is currently in
+     * @param flowName - The Flow this Event is currently in
+     * @param timeToLive - Time to live for the wiretap
+     */
     public void tapEvent(Event event, String componentName, String moduleName, String flowName, Long timeToLive)
     {
         String eventId = event.getId();
@@ -109,6 +182,9 @@ public class WiretapServiceImpl implements WiretapService
         }
     }
 
+    /**
+     * Housekeep the wiretaps by deleting expired ones.
+     */
     public void housekeep()
     {
         wiretapDao.deleteAllExpired();
