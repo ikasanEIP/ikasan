@@ -39,6 +39,7 @@
     	<c:param name="page" value="${page+1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
     	<c:param name="orderAsc" value="${orderAsc}"/>
+    	<c:param name="selectAll" value="${selectAll}"/>
     </c:url>
     
     <c:url var="previousPageLink" value="list.htm">
@@ -50,6 +51,7 @@
     	<c:param name="page" value="${page-1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
     	<c:param name="orderAsc" value="${orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>    	
     </c:url>
 
     <c:choose>

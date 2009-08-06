@@ -23,7 +23,6 @@
  */
 package org.ikasan.console.web.controller;
 
-import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
