@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.ErrorListener;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -306,8 +305,6 @@ public class ExtendedXsltTransformer implements Transformer
         }
         // Get a handle to a new Transformer
         javax.xml.transform.Transformer transformer = getTransformer();
-        // Make sure we're using the correct character set encoding
-        transformer.setOutputProperty(OutputKeys.ENCODING, payload.getCharset());
         //Transform away...
         transformer.transform(saxSource, new StreamResult(transformedDataStream));
         //set the transformed data back onto the Payload
