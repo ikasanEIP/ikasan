@@ -52,16 +52,16 @@ import org.junit.Test;
 import org.xml.sax.XMLReader;
 
 /**
- * Test class for FlatFileTransformer
+ * Test class for ExtendedXsltTransformer
  * 
  * @author Ikasan Development Team
- * 
  */
 public class ExtendedXsltTransformerTest
 {
     /**
      * Constructor
-     * @throws URISyntaxException 
+     * 
+     * @throws URISyntaxException - Exception if URI is invalid
      */
     public ExtendedXsltTransformerTest() throws URISyntaxException
     {
@@ -71,12 +71,10 @@ public class ExtendedXsltTransformerTest
 
     /** Payload time stamp */
     final Long PAYLOAD_TIMESTAMP = 1218726802809l;
-//    /** default XSL */
-//    final String xsl = "<?xml version=" + '"' + "1.0" + '"' + " encoding=" + '"' + "UTF-8" + '"' + "?>\n" + "<xsl:stylesheet version=" + '"' + "1.0" + '"'
-//            + " xmlns:xsl=" + '"' + "http://www.w3.org/1999/XSL/Transform" + '"' + " xmlns:fo=" + '"' + "http://www.w3.org/1999/XSL/Format" + '"' + ">"
-//            + "</xsl:stylesheet>";
+
     /** Mockery for interfaces */
     Mockery mockery = new Mockery();
+
     /** Mockery for classes */
     private Mockery classMockery = new Mockery()
     {
@@ -84,25 +82,28 @@ public class ExtendedXsltTransformerTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
+
     /** XML Reader */
     final XMLReader xmlReader = mockery.mock(XMLReader.class);
-    /** Paylaod */
+
+    /** Payload */
     final Payload payload = mockery.mock(Payload.class);
+
     /** Event */
     final Event event = classMockery.mock(Event.class);
-    
+
     /** The XSL URI */
-    final URI xslUri; 
-//    /** InputStream */
-//    final InputStream inputStream = new ByteArrayInputStream(xsl.getBytes());
-//    /** Stream Source */
-//    final StreamSource streamSource = new StreamSource(inputStream);
+    final URI xslUri;
+
     /** Transformer factory */
     final TransformerFactory transformerFactory = classMockery.mock(TransformerFactory.class);
+
     /** Templates */
     final Templates templates = classMockery.mock(Templates.class);
+
     /** Transformer */
     final Transformer transformer = classMockery.mock(Transformer.class);
+
     /** Transformer Exception */
     final TransformerException transformerException = new TransformerException((String) null);
 
@@ -128,6 +129,7 @@ public class ExtendedXsltTransformerTest
                 will(returnValue(payloads));
                 one(templates).newTransformer();
                 will(returnValue(transformer));
+                one(transformer).setOutputProperty("encoding", "");
                 one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
                 one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
             }
@@ -135,6 +137,7 @@ public class ExtendedXsltTransformerTest
         mockery.checking(new Expectations()
         {
             {
+                one(payload).getCharset();
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
@@ -153,9 +156,9 @@ public class ExtendedXsltTransformerTest
      * 
      * @throws TransformerException
      */
-    @SuppressWarnings({"unqualified-field-access"})
+    @SuppressWarnings( { "unqualified-field-access" })
     @Test
-    public void testTransformInputStreamOutputStream_throwsTransformationExcetpionForTransformerException() throws TransformerException
+    public void testTransformInputStreamOutputStream_throwsTransformationExceptionForTransformerException() throws TransformerException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(this.payload);
@@ -169,6 +172,7 @@ public class ExtendedXsltTransformerTest
                 will(returnValue(payloads));
                 one(templates).newTransformer();
                 will(returnValue(transformer));
+                one(transformer).setOutputProperty("encoding", "");
                 one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
                 one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
                 will(throwException(transformerException));
@@ -177,6 +181,7 @@ public class ExtendedXsltTransformerTest
         mockery.checking(new Expectations()
         {
             {
+                one(payload).getCharset();
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
             }
@@ -220,6 +225,7 @@ public class ExtendedXsltTransformerTest
                 will(returnValue(payloads));
                 one(templates).newTransformer();
                 will(returnValue(transformer));
+                one(transformer).setOutputProperty("encoding", "");
                 one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
                 one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
             }
@@ -227,6 +233,7 @@ public class ExtendedXsltTransformerTest
         mockery.checking(new Expectations()
         {
             {
+                one(payload).getCharset();
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
