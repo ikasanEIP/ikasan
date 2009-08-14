@@ -40,7 +40,7 @@
 	<name>ikasan :: webconsole : war</name>
 
     <scm>
-      <connection>scm:svn:svn+ssh://svc-vcsp/architecture/ikasan/trunk/webconsole/war</connection>
+      <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/webconsole-0.3.x/war</connection>
     </scm>
 
 	<build>
