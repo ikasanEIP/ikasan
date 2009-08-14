@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-common</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.0-SNAPSHOT</version>
+  <version>0.7.0</version>
   <name>Ikasan Common</name>
   <organization>
     <name>Ikasan Ltd</name>
@@ -136,7 +136,7 @@
     <url>https://apps.sourceforge.net/trac/ikasaneip/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-common-1.1.13-public</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/common-0.7.0</connection>
   </scm>
   <build>
     <!-- Std plugins -->
