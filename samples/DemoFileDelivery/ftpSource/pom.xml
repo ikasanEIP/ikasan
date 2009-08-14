@@ -75,8 +75,5 @@
       	</plugins>
 	</build>
 
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/components/releases/demoFileDelivery-ftpSource-jar-0.7.1</connection>
-  </scm>
 </project>
 
