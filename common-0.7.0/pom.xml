@@ -34,10 +34,10 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-common</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.0</version>
+  <version>0.7.1-SNAPSHOT</version>
   <name>Ikasan Common</name>
   <organization>
-    <name>Ikasan Ltd</name>
+    <name>Ikasan</name>
     <url>http://www.ikasan.org</url>
   </organization>
   <url>http://www.ikasan.org</url>
