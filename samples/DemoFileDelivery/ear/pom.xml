@@ -32,7 +32,7 @@
 	<parent>
 		<groupId>org.ikasan.demo</groupId>
 		<artifactId>demoFileDelivery-parent</artifactId>
-		<version>0.16.2</version>
+		<version>0.7.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>demoFileDelivery-app</artifactId>
 	<packaging>ear</packaging>
@@ -55,7 +55,7 @@
 
 						<rarModule>
 							<groupId>org.ikasan</groupId>
-							<artifactId>ikasan-connector-ftp</artifactId>
+							<artifactId>ikasan-connector-ftpRar</artifactId>
 						</rarModule>
 						<javaModule>
 							<groupId>junit</groupId>  <!-- this is a dummy to force the reference of the cf-ds in generated application.xml -->
@@ -220,7 +220,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -269,7 +269,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>1.1.13</version>
+			<version>0.7.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -343,28 +343,28 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-client-filetransfer</artifactId>
-			<version>1.4.4</version>
+			<version>0.7.1</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-connector-base</artifactId>
-			<version>1.1.9</version>
+			<version>0.7.1</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-connector-basefiletransfer</artifactId>
-	      <version>1.2.7</version>
+	      <version>0.7.1</version>
 	      <scope>provided</scope>
 	    </dependency>	
 	    
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 		  <artifactId>ikasan-client-connection</artifactId>
-	      <version>1.0.2</version>
+	      <version>0.7.1</version>
 	      <scope>provided</scope>
 	    </dependency>	
 	    <dependency>
@@ -381,8 +381,8 @@
 	    </dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-connector-ftp</artifactId>
-			<version>1.3.0</version>
+			<artifactId>ikasan-connector-ftpRar</artifactId>
+			<version>0.7.1</version>
 			<scope>provided</scope>
 			<type>rar</type>
 		</dependency>	
