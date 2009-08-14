@@ -31,12 +31,12 @@
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoFileDelivery-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.1-SNAPSHOT</version>
+  <version>0.7.1</version>
 
 	<name>demoFileDelivery :: Parent Project</name>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoFileDelivery</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoFileDelivery-parent-0.7.1</connection>
   </scm>
 
      <modules>
