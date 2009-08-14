@@ -110,7 +110,7 @@
 		<distribution>repo</distribution> </license> </licenses>
 	-->
 	<scm>
-		<connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/framework-0.7.0</connection>
+		<connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/framework-0.7.1</connection>
 	</scm>
 	<build>
 		<plugins>
