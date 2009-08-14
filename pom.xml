@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-connector-basefiletransfer</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.8</version>
+  <version>0.7.1-SNAPSHOT</version>
   <name>Connector Base Filetransfer</name>
   <organization>
     <name>Ikasan</name>
@@ -132,7 +132,7 @@
   </issueManagement>
   -->
   <scm>
-    <connection>scm:svn:svn+ssh://svc-vcsp/architecture/ikasan/trunk/connector-basefiletransfer</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/connector-basefiletransfer-1.2.8</connection>
   </scm>
   <build>
     <resources>
@@ -218,14 +218,14 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>1.1.13</version>
+      <version>0.7.1</version>
       <scope>provided</scope>
     </dependency>
     <!-- Used for the common connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-base</artifactId>
-      <version>1.1.10</version>
+      <version>0.7.1</version>
     </dependency>
     <!-- J2EE -->
 	<dependency>
