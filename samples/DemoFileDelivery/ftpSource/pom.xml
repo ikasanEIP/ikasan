@@ -33,7 +33,7 @@
 	<parent>
 		<groupId>org.ikasan.demo</groupId>
 		<artifactId>demoFileDelivery-parent</artifactId>
-		<version>0.16.2</version>
+		<version>0.7.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
 	<packaging>jar</packaging>
