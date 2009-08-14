@@ -34,7 +34,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-framework</artifactId>
 	<packaging>jar</packaging>
-	<version>0.16.3-SNAPSHOT</version>
+	<version>0.7.0</version>
 	<name>Ikasan Framework</name>
 	<organization>
 		<name>Ikasan</name>
@@ -110,7 +110,7 @@
 		<distribution>repo</distribution> </license> </licenses>
 	-->
 	<scm>
-		<connection>scm:svn:svn+ssh://svc-vcsp/architecture/ikasan/tags/ikasan-framework-0.16.2</connection>
+		<connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/framework-0.7.0</connection>
 	</scm>
 	<build>
 		<plugins>
