@@ -6,9 +6,10 @@
 	<parent>
 		<groupId>org.ikasan.demo</groupId>
 		<artifactId>demoFileDelivery-parent</artifactId>
-		<version>0.7.1-SNAPSHOT</version>
+		<version>0.7.1</version>
 	</parent>
 	<artifactId>demoFileDelivery-app-war</artifactId>
+    <version>0.7.1-SNAPSHOT</version>    
 	<packaging>war</packaging>
 
 	

@@ -32,9 +32,10 @@
 	<parent>
 		<groupId>org.ikasan.demo</groupId>
 		<artifactId>demoFileDelivery-parent</artifactId>
-		<version>0.7.1-SNAPSHOT</version>
+		<version>0.7.1</version>
 	</parent>
 	<artifactId>demoFileDelivery-app</artifactId>
+    <version>0.7.1-SNAPSHOT</version>    
 	<packaging>ear</packaging>
 
 	<name>demoFileDelivery :: demoFileDelivery : ear</name>
