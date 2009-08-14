@@ -35,6 +35,10 @@
 
 	<name>demoFileDelivery :: Parent Project</name>
 
+  <scm>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoFileDelivery</connection>
+  </scm>
+
      <modules>
        <module>ftpSource</module>
        <module>ftpTarget</module>
