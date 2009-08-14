@@ -20,6 +20,10 @@
         </pluginRepository>
     </pluginRepositories>
 
+  <scm>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/documentation/ArchitectureGuide</connection>
+  </scm>
+
     <build>
         <plugins>
             <plugin>
