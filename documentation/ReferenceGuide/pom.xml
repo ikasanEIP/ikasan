@@ -18,7 +18,9 @@
             <url>http://download.java.net/maven/2</url>
         </pluginRepository>
     </pluginRepositories>
-
+  <scm>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/documentation/ReferenceGuide</connection>
+  </scm>
     <build>
         <plugins>
             <plugin>
