@@ -21,8 +21,8 @@
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
 
-DROP TABLE IF EXISTS `ikasan01`.`ikasanwiretap`;
-CREATE TABLE  `ikasan01`.`ikasanwiretap` (
+DROP TABLE IF EXISTS `Ikasan01`.`IkasanWiretap`;
+CREATE TABLE  `Ikasan01`.`IkasanWiretap` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(255) NOT NULL,
   `FlowName` varchar(255) NOT NULL,
