@@ -20,8 +20,8 @@
 -- Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
-DROP TABLE IF EXISTS `ikasan01`.`initiatorcommand`;
-CREATE TABLE  `ikasan01`.`initiatorcommand` (
+DROP TABLE IF EXISTS `Ikasan01`.`InitiatorCommand`;
+CREATE TABLE  `Ikasan01`.`InitiatorCommand` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(255) NOT NULL,
   `InitiatorName` varchar(255) NOT NULL,
