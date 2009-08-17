@@ -340,14 +340,14 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.1</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoFileDelivery-ftpTarget-jar</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.1</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
