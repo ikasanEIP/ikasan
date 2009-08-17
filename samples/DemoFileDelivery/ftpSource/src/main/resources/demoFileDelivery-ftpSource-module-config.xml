@@ -38,7 +38,7 @@
     
     <bean id="module"
         class="org.ikasan.framework.module.SimpleModule">
-        <constructor-arg value="${project.name}-${module.name}" />
+        <constructor-arg value="demoFileDelivery-${module.name}" />
         <constructor-arg>
             <list>
             	<ref bean="channelAdapterFlowInitiator"/>
@@ -61,7 +61,7 @@
     <!-- initiator name -->
     <constructor-arg value="channelAdapterFlowInitiator"/>
     <!-- module name -->
-    <constructor-arg value="${project.name}-${module.name}"/>
+    <constructor-arg value="demoFileDelivery-${module.name}"/>
     <!-- event provider -->
     <constructor-arg ref="ftpEventProvider"/>
     <!-- flow to invoke -->
