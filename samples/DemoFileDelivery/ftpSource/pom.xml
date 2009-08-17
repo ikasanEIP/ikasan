@@ -52,7 +52,7 @@
 		</resources>
 
 		<filters>
-			<filter>../project.properties</filter>
+			<!-- <filter>../project.properties</filter> -->
 			<filter>./module.properties</filter>
 		</filters>
     	<plugins>
