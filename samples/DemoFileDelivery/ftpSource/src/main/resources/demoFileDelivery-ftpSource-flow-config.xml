@@ -36,7 +36,7 @@
 
 
 	<bean id="moduleName" class="java.lang.String">
-		<constructor-arg value="${project.name}-${module.name}" />
+		<constructor-arg value="demoFileDelivery-${module.name}" />
 	</bean>
 	
     <bean id="loggingExceptionHandler" class="org.ikasan.framework.component.LoggingExceptionHandlerImpl">
