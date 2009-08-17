@@ -26,7 +26,8 @@
 # //
 # // 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
     <!-- 
 	<parent>
@@ -37,7 +38,7 @@
      -->
     <groupId>org.ikasan.demo</groupId>
 	<artifactId>demoFileDelivery-app</artifactId>
-    <version>0.7.1</version>    
+    <version>0.7.1-SNAPSHOT</version>    
 	<packaging>ear</packaging>
 
 	<name>demoFileDelivery :: demoFileDelivery : ear</name>
@@ -422,7 +423,7 @@
 	</repositories>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoFileDelivery-app-0.7.1</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoFileDelivery/ear</connection>
   </scm>
     
   <distributionManagement>
