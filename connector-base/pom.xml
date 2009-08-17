@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-connector-base</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.10</version>
+  <version>0.8.0-SNAPSHOT</version>
   <name>Connector Base</name>
   <organization>
     <name>Ikasan</name>
@@ -222,7 +222,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>1.1.13</version>
+      <version>0.7.1</version>
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
