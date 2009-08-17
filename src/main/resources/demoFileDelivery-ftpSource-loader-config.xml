@@ -39,15 +39,15 @@
 		class="org.ikasan.framework.module.loader.ModuleFactoryBean">
 		<constructor-arg>
 			<list>
-				<value>${project.name}-environmentalisation.xml</value>
+				<value>demoFileDelivery-environmentalisation.xml</value>
 			</list>
 		</constructor-arg>
 		<constructor-arg>
 			<list>
-			    <value>${project.name}-${module.name}-module-config.xml</value>
-			    <value>${project.name}-${module.name}-flow-config.xml</value>
-			    <value>${project.name}-${module.name}-component-config.xml</value>
-			    <value>${project.name}-${module.name}-messaging-config.xml</value>
+			    <value>demoFileDelivery-${module.name}-module-config.xml</value>
+			    <value>demoFileDelivery-${module.name}-flow-config.xml</value>
+			    <value>demoFileDelivery-${module.name}-component-config.xml</value>
+			    <value>demoFileDelivery-${module.name}-messaging-config.xml</value>
 				
 			</list>
 		</constructor-arg>
