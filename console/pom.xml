@@ -3,7 +3,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>console</artifactId>
     <packaging>war</packaging>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.8.0-SNAPSHOT</version>
     <name>Ikasan Console</name>
     <organization>
         <name>Ikasan</name>
