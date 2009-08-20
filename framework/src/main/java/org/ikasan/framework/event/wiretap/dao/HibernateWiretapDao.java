@@ -262,8 +262,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     static final boolean restrictionExists(Object restrictionValue)
     {
         // If the value passed in is not null and not an empty string then it
-        // can
-        // have a restriction applied
+        // can have a restriction applied
         if (restrictionValue != null && !"".equals(restrictionValue))
         {
             return true;

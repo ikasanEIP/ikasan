@@ -176,12 +176,16 @@ public class JMSEventPublisherPluginTest extends TestCase
      */
     public void testInvoke_withSecurityPublishesWithSecureConnection() throws PluginInvocationException, JMSException, EventSerialisationException
     {
+    	
+    	final int eventPriority = 7;
         classMockery.checking(new Expectations()
         {
             {
                 // event has some payloads
                 one(event).idToString();
                 will(returnValue("dummy id list"));
+                one(event).getPriority();
+                will(returnValue(eventPriority));
             }
         });
         mockery.checking(new Expectations()
@@ -200,6 +204,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
                 one(messageProducer).send(mapMessage);
+                one(messageProducer).setPriority(eventPriority);
                 one(connection).close();
             }
         });
@@ -265,11 +270,15 @@ public class JMSEventPublisherPluginTest extends TestCase
      */
     public void testInvoke_withoutSecurityPublishesWithUnsecuredConnection() throws PluginInvocationException, JMSException, EventSerialisationException
     {
+    	final int eventPriority = 7;
         classMockery.checking(new Expectations()
         {
             {
+                // event has some payloads
                 one(event).idToString();
                 will(returnValue("dummy id list"));
+                one(event).getPriority();
+                will(returnValue(eventPriority));
             }
         });
         mockery.checking(new Expectations()
@@ -284,6 +293,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
                 one(messageProducer).send(mapMessage);
+                one(messageProducer).setPriority(eventPriority);
                 one(connection).close();
             }
         });
@@ -429,12 +439,14 @@ public class JMSEventPublisherPluginTest extends TestCase
     }
     
     public void testInvoke_willUtiliseDestinationFactoryWhenSupplied() throws PluginInvocationException, JMSException, EventSerialisationException, NamingException{
-
+    	final int eventPriority =7;
         classMockery.checking(new Expectations()
         {
             {
                 one(event).idToString();
                 will(returnValue("dummy id list"));
+                one(event).getPriority();
+                will(returnValue(eventPriority));
             }
         });
         mockery.checking(new Expectations()
@@ -451,6 +463,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
                 one(messageProducer).send(mapMessage);
+                one(messageProducer).setPriority(eventPriority);
                 one(connection).close();
             }
         });
