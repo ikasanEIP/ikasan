@@ -383,6 +383,7 @@ public class JmsMessageDrivenInitiatorImplTest
         // stubJmsMessageDrivenInitiatorImpl.getState().isRecovering());
         
         // expectations for the resumption
+        
         mockery.checking(new Expectations()
         {
             {
@@ -391,8 +392,6 @@ public class JmsMessageDrivenInitiatorImplTest
                 inSequence(sequence);
                 allowing(messageListenerContainer).isRunning();
                 will(returnValue(true));
-                inSequence(sequence);
-                allowing(monitorListener).notify(with(equal("running")));
             }
         });
         /*
@@ -425,6 +424,7 @@ public class JmsMessageDrivenInitiatorImplTest
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
                 inSequence(sequence);
                 will(returnValue(null));
+                one(monitorListener).notify(with(equal("running")));
             }
         });
         stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);

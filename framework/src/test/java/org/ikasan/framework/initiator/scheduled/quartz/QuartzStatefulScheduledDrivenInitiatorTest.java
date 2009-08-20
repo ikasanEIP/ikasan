@@ -706,7 +706,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         setExpectationsForIsRecovering(isRecovering);
         if (isRecovering){
             setCancelRetryCycleExpectations(isRecovering);
-            
+            setNotifyMonitorListenerExpectations();
             //setStartInitiatorExpectations(true);
             try
             {

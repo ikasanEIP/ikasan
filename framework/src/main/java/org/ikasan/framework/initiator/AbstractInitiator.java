@@ -395,6 +395,7 @@ public abstract class AbstractInitiator implements Initiator
         if (isRecovering())
         {
             completeRetryCycle();
+            notifyMonitorListeners();
         }
     }
     

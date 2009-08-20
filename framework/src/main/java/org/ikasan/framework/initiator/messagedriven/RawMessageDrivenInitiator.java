@@ -41,26 +41,34 @@ import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.flow.Flow;
 
 /**
- * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create and fire new <code>Event</code>s based
- * on raw JMS messages.
+ * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create
+ * and fire new <code>Event</code>s based on raw JMS messages.
  * 
- * This implementation places no expectation on the incoming message data. Do not use this for deserialising existing
- * <code>Event</code>s, rather use the <code>EventMessageDrivenInitiator</code>
+ * This implementation places no expectation on the incoming message data. Do
+ * not use this for deserialising existing <code>Event</code>s, rather use the
+ * <code>EventMessageDrivenInitiator</code>
  * 
  * @author Ikasan Development Team
  */
 public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
 {
-    
+    /** Default Message Priority used by the Ikasan Raw Message Driven Initiator */
+    private static final int DEFAULT_MESSAGE_PRIORITY = 4;
+
     /**
      * Logger instance for this class
      */
     private Logger logger = Logger.getLogger(RawMessageDrivenInitiator.class);
-    
+
     /**
      * Factory for constructing Payloads
      */
     protected PayloadFactory payloadFactory;
+
+    /**
+     * Respect the priority of received messages by setting this on the Event
+     */
+    private boolean respectPriority;
 
     /**
      * Constructor
@@ -81,26 +89,52 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl#handleTextMessage(javax.jms.TextMessage
-     * )
+     * org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl
+     * #handleTextMessage(javax.jms.TextMessage )
      */
     @Override
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
+        System.out.println("handleTextMessage");
         // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
-            MetaDataInterface.UNDEFINED, message.getText().getBytes());
+        Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
         //
-        Event event = new Event(moduleName, name,message.getJMSMessageID(),payload);
-
+        Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
+        // Reuse the message's priority if we are configured to respect it
+        if (respectPriority)
+        {
+            event.setPriority(message.getJMSPriority());
+        }
+        else
+        {
+            event.setPriority(DEFAULT_MESSAGE_PRIORITY);
+        }
         return event;
     }
-
-
 
     @Override
     protected Logger getLogger()
     {
         return logger;
+    }
+
+    /**
+     * Respect the priority of received messages by setting this on the Event
+     * 
+     * @param respectPriority
+     */
+    public void setRespectPriority(boolean respectPriority)
+    {
+        this.respectPriority = respectPriority;
+    }
+
+    /**
+     * Accessor for respectPriority
+     * 
+     * @return respectPriority
+     */
+    public boolean isRespectPriority()
+    {
+        return respectPriority;
     }
 }

@@ -151,7 +151,6 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
     {
         if (retryCount!=null){
             retryCount=null;
-            notifyMonitorListeners();
         }
     }
 
