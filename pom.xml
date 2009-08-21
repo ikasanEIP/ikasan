@@ -7,16 +7,28 @@
 
      <name>Ikasan Projects Parent Project</name>
      <modules>
-       <module>client-connection</module>
-       <module>client-filetransfer</module>
-       <module>common</module>
-       <module>connector-base</module>
-       <module>connector-basefiletransfer</module>
-       <module>connector-filetransfer-parent</module>
-       <module>connector-ftpRar</module>
-       <module>connector-sftpRar</module>
-       <module>framework</module>
-	   <module>webconsole</module>
+     	<!--  
+     		gotta keep the order correct here, dependent projects first, not alphebetical!
+     	
+     	 -->
+     	<module>common</module>
+     	<module>framework</module>
+     
+        <module>webconsole</module>
+        <module>console</module>
+        
+        <module>connector-base</module>
+        <module>connector-basefiletransfer</module>
+        <module>connector-filetransfer-parent</module>
+        <module>connector-ftpRar</module>
+        <module>connector-sftpRar</module>
+     
+        <module>client-connection</module>
+        <module>client-filetransfer</module>
+       
+        
+       
+	   
      </modules>
 
 </project>
