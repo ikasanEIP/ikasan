@@ -11,23 +11,31 @@
      		gotta keep the order correct here, dependent projects first, not alphebetical!
      	
      	 -->
+     	<!-- ikasan core -->
      	<module>common</module>
      	<module>framework</module>
-     
+     	
+     	<!-- consoles -->
         <module>webconsole</module>
         <module>console</module>
         
+        <!-- connectors -->
         <module>connector-base</module>
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
         <module>connector-ftpRar</module>
         <module>connector-sftpRar</module>
      
+     	<!-- connector clients -->
         <module>client-connection</module>
         <module>client-filetransfer</module>
        
+        <!-- samples -->
         <module>samples/DemoFileDelivery</module>
        
+       <!-- documentation  -->
+	   <!-- <module>documentation/ArchitectureGuide</module> -->
+	   <!-- <module>documentation/ReferenceGuide</module> -->
 	   
      </modules>
 
