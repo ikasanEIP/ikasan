@@ -4,7 +4,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>architecture-guide</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2-SNAPSHOT</version>
     <packaging>jdocbook</packaging>
     <name>Ikasan Enterprise Integration Architecture Guide</name>
     <pluginRepositories>
@@ -19,7 +19,7 @@
     </pluginRepositories>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/architecture-guide-0.7.1</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/architecture-guide-0.7.2</connection>
   </scm>
 
     <build>
