@@ -17,7 +17,7 @@
         </pluginRepository>
     </pluginRepositories>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/reference-guide-0.7.1</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/reference-guide-0.8.0</connection>
   </scm>
     <build>
         <plugins>
