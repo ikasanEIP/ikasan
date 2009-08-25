@@ -66,8 +66,7 @@ public class BaseFileTransferMappedRecordTransformer
         // Don't set the Checksum, the client doesn't calculate checksum as the payload does it
         // Don't set the name
         
-        // Set the Size
-        payload.setSize(record.getSize());
+
         // Set the source system name
         String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
         payload.setSrcSystem(componentGroupName);
