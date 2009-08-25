@@ -241,7 +241,7 @@ public interface MetaDataInterface
      * 
      * @return Long
      */
-    public Long getSize();
+    public Long size();
 
     /**
      * Setter for <code>checksum</code>. This can be used to set checksum to

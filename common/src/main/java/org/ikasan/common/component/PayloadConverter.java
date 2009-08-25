@@ -158,9 +158,9 @@ public class PayloadConverter
         {
             writer.addAttribute("CHARSET", payload.getCharset()); //$NON-NLS-1$
         }
-        if (payload.getSize().longValue() > 0L)
+        if (payload.size().longValue() > 0L)
         {
-            writer.addAttribute("SIZE", String.valueOf(payload.getSize())); //$NON-NLS-1$
+            writer.addAttribute("SIZE", String.valueOf(payload.size())); //$NON-NLS-1$
         }
         if (payload.getChecksum() != null)
         {

@@ -125,7 +125,7 @@ public class PayloadTest
         String charSet = this.payload.getCharset();
         Assert.assertEquals(expectedCharSet, charSet);
 
-        Long size = this.payload.getSize();
+        Long size = this.payload.size();
         Assert.assertEquals(expectedSize, size);
 
         String checkSumAlg = this.payload.getChecksumAlg();
@@ -252,7 +252,7 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), clonePayload.getCharset());
 
-        Assert.assertTrue(this.payload.getSize() == clonePayload.getSize());
+        Assert.assertTrue(this.payload.size() == clonePayload.size());
 
         Assert.assertEquals(this.payload.getChecksum(), clonePayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), clonePayload.getChecksumAlg());
@@ -334,7 +334,7 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), spawnPayload.getCharset());
 
-        Assert.assertTrue(this.payload.getSize() == spawnPayload.getSize());
+        Assert.assertTrue(this.payload.size() == spawnPayload.size());
 
         Assert.assertEquals(this.payload.getChecksum(), spawnPayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), spawnPayload.getChecksumAlg());

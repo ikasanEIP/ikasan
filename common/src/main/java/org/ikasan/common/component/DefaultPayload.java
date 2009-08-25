@@ -350,7 +350,7 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
 	/* (non-Javadoc)
 	 * @see org.ikasan.common.MetaDataInterface#getSize()
 	 */
-	public Long getSize() {
+	public Long size() {
 		int size = 0;
 		if (content!=null){
 			size = content.length;
