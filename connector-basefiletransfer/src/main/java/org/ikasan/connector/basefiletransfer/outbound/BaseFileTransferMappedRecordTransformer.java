@@ -141,7 +141,7 @@ public class BaseFileTransferMappedRecordTransformer
         record.setContent(payload.getContent());
         record.setChecksum(payload.getChecksum(), payload.getChecksumAlg());
         record.setName(payload.getName());
-        record.setSize(payload.getSize());
+        record.setSize(payload.size());
         record.setCreatedDayTime(new Date(payload.getTimestamp()));
         record.setRecordName(payload.getName());
         record.setRecordShortDescription(null);

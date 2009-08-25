@@ -148,10 +148,10 @@ public class EnvelopeConverter extends PayloadConverter
             writer.setValue(envelope.getCharset());
             writer.endNode();
         }
-        if (envelope.getSize().longValue() > 0L)
+        if (envelope.size().longValue() > 0L)
         {
             writer.startNode("size"); //$NON-NLS-1$
-            writer.setValue(String.valueOf(envelope.getSize()));
+            writer.setValue(String.valueOf(envelope.size()));
             writer.endNode();
         }
         if (envelope.getChecksum() != null)

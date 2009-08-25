@@ -298,7 +298,7 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
         long totalSizeOfPayloads = 0;
         for (Payload payload : payloads)
         {
-            totalSizeOfPayloads += payload.getSize();
+            totalSizeOfPayloads += payload.size();
         }
         // If the total payload size is too big then truncate payloads as needed
         if (totalSizeOfPayloads > externalExceptionDef.getMaxPayloadSize().intValue())
