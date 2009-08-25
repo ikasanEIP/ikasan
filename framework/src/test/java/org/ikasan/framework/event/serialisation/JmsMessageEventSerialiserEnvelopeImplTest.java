@@ -113,18 +113,22 @@ public class JmsMessageEventSerialiserEnvelopeImplTest
                 will(returnValue(envelope));
                 one(envelope).getPayloads();
                 will(returnValue(payloads));
-                one(payload1).getName();
-                will(returnValue("payload1Name"));
-                one(payload1).getSpec();
-                will(returnValue(Spec.TEXT_XML.toString()));
-                one(payload1).getSrcSystem();
-                will(returnValue("srcSystem1"));
-                one(payload2).getName();
-                will(returnValue("payload2Name"));
-                one(payload2).getSpec();
-                will(returnValue(Spec.TEXT_XML.toString()));
-                one(payload2).getSrcSystem();
-                will(returnValue("srcSystem2"));
+                
+                
+//                one(payload1).getName();
+//                will(returnValue("payload1Name"));
+//                one(payload1).getSpec();
+//                will(returnValue(Spec.TEXT_XML.toString()));
+//                one(payload1).getSrcSystem();
+//                will(returnValue("srcSystem1"));
+//                one(payload2).getName();
+//                will(returnValue("payload2Name"));
+//                one(payload2).getSpec();
+//                will(returnValue(Spec.TEXT_XML.toString()));
+//                one(payload2).getSrcSystem();
+//                will(returnValue("srcSystem2"));
+                
+                
                 one(envelope).getId();
                 will(returnValue("envelopeId"));
                 one(envelope).getTimestamp();
@@ -145,8 +149,8 @@ public class JmsMessageEventSerialiserEnvelopeImplTest
                 will(returnValue("envelopeFormat"));
                 one(envelope).getCharset();
                 will(returnValue("envelopeCharset"));
-                one(envelope).getSize();
-                will(returnValue(9999l));
+//                one(envelope).getSize();
+//                will(returnValue(9999l));
                 one(envelope).getChecksum();
                 will(returnValue("envelopeChecksum"));
                 one(envelope).getChecksumAlg();
@@ -163,6 +167,8 @@ public class JmsMessageEventSerialiserEnvelopeImplTest
 //        Assert.assertEquals(moduleName, event.getComponentGroupName());
 //        Assert.assertEquals(componentName, event.getComponentName());
         Assert.assertEquals(id, event.getId());
+        
+        mockery.assertIsSatisfied();
     }
 
     /**
