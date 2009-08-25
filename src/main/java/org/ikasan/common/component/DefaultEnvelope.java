@@ -219,10 +219,10 @@ public class DefaultEnvelope extends MetaData implements Envelope
 	/* (non-Javadoc)
 	 * @see org.ikasan.common.MetaDataInterface#getSize()
 	 */
-	public Long getSize() {
+	public Long size() {
 		long size=0;
 		for (Payload payload : payloads){
-			size = size + payload.getSize();
+			size = size + payload.size();
 		}
 		return size;
 	}
