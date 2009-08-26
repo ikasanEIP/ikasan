@@ -29,6 +29,7 @@ package org.ikasan.common.factory;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -892,7 +893,12 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
                                     throw new JMSException("Unsupported class [" //$NON-NLS-1$
                                             + obj.getClass().getName() + "] found in JMS MapMessage"); //$NON-NLS-1$
                                 }
-                                pd.getWriteMethod().invoke(payload, obj);
+                                Method writeMethod = pd.getWriteMethod();
+                                if (writeMethod==null){
+                                	logger.warn("Message contains unmappable property ["+pd.getName()+"]");
+                                } else{
+                                	writeMethod.invoke(payload, obj);
+                                }
                                 break;
                             }
                         }
