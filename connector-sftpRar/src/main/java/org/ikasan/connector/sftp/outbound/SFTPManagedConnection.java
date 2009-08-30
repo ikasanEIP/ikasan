@@ -130,7 +130,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
      * Set the connection request info
      * @param scri
      */
-    public void setSFTPConnectionRequestInfo(SFTPConnectionRequestInfo scri)
+    public void setConnectionRequestInfo(SFTPConnectionRequestInfo scri)
     {
         this.scri = scri;
     }
@@ -139,7 +139,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
      * GEt the SFTP connection request info
      * @return SFTPConnectionRequestInfo
      */
-    public SFTPConnectionRequestInfo getSFTPConnectionRequestInfo()
+    public SFTPConnectionRequestInfo getConnectionRequestInfo()
     {
         return this.scri;
     }
