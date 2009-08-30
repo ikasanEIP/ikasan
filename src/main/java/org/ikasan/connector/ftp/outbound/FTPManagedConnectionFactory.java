@@ -206,10 +206,10 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
                 logger.debug("Object is a FTPManagedConnection instance.");
                 FTPManagedConnection fmc = (FTPManagedConnection) obj;
                 logger.debug("Connection considered [" + fmc + "].");
-                FTPManagedConnectionFactory fmcf = fmc.getManagedConnectionFactory();
+                FTPConnectionRequestInfo currentFcri = fmc.getConnectionRequestInfo();
                 // TODO We may also want to check that the fmcf is equal to
                 // 'this'.
-                if(fmcf.compareFCRI(fcri))
+                if(currentFcri.equals(fcri))
                 {
                     logger.debug("Found matched Connection."); //$NON-NLS-1$
 
@@ -271,26 +271,6 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
         }
         // default else
         logger.debug("Object is not valid, returning [false]."); //$NON-NLS-1$
-        return false;
-    }
-
-    /**
-     * Return true if the FCRI matches this connection
-     * 
-     * @param fcri Incoming <code>ConnectionRequestInfo</code> instance from
-     *            application server.
-     * @return true if the FCRI matches this connection
-     */
-    private boolean compareFCRI(FTPConnectionRequestInfo fcri)
-    {
-        if(this.remoteHostname.equalsIgnoreCase(fcri.getRemoteHostname()) && this.password.equals(fcri.getPassword())
-                && this.remotePort.equals(fcri.getRemotePort()) && this.username.equals(fcri.getUsername()) && this.clientID.equals(fcri.getClientID()))
-        {
-            logger.debug("Current connection properties matches CRI. Returning [true]."); //$NON-NLS-1$
-            return true;
-        }
-        // Default else
-        logger.debug("Current connection properties do no match CRI. Returning [false]."); //$NON-NLS-1$
         return false;
     }
 

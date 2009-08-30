@@ -129,7 +129,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      * Set the connection request info
      * @param fcri
      */
-    public void setFTPConnectionRequestInfo(FTPConnectionRequestInfo fcri)
+    public void setConnectionRequestInfo(FTPConnectionRequestInfo fcri)
     {
         this.fcri = fcri;
     }
@@ -138,7 +138,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      * Get the FTP connection request info
      * @return fcri
      */
-    public FTPConnectionRequestInfo getFConnectionRequestInfo()
+    public FTPConnectionRequestInfo getConnectionRequestInfo()
     {
         return this.fcri;
     }
