@@ -196,9 +196,9 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
             {
                 logger.debug("Object is a SFTPManagedConnection instance.");
                 SFTPManagedConnection smc = (SFTPManagedConnection) obj;
-                SFTPManagedConnectionFactory smcf = smc.getManagedConnectionFactory();
+                SFTPConnectionRequestInfo currentScri = smc.getConnectionRequestInfo();
                 // TODO We may also want to check that the smcf is equal to 'this'.
-                if (smcf.compareSCRI(scri))
+                if (currentScri.equals(scri))
                 {
                     logger.debug("Found matched Connection.");
                     
@@ -259,29 +259,6 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
         }
         // default else
         logger.debug("Object is not valid, returning [false]."); //$NON-NLS-1$
-        return false;
-    }
-
-    /**
-     * Return true if the SCRI matches this connection
-     * 
-     * @param scri Incoming <code>ConnectionRequestInfo</code> instance from application server.
-     * @return true if the <code>scri</code> matches this connection
-     */
-    private boolean compareSCRI(SFTPConnectionRequestInfo scri)
-    {
-        if (this.remoteHostname.equalsIgnoreCase(scri.getRemoteHostname()) && 
-            this.remotePort.equals(scri.getRemotePort()) && 
-            this.username.equals(scri.getUsername()) &&
-            this.knownHostsFilename.equals(scri.getKnownHostsFilename()) &&
-            this.privateKeyFilename.equals(scri.getPrivateKeyFilename()) &&
-            this.clientID.equals(scri.getClientID()))
-        {
-            logger.debug("Current connection properties matches CRI. Returning [true]."); //$NON-NLS-1$
-            return true;
-        }
-        // Default else
-        logger.debug("Current connection properties do not match CRI. Returning [false]."); //$NON-NLS-1$
         return false;
     }
 
