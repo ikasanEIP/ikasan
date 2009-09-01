@@ -37,7 +37,7 @@
     -->
     <groupId>org.ikasan.demo</groupId>
 	<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
-	<version>0.7.2-SNAPSHOT</version>
+	<version>0.7.2</version>
     <packaging>jar</packaging>
 	
 
@@ -85,7 +85,7 @@
       	</plugins>
 	</build>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoFileDelivery-ftpSource-jar-0.7.1</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-project-0.7.2</connection>
   </scm>
     
   <distributionManagement>
