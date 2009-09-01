@@ -32,6 +32,7 @@
        
         <!-- samples -->
         <module>samples/DemoFileDelivery</module>
+        <module>samples/DemoTransformationRouting</module>
        
        <!-- documentation  -->
        <!-- <module>documentation/ArchitectureGuide</module> -->
