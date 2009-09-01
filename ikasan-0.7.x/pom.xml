@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.7.2</version>
     <packaging>pom</packaging>
 
     <name>Ikasan Projects Parent Project</name>
@@ -41,7 +41,7 @@
     </modules>
 
     <scm>
-        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.2</connection>
     </scm>
 
 </project>
