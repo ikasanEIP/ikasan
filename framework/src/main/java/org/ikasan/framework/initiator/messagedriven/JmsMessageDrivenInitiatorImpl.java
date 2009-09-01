@@ -107,8 +107,11 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
         Event event = null;
         try
         {
-            logger.info("received message with id [" + message.getJMSMessageID() + "]");
-            if (message instanceof TextMessage)
+        	if (logger.isDebugEnabled()){
+        		logger.debug("received message with id [" + message.getJMSMessageID() + "]");
+        	}
+        	
+        	if (message instanceof TextMessage)
             {
                 event = handleTextMessage((TextMessage) message);
             }
