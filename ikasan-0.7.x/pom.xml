@@ -1,21 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-     <modelVersion>4.0.0</modelVersion>
-     <groupId>org.ikasan</groupId>
-     <artifactId>ikasan-project</artifactId>
-     <version>1.0</version>
-     <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-project</artifactId>
+    <version>0.7.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-     <name>Ikasan Projects Parent Project</name>
-     <modules>
-     	<!--  
-     		gotta keep the order correct here, dependent projects first, not alphebetical!
-     	
-     	 -->
-     	<!-- ikasan core -->
-     	<module>common</module>
-     	<module>framework</module>
-     	
-     	<!-- consoles -->
+    <name>Ikasan Projects Parent Project</name>
+    <modules>
+         <!--  
+             gotta keep the order correct here, dependent projects first, not alphabetical!
+            
+        -->
+        <!-- ikasan core -->
+        <module>common</module>
+        <module>framework</module>
+        
+        <!-- consoles -->
         <module>webconsole</module>
         <module>console</module>
         
@@ -25,8 +25,8 @@
         <module>connector-filetransfer-parent</module>
         <module>connector-ftpRar</module>
         <module>connector-sftpRar</module>
-     
-     	<!-- connector clients -->
+        
+        <!-- connector clients -->
         <module>client-connection</module>
         <module>client-filetransfer</module>
        
@@ -34,10 +34,14 @@
         <module>samples/DemoFileDelivery</module>
        
        <!-- documentation  -->
-	   <!-- <module>documentation/ArchitectureGuide</module> -->
-	   <!-- <module>documentation/ReferenceGuide</module> -->
-	   
-     </modules>
+       <!-- <module>documentation/ArchitectureGuide</module> -->
+       <!-- <module>documentation/ReferenceGuide</module> -->
+       
+    </modules>
+
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+    </scm>
 
 </project>
 
