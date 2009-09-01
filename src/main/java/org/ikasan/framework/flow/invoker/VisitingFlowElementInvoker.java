@@ -88,9 +88,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     {
         while (flowElement != null)
         {
-            if (logger.isInfoEnabled())
+            if (logger.isDebugEnabled())
             {
-                logger.info("Invoking [" + flowElement.getComponentName() + "] of [" + flowName + "] " + event.idToString());
+                logger.debug("Invoking [" + flowElement.getComponentName() + "] of [" + flowName + "] " + event.idToString());
             }
             notifyListenersBeforeElement(event, moduleName, flowName, flowElement);
             FlowComponent flowComponent = flowElement.getFlowComponent();
