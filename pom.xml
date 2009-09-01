@@ -4,7 +4,7 @@
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-war</artifactId>
 	<packaging>war</packaging>
-	<version>0.7.2</version>
+	<version>0.7.3-SNAPSHOT</version>
 	
 	<name>demoTransformationRouting :: demoTransformationRouting : war</name>
 
