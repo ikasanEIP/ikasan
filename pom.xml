@@ -19,7 +19,7 @@
         <module>webconsole</module>
         <module>console</module>
         
-        <!-- connectors -->
+        <!-- connectors  -->
         <module>connector-base</module>
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
