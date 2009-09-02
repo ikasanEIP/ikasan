@@ -136,7 +136,7 @@
     <url>https://apps.sourceforge.net/trac/ikasaneip/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/common-0.7.1</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
   <build>
     <!-- Std plugins -->
