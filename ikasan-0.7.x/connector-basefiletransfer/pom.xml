@@ -131,11 +131,9 @@
     <url>http://sourceforge.net/tracker/?group_id=91412</url>
   </issueManagement>
   -->
-  <!--
   <scm>
     <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
-  -->
   <build>
     <resources>
       <resource>
