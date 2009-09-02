@@ -1,0 +1,316 @@
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ikasan</groupId>
+  <artifactId>ikasan-connector-base</artifactId>
+  <packaging>jar</packaging>
+  <version>0.7.2</version>
+  <name>Connector Base</name>
+  <organization>
+    <name>Ikasan</name>
+    <url>http://www.ikasan.org</url>
+  </organization>
+  <url>http://www.ikasan.org</url>
+  <inceptionYear>2007</inceptionYear>
+  <description>The common library for the Ikasan Enterprise Integration Platform</description>
+  <developers>
+    <developer>
+      <id>verbma</id>
+      <name>Martijn Verburg</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>support manager</role>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>duncro</id>
+      <name>Ross Duncan</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>mitcje</id>
+      <name>Jeff Mitchell</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>hasasu</id>
+      <name>Summer Hasani</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>suetju</id>
+      <name>Junichi Suetake</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>koukhe</id>
+      <name>Herodotos Koukkides</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+  <!--
+  <licenses>
+    <license>
+      <name>The Lesser GNU Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/LICENSE-3.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  -->
+  <!--
+  <mailingLists>
+    <mailingList>
+      <name>Ikasan Development</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/jajuk-i18n</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/jajuk-i18n</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=jajuk-i18n</archive>
+    </mailingList>
+  </mailingLists>
+  -->
+  <!--
+  <issueManagement>
+    <url>http://sourceforge.net/tracker/?group_id=91412</url>
+  </issueManagement>
+  -->
+  <scm>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.2</connection>
+  </scm>
+  <build>
+    <resources>
+      <resource>
+        <!-- We explicitly include and exclude, because we want to know *why* -->
+        <directory>src/main/resources</directory>
+        <includes>
+          <!-- Holds JNDI references and Class names for common connector configuration -->
+          <include>connectorResource.xml</include>
+        </includes>
+        <excludes>
+          <!-- Connector DS file, needs to be external to the JAR -->
+          <exclude>ikasan-connector-default-ds.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
+      <!-- For sample assembly only, users should assemble their own wrapped connector seperately -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <filters>
+            <filter>src/main/assembly/filter.properties</filter>
+          </filters>
+          <descriptors>
+            <descriptor>src/main/assembly/distribution.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <!-- Report from the day we became Ikasan -->
+        <configuration>
+          <type>date</type>
+          <dates>
+            <date implementation="java.lang.String">2008-05-21</date>
+          </dates>
+          <dateFormat>yyyy-MM-dd</dateFormat>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <dependencies>
+    <!-- Used for the common functionality for the ikasan platform, e.g. Ikasan Exceptions -->
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-common</artifactId>
+      <version>0.7.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- J2EE -->
+	<dependency>
+    	<groupId>geronimo-spec</groupId>
+    	<artifactId>geronimo-spec-j2ee</artifactId>
+    	<version>1.4-rc3</version>
+		<scope>provided</scope>
+	</dependency> 
+    <!-- For persisting information about the connector such as chunking large messages -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <version>3.2.0.ga</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- Needed for logging -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Used for hierarchy of connector configuration -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>2.5.5</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- TODO Investigate wrapping this one day, used to interact with LastResourceCommit -->
+    <dependency>
+      <groupId>org.jboss.transaction</groupId>
+      <artifactId>jboss-jta</artifactId>
+      <version>4.2.3.SP7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-jta</artifactId>
+      <version>1.0.1B-rc4</version>
+      <scope>provided</scope>
+    </dependency> 
+    <!-- Used for creating test objects -->
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <version>2.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Used for Unit testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- XML serialisation/deserialisation, used for testing -->
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.2.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <repositories>
+  <repository>
+    <id>jboss</id>
+    <url>http://repository.jboss.com/maven2</url>
+  </repository>
+  </repositories>
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+</project>
