@@ -8,6 +8,11 @@
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: germanWordSrc : jar</name>
 
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+    </scm>
+
+
 	<build>
 		<resources>
 			<resource>
