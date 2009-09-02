@@ -40,7 +40,7 @@
 	<name>ikasan :: webconsole : war</name>
 
     <scm>
-      <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/webconsole-0.7.1</connection>
+      <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
     </scm>
 
 	<build>
@@ -93,14 +93,14 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>0.7.2-SNAPSHOT</version>
+			<version>0.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.2-SNAPSHOT</version>
+			<version>0.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 
