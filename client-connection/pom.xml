@@ -106,7 +106,7 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/client-connection-0.7.1</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
   <build>
     
