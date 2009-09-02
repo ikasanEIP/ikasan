@@ -153,7 +153,7 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-war</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>war</type>
 			<scope>provided</scope>
 		</dependency>
@@ -162,7 +162,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -211,7 +211,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -264,21 +264,21 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-germanWordSrc-jar</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.2</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -286,7 +286,7 @@
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchColourTgt-jar</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.2</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -294,7 +294,7 @@
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.2</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>        
@@ -303,7 +303,7 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-components</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
