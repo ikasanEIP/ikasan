@@ -35,13 +35,13 @@
 		<version>0.7.2</version>
 	</parent>
   <artifactId>ikasan-connector-sftpRar</artifactId>
-  <version>0.7.2-SNAPSHOT</version>  
+  <version>0.7.2</version>  
   <packaging>rar</packaging>
 
   <name>Connector SFTP Resource Adapter</name>
 
     <scm>
-       <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+       <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-connector-sftpRar-0.7.2</connection>
     </scm>
 
   
