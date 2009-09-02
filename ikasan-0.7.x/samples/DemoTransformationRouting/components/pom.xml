@@ -8,6 +8,11 @@
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: components : jar</name>
 
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+    </scm>
+
+
 	<build>
 
 		<!-- Std plugins -->
