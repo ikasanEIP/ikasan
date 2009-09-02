@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-	<version>0.7.2</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: englishWordRouter : jar</name>
 
     <scm>
-        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoTransformationRouting-englishWordRouter-jar-0.7.2</connection>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
     </scm>
 
 
