@@ -131,9 +131,11 @@
     <url>http://sourceforge.net/tracker/?group_id=91412</url>
   </issueManagement>
   -->
+  <!--
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-project-0.7.2</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/connector-basefiletransfer-0.7.1</connection>
   </scm>
+  -->
   <build>
     <resources>
       <resource>
