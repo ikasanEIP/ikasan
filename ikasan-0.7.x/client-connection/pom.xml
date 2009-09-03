@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-client-connection</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.4-SNAPSHOT</version>
+  <version>0.7.3-SNAPSHOT</version>
   <name>Connector Client</name>
   <organization>
     <name>Ikasan</name>
