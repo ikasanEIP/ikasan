@@ -35,14 +35,14 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-connector-filetransfer-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.7.3</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<name>Connector File Transfer Resource Adapter Parent</name>
 	<url>http://www.ikasan.org</url>
 
 
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-project-0.7.3</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
 	<build>
 		<plugins>
