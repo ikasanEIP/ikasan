@@ -4,8 +4,12 @@
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-app</artifactId>
 	<packaging>ear</packaging>
-	<version>0.7.2</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<name>demoTransformationRouting :: demoTransformationRouting : ear</name>
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+    </scm>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -152,7 +156,7 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-war</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>war</type>
 			<scope>provided</scope>
 		</dependency>
@@ -161,7 +165,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -210,7 +214,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -263,21 +267,21 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-germanWordSrc-jar</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.2</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -285,7 +289,7 @@
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchColourTgt-jar</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.2</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -293,7 +297,7 @@
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.2</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>        
@@ -302,10 +306,25 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-components</artifactId>
-			<version>${project.version}</version>
+			<version>0.7.2</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>
+	
+	  <distributionManagement>
+	      <repository>
+	          <id>ikasaneip-releases</id>
+	          <name>Ikasan EIP Releases Repository</name>
+	          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+	      </repository>
+	      <snapshotRepository>
+	          <id>ikasaneip-snapshots</id>
+	          <name>Ikasan EIP Snapshot Repository</name>
+	          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+	      </snapshotRepository>
+	  </distributionManagement>
+
+	
 </project>

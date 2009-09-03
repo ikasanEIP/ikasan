@@ -38,13 +38,13 @@
 		<version>0.7.2</version>
 	</parent>
 	<artifactId>ikasan-connector-ftpRar</artifactId>
-  <version>0.7.2</version>
+  <version>0.7.3-SNAPSHOT</version>
 	<packaging>rar</packaging>
 
 	<name>Connector FTP Resource Adapter</name>
 
     <scm>
-       <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.2</connection>
+       <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
     </scm>
 
 	<dependencies>

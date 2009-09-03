@@ -31,7 +31,7 @@
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoTransformationRouting-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.2</version>
+  <version>0.7.3-SNAPSHOT</version>
 
 	<name>demoTransformationRouting :: Parent Project</name>
 
@@ -45,5 +45,23 @@
        <module>war</module>
        <module>ear</module>
      </modules>
+
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+    </scm>
+
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+
 
 </project>
