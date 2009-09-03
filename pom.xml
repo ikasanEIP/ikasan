@@ -7,42 +7,56 @@
 
     <name>Ikasan Projects Parent Project</name>
     <modules>
-         <!--  
+         <!--
              gotta keep the order correct here, dependent projects first, not alphabetical!
-            
+
         -->
         <!-- ikasan core -->
         <module>common</module>
         <module>framework</module>
-        
+
         <!-- consoles -->
         <module>webconsole</module>
         <module>console</module>
-        
+
         <!-- connectors  -->
         <module>connector-base</module>
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
         <module>connector-ftpRar</module>
         <module>connector-sftpRar</module>
-        
+
         <!-- connector clients -->
         <module>client-connection</module>
         <module>client-filetransfer</module>
-       
+
         <!-- samples -->
         <module>samples/DemoFileDelivery</module>
         <module>samples/DemoTransformationRouting</module>
-       
+
        <!-- documentation  -->
        <!-- <module>documentation/ArchitectureGuide</module> -->
        <!-- <module>documentation/ReferenceGuide</module> -->
-       
+
     </modules>
 
     <scm>
         <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.3</connection>
     </scm>
+
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+
 
 </project>
 
