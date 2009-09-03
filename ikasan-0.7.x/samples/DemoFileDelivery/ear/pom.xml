@@ -37,7 +37,7 @@
      -->
     <groupId>org.ikasan.demo</groupId>
 	<artifactId>demoFileDelivery-app</artifactId>
-    <version>0.7.3</version>
+    <version>0.7.4-SNAPSHOT</version>
 	<packaging>ear</packaging>
 
 	<name>demoFileDelivery :: demoFileDelivery : ear</name>
@@ -403,7 +403,7 @@
 	</repositories>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.3</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoFileDelivery-app-0.7.1</connection>
   </scm>
 
   <distributionManagement>
