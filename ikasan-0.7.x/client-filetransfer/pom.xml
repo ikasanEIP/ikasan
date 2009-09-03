@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-client-filetransfer</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.3</version>
+  <version>0.7.3-SNAPSHOT</version>
   <name>Client Filetransfer</name>
   <organization>
     <name>Ikasan</name>
@@ -132,7 +132,7 @@
   </issueManagement>
   -->
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.3</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
   <build>
     <plugins>
