@@ -4,10 +4,10 @@
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-app</artifactId>
 	<packaging>ear</packaging>
-	<version>0.7.3-SNAPSHOT</version>
+	<version>0.7.3</version>
 	<name>demoTransformationRouting :: demoTransformationRouting : ear</name>
     <scm>
-        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.3</connection>
     </scm>
 
 	<build>
