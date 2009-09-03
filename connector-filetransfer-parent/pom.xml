@@ -35,7 +35,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-connector-filetransfer-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.7.4-SNAPSHOT</version>
+	<version>0.7.3-SNAPSHOT</version>
 	<name>Connector File Transfer Resource Adapter Parent</name>
 	<url>http://www.ikasan.org</url>
 
