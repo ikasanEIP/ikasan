@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>reference-guide</artifactId>
-    <version>0.7.2</version>
+    <version>0.7.3-SNAPSHOT</version>
     <packaging>jdocbook</packaging>
     <name>Ikasan Enterprise Integration Reference Guide</name>
     <pluginRepositories>
@@ -17,7 +17,7 @@
         </pluginRepository>
     </pluginRepositories>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/reference-guide-0.7.2</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/reference-guide-0.7.1</connection>
   </scm>
     <build>
         <plugins>
