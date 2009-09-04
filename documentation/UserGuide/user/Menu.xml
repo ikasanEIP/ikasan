@@ -1,0 +1,54 @@
+<chapter xmlns="http://docbook.org/ns/docbook" 
+    version="5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
+    xml:id="Menu">
+
+    <title>Menu</title>
+
+    <sect1>
+        <title>Introduction</title>
+
+        <para>
+            This page simply lists the common Menu links in the Ikasan Console.
+        </para>
+
+        <sect2>
+            <title>Screen Shot</title>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            TODO
+                            <!--
+                            <inlinemediaobject>
+                                <imageobject>
+                                    <imagedata fileref="images/login_error.png" format="png" width="450px" depth="200px" />
+                                </imageobject>
+                            </inlinemediaobject>
+                            -->
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </sect2>
+
+        <sect2>
+            <title>Actions</title>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para><emphasis role="bold">Logout</emphasis> - Logs you out and returns you to the Login page</para>
+                    </listitem>
+                    <listitem>
+                        <para><emphasis role="bold">Home</emphasis> - A link that takes you to the Home page.</para>
+                    </listitem>
+                    <listitem>
+                        <para><emphasis role="bold">Events</emphasis> - Takes you to the WiretapEventSearch page.</para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </sect2>
+
+    </sect1>
+
+</chapter>

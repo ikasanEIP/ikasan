@@ -1,15 +1,16 @@
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
     xml:id="Introduction">
 
+    <title>Introduction</title>
+
     <sect1>
         <title>Introduction</title>
 
         <para>
             Welcome to the Ikasan Enterprise Integration Platform (EIP). There is a already a
-            great deal of material written about this platform, but this
-            document will focus on you,
-            the all important end user!   
-    	</para>
+            great deal of material written about this platform, but this document will focus on you,
+            the all important end user!
+        </para>
 
         <para>
             End users interact with Ikasan via a web browser (supported browsers are listed below) and 
@@ -25,7 +26,7 @@
                         <para>Firefox 2.0.x/3.0.x/3.5.x</para>
                     </listitem>
                     <listitem>
-                        <para>Internet Explorer 6.x/7.x/8.x</para>
+                        <para>Internet Explorer 7.x/8.x</para>
                     </listitem>
                     <listitem>
                         <para>TODO - Test other browsers</para>
@@ -42,19 +43,10 @@
                     <listitem>
                         <para>Wiretap Event Search</para>
                     </listitem>
-                    <listitem>
-                        <para>Admin</para>
-                        <itemizedlist>
-                            <listitem>
-                                <para>User</para>
-                            </listitem>
-                        </itemizedlist>                        
-                    </listitem>
                 </itemizedlist>
             </para>
         </sect2>
 
     </sect1>
-
 
 </chapter>

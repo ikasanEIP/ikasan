@@ -13,7 +13,12 @@
     </info>
 
     <xi:include href="Introduction.xml" />
-
+    <xi:include href="Login.xml" />
+    <xi:include href="Menu.xml" />
+    <xi:include href="Home.xml" />
+    <xi:include href="WiretapEventSearch.xml" />
+    <xi:include href="WiretapEventDetails.xml" />
+    
     <dedication>
         <para>To the Ikasan EIP Community.</para>
     </dedication>
