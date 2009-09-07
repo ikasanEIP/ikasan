@@ -35,6 +35,7 @@
 		<version>0.8.0-SNAPSHOT</version>
 	</parent>
   <artifactId>ikasan-connector-sftpRar</artifactId>
+  <version>0.7.4-SNAPSHOT</version>  
   <packaging>rar</packaging>
 
   <name>Connector SFTP Resource Adapter</name>

@@ -1,6 +1,6 @@
 /*
- * $Id$
- * $URL$
+ * $Id: AbstractBaseFileTransferTransactionalResourceCommandTest.java 168 2009-06-15 12:22:10Z magicduncan $
+ * $URL: https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x/connector-basefiletransfer/src/test/java/org/ikasan/connector/basefiletransfer/outbound/command/AbstractBaseFileTransferTransactionalResourceCommandTest.java $
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform

@@ -79,6 +79,12 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     protected FTPManagedConnectionFactory managedConnectionFactory;
 
     /**
+     * The client specific connection spec used to override the MFC values where 
+     * necessary.
+     */
+    private FTPConnectionRequestInfo fcri;
+
+    /**
      * Constructor, sets the managed connection factory and the hibernate filter
      * table
      * 
@@ -87,11 +93,12 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      * @param managedConnectionFactory The managed connection factory providing
      *            this managed connection
      */
-    public FTPManagedConnection(FTPManagedConnectionFactory managedConnectionFactory)
+    public FTPManagedConnection(FTPManagedConnectionFactory managedConnectionFactory, FTPConnectionRequestInfo fcri)
     {
         logger.debug("Called constructor."); //$NON-NLS-1$
         this.managedConnectionFactory = managedConnectionFactory;
-        this.clientID = this.managedConnectionFactory.getClientID();
+        this.fcri = fcri;
+        this.clientID = this.fcri.getClientID();
         instanceCount++;
         instanceOrdinal = instanceCount;
     }
@@ -116,6 +123,24 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     {
         logger.debug("Called getManagedConnectionFactory"); //$NON-NLS-1$
         return this.managedConnectionFactory;
+    }
+
+    /**
+     * Set the connection request info
+     * @param fcri
+     */
+    public void setConnectionRequestInfo(FTPConnectionRequestInfo fcri)
+    {
+        this.fcri = fcri;
+    }
+
+    /**
+     * Get the FTP connection request info
+     * @return fcri
+     */
+    public FTPConnectionRequestInfo getConnectionRequestInfo()
+    {
+        return this.fcri;
     }
 
     /**
@@ -239,20 +264,20 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      */
     private void createFTPClient() throws ResourceException
     {
-        logger.debug("Called createFTPClient \n" //$NON-NLS-1$
-                + "active   [" + this.managedConnectionFactory.isActive() + "]\n" //$NON-NLS-1$//$NON-NLS-2$            
-                + "host     [" + this.managedConnectionFactory.getRemoteHostname() + "]\n" //$NON-NLS-1$//$NON-NLS-2$
-                + "maxretry [" + this.managedConnectionFactory.getMaxRetryAttempts() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "password [" + this.managedConnectionFactory.getPassword() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "port     [" + this.managedConnectionFactory.getRemotePort() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "user     [" + this.managedConnectionFactory.getUsername() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("Called createFTPClient \n"
+                + "active   [" + this.fcri.getActive() + "]\n"
+                + "host     [" + this.fcri.getRemoteHostname() + "]\n"
+                + "maxretry [" + this.fcri.getMaxRetryAttempts() + "]\n"
+                + "password [" + this.fcri.getPassword() + "]\n"
+                + "port     [" + this.fcri.getRemotePort() + "]\n"
+                + "user     [" + this.fcri.getUsername() + "]");
         // Active
-        boolean active = this.managedConnectionFactory.isActive();
+        boolean active = this.fcri.getActive();
         // Hostname
         String remoteHostname = null;
-        if(this.managedConnectionFactory.getRemoteHostname() != null)
+        if(this.fcri.getRemoteHostname() != null)
         {
-            remoteHostname = this.managedConnectionFactory.getRemoteHostname();
+            remoteHostname = this.fcri.getRemoteHostname();
         }
         else
         {
@@ -260,9 +285,9 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         }
         // Max retry attempts (Integer unboxes to int)
         int maxRetryAttempts;
-        if(this.managedConnectionFactory.getMaxRetryAttempts() != null)
+        if(this.fcri.getMaxRetryAttempts() != null)
         {
-            maxRetryAttempts = this.managedConnectionFactory.getMaxRetryAttempts();
+            maxRetryAttempts = this.fcri.getMaxRetryAttempts();
         }
         else
         {
@@ -270,9 +295,9 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         }
         // Password
         String password;
-        if(this.managedConnectionFactory.getPassword() != null)
+        if(this.fcri.getPassword() != null)
         {
-            password = this.managedConnectionFactory.getPassword();
+            password = this.fcri.getPassword();
         }
         else
         {
@@ -280,9 +305,9 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         }
         // Port (Integer unboxes to int)
         int remotePort;
-        if(this.managedConnectionFactory.getRemotePort() != null)
+        if(this.fcri.getRemotePort() != null)
         {
-            remotePort = this.managedConnectionFactory.getRemotePort();
+            remotePort = this.fcri.getRemotePort();
         }
         else
         {
@@ -290,9 +315,9 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         }
         // Username
         String username = null;
-        if(this.managedConnectionFactory.getUsername() != null)
+        if(this.fcri.getUsername() != null)
         {
-            username = this.managedConnectionFactory.getUsername();
+            username = this.fcri.getUsername();
         }
         else
         {
@@ -303,10 +328,10 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
         {
             localHostname = this.managedConnectionFactory.getLocalHostname();
         }
-        String systemKey = this.managedConnectionFactory.getSystemKey();
-        Integer connectionTimeout = this.managedConnectionFactory.getConnectionTimeout();
-        Integer dataTimeout = this.managedConnectionFactory.getDataTimeout();
-        Integer soTimeout = this.managedConnectionFactory.getSocketTimeout();
+        String systemKey = this.fcri.getSystemKey();
+        Integer connectionTimeout = this.fcri.getConnectionTimeout();
+        Integer dataTimeout = this.fcri.getDataTimeout();
+        Integer soTimeout = this.fcri.getSocketTimeout();
 
         // Create a FileTransferProtocolClient
         this.ftpClient = new FileTransferProtocolClient(active, remoteHostname, localHostname, maxRetryAttempts, password, remotePort, username, systemKey,
@@ -474,6 +499,6 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     @Override
     protected boolean cleanupJournalOnComplete()
     {
-        return managedConnectionFactory.isCleanupJournalOnComplete();
+        return fcri.cleanupJournalOnComplete();
     }
 }
