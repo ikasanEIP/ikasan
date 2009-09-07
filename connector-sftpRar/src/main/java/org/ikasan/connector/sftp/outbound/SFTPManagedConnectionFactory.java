@@ -155,15 +155,9 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
             throws ResourceException
     {
         logger.debug("Called createManagedConnection"); //$NON-NLS-1$
-
-        // Set the connection properties if they exist
-        if (cri != null)
-        {
-            this.setConnectionProperties(cri);
-        }
-
+        
         // Create the new Managed Connection
-        SFTPManagedConnection sftpManagedConnection = new SFTPManagedConnection(this);
+        SFTPManagedConnection sftpManagedConnection = new SFTPManagedConnection(this, (SFTPConnectionRequestInfo) cri);
 
         sftpManagedConnection.setTransactionJournal(getTransactionJournal());
 
@@ -202,9 +196,9 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
             {
                 logger.debug("Object is a SFTPManagedConnection instance.");
                 SFTPManagedConnection smc = (SFTPManagedConnection) obj;
-                SFTPManagedConnectionFactory smcf = smc.getManagedConnectionFactory();
+                SFTPConnectionRequestInfo currentScri = smc.getConnectionRequestInfo();
                 // TODO We may also want to check that the smcf is equal to 'this'.
-                if (smcf.compareSCRI(scri))
+                if (currentScri.equals(scri))
                 {
                     logger.debug("Found matched Connection.");
                     
@@ -269,29 +263,6 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * Return true if the SCRI matches this connection
-     * 
-     * @param scri Incoming <code>ConnectionRequestInfo</code> instance from application server.
-     * @return true if the <code>scri</code> matches this connection
-     */
-    private boolean compareSCRI(SFTPConnectionRequestInfo scri)
-    {
-        if (this.remoteHostname.equalsIgnoreCase(scri.getRemoteHostname()) && 
-            this.remotePort.equals(scri.getRemotePort()) && 
-            this.username.equals(scri.getUsername()) &&
-            this.knownHostsFilename.equals(scri.getKnownHostsFilename()) &&
-            this.privateKeyFilename.equals(scri.getPrivateKeyFilename()) &&
-            this.clientID.equals(scri.getClientID()))
-        {
-            logger.debug("Current connection properties matches CRI. Returning [true]."); //$NON-NLS-1$
-            return true;
-        }
-        // Default else
-        logger.debug("Current connection properties do not match CRI. Returning [false]."); //$NON-NLS-1$
-        return false;
-    }
-
-    /**
      * Return true if the SMCF matches this connection
      * 
      * @param smcf Incoming <code>ManagedConnectionFactory</code> instance from application server.
@@ -330,84 +301,6 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
         // Default else
         logger.debug("Object is not equal. Returning [false]."); //$NON-NLS-1$
         return false;
-    }
-
-    /**
-     * Determine the connection request info provided to the connection creation
-     * (for overriding the ra.xml).
-     * 
-     * We deliberately do not use setters here as the setters are called
-     * directly by the Application Server and we want to be able to trace that
-     * independently
-     * 
-     * @param cri <code>ConnectionRequestInfo</code> used to override the ra.xml.
-     * @throws ResourceException Thrown if the received <code>cri</code> is not an instance
-     * of <code>SFTPConnectionRequestInfo</code>.
-     */
-    private void setConnectionProperties(ConnectionRequestInfo cri) throws ResourceException
-    {
-        try
-        {
-            logger.debug("CRI was not null, so we override ra.xml values."); //$NON-NLS-1$
-            SFTPConnectionRequestInfo scri = (SFTPConnectionRequestInfo) cri;
-            logger.debug("CRI \n" + scri);
-            // Client ID sits on the EISManagedConnectionFactory
-            if (scri.getClientID() != null)
-            {
-                logger.debug("CRI setting clientID to: [" + scri.getClientID() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.clientID = scri.getClientID();
-            }
-            if (scri.getRemoteHostname() != null)
-            {
-                logger.debug("CRI setting hostname to: [" + scri.getRemoteHostname() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.remoteHostname = scri.getRemoteHostname();
-            }
-            if (scri.getKnownHostsFilename() != null)
-            {
-                logger.debug("CRI setting knownHostsFilename to: [" + scri.getKnownHostsFilename() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.knownHostsFilename = scri.getKnownHostsFilename();
-            }
-            if (scri.getRemotePort() != null)
-            {
-                logger.debug("CRI setting port to: [" + scri.getRemotePort() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.remotePort = scri.getRemotePort();
-            }
-            if (scri.getPrivateKeyFilename() != null)
-            {
-                logger.debug("CRI setting privateKeyFilename to: [" + scri.getPrivateKeyFilename() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.privateKeyFilename = scri.getPrivateKeyFilename();
-            }
-            if (scri.getUsername() != null)
-            {
-                logger.debug("CRI setting username to: [" + scri.getUsername() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.username = scri.getUsername();
-            }
-            if (scri.getMaxRetryAttempts() != null)
-            {
-                logger.debug("CRI setting maxRetryAttempts to: [" + scri.getMaxRetryAttempts() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.maxRetryAttempts = scri.getMaxRetryAttempts();
-            }
-            if (scri.cleanupJournalOnComplete() != null)
-            {
-                logger.debug(" setting cleanup journal on complete to : [" + scri.cleanupJournalOnComplete() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.cleanupJournalOnComplete = scri.cleanupJournalOnComplete().booleanValue();
-            }
-            if (scri.getPreferredAuthentications() != null)
-            {
-                logger.debug("Setting authentication order to: [" + scri.getPreferredAuthentications() +"].");
-                this.preferredAuthentications = scri.getPreferredAuthentications();
-            }
-            if (scri.getConnectionTimeout() != null)
-            {
-                logger.debug("Setting connection timeout to: [" + scri.getConnectionTimeout() +"].");
-                this.connectionTimeout = scri.getConnectionTimeout();
-            }
-        }
-        catch (ClassCastException e)
-        {
-            throw new ResourceException("ConnectionRequestInfo is not a valid "
-                    + "instance for SFTP connectivity.", e);
-        }
     }
 
     /**

@@ -6,10 +6,8 @@
 	<version>1.0</version>
 	<packaging>pom</packaging>
 
-	<name>Ikasan Projects Parent Project</name>
-
+    <name>Ikasan Projects Parent Project</name>
 	<profiles>
-
 		<profile>
 			<id>deliverables</id>
 			<activation>

@@ -76,7 +76,7 @@ public class SFTPManagedConnectionTest extends TestCase
 
         // setup the managed connection
         TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory());
+            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
 
         // execute the recover method
@@ -112,7 +112,7 @@ public class SFTPManagedConnectionTest extends TestCase
 
         // setup the managed connection
         TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory());
+            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         managedConnection.setTransactionJournal(transactionJournal);
 
         // execute the recover method
@@ -136,7 +136,7 @@ public class SFTPManagedConnectionTest extends TestCase
     {
 
         TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory());
+            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
 
         int invalidFlag = 99;
         boolean xaExceptionFound = false;
@@ -165,7 +165,7 @@ public class SFTPManagedConnectionTest extends TestCase
     public void testRecover_WithTimerEndScanFlag() throws XAException
     {
         TransactionalCommandConnection managedConnection = new SFTPManagedConnection(
-            getMockedManagedConnectionFactory());
+            getMockedManagedConnectionFactory(), getMockedConnectionRequestInfo());
         int flag = XAResource.TMENDRSCAN;
         Xid[] xids = managedConnection.recover(flag);
 
@@ -189,14 +189,36 @@ public class SFTPManagedConnectionTest extends TestCase
 
         final SFTPManagedConnectionFactory managedConnectionFactory = classMockery
             .mock(SFTPManagedConnectionFactory.class);
+//        classMockery.checking(new Expectations()
+//        {
+//            {
+//                one(managedConnectionFactory).getClientID();// dont care what
+//                                                            // this returns
+//            }
+//        });
+        return managedConnectionFactory;
+    }
+
+    private SFTPConnectionRequestInfo getMockedConnectionRequestInfo()
+    {
+        // Mock the
+        Mockery classMockery = new Mockery()
+        {
+            {
+                setImposteriser(ClassImposteriser.INSTANCE);
+            }
+        };
+
+        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery
+            .mock(SFTPConnectionRequestInfo.class);
         classMockery.checking(new Expectations()
 
         {
             {
-                one(managedConnectionFactory).getClientID();// dont care what
+                one(connectionRequestInfo).getClientID();// dont care what
                                                             // this returns
             }
         });
-        return managedConnectionFactory;
+        return connectionRequestInfo;
     }
 }

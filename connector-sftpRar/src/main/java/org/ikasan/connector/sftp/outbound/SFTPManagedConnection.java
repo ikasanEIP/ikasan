@@ -81,6 +81,12 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     protected SFTPManagedConnectionFactory managedConnectionFactory;
 
     /**
+     * The client specific connection spec used to override the MFC values where 
+     * necessary.
+     */
+    private SFTPConnectionRequestInfo scri;
+
+    /**
      * Constructor, sets the managed connection factory and the hibernate filter
      * table
      * 
@@ -88,11 +94,12 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
      * 
      * @param managedConnectionFactory
      */
-    public SFTPManagedConnection(SFTPManagedConnectionFactory managedConnectionFactory)
+    public SFTPManagedConnection(SFTPManagedConnectionFactory managedConnectionFactory, SFTPConnectionRequestInfo scri)
     {
         logger.debug("Called constructor."); //$NON-NLS-1$
         this.managedConnectionFactory = managedConnectionFactory;
-        this.clientID = this.managedConnectionFactory.getClientID();
+        this.scri = scri;
+        this.clientID = this.scri.getClientID();
 
         instanceCount++;
         instanceOrdinal = instanceCount;
@@ -117,6 +124,24 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     {
         logger.debug("Called getManagedConnectionFactory"); //$NON-NLS-1$
         return this.managedConnectionFactory;
+    }
+
+    /**
+     * Set the connection request info
+     * @param scri
+     */
+    public void setConnectionRequestInfo(SFTPConnectionRequestInfo scri)
+    {
+        this.scri = scri;
+    }
+
+    /**
+     * GEt the SFTP connection request info
+     * @return SFTPConnectionRequestInfo
+     */
+    public SFTPConnectionRequestInfo getConnectionRequestInfo()
+    {
+        return this.scri;
     }
 
     /**
@@ -246,19 +271,19 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
      */
     private void createSFTPClient() throws ResourceException
     {
-        logger.debug("Called createSFTPClient \n" //$NON-NLS-1$
-                + "host     [" + this.managedConnectionFactory.getRemoteHostname() + "]\n" //$NON-NLS-1$//$NON-NLS-2$
-                + "port     [" + this.managedConnectionFactory.getRemotePort() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "pvkey    [" + this.managedConnectionFactory.getPrivateKeyFilename() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "kwnhost  [" + this.managedConnectionFactory.getKnownHostsFilename() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "maxretry [" + this.managedConnectionFactory.getMaxRetryAttempts() + "]\n" //$NON-NLS-1$ //$NON-NLS-2$
-                + "user     [" + this.managedConnectionFactory.getUsername() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("Called createSFTPClient \n"
+                + "host     [" + this.scri.getRemoteHostname() + "]\n"
+                + "port     [" + this.scri.getRemotePort() + "]\n"
+                + "pvkey    [" + this.scri.getPrivateKeyFilename() + "]\n"
+                + "kwnhost  [" + this.scri.getKnownHostsFilename() + "]\n"
+                + "maxretry [" + this.scri.getMaxRetryAttempts() + "]\n"
+                + "user     [" + this.scri.getUsername() + "]");
 
         // Private key file
         File privateKey = null;
         try
         {
-            privateKey = new File(this.managedConnectionFactory.getPrivateKeyFilename());
+            privateKey = new File(this.scri.getPrivateKeyFilename());
         }
         catch (NullPointerException e)
         {
@@ -268,7 +293,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         File knownHosts = null;
         try
         {
-            knownHosts = new File(this.managedConnectionFactory.getKnownHostsFilename());
+            knownHosts = new File(this.scri.getKnownHostsFilename());
         }
         catch (NullPointerException e)
         {
@@ -276,9 +301,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         }
         // Username
         String username = null;
-        if (this.managedConnectionFactory.getUsername() != null)
+        if (this.scri.getUsername() != null)
         {
-            username = this.managedConnectionFactory.getUsername();
+            username = this.scri.getUsername();
         }
         else
         {
@@ -286,9 +311,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         }
         // Remote hostname
         String remoteHostname = null;
-        if (this.managedConnectionFactory.getRemoteHostname() != null)
+        if (this.scri.getRemoteHostname() != null)
         {
-            remoteHostname = this.managedConnectionFactory.getRemoteHostname();
+            remoteHostname = this.scri.getRemoteHostname();
         }
         else
         {
@@ -296,9 +321,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         }
         // Remote port (Integer unboxes to int)
         int remotePort;
-        if (this.managedConnectionFactory.getRemotePort() != null)
+        if (this.scri.getRemotePort() != null)
         {
-            remotePort = this.managedConnectionFactory.getRemotePort();
+            remotePort = this.scri.getRemotePort();
         }
         else
         {
@@ -306,9 +331,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
         }
         // Max retry attempts (Integer unboxes to int)
         int maxRetryAttempts;
-        if (this.managedConnectionFactory.getMaxRetryAttempts() != null)
+        if (this.scri.getMaxRetryAttempts() != null)
         {
-            maxRetryAttempts = this.managedConnectionFactory.getMaxRetryAttempts();
+            maxRetryAttempts = this.scri.getMaxRetryAttempts();
         }
         else
         {
@@ -321,9 +346,9 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
             localHostname = this.managedConnectionFactory.getLocalHostname();
         }
 
-        String preferredAuthentications = this.managedConnectionFactory.getPreferredAuthentications();
+        String preferredAuthentications = this.scri.getPreferredAuthentications();
 
-        Integer connectionTimeout = this.managedConnectionFactory.getConnectionTimeout();
+        Integer connectionTimeout = this.scri.getConnectionTimeout();
 
         //Create a SFTPClient
         this.sftpClient = new SFTPClient(privateKey, knownHosts, username, remoteHostname, remotePort, localHostname, maxRetryAttempts, preferredAuthentications, connectionTimeout);
@@ -483,7 +508,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     @Override
     protected boolean cleanupJournalOnComplete()
     {
-        return managedConnectionFactory.isCleanupJournalOnComplete();
+        return scri.cleanupJournalOnComplete();
     }
     
 }

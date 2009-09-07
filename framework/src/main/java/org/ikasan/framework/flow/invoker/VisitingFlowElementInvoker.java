@@ -82,7 +82,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     	
         while (flowElement != null)
         {
-        	System.out.println("looping on:"+flowElement);
         	flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         	
             if (logger.isInfoEnabled())

@@ -161,14 +161,9 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
     {
         logger.debug("Called createManagedConnection");
-        // Set the connection properties if they exist
-        if(cri != null)
-        {
-            this.setConnectionProperties(cri);
-        }
 
         // Create the new Managed Connection
-        FTPManagedConnection ftpManagedConnection = new FTPManagedConnection(this);
+        FTPManagedConnection ftpManagedConnection = new FTPManagedConnection(this, (FTPConnectionRequestInfo)cri);
 
         ftpManagedConnection.setTransactionJournal(getTransactionJournal());
 
@@ -211,10 +206,10 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
                 logger.debug("Object is a FTPManagedConnection instance.");
                 FTPManagedConnection fmc = (FTPManagedConnection) obj;
                 logger.debug("Connection considered [" + fmc + "].");
-                FTPManagedConnectionFactory fmcf = fmc.getManagedConnectionFactory();
+                FTPConnectionRequestInfo currentFcri = fmc.getConnectionRequestInfo();
                 // TODO We may also want to check that the fmcf is equal to
                 // 'this'.
-                if(fmcf.compareFCRI(fcri))
+                if(currentFcri.equals(fcri))
                 {
                     logger.debug("Found matched Connection."); //$NON-NLS-1$
 
@@ -280,26 +275,6 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * Return true if the FCRI matches this connection
-     * 
-     * @param fcri Incoming <code>ConnectionRequestInfo</code> instance from
-     *            application server.
-     * @return true if the FCRI matches this connection
-     */
-    private boolean compareFCRI(FTPConnectionRequestInfo fcri)
-    {
-        if(this.remoteHostname.equalsIgnoreCase(fcri.getRemoteHostname()) && this.password.equals(fcri.getPassword())
-                && this.remotePort.equals(fcri.getRemotePort()) && this.username.equals(fcri.getUsername()) && this.clientID.equals(fcri.getClientID()))
-        {
-            logger.debug("Current connection properties matches CRI. Returning [true]."); //$NON-NLS-1$
-            return true;
-        }
-        // Default else
-        logger.debug("Current connection properties do no match CRI. Returning [false]."); //$NON-NLS-1$
-        return false;
-    }
-
-    /**
      * Return true if the FMCF matches this connection
      * 
      * @param fmcf Incoming <code>ManagedConnectionFactory</code> instance from
@@ -326,96 +301,6 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
         // Default else
         logger.debug("Object is not equal. Returning [false]."); //$NON-NLS-1$
         return false;
-    }
-
-    /**
-     * Determine the connection request info provided to the connection creation
-     * (for overriding the ra.xml).
-     * 
-     * We deliberately do not use setters here as the setters are called
-     * directly by the Application Server and we want to be able to trace that
-     * independently
-     * 
-     * @param cri <code>ConnectionRequestInfo</code> used to override the
-     *            ra.xml.
-     * @throws ResourceException Thrown if the received <code>cri</code> is not
-     *             an instance of <code>SFTPConnectionRequestInfo</code>.
-     */
-    private void setConnectionProperties(ConnectionRequestInfo cri) throws ResourceException
-    {
-
-        try
-        {
-            logger.debug("CRI was not null, so we override ra.xml values."); //$NON-NLS-1$
-            FTPConnectionRequestInfo fcri = (FTPConnectionRequestInfo) cri;
-
-            if(fcri.getActive() != null)
-            {
-                logger.debug(" setting active to : [" + fcri.getActive() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.active = fcri.getActive().booleanValue();
-            }
-            if(fcri.cleanupJournalOnComplete() != null)
-            {
-                logger.debug(" setting cleanup journal on complete to : [" + fcri.cleanupJournalOnComplete() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.cleanupJournalOnComplete = fcri.cleanupJournalOnComplete().booleanValue();
-            }
-            // Client ID sits on the EISManagedConnectionFactory
-            if(fcri.getClientID() != null)
-            {
-                logger.debug("CRI setting clientID to: [" + fcri.getClientID() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.clientID = fcri.getClientID();
-            }
-            if(fcri.getRemoteHostname() != null)
-            {
-                logger.debug("CRI setting hostname to: [" + fcri.getRemoteHostname() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.remoteHostname = fcri.getRemoteHostname();
-            }
-            if(fcri.getMaxRetryAttempts() != null)
-            {
-                logger.debug("CRI setting maxRetryAttempts to: [" + fcri.getMaxRetryAttempts() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.maxRetryAttempts = fcri.getMaxRetryAttempts();
-            }
-            if(fcri.getPassword() != null)
-            {
-                logger.debug("CRI setting password to: [" + fcri.getPassword() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.password = fcri.getPassword();
-            }
-            if(fcri.getRemotePort() != null)
-            {
-                logger.debug("CRI setting port to: [" + fcri.getRemotePort() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.remotePort = fcri.getRemotePort();
-            }
-            if(fcri.getUsername() != null)
-            {
-                logger.debug("CRI setting username to: [" + fcri.getUsername() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.username = fcri.getUsername();
-            }
-            if(fcri.getSystemKey() != null)
-            {
-                logger.debug("CRI setting system key to: [" + fcri.getSystemKey() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                this.systemKey = fcri.getSystemKey();
-            }
-            if(fcri.getConnectionTimeout() != null)
-            {
-                logger.debug("CRI setting connectiont timeout to: [" + fcri.getConnectionTimeout() + "].");
-                this.connectionTimeout = fcri.getConnectionTimeout();
-            }
-            if(fcri.getDataTimeout() != null)
-            {
-                logger.debug("CRI setting data timeout to: [" + fcri.getDataTimeout() + "].");
-                this.dataTimeout = fcri.getDataTimeout();
-            }
-            if(fcri.getSocketTimeout() != null)
-            {
-                logger.debug("CRI setting socket timeout to: [" + fcri.getSocketTimeout() + "].");
-                this.socketTimeout = fcri.getSocketTimeout();
-            }
-        }
-        catch (ClassCastException e)
-        {
-            throw new ResourceException("ConnectionRequestInfo is not a valid " //$NON-NLS-1$
-                    + "instance for FTP connectivity.", e); //$NON-NLS-1$
-        }
     }
 
     /**
