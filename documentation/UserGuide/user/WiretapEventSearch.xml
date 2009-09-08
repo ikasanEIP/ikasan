@@ -20,17 +20,13 @@
             <sect3>
                 <title>Screen Shot</title>
 
-                <para><itemizedlist>
-                        <listitem>
-                            <para>TODO<!--
-                                <inlinemediaobject>
-                                    <imageobject>
-                                        <imagedata fileref="images/login_error.png" format="png" width="450px" depth="200px" />
-                                    </imageobject>
-                                </inlinemediaobject>
-                                --></para>
-                        </listitem>
-                    </itemizedlist></para>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="images/login_error.png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+
+                <para></para>
             </sect3>
 
             <sect3>
