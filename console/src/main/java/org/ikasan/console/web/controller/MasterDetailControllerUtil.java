@@ -38,6 +38,7 @@ import org.springframework.ui.ModelMap;
  */
 public class MasterDetailControllerUtil
 {
+    
     /**
      * Adds a parameter to the searchParams map, only if it has a value
      * 
@@ -63,12 +64,13 @@ public class MasterDetailControllerUtil
      * @param selectAll - Select All flag  
      * @param model - The model we are displaying (the data)
      * @param pageNo - The page number we are on
+     * @param pageSize - The page Size (how many results to display per page)
      * @param pagedResult - The paged result page
      * @param request - standard HttpRequest
      * @param searchParams - The search parameters we're using
      */
     public static void addPagedModelAttributes(String orderBy, Boolean orderAsc, Boolean selectAll, 
-            ModelMap model, int pageNo, PagedSearchResult<?> pagedResult,
+            ModelMap model, int pageNo, int pageSize, PagedSearchResult<?> pagedResult,
             HttpServletRequest request, Map<String, Object> searchParams)
     {
         String requestUrl = request.getRequestURL() + "?" + request.getQueryString() + "#results";
@@ -82,7 +84,10 @@ public class MasterDetailControllerUtil
         if (pagedResult != null)
         {
             model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
-            model.addAttribute("lastPage", pagedResult.isLastPage());
+            // Calculate the last page (divide total results by page size, round up but take off 1 as indexes are 0 based)
+            int lastPage = (int)Math.ceil(((double)pagedResult.getResultSize() / (double)pageSize)) - 1;
+            model.addAttribute("isLastPage", pagedResult.isLastPage());
+            model.addAttribute("lastPage", lastPage);
             model.addAttribute("resultSize", pagedResult.getResultSize());
             model.addAttribute("size", pagedResult.size());
         }

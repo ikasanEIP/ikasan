@@ -212,7 +212,7 @@ public class WiretapEventsSearchFormController
         MasterDetailControllerUtil.addParam(searchParams, "untilDateString", untilDateString);
         MasterDetailControllerUtil.addParam(searchParams, "untilTimeString", untilTimeString);
         MasterDetailControllerUtil.addParam(searchParams, "payloadContent", payloadContent);
-        MasterDetailControllerUtil.addPagedModelAttributes(orderByField, orderAscending, selectAll, model, pageNo, pagedResult, request, searchParams);
+        MasterDetailControllerUtil.addPagedModelAttributes(orderByField, orderAscending, selectAll, model, pageNo, pageSize, pagedResult, request, searchParams);
         
         // Return back to the combined search / search results view
         return "events/wiretapEvents";
