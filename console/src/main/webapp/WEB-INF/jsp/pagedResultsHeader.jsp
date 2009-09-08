@@ -29,6 +29,18 @@
 # // 
 --%>
 <div id="searchResultsHeader">
+
+    <c:url var="firstPageLink" value="list.htm">
+        <c:forEach var="entry" items="${searchParams}">
+            <c:forEach var="entryValue" items="${entry.value}">
+               <c:param name="${entry.key}" value="${entryValue}"/>
+            </c:forEach>
+        </c:forEach>
+        <c:param name="page" value="0"/>
+        <c:param name="orderBy" value="${orderBy}"/>
+        <c:param name="orderAsc" value="${orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>
+    </c:url>
     
     <c:url var="nextPageLink" value="list.htm">
 		<c:forEach var="entry" items="${searchParams}">
@@ -54,6 +66,18 @@
         <c:param name="selectAll" value="${selectAll}"/>    	
     </c:url>
 
+    <c:url var="lastPageLink" value="list.htm">
+        <c:forEach var="entry" items="${searchParams}">
+            <c:forEach var="entryValue" items="${entry.value}">
+               <c:param name="${entry.key}" value="${entryValue}"/>
+            </c:forEach>
+        </c:forEach>
+        <c:param name="page" value="${lastPage}"/>
+        <c:param name="orderBy" value="${orderBy}"/>
+        <c:param name="orderAsc" value="${orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>
+    </c:url>
+
     <c:choose>
     	<c:when test="${resultSize==0}">
     		<p><fmt:message key="paged_results_header_no_results"/></p>
@@ -63,10 +87,10 @@
     		<span id="navigationControls">
     		    <a name="results" />
             	<c:if test="${page gt 0}">
-                	<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;
+                	<a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;
             	</c:if>
-            	<c:if test="${!lastPage}">
-                	<a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>
+            	<c:if test="${!isLastPage}">
+                	<a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a>
             	</c:if>
     		</span>
     	</c:otherwise>
