@@ -94,10 +94,20 @@
 	<bean id="timeDependentExclusionFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
 		<constructor-arg value="exclusionFlow" />
 		<constructor-arg ref="moduleName" />
-		<constructor-arg ref="timeDependentExceptionElement" />
+		<constructor-arg ref="chemicalElementNameTransformerElement" />
 		<constructor-arg ref="flowElementInvoker" />
 
 	</bean>
+
+
+    <bean id="chemicalElementNameTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="chemicalElementNameTransformationStep" />
+        <constructor-arg ref="chemicalElementNameTransformer" />
+        <constructor-arg ref="timeDependentExceptionElement" />
+        <property name="description">
+          <value>Transforms the name of a chemical into its symbol</value>
+        </property>
+    </bean>
 
 
     <bean id="timeDependentExceptionElement" class="org.ikasan.framework.flow.FlowElementImpl">

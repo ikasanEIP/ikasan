@@ -50,7 +50,7 @@
 						<value>lithium</value>
 						<value>beryllium</value>
 						<value>boron</value>
-						<value>carbo</value>
+						<value>carbon</value>
 						<value>nitrogen</value>
 						<value>oxygen</value>
 						<value>fluorine</value>
@@ -73,6 +73,33 @@
 		<constructor-arg value="someModuleName"/>
 		<constructor-arg value="someComponentName"/>
 	</bean>	
+	
+	<bean id="chemicalElementNameTransformer" class="org.ikasan.demo.WordDictionaryTransformer">
+		<constructor-arg>
+			<map>
+				<entry key="hydrogen" value="H"/>
+				<entry key="helium" value="He"/>
+				<entry key="lithium" value="Li"/>
+				<entry key="beryllium" value="Be"/>
+				<entry key="boron" value="B"/>
+				<entry key="carbon" value="C"/>
+				<entry key="nitrogen" value="N"/>
+				<entry key="oxygen" value="O"/>
+				<entry key="fluorine" value="Fl"/>
+				<entry key="neon" value="Ne"/>
+				<entry key="sodium" value="Na"/>
+				<entry key="magnesium" value="Mg"/>
+				<entry key="aluminuim" value="Al"/>
+				<entry key="silicon" value="Si"/>
+				<entry key="phosphorus" value="P"/>
+				<entry key="sulfur" value="S"/>
+				<entry key="chlorine" value="Cl"/>
+				<entry key="argon" value="Ar"/>
+				<entry key="potassium" value="K"/>
+				<entry key="calcium" value="Ca"/>
+			</map>
+		</constructor-arg>
+	</bean>
 	
 		
     <bean id="randomWordChannelPublishingEndpoint"
