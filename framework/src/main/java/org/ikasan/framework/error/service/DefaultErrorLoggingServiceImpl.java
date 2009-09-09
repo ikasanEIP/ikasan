@@ -67,7 +67,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	/**
 	 * List of all registered listeners
 	 */
-	private List<ErrorOccurrenceListener> errorOccurrenceListeners;
+	private List<ErrorOccurrenceListener> errorOccurrenceListeners= new ArrayList<ErrorOccurrenceListener>();
 
 	/**
 	 * Constructor
@@ -185,6 +185,15 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 */
 	public List<ErrorOccurrence> getErrorOccurrences(String eventId) {
 		return errorOccurrenceDao.getErrorOccurrences(eventId);
+	}
+	
+	
+	public void addErrorOccurrenceListener(ErrorOccurrenceListener errorOccurrenceListener){
+		errorOccurrenceListeners.add(errorOccurrenceListener);
+	}
+	
+	public void removeErrorOccurrenceListener(ErrorOccurrenceListener errorOccurrenceListener){
+		errorOccurrenceListeners.remove(errorOccurrenceListener);
 	}
 
 }

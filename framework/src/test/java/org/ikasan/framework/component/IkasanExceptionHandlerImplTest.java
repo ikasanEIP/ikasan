@@ -184,7 +184,7 @@ public class IkasanExceptionHandlerImplTest
         
         //
         // create a dummy event
-        event = new Event(null,null,null,new ArrayList<Payload>());
+        event = new Event(null,null,"myEvent1",new ArrayList<Payload>());
     }
 
     /**

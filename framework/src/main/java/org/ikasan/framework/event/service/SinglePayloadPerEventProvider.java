@@ -59,6 +59,7 @@ public class SinglePayloadPerEventProvider implements EventProvider
 
     /** Component name that created the event */
     private String componentName;
+    
 
     /**
      * Constructor.
@@ -94,9 +95,12 @@ public class SinglePayloadPerEventProvider implements EventProvider
         List<Event> events = new ArrayList<Event>();
         for (Payload payload : payloads)
         {
-            Event event = new Event(this.moduleName, this.componentName, null,payload);
+         	
+            Event event = new Event(this.moduleName, this.componentName, payload.getId(),payload);
             events.add(event);
         }
         return events;
     }
+    
+
 }

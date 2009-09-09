@@ -253,7 +253,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleBytesMessage(BytesMessage message) throws JMSException, EventSerialisationException
+    protected Event handleBytesMessage(BytesMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support BytesMessage [" + message.toString()
                 + "]");
@@ -285,7 +285,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventSerialisationException
+    protected Event handleObjectMessage(ObjectMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support ObjectMessage [" + message.toString()
                 + "]");
@@ -303,7 +303,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleMapMessage(MapMessage message) throws JMSException, EventSerialisationException
+    protected Event handleMapMessage(MapMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support MapMessage [" + message.toString()
                 + "]");
@@ -321,7 +321,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
+    protected Event handleTextMessage(TextMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support TextMessage [" + message.toString()
                 + "]");

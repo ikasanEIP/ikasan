@@ -67,15 +67,15 @@ public class HibernateExcludedEventDaoTest {
 		//set up an event to exclude
 		
 
-		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
-		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
+		DefaultPayload payload1 = new DefaultPayload("id1", null, Spec.TEXT_CSV, "thisSourceSystem", "payload1Content".getBytes());
+		DefaultPayload payload2 = new DefaultPayload("id2", null, Spec.BYTE_ZIP, "thatSourceSystem", "payload2Content".getBytes());
 		
 		
 		List<Payload> payloads = new ArrayList<Payload>();
 		payloads.add(payload1);
 		payloads.add(payload2);
 		
-		Event event = new Event(null, null, null,payloads);
+		Event event = new Event(null, null, "myEvent1",payloads);
 		
 		ExcludedEvent excludedEvent = new ExcludedEvent(event,moduleName, flowName, new Date());
 
@@ -173,15 +173,15 @@ public class HibernateExcludedEventDaoTest {
 	public Event createEvent(){
 
 
-		DefaultPayload payload1 = new DefaultPayload(null, Spec.TEXT_CSV.name(), "thisSourceSystem", "payload1Content".getBytes());
-		DefaultPayload payload2 = new DefaultPayload(null, Spec.BYTE_ZIP.name(), "thatSourceSystem", "payload2Content".getBytes());
+		DefaultPayload payload1 = new DefaultPayload("id1", null, Spec.TEXT_CSV, "thisSourceSystem", "payload1Content".getBytes());
+		DefaultPayload payload2 = new DefaultPayload("id2", null, Spec.BYTE_ZIP, "thatSourceSystem", "payload2Content".getBytes());
 		
 		
 		List<Payload> payloads = new ArrayList<Payload>();
 		payloads.add(payload1);
 		payloads.add(payload2);
 		
-		Event event = new Event(null, null, null,payloads);
+		Event event = new Event(null, null, "myEvent1",payloads);
 		return event;
 	
 	}

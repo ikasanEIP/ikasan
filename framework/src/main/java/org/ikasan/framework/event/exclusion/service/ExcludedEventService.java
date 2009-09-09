@@ -65,7 +65,14 @@ public interface ExcludedEventService {
 	 * @return ExcludedEvent
 	 */
 	public ExcludedEvent getExcludedEvent(long excludedEventId);
-
+	
+	/**
+	 * Retrieve an ExcludedEvent specified by its event Id
+	 * 
+	 * @param eventId
+	 * @return ExcludedEvent
+	 */	
+	public ExcludedEvent getExcludedEvent(String eventId);
 	
 	/**
 	 * Synchronously attempts to resubmit an ExcludedEvent specified by id
@@ -78,5 +85,7 @@ public interface ExcludedEventService {
 	 * @param excludedEventId
 	 */
 	public void resubmit(long excludedEventId);
+
+
 
 }

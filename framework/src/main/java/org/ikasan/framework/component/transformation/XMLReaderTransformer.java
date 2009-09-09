@@ -134,7 +134,7 @@ public class XMLReaderTransformer implements Transformer
             byte[] transformedData = transformedDataStream.toByteArray();
             logger.debug("setting payload content [" + new String(transformedData) + "]");
             payload.setContent(transformedData);
-            payload.setSpec(Spec.TEXT_XML.toString());
+            payload.setSpec(Spec.TEXT_XML);
             logger.debug(new String(transformedData));
         }
     }

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
 import org.ikasan.common.component.Spec;
@@ -108,10 +109,10 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payload
-        Payload payload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test", zippedFileData);
+        Payload payload = new DefaultPayload("incomingPayload",MetaDataInterface.UNDEFINED,Spec.BYTE_ZIP, "finCal-test", zippedFileData);
         
         //create the original Event
-        Event event = new Event("finCal", "finCal-calendarSrc",null,payload);
+        Event event = new Event("finCal", "finCal-calendarSrc","myEvent1",payload);
 
         //call the method under test
         List<Event> newEvents = splitter.onEvent(event, moduleName, componentName);
@@ -150,15 +151,15 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payloads
-        Payload firstOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test", zippedFileData);
-        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP.toString(), "finCal-test",
+        Payload firstOriginalPayload = new DefaultPayload("incomingPayload", MetaDataInterface.UNDEFINED, Spec.BYTE_ZIP, "finCal-test", zippedFileData);
+        Payload secondOriginalPayload = new DefaultPayload("incomingPayload",MetaDataInterface.UNDEFINED, Spec.BYTE_ZIP, "finCal-test",
             zippedFileData);
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(firstOriginalPayload);
         payloads.add(secondOriginalPayload);
         
         //create the original event
-        Event event = new Event("finCal", "finCal-calendarSrc",null,payloads);
+        Event event = new Event("finCal", "finCal-calendarSrc","myEvent1",payloads);
 //        event.setPayload(this.payload);
 //        event.setPayload(secondOriginalPayload);
 

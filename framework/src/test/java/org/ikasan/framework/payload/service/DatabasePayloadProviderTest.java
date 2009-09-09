@@ -32,6 +32,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
@@ -39,6 +40,7 @@ import org.ikasan.framework.payload.dao.DatabasePayloadDao;
 import org.ikasan.framework.payload.model.DatabasePayload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 
 /**
  * JUnit test class for Database payload provider
@@ -46,6 +48,14 @@ import org.jmock.Mockery;
  */
 public class DatabasePayloadProviderTest extends TestCase
 {
+	
+	private Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+    
     /**
      * Test invalid constructor
      */
@@ -68,7 +78,6 @@ public class DatabasePayloadProviderTest extends TestCase
      */
     public void testConstructor_acceptsValidArguments()
     {
-        Mockery mockery = new Mockery();
         DatabaseHousekeeper databaseEventHouseKeepingMatcher = mockery
             .mock(DatabaseHousekeeper.class);
         final PayloadFactory payloadFactory = mockery
@@ -95,7 +104,6 @@ public class DatabasePayloadProviderTest extends TestCase
      */
     public void testConstructor_enforcesHousekeepingAndDestructiveReadMutuallyExclusive()
     {
-        Mockery mockery = new Mockery();
         DatabaseHousekeeper databaseEventHouseKeepingMatcher = mockery
             .mock(DatabaseHousekeeper.class);
         final PayloadFactory payloadFactory = mockery
@@ -126,7 +134,6 @@ public class DatabasePayloadProviderTest extends TestCase
      */
     public void testGetNextRelatedPayloads_housekeepingConfiguredCallsHousekeeping()
     {
-        Mockery mockery = new Mockery();
         final DatabaseHousekeeper housekeeper = mockery
             .mock(DatabaseHousekeeper.class);
         final DatabasePayloadDao databaseEventDao = mockery
@@ -161,17 +168,19 @@ public class DatabasePayloadProviderTest extends TestCase
      */
     public void testGetNextRelatedPayloads_discoversDatabaseEventNonDestructiveRead()
     {
-        Mockery mockery = new Mockery();
+
         final DatabasePayloadDao databaseEventDao = mockery
             .mock(DatabasePayloadDao.class);
         final PayloadFactory payloadFactory = mockery
             .mock(PayloadFactory.class);
         final String payloadContent = "blah";
-        final DatabasePayload unconsumedEvent = new DatabasePayload(
-            payloadContent, new Date());
+//        final DatabasePayload unconsumedEvent = new DatabasePayload(
+//            payloadContent, new Date());
+        final DatabasePayload unconsumedEvent = mockery.mock(DatabasePayload.class);
         final Spec payloadSpec = Spec.TEXT_PLAIN;
         final String payloadSrcSystem = "testSrcSystem";
         final List<DatabasePayload> unconsumedEvents = new ArrayList<DatabasePayload>();
+        final Long databasePayloadId = 1l;
         unconsumedEvents.add(unconsumedEvent);
         mockery.checking(new Expectations()
         {
@@ -179,8 +188,15 @@ public class DatabasePayloadProviderTest extends TestCase
                 // a new event to consume
                 one(databaseEventDao).findUnconsumed();
                 will(returnValue(unconsumedEvents));
-                one(payloadFactory).newPayload(payloadSpec,
+                allowing(unconsumedEvent).getId();will(returnValue(databasePayloadId));
+                one(unconsumedEvent).getEvent();will(returnValue(payloadContent));
+                
+                one(payloadFactory).newPayload("1", MetaDataInterface.UNDEFINED,payloadSpec,
                         payloadSrcSystem, payloadContent.getBytes());
+                
+                //set it as consumed and save it
+                one(unconsumedEvent).setConsumed(true);
+                one(unconsumedEvent).setLastUpdated(with(any(Date.class)));
                 one(databaseEventDao).save(unconsumedEvent);
             }
         });
@@ -200,17 +216,20 @@ public class DatabasePayloadProviderTest extends TestCase
      */
     public void testGetNextRelatedPayloads_discoversDatabaseEventDestructiveRead()
     {
-        Mockery mockery = new Mockery();
         final DatabasePayloadDao databaseEventDao = mockery
             .mock(DatabasePayloadDao.class);
         final PayloadFactory payloadFactory = mockery
             .mock(PayloadFactory.class);
         final String payloadContent = "blah";
-        final DatabasePayload unconsumedEvent = new DatabasePayload(
-            payloadContent, new Date());
+//        final DatabasePayload unconsumedEvent = new DatabasePayload(
+//            payloadContent, new Date());
+        final DatabasePayload unconsumedEvent = mockery.mock(DatabasePayload.class);
         final Spec payloadSpec = Spec.TEXT_PLAIN;
         final String payloadSrcSystem = "testSrcSystem";
         final List<DatabasePayload> unconsumedEvents = new ArrayList<DatabasePayload>();
+        final Long databasePayloadId = 1l;
+        
+        
         unconsumedEvents.add(unconsumedEvent);
         mockery.checking(new Expectations()
         {
@@ -218,8 +237,15 @@ public class DatabasePayloadProviderTest extends TestCase
                 // a new event to consume
                 one(databaseEventDao).findUnconsumed();
                 will(returnValue(unconsumedEvents));
-                one(payloadFactory).newPayload(payloadSpec,
+                allowing(unconsumedEvent).getId();will(returnValue(databasePayloadId));
+                one(unconsumedEvent).getEvent();will(returnValue(payloadContent));
+                
+                
+                one(payloadFactory).newPayload("1", MetaDataInterface.UNDEFINED,payloadSpec,
                         payloadSrcSystem, payloadContent.getBytes());
+                
+                one(unconsumedEvent).setConsumed(true);
+                one(unconsumedEvent).setLastUpdated(with(any(Date.class)));
                 one(databaseEventDao).delete(unconsumedEvent);
             }
         });

@@ -29,6 +29,7 @@ package org.ikasan.framework.error.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -53,10 +54,12 @@ public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements 
     /** Query used for finding all ErrorOccurrences for the specifiend event */
     private static final String FOR_EVENT_QUERY = "from ErrorOccurrence e where e.eventId = ?";
 	
+    private static final Logger logger = Logger.getLogger(HibernateErrorOccurrenceDao.class);
     /* (non-Javadoc)
 	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#save(org.ikasan.framework.error.model.ErrorOccurrence)
 	 */
 	public void save(ErrorOccurrence errorOccurrence) {
+		logger.info("saving ["+errorOccurrence+"]");
 		getHibernateTemplate().save(errorOccurrence);
 		
 	}

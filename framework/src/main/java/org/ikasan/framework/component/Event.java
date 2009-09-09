@@ -30,11 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.Envelope;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.MetaData;
 import org.ikasan.common.component.PayloadHelper;
-import org.ikasan.common.factory.EnvelopeFactory;
 
 /**
  * Event provides the transport framing object for all payloads and associated
@@ -73,6 +71,9 @@ public class Event extends MetaData implements Cloneable
      * @param initiatorGeneratedId
      */
     private Event(String originatingModuleName, String originatingComponentName, String originatorGeneratedId){
+    	if (originatorGeneratedId==null){
+    		throw new IllegalArgumentException("Event originator did not provide a generated id!");
+    	}
     	this.id=originatingModuleName+"_"+originatingComponentName+"_"+originatorGeneratedId;
     	this.timestamp=generateTimestamp();
     } 
@@ -129,28 +130,28 @@ public class Event extends MetaData implements Cloneable
 	}
 
 
-	/**
-     * Sets the event from an envelope
-     * 
-     * @param envelope
-     */
-    public void setEventAttribsFromEnvelope(final Envelope envelope)
-    {
-        this.timestamp = envelope.getTimestamp();
-        this.timestampFormat = envelope.getTimestampFormat();
-        this.timezone = envelope.getTimezone();
-        this.priority = envelope.getPriority();
-        this.name = envelope.getName();
-        this.spec = envelope.getSpec();
-        this.encoding = envelope.getEncoding();
-        this.format = envelope.getFormat();
-        this.charset = envelope.getCharset();
-        this.checksum = envelope.getChecksum();
-        this.checksumAlg = envelope.getChecksumAlg();
-        this.srcSystem = envelope.getSrcSystem();
-        this.targetSystems = envelope.getTargetSystems();
-        this.processIds = envelope.getProcessIds();
-    }
+//	/**
+//     * Sets the event from an envelope
+//     * 
+//     * @param envelope
+//     */
+//    public void setEventAttribsFromEnvelope(final Envelope envelope)
+//    {
+//        this.timestamp = envelope.getTimestamp();
+//        this.timestampFormat = envelope.getTimestampFormat();
+//        this.timezone = envelope.getTimezone();
+//        this.priority = envelope.getPriority();
+//        this.name = envelope.getName();
+//        this.spec = envelope.getSpec();
+//        this.encoding = envelope.getEncoding();
+//        this.format = envelope.getFormat();
+//        this.charset = envelope.getCharset();
+//        this.checksum = envelope.getChecksum();
+//        this.checksumAlg = envelope.getChecksumAlg();
+//        this.srcSystem = envelope.getSrcSystem();
+//        this.targetSystems = envelope.getTargetSystems();
+//        this.processIds = envelope.getProcessIds();
+//    }
 
     /**
      * Returns a completely new instance of the payload with a deep copy of all
@@ -302,36 +303,36 @@ public class Event extends MetaData implements Cloneable
         return eventName;
     }
 
-    /**
-     * Create an Envelope from and Event
-     * 
-     * TODO move this into the Envelope Factory once Event is moved to the
-     * Common project
-     * 
-     * @param envelopeFactory
-     * 
-     * @return Envelope
-     */
-    public Envelope getEnvelope(EnvelopeFactory envelopeFactory)
-    {
-        Envelope envelope = envelopeFactory.newEnvelope(getPayloads());
-        envelope.setId(getId());
-        envelope.setTimestamp(getTimestamp());
-        envelope.setTimestampFormat(getTimestampFormat());
-        envelope.setTimezone(getTimezone());
-        envelope.setPriority(getPriority());
-        envelope.setName(getName());
-        envelope.setSpec(getSpec());
-        envelope.setEncoding(getEncoding());
-        envelope.setFormat(getFormat());
-        envelope.setCharset(getCharset());
-        envelope.setChecksum(getChecksum());
-        envelope.setChecksumAlg(getChecksumAlg());
-        envelope.setSrcSystem(getSrcSystem());
-        envelope.setTargetSystems(getTargetSystems());
-        envelope.setProcessIds(getProcessIds());
-        return envelope;
-    }
+//    /**
+//     * Create an Envelope from and Event
+//     * 
+//     * TODO move this into the Envelope Factory once Event is moved to the
+//     * Common project
+//     * 
+//     * @param envelopeFactory
+//     * 
+//     * @return Envelope
+//     */
+//    public Envelope getEnvelope(EnvelopeFactory envelopeFactory)
+//    {
+//        Envelope envelope = envelopeFactory.newEnvelope(getPayloads());
+//        envelope.setId(getId());
+//        envelope.setTimestamp(getTimestamp());
+//        envelope.setTimestampFormat(getTimestampFormat());
+//        envelope.setTimezone(getTimezone());
+//        envelope.setPriority(getPriority());
+//        envelope.setName(getName());
+//        envelope.setSpec(getSpec());
+//        envelope.setEncoding(getEncoding());
+//        envelope.setFormat(getFormat());
+//        envelope.setCharset(getCharset());
+//        envelope.setChecksum(getChecksum());
+//        envelope.setChecksumAlg(getChecksumAlg());
+//        envelope.setSrcSystem(getSrcSystem());
+//        envelope.setTargetSystems(getTargetSystems());
+//        envelope.setProcessIds(getProcessIds());
+//        return envelope;
+//    }
     
     
 

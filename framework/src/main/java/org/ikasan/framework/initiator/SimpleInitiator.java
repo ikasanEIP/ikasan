@@ -82,7 +82,7 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
             throw new IllegalStateException("Initiator is not available for business");
         }
         
-        Payload singlePayload = payloadFactory.newPayload(payloadName, spec, srcSystem, payloadContent.getBytes());  
+        Payload singlePayload = payloadFactory.newPayload(originationId, payloadName, spec, srcSystem, payloadContent.getBytes());  
         
 
         List<Event>events = new ArrayList<Event>();

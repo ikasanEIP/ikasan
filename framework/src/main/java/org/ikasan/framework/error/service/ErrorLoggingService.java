@@ -93,4 +93,19 @@ public interface ErrorLoggingService {
 	 * @return List of ErrorOccurrences for the specified event
 	 */
 	public List<ErrorOccurrence> getErrorOccurrences(String eventId);
+	
+	
+	/**
+	 * Registers an <code>ErrorOccurrenceListener</code> as a listener for new <code>ErrorOccurrence</code>
+	 * 
+	 * @param errorOccurrenceListener
+	 */
+	public void addErrorOccurrenceListener(ErrorOccurrenceListener errorOccurrenceListener);
+	
+	/**
+     * Deregisters an <code>ErrorOccurrenceListener</code> as a listener for new <code>ErrorOccurrence</code>
+	 * 
+	 * @param errorOccurrenceListener
+	 */
+	public void removeErrorOccurrenceListener(ErrorOccurrenceListener errorOccurrenceListener);
 }

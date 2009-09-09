@@ -54,7 +54,7 @@ public class ErrorOccurrenceTest {
 		Throwable cause = new NullPointerException();
 		Throwable throwable = new Throwable(cause);
 		
-		Event event = new Event(null, null, null,new ArrayList<Payload>());
+		Event event = new Event(null, null, "myEvent1",new ArrayList<Payload>());
 		
 		
 		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, event, moduleName, flowName, flowElementName, expiry);

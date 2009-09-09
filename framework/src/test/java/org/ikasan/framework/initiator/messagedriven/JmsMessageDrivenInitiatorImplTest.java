@@ -500,7 +500,7 @@ public class JmsMessageDrivenInitiatorImplTest
         }
 
         @Override
-        protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
+        protected Event handleTextMessage(TextMessage message) throws JMSException
         {
             return eventFromTextMessage;
         }

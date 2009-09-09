@@ -26,6 +26,8 @@
  */
 package org.ikasan.common;
 
+import org.ikasan.common.component.Spec;
+
 /**
  * Default meta-data required operations across all transport containers
  * such as Payload and Envelope.
@@ -174,13 +176,13 @@ public interface MetaDataInterface
      * Setter for spec attribute
      * @param spec 
      */
-    public void setSpec(final String spec);
+    public void setSpec(final Spec spec);
 
     /**
      * Getter for spec
      * @return String
      */
-    public String getSpec();
+    public Spec getSpec();
 
     /**
      * Setter for encoding
