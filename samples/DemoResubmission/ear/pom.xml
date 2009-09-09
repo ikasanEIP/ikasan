@@ -48,6 +48,12 @@
 							<artifactId>demoResubmission-war</artifactId>
 							<contextRoot>/demoResubmission</contextRoot>
 						</webModule>
+						
+						<webModule>
+							<groupId>org.ikasan.demo</groupId>
+							<artifactId>businessErrorManager-server</artifactId>
+							<contextRoot>/errorManager</contextRoot>
+						</webModule>
 
 						
 						<!--jars required by the web app -->
@@ -127,7 +133,16 @@
 			      		  <artifactId>commons-lang</artifactId>
 			              <bundleDir>lib</bundleDir>
 			            </jarModule>	                      
-
+						<jarModule>
+				    		<groupId>org.freemarker</groupId>
+				    		<artifactId>freemarker</artifactId>
+			                <bundleDir>lib</bundleDir>
+						</jarModule> 
+						<jarModule>
+							<groupId>org.ikasan.demo</groupId>
+							<artifactId>businessErrorManager-eai</artifactId>
+			                <bundleDir>lib</bundleDir>
+						</jarModule>
 						<!--
 							module config files must be in the lib dir for the web app to do
 							anything
@@ -178,6 +193,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.ikasan.demo</groupId>
+			<artifactId>businessErrorManager-server</artifactId>
+			<version>0.8.0-SNAPSHOT</version>
+			<type>war</type>
+			<scope>provided</scope>
+		</dependency>
 		<!--direct dependencies of the war -->
 		<dependency>
 			<groupId>org.ikasan</groupId>
@@ -272,7 +294,18 @@
       	  <version>2.2</version>
       	  <scope>provided</scope>
     	</dependency>
-
+		<dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		    <version>2.3.15</version>
+      	    <scope>provided</scope>
+		</dependency> 
+		<dependency>
+			<groupId>org.ikasan.demo</groupId>
+			<artifactId>businessErrorManager-eai</artifactId>
+			<version>0.8.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- module files 	-->
 		<dependency>
