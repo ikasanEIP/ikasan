@@ -26,6 +26,7 @@ package org.ikasan.framework.event.exclusion.dao;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -44,11 +45,15 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  */
 public class HibernateExcludedEventDao extends HibernateDaoSupport implements ExcludedEventDao{
 
+	
+	private Logger logger = Logger.getLogger(HibernateExcludedEventDao.class);
+	
 	/* (non-Javadoc)
 	 * @see org.ItemDao#save(org.Item)
 	 */
-	public void save(ExcludedEvent excldudedEvent) {
-		getHibernateTemplate().save(excldudedEvent);
+	public void save(ExcludedEvent excludedEvent) {
+		logger.info("saving ["+excludedEvent+"]");
+		getHibernateTemplate().save(excludedEvent);
 	}
 
 
@@ -109,6 +114,18 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 
 	public void delete(ExcludedEvent excludedEvent) {
 		getHibernateTemplate().delete(excludedEvent);
+	}
+
+
+	public ExcludedEvent getExcludedEvent(String eventId) {
+		ExcludedEvent result = null;
+		List excludedEvents = getHibernateTemplate().find("from ExcludedEvent e where e.event.id = ?", eventId);
+		
+		if (excludedEvents.size()>0){
+			
+		}
+		
+		return null;
 	}
 
 }

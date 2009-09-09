@@ -36,33 +36,33 @@ import org.ikasan.common.component.Spec;
  */
 public interface PayloadFactory
 {
-    /**
-     * Create a new instance of the Payload based on the incoming name, spec (as a string) and source system.
-     * 
-     * @param name The payload name
-     * @param spec The payload Spec (as a String)
-     * @param srcSystem The payload source system
-     * @return Payload
-     */
-    public Payload newPayload(final String name, final String spec, final String srcSystem);
+//    /**
+//     * Create a new instance of the Payload based on the incoming name, spec (as a string) and source system.
+//     * 
+//     * @param name The payload name
+//     * @param spec The payload Spec (as a String)
+//     * @param srcSystem The payload source system
+//     * @return Payload
+//     */
+//    public Payload newPayload(final String name, final String spec, final String srcSystem);
+//
+//    /**
+//     * Create a new instance of the Payload based on the incoming name, spec and source system.
+//     * 
+//     * @param name The payload name
+//     * @param spec The payload Spec
+//     * @param srcSystem The payload source system
+//     * @return Payload
+//     */
+//    public Payload newPayload(final String name, final Spec spec, final String srcSystem);
 
-    /**
-     * Create a new instance of the Payload based on the incoming name, spec and source system.
-     * 
-     * @param name The payload name
-     * @param spec The payload Spec
-     * @param srcSystem The payload source system
-     * @return Payload
-     */
-    public Payload newPayload(final String name, final Spec spec, final String srcSystem);
-
-    /**
-     * Create a new instance of the Payload based on the incoming Payload.
-     * 
-     * @param payload The incoming payload
-     * @return Payload
-     */
-    public Payload newPayload(Payload payload);
+//    /**
+//     * Create a new instance of the Payload based on the incoming Payload.
+//     * 
+//     * @param payload The incoming payload
+//     * @return Payload
+//     */
+//    public Payload newPayload(Payload payload);
 
     /**
      * Create a new instance of the Payload for the incoming content.
@@ -73,28 +73,28 @@ public interface PayloadFactory
      * @param content The payload content
      * @return Payload
      */
-    public Payload newPayload(final String name, final Spec spec, final String srcSystem, final byte[] content);
+    public Payload newPayload(final String id, final String name, final Spec spec, final String srcSystem, final byte[] content);
 
-    /**
-     * Create a new instance of the Payload for the incoming content.
-     * 
-     * @param name The payload name
-     * @param spec The payload Spec (as a String)
-     * @param srcSystem The payload source system
-     * @param content The payload content
-     * @return Payload
-     */
-    public Payload newPayload(final String name, final String spec, final String srcSystem, final byte[] content);
+//    /**
+//     * Create a new instance of the Payload for the incoming content.
+//     * 
+//     * @param name The payload name
+//     * @param spec The payload Spec (as a String)
+//     * @param srcSystem The payload source system
+//     * @param content The payload content
+//     * @return Payload
+//     */
+//    public Payload newPayload(final String name, final String spec, final String srcSystem, final byte[] content);
 
-    /**
-     * Create a new instance of the Payload for the incoming content, where the content is known to be XML
-     * 
-     * @param spec The payload Spec (as a String)
-     * @param srcSystem The payload source system
-     * @param xmlContent The content
-     * @return Payload
-     */
-    public Payload newPayload(final Spec spec, final String srcSystem, final byte[] xmlContent);
+//    /**
+//     * Create a new instance of the Payload for the incoming content, where the content is known to be XML
+//     * 
+//     * @param spec The payload Spec (as a String)
+//     * @param srcSystem The payload source system
+//     * @param xmlContent The content
+//     * @return Payload
+//     */
+//    public Payload newPayload(final Spec spec, final String srcSystem, final byte[] xmlContent);
 
     /**
      * Get the payload concrete implementation class.
@@ -103,10 +103,10 @@ public interface PayloadFactory
      */
     public Class<? extends Payload> getPayloadImplClass();
 
-    /**
-     * Set the payload concrete implementation class
-     * 
-     * @param payloadImplClass the payloadImplClass to set
-     */
-    public void setPayloadImplClass(final Class<? extends Payload> payloadImplClass);
+//    /**
+//     * Set the payload concrete implementation class
+//     * 
+//     * @param payloadImplClass the payloadImplClass to set
+//     */
+//    public void setPayloadImplClass(final Class<? extends Payload> payloadImplClass);
 }

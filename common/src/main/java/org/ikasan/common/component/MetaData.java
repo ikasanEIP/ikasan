@@ -77,7 +77,7 @@ public abstract class MetaData implements Serializable
     protected String name;
 
     /** content MIME type specification */
-    protected String spec;
+    protected Spec spec;
 
     /** content encoding ie base64, hex, noenc */
     protected String encoding;
@@ -292,7 +292,7 @@ public abstract class MetaData implements Serializable
      * 
      * @param spec spec to set
      */
-    public void setSpec(final String spec)
+    public void setSpec(final Spec spec)
     {
         this.spec = spec;
         logger.debug("Spec set to [" + this.spec + "]."); //$NON-NLS-1$//$NON-NLS-2$
@@ -303,7 +303,7 @@ public abstract class MetaData implements Serializable
      * 
      * @return String
      */
-    public String getSpec()
+    public Spec getSpec()
     {
         logger.debug("Returning spec [" + this.spec + "]."); //$NON-NLS-1$//$NON-NLS-2$
         return this.spec;

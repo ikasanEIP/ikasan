@@ -160,10 +160,6 @@ public class JMSEventPublisherPlugin implements EventInvocable
         {
             throw new PluginInvocationException("JMS Exception caught whilst publishing", e);
         }
-        catch (EventSerialisationException e)
-        {
-            throw new PluginInvocationException("EventSerialisationException caught whilst creating mapMessage", e);
-        }
         finally
         {
             if (connection != null)

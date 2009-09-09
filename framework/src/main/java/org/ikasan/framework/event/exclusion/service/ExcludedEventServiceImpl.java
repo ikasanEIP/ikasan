@@ -105,6 +105,10 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	public ExcludedEvent getExcludedEvent(long excludedEventId) {
 		return excludedEventDao.getExcludedEvent(excludedEventId);
 	}
+	
+	public ExcludedEvent getExcludedEvent(String eventId) {
+		return excludedEventDao.getExcludedEvent(eventId);
+	}
 
 	/* (non-Javadoc)
 	 * 

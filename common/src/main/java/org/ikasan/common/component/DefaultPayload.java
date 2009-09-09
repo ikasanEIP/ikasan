@@ -78,17 +78,17 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
 		this.persistenceId = persistenceId;
 	}
 
-	/**
-     * Default constructor Creates a new instance of <code>Payload</code> with the empty data content.
-     * 
-     * @param name Name of the payload
-     * @param spec Spec of the payload
-     * @param srcSystem Src System of the payload
-     */
-    public DefaultPayload(final String name, final String spec, final String srcSystem)
-    {
-        this(name, spec, srcSystem, new String("").getBytes()); //$NON-NLS-1$
-    }
+//	/**
+//     * Default constructor Creates a new instance of <code>Payload</code> with the empty data content.
+//     * 
+//     * @param name Name of the payload
+//     * @param spec Spec of the payload
+//     * @param srcSystem Src System of the payload
+//     */
+//    public DefaultPayload(final String name, final String spec, final String srcSystem)
+//    {
+//        this(name, spec, srcSystem, new String("").getBytes()); //$NON-NLS-1$
+//    }
 
     /**
      * Creates a new instance of <code>Payload</code> with the specified data content.
@@ -98,14 +98,14 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
      * @param srcSystem Src System of the payload
      * @param content Content of the payload
      */
-    public DefaultPayload(final String name, final String spec, final String srcSystem, final byte content[])
+    public DefaultPayload(final String id, final String name, final Spec spec, final String srcSystem, final byte content[])
     {
         this.noNamespaceSchemaLocation = null;
         this.schemaInstanceNSURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
         this.name = name;
         this.spec = spec;
         this.srcSystem = srcSystem;
-        this.id = generateId();
+        this.id = id;
         this.setTimezone(MetaDataInterface.DEFAULT_TIMEZONE);
         this.timestamp = generateTimestamp();
         this.timestampFormat = DEFAULT_TIMESTAMP_FORMAT;
@@ -118,35 +118,35 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
     }
 
-    /**
-     * This constructor has a serious flaw and does not create a copy of the payload. DO NOT USE THIS CONSTRUCTOR.
-     * 
-     * @param payload The payload to clone off
-     * @deprecated - this is not a deep copy and simply returns a pointer to the same object.
-     */
-    @Deprecated
-    public DefaultPayload(final Payload payload)
-    {
-        this.noNamespaceSchemaLocation = payload.getNoNamespaceSchemaLocation();
-        this.schemaInstanceNSURI = payload.getSchemaInstanceNSURI();
-        this.id = payload.getId();
-        this.priority = payload.getPriority();
-        this.timestamp = payload.getTimestamp();
-        this.timestampFormat = payload.getTimestampFormat();
-        this.timezone = payload.getTimezone();
-        this.content = payload.getContent();
-        this.name = payload.getName();
-        this.spec = payload.getSpec();
-        this.encoding = payload.getEncoding();
-        this.format = payload.getFormat();
-        this.charset = payload.getCharset();
-        this.checksumAlg = payload.getChecksumAlg();
-        this.checksum = payload.getChecksum();
-        this.srcSystem = payload.getSrcSystem();
-        this.targetSystems = payload.getTargetSystems();
-        this.processIds = payload.getProcessIds();
-        if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
-    }
+//    /**
+//     * This constructor has a serious flaw and does not create a copy of the payload. DO NOT USE THIS CONSTRUCTOR.
+//     * 
+//     * @param payload The payload to clone off
+//     * @deprecated - this is not a deep copy and simply returns a pointer to the same object.
+//     */
+//    @Deprecated
+//    public DefaultPayload(final Payload payload)
+//    {
+//        this.noNamespaceSchemaLocation = payload.getNoNamespaceSchemaLocation();
+//        this.schemaInstanceNSURI = payload.getSchemaInstanceNSURI();
+//        this.id = payload.getId();
+//        this.priority = payload.getPriority();
+//        this.timestamp = payload.getTimestamp();
+//        this.timestampFormat = payload.getTimestampFormat();
+//        this.timezone = payload.getTimezone();
+//        this.content = payload.getContent();
+//        this.name = payload.getName();
+//        this.spec = payload.getSpec();
+//        this.encoding = payload.getEncoding();
+//        this.format = payload.getFormat();
+//        this.charset = payload.getCharset();
+//        this.checksumAlg = payload.getChecksumAlg();
+//        this.checksum = payload.getChecksum();
+//        this.srcSystem = payload.getSrcSystem();
+//        this.targetSystems = payload.getTargetSystems();
+//        this.processIds = payload.getProcessIds();
+//        if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
+//    }
 
     /**
      * Setter for content. This setter by default sets the size and checksum of the particular payload.
@@ -160,25 +160,25 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         this.setChecksum();
     }
 
-    /**
-     * Setter for content that allows to override the default functionality of setting the respective size and checksum
-     * automatically.
-     * 
-     * @param content The content to set
-     * @param contentOnly If true, set the content only, otherwise set the content and adjust the size and checksum
-     *            automatically.
-     */
-    public void setContent(final byte[] content, boolean contentOnly)
-    {
-        if (contentOnly)
-        {
-            this.content = content;
-        }
-        else
-        {
-            setContent(content);
-        }
-    }
+//    /**
+//     * Setter for content that allows to override the default functionality of setting the respective size and checksum
+//     * automatically.
+//     * 
+//     * @param content The content to set
+//     * @param contentOnly If true, set the content only, otherwise set the content and adjust the size and checksum
+//     *            automatically.
+//     */
+//    public void setContent(final byte[] content, boolean contentOnly)
+//    {
+//        if (contentOnly)
+//        {
+//            this.content = content;
+//        }
+//        else
+//        {
+//            setContent(content);
+//        }
+//    }
 
     /**
      * Getter for content

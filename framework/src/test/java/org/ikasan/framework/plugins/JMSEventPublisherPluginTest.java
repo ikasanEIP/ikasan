@@ -40,7 +40,6 @@ import javax.naming.NamingException;
 
 import junit.framework.TestCase;
 
-import org.ikasan.common.Envelope;
 import org.ikasan.common.Payload;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.component.Event;
@@ -113,10 +112,6 @@ public class JMSEventPublisherPluginTest extends TestCase
      */
     final List<Payload> payloads = new ArrayList<Payload>();
 
-    /**
-     * mock of the envelope
-     */
-    final Envelope envelope = mockery.mock(Envelope.class);
 
     /**
      * mock of the connection
@@ -361,39 +356,7 @@ public class JMSEventPublisherPluginTest extends TestCase
         }
     }
 
-    /**
-     * Test method for
-     * {@link org.ikasan.framework.plugins.JMSEventPublisherPlugin#invoke(org.ikasan.framework.component.Event)}
-     * .
-     * 
-     * @throws JMSException
-     * @throws EventSerialisationException
-     */
-    public void testInvoke_throwsPluginInvocationExceptionWhenEventSerialiserThrowsException() throws JMSException, EventSerialisationException
-    {
-        mockery.checking(new Expectations()
-        {
-            {
-                one(jmsConnectionFactory).createConnection();
-                will(returnValue(connection));
-                one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
-                will(returnValue(session));
-                one(jmsMessageEventSerialiser).toMapMessage(event, session);
-                will(throwException(eventSerialisationException));
-                one(connection).close();
-            }
-        });
-        final JMSEventPublisherPlugin eventPublisherPlugin = new JMSEventPublisherPlugin(destination, jmsConnectionFactory, jmsMessageEventSerialiser, null);
-        try
-        {
-            eventPublisherPlugin.invoke(event);
-            fail("Exception should have been thrown");
-        }
-        catch (PluginInvocationException p)
-        {
-            assertTrue("underlyingException should be the EnvelopeOperationException", eventSerialisationException.equals(p.getCause()));
-        }
-    }
+
 
     /**
      * Test method for

@@ -71,6 +71,14 @@ public interface ExcludedEventDao{
 	 * @return ExcludedEvent
 	 */
 	public ExcludedEvent getExcludedEvent(long excludedEventId);
+	
+	/**
+	 * Retrieves an ExcludedEvent by event Id
+	 * 
+	 * @param eventId
+	 * @return ExcludedEvent
+	 */
+	public ExcludedEvent getExcludedEvent(String eventId);
 
 	
 	/**

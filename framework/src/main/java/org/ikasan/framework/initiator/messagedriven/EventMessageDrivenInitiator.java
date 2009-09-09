@@ -26,6 +26,7 @@
  */
 package org.ikasan.framework.initiator.messagedriven;
 
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
@@ -76,7 +77,7 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     }
 
     @Override
-    protected Event handleMapMessage(MapMessage message) throws EventSerialisationException
+    protected Event handleMapMessage(MapMessage message) throws JMSException
     {
         Event event = jmsMessageEventSerialiser.fromMapMessage(message, moduleName, name);
         return event;

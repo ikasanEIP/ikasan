@@ -26,6 +26,7 @@
  */
 package org.ikasan.framework.event.serialisation;
 
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Session;
 
@@ -49,10 +50,9 @@ public interface JmsMessageEventSerialiser
      *            Event
      * @return reconstituted <code>Event</code>
      * 
-     * @throws EventSerialisationException Exception if we could not deserialise the event
+     * @throws J Exception if we could not deserialise the event
      */
-    public Event fromMapMessage(MapMessage mapMessage, String moduleName, String componentName)
-            throws EventSerialisationException;
+    public Event fromMapMessage(MapMessage mapMessage, String moduleName, String componentName) throws JMSException;
 
     /**
      * Serialises an <code>Event</code> to a <code>MapMessage</code>
@@ -63,5 +63,5 @@ public interface JmsMessageEventSerialiser
      * 
      * @throws EventSerialisationException Exception if we could not serialise the event
      */
-    public MapMessage toMapMessage(Event event, Session session) throws EventSerialisationException;
+    public MapMessage toMapMessage(Event event, Session session) throws JMSException;
 }

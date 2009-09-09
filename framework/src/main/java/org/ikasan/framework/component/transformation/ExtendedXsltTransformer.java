@@ -325,7 +325,7 @@ public class ExtendedXsltTransformer implements Transformer
         {
             payload.setName(this.payloadName);
         }
-        payload.setSpec(Spec.TEXT_XML.toString());
+        payload.setSpec(Spec.TEXT_XML);
         logger.debug(new String(transformedData));
     }
 }
