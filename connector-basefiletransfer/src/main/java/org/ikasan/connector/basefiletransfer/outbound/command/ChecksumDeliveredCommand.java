@@ -31,11 +31,10 @@ import java.io.UnsupportedEncodingException;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.Payload;
-import org.ikasan.common.ServiceLocator;
+import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.common.factory.PayloadFactoryImpl;
 import org.ikasan.common.util.ChecksumUtils;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
@@ -51,7 +50,9 @@ public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactio
 {
 
     /** The logger instance. */
-    private static Logger logger = Logger.getLogger(FileDiscoveryCommand.class);
+    private static Logger logger = Logger.getLogger(ChecksumDeliveredCommand.class);
+    
+    private static final PayloadFactory payloadFactory = new PayloadFactoryImpl();
 
     /** 
      * Constructor 
@@ -93,9 +94,10 @@ public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactio
             // which we know to be MD5
             String generatedChecksum = payload.getChecksum();
             
-            // TODO global service locator
-            ServiceLocator serviceLocator = ResourceLoader.getInstance();
-            Payload reloadedPayload = serviceLocator.getPayloadFactory().newPayload(
+            // TODO This is a really poor way of doing checksums, delegating to the Payload class
+            // Need to do this without using Payload
+            
+            Payload reloadedPayload = payloadFactory.newPayload("dummyId",
                 file.getName(), payload.getSpec(),payload.getSrcSystem(),
                 file.getContent());
             
