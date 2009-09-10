@@ -14,7 +14,6 @@ import javax.jms.Session;
 import junit.framework.Assert;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.PayloadOperationException;
 import org.ikasan.common.component.UnknownMessageContentException;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
@@ -86,8 +85,7 @@ public class DefaultMapMessageEventSerialiserTest {
      * @throws JMSException
      */
     @Test
-    public void testFromMapMessage() throws EventSerialisationException, UnknownMessageContentException, PayloadOperationException,
-            JMSException
+    public void testFromMapMessage() throws EventSerialisationException, UnknownMessageContentException,JMSException
     {
     	final MapMessage mapMessage = mockery.mock(MapMessage.class);
     	final String moduleName = "moduleName";

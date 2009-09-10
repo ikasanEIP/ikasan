@@ -40,7 +40,6 @@ import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.PayloadOperationException;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser;
