@@ -34,7 +34,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-framework</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.4-SNAPSHOT</version>
+	<version>feature-resubmission-SNAPSHOT</version>
 	<name>Ikasan Framework</name>
 	<organization>
 		<name>Ikasan</name>
@@ -109,9 +109,7 @@
 		3.0</name> <url>http://www.gnu.org/licenses/LICENSE-3.0.txt</url>
 		<distribution>repo</distribution> </license> </licenses>
 	-->
-	<scm>
-		<connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
-	</scm>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -190,7 +188,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.2</version>
+			<version>feature-resubmission-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

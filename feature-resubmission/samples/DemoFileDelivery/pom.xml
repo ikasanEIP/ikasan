@@ -31,7 +31,7 @@
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoFileDelivery-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.4-SNAPSHOT</version>
+  <version>feature-resubmission-SNAPSHOT</version>
 
   <name>demoFileDelivery :: Parent Project</name>
 
@@ -48,9 +48,6 @@
       </plugins>
 </build>
 
-  <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoFileDelivery</connection>
-  </scm>
 
      <modules>
        <module>ftpSource</module>
