@@ -492,7 +492,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
                 logger.warn("No file was picked up."); //$NON-NLS-1$
                 return result;
             }
-            result = BaseFileTransferMappedRecordTransformer.mappedRecordToPayload(ftpMappedRecord, payloadFactory);
+            result = BaseFileTransferMappedRecordTransformer.mappedRecordToPayload(ftpMappedRecord);
             // end non chunking specific
         }
         String sourcePath = entry.getUri().getPath();
@@ -549,7 +549,29 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         return result;
     }
 
-
+    /**
+     * Method used to map an <code>FTPMappedRecord</code> object to a
+     * <code>Payload</code> object.
+     * 
+     * TODO Is there any other Payload stuff to set here?
+     * 
+     * @param header The record as returned from the FileTransferProtocolClient
+     * @return A payload constructed from the record.
+     */
+    public static Payload fileChunkHeaderToPayload(FileChunkHeader header)
+    {
+        // TODO global service locator
+        ServiceLocator serviceLocator = ResourceLoader.getInstance();
+        Payload payload = serviceLocator.getPayloadFactory().newPayload(header.getFileName(), Spec.TEXT_XML, MetaDataInterface.UNDEFINED,
+            header.toXml().getBytes());
+        payload.setFormat(Format.REFERENCE.toString());
+        String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
+        payload.setSrcSystem(componentGroupName);
+        // need to do checksumming
+        payload.setChecksum(header.getInternalMd5Hash());
+        payload.setChecksumAlg(Md5ChecksumSupplier.MD5);
+        return payload;
+    }
 
     /**
      * Executes the supplied command

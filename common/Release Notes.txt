@@ -3,14 +3,6 @@ Release Notes
 The following TLAs are used:-
 NBC - Not Backward Compatible with previous version of the framework.
 
-Release 1.1.14
---------------------
-- #87 Updated pom to include distribution management to the external Sonatype repositories.
-
-Release 1.1.13
---------------------
-- Notes omitted.
-
 Release 1.1.12
 --------------------
 - Changed MathsUtils class to include multiply,subtract, and proportion operations.

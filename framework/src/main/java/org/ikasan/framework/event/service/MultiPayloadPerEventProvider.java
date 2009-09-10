@@ -86,18 +86,9 @@ public class MultiPayloadPerEventProvider implements EventProvider
         {
             return null;
         }
- 
-        Event event = new Event(this.moduleName, this.componentName, hashPayloadIds(payloads), payloads);
+        Event event = new Event(payloads, this.moduleName, this.componentName);
         List<Event> events = new ArrayList<Event>();
         events.add(event);
         return events;
     }
-
-	private String hashPayloadIds(List<Payload> payloads) {
-		StringBuffer aggregatedId = new StringBuffer();
-		for (Payload payload : payloads){
-			aggregatedId.append(payload.getId());
-		}
-		return ""+aggregatedId.toString().hashCode();
-	}
 }

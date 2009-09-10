@@ -22,11 +22,11 @@
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
 
-DROP TABLE IF EXISTS `Ikasan01`.`UsersAuthorities`;
-DROP TABLE IF EXISTS `Ikasan01`.`Authorities`;
-DROP TABLE IF EXISTS `Ikasan01`.`Users`;
+DROP TABLE IF EXISTS `ikasan01`.`usersauthorities`;
+DROP TABLE IF EXISTS `ikasan01`.`authorities`;
+DROP TABLE IF EXISTS `ikasan01`.`users`;
 
-CREATE TABLE  `Ikasan01`.`Users` (
+CREATE TABLE  `ikasan01`.`users` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Username` varchar(255) DEFAULT NULL,
   `Password` varchar(255) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE  `Ikasan01`.`Users` (
   UNIQUE KEY `Username` (`Username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `Ikasan01`.`Authorities` (
+CREATE TABLE  `ikasan01`.`authorities` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Authority` varchar(255) DEFAULT NULL,
   `Description` varchar(255) DEFAULT NULL,
@@ -44,12 +44,12 @@ CREATE TABLE  `Ikasan01`.`Authorities` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE  `Ikasan01`.`UsersAuthorities` (
+CREATE TABLE  `ikasan01`.`usersauthorities` (
   `UserId` bigint(20) NOT NULL,
   `AuthorityId` bigint(20) NOT NULL,
   PRIMARY KEY (`UserId`,`AuthorityId`),
   KEY `FK991EDC1922123CD1` (`UserId`),
   KEY `FK991EDC19ACF38401` (`AuthorityId`),
-  CONSTRAINT `FK991EDC19ACF38401` FOREIGN KEY (`AuthorityId`) REFERENCES `Authorities` (`Id`),
-  CONSTRAINT `FK991EDC1922123CD1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`)
+  CONSTRAINT `FK991EDC19ACF38401` FOREIGN KEY (`AuthorityId`) REFERENCES `authorities` (`Id`),
+  CONSTRAINT `FK991EDC1922123CD1` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

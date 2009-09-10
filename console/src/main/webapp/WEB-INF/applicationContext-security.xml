@@ -46,11 +46,11 @@
     	<intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
         <!-- You need ROLE_USER for all pages -->
     	<intercept-url pattern="/**" access="ROLE_USER" />
-        <!-- If you fail login then redirect to the login.jsp page but with the extra parameter indicating failure -->
+        <!-- If you fail login then redirect to the login.jsp page but wit the extra parameter indicating failure -->
     	<form-login login-page='/login.jsp'	authentication-failure-url='/login.jsp?login_error=1' />
 	</http>
 
-    <!-- The authentication provider, use the SHA1 encoding for password obscuring -->
+    <!--  The authentication provider, use the SHA1 encoding for password obscuring -->
 	<authentication-provider user-service-ref="userDetailsService">
 		<password-encoder ref="sha1PasswordEncoder" />
 	</authentication-provider>
@@ -58,7 +58,7 @@
     <!-- The SHA1 password encoder provider -->
     <beans:bean id="sha1PasswordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
-    <!-- The user details service -->
+    <!--  The user details service -->
 	<beans:bean id="userDetailsService" class="org.ikasan.framework.security.service.UserServiceImpl">
 		<beans:constructor-arg ref="userDao"/>
 		<beans:constructor-arg ref="authorityDao"/>

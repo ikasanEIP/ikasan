@@ -25,19 +25,11 @@ package org.ikasan.framework.initiator;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.error.service.ErrorLoggingService;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
 
 /**
@@ -68,10 +60,6 @@ public abstract class AbstractInitiator implements Initiator
     
     /** Exception action is an implied rollback message */
     public static final String EXCEPTION_ACTION_IMPLIED_ROLLBACK = "Exception Action implied rollback";
-
-    /** Exception action is an implied rollback message */
-    public static final String UNSUPPORTED_EXCLUDE_ENCONTERED = "Unsupported EXCLUDE action encountered";
-
     
     /** Monitor listeners for the initiator */
     protected List<MonitorListener> monitorListeners = new ArrayList<MonitorListener>();
@@ -94,42 +82,19 @@ public abstract class AbstractInitiator implements Initiator
     /** Count of how many times this Initiator has retried */
     protected Integer retryCount = null;
     
-    private static final Logger logger = Logger.getLogger(AbstractInitiator.class);
-    
-    /**
-     * Set of ids for Events that will be immediately excluded when next encountered
-     */
-    protected Set<String> exclusions = new HashSet<String>();
-    
-    protected IkasanExceptionHandler exceptionHandler;
-    
-    /**
-     * Service for logging errors in a heavyweight fashion
-     */
-    protected ErrorLoggingService errorLoggingService;
-    
-    /**
-     * Service for excluding events
-     */
-    protected ExcludedEventService excludedEventService;
-    
 
-
-
-	/**
+    /**
      * Constructor
      * 
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
-     * @param exceptionHandler for handling exceptions
      */
-    public AbstractInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
+    public AbstractInitiator(String moduleName, String name, Flow flow)
     {
         this.moduleName = moduleName;
         this.name = name;
         this.flow = flow;
-        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -225,61 +190,13 @@ public abstract class AbstractInitiator implements Initiator
             notifyMonitorListeners();
 
     }
-    
-    /**
-	 * Flow invocation routine.
-	 * 
-	 * Attempts to play each Event down the flow in sequence, interrupted only if an exception action
-	 * is encountered. 
-	 */
-	protected void invokeFlow(List<Event> events) {
-		IkasanExceptionAction exceptionAction = null;
-		String currentEventId = null;
-		if (events != null && !events.isEmpty()) {
-			for (Event event : events) {
-				currentEventId = event.getId();
-				
-				//check if this event has been noted for exclusion, and if so exclude it
-				if (supportsExclusions()){
-					if (notedForExclusion(currentEventId)){
-						excludedEventService.excludeEvent(event, moduleName, flow.getName());
-						exclusions.remove(currentEventId);
-						continue;
-					} 
-				} 
-				
-				
-				FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
-				try{
-					flow.invoke(flowInvocationContext,event);
-				}catch (Throwable throwable){
-					String lastComponentName = flowInvocationContext.getLastComponentName();
-					if (errorLoggingService!=null){
-						errorLoggingService.logError(throwable, moduleName, flow.getName(), lastComponentName, event);
-					} else{
-						logger.warn("exception caught by initiator ["+moduleName+"."+name+"], but not errorLoggingService available");
-					}
-					exceptionAction = exceptionHandler.invoke(lastComponentName, event, throwable);
-					break;
-				}
-				
-
-			}
-		}
-		handleAction(exceptionAction, currentEventId);
-	}
-
-	private boolean notedForExclusion(String currentEventId) {
-		boolean exclusionNoted = exclusions.contains(currentEventId);
-		return exclusionNoted;
-	}
   
     /**
      * Handle the returned action from the flow invocation
      * 
      * @param action IkasanExceptionAction to deal with
      */
-    protected void handleAction(IkasanExceptionAction action, String eventId)
+    protected void handleAction(IkasanExceptionAction action)
     {
         try
         {
@@ -296,25 +213,17 @@ public abstract class AbstractInitiator implements Initiator
             }
             else if (action.getType().isRollback())
             {
-                if(action.getType().equals(IkasanExceptionActionType.EXCLUDE)){
-                	if (!supportsExclusions()){
-                		//what do we do here?#
-                		logger.error("Initiator that doesnt support Exclusions was asked to handle an EXCLUDE! Switching to rollback and stop instead!");
-                        stopInError();
-                        if (action.getType().isRollback()){
-                            throw new AbortTransactionException(UNSUPPORTED_EXCLUDE_ENCONTERED);
-                        }
-                	}
-                	exclusions.add(eventId);
-                }
-            	
-            	
-                else if (!stopping){
+                if (!stopping){
                     Integer maxAttempts = action.getMaxAttempts();
                     long delay = action.getDelay().longValue();
                     handleRetry(maxAttempts, delay);
                 }
                 throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
+            }
+            else
+            {
+                // continue or skip result in the same initiator action
+                resume();
             }
         }
         catch (InitiatorOperationException e)
@@ -374,12 +283,9 @@ public abstract class AbstractInitiator implements Initiator
     
     private boolean retryWouldExceedLimit(Integer maxAttempts, Integer attemptCount)
     {
-    	
-        Integer thisAttemptCount = attemptCount==null?-1:attemptCount;
+        Integer thisAttemptCount = attemptCount==null?0:attemptCount;
         
-        boolean retryWouldExceed = (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts<=thisAttemptCount+1);
-
-        return retryWouldExceed;
+        return (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts <= thisAttemptCount+1);
     }
 
 
@@ -462,18 +368,6 @@ public abstract class AbstractInitiator implements Initiator
         return stopping;
     }
     
-	/**
-	 * Handles Errors that occur whilst attempting to source the Event(s) to play
-	 * 
-	 * @param eventSourcingThrowable
-	 */
-	protected void handleEventSourcingThrowable(Throwable eventSourcingThrowable) {
-		if (errorLoggingService!=null){
-			errorLoggingService.logError(eventSourcingThrowable, moduleName, name);
-		}
-		handleAction(exceptionHandler.invoke(name, eventSourcingThrowable),null);
-	}
-	
     /**
      * Provides access to the implementation class specific logger instance
      * 
@@ -525,40 +419,4 @@ public abstract class AbstractInitiator implements Initiator
         //overridden where necessary
         
     }
-    
-    /**
-     * @param excludedEventService to set
-     */
-    public void setExcludedEventService(ExcludedEventService excludedEventService) {
-		this.excludedEventService = excludedEventService;
-	}
-
-	/**
-	 * @param errorLoggingService the errorLoggingService to set
-	 */
-	public void setErrorLoggingService(ErrorLoggingService errorLoggingService) {
-		this.errorLoggingService = errorLoggingService;
-	}
-	
-	/**
-	 * Returns true if an excludedEventService is present, and thus supports exclusions
-	 * 
-	 * @return true if exclusions are supported by this Initiator
-	 */
-	public boolean supportsExclusions(){
-		boolean result = excludedEventService!=null;
-		logger.info("supports exclusions returning:"+result);
-		return result;
-	}
-
-	/**
-	 * Accessor for exclusions
-	 * 
-	 * @return set of eventIds noted for exclusion when next encountered
-	 */
-	public Set<String> getExclusions() {
-		HashSet<String> result = new HashSet<String>(exclusions);
-		logger.info("getExclusions called, returning:"+result+", size:"+result.size());
-		return result;
-	}
 }

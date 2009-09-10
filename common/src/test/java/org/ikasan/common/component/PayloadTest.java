@@ -37,6 +37,7 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.ResourceLoader;
 import org.ikasan.common.ServiceLocator;
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.common.xml.serializer.PayloadXmlSerializer;
 
 import junit.framework.JUnit4TestAdapter;
 
@@ -87,8 +88,9 @@ public class PayloadTest
         String expectedCheckSumAlg = MetaDataInterface.DEFAULT_CHECKSUM_ALG;
         String expectedSrcSystem = this.srcSystem;
         
-
-        this.payload = new DefaultPayload("id", this.payloadName, 
+        ServiceLocator serviceLocator = ResourceLoader.getInstance();
+        this.payload = 
+            serviceLocator.getPayloadFactory().newPayload(this.payloadName, 
                     Spec.TEXT_PLAIN, this.srcSystem, "This is a test".getBytes());
         
         String noNamespaceSchemaLocation = this.payload.getNoNamespaceSchemaLocation();
@@ -123,7 +125,7 @@ public class PayloadTest
         String charSet = this.payload.getCharset();
         Assert.assertEquals(expectedCharSet, charSet);
 
-        Long size = this.payload.size();
+        Long size = this.payload.getSize();
         Assert.assertEquals(expectedSize, size);
 
         String checkSumAlg = this.payload.getChecksumAlg();
@@ -133,7 +135,59 @@ public class PayloadTest
         Assert.assertEquals(expectedSrcSystem, srcSys);
     }
 
+    /**
+     * Test Payload to XML string  
+     */
+    @Test 
+    public void testPayloadToXml() 
+    {
+        String expectedPayloadXML = 
+            "<payload xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" 
+            + " ID=\"testID\"" 
+            + " TIMESTAMP_FORMATTED=\"20070711132549580\""
+            + " TIMESTAMP_FORMAT=\"yyyyMMddHHmmssSSS\""
+            + " TIMESTAMP=\"1184160349580\""
+            + " TIMEZONE=\"UTC\""
+            + " PRIORITY=\"4\""
+            + " NAME=\"testPayload\""
+            + " SPEC=\"text/xml\""
+            + " ENCODING=\"noenc\""
+            + " CHARSET=\"windows-1252\"" 
+            + " SIZE=\"100\""
+            + " CHECKSUM=\"999\""
+            + " CHECKSUM_ALG=\"MD5\""
+            + " SRC_SYSTEM=\"JUnit\""
+            + " TARGET_SYSTEMS=\"testTargetSystems\">&lt;![CDATA[This is a test]]&gt;</payload>";
+        
+        ServiceLocator serviceLocator = ResourceLoader.getInstance();
+        PayloadFactory payloadFactory = serviceLocator.getPayloadFactory();
+        this.payload = 
+            payloadFactory.newPayload(this.payloadName,
+                    Spec.TEXT_XML, this.srcSystem, "This is a test".getBytes());
+        this.payload.setCharset("windows-1252");
+        this.payload.setChecksum("999");
+        this.payload.setChecksumAlg("MD5");
+        this.payload.setEncoding("noenc");
+        this.payload.setId("testID");
+        this.payload.setPriority(new Integer(4));
+        this.payload.setSchemaInstanceNSURI("http://www.w3.org/2001/XMLSchema-instance");
+        this.payload.setSize(new Long(100));
+        this.payload.setTargetSystems("testTargetSystems");
+        this.payload.setTimestamp(new Long(1184160349580L));
+        this.payload.setTimestampFormat(MetaDataInterface.DEFAULT_TIMESTAMP_FORMAT);
+        this.payload.setTimezone("UTC");
+ 
+        
+        PayloadXmlSerializer payloadXmlSerializer = new PayloadXmlSerializer(payloadFactory.getPayloadImplClass());
 
+        String xml = payloadXmlSerializer.toXml(this.payload);
+        Assert.assertEquals(expectedPayloadXML, xml);
+        
+        
+        
+        Payload reconstitutedPayload = payloadXmlSerializer.toObject(expectedPayloadXML);
+        Assert.assertTrue(reconstitutedPayload.equals(this.payload));
+    }
 
     /**
      * Test Payload Cloning  
@@ -158,8 +212,9 @@ public class PayloadTest
 //        String expectedCheckSumAlg = MetaDataInterface.DEFAULT_CHECKSUM_ALG;
 //        String expectedSrcSystem = this.srcSystem;
         
-
-        this.payload = new DefaultPayload("id", this.payloadName, 
+        ServiceLocator serviceLocator = ResourceLoader.getInstance();
+        this.payload = 
+            serviceLocator.getPayloadFactory().newPayload(this.payloadName, 
                     Spec.TEXT_PLAIN, this.srcSystem, "This is a test".getBytes());
         
         Payload clonePayload = this.payload.clone();
@@ -198,7 +253,8 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), clonePayload.getCharset());
 
-        Assert.assertTrue(this.payload.size() == clonePayload.size());
+        Assert.assertFalse(this.payload.getSize() == clonePayload.getSize());
+        Assert.assertEquals(this.payload.getSize(), clonePayload.getSize());
 
         Assert.assertEquals(this.payload.getChecksum(), clonePayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), clonePayload.getChecksumAlg());
@@ -234,8 +290,9 @@ public class PayloadTest
 //        String expectedCheckSumAlg = MetaDataInterface.DEFAULT_CHECKSUM_ALG;
 //        String expectedSrcSystem = this.srcSystem;
 //        
-
-        this.payload = new DefaultPayload("id", this.payloadName, 
+        ServiceLocator serviceLocator = ResourceLoader.getInstance();
+        this.payload = 
+            serviceLocator.getPayloadFactory().newPayload(this.payloadName, 
                     Spec.TEXT_PLAIN, this.srcSystem, "This is a test".getBytes());
 
         // put a sleep in here to allow us to ensure a clean comparison 
@@ -279,7 +336,8 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), spawnPayload.getCharset());
 
-        Assert.assertTrue(this.payload.size() == spawnPayload.size());
+        Assert.assertFalse(this.payload.getSize() == spawnPayload.getSize());
+        Assert.assertEquals(this.payload.getSize(), spawnPayload.getSize());
 
         Assert.assertEquals(this.payload.getChecksum(), spawnPayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), spawnPayload.getChecksumAlg());

@@ -45,7 +45,6 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.FlowElement;
-import org.ikasan.framework.flow.FlowInvocationContext;
 import org.ikasan.framework.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
 import org.jmock.Expectations;
@@ -77,7 +76,8 @@ public class VisitingFlowElementInvokerTest
     Event constitutentEventA = classMockery.mock(Event.class, "constituentEventA");
     /** Mocked Event object */
     Event constitutentEventB = classMockery.mock(Event.class, "constituentEventB");
-
+    /** Mocked ExceptionHandler */
+    IkasanExceptionHandler ikasanExceptionHandler = classMockery.mock(IkasanExceptionHandler.class);
     /**
      * Mocked Transformer
      */
@@ -104,9 +104,6 @@ public class VisitingFlowElementInvokerTest
     String moduleName = "moduleName";
     /** Name of the flow */
     String flowName = "flowName";
-    
-    FlowInvocationContext flowInvocationContext = classMockery.mock(FlowInvocationContext.class);
-    
     /** Class under test */
     private VisitingFlowElementInvoker visitingFlowElementInvoker;
 
@@ -115,7 +112,7 @@ public class VisitingFlowElementInvokerTest
      */
     public VisitingFlowElementInvokerTest()
     {
-        visitingFlowElementInvoker = new VisitingFlowElementInvoker();
+        visitingFlowElementInvoker = new VisitingFlowElementInvoker(ikasanExceptionHandler);
         visitingFlowElementInvoker.setFlowEventListener(flowEventListener);
     }
 
@@ -123,10 +120,10 @@ public class VisitingFlowElementInvokerTest
      * Tests that execution with a null FlowElement simply skips out
      */
     @Test
-    public void testInvoke_withNullFlowElementWillDoNothing()
+    public void testInvoke_withNullFlowElementWillReturnNull()
     {
-        visitingFlowElementInvoker.invoke(flowInvocationContext, null, moduleName,
-            flowName, null);
+        Assert.assertNull("invoker should simply return null, if it is visiting a null FlowElement", visitingFlowElementInvoker.invoke(null, moduleName,
+            flowName, null));
     }
 
     /**
@@ -145,11 +142,35 @@ public class VisitingFlowElementInvokerTest
         // transition, both expecting to be called
         mockTransformerVisitingExpectations(transformerWrappingElement, transformer, "myTransformer", originalEvent, terminatingElement);
         mockTerminatingEndpointElement(endpoint, "myEndpoint", terminatingElement, originalEvent, null);
-        visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName, transformerWrappingElement);
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, transformerWrappingElement);
+        Assert.assertNull("invoker should simply return null, if if no exceptions occured", action);
         classMockery.assertIsSatisfied();
     }
 
-
+    /**
+     * Tests that execution with a FlowElement containing a Transformer, will
+     * successfully return the ExceptionAction on component exception.
+     * 
+     * @throws TransformationException
+     * @throws EndpointException
+     */
+    @Test
+    public void testInvoke_withWrappedTransformerWillInvokeTransformerAndReturnNonNullExceptionAction() throws TransformationException, EndpointException
+    {
+        final FlowElement transformerWrappingElement = classMockery.mock(FlowElement.class);
+        final FlowElement terminatingElement = classMockery.mock(FlowElement.class, "terminatingElement");
+        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        final EndpointException myEndpointException = new EndpointException(new Exception());
+        // first visit a transformer
+        mockTransformerVisitingExpectations(transformerWrappingElement, transformer, "myTransformer", originalEvent, terminatingElement);
+        // followed by the terminating endpoint which throws an exception
+        mockTerminatingEndpointElement(endpoint, "myEndpoint", terminatingElement, originalEvent, myEndpointException);
+        // and some interaction with the exceptionHandler
+        mockExceptionHandlerInteraction(terminatingElement, "myEndpoint", exceptionAction, myEndpointException, originalEvent);
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, transformerWrappingElement);
+        Assert.assertNotNull("invoker must return a non-null result", action);
+        classMockery.assertIsSatisfied();
+    }
 
     /**
      * Tests that execution with a FlowElement containing a Transformer, but no
@@ -166,7 +187,7 @@ public class VisitingFlowElementInvokerTest
         RuntimeException re = null;
         try
         {
-            visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName, transformerWrappingElement);
+            visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, transformerWrappingElement);
             Assert.fail("RuntimeException should have been thrown, when Transformer is last component");
         }
         catch (RuntimeException r)
@@ -189,12 +210,33 @@ public class VisitingFlowElementInvokerTest
     {
         final FlowElement endpointWrappingElement = classMockery.mock(FlowElement.class);
         mockTerminatingEndpointElement(endpoint, "myEndpoint", endpointWrappingElement, originalEvent, null);
-        visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName, endpointWrappingElement);
-
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, endpointWrappingElement);
+        Assert.assertNull("invoker should simply return null, if if no exceptions occured", action);
         classMockery.assertIsSatisfied();
     }
 
-
+    /**
+     * Tests the execution with a FlowElement containing an Endpoint, throwing
+     * an exception that results in a rollback and stop. Specifically here we
+     * are looking for the action to be returned, and no default transition
+     * investigated
+     * 
+     * @throws EndpointException
+     */
+    @Test
+    public void testInvoke_withWrappedEndpointWillInvokeEndpointAndReturnNonNullExceptionAction() throws EndpointException
+    {
+        final FlowElement endpointWrappingElement = classMockery.mock(FlowElement.class);
+        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        final EndpointException myEndpointException = new EndpointException(new Exception());
+        // expect to the endpoint to be visited resulting in an exception
+        mockTerminatingEndpointElement(endpoint, "myEndpoint", endpointWrappingElement, originalEvent, myEndpointException);
+        // expect interaction with the exception handler
+        mockExceptionHandlerInteraction(endpointWrappingElement, "myEndpoint", exceptionAction, myEndpointException, originalEvent);
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, endpointWrappingElement);
+        Assert.assertNotNull("invoker must return a non-null result", action);
+        classMockery.assertIsSatisfied();
+    }
 
     /**
      * Tests that execution with a FlowElement containing a Router, invokes the
@@ -218,14 +260,75 @@ public class VisitingFlowElementInvokerTest
         mockTerminatingEndpointElement(endpoint, "downstreamComponentA", downstreamElementA, originalEvent, null);
         // expect downstreamElementB to be visited
         mockTerminatingEndpointElement(endpoint, "downstreamComponentB", downstreamElementB, originalEvent, null);
-        visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName, routerWrappingElement);
-
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, routerWrappingElement);
+        Assert.assertNull("invoker should simply return null, if if no exceptions occured", action);
         classMockery.assertIsSatisfied();
     }
 
+    /**
+     * Tests the successful return of an ExceptionAction should a router
+     * component fail.
+     * 
+     * Specifically, this test is geared to testing the router component which
+     * is capable of spawning subflows. Any failure of a subflow component must
+     * have the required ExceptionAction passed back to the caller.
+     * 
+     * @throws RouterException
+     * @throws CloneNotSupportedException
+     * @throws EndpointException
+     */
+    @Test
+    public void testInvoke_withWrappedRouterSpawnedFlowReturningNonNullExceptionAction() throws RouterException, CloneNotSupportedException, EndpointException
+    {
+        final FlowElement routerWrappingElement = classMockery.mock(FlowElement.class, "routingElement");
+        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        final EndpointException myEndpointException = new EndpointException(new Exception());
+        final Map<String, FlowElement> routerTransitions = new LinkedHashMap<String, FlowElement>();
+        routerTransitions.put("transitionA", downstreamElementA);
+        // router expects visitation
+        mockRouterVisitingExpectations(routerWrappingElement, router, "myRouterComponent", originalEvent, routerTransitions);
+        // downstream component expects visitation, but throws exception
+        mockTerminatingEndpointElement(endpoint, "myDownstreamComponentA", downstreamElementA, originalEvent, myEndpointException);
+        // exceptionHandler expects to come into play
+        mockExceptionHandlerInteraction(downstreamElementA, "myDownstreamComponentA", exceptionAction, myEndpointException, originalEvent);
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, routerWrappingElement);
+        Assert.assertNotNull("invoker must return a non-null result", action);
+        classMockery.assertIsSatisfied();
+    }
 
-
-
+    /**
+     * Tests the successful return of an ExceptionAction should a sequencer
+     * component fail.
+     * 
+     * Specifically, this test is geared to testing the sequencer component
+     * which is capable of spawning subflows. Any failure of a subflow component
+     * must have the required ExceptionAction passed back to the caller.
+     * 
+     * @throws SequencerException
+     * @throws CloneNotSupportedException
+     * @throws EndpointException
+     */
+    @Test
+    public void testInvoke_withWrappedSequencerSpawnedFlowReturningNonNullExceptionAction() throws SequencerException, CloneNotSupportedException,
+            EndpointException
+    {
+        final FlowElement sequencerWrappingElement = classMockery.mock(FlowElement.class, "sequencerElement");
+        final List<Event> sequencerResults = new ArrayList<Event>();
+        sequencerResults.add(constitutentEventA);
+        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        final EndpointException myEndpointException = new EndpointException(new Exception());
+        // sequencer expects invocation, returning sequencerResults,
+        // transitioning to downstreamElementA
+        mockSequencerVistingExpectations(sequencerWrappingElement, sequencer, "mySequencerComponent", originalEvent, downstreamElementA, sequencerResults);
+        // downstream component expects visitation with constituent event, but
+        // will throw an exception
+        mockTerminatingEndpointElement(endpoint, "myDownstreamComponent", downstreamElementA, constitutentEventA, myEndpointException);
+        // exception handler comes into play
+        mockExceptionHandlerInteraction(downstreamElementA, "myDownstreamComponent", exceptionAction, myEndpointException, constitutentEventA);
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, sequencerWrappingElement);
+        Assert.assertNotNull("invoker must return a non-null result", action);
+        classMockery.assertIsSatisfied();
+    }
 
     /**
      * Tests that execution with a FlowElement containing a Router, invokes the
@@ -238,22 +341,25 @@ public class VisitingFlowElementInvokerTest
     public void testInvoke_withWrappedRouterWillThrowRuntimeExceptionIfNoDefaultTransition() throws RouterException, CloneNotSupportedException
     {
         final FlowElement routerWrappingElement = classMockery.mock(FlowElement.class, "routerElement");
-
+        final IkasanExceptionAction exceptionAction = classMockery.mock(IkasanExceptionAction.class);
         final Map<String, FlowElement> routerTransitions = new LinkedHashMap<String, FlowElement>();
         routerTransitions.put("nonExistantTransition", null);
         // mock router returns non existant transition - results in an
         // InvalidFlowException being thrown.
         mockRouterVisitingExpectations(routerWrappingElement, router, "myRouter", originalEvent, routerTransitions);
-
-        
-        InvalidFlowException invalidFlowException = null;
-        try{
-        	visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName, routerWrappingElement);
-        	Assert.fail("should have thrown InvalidFlow exception for Router with unmapped transition");
-        }catch(InvalidFlowException i){
-        	invalidFlowException = i;
-        }
-        Assert.assertNotNull("should have thrown InvalidFlow exception for Router with unmapped transition", invalidFlowException);
+        // expect that the exception handler is gonna get told about the
+        // InvalidFlowException
+        classMockery.checking(new Expectations()
+        {
+            {
+                one(routerWrappingElement).getComponentName();
+                will(returnValue("myRouter"));
+                one(ikasanExceptionHandler).invoke(with(equal("myRouter")), with(equal(originalEvent)), (Throwable) with(a(InvalidFlowException.class)));
+                will(returnValue(exceptionAction));
+            }
+        });
+        IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, routerWrappingElement);
+        Assert.assertEquals("ExceptionAction returned should be that returned by the exception handler", exceptionAction, action);
         classMockery.assertIsSatisfied();
     }
 
@@ -272,7 +378,7 @@ public class VisitingFlowElementInvokerTest
     public void testInvoke_withWrappedSequencerWillInvokeSequencerAndInvokeDefaultTransitionWithAllReturnedEvents() throws SequencerException,
             CloneNotSupportedException, EndpointException
     {
-        final FlowElement sequencerWrappingElement = classMockery.mock(FlowElement.class, "mySequencer");
+        final FlowElement sequencerWrappingElement = classMockery.mock(FlowElement.class);
         final List<Event> sequencerResults = new ArrayList<Event>();
         sequencerResults.add(constitutentEventA);
         sequencerResults.add(constitutentEventB);
@@ -283,8 +389,8 @@ public class VisitingFlowElementInvokerTest
         mockTerminatingEndpointElement(endpoint, "myDownstreamComponent", downstreamElementA, constitutentEventA, null);
         // downstream component gets visited with second constituent event
         mockTerminatingEndpointElement(endpoint, "myDownstreamComponent", downstreamElementA, constitutentEventB, null);
-        visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName,
-            sequencerWrappingElement);
+        Assert.assertNull("invoker should simply return null, as no exceptions occured", visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName,
+            sequencerWrappingElement));
         classMockery.assertIsSatisfied();
     }
 
@@ -301,28 +407,137 @@ public class VisitingFlowElementInvokerTest
     {
         final FlowElement sequencerWrappingElement = classMockery.mock(FlowElement.class);
         final List<Event> sequencerResults = new ArrayList<Event>();
-
+        final IkasanExceptionAction exceptionAction = classMockery.mock(IkasanExceptionAction.class);
         sequencerResults.add(constitutentEventA);
         sequencerResults.add(constitutentEventB);
         // expect the sequencer to get visited, but have a null transition
         FlowElement defaultTransition = null;
         mockSequencerVistingExpectations(sequencerWrappingElement, sequencer, "mySequencerComponent", originalEvent, defaultTransition, sequencerResults);
-
-        InvalidFlowException invalidFlowException = null;
-        try{
-        	visitingFlowElementInvoker.invoke(flowInvocationContext, originalEvent, moduleName, flowName, sequencerWrappingElement);
-        	Assert.fail("InvalidFlowException should have been thrown when a Sequencer is encountered with no default transition");
-        }catch(InvalidFlowException i){
-        	invalidFlowException = i;
-        }
-        Assert.assertNotNull("InvalidFlowException should have been thrown when a Sequencer is encountered with no default transition", invalidFlowException);
-        
+        // expect the exceptionHandler to get told about the
+        // InvalidFlowException
+        // TODO - isnt it kinda dumb to try to exceptionHandle
+        // InvalidFlowExceptions?
+        classMockery.checking(new Expectations()
+        {
+            {
+                one(sequencerWrappingElement).getComponentName();
+                will(returnValue("mySequencerComponent"));
+                one(ikasanExceptionHandler).invoke(with(equal("mySequencerComponent")), with(equal(originalEvent)),
+                    (Throwable) with(a(InvalidFlowException.class)));
+                will(returnValue(exceptionAction));
+            }
+        });
+        IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, sequencerWrappingElement);
+        Assert.assertEquals("ExceptionAction returned should be that returned by the exception handler", exceptionAction, action);
         classMockery.assertIsSatisfied();
     }
 
+    /**
+     * Tests that execution with a FlowElement returns an IkasanExceptionAction
+     * from the ExceptionHandler when a FlowComponent throws an Exception
+     * 
+     * @throws TransformationException
+     * @throws EndpointException
+     */
+    @Test
+    public void testInvoke_skipsExceptionWhenActionTypeIsContinueAndFlowComponentIsTransformer() throws TransformationException, EndpointException
+    {
+        final FlowElement transformerWrappingElement = classMockery.mock(FlowElement.class);
+        final FlowElement terminatingElement = classMockery.mock(FlowElement.class);
+        final TransformationException throwable = classMockery.mock(TransformationException.class);
+        final String componentName = "componentName";
+        final IkasanExceptionAction ikasanExceptionAction = classMockery.mock(IkasanExceptionAction.class);
+        classMockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(originalEvent).idToString();
+                will(returnValue("dummy events ids"));
+                one(throwable).fillInStackTrace();
+                allowing(throwable).printStackTrace();
+                // hit the transformer which throws the exception
+                exactly(1).of(transformerWrappingElement).getComponentName();
+                will(returnValue(componentName));
+                exactly(2).of(transformerWrappingElement).getFlowComponent();
+                will(returnValue(transformer));
+                one(flowEventListener).beforeFlowElement(moduleName, flowName, transformerWrappingElement, originalEvent);
+                one(transformer).onEvent(originalEvent);
+                will(throwException(throwable));
+                // hit the exception handler, which says continue
+                one(transformerWrappingElement).getComponentName();
+                will(returnValue(componentName));
+                one(ikasanExceptionHandler).invoke(componentName, originalEvent, throwable);
+                will(returnValue(ikasanExceptionAction));
+                one(ikasanExceptionAction).getType();
+                will(returnValue(IkasanExceptionActionType.CONTINUE));
+                // continue from the transformer
+                one(transformerWrappingElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(terminatingElement));
+                // hit the subsequent endpoint
+                exactly(1).of(terminatingElement).getComponentName();
+                will(returnValue(componentName));
+                exactly(2).of(terminatingElement).getFlowComponent();
+                will(returnValue(endpoint));
+                one(flowEventListener).beforeFlowElement(moduleName, flowName, terminatingElement, originalEvent);
+                one(endpoint).onEvent(originalEvent);
+                one(flowEventListener).afterFlowElement(moduleName, flowName, terminatingElement, originalEvent);
+                one(terminatingElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(null));
+            }
+        });
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, transformerWrappingElement);
+        Assert.assertNull("invoker should simply return null, if exception action was continue", action);
+        classMockery.assertIsSatisfied();
+    }
 
-
- 
+    /**
+     * Tests that execution with a FlowElement returns an IkasanExceptionAction
+     * from the ExceptionHandler when a FlowComponent throws an Exception
+     * 
+     * @throws EndpointException
+     */
+    @Test
+    public void testInvoke_skipsExceptionWhenActionTypeIsContinueAndFlowComponentIsEndpoint() throws EndpointException
+    {
+        final FlowElement endpointWrappingElement = classMockery.mock(FlowElement.class);
+        final EndpointException throwable = classMockery.mock(EndpointException.class);
+        final String componentName = "componentName";
+        final IkasanExceptionAction ikasanExceptionAction = classMockery.mock(IkasanExceptionAction.class);
+        classMockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(originalEvent).idToString();
+                will(returnValue("dummy events ids"));
+                one(throwable).fillInStackTrace();
+                allowing(throwable).printStackTrace();
+            }
+        });
+        classMockery.checking(new Expectations()
+        {
+            {
+                // hit the first endpoint which throws the exception
+                exactly(1).of(endpointWrappingElement).getComponentName();
+                will(returnValue(componentName));
+                exactly(2).of(endpointWrappingElement).getFlowComponent();
+                will(returnValue(endpoint));
+                one(flowEventListener).beforeFlowElement(moduleName, flowName, endpointWrappingElement, originalEvent);
+                one(endpoint).onEvent(originalEvent);
+                will(throwException(throwable));
+                // hit the exception handler, which says continue
+                one(endpointWrappingElement).getComponentName();
+                will(returnValue(componentName));
+                one(ikasanExceptionHandler).invoke(componentName, originalEvent, throwable);
+                will(returnValue(ikasanExceptionAction));
+                one(ikasanExceptionAction).getType();
+                will(returnValue(IkasanExceptionActionType.CONTINUE));
+                // continue from the transformer
+                one(endpointWrappingElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(null));
+            }
+        });
+        final IkasanExceptionAction action = visitingFlowElementInvoker.invoke(originalEvent, moduleName, flowName, endpointWrappingElement);
+        Assert.assertNull("invoker should simply return null, if exception action was continue", action);
+        classMockery.assertIsSatisfied();
+    }
 
     /**
      * Setup mock expectations for Event
@@ -359,12 +574,9 @@ public class VisitingFlowElementInvokerTest
         classMockery.checking(new Expectations()
         {
             {
-            	
-            	one(flowInvocationContext).addInvokedComponentName(componentName);
-            	
                 one(event).idToString();
                 will(returnValue("dummy events ids"));
-                exactly(2).of(terminatingElement).getComponentName();
+                one(terminatingElement).getComponentName();
                 will(returnValue(componentName));
                 exactly(2).of(terminatingElement).getFlowComponent();
                 will(returnValue(anEndpoint));
@@ -384,7 +596,28 @@ public class VisitingFlowElementInvokerTest
         });
     }
 
-
+    /**
+     * Mock the exception handling interaction
+     * 
+     * @param flowElement
+     * @param componentName
+     * @param exceptionAction
+     * @param throwable
+     * @param associatedEvent
+     */
+    private void mockExceptionHandlerInteraction(final FlowElement flowElement, final String componentName, final IkasanExceptionAction exceptionAction,
+            final Throwable throwable, final Event associatedEvent)
+    {
+        classMockery.checking(new Expectations()
+        {
+            {
+                one(flowElement).getComponentName();
+                will(returnValue(componentName));
+                one(ikasanExceptionHandler).invoke(with(equal(componentName)), with(equal(associatedEvent)), with(equal(throwable)));
+                will(returnValue(exceptionAction));
+            }
+        });
+    }
 
     /**
      * Mock the TransformerVisitingExpectations
@@ -402,7 +635,6 @@ public class VisitingFlowElementInvokerTest
         classMockery.checking(new Expectations()
         {
             {
-            	one(flowInvocationContext).addInvokedComponentName(componentName);
                 one(event).idToString();
                 will(returnValue("dummy events ids"));
                 allowing(transformerElement).getComponentName();
@@ -435,11 +667,9 @@ public class VisitingFlowElementInvokerTest
         classMockery.checking(new Expectations()
         {
             {
-            	one(flowInvocationContext).addInvokedComponentName(componentName);
-            	
                 exactly(1).of(event).idToString();
                 will(returnValue("dummy events ids"));
-                exactly(2).of(routerWrappingElement).getComponentName();
+                exactly(1).of(routerWrappingElement).getComponentName();
                 will(returnValue(componentName));
                 exactly(2).of(routerWrappingElement).getFlowComponent();
                 will(returnValue(aRouter));
@@ -489,17 +719,15 @@ public class VisitingFlowElementInvokerTest
         classMockery.checking(new Expectations()
         {
             {
-            	one(flowInvocationContext).addInvokedComponentName(componentName);
-            	
                 exactly(1).of(parentEvent).idToString();
                 will(returnValue("parentEvent"));
-                exactly(3).of(sequencerWrappingElement).getComponentName();
+                exactly(1).of(sequencerWrappingElement).getComponentName();
                 will(returnValue(componentName));
                 exactly(2).of(sequencerWrappingElement).getFlowComponent();
                 will(returnValue(thisSequencer));
                 one(flowEventListener).beforeFlowElement(with(equal(moduleName)), with(equal(flowName)), with(equal(sequencerWrappingElement)),
                     with(equal(parentEvent)));
-                one(thisSequencer).onEvent(with(equal(parentEvent)), with(equal(moduleName)), with(equal(componentName)));
+                one(thisSequencer).onEvent(with(equal(parentEvent)));
                 will(returnValue(sequencerResults));
                 for (Event constiutentEvent : sequencerResults)
                 {

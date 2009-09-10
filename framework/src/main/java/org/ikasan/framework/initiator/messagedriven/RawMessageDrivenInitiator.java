@@ -35,53 +35,47 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.error.service.ErrorLoggingService;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.flow.Flow;
 
 /**
- * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create
- * and fire new <code>Event</code>s based on raw JMS messages.
+ * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create and fire new <code>Event</code>s based
+ * on raw JMS messages.
  * 
- * This implementation places no expectation on the incoming message data. Do
- * not use this for deserialising existing <code>Event</code>s, rather use the
- * <code>EventMessageDrivenInitiator</code>
+ * This implementation places no expectation on the incoming message data. Do not use this for deserialising existing
+ * <code>Event</code>s, rather use the <code>EventMessageDrivenInitiator</code>
  * 
  * @author Ikasan Development Team
  */
 public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
 {
-    /** Default Message Priority used by the Ikasan Raw Message Driven Initiator */
-    private static final int DEFAULT_MESSAGE_PRIORITY = 4;
-
+    
     /**
      * Logger instance for this class
      */
     private Logger logger = Logger.getLogger(RawMessageDrivenInitiator.class);
-
+    
     /**
      * Factory for constructing Payloads
      */
     protected PayloadFactory payloadFactory;
-
+    
     /**
      * Respect the priority of received messages by setting this on the Event
      */
     private boolean respectPriority;
 
-    /**
+
+	/**
      * Constructor
      * 
      * @param moduleName - name of the module
      * @param name - name of this initiator
      * @param flow - flow to invoke
-     * @param exceptionHandler for handlingExceptions
      * @param payloadFactory - means for creating new <code>Payload</code>s
      */
-    public RawMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler, PayloadFactory payloadFactory)
+    public RawMessageDrivenInitiator(String moduleName, String name, Flow flow, PayloadFactory payloadFactory)
     {
-        super(moduleName, name, flow, exceptionHandler);
+        super(moduleName, name, flow);
         this.payloadFactory = payloadFactory;
     }
 
@@ -89,51 +83,48 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl
-     * #handleTextMessage(javax.jms.TextMessage )
+     * org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl#handleTextMessage(javax.jms.TextMessage
+     * )
      */
     @Override
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
         // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
+        Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
+            MetaDataInterface.UNDEFINED, message.getText().getBytes());
         //
-        Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
-        // Reuse the message's priority if we are configured to respect it
-        if (respectPriority)
-        {
-            event.setPriority(message.getJMSPriority());
+        Event event = new Event(moduleName, name);
+        
+        //resuse the message's priority if we are configured to respect it
+        if (respectPriority){
+        	event.setPriority(message.getJMSPriority());
         }
-        else
-        {
-            event.setPriority(DEFAULT_MESSAGE_PRIORITY);
-        }
+        event.setPayload(payload);
         return event;
     }
+
+
 
     @Override
     protected Logger getLogger()
     {
         return logger;
     }
+    
 
     /**
      * Respect the priority of received messages by setting this on the Event
-     * 
-     * @param respectPriority
-     */
-    public void setRespectPriority(boolean respectPriority)
-    {
-        this.respectPriority = respectPriority;
-    }
+	 * @param respectPriority
+	 */
+	public void setRespectPriority(boolean respectPriority) {
+		this.respectPriority = respectPriority;
+	}
 
-    /**
-     * Accessor for respectPriority
-     * 
-     * @return respectPriority
-     */
-    public boolean isRespectPriority()
-    {
-        return respectPriority;
-    }
+	/**
+	 * Accessor for respectPriority
+	 * @return respectPriority
+	 */
+	public boolean isRespectPriority() {
+		return respectPriority;
+	}
 }

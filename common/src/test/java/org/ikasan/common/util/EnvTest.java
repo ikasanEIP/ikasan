@@ -27,12 +27,13 @@
 package org.ikasan.common.util;
 
 // Imported junit classes
+import org.ikasan.common.CommonEnvironment;
+import org.ikasan.common.util.Env;
+import org.ikasan.common.ResourceLoader;
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.ikasan.common.CommonEnvironment;
 
 /**
  * unit tests for the {@link org.ikasan.common.util.Env} class.
@@ -44,7 +45,7 @@ public class EnvTest
 {
     
     /** Provide a common environment */
-    CommonEnvironment env = new Env();
+    CommonEnvironment env = null;
     
     static
     {
@@ -52,6 +53,12 @@ public class EnvTest
         System.setProperty("thing", "Italian girl");
     }
 
+    @Override
+    protected void setUp() throws Exception
+    {
+        env = ResourceLoader.getInstance().newEnvironment();
+        super.setUp();
+    }
     
     /**
      * A unit test to check whether all variables can be expanded correctly.

@@ -69,7 +69,7 @@ public class UnzipSplitter implements Sequencer
      * @throws SequencerException Wrapper exception thrown when cloning and/or transforming the<br>
      *         <code>Event</code>/<code>Payload</code>
      */
-    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
+    public List<Event> onEvent(Event event) throws SequencerException
     {
         List<Event> newEvents = new ArrayList<Event>();
         List<Payload> payloads = event.getPayloads();
@@ -82,11 +82,19 @@ public class UnzipSplitter implements Sequencer
             try
             {
                 List<Payload> newPayloads = this.unzipPayload(payload);
-                for (int i=0;i<newPayloads.size();i++)
+                for (Payload newPayload : newPayloads)
                 {
-                	Event newEvent = event.spawnChild(moduleName, componentName, i, newPayloads.get(i));
-					newEvents.add(newEvent);
-
+                    /* 
+                     * Get a new Event instance, that is identical to original Event.
+                     * The new instance will have a different id, timestamp, and payloads.
+                     * See org.ikasan.framework.Event.spawn() for more details on Event 
+                     * spawning/cloning method.
+                     */
+                    Event newEvent = event.spawn();
+                    // Remove all old payloads, before adding the new one.
+                    newEvent.getPayloads().clear();
+                    newEvent.setPayload(newPayload);
+                    newEvents.add(newEvent);
                     if (logger.isDebugEnabled())
                     {
                         logger.debug("Incoming event [" + event.getId() + "] split into event [" + newEvent.getId()

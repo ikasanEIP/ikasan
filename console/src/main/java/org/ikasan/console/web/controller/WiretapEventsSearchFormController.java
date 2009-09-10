@@ -26,9 +26,7 @@
  */
 package org.ikasan.console.web.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -127,29 +124,34 @@ public class WiretapEventsSearchFormController
      * @return wiretap events view
      */
     @RequestMapping("list.htm")
-    public String listWiretapEvents(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch,
-            @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy, @RequestParam(required = false) Boolean orderAsc,
-            @RequestParam(required = false) Boolean selectAll, @RequestParam(required = false) Set<String> moduleNames,
-            @RequestParam(required = false) String componentName, @RequestParam(required = false) String eventId,
-            @RequestParam(required = false) String payloadId, @RequestParam(required = false) String fromDateString,
-            @RequestParam(required = false) String fromTimeString, @RequestParam(required = false) String untilDateString,
-            @RequestParam(required = false) String untilTimeString, @RequestParam(required = false) String payloadContent, ModelMap model)
+    public String listWiretapEvents(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch, 
+            @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy,
+            @RequestParam(required = false) Boolean orderAsc, @RequestParam(required = false) Boolean selectAll,
+            @RequestParam(required = false) Set<String> moduleNames, @RequestParam(required = false) String componentName,
+            @RequestParam(required = false) String eventId, @RequestParam(required = false) String payloadId,
+            @RequestParam(required = false) String fromDateString, @RequestParam(required = false) String fromTimeString,
+            @RequestParam(required = false) String untilDateString, @RequestParam(required = false) String untilTimeString,
+            @RequestParam(required = false) String payloadContent, ModelMap model)
     {
         boolean noErrors = true;
-        // If it's a new search then automatically run the default search
+        
+        // If it's a new search then automatically run the default search 
         if (newSearch != null && newSearch)
         {
             logger.debug("Redirecting to the Default Search");
-            String newSearchURL = getNewSearchURL();
+            String newSearchURL = getNewSearchURL(); 
             return newSearchURL;
         }
+        
         // Log the search criteria coming in
         if (logger.isDebugEnabled())
         {
             logger.debug("Form values that came in:");
-            logSearch(newSearch, page, orderBy, orderAsc, selectAll, moduleNames, componentName, eventId, payloadId, fromDateString, fromTimeString,
-                untilDateString, untilTimeString, payloadContent);
+            logSearch(newSearch, page, orderBy, orderAsc, selectAll, moduleNames, componentName,
+                eventId, payloadId, fromDateString, fromTimeString, untilDateString, 
+                untilTimeString, payloadContent);
         }
+        
         // Set the search criteria from the values that came in
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(moduleNames);
         wiretapSearchCriteria.setComponentName(componentName);
@@ -160,6 +162,7 @@ public class WiretapEventsSearchFormController
         wiretapSearchCriteria.setUntilDate(untilDateString);
         wiretapSearchCriteria.setUntilTime(untilTimeString);
         wiretapSearchCriteria.setPayloadContent(payloadContent);
+
         // Validate the wiretap search criteria
         List<String> errors = new ArrayList<String>();
         this.validator.validate(wiretapSearchCriteria, errors);
@@ -168,30 +171,36 @@ public class WiretapEventsSearchFormController
         {
             noErrors = false;
         }
+        
         // Setup the generic search criteria
         int pageNo = MasterDetailControllerUtil.defaultZero(page);
         int pageSize = 25;
         String orderByField = MasterDetailControllerUtil.resolveOrderBy(orderBy);
         boolean orderAscending = MasterDetailControllerUtil.defaultFalse(orderAsc);
+
         Date fromDate = wiretapSearchCriteria.getFromDateTime();
         Date untilDate = wiretapSearchCriteria.getUntilDateTime();
+
         // Log the search criteria we're sending down
         if (logger.isDebugEnabled())
         {
             logger.debug("Executing Search with:");
-            logSearch(newSearch, pageNo, orderByField, orderAscending, selectAll, moduleNames, componentName, eventId, payloadId, fromDateString,
-                fromTimeString, untilDateString, untilTimeString, payloadContent);
+            logSearch(newSearch, pageNo, orderByField, orderAscending, selectAll, moduleNames, componentName,
+                eventId, payloadId, fromDateString, fromTimeString, untilDateString, 
+                untilTimeString, payloadContent);
             logger.debug("Page Size [" + pageSize + "]");
             logger.debug("From Date/Time [" + fromDate + "]");
             logger.debug("Until Date/Time [" + untilDate + "]");
         }
+
         // Perform the paged search
         PagedSearchResult<WiretapEvent> pagedResult = null;
         if (noErrors)
         {
-            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSize, orderByField, orderAscending, moduleNames, componentName, eventId, payloadId,
-                fromDate, untilDate, payloadContent);
+            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSize, orderByField, orderAscending, moduleNames, componentName,
+                eventId, payloadId, fromDate, untilDate, payloadContent);
         }
+
         // Store the search parameters used
         Map<String, Object> searchParams = new HashMap<String, Object>();
         MasterDetailControllerUtil.addParam(searchParams, "moduleNames", moduleNames);
@@ -203,8 +212,8 @@ public class WiretapEventsSearchFormController
         MasterDetailControllerUtil.addParam(searchParams, "untilDateString", untilDateString);
         MasterDetailControllerUtil.addParam(searchParams, "untilTimeString", untilTimeString);
         MasterDetailControllerUtil.addParam(searchParams, "payloadContent", payloadContent);
-        MasterDetailControllerUtil
-            .addPagedModelAttributes(orderByField, orderAscending, selectAll, model, pageNo, pageSize, pagedResult, request, searchParams);
+        MasterDetailControllerUtil.addPagedModelAttributes(orderByField, orderAscending, selectAll, model, pageNo, pagedResult, request, searchParams);
+        
         // Return back to the combined search / search results view
         return "events/wiretapEvents";
     }
@@ -218,6 +227,7 @@ public class WiretapEventsSearchFormController
     {
         String springRedirectCommand = "redirect:";
         String baseURL = "list.htm?";
+        
         // Build the list of parameters
         List<Module> modules = this.moduleService.getModules();
         String parameters = "newSearch=false&page=0&orderBy=id&orderAsc=true&selectAll=true";
@@ -225,10 +235,11 @@ public class WiretapEventsSearchFormController
         {
             parameters = parameters + "&moduleNames=" + module.getName();
         }
+        
         String finalURL = springRedirectCommand + baseURL + parameters;
         return finalURL;
     }
-
+    
     /**
      * View a specified WiretapEvent
      * 
@@ -298,35 +309,7 @@ public class WiretapEventsSearchFormController
         }
         return null;
     }
-
-    /**
-     * Download the payload content as a file
-     * 
-     * TODO Improve Error handling?
-     * 
-     * @param eventId - The Event id of the wiretapped event to download
-     * @param response - The HttpServletResponse object, content is streamed to this
-     */
-    @RequestMapping("downloadPayloadContent.htm")
-    public void outputFile(@RequestParam("eventId") long eventId, final HttpServletResponse response)
-    {
-        this.logger.info("inside downloadPayloadContent, eventId=[" + eventId + "]");        
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));        
-        String outgoingFileName = wiretapEvent.getEventId();
-        response.setContentType("application/download");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + outgoingFileName + "\"");
-        try
-        {
-            ServletOutputStream op = response.getOutputStream();
-            op.write(wiretapEvent.getPayloadContent().getBytes());
-            op.flush();
-        }
-        catch (IOException e)
-        {
-            this.logger.error("Could not download payload.", e);
-        }
-    }
-
+    
     /**
      * Log the search
      * 
@@ -345,8 +328,12 @@ public class WiretapEventsSearchFormController
      * @param untilTimeString - untilTime String
      * @param payloadContent - The Payload content
      */
-    private void logSearch(Boolean newSearch, Integer page, String orderBy, Boolean orderAsc, Boolean selectAll, Set<String> moduleNames, String componentName,
-            String eventId, String payloadId, String fromDateString, String fromTimeString, String untilDateString, String untilTimeString,
+    private void logSearch(Boolean newSearch, Integer page, String orderBy,
+            Boolean orderAsc, Boolean selectAll,
+            Set<String> moduleNames, String componentName,
+            String eventId, String payloadId,
+            String fromDateString, String fromTimeString,
+            String untilDateString, String untilTimeString,
             String payloadContent)
     {
         logger.debug("New Search Flag [" + newSearch + "]");
@@ -364,4 +351,5 @@ public class WiretapEventsSearchFormController
         logger.debug("Until Time String [" + untilTimeString + "]");
         logger.debug("Payload Content [" + payloadContent + "]");
     }
+    
 }

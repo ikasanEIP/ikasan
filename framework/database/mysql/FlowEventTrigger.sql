@@ -21,9 +21,9 @@
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
 
-DROP TABLE IF EXISTS `Ikasan01`.`FlowEventTriggerParameters`;
-DROP TABLE IF EXISTS `Ikasan01`.`FlowEventTrigger`;
-CREATE TABLE  `Ikasan01`.`FlowEventTrigger` (
+DROP TABLE IF EXISTS `ikasan01`.`floweventtriggerparameters`;
+DROP TABLE IF EXISTS `ikasan01`.`floweventtrigger`;
+CREATE TABLE  `ikasan01`.`floweventtrigger` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(255) NOT NULL,
   `FlowName` varchar(255) NOT NULL,
@@ -33,11 +33,11 @@ CREATE TABLE  `Ikasan01`.`FlowEventTrigger` (
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `Ikasan01`.`FlowEventTriggerParameters` (
+CREATE TABLE  `ikasan01`.`floweventtriggerparameters` (
   `TriggerId` bigint(20) NOT NULL,
   `ParamValue` varchar(255) DEFAULT NULL,
   `ParamName` varchar(255) NOT NULL,
   PRIMARY KEY (`TriggerId`,`ParamName`),
   KEY `FK71FA5536C7DD805` (`TriggerId`),
-  CONSTRAINT `FK71FA5536C7DD805` FOREIGN KEY (`TriggerId`) REFERENCES `FlowEventTrigger` (`Id`)
+  CONSTRAINT `FK71FA5536C7DD805` FOREIGN KEY (`TriggerId`) REFERENCES `floweventtrigger` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

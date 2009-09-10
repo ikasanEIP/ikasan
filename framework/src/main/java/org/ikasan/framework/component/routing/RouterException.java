@@ -34,7 +34,7 @@ package org.ikasan.framework.component.routing;
  * 
  * @author Ikasan Development Team
  */
-public class RouterException extends RuntimeException
+public class RouterException extends Exception
 {
     /**
      * serialVersionUID

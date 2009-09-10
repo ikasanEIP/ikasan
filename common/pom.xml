@@ -34,10 +34,10 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-common</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.7.4-SNAPSHOT</version>
   <name>Ikasan Common</name>
   <organization>
-    <name>Ikasan Ltd</name>
+    <name>Ikasan</name>
     <url>http://www.ikasan.org</url>
   </organization>
   <url>http://www.ikasan.org</url>
@@ -136,7 +136,7 @@
     <url>https://apps.sourceforge.net/trac/ikasaneip/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/common</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
   <build>
     <!-- Std plugins -->
@@ -170,8 +170,8 @@
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

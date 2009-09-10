@@ -26,9 +26,6 @@
  */
 package org.ikasan.framework.initiator.messagedriven;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -39,9 +36,6 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.error.service.ErrorLoggingService;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
@@ -93,11 +87,10 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
-     * @param exceptionHandler for handlingExceptions
      */
-    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
+    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
     {
-        super(moduleName, name, flow, exceptionHandler);
+        super(moduleName, name, flow);
     }
     
     public String getType(){
@@ -111,8 +104,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      */
     public void onMessage(Message message)
     {
-    	List<Event> events = new ArrayList<Event>();
-
+        Event event = null;
         try
         {
         	if (logger.isDebugEnabled()){
@@ -121,33 +113,38 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
         	
         	if (message instanceof TextMessage)
             {
-            	events.add(handleTextMessage((TextMessage) message));
+                event = handleTextMessage((TextMessage) message);
             }
             else if (message instanceof MapMessage)
             {
-            	events.add(handleMapMessage((MapMessage) message));
+                event = handleMapMessage((MapMessage) message);
             }
             else if (message instanceof ObjectMessage)
             {
-            	events.add(handleObjectMessage((ObjectMessage) message));
+                event = handleObjectMessage((ObjectMessage) message);
             }
             else if (message instanceof StreamMessage)
             {
-            	events.add(handleStreamMessage((StreamMessage) message));
+                event = handleStreamMessage((StreamMessage) message);
             }
             else if (message instanceof BytesMessage)
             {
-            	events.add(handleBytesMessage((BytesMessage) message));
+                event = handleBytesMessage((BytesMessage) message);
             }
         }
-        catch (Throwable eventSourcingThrowable){
-        	handleEventSourcingThrowable(eventSourcingThrowable);
+        catch (JMSException jmsException)
+        {
+            stopInError();
+            throw new RuntimeException(jmsException);
         }
-        invokeFlow(events);
+        catch (EventSerialisationException eventSerialisationException)
+        {
+            stopInError();
+            throw new RuntimeException(eventSerialisationException);
+        }
+        IkasanExceptionAction action = flow.invoke(event);
+        handleAction(action);
     }
-    
-
-
 
 
     protected void completeRetryCycle()
@@ -253,7 +250,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleBytesMessage(BytesMessage message) throws JMSException
+    protected Event handleBytesMessage(BytesMessage message) throws JMSException, EventSerialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support BytesMessage [" + message.toString()
                 + "]");
@@ -285,7 +282,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleObjectMessage(ObjectMessage message) throws JMSException
+    protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventSerialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support ObjectMessage [" + message.toString()
                 + "]");
@@ -303,7 +300,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleMapMessage(MapMessage message) throws JMSException
+    protected Event handleMapMessage(MapMessage message) throws JMSException, EventSerialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support MapMessage [" + message.toString()
                 + "]");
@@ -321,7 +318,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      *             by implementing children
      */
     @SuppressWarnings("unused")
-    protected Event handleTextMessage(TextMessage message) throws JMSException
+    protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support TextMessage [" + message.toString()
                 + "]");
@@ -350,7 +347,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * 
      * This needs to happen in a separate thread.
      * 
-     * @author Ikasan Development Team
+     * @author duncro
      * 
      */
     private class Anesthetist extends Thread

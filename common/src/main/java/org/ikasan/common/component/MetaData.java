@@ -77,7 +77,7 @@ public abstract class MetaData implements Serializable
     protected String name;
 
     /** content MIME type specification */
-    protected Spec spec;
+    protected String spec;
 
     /** content encoding ie base64, hex, noenc */
     protected String encoding;
@@ -88,8 +88,8 @@ public abstract class MetaData implements Serializable
     /** content character set */
     protected String charset;
 
-//    /** content size */
-//    protected Long size = new Long(0L);
+    /** content size */
+    protected Long size = new Long(0L);
 
     /** content calculated checksum */
     protected String checksum;
@@ -292,7 +292,7 @@ public abstract class MetaData implements Serializable
      * 
      * @param spec spec to set
      */
-    public void setSpec(final Spec spec)
+    public void setSpec(final String spec)
     {
         this.spec = spec;
         logger.debug("Spec set to [" + this.spec + "]."); //$NON-NLS-1$//$NON-NLS-2$
@@ -303,7 +303,7 @@ public abstract class MetaData implements Serializable
      * 
      * @return String
      */
-    public Spec getSpec()
+    public String getSpec()
     {
         logger.debug("Returning spec [" + this.spec + "]."); //$NON-NLS-1$//$NON-NLS-2$
         return this.spec;
@@ -375,32 +375,32 @@ public abstract class MetaData implements Serializable
         return this.charset;
     }
 
-//    /**
-//     * Setter for size attribute. This can be used to set the size attribute to an explicit value.
-//     * 
-//     * @param size size to set
-//     */
-//    public void setSize(final Long size)
-//    {
-//        this.size = size;
-//        logger.debug("Size set to [" + this.size + "]."); //$NON-NLS-1$ //$NON-NLS-2$
-//    }
+    /**
+     * Setter for size attribute. This can be used to set the size attribute to an explicit value.
+     * 
+     * @param size size to set
+     */
+    public void setSize(final Long size)
+    {
+        this.size = size;
+        logger.debug("Size set to [" + this.size + "]."); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
-//    /**
-//     * Utility setter for <code>size</code>.
-//     */
-//    public abstract void setSize();
+    /**
+     * Utility setter for <code>size</code>.
+     */
+    public abstract void setSize();
 
-//    /**
-//     * Getter for size
-//     * 
-//     * @return Long
-//     */
-//    public Long getSize()
-//    {
-//        logger.debug("Returning size [" + this.size + "]."); //$NON-NLS-1$//$NON-NLS-2$
-//        return this.size;
-//    }
+    /**
+     * Getter for size
+     * 
+     * @return Long
+     */
+    public Long getSize()
+    {
+        logger.debug("Returning size [" + this.size + "]."); //$NON-NLS-1$//$NON-NLS-2$
+        return this.size;
+    }
 
     /**
      * Setter for <code>checksum</code>. This can be used to set checksum to an explicit value as provided by the
@@ -642,6 +642,9 @@ public abstract class MetaData implements Serializable
         sb.append("]\n");//$NON-NLS-1$
         sb.append("Charset          = [");//$NON-NLS-1$
         sb.append(this.charset);
+        sb.append("]\n");//$NON-NLS-1$
+        sb.append("Size(bytes)      = [");//$NON-NLS-1$
+        sb.append(this.size);
         sb.append("]\n");//$NON-NLS-1$
         sb.append("Checksum (Hex)   = [");//$NON-NLS-1$
         sb.append(this.checksum);

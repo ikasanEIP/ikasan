@@ -52,13 +52,6 @@ public interface Payload extends MetaDataInterface
      * @return content of payload
      */
     public byte[] getContent();
-    
-    /**
-     * Get the content in a displayable form
-     * 
-     * @return displayable form of the content
-     */
-    public String getDisplayableContent();
 
     /**
      * Test the equality of two payload instances
