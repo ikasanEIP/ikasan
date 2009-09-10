@@ -123,61 +123,27 @@ public class EventTest
             Assert.assertEquals(eventPayload, clonePayload);
         }
         
-        Assert.assertEquals(clone.getNoNamespaceSchemaLocation(),
-                event.getNoNamespaceSchemaLocation());
-        
-        Assert.assertEquals(clone.getSchemaInstanceNSURI(),
-                event.getSchemaInstanceNSURI());
+
 
         Assert.assertEquals(clone.getId(),
                 event.getId());
 
-        Assert.assertTrue(clone.getTimestamp() != event.getTimestamp());
         Assert.assertEquals(clone.getTimestamp(),
                 event.getTimestamp());
 
-        Assert.assertEquals(clone.getTimestampFormat(),
-                event.getTimestampFormat());
-        
-        Assert.assertEquals(clone.getTimezone(),
-                event.getTimezone());
-        
-        Assert.assertTrue(clone.getPriority() != event.getPriority());
+
         Assert.assertEquals(clone.getPriority(),
                 event.getPriority());
         
         Assert.assertEquals(clone.getName(),
                 event.getName());
         
-        Assert.assertEquals(clone.getSpec(),
-                event.getSpec());
-        
-        Assert.assertEquals(clone.getEncoding(),
-                event.getEncoding());
-        
-        Assert.assertEquals(clone.getFormat(),
-                event.getFormat());
-        
-        Assert.assertEquals(clone.getCharset(),
-                event.getCharset());
-        
-        Assert.assertEquals(clone.getChecksum(),
-                event.getChecksum());
-        
-        Assert.assertEquals(clone.getChecksumAlg(),
-                event.getChecksumAlg());
+
         
         Assert.assertEquals(clone.getSrcSystem(),
                 event.getSrcSystem());
 
-        Assert.assertEquals(clone.getTargetSystems(),
-                event.getTargetSystems());
-
-        Assert.assertEquals(clone.getProcessIds(),
-                event.getProcessIds());
-
-        Assert.assertEquals(clone.getResubmissionInfo(),
-                event.getResubmissionInfo());
+ 
     }
 
     /**
@@ -213,22 +179,11 @@ public class EventTest
 
         Assert.assertEquals(childPayloads, spawned.getPayloads());
         
-        Assert.assertEquals(spawned.getNoNamespaceSchemaLocation(),
-                event.getNoNamespaceSchemaLocation());
-        
-        Assert.assertEquals(spawned.getSchemaInstanceNSURI(),
-                event.getSchemaInstanceNSURI());
-
+ 
         Assert.assertFalse(spawned.getId().equals(event.getId()));
 
         Assert.assertTrue(spawned.getTimestamp() != event.getTimestamp());
-        Assert.assertFalse(spawned.getTimestamp().equals(event.getTimestamp()));
 
-        Assert.assertEquals(spawned.getTimestampFormat(),
-                event.getTimestampFormat());
-        
-        Assert.assertEquals(spawned.getTimezone(),
-                event.getTimezone());
         
         Assert.assertEquals(spawned.getPriority(),
                 event.getPriority());
@@ -236,35 +191,12 @@ public class EventTest
         Assert.assertEquals(spawned.getName(),
                 event.getName());
         
-        Assert.assertEquals(spawned.getSpec(),
-                event.getSpec());
-        
-        Assert.assertEquals(spawned.getEncoding(),
-                event.getEncoding());
-        
-        Assert.assertEquals(spawned.getFormat(),
-                event.getFormat());
-        
-        Assert.assertEquals(spawned.getCharset(),
-                event.getCharset());
-        
-        Assert.assertEquals(spawned.getChecksum(),
-                event.getChecksum());
-        
-        Assert.assertEquals(spawned.getChecksumAlg(),
-                event.getChecksumAlg());
+   
         
         Assert.assertEquals(spawned.getSrcSystem(),
                 event.getSrcSystem());
 
-        Assert.assertEquals(spawned.getTargetSystems(),
-                event.getTargetSystems());
-
-        Assert.assertEquals(spawned.getProcessIds(),
-                event.getProcessIds());
-
-        Assert.assertEquals(spawned.getResubmissionInfo(),
-                event.getResubmissionInfo());
+      
     }
 
  
