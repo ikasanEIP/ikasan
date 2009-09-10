@@ -1,6 +1,5 @@
 package org.ikasan.framework.event.serialisation;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import javax.jms.Session;
 
 import junit.framework.Assert;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
@@ -46,7 +44,7 @@ public class JmsMessageEventSerialiserTest {
 	private PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
 
 	protected void testSerialisationDesrialisation(
-			JmsMessageEventSerialiser jmsMessageEventSerialiser)
+			JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser)
 			throws JMSException {
 
 		// setup the Event with all important fields
@@ -94,10 +92,10 @@ public class JmsMessageEventSerialiserTest {
 			}
 		});
 
-		MapMessage producedMapMessage = jmsMessageEventSerialiser.toMapMessage(
+		MapMessage producedMapMessage = jmsMessageEventSerialiser.toMessage(
 				original, session);
 
-		Event reconstituted = jmsMessageEventSerialiser.fromMapMessage(
+		Event reconstituted = jmsMessageEventSerialiser.fromMessage(
 				producedMapMessage, "moduleName", "componentName");
 
 		// check that the reconstituted event is equivalent to the original
@@ -109,7 +107,7 @@ public class JmsMessageEventSerialiserTest {
 
 	@Test
 	public void testDefaultJmsMessageEventSerialiser() throws JMSException {
-		DefaultJmsMessageEventSerialiser defaultJmsMessageEventSerialiser = new DefaultJmsMessageEventSerialiser();
+		DefaultMapMessageEventSerialiser defaultJmsMessageEventSerialiser = new DefaultMapMessageEventSerialiser();
 
 		defaultJmsMessageEventSerialiser.setPayloadFactory(payloadFactory);
 		testSerialisationDesrialisation(defaultJmsMessageEventSerialiser);

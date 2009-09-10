@@ -66,7 +66,7 @@ public class EventMessageDrivenInitiatorTest {
         }
     };
 	
-	JmsMessageEventSerialiser jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
+	JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
 	
 	Flow flow = mockery.mock(Flow.class);
 	
@@ -91,7 +91,7 @@ public class EventMessageDrivenInitiatorTest {
             {
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
             	
-                one(jmsMessageEventSerialiser).fromMapMessage(mapMessage, moduleName, name);
+                one(jmsMessageEventSerialiser).fromMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
                 one(event).getId();will(returnValue("eventId"));
                 one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));

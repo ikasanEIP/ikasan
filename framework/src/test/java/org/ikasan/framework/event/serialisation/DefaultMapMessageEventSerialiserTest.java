@@ -23,12 +23,12 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
-public class DefaultJmsMessageEventSerialiserTest {
+public class DefaultMapMessageEventSerialiserTest {
 
 	/**
 	 * Class under test
 	 */
-	private DefaultJmsMessageEventSerialiser defaultJmsMessageEventSerialiser;
+	private DefaultMapMessageEventSerialiser defaultJmsMessageEventSerialiser;
 	
 	
 	private Mockery mockery = new Mockery()
@@ -43,36 +43,36 @@ public class DefaultJmsMessageEventSerialiserTest {
 	final Payload payload1 = mockery.mock(Payload.class, "payload1");
 	final Payload payload2 = mockery.mock(Payload.class, "payload2");
 	
-	final String payload1Prefix = DefaultJmsMessageEventSerialiser.PAYLOAD_PREFIX+0;
-	final String payload2Prefix = DefaultJmsMessageEventSerialiser.PAYLOAD_PREFIX+1;
+	final String payload1Prefix = DefaultMapMessageEventSerialiser.PAYLOAD_PREFIX+0;
+	final String payload2Prefix = DefaultMapMessageEventSerialiser.PAYLOAD_PREFIX+1;
 	
 	//payload content
-	final String payload1ContentKey = payload1Prefix + DefaultJmsMessageEventSerialiser.PAYLOAD_CONTENT_SUFFIX;
-	final String payload2ContentKey = payload2Prefix + DefaultJmsMessageEventSerialiser.PAYLOAD_CONTENT_SUFFIX;
+	final String payload1ContentKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_CONTENT_SUFFIX;
+	final String payload2ContentKey = payload2Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_CONTENT_SUFFIX;
 	final byte[] payload1Content = "payload1Content".getBytes();
 	final byte[] payload2Content = "payload2Content".getBytes();
 	
 	//payload srcSystem
-	final String payload1SrcSystemKey = payload1Prefix + DefaultJmsMessageEventSerialiser.PAYLOAD_SRC_SYSTEM_SUFFIX;
-	final String payload2SrcSystemKey = payload2Prefix + DefaultJmsMessageEventSerialiser.PAYLOAD_SRC_SYSTEM_SUFFIX;
+	final String payload1SrcSystemKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_SRC_SYSTEM_SUFFIX;
+	final String payload2SrcSystemKey = payload2Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_SRC_SYSTEM_SUFFIX;
 	final String payload1SrcSystem = "payload1SrcSystem";
 	final String payload2SrcSystem = "payload2SrcSystem";
 	
 	//payload name
-	final String payload1NameKey = payload1Prefix + DefaultJmsMessageEventSerialiser.PAYLOAD_NAME_SUFFIX;
-	final String payload2NameKey = payload2Prefix + DefaultJmsMessageEventSerialiser.PAYLOAD_NAME_SUFFIX;
+	final String payload1NameKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_NAME_SUFFIX;
+	final String payload2NameKey = payload2Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_NAME_SUFFIX;
 	final String payload1Name = "payload1Name";
 	final String payload2Name = "payload2Name";	
 	
 	//event id
-	final String eventIdKey = DefaultJmsMessageEventSerialiser.EVENT_FIELD_ID;
+	final String eventIdKey = DefaultMapMessageEventSerialiser.EVENT_FIELD_ID;
 	final String eventId = "eventId";
 	
 
 
 	
-	public DefaultJmsMessageEventSerialiserTest(){
-		defaultJmsMessageEventSerialiser = new DefaultJmsMessageEventSerialiser();
+	public DefaultMapMessageEventSerialiserTest(){
+		defaultJmsMessageEventSerialiser = new DefaultMapMessageEventSerialiser();
 		defaultJmsMessageEventSerialiser.setPayloadFactory(payloadFactory);
 	}
 	
@@ -99,7 +99,7 @@ public class DefaultJmsMessageEventSerialiserTest {
     	
     	
     	Map<String, Object> map = new HashMap<String, Object>();
-    	map.put(DefaultJmsMessageEventSerialiser.EVENT_FIELD_ID, eventId);
+    	map.put(DefaultMapMessageEventSerialiser.EVENT_FIELD_ID, eventId);
     	
     	//payload content
     	map.put(payload1ContentKey, payload1Content);
@@ -125,7 +125,7 @@ public class DefaultJmsMessageEventSerialiserTest {
             {
             	one(mapMessage).getMapNames();will(returnValue(mapNamesEnumeration));
             	
-            	one(mapMessage).getString(DefaultJmsMessageEventSerialiser.EVENT_FIELD_ID);will(returnValue(eventId));
+            	one(mapMessage).getString(DefaultMapMessageEventSerialiser.EVENT_FIELD_ID);will(returnValue(eventId));
             	
             	//payload content
             	one(mapMessage).getBytes(payload1ContentKey);will(returnValue(payload1Content));
@@ -147,7 +147,7 @@ public class DefaultJmsMessageEventSerialiserTest {
             }
         });
     	
-    	Event event = defaultJmsMessageEventSerialiser.fromMapMessage(mapMessage, moduleName, componentName);
+    	Event event = defaultJmsMessageEventSerialiser.fromMessage(mapMessage, moduleName, componentName);
     	
     	Assert.assertEquals("event should have id, obtained from appropriate field in mapMessage", eventId, event.getId());
     	
@@ -206,7 +206,7 @@ public class DefaultJmsMessageEventSerialiserTest {
 
             }
         });
-        Assert.assertEquals("produced MapMessage should be that obtained from session",mapMessage, defaultJmsMessageEventSerialiser.toMapMessage(event, session));
+        Assert.assertEquals("produced MapMessage should be that obtained from session",mapMessage, defaultJmsMessageEventSerialiser.toMessage(event, session));
         
         mockery.assertIsSatisfied();
 	}
