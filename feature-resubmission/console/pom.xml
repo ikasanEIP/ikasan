@@ -3,7 +3,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>console</artifactId>
     <packaging>war</packaging>
-    <version>0.7.4-SNAPSHOT</version>
+    <version>0.8.0-SNAPSHOT</version>
     <name>Ikasan Console</name>
     <organization>
         <name>Ikasan</name>
@@ -104,9 +104,7 @@
     <issueManagement>
         <url>http://open.jira.com/browse/IKASAN</url>
     </issueManagement>
-    <scm>
-        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
-    </scm>
+
     <build>
         <plugins>
             <plugin>
@@ -210,7 +208,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.7.2</version>
+            <version>0.8.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
