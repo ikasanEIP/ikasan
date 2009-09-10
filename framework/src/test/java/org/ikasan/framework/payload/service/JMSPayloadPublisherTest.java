@@ -44,7 +44,6 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.PayloadOperationException;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser;
@@ -122,10 +121,7 @@ public class JMSPayloadPublisherTest extends TestCase
      */
     final JMSException jmsException = new JMSException(null);
 
-    /**
-     * EventSerialisationException
-     */
-    final PayloadOperationException payloadOperationException = new PayloadOperationException();
+
     
     /**
      * mock of the jndiDestinationFactory
@@ -302,9 +298,8 @@ public class JMSPayloadPublisherTest extends TestCase
      * {@link org.ikasan.framework.payload.service.JMSPayloadPublisher#publish(org.ikasan.common.Payload)}
      * .
      * @throws JMSException thrown when error publishing a message.
-     * @throws PayloadOperationException thwon when error creating a message from payload
      */
-    public void testPublish_throwsResourceExceptionWhenClosingConnectionThrowsJMSException() throws JMSException, PayloadOperationException
+    public void testPublish_throwsResourceExceptionWhenClosingConnectionThrowsJMSException() throws JMSException
     {
         mockery.checking(new Expectations()
         {

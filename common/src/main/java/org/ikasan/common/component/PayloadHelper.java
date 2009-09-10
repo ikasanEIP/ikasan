@@ -149,117 +149,117 @@ public class PayloadHelper
     
 
 
-    /**
-     * Returns a Map of the payload attributes as their native types.
-     *
-     * @param payload
-     * @return Map
-     * @throws PayloadOperationException
-     */
-    public static Map<String,Object> getPayloadMap(Payload payload)
-        throws PayloadOperationException
-    {
-        return getPayloadMap(payload, false);
-    }
+//    /**
+//     * Returns a Map of the payload attributes as their native types.
+//     *
+//     * @param payload
+//     * @return Map
+//     * @throws PayloadOperationException
+//     */
+//    public static Map<String,Object> getPayloadMap(Payload payload)
+//        throws PayloadOperationException
+//    {
+//        return getPayloadMap(payload, false);
+//    }
 
-    /**
-     * Returns a Map of the payload attributes either as their native types or
-     * as Strings.
-     *
-     * @param payload incoming payload to map attributes
-     * @param toString - determines whether the objects populate the map
-     *            natively (false) or as Strings (true)
-     * @return Map
-     * @throws PayloadOperationException
-     */
-    public static Map<String,Object> getPayloadMap(Payload payload, boolean toString)
-        throws PayloadOperationException
-    {
-        Map<String,Object> payloadMap = new HashMap<String,Object>();
-
-        try
-        {
-            //
-            // use introspection to get bean attributes
-            BeanInfo info = Introspector.getBeanInfo(payload.getClass(), Object.class);
-
-            //
-            // iterate over the payload attributes
-            for (PropertyDescriptor pd : info.getPropertyDescriptors())
-            {
-                Object [] methodParams = {};
-                Object obj = pd.getReadMethod().invoke(payload, methodParams);
-
-                //
-                // no valid data to return
-                if (obj == null) continue;
-
-                //
-                // got data - can we populate the map with it
-                if (toString)
-                {
-                    if (obj instanceof Boolean   ||
-                        obj instanceof Byte      ||
-                        obj instanceof Short     ||
-                        obj instanceof Character ||
-                        obj instanceof Integer   ||
-                        obj instanceof Long      ||
-                        obj instanceof Float     ||
-                        obj instanceof Double)
-                    {
-                        payloadMap.put(pd.getName(), obj.toString());
-                    }
-                    else if (obj instanceof String)
-                    {
-                        payloadMap.put(pd.getName(), obj);
-                    }
-                    else if (obj instanceof byte[])
-                    {
-                        payloadMap.put(pd.getName(), new String((byte[])obj));
-                    }
-                    else
-                    {
-                        logger.warn("Unsupported attribute found in " //$NON-NLS-1$
-                                  + payload.getClass().getName()
-                                  + " on creation of Map [" //$NON-NLS-1$
-                                  + obj.getClass().getName() + "]. This " //$NON-NLS-1$
-                                  + "attribute of the payload will be ignored."); //$NON-NLS-1$
-                    }
-                }
-                else
-                {
-                    payloadMap.put(pd.getName(), obj);
-                }
-            }
-
-            return payloadMap;
-        }
-        catch (IntrospectionException e)
-        {
-            throw new PayloadOperationException(e);
-        }
-        catch (InvocationTargetException e)
-        {
-            Throwable cause = e.getCause();
-            if (cause != null)
-            {
-                // Go through the possible (checked) exceptions
-                if (cause instanceof PayloadOperationException)
-                {
-                    throw (PayloadOperationException)cause;
-                }
-
-                throw new PayloadOperationException(cause);
-            }
-
-            throw new PayloadOperationException(e);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new PayloadOperationException(e);
-        }
-
-    }
+//    /**
+//     * Returns a Map of the payload attributes either as their native types or
+//     * as Strings.
+//     *
+//     * @param payload incoming payload to map attributes
+//     * @param toString - determines whether the objects populate the map
+//     *            natively (false) or as Strings (true)
+//     * @return Map
+//     * @throws PayloadOperationException
+//     */
+//    public static Map<String,Object> getPayloadMap(Payload payload, boolean toString)
+//        throws PayloadOperationException
+//    {
+//        Map<String,Object> payloadMap = new HashMap<String,Object>();
+//
+//        try
+//        {
+//            //
+//            // use introspection to get bean attributes
+//            BeanInfo info = Introspector.getBeanInfo(payload.getClass(), Object.class);
+//
+//            //
+//            // iterate over the payload attributes
+//            for (PropertyDescriptor pd : info.getPropertyDescriptors())
+//            {
+//                Object [] methodParams = {};
+//                Object obj = pd.getReadMethod().invoke(payload, methodParams);
+//
+//                //
+//                // no valid data to return
+//                if (obj == null) continue;
+//
+//                //
+//                // got data - can we populate the map with it
+//                if (toString)
+//                {
+//                    if (obj instanceof Boolean   ||
+//                        obj instanceof Byte      ||
+//                        obj instanceof Short     ||
+//                        obj instanceof Character ||
+//                        obj instanceof Integer   ||
+//                        obj instanceof Long      ||
+//                        obj instanceof Float     ||
+//                        obj instanceof Double)
+//                    {
+//                        payloadMap.put(pd.getName(), obj.toString());
+//                    }
+//                    else if (obj instanceof String)
+//                    {
+//                        payloadMap.put(pd.getName(), obj);
+//                    }
+//                    else if (obj instanceof byte[])
+//                    {
+//                        payloadMap.put(pd.getName(), new String((byte[])obj));
+//                    }
+//                    else
+//                    {
+//                        logger.warn("Unsupported attribute found in " //$NON-NLS-1$
+//                                  + payload.getClass().getName()
+//                                  + " on creation of Map [" //$NON-NLS-1$
+//                                  + obj.getClass().getName() + "]. This " //$NON-NLS-1$
+//                                  + "attribute of the payload will be ignored."); //$NON-NLS-1$
+//                    }
+//                }
+//                else
+//                {
+//                    payloadMap.put(pd.getName(), obj);
+//                }
+//            }
+//
+//            return payloadMap;
+//        }
+//        catch (IntrospectionException e)
+//        {
+//            throw new PayloadOperationException(e);
+//        }
+//        catch (InvocationTargetException e)
+//        {
+//            Throwable cause = e.getCause();
+//            if (cause != null)
+//            {
+//                // Go through the possible (checked) exceptions
+//                if (cause instanceof PayloadOperationException)
+//                {
+//                    throw (PayloadOperationException)cause;
+//                }
+//
+//                throw new PayloadOperationException(cause);
+//            }
+//
+//            throw new PayloadOperationException(e);
+//        }
+//        catch (IllegalAccessException e)
+//        {
+//            throw new PayloadOperationException(e);
+//        }
+//
+//    }
 
     /**
      * Getter for priority
@@ -435,23 +435,15 @@ public class PayloadHelper
      * if so, move this method to Event
      */
     public static List<byte[]> getPayloadsContent(List<Payload> payloads)
-        throws PayloadOperationException
     {
         List<byte[]> payloadContent = new ArrayList<byte[]>();
 
         // Iterate over payloads and populate list with content
-        try
-        {
+
             for (Payload payload : payloads)
             {
                 payloadContent.add(payload.getContent());
             }
-        }
-        catch (RuntimeException e)
-        {
-            throw new PayloadOperationException(
-                "Failed to get Payload Content!", e); //$NON-NLS-1$
-        }
 
         return payloadContent;
     }
@@ -499,37 +491,31 @@ public class PayloadHelper
         return sb.toString();
     }
 
-    /**
-     * Get the attributes of the transported payload arraylist
-     *
-     * @param payloads
-     * @return attributes of payloads
-     * @throws PayloadOperationException
-     */
-    public static List<Map<String, Object>> getPayloadsAttributes(List<Payload> payloads)
-        throws PayloadOperationException
-    {
-        List<Map<String, Object>> payloadAttributes = new ArrayList<Map<String, Object>>();
-
-        try
-        {
-            // Iterate over payloads and populate list with content
-            for (Payload payload : payloads)
-            {
-                // Need to get Map<String,String>
-                boolean attributesToString = true;
-                Map<String, Object> payloadMap = getPayloadMap(payload, attributesToString);
-                payloadAttributes.add(payloadMap);
-            }
-        }
-        catch (RuntimeException e)
-        {
-            throw new PayloadOperationException(
-                "Failed to get Payload as an attribute map", e); //$NON-NLS-1$
-        }
-
-        return payloadAttributes;
-    }
+//    /**
+//     * Get the attributes of the transported payload arraylist
+//     *
+//     * @param payloads
+//     * @return attributes of payloads
+//     * @throws PayloadOperationException
+//     */
+//    public static List<Map<String, Object>> getPayloadsAttributes(List<Payload> payloads)
+//        throws PayloadOperationException
+//    {
+//        List<Map<String, Object>> payloadAttributes = new ArrayList<Map<String, Object>>();
+//
+//
+//            // Iterate over payloads and populate list with content
+//            for (Payload payload : payloads)
+//            {
+//                // Need to get Map<String,String>
+//                boolean attributesToString = true;
+//                Map<String, Object> payloadMap = getPayloadMap(payload, attributesToString);
+//                payloadAttributes.add(payloadMap);
+//            }
+//        
+//        
+//        return payloadAttributes;
+//    }
 
 
 
