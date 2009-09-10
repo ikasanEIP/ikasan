@@ -69,32 +69,12 @@
 	</tr>	
 	
 	<tr>
-		<th><fmt:message key="wiretap_event_payload_id"/>
-		<%--
-		          <c:choose>
-                <c:when test="${wiretapEvent.previousByPayload != null}">
-            <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
-                </c:when>
-                <c:otherwise>
-                </c:otherwise>
-            </c:choose>
-            &nbsp;
-            <c:choose>
-                <c:when test="${wiretapEvent.nextByPayload != null}">
-            <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
-                </c:when>
-                <c:otherwise>
-                </c:otherwise>
-            </c:choose>
-            --%>                 
-		
-		
-		</th>
+		<th><fmt:message key="wiretap_event_payload_id"/></th>
 		<td><c:out value="${wiretapEvent.payloadId}" /></td>
 		<td>
 	 		<c:choose>
 				<c:when test="${wiretapEvent.previousByPayload != null}">
-			<a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
+			        <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
 				</c:when>
 				<c:otherwise>
 				</c:otherwise>
@@ -102,7 +82,7 @@
 			&nbsp;
 			<c:choose>
 				<c:when test="${wiretapEvent.nextByPayload != null}">
-			<a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
+			        <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
 				</c:when>
 				<c:otherwise>
 				</c:otherwise>
@@ -127,6 +107,16 @@
                 </td>
             </c:otherwise>
         </c:choose>
+    </tr>
+
+    <tr>
+        <th><fmt:message key="wiretap_event_download_payload"/></th>
+        <td colspan="2">
+            <!-- This link will download the payload content -->
+            <a href="downloadPayloadContent.htm?eventId=<c:out value="${wiretapEvent.id}" />">
+                <fmt:message key="wiretap_event_download_payload"/>
+            </a>
+        </td>
     </tr>
 
 	<tr>
