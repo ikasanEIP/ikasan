@@ -36,6 +36,7 @@ import org.ikasan.framework.initiator.Initiator;
 
 /**
  * A simple representation of a Module
+ * 
  * @author Ikasan Development Team
  */
 public class SimpleModule implements Module
@@ -45,7 +46,7 @@ public class SimpleModule implements Module
 
     /** Module name */
     protected String name;
-    
+
     /** Human readable description of this module */
     private String description;
 
@@ -89,7 +90,6 @@ public class SimpleModule implements Module
      */
     public Initiator getInitiator(String initiatorName)
     {
-
         Initiator initiator = null;
         for (Initiator thisInitiator : initiators)
         {
@@ -101,6 +101,7 @@ public class SimpleModule implements Module
         }
         return initiator;
     }
+
     /**
      * @return the initiators
      */
@@ -109,6 +110,12 @@ public class SimpleModule implements Module
         return new ArrayList<Initiator>(initiators);
     }
 
+    /**
+     * Get the list of flows for this SimpleModule.  Interrogates the Initiators in 
+     * order to get this information.
+     * 
+     * @return List of flows for this SimpleModule
+     */
     public Map<String, Flow> getFlows()
     {
         Map<String, Flow> result = new HashMap<String, Flow>();
@@ -120,42 +127,52 @@ public class SimpleModule implements Module
         return result;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.ikasan.framework.module.Module#getDescription()
      */
     public String getDescription()
     {
         return description;
     }
-    
+
     /**
      * Setter for description
      * 
-     * @param description
+     * @param description - Description of this Module
      */
-    public void setDescription(String description){
+    public void setDescription(String description)
+    {
         this.description = description;
     }
-    
+
     /**
      * Required for ACL security
      * 
-     * @return
+     * @return The module Id
      */
-    public Long getId(){
+    public Long getId()
+    {
         Long id = new Long(name.hashCode());
         return id;
     }
-    
-    public String toString(){
-        StringBuffer sb = new StringBuffer(getClass().getName()+" [");
-        
-        sb.append("name=");sb.append(name);sb.append(",");
-        sb.append("description=");sb.append(description);sb.append(",");
-        sb.append("initiators=");sb.append(initiators);
 
+    /**
+     * Return a string representation of a SimpleModule
+     * @return String representation of the SimpleModule
+     */
+    @Override
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer(getClass().getName() + " [");
+        sb.append("name=");
+        sb.append(name);
+        sb.append(",");
+        sb.append("description=");
+        sb.append(description);
+        sb.append(",");
+        sb.append("initiators=");
+        sb.append(initiators);
         sb.append("]");
         return sb.toString();
-    
     }
 }
