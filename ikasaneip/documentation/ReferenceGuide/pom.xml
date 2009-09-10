@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>reference-guide</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.8.0-SNAPSHOT</version>
     <packaging>jdocbook</packaging>
     <name>Ikasan Enterprise Integration Reference Guide</name>
     <pluginRepositories>
@@ -16,9 +16,7 @@
             <url>http://download.java.net/maven/2</url>
         </pluginRepository>
     </pluginRepositories>
-  <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/reference-guide-0.7.1</connection>
-  </scm>
+
     <build>
         <plugins>
             <plugin>
