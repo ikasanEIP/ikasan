@@ -26,8 +26,6 @@
  */
 package org.ikasan.framework.initiator;
 
-import java.util.Set;
-
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.InitiatorOperationException;
 
@@ -109,19 +107,4 @@ public interface Initiator
      * @return no of attempts made to retry
      */
     public Integer getRetryCount();
-    
-	/**
-	 * Returns true if Initiator supports exclusions
-	 * 
-	 * @return true if exclusions are supported by this Initiator
-	 */
-	public boolean supportsExclusions();
-	/**
-	 * Accessor for exclusions
-	 * 
-	 * @return set of eventIds noted for exclusion when next encountered
-	 */
-	public Set<String> getExclusions();
-	
-	
 }

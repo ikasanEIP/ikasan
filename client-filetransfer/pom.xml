@@ -1,9 +1,9 @@
-<!-- 
+<!--
 # //
 # //
 # // $Id$
 # // $URL$
-# // 
+# //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -21,20 +21,20 @@
 # // Lesser General Public License for more details.
 # //
 # // You should have received a copy of the GNU Lesser General Public
-# // License along with this software; if not, write to the 
-# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // License along with this software; if not, write to the
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
 # // or see the FSF site: http://www.fsfeurope.org/.
 # // ====================================================================
 # //
 # // Author:  Ikasan Development Team
-# // 
+# //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-client-filetransfer</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.7.4-SNAPSHOT</version>
   <name>Client Filetransfer</name>
   <organization>
     <name>Ikasan</name>
@@ -132,7 +132,7 @@
   </issueManagement>
   -->
   <scm>
-    <connection>scm:svn:svn+ssh://svc-vcsp/architecture/ikasan/trunk/client-filetransfer</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
   <build>
     <plugins>
@@ -166,8 +166,8 @@
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -192,47 +192,47 @@
     </plugins>
   </reporting>
   <dependencies>
-    <!-- Common functioinality for Ikasan -->
+    <!-- Common functionality for Ikasan -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Common functioinality for Ikasan Connector Clients-->
+    <!-- Common functionality for Ikasan Connector Clients-->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-client-connection</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
     </dependency>
     <!-- base connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-base</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
       <scope>provided</scope>
     </dependency>
     <!-- Filetransfer connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
       <scope>provided</scope>
     </dependency>
     <!-- Framework -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
       <scope>provided</scope>
     </dependency>
     <!-- j2ee -->
-	<dependency>
-    	<groupId>geronimo-spec</groupId>
-    	<artifactId>geronimo-spec-j2ee</artifactId>
-    	<version>1.4-rc3</version>
-		<scope>provided</scope>
-	</dependency>
+  <dependency>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-j2ee</artifactId>
+      <version>1.4-rc3</version>
+    <scope>provided</scope>
+  </dependency>
     <!-- TODO We're not explicitly dependent on this, because Spring transitively pulls it in -->
     <!-- Tests fail if not included -->
     <dependency>
@@ -274,8 +274,8 @@
       <artifactId>jboss-jta</artifactId>
       <version>4.2.3.SP7</version>
       <scope>test</scope>
-    </dependency>  
-    
+    </dependency>
+
     <!-- For persisting information, testing only -->
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -296,7 +296,7 @@
       <url>http://repository.jboss.com/maven2</url>
     </repository>
   </repositories>
-    
+
   <distributionManagement>
       <repository>
           <id>ikasaneip-releases</id>

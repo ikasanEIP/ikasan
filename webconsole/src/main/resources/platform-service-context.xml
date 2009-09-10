@@ -83,33 +83,48 @@
 		<constructor-arg ref="moduleService" />
 	</bean>
 	
-	<bean id="errorLoggingService" class="org.ikasan.framework.error.service.DefaultErrorLoggingServiceImpl">
-		<constructor-arg ref="errorOccurrenceDao" />
-	</bean>
-	
-	<!-- transaction configuration for errorLoggingService -->
-    <aop:config>
-        <aop:pointcut id="errorLoggingInvocation" expression="execution(* org.ikasan.framework.error.service.ErrorLoggingService.logError(..))" />
-        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorLoggingInvocation" />
-    </aop:config>
-	
-	<bean id="excludedEventService" class="org.ikasan.framework.event.exclusion.service.ExcludedEventServiceImpl">
-		<constructor-arg ref="excludedEventDao" />
-		<constructor-arg>
-			<list>
-				<!-- listeners will go here... -->
-			</list>
-		</constructor-arg>
-		<constructor-arg ref="moduleService" />
-		<property name="transactionManager" ref="rawTransactionManager" />
-	</bean>
-	
-	<!-- transaction configuration for excludedEventService -->
-    <aop:config>
-        <aop:pointcut id="initiatorInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.resubmit(..))" />
-        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="initiatorInvocation" />
-    </aop:config>
+	<bean id="initiatorCommandDao"
+        class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorCommandDao">
+        <property name="sessionFactory" ref="initiatorCommandHibernateSessionFactory" />
+    </bean>
 
+	<bean id="wiretapDao"
+		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
+
+	<bean id="triggerDao"
+		class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
+
+	<bean id="wiretapHibernateSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasanAdminXaDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>WiretapEventImpl.hbm.xml</value>
+				<value>Trigger.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
+	
+	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true"/>
+		<property name="location" value="classpath:ikasan-hibernate.properties"/>
+	</bean>
+	
+	<bean id="initiatorCommandHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>InitiatorCommand.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 
     
 	<bean id="platformScheduler"
@@ -118,7 +133,6 @@
 		<property name="triggers">
 			<list>
 				<ref bean="wiretapEventHousekeepingTrigger" />
-				<ref bean="loggedErrorHousekeepingTrigger" />
 			</list>
 		</property>
 	</bean>
@@ -136,23 +150,6 @@
 		<property name="name" value="WiretapEvent Housekeeping Trigger" />
 		<!-- run every morning at 6 AM -->
 		<!-- <property name="cronExpression" value="0 0 6 * * ?" />-->
-		<property name="cronExpression" value="0 0/2 * * * ?" />
-		<!--
-			every 2 mins
-		-->
-	</bean>
-	
-		<bean id="loggedErrorHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<bean
-				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-				<property name="targetObject" ref="errorLoggingService" />
-				<property name="targetMethod" value="housekeep" />
-				<property name="concurrent" value="false" />
-				<property name="name" value="Error Log Housekeeping" />
-			</bean>
-		</property>
-		<property name="name" value="Error Log Housekeeping Trigger" />
 		<property name="cronExpression" value="0 0/2 * * * ?" />
 		<!--
 			every 2 mins
@@ -240,10 +237,6 @@
   <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
     <property name="transactionManagerName" value="java:/TransactionManager"/>
     <property name="userTransactionName" value="UserTransaction"/>
-  </bean>
-  
-  <bean id="rawTransactionManager" class="org.springframework.jndi.JndiObjectFactoryBean">
-  	<property name="jndiName" value="java:/TransactionManager"/>
   </bean>
 
     <!-- ###################################### -->

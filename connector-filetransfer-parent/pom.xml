@@ -30,20 +30,19 @@
 # // Author:  Ikasan Development Team
 # // 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-connector-filetransfer-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.8.0-SNAPSHOT</version>
-	<name>Connector FTP Resource Adapter</name>
+	<version>0.7.4-SNAPSHOT</version>
+	<name>Connector File Transfer Resource Adapter Parent</name>
 	<url>http://www.ikasan.org</url>
 
 
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/connector-filetransfer-parent</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
 	<build>
 		<plugins>
@@ -100,8 +99,8 @@
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -130,14 +129,14 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
       <scope>provided</scope>
     </dependency>
     <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.7.2</version>
      <!--  <scope>provided</scope> -->
     </dependency>
     <!-- J2EE -->

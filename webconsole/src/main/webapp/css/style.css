@@ -5,7 +5,7 @@
 
 body {
 	background: #F0F0F0;
-	font: .74em "Trebuchet MS",Verdana,Arial,sans-serif;
+	font: .74em "Trebuchet MS" Verdana, Arial, sans-serif;
 	line-height: 1.5em;
 }
 
@@ -90,7 +90,6 @@ input.controlButton {
 .listTable {
 	border: 1px solid #E1E1E1;
 	border-collapse: collapse;
-	float: left;
 }
 
 .listTable thead tr {
@@ -387,9 +386,6 @@ form.fancydataform fieldset li {
 	width: 100%;
 }
 
-#exclusionsSearchResults {
-	width: 100%;
-}
 #flowEventTriggerParameters {
 	width: 100%;
 }
@@ -421,8 +417,4 @@ form.fancydataform fieldset li {
 #initiatorStateControl {
     font-size: 16px;
     font-weight: bold;
-}
-
-#excludedEventErrorOccurrences {
-	list-style:decimal inside;
 }

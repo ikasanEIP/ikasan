@@ -66,25 +66,10 @@
         }
     }
 
-    /* 
-     * A function to show/hide the search form section.
-     */
-    function showHideSearchForm() {
-        if (document.getElementById('searchForm').style.display == "")
-        {
-            document.getElementById('searchForm').style.display = "none";
-        }
-        else
-        {
-            document.getElementById('searchForm').style.display = "";
-        }
-    }
-
   </script>
 
 <div class="middle">
-    <a href="javascript:showHideSearchForm()">Show/Hide Search Form</a>
-    <div id="searchForm">
+
     <form method="get" id="wiretapSearchForm" action="" class="dataform fancydataform">
 
         <c:if test="${errors != ''}">
@@ -166,7 +151,6 @@
             <input type="submit" value="Search for Events" class="controlButton"/>
         </p>
     </form>
-    </div>
 
     <%@ include file="/WEB-INF/jsp/pagedResultsHeader.jsp"%>
     

@@ -145,7 +145,7 @@ public class XMLReaderTransformerTest
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-                one(payload).setSpec(Spec.TEXT_XML);
+                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
 

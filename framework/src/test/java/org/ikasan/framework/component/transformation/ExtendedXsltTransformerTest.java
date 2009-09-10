@@ -138,7 +138,7 @@ public class ExtendedXsltTransformerTest
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-                one(payload).setSpec(Spec.TEXT_XML);
+                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
         ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null, xmlReader);
@@ -230,7 +230,7 @@ public class ExtendedXsltTransformerTest
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-                one(payload).setSpec(Spec.TEXT_XML);
+                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
         ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null);

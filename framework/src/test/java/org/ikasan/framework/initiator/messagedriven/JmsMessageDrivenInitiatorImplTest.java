@@ -35,14 +35,11 @@ import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.FlowInvocationContext;
-import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorState;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -79,7 +76,7 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private TextMessage textMessage = mockTextMessage();
 
-    //private IkasanExceptionAction rollForwardStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
+    private IkasanExceptionAction rollForwardStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
 
     private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
 
@@ -91,7 +88,6 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private IkasanExceptionAction retryZeroAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 0);
 
-    private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
     /**
      * System under test
      */
@@ -101,7 +97,7 @@ public class JmsMessageDrivenInitiatorImplTest
     {
 
 
-        stubJmsMessageDrivenInitiatorImpl = new StubJmsMessageDrivenInitiatorImpl("moduleName", initiatorName, flow, exceptionHandler);
+        stubJmsMessageDrivenInitiatorImpl = new StubJmsMessageDrivenInitiatorImpl("moduleName", initiatorName, flow);
         mockery.checking(new Expectations()
         {
             {
@@ -193,14 +189,11 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-                one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
+                one(flow).invoke(eventFromTextMessage);
                 will(returnValue(null));
             }
         });
         stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
-        
-        
         mockery.assertIsSatisfied();
     }
 
@@ -231,35 +224,16 @@ public class JmsMessageDrivenInitiatorImplTest
     @Test
     public void testOnMessage_stopsTheInitiatorInResponseToFlowReturningStopAction()
     {
-    	final Throwable throwable = new RuntimeException();
-    	
-    	
         mockery.checking(new Expectations()
         {
             {
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
-                will(throwException(throwable));
-            	
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
-            	will(returnValue(rollbackStopAction));
-                
-                
-                
-                
+                one(flow).invoke(eventFromTextMessage);
+                will(returnValue(rollForwardStopAction));
                 one(messageListenerContainer).stop();
             }
         });
         monitorExpectsStoppedInError();
-        AbortTransactionException abortTransactionException = null;
-        try{
-        	stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
-        	fail();
-        } catch(AbortTransactionException exception){
-        	abortTransactionException = exception;
-        }
-        Assert.assertNotNull(abortTransactionException);
-        
+        stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
         mockery.assertIsSatisfied();
     }
 
@@ -283,19 +257,11 @@ public class JmsMessageDrivenInitiatorImplTest
     @Test
     public void testOnMessage_stopsTheInitiatorAndThrowsRuntimeExceptionInResponseToFlowReturningStopRollbackAction()
     {
-    	
-    	final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
-                will(throwException(throwable));
-            	
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(flow).invoke(eventFromTextMessage);
                 will(returnValue(rollbackStopAction));
-            	
-            	
                 one(messageListenerContainer).stop();
             }
         });
@@ -329,24 +295,14 @@ public class JmsMessageDrivenInitiatorImplTest
     @Test
     public void testOnMessage_suspendsTheContainerForARetryAction()
     {
-    	final Throwable throwable = new RuntimeException();
-    	
         final Sequence sequence = mockery.sequence("invocationSequence");
         // expectations for the suspension
         mockery.checking(new Expectations()
         {
             {
-            	//flow invocation fails
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
-                inSequence(sequence);
-                will(throwException(throwable));
-                
-                //exceptionhandler says RETRY
-                one(exceptionHandler).invoke(with(any(String.class)), (Event) with(equal(eventFromTextMessage)), (Throwable) with(equal(throwable)));
+                one(flow).invoke(eventFromTextMessage);
                 inSequence(sequence);
                 will(returnValue(retryAction));
-                
                 // suspends
                 one(messageListenerContainer).stop();
                 // inSequence(sequence);
@@ -420,8 +376,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
+                one(flow).invoke(eventFromTextMessage);
                 inSequence(sequence);
                 will(returnValue(null));
                 one(monitorListener).notify(with(equal("running")));
@@ -441,24 +396,13 @@ public class JmsMessageDrivenInitiatorImplTest
     public void testOnMessage_rollsbackAndStopsInErrorWhenExceedingMaxAttemptsOnRetry()
     {
         final Sequence sequence = mockery.sequence("invocationSequence");
-        
-        final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
-            	//flow invocation fails
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-                one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
-                inSequence(sequence);
-                will(throwException(throwable));
-                
-                //exception handler says RETRY maximum of zero times (slightly nonsensical, but for arguments sake!)
-                one(exceptionHandler).invoke(with(any(String.class)), (Event)with(equal(eventFromTextMessage)), (Throwable)with(equal(throwable)));
+                one(flow).invoke(eventFromTextMessage);
                 inSequence(sequence);
                 will(returnValue(retryZeroAction));
-                
-                
-                // which of course results in a stop
+                // stops
                 one(messageListenerContainer).stop();
                 inSequence(sequence);
                 monitorExpectsStoppedInError();
@@ -494,13 +438,13 @@ public class JmsMessageDrivenInitiatorImplTest
     {
         private Logger logger = Logger.getLogger(StubJmsMessageDrivenInitiatorImpl.class);
         
-        public StubJmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
+        public StubJmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
         {
-            super(moduleName, name, flow, exceptionHandler);
+            super(moduleName, name, flow);
         }
 
         @Override
-        protected Event handleTextMessage(TextMessage message) throws JMSException
+        protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
         {
             return eventFromTextMessage;
         }

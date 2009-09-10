@@ -63,8 +63,6 @@ public class VisitingInvokerFlowTest
      */
     Event event = classMockery.mock(Event.class);
     
-    
-    
     /**
      * Mocked invoker
      */
@@ -81,8 +79,6 @@ public class VisitingInvokerFlowTest
     String flowName = "flowName";
     
     String moduleName = "moduleName";
-    
-    FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
     
 
     /**
@@ -103,17 +99,17 @@ public class VisitingInvokerFlowTest
     @Test
     public void testInvoke()
     {
-    	
-    	
         mockery.checking(new Expectations()
         {
             {
-                one(flowElementInvoker).invoke(flowInvocationContext, event, moduleName, flowName, flowElement);
+                one(flowElementInvoker).invoke(event, moduleName, flowName, flowElement);
+                will(returnValue(ikasanExceptionAction));
             }
         });
         
         
-        visitingInvokerFlow.invoke(flowInvocationContext, event);
+        IkasanExceptionAction exceptionAction = visitingInvokerFlow.invoke(event);
+        Assert.assertEquals("ExceptionAction returned by the flow should be the same one returned internally by the invoker", ikasanExceptionAction, exceptionAction);
     }
     /**
      * Creates a sufficiently complex graph of flow elements and tests that the getFlowElements

@@ -1,4 +1,4 @@
-/* 
+ /* 
  * $Id$
  * $URL$
  *
@@ -39,13 +39,7 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionImpl;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.FlowInvocationContext;
-import org.ikasan.framework.initiator.AbortTransactionException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -54,142 +48,155 @@ import org.junit.Test;
  * Test class for RawMessageDrivenInitiator
  * 
  * @author Ikasan Development Team
- * 
+ *
  */
-public class RawMessageDrivenInitiatorTest
-{
-    private static final int DEFAULT_PRIORITY = 4;
+public class RawMessageDrivenInitiatorTest {
 
-    private String moduleName = "moduleName";
+	private static final int DEFAULT_PRIORITY = 4;
 
-    private String name = "name";
+	private String moduleName = "moduleName";
+	
+	private String name ="name";
+	
+	private Mockery mockery = new Mockery();
+	
+	PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
+	
+	Flow flow = mockery.mock(Flow.class);
+		
+	
+	TextMessage textMessage = mockery.mock(TextMessage.class);
+	
+	MapMessage mapMessage = mockery.mock(MapMessage.class);
+	
+	/**
+	 * Tests that TextMessages are supported
+	 * 
+	 * @throws JMSException
+	 */
+	@Test
+	public void testOnMessageHandlesTextMessage() throws JMSException {
+		createExpectations(false, DEFAULT_PRIORITY);
+        
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+		rawDrivenInitiator.onMessage(textMessage);
+	
+	}
 
-    private Mockery mockery = new Mockery();
+	
+	
+	/**
+	 * Tests that JMS Message priority is propogated to the Event if configured
+	 * 
+	 * @throws JMSException
+	 */
+	@Test
+	public void testOnMessageRespectsPriorityWhenConfigured() throws JMSException {
 
-    PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
-
-    Flow flow = mockery.mock(Flow.class);
-
-    IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
-
-    TextMessage textMessage = mockery.mock(TextMessage.class);
-
-    MapMessage mapMessage = mockery.mock(MapMessage.class);
-
-    /**
-     * Tests that TextMessages are supported
-     * 
-     * @throws JMSException
-     */
-    @Test
-    public void testOnMessageHandlesTextMessage() throws JMSException
-    {
-        createExpectations(false, DEFAULT_PRIORITY);
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
-        rawDrivenInitiator.onMessage(textMessage);
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Tests that JMS Message priority is propagated to the Event if configured
-     * 
-     * @throws JMSException
-     */
-    @Test
-    public void testOnMessageRespectsPriorityWhenConfigured() throws JMSException
-    {
-        final int messagePriority = 8;
+		
+		final int messagePriority = 8;
+		
         createExpectations(true, messagePriority);
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
+        
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
         rawDrivenInitiator.setRespectPriority(true);
         rawDrivenInitiator.onMessage(textMessage);
-        mockery.assertIsSatisfied();
-    }
+	
+	}
 
-    private void createExpectations(final boolean respectingPriority, final int messagePriority) throws JMSException
-    {
-        final String textMessageText = "textMessageText";
-        final Payload payload = mockery.mock(Payload.class);
-        mockery.checking(new Expectations()
+
+
+	private void createExpectations(final boolean respectingPriority, final int messagePriority)
+			throws JMSException {
+		
+		final String textMessageText = "textMessageText";
+		final Payload payload = mockery.mock(Payload.class);
+		
+		mockery.checking(new Expectations()
         {
             {
-                allowing(textMessage).getJMSMessageID();
-                will(returnValue("messageId"));
+            	
+            	
+            	allowing(textMessage).getJMSMessageID();will(returnValue("messageId"));
+            	
                 one(textMessage).getText();
                 will(returnValue(textMessageText));
-                if (respectingPriority)
-                {
-                    one(textMessage).getJMSPriority();
-                    will(returnValue(messagePriority));
+                
+                if (respectingPriority){
+	                one(textMessage).getJMSPriority();
+	                will(returnValue(messagePriority));
                 }
-                one(payloadFactory).newPayload("messageId", MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
+                
+                one(payloadFactory).newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
                 will(returnValue(payload));
-                one(flow).invoke((FlowInvocationContext) (with(a(FlowInvocationContext.class))), (with(new EventMatcher(messagePriority))));
+                
+                //grrrrrr......all these dumb methods on Payload get called during Event.setPayload
+                one(payload).getName();
+                will(returnValue("payloadName"));
+                one(payload).getSpec();
+                will(returnValue(Spec.TEXT_XML.toString()));
+                one(payload).getSrcSystem();
+                will(returnValue("srcSystem"));
+                
+                one(flow).invoke((Event) with(new EventMatcher(messagePriority)));
                 will(returnValue(null));
             }
         });
-    }
+	}
 
-    /**
-     * Tests that MapMessages are not supported
-     * 
-     * @throws JMSException
-     */
-    @Test
-    public void testOnMessageDoesNotHandleMapMessage() throws JMSException
-    {
-        final IkasanExceptionAction stopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
-        final MessageListenerContainer messageListenerContainer = mockery.mock(MessageListenerContainer.class);
-        final RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
+	
+	/**
+	 * Tests that MapMessages are not supported
+	 * 
+	 * @throws JMSException
+	 */
+	@Test
+	public void testOnMessageDoesNotHandleMapMessage() throws JMSException {
+		UnsupportedOperationException exception = null;
+		
         mockery.checking(new Expectations()
         {
             {
-                allowing(messageListenerContainer).setListenerSetupExceptionListener(rawDrivenInitiator);
-                allowing(mapMessage).getJMSMessageID();
-                will(returnValue("messageId"));
-                one(exceptionHandler).invoke(with(equal(name)), (Throwable) with(an(UnsupportedOperationException.class)));
-                will(returnValue(stopAction));
-                one(messageListenerContainer).stop();
+            	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
             }
         });
-        rawDrivenInitiator.setMessageListenerContainer(messageListenerContainer);
-        AbortTransactionException exception = null;
-        try
-        {
-            rawDrivenInitiator.onMessage(mapMessage);
-            Assert.fail("should have thrown UnsupportedOperationException");
-        }
-        catch (AbortTransactionException abortTransactionException)
-        {
-            exception = abortTransactionException;
-        }
-        Assert.assertNotNull("should have thrown AbortTransactionException", exception);
-        mockery.assertIsSatisfied();
-    }
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+		try{
+			rawDrivenInitiator.onMessage(mapMessage);
+			Assert.fail("should have thrown UnsupportedOperationException");
+		} catch(UnsupportedOperationException unsupportedOperationException){
+				exception = unsupportedOperationException;
+		}
+		
+		Assert.assertNotNull("should have thrown UnsupportedOperationException", exception);
+	}
+	
+	class EventMatcher extends TypeSafeMatcher<Event>{
 
-    class EventMatcher extends TypeSafeMatcher<Event>
-    {
-        private int priority;
+		private int priority;
+			
+		
+		public EventMatcher(int priority) {
+			super();
+			this.priority = priority;
+		}
 
-        public EventMatcher(int priority)
-        {
-            super();
-            this.priority = priority;
-        }
+		@Override
+		public boolean matchesSafely(Event event) {
+			boolean result = true;
+			
+			if (event.getPriority()!=priority){
+				result=false;
+			}
+			
+			return result;
+		}
 
-        @Override
-        public boolean matchesSafely(Event event)
-        {
-            boolean result = true;
-            if (event.getPriority() != priority)
-            {
-                result = false;
-            }
-            return result;
-        }
+		public void describeTo(Description arg0) {
+			
+		}
+		
+	}
 
-        public void describeTo(Description arg0)
-        {
-        }
-    }
+
 }

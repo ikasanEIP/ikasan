@@ -64,16 +64,6 @@ public class EventAggregatingSequencerTest
 
     /** Mock event */
     final Event event = classMockery.mock(Event.class);
-    
-    /**
-     * Name of the module doing the aggregating - required if aggregator creates a new event
-     */
-    private String moduleName = "moduleName";
-    
-    /**
-     * Name of the component doing the aggregating - required if aggregator creates a new event
-     */   
-    private String componentName = "componentName";
 
     /**
      * Setup runs before each test
@@ -115,7 +105,7 @@ public class EventAggregatingSequencerTest
         });
 
         EventAggregatingSequencer eventAggregatingSequencer = new EventAggregatingSequencer(eventAggregator);
-        assertTrue(eventAggregatingSequencer.onEvent(event, moduleName, componentName) == null);
+        assertTrue(eventAggregatingSequencer.onEvent(event) == null);
     }
 
     /**
@@ -140,7 +130,7 @@ public class EventAggregatingSequencerTest
         });
 
         EventAggregatingSequencer eventAggregatingSequencer = new EventAggregatingSequencer(eventAggregator);
-        List<Event> events = eventAggregatingSequencer.onEvent(event, moduleName, componentName);
+        List<Event> events = eventAggregatingSequencer.onEvent(event);
         assertTrue(events.size() == 1);
     }
 

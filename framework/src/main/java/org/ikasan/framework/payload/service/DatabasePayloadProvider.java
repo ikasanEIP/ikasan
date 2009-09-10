@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
@@ -123,8 +122,8 @@ public class DatabasePayloadProvider implements PayloadProvider
             {
                 logger.info("consuming DatabasePayload with id [" + databasePayload.getId() + "]");
                 byte[] payloadContent = databasePayload.getEvent().getBytes();
-                Payload payload = payloadFactory.newPayload(databasePayload.getId().toString(), MetaDataInterface.UNDEFINED, this.payloadSpec, this.payloadSrcSystem, payloadContent);
-
+                Payload payload = payloadFactory.newPayload(this.payloadSpec, this.payloadSrcSystem, payloadContent);
+                payload.setContent(payloadContent);
                 result.add(payload);
                 databasePayload.setConsumed(true);
                 databasePayload.setLastUpdated(new Date());

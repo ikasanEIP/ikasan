@@ -196,8 +196,8 @@ public class SinglePayloadPerEventProviderTest
             if (events != null)
             {
                 Event event = events.get(x);
-//                assertTrue(event.getComponentGroupName().equals(moduleName));
-//                assertTrue(event.getComponentName().equals(componentName));
+                assertTrue(event.getComponentGroupName().equals(moduleName));
+                assertTrue(event.getComponentName().equals(componentName));
                 assertTrue(event.getPayloads().size() == 1);
             }
             else

@@ -88,9 +88,9 @@ public class VisitingInvokerFlow implements Flow
      * 
      * @see org.ikasan.framework.flow.Flow#invoke(org.ikasan.framework.component.Event)
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, Event event)
+    public IkasanExceptionAction invoke(Event event)
     {
-        flowElementInvoker.invoke(flowInvocationContext, event, moduleName, name, headElement);
+        return flowElementInvoker.invoke(event, moduleName, name, headElement);
     }
 
     /**

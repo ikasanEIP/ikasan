@@ -34,7 +34,6 @@ import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.ServiceLocator;
 import org.ikasan.common.component.Spec;
-import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.util.FileUtils;
 import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
@@ -57,23 +56,18 @@ public class BaseFileTransferMappedRecordTransformer
      * @param record The record as returned from the File Transfer Client
      * @return A payload constructed from the record.
      */
-    public static Payload mappedRecordToPayload(BaseFileTransferMappedRecord record, PayloadFactory payloadFactory)
+    public static Payload mappedRecordToPayload(BaseFileTransferMappedRecord record)
     {
-
-    	Date createdDayTime = record.getCreatedDayTime();
-    	
-    	//calculate a payload id based on the filename and created date
-    	int id = createdDayTime.hashCode();
-    	id = (37 * id) + (record.getName()).hashCode();
-    	
-    	
-        Payload payload = payloadFactory.newPayload(""+id,record.getName(),
+        // TODO global service locator
+        ServiceLocator serviceLocator = ResourceLoader.getInstance();
+        Payload payload = serviceLocator.getPayloadFactory().newPayload(record.getName(),
                 Spec.BYTE_PLAIN, MetaDataInterface.UNDEFINED, record.getContent());
 
         // Don't set the Checksum, the client doesn't calculate checksum as the payload does it
         // Don't set the name
         
-
+        // Set the Size
+        payload.setSize(record.getSize());
         // Set the source system name
         String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
         payload.setSrcSystem(componentGroupName);
@@ -94,7 +88,7 @@ public class BaseFileTransferMappedRecordTransformer
         if (extSeparatorLoc == -1)
         {
             // No extension, so set to plain bytes
-            payload.setSpec(Spec.BYTE_PLAIN);
+            payload.setSpec(Spec.BYTE_PLAIN.toString());
         }
         else
         {
@@ -102,34 +96,34 @@ public class BaseFileTransferMappedRecordTransformer
                 record.getName().length());
             if (extension.equalsIgnoreCase(FileUtils.ZIP_EXT))
             {
-                payload.setSpec(Spec.BYTE_ZIP);
+                payload.setSpec(Spec.BYTE_ZIP.toString());
             }
             else if (extension.equalsIgnoreCase(FileUtils.JAR_EXT))
             {
-                payload.setSpec(Spec.BYTE_JAR);
+                payload.setSpec(Spec.BYTE_JAR.toString());
             }
             else if (extension.equalsIgnoreCase(FileUtils.TEXT_EXT))
             {
-                payload.setSpec(Spec.TEXT_PLAIN);
+                payload.setSpec(Spec.TEXT_PLAIN.toString());
             }
             else if (extension.equalsIgnoreCase(FileUtils.XML_EXT))
             {
-                payload.setSpec(Spec.TEXT_XML);
+                payload.setSpec(Spec.TEXT_XML.toString());
             }
             else if (extension.equalsIgnoreCase(FileUtils.HTML_EXT)
                     || extension.equalsIgnoreCase(FileUtils.HTM_EXT))
             {
-                payload.setSpec(Spec.TEXT_HTML);
+                payload.setSpec(Spec.TEXT_HTML.toString());
             }
             else if (extension.equalsIgnoreCase(FileUtils.CSV_EXT))
             {
-                payload.setSpec(Spec.TEXT_CSV);
+                payload.setSpec(Spec.TEXT_CSV.toString());
             }
             else
             {
                 logger.info("File extension unknown, setting Spec to: [" //$NON-NLS-1$
                         + Spec.BYTE_PLAIN.toString() + "]"); //$NON-NLS-1$
-                payload.setSpec(Spec.BYTE_PLAIN);
+                payload.setSpec(Spec.BYTE_PLAIN.toString());
             }
         }
         return payload;
@@ -148,7 +142,7 @@ public class BaseFileTransferMappedRecordTransformer
         record.setContent(payload.getContent());
         record.setChecksum(payload.getChecksum(), payload.getChecksumAlg());
         record.setName(payload.getName());
-        record.setSize(payload.size());
+        record.setSize(payload.getSize());
         record.setCreatedDayTime(new Date(payload.getTimestamp()));
         record.setRecordName(payload.getName());
         record.setRecordShortDescription(null);

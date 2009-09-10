@@ -31,23 +31,15 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
-import org.ikasan.common.MetaDataInterface;
-import org.ikasan.common.Payload;
-import org.ikasan.common.component.Format;
-import org.ikasan.common.component.Spec;
-import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.common.factory.PayloadFactoryImpl;
-import org.ikasan.common.util.checksum.Md5ChecksumSupplier;
-import org.ikasan.connector.ResourceLoader;
+import org.ikasan.connector.base.outbound.EISConnectionImpl;
+
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
-import org.ikasan.connector.base.outbound.EISConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFileProvider;
-import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 
 /**
  * A Base implementation for File transfer connections
@@ -55,13 +47,6 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
  */
 public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
 {
-	/**
-	 * PayloadFactory for creating Payloads.
-	 * TODO this will be removed as a part of the decoupling of connectors from common.
-	 */
-	protected PayloadFactory payloadFactory = new PayloadFactoryImpl();
-	
-	
     /**
      * Constructor which takes ManagedConnection as a parameter
      * 
@@ -112,29 +97,6 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
             deliveryCommand = new DeliverBatchCommand(outputDir, overwrite);
         }
         executeCommand(deliveryCommand, executionContext).getResult();
-    }
-    /**
-     * Method used to map an <code>FTPMappedRecord</code> object to a
-     * <code>Payload</code> object.
-     * 
-     * TODO Is there any other Payload stuff to set here?
-     * 
-     * @param header The record as returned from the FileTransferProtocolClient
-     * @return A payload constructed from the record.
-     */
-    protected  Payload fileChunkHeaderToPayload(FileChunkHeader header)
-    {    	
-    	String paylaodId = ""+header.getFileName().hashCode();
-
-        Payload payload = payloadFactory.newPayload(paylaodId, header.getFileName(), Spec.TEXT_XML, MetaDataInterface.UNDEFINED,
-            header.toXml().getBytes());
-        payload.setFormat(Format.REFERENCE.toString());
-        String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
-        payload.setSrcSystem(componentGroupName);
-        // need to do checksumming
-        payload.setChecksum(header.getInternalMd5Hash());
-        payload.setChecksumAlg(Md5ChecksumSupplier.MD5);
-        return payload;
     }
 
     /**

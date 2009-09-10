@@ -38,12 +38,8 @@ public class RandomWordPayloadProvider implements PayloadProvider{
 		int nextInt = random.nextInt(words.size()-1);
 		String randomWord = words.get(nextInt);
 		
-		
-		int payloadId = randomWord.hashCode();
-		payloadId = (int) ((37*payloadId)+ System.currentTimeMillis());
-		
-		Payload newPayload = payloadFactory.newPayload(""+payloadId,"meaninglessPayloadName",  Spec.TEXT_PLAIN,"meaninglessSrcSystem", randomWord.getBytes());
-
+		Payload newPayload = payloadFactory.newPayload(null, Spec.TEXT_PLAIN, null);
+		newPayload.setContent(randomWord.getBytes());
 		result.add(newPayload);
 		return result;
 	}

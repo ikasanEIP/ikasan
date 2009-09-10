@@ -26,14 +26,10 @@
  */
 package org.ikasan.framework.initiator.messagedriven;
 
-import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.error.service.ErrorLoggingService;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
@@ -58,7 +54,7 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     private Logger logger = Logger.getLogger(EventMessageDrivenInitiator.class);
     
     /** Deserialiser */
-    private JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser;
+    private JmsMessageEventSerialiser jmsMessageEventSerialiser;
 
     /**
      * Constructor
@@ -66,20 +62,19 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param moduleName - name of the module
      * @param name - name of this initiator
      * @param flow - flow to invoke
-     * @param exceptionHandler for handlingExceptions
      * @param jmsMessageEventSerialiser - The serialiser for the JMS message
      */
-    public EventMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler,
+    public EventMessageDrivenInitiator(String moduleName, String name, Flow flow,
             JmsMessageEventSerialiser jmsMessageEventSerialiser)
     {
-        super(moduleName, name, flow, exceptionHandler);
+        super(moduleName, name, flow);
         this.jmsMessageEventSerialiser = jmsMessageEventSerialiser;
     }
 
     @Override
-    protected Event handleMapMessage(MapMessage message) throws JMSException
+    protected Event handleMapMessage(MapMessage message) throws EventSerialisationException
     {
-        Event event = jmsMessageEventSerialiser.fromMessage(message, moduleName, name);
+        Event event = jmsMessageEventSerialiser.fromMapMessage(message, moduleName, name);
         return event;
     }
     

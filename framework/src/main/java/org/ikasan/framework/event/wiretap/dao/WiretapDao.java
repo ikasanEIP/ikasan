@@ -40,6 +40,7 @@ import org.ikasan.framework.management.search.PagedSearchResult;
  */
 public interface WiretapDao
 {
+
     /**
      * Save a wiretapEvent entry.
      * 

@@ -36,7 +36,6 @@ import junit.framework.JUnit4TestAdapter;
 import org.ikasan.common.CommonExceptionType;
 import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.ExceptionType;
-import org.ikasan.common.Payload;
 import org.ikasan.framework.exception.DefaultExceptionDefinition;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -107,7 +106,7 @@ public class IkasanExceptionHandlerImplTest
 
     /** action for NumberFormatException */
     private static IkasanExceptionAction numberFormatExceptionAction = 
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY,
+        new IkasanExceptionActionImpl(IkasanExceptionActionType.CONTINUE,
                 new Long(10), new Integer(10));
     /** resolution for NumberFormatException */
     private static IkasanExceptionResolution numberFormatExceptionResolution = 
@@ -184,7 +183,7 @@ public class IkasanExceptionHandlerImplTest
         
         //
         // create a dummy event
-        event = new Event(null,null,"myEvent1",new ArrayList<Payload>());
+        event = new Event(moduleName, componentName);
     }
 
     /**

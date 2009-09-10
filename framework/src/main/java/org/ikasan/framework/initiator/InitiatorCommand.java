@@ -18,7 +18,7 @@ import java.util.Date;
  * 
  * Note that a historical collection of <code>InitiatorCommand</code>s could form the basis of an auditing record.
  * 
- * @author Ikasan Development Team
+ * @author The Ikasan Development Team
  *
  */
 public class InitiatorCommand

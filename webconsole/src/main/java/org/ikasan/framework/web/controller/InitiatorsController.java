@@ -207,7 +207,7 @@ public class InitiatorsController
         {
             SimpleInitiator simpleInitiator = ((SimpleInitiator) initiator);
             boolean success = simpleInitiator.initiate("httpSubmissionPayload", Spec.TEXT_PLAIN,
-                "manualHttpSubmission", payloadCommand.getPayloadContent(), ""+System.currentTimeMillis());
+                "manualHttpSubmission", payloadCommand.getPayloadContent());
             String initiationResult = "Initiation Failed";
             if (success)
             {
