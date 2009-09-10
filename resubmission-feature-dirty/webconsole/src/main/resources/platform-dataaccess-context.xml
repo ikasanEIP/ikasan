@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+    
+	
+	<bean id="initiatorCommandDao"
+        class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorCommandDao">
+        <property name="sessionFactory" ref="initiatorCommandHibernateSessionFactory" />
+    </bean>
+
+	<bean id="wiretapDao"
+		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
+
+	<bean id="triggerDao"
+		class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
+	
+	<bean id="errorOccurrenceDao"
+		class="org.ikasan.framework.error.dao.HibernateErrorOccurrenceDao">
+		<property name="sessionFactory" ref="errorLoggingHibernateSessionFactory" />
+	</bean>
+	
+	<bean id="excludedEventDao"
+		class="org.ikasan.framework.event.exclusion.dao.HibernateExcludedEventDao">
+		<property name="sessionFactory" ref="excludedEventHibernateSessionFactory" />
+	</bean>
+
+	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true"/>
+		<property name="location" value="classpath:ikasan-hibernate.properties"/>
+	</bean>
+
+
+	<bean id="wiretapHibernateSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasanAdminXaDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>WiretapEventImpl.hbm.xml</value>
+				<value>Trigger.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
+	
+	<bean id="initiatorCommandHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>InitiatorCommand.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="errorLoggingHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>ErrorOccurrence.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+    
+    <bean id="excludedEventHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>ExcludedEvent.hbm.xml</value>
+                <value>ExcludedPayload.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+        <!-- <property name="hibernateProperties" >
+        	<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="ignoreResourceNotFound" value="true"/>
+				<property name="location" value="classpath:ikasan-hibernate.properties"/>
+				<property name="properties">
+					<props>
+					<prop key="hibernate.hbm2ddl.auto">create</prop>
+					</props>
+				</property>
+			</bean>
+        </property>-->
+    </bean>
+    
+	</beans>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/webflow-config
+           http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+           http://www.springframework.org/schema/context 
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <!-- <context:component-scan base-package="org.ikasan.demo.businesserror"/>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>-->
+    
+    <!-- WEB -->
+    
+    <!-- freemarker config -->
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+	  <property name="preTemplateLoaders">
+	  	<list>
+	  		<bean class="freemarker.cache.ClassTemplateLoader">
+	  			<constructor-arg>
+	  				<value>org.ikasan.demo.businesserror.web.BusinessErrorController</value></constructor-arg>
+	  		</bean>
+	  	</list>
+	  </property>
+	</bean>
+	
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+	  <property name="cache" value="true"/>
+	  <property name="prefix" value=""/>
+	  <property name="suffix" value=".ftl"/>
+	</bean>
+    
+    
+    
+    
+    <bean id="businessErrorController" class="org.ikasan.demo.businesserror.web.BusinessErrorController">
+    	<constructor-arg ref="businessErrorService"/>
+    </bean>
+    
+    <bean id="businessErrorService" class="org.ikasan.demo.businesserror.service.BusinessErrorService">
+    	<constructor-arg ref="inMemoryBusinessErrorDao" />
+    	<constructor-arg>
+    		<list>
+    			<ref bean="demoResubmissionJmsEaiAdapter"/>
+    		</list>
+    	</constructor-arg>
+    </bean>
+    
+    <bean id="inMemoryBusinessErrorDao" class="org.ikasan.demo.businesserror.dao.InMemoryBusinessErrorDao"/>
+
+
+
+
+
+
+	<bean id="demoResubmissionJmsEaiAdapter" class="org.ikasan.demo.businesserror.eai.JmsEaiAdapter">
+		<property name="originatingSystem" value="demoResubmission" />
+		<property name="errorConverter">
+			<bean
+				class="org.ikasan.demo.businesserror.eai.converter.IkasanXmlBusinessErrorConverter">
+				<constructor-arg>
+					<bean class="org.apache.xalan.processor.TransformerFactoryImpl"
+						factory-method="newInstance" />
+				</constructor-arg>
+			</bean>
+		</property>
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="outgoingDestination" ref="resubmissionDestination" />
+	</bean>
+
+
+
+
+
+
+	
+
+		
+
+	<bean id="errorChannelListenerConatiner"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="destination">
+			<bean id="errorsDestination" class="org.springframework.jndi.JndiObjectFactoryBean">
+				<property name="jndiName" value="/queue/demo.errorManager.errors" />
+				<property name="jndiTemplate" ref="jmsJndiTemplate" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="demoResubmissionJmsEaiAdapter" />
+	</bean>
+
+      <!-- Connection Factories -->
+  <bean id="jmsConnectionFactory"
+      class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="jndiName" value="java:/JmsXA" />
+      <property name="lookupOnStartup" value="false" />
+      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+  </bean>
+  
+  
+  <bean id="resubmissionDestination"
+      class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="jndiName" value="/queue/demo.errorManager.resubmission" />
+      <property name="jndiTemplate" ref="jmsJndiTemplate"/>
+  </bean>
+  
+
+  
+
+  
+  <bean name="pphConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+			
+				<value>classpath:/ikasan.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jmsJndiTemplate" class="org.springframework.jndi.JndiTemplate">
+		<property name="environment" ref="jmsJndiEnvironment" />
+	</bean>
+
+
+	<bean id="jmsJndiEnvironment"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+				<prop key="java.naming.factory.url.pkgs">org.jnp.interfaces:org.jboss.naming</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>
