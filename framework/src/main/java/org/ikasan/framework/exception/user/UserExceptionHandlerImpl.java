@@ -268,7 +268,6 @@ public class UserExceptionHandlerImpl implements UserExceptionHandler, UserExcep
         payloads.add(payload);
         Event event = new Event("userExceptionHandler", "userExceptionHandler", "userExceptionEventId",payloads);
         event.setName("emrException");
-        event.setSpec(Spec.TEXT_XML);
         // Publish away!
         jmsEventPublisher.invoke(event);
     }

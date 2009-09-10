@@ -40,15 +40,124 @@ import org.ikasan.common.component.PayloadHelper;
  * 
  * @author Ikasan Development Team
  */
-public class Event extends MetaData implements Cloneable
+public class Event implements Cloneable
 {
     /** Serialize ID */
     private static final long serialVersionUID = 1L;
     /** Logger instance */
     private static Logger logger = Logger.getLogger(Event.class);
 
+    
+    
 
+    /**
+     * Identifier for the Event
+     */
+    private String id;
+    
+    /**
+     * Accessor for id
+     * 
+     * @return
+     */
+    public String getId(){
+    	return id;
+    }
 
+    /**
+     * Mutator for id, required for ORM
+     * 
+     * @param id
+     */
+    @SuppressWarnings("unused")
+	private void setId(String id){
+    	this.id = id;
+    }
+    
+    /**
+     * Origination time for the Event
+     */
+    private long timestamp;
+    
+    /**
+     * Accessor for timestamp
+     * 
+     * @return timestamp
+     */
+    public long getTimestamp(){
+    	return timestamp;
+    }
+    
+    /**
+     * Mutator for timestamp, required by ORM
+     * 
+     * @param timestamp
+     */
+    private void setTimestamp(long timestamp){
+    	this.timestamp = timestamp;
+    }
+    
+    
+    
+    /**
+     * Relative priority - see JMS Message Priority
+     * 
+     * TODO, if this really is just a number from 0-9, then this constraint should be modelled somehow
+     */
+    private int priority =4;
+    
+    /**
+     * Accessor for priority
+     * 
+     * @return priority
+     */
+    public int getPriority(){
+    	return priority;
+    }
+    
+    /**
+     * Mutator for priority
+     * 
+     * @param priority
+     */
+    public void setPriority(int priority){
+    	this.priority = priority;
+    }
+    
+    /**
+     * Name of the Event
+     * 
+     * TODO - what does this mean? Does an Event need a name? Why? Do all? How/When should this change?
+     */
+    private String name;
+    
+    /**
+     * Mutator for name
+     * 
+     * @param name
+     */
+    public void setName(String name){
+    	this.name = name;
+    }
+    
+    /**
+     * Description of the external system this event is originated from
+     */
+    private String srcSystem;
+    
+    /**
+     * Accessor for srcSystem
+     * 
+     * @return srcSysterm
+     */
+    public String getSrcSystem(){
+    	return srcSystem;
+    }
+    
+    private void setSrcSystem(String srcSystem){
+    	this.srcSystem = srcSystem;
+    }
+    
     /** Event contained payloads */
     private List<Payload> payloads = null;
 
@@ -75,7 +184,7 @@ public class Event extends MetaData implements Cloneable
     		throw new IllegalArgumentException("Event originator did not provide a generated id!");
     	}
     	this.id=originatingModuleName+"_"+originatingComponentName+"_"+originatorGeneratedId;
-    	this.timestamp=generateTimestamp();
+    	this.timestamp=System.currentTimeMillis();
     } 
     
     /**
@@ -166,12 +275,10 @@ public class Event extends MetaData implements Cloneable
     public Event clone() throws CloneNotSupportedException
     {
         Event clone = (Event) super.clone();
-        if (this.getTimestamp() != null){ 
-        	clone.setTimestamp(new Long(this.getTimestamp()));
-        }
-        if (this.getPriority() != null){
-        	clone.setPriority(new Integer(this.getPriority()));
-        }
+
+        clone.setTimestamp(timestamp);
+        clone.setPriority(priority);
+        
 
         // populate actual payload(s)
         List<Payload> clonedPayloads = new ArrayList<Payload>();
@@ -251,7 +358,6 @@ public class Event extends MetaData implements Cloneable
      * 
      * @return String - formatted messsage
      */
-    @Override
     public String idToString()
     {
         StringBuffer sb = new StringBuffer();
@@ -277,13 +383,7 @@ public class Event extends MetaData implements Cloneable
 
 
 
-    @Override
-    // TODO - check this implementation
-    protected String calculateChecksum()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
 
     /**
      * If this event has payloads, return the primary payload's name.
@@ -291,7 +391,6 @@ public class Event extends MetaData implements Cloneable
      * The primary payload being the first in this event's payload list.
      * @return String
      */
-    @Override
     public String getName()
     {
         String eventName = this.name;

@@ -28,6 +28,7 @@ package org.ikasan.framework.exception.user;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,7 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
 
     /** Payload class */
     private Class<? extends Payload> payloadClass;
+    
 
     /**
      * Constructor
@@ -172,8 +174,8 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
         // Event sourced data depends on whether we have an event
         if (exceptionContext.getEvent() != null)
         {
-            params.put("timestamp", exceptionContext.getEvent().getFormattedTimestamp());
-            params.put("timezone", exceptionContext.getEvent().getTimezone());
+            params.put("timestamp", new Date(exceptionContext.getEvent().getTimestamp()).toGMTString());
+            params.put("timezone", null);
 //            params.put("originalEvent", getOriginalEvent(xstream, exceptionContext.getEvent().getOriginalPayloads(),
 //                externalExceptionDef));
             params.put("exceptionEvent", getExceptionEvent(xstream, exceptionContext.getEvent().getPayloads(),
