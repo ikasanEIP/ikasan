@@ -58,7 +58,7 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     private Logger logger = Logger.getLogger(EventMessageDrivenInitiator.class);
     
     /** Deserialiser */
-    private JmsMessageEventSerialiser jmsMessageEventSerialiser;
+    private JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser;
 
     /**
      * Constructor
@@ -79,7 +79,7 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     @Override
     protected Event handleMapMessage(MapMessage message) throws JMSException
     {
-        Event event = jmsMessageEventSerialiser.fromMapMessage(message, moduleName, name);
+        Event event = jmsMessageEventSerialiser.fromMessage(message, moduleName, name);
         return event;
     }
     

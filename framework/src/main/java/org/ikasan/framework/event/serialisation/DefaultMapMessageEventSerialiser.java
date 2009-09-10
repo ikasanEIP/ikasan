@@ -16,8 +16,8 @@ import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 
-public class DefaultJmsMessageEventSerialiser implements
-		JmsMessageEventSerialiser {
+public class DefaultMapMessageEventSerialiser implements
+		JmsMessageEventSerialiser<MapMessage> {
 
 	static final String PAYLOAD_PREFIX = "PAYLOAD_";
 
@@ -29,7 +29,7 @@ public class DefaultJmsMessageEventSerialiser implements
 	
 	private PayloadFactory payloadFactory;
 
-	public Event fromMapMessage(MapMessage mapMessage, String moduleName,
+	public Event fromMessage(MapMessage mapMessage, String moduleName,
 			String componentName) throws JMSException {
 		Event result = null;
 		
@@ -162,7 +162,7 @@ public class DefaultJmsMessageEventSerialiser implements
 		return result;
 	}
 
-	public MapMessage toMapMessage(Event event, Session session)
+	public MapMessage toMessage(Event event, Session session)
 			throws JMSException {
 		MapMessage mapMessage = session.createMapMessage();
 

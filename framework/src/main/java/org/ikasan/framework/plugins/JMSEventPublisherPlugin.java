@@ -63,7 +63,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
     private IkasanSecurityConf ikasanSecurityConf;
 
     /** Converter to a MapMessage */
-    private JmsMessageEventSerialiser jmsMessageEventSerialiser;
+    private JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser;
 
     /** JMS Message Time to live */
     private Long timeToLive;
@@ -143,7 +143,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
         {
             connection = createConnection();
             Session session = connection.createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
-            MapMessage mapMessage = jmsMessageEventSerialiser.toMapMessage(event, session);
+            MapMessage mapMessage = jmsMessageEventSerialiser.toMessage(event, session);
             MessageProducer messageProducer = session.createProducer(thisDestination);
             if (timeToLive != null)
             {

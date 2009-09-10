@@ -95,7 +95,7 @@ public class JMSEventPublisherPluginTest extends TestCase
     /**
      * mock of the serialiser
      */
-    final JmsMessageEventSerialiser jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
+    final JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
 
     /**
      * mock of the security conf
@@ -194,7 +194,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageEventSerialiser).toMapMessage(event, session);
+                one(jmsMessageEventSerialiser).toMessage(event, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -238,7 +238,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageEventSerialiser).toMapMessage(event, session);
+                one(jmsMessageEventSerialiser).toMessage(event, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -283,7 +283,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageEventSerialiser).toMapMessage(event, session);
+                one(jmsMessageEventSerialiser).toMessage(event, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -379,7 +379,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageEventSerialiser).toMapMessage(event, session);
+                one(jmsMessageEventSerialiser).toMessage(event, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -421,7 +421,7 @@ public class JMSEventPublisherPluginTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageEventSerialiser).toMapMessage(event, session);
+                one(jmsMessageEventSerialiser).toMessage(event, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
