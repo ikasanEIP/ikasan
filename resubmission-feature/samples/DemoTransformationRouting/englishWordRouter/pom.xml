@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ikasan.demo</groupId>
+  <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
+  <version>0.7.4-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>demoTransformationRouting :: englishWordRouter : jar</name>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <filters>
+      <filter>module.properties</filter>
+    </filters>
+
+
+  </build>
+
+    <scm>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+    </scm>
+
+
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+
+
+</project>
+
