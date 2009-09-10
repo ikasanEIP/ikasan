@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+	<bean id="moduleName" class="java.lang.String">
+		<constructor-arg value="${module.name}" />
+	</bean>
+	
+    <bean id="loggingExceptionHandler" class="org.ikasan.framework.component.LoggingExceptionHandlerImpl">
+            <property name="errorAction">
+                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    <constructor-arg value="ROLLBACK_RETRY" />
+                    <constructor-arg value="10000" />
+                    <constructor-arg value="10" />
+                </bean>
+            </property>
+        </bean>
+
+
+	<bean id="flowElementInvoker"
+		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
+		<property name="flowEventListener" ref="flowEventListener" />
+		<constructor-arg ref="loggingExceptionHandler"/>
+	</bean>
+
+
+    <!-- transformer flow -->
+    
+    <bean id="transformerFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
+        <constructor-arg value="transformerFlow" />
+        <constructor-arg ref="moduleName" />
+        <constructor-arg ref="englishToFrenchNumberTransformerElement" />
+        <constructor-arg ref="flowElementInvoker" />
+
+    </bean>
+
+    <bean id="englishToFrenchNumberTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="englishToFrenchNumberStep" />
+        <constructor-arg ref="englishToFrenchWordTransformer" />
+        <constructor-arg ref="frenchNumberPublishingElement" />
+        <property name="description">
+          <value>Translates English numbers to French numbers</value>
+        </property>
+    </bean>	
+	
+    <!-- channel Adapter Flow -->
+
+
+    <bean id="channelAdapterFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
+        <constructor-arg value="channelAdapterFlow" />
+        <constructor-arg ref="moduleName" />
+        <constructor-arg ref="frenchNumberPublishingElement" />
+        <constructor-arg ref="flowElementInvoker" />
+
+    </bean>
+
+
+    <bean id="frenchNumberPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="frenchNumberPublishingStep" />
+        <constructor-arg ref="eventLoggingEndpoint" />
+        <property name="description">
+          <value>Dumps French numbers to the log</value>
+        </property>
+    </bean>
+        
+
+    
+
+
+
+
+
+
+</beans>
