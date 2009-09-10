@@ -148,10 +148,10 @@ public class EnvelopeConverter extends PayloadConverter
             writer.setValue(envelope.getCharset());
             writer.endNode();
         }
-        if (envelope.size().longValue() > 0L)
+        if (envelope.getSize().longValue() > 0L)
         {
             writer.startNode("size"); //$NON-NLS-1$
-            writer.setValue(String.valueOf(envelope.size()));
+            writer.setValue(String.valueOf(envelope.getSize()));
             writer.endNode();
         }
         if (envelope.getChecksum() != null)
@@ -367,6 +367,20 @@ public class EnvelopeConverter extends PayloadConverter
             {
                 String value = reader.getValue();
                 envelope.setCharset(value);
+            }
+            // Size
+            else if (nodeName.equals("size")) //$NON-NLS-1$
+            {
+                String value = reader.getValue();
+                try
+                {
+                    Long longVal = new Long(value);
+                    envelope.setSize(longVal);
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new ConversionException(e);
+                }
             }
             // checksum
             else if (nodeName.equals("checksum")) //$NON-NLS-1$

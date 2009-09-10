@@ -158,9 +158,9 @@ public class PayloadConverter
         {
             writer.addAttribute("CHARSET", payload.getCharset()); //$NON-NLS-1$
         }
-        if (payload.size().longValue() > 0L)
+        if (payload.getSize().longValue() > 0L)
         {
-            writer.addAttribute("SIZE", String.valueOf(payload.size())); //$NON-NLS-1$
+            writer.addAttribute("SIZE", String.valueOf(payload.getSize())); //$NON-NLS-1$
         }
         if (payload.getChecksum() != null)
         {
@@ -290,7 +290,19 @@ public class PayloadConverter
             {
                 payload.setCharset(reader.getAttribute("CHARSET")); //$NON-NLS-1$
             }
-
+            if (reader.getAttribute("SIZE") != null) //$NON-NLS-1$
+            {
+                String attrVal = reader.getAttribute("SIZE"); //$NON-NLS-1$
+                try
+                {
+                    long size = Long.parseLong(attrVal);
+                    payload.setSize(new Long(size));
+                }
+                catch (NumberFormatException e)
+                {
+                    throw new ConversionException(e);
+                }
+            }
             if (reader.getAttribute("CHECKSUM") != null) //$NON-NLS-1$
             {
                 payload.setChecksum(reader.getAttribute("CHECKSUM")); //$NON-NLS-1$

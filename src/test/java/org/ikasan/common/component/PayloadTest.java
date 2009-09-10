@@ -125,7 +125,7 @@ public class PayloadTest
         String charSet = this.payload.getCharset();
         Assert.assertEquals(expectedCharSet, charSet);
 
-        Long size = this.payload.size();
+        Long size = this.payload.getSize();
         Assert.assertEquals(expectedSize, size);
 
         String checkSumAlg = this.payload.getChecksumAlg();
@@ -153,7 +153,7 @@ public class PayloadTest
             + " SPEC=\"text/xml\""
             + " ENCODING=\"noenc\""
             + " CHARSET=\"windows-1252\"" 
-            + " SIZE=\"14\""
+            + " SIZE=\"100\""
             + " CHECKSUM=\"999\""
             + " CHECKSUM_ALG=\"MD5\""
             + " SRC_SYSTEM=\"JUnit\""
@@ -171,6 +171,7 @@ public class PayloadTest
         this.payload.setId("testID");
         this.payload.setPriority(new Integer(4));
         this.payload.setSchemaInstanceNSURI("http://www.w3.org/2001/XMLSchema-instance");
+        this.payload.setSize(new Long(100));
         this.payload.setTargetSystems("testTargetSystems");
         this.payload.setTimestamp(new Long(1184160349580L));
         this.payload.setTimestampFormat(MetaDataInterface.DEFAULT_TIMESTAMP_FORMAT);
@@ -252,7 +253,8 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), clonePayload.getCharset());
 
-        Assert.assertTrue(this.payload.size() == clonePayload.size());
+        Assert.assertFalse(this.payload.getSize() == clonePayload.getSize());
+        Assert.assertEquals(this.payload.getSize(), clonePayload.getSize());
 
         Assert.assertEquals(this.payload.getChecksum(), clonePayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), clonePayload.getChecksumAlg());
@@ -334,7 +336,8 @@ public class PayloadTest
 
         Assert.assertEquals(this.payload.getCharset(), spawnPayload.getCharset());
 
-        Assert.assertTrue(this.payload.size() == spawnPayload.size());
+        Assert.assertFalse(this.payload.getSize() == spawnPayload.getSize());
+        Assert.assertEquals(this.payload.getSize(), spawnPayload.getSize());
 
         Assert.assertEquals(this.payload.getChecksum(), spawnPayload.getChecksum());
         Assert.assertEquals(this.payload.getChecksumAlg(), spawnPayload.getChecksumAlg());

@@ -114,7 +114,7 @@ public class PayloadFactoryImplTest
                one(payload).getEncoding();
                one(payload).getFormat();
                one(payload).getCharset();
-               one(payload).size();
+               one(payload).getSize();
                one(payload).getChecksumAlg();
                one(payload).getChecksum();
                one(payload).getTargetSystems();

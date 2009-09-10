@@ -222,26 +222,26 @@ public interface MetaDataInterface
      */
     public String getCharset();
 
-//    /**
-//     * Setter for size attribute. This can be used to set the size attribute to
-//     * an explicit value.
-//     * @param size 
-//     */
-//    public void setSize(final Long size);
-//
-//    /**
-//     * Utility setter for <code>size</code>. When this setter is used, the
-//     * size is automatically set to the size of the contained business data.
-//     * 
-//     */
-//    public void setSize();
+    /**
+     * Setter for size attribute. This can be used to set the size attribute to
+     * an explicit value.
+     * @param size 
+     */
+    public void setSize(final Long size);
+
+    /**
+     * Utility setter for <code>size</code>. When this setter is used, the
+     * size is automatically set to the size of the contained business data.
+     * 
+     */
+    public void setSize();
 
     /**
      * Getter for size
      * 
      * @return Long
      */
-    public Long size();
+    public Long getSize();
 
     /**
      * Setter for <code>checksum</code>. This can be used to set checksum to
