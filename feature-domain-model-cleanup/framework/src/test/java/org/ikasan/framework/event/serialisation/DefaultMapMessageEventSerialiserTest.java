@@ -22,7 +22,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
-public class DefaultMapMessageEventSerialiserTest {
+public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSerialiserTest{
 
 	/**
 	 * Class under test
@@ -285,6 +285,15 @@ public class DefaultMapMessageEventSerialiserTest {
         Assert.assertEquals("produced MapMessage should be that obtained from session",mapMessage, defaultJmsMessageEventSerialiser.toMessage(event, session));
         
         mockery.assertIsSatisfied();
+	}
+	
+	@Test
+	public void testDefaultJmsMessageEventSerialiser() throws JMSException {
+		DefaultMapMessageEventSerialiser defaultJmsMessageEventSerialiser = new DefaultMapMessageEventSerialiser();
+
+		defaultJmsMessageEventSerialiser.setPayloadFactory(payloadFactory);
+		testSerialisationDesrialisation(defaultJmsMessageEventSerialiser, payloadFactory, mockery);
+
 	}
 
 }

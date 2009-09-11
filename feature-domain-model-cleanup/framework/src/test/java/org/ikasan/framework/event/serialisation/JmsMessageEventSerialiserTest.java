@@ -34,18 +34,14 @@ import org.junit.Test;
  * @author The Ikasan Development Team
  * 
  */
-public class JmsMessageEventSerialiserTest {
+public abstract class JmsMessageEventSerialiserTest {
 
-	private Mockery mockery = new Mockery() {
-		{
-			setImposteriser(ClassImposteriser.INSTANCE);
-		}
-	};
+
 	
-	private PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
+	//private PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
 
 	protected void testSerialisationDesrialisation(
-			JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser)
+			JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser, final PayloadFactory payloadFactory, Mockery mockery)
 			throws JMSException {
 
 		// setup the Event with all important fields
@@ -133,14 +129,7 @@ public class JmsMessageEventSerialiserTest {
 		mockery.assertIsSatisfied();
 	}
 
-	@Test
-	public void testDefaultJmsMessageEventSerialiser() throws JMSException {
-		DefaultMapMessageEventSerialiser defaultJmsMessageEventSerialiser = new DefaultMapMessageEventSerialiser();
 
-		defaultJmsMessageEventSerialiser.setPayloadFactory(payloadFactory);
-		testSerialisationDesrialisation(defaultJmsMessageEventSerialiser);
-
-	}
 
 }
 
