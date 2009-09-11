@@ -52,7 +52,7 @@ import org.xml.sax.SAXException;
 public class XMLValidatorRouter extends SingleResultRouter
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(XMLValidator.class);
+    private static Logger logger = Logger.getLogger(XMLValidatorRouter.class);
 
     /** Result where xml is valid */
     private static final String XML_VALID = "valid";
@@ -102,17 +102,14 @@ public class XMLValidatorRouter extends SingleResultRouter
         }
         catch (SAXException e)
         {
-            event.setException(e);
             result = XML_INVALID;
         }
         catch (IOException e)
         {
-            event.setException(e);
             result = XML_INVALID;
         }
         catch (ParserConfigurationException e)
         {
-            event.setException(e);
             result = XML_INVALID;
         }
         if (result == null)

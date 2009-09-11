@@ -721,13 +721,13 @@ public class VisitingFlowElementInvokerTest
             {
                 exactly(1).of(parentEvent).idToString();
                 will(returnValue("parentEvent"));
-                exactly(1).of(sequencerWrappingElement).getComponentName();
+                exactly(2).of(sequencerWrappingElement).getComponentName();
                 will(returnValue(componentName));
                 exactly(2).of(sequencerWrappingElement).getFlowComponent();
                 will(returnValue(thisSequencer));
                 one(flowEventListener).beforeFlowElement(with(equal(moduleName)), with(equal(flowName)), with(equal(sequencerWrappingElement)),
                     with(equal(parentEvent)));
-                one(thisSequencer).onEvent(with(equal(parentEvent)));
+                one(thisSequencer).onEvent(with(equal(parentEvent)), with(equal(moduleName)), with(equal(componentName)));
                 will(returnValue(sequencerResults));
                 for (Event constiutentEvent : sequencerResults)
                 {

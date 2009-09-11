@@ -82,28 +82,9 @@ public class EventHelper
         return PayloadHelper.getPayloadsContent(this.event.getPayloads());
     }
 
-    /**
-     * Set spec on all payloads
-     * @param spec
-     */
-    public void setPayloadSpec(String spec)
-    {
-        this.setPayloadSpec(this.event.getPayloads(), spec);
-    }
 
-    /**
-     * Set spec on all payloads
-     *
-     * @param payloadList
-     * @param spec
-     */
-    public void setPayloadSpec(List<Payload> payloadList, String spec)
-    {
-        for (Payload payload : payloadList)
-        {
-            payload.setSpec(spec);
-        }
-    }
+
+
 
     /**
      * Set encoding on all payloads
@@ -225,31 +206,8 @@ public class EventHelper
         return priorityPayload;
     }
 
-//    /**
-//     * Get the list of payload attribs
-//     *
-//     * @return List of Payload attribs
-//     * @throws PayloadOperationException
-//     */
-//    public List<Map> getPayloadsAttributes()
-//        throws PayloadOperationException
-//    {
-//        return PayloadHelper.getPayloadsAttributes(this.event.getPayloads());
-//    }
 
-    /**
-     * Runs this class for test.
-     *
-     * TODO Should be a Unit test
-     *
-     * @param args
-     */
-    public static void main(String args[])
-    {
-        // TODO global service locator
-        ServiceLocator serviceLocator = ResourceLoader.getInstance();
-        serviceLocator.getPayloadFactory().newPayload("test", Spec.TEXT_PLAIN,
-                "testSrcSystem", "hello".getBytes());
-    }
+
+
 
 }

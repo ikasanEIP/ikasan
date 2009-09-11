@@ -48,7 +48,9 @@ import org.ikasan.framework.flow.Flow;
  */
 public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
 {
-    
+    /** Default Message Priority used by the Ikasan Raw Message Driven Initiator */
+    private static final int DEFAULT_MESSAGE_PRIORITY = 4;
+
     /**
      * Logger instance for this class
      */
@@ -90,16 +92,18 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
         // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
-            MetaDataInterface.UNDEFINED, message.getText().getBytes());
+        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
         //
-        Event event = new Event(moduleName, name);
-        
-        //resuse the message's priority if we are configured to respect it
-        if (respectPriority){
-        	event.setPriority(message.getJMSPriority());
+        Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
+        // Reuse the message's priority if we are configured to respect it
+        if (respectPriority)
+        {
+            event.setPriority(message.getJMSPriority());
         }
-        event.setPayload(payload);
+        else
+        {
+            event.setPriority(DEFAULT_MESSAGE_PRIORITY);
+        }
         return event;
     }
 

@@ -28,6 +28,7 @@ package org.ikasan.framework.exception.user;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.PayloadConverter;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.ResubmissionInfo;
 import org.xml.sax.SAXException;
@@ -170,12 +172,13 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
             params.put("resubmissionInfo", resubmissionInfo);
         }
         // Event sourced data depends on whether we have an event
-        if (exceptionContext.getEvent() != null)
+        Event event = exceptionContext.getEvent();
+        if (event != null)
         {
-            params.put("timestamp", exceptionContext.getEvent().getFormattedTimestamp());
-            params.put("timezone", exceptionContext.getEvent().getTimezone());
-            params.put("originalEvent", getOriginalEvent(xstream, exceptionContext.getEvent().getOriginalPayloads(),
-                externalExceptionDef));
+        	
+            params.put("timestamp", new Date(event.getTimestamp()).toString());
+            params.put("timezone", "UTC");
+            params.put("originalEvent", null);
             params.put("exceptionEvent", getExceptionEvent(xstream, exceptionContext.getEvent().getPayloads(),
                 externalExceptionDef));
         }

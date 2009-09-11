@@ -126,8 +126,7 @@ public class RawMessageDrivenInitiatorTest {
 	                one(textMessage).getJMSPriority();
 	                will(returnValue(messagePriority));
                 }
-                
-                one(payloadFactory).newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
+                one(payloadFactory).newPayload("messageId", MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
                 will(returnValue(payload));
                 
                 //grrrrrr......all these dumb methods on Payload get called during Event.setPayload

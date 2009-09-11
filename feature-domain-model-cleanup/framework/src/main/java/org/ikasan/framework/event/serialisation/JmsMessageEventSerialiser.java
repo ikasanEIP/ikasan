@@ -26,42 +26,40 @@
  */
 package org.ikasan.framework.event.serialisation;
 
-import javax.jms.MapMessage;
+import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.Session;
 
 import org.ikasan.framework.component.Event;
 
 /**
- * Serialisation/Deserialisation interface for converting between <code>Event</code> and <code>MapMessage<code>
- * 
- * This is the current wire protocol interface for Ikasan
+ * Serialisation/Deserialisation interface for converting between <code>Event</code> and some specified <code>Message<code> implementation
  * 
  * @author Ikasan Development Team
  */
-public interface JmsMessageEventSerialiser
+public interface JmsMessageEventSerialiser<T extends Message>
 {
     /**
      * Deserialises a previously existing <code>Event</code> from a <code>MapMessage</code>
      * 
-     * @param mapMessage - message to deserialise
+     * @param message - message to deserialise
      * @param moduleName - name of the module that is reconstituting the Event - this gets set on the Event
      * @param componentName - name of the component/initiator that is reconstituting the Event - this gets set on the
      *            Event
      * @return reconstituted <code>Event</code>
      * 
-     * @throws EventSerialisationException Exception if we could not deserialise the event
+     * @throws J Exception if we could not deserialise the event
      */
-    public Event fromMapMessage(MapMessage mapMessage, String moduleName, String componentName)
-            throws EventSerialisationException;
+    public Event fromMessage(T message, String moduleName, String componentName) throws JMSException;
 
     /**
      * Serialises an <code>Event</code> to a <code>MapMessage</code>
      * 
      * @param event The event to turn into a JMS MapMessage
      * @param session The session
-     * @return MapMessge - ready to go!
+     * @return Message - ready to go!
      * 
      * @throws EventSerialisationException Exception if we could not serialise the event
      */
-    public MapMessage toMapMessage(Event event, Session session) throws EventSerialisationException;
+    public T toMessage(Event event, Session session) throws JMSException;
 }

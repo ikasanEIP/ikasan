@@ -43,35 +43,26 @@ public class SinglePayloadPerEventSplitter implements Sequencer
     /* (non-Javadoc)
      * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
      */
-    public List<Event> onEvent(Event event) throws SequencerException
+    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
     {
         // we must always return a list of events
         List<Event> events = new ArrayList<Event>();
 
-        // get the payloads in this event
-        List<Payload> payloads = event.getPayloads();
-        if(payloads.size() == 1)
-        {
-            // only one payload so add the incoming event to the outgoing list and return
-            events.add(event);
-            return events;
-        }
         
-        try
-        {
-            for(Payload payload:payloads)
-            {
-                Event newEvent = event.spawn();
-                newEvent.getPayloads().clear();
-                newEvent.setPayload(payload);
-                events.add(newEvent);
-            }
-            
-            return events;
-        } 
-        catch (CloneNotSupportedException e)
-        {
-            throw new SequencerException(e);
-        }
+		// get the payloads in this event
+		List<Payload> payloads = event.getPayloads();
+		if (payloads.size() == 1) {
+			// only one payload so add the incoming event to the outgoing list
+			// and return
+			events.add(event);
+			return events;
+		}
+
+		for (int i = 0; i < payloads.size(); i++) {
+			Payload payload = payloads.get(i);
+			events.add(event.spawnChild(moduleName, componentName, i, payload));
+
+		}
+		return events;
     }
 }

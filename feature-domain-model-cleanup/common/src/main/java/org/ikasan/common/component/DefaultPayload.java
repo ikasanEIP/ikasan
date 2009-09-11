@@ -68,46 +68,36 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         // empty
     }
 
-    /**
-     * Default constructor Creates a new instance of <code>Payload</code> with the empty data content.
-     * 
-     * @param name Name of the payload
-     * @param spec Spec of the payload
-     * @param srcSystem Src System of the payload
-     */
-    public DefaultPayload(final String name, final String spec, final String srcSystem)
-    {
-        this(name, spec, srcSystem, new String("").getBytes()); //$NON-NLS-1$
-    }
 
-    /**
-     * Creates a new instance of <code>Payload</code> with the specified data content.
-     * 
-     * @param name Name of the payload
-     * @param spec Spec of the payload
-     * @param srcSystem Src System of the payload
-     * @param content Content of the payload
-     */
-    public DefaultPayload(final String name, final String spec, final String srcSystem, final byte content[])
-    {
-        this.noNamespaceSchemaLocation = null;
-        this.schemaInstanceNSURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-        this.name = name;
-        this.spec = spec;
-        this.srcSystem = srcSystem;
-        this.id = generateId();
-        this.setTimezone(MetaDataInterface.DEFAULT_TIMEZONE);
-        this.timestamp = generateTimestamp();
-        this.timestampFormat = DEFAULT_TIMESTAMP_FORMAT;
-        this.priority = new Integer(Priority.NORMAL.getLevel());
-        this.content = content;
-        this.encoding = Encoding.NOENC.toString();
-        this.charset = Charset.defaultCharset().toString();
-        this.checksumAlg = DEFAULT_CHECKSUM_ALG;
-        this.checksum = this.calculateChecksum();
-        this.size = new Long(content.length);
-        if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
-    }
+
+//    /**
+//     * Creates a new instance of <code>Payload</code> with the specified data content.
+//     * 
+//     * @param name Name of the payload
+//     * @param spec Spec of the payload
+//     * @param srcSystem Src System of the payload
+//     * @param content Content of the payload
+//     */
+//    public DefaultPayload(final String name, final String spec, final String srcSystem, final byte content[])
+//    {
+//        this.noNamespaceSchemaLocation = null;
+//        this.schemaInstanceNSURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
+//        this.name = name;
+//        this.spec = spec;
+//        this.srcSystem = srcSystem;
+//        this.id = generateId();
+//        this.setTimezone(MetaDataInterface.DEFAULT_TIMEZONE);
+//        this.timestamp = generateTimestamp();
+//        this.timestampFormat = DEFAULT_TIMESTAMP_FORMAT;
+//        this.priority = new Integer(Priority.NORMAL.getLevel());
+//        this.content = content;
+//        this.encoding = Encoding.NOENC.toString();
+//        this.charset = Charset.defaultCharset().toString();
+//        this.checksumAlg = DEFAULT_CHECKSUM_ALG;
+//        this.checksum = this.calculateChecksum();
+//        this.size = new Long(content.length);
+//        if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
+//    }
 
     /**
      * This constructor has a serious flaw and does not create a copy of the payload. DO NOT USE THIS CONSTRUCTOR.
@@ -132,8 +122,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         this.format = payload.getFormat();
         this.charset = payload.getCharset();
         this.size = payload.getSize();
-        this.checksumAlg = payload.getChecksumAlg();
-        this.checksum = payload.getChecksum();
         this.srcSystem = payload.getSrcSystem();
         this.targetSystems = payload.getTargetSystems();
         this.processIds = payload.getProcessIds();
@@ -141,6 +129,25 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     }
 
     /**
+     * Construtor
+     * 
+     * @param id
+     * @param name
+     * @param spec
+     * @param srcSystem
+     * @param content
+     */
+    public DefaultPayload(String id, String name, Spec spec, String srcSystem,
+			byte[] content) {
+		this.id = id;
+		this.name=name;
+		this.spec = spec;
+		this.srcSystem = srcSystem;
+		this.content = content;
+		
+	}
+
+	/**
      * Setter for content. This setter by default sets the size and checksum of the particular payload.
      * 
      * @param content The content of the payload to set
@@ -149,7 +156,7 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     {
         this.content = content;
         if (logger.isDebugEnabled()) logger.debug("Content set to [" + this.content + "]."); //$NON-NLS-1$//$NON-NLS-2$
-        this.setChecksum();
+  
         this.size = new Long(content.length);
     }
 
@@ -206,49 +213,7 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         if (logger.isDebugEnabled()) logger.debug("Size set to [" + this.size + "]."); //$NON-NLS-1$//$NON-NLS-2$
     }
 
-    /**
-     * Method used to calculate the checksum of the <code>content</code> byte array. By default, the checksum is
-     * calculated using the <code>MD5</code> algorithm.
-     * 
-     * @return The MD5 checksum of the <code>content</code> as a hexadecimal <code>String</code>.
-     */
-    @Override
-    protected String calculateChecksum()
-    {
-        String result = null;
-        // Check whether the content is null
-        if (this.content == null)
-        {
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Content was null, returning a null checksum for the payload.");
-            }
-        }
-        else
-        {
-            try
-            {
-                if (logger.isDebugEnabled())
-                {
-                    logger.debug("Calculating checksum for the payload.");
-                }
-                // we have content so lets get a checksum
-                InputStream stream = new ByteArrayInputStream(this.content);
-                result = ChecksumUtils.getChecksum(stream, this.getChecksumAlg());
-            }
-            catch (IOException e)
-            {
-                logger.warn("Exception encountered when calculating payload " //$NON-NLS-1$
-                        + "content checksum. Setting checksum to [null].", e); //$NON-NLS-1$
-            }
-            catch (NoSuchAlgorithmException e)
-            {
-                logger.warn("Exception encountered when calculating payload " //$NON-NLS-1$
-                        + "content checksum. Setting checksum to [null].", e); //$NON-NLS-1$
-            }
-        }
-        return result;
-    }
+ 
 
     /**
      * Create a formatted string detailing the payload id of the incoming payload.
@@ -352,7 +317,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         {
             clone.setSize(new Long(this.getSize()));
         }
-        clone.setChecksum();
         return clone;
     }
 

@@ -34,6 +34,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
+import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.NamingException;
@@ -43,10 +44,9 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.PayloadOperationException;
-import org.ikasan.common.factory.JMSMessageFactory;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
+import org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 /**
@@ -84,7 +84,7 @@ public class JMSPayloadPublisherTest extends TestCase
     /**
      * mock of the serialiser
      */
-    final JMSMessageFactory jmsMessageFactory = mockery.mock(JMSMessageFactory.class);
+    final JmsMessagePayloadSerialiser<Message> jmsMessagePayloadSerialiser = mockery.mock(JmsMessagePayloadSerialiser.class);
 
     /**
      * mock of the security conf
@@ -121,10 +121,7 @@ public class JMSPayloadPublisherTest extends TestCase
      */
     final JMSException jmsException = new JMSException(null);
 
-    /**
-     * EventSerialisationException
-     */
-    final PayloadOperationException payloadOperationException = new PayloadOperationException();
+
     
     /**
      * mock of the jndiDestinationFactory
@@ -154,7 +151,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageFactory).payloadToMapMessage(payload, session);
+                one(jmsMessagePayloadSerialiser).toMessage(payload, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -162,7 +159,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 one(connection).close();
             }
         });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory, ikasanSecurityConf);
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessagePayloadSerialiser, ikasanSecurityConf);
         publisher.publish(payload);
     }
 
@@ -189,7 +186,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageFactory).payloadToMapMessage(payload, session);
+                one(jmsMessagePayloadSerialiser).toMessage(payload, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -198,7 +195,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 one(connection).close();
             }
         });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory,
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessagePayloadSerialiser,
             ikasanSecurityConf);
         final Integer priority = new Integer(1);
         publisher.setPriority(priority);
@@ -224,7 +221,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageFactory).payloadToMapMessage(payload, session);
+                one(jmsMessagePayloadSerialiser).toMessage(payload, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -232,7 +229,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 one(connection).close();
             }
         });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory, null);
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessagePayloadSerialiser, null);
         publisher.publish(payload);
     }
 
@@ -252,7 +249,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 one(connection).close();
             }
         });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory, null);
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessagePayloadSerialiser, null);
         try
         {
             publisher.publish(payload);
@@ -282,7 +279,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 one(connection).close();
             }
         });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory, null);
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessagePayloadSerialiser, null);
         try
         {
             publisher.publish(payload);
@@ -294,47 +291,15 @@ public class JMSPayloadPublisherTest extends TestCase
         }
     }
 
-    /**
-     * Test method for
-     * {@link org.ikasan.framework.payload.service.JMSPayloadPublisher#publish(org.ikasan.common.Payload)}
-     * .
-     * @throws JMSException thrown when error publishing a message.
-     * @throws PayloadOperationException thwon when error creating a message from payload
-     */
-    public void testPublish_throwsResourceExceptionWhenJmsMessageFactoryException() throws JMSException, PayloadOperationException
-    {
-        mockery.checking(new Expectations()
-        {
-            {
-                one(jmsConnectionFactory).createConnection();
-                will(returnValue(connection));
-                one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
-                will(returnValue(session));
-                one(jmsMessageFactory).payloadToMapMessage(payload, session);
-                will(throwException(payloadOperationException));
-                one(connection).close();
-            }
-        });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory, null);
-        try
-        {
-            publisher.publish(payload);
-            fail("Exception should have been thrown");
-        }
-        catch (ResourceException p)
-        {
-            assertTrue("underlyingException should be the PayloadOperationException", payloadOperationException.equals(p.getCause()));
-        }
-    }
+
 
     /**
      * Test method for
      * {@link org.ikasan.framework.payload.service.JMSPayloadPublisher#publish(org.ikasan.common.Payload)}
      * .
      * @throws JMSException thrown when error publishing a message.
-     * @throws PayloadOperationException thwon when error creating a message from payload
      */
-    public void testPublish_throwsResourceExceptionWhenClosingConnectionThrowsJMSException() throws JMSException, PayloadOperationException
+    public void testPublish_throwsResourceExceptionWhenClosingConnectionThrowsJMSException() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -350,7 +315,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageFactory).payloadToMapMessage(payload, session);
+                one(jmsMessagePayloadSerialiser).toMessage(payload, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -359,7 +324,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 will(throwException(jmsException));
             }
         });
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessageFactory,
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(destination, jmsConnectionFactory, jmsMessagePayloadSerialiser,
             ikasanSecurityConf);
         try
         {
@@ -387,7 +352,7 @@ public class JMSPayloadPublisherTest extends TestCase
                 will(returnValue(connection));
                 one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
                 will(returnValue(session));
-                one(jmsMessageFactory).payloadToMapMessage(payload, session);
+                one(jmsMessagePayloadSerialiser).toMessage(payload, session);
                 will(returnValue(mapMessage));
                 one(session).createProducer(destination);
                 will(returnValue(messageProducer));
@@ -396,7 +361,7 @@ public class JMSPayloadPublisherTest extends TestCase
             }
         });
         
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(jndiDestinationFactory, jmsConnectionFactory, jmsMessageFactory,
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(jndiDestinationFactory, jmsConnectionFactory, jmsMessagePayloadSerialiser,
                 null);
         publisher.publish(payload);
         
@@ -404,7 +369,7 @@ public class JMSPayloadPublisherTest extends TestCase
     }
     
     public void testPublish_willThrowResourceExceptionForNamingException() throws NamingException{
-        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(jndiDestinationFactory, jmsConnectionFactory, jmsMessageFactory,
+        final JMSPayloadPublisher publisher = new JMSPayloadPublisher(jndiDestinationFactory, jmsConnectionFactory, jmsMessagePayloadSerialiser,
                 null);
         
         final NamingException namingException = new NamingException();

@@ -26,6 +26,8 @@
  */
 package org.ikasan.common;
 
+import org.ikasan.common.component.Spec;
+
 /**
  * Default meta-data required operations across all transport containers
  * such as Payload and Envelope.
@@ -174,13 +176,13 @@ public interface MetaDataInterface
      * Setter for spec attribute
      * @param spec 
      */
-    public void setSpec(final String spec);
+    public void setSpec(final Spec spec);
 
     /**
      * Getter for spec
      * @return String
      */
-    public String getSpec();
+    public Spec getSpec();
 
     /**
      * Setter for encoding
@@ -243,40 +245,8 @@ public interface MetaDataInterface
      */
     public Long getSize();
 
-    /**
-     * Setter for <code>checksum</code>. This can be used to set checksum to
-     * an explicit value as provided by the <code>checksum</code> parameter.
-     * 
-     * @param checksum 
-     */
-    public void setChecksum(final String checksum);
 
-    /**
-     * Utility setter for checksum. When this setter is used, the checksum is
-     * calculated and set automatically. The checksum is calculated based on the
-     * class default <code>MD5</code> algorithm.
-     */
-    public void setChecksum();
 
-    /**
-     * Getter for checksum
-     * @return String
-     */
-    public String getChecksum();
-
-    /**
-     * Utility setter for checksumAlg. When this setter is used, the checksum 
-     * algorithm is set. The checksumAlg default is <code>MD5</code> algorithm.
-     * 
-     * @param checksumAlg 
-     */
-    public void setChecksumAlg(final String checksumAlg);
-
-    /**
-     * Getter for checksumAlg
-     * @return String
-     */
-    public String getChecksumAlg();
 
     /**
      * Setter for srcSystem

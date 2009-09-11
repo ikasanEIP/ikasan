@@ -73,15 +73,7 @@ public class PayloadConverter
      */
     protected PayloadFactory payloadFactory;
     
-    /**
-     * Creates a new <code>PayloadConverter</code> instance.
-     * 
-     * @param implementationClass 
-     */
-    public PayloadConverter(Class<?> implementationClass)
-    {
-        this(implementationClass, ResourceLoader.getInstance().getPayloadFactory());
-    }
+
     
     /**
      * Constructor
@@ -144,7 +136,7 @@ public class PayloadConverter
         }
         if (payload.getSpec() != null)
         {
-            writer.addAttribute("SPEC", payload.getSpec()); //$NON-NLS-1$
+            writer.addAttribute("SPEC", payload.getSpec().name()); //$NON-NLS-1$
         }
         if (payload.getFormat() != null)
         {
@@ -162,14 +154,7 @@ public class PayloadConverter
         {
             writer.addAttribute("SIZE", String.valueOf(payload.getSize())); //$NON-NLS-1$
         }
-        if (payload.getChecksum() != null)
-        {
-            writer.addAttribute("CHECKSUM", payload.getChecksum()); //$NON-NLS-1$
-        }
-        if (payload.getChecksumAlg() != null)
-        {
-            writer.addAttribute("CHECKSUM_ALG", payload.getChecksumAlg()); //$NON-NLS-1$
-        }
+        
         if (payload.getProcessIds() != null)
         {
             writer.addAttribute("PROCESS_IDS", payload.getProcessIds()); //$NON-NLS-1$
@@ -207,9 +192,11 @@ public class PayloadConverter
     {
         try
         {
+        	String id = null;
             String name = null;
-            String spec = null;
+            Spec spec = null;
             String srcSystem = null;
+            byte [] content = null;
             
             if (reader.getAttribute("NAME") != null) //$NON-NLS-1$
             {
@@ -217,14 +204,24 @@ public class PayloadConverter
             }
             if (reader.getAttribute("SPEC") != null) //$NON-NLS-1$
             {
-                spec = reader.getAttribute("SPEC"); //$NON-NLS-1$
+                spec = Spec.valueOf(reader.getAttribute("SPEC")); //$NON-NLS-1$
             }
             if (reader.getAttribute("SRC_SYSTEM") != null) //$NON-NLS-1$
             {
                 srcSystem = reader.getAttribute("SRC_SYSTEM"); //$NON-NLS-1$
             }
+            if (reader.getAttribute("ID") != null) //$NON-NLS-1$
+            {
+                id = reader.getAttribute("ID"); //$NON-NLS-1$
+            }
+            if (reader.getValue() != null)
+            {
+                String contentString = reader.getValue();
+                contentString = this.removeCDATASection(contentString);
+                content = contentString.getBytes();
+            }
 
-            Payload payload = payloadFactory.newPayload(name, spec, srcSystem);
+            Payload payload = payloadFactory.newPayload(id, name, spec, srcSystem, content);
     
             // XMLSchema Instance NS URI
             if (reader.getAttribute("xmlns:xsi") != null) //$NON-NLS-1$
@@ -237,10 +234,7 @@ public class PayloadConverter
                 payload.setNoNamespaceSchemaLocation(reader.
                                     getAttribute("xsi:noNamespaceSchemaLocation")); //$NON-NLS-1$
             }
-            if (reader.getAttribute("ID") != null) //$NON-NLS-1$
-            {
-                payload.setId(reader.getAttribute("ID")); //$NON-NLS-1$
-            }
+
             if (reader.getAttribute("TIMESTAMP") != null) //$NON-NLS-1$
             {
                 String attrVal = reader.getAttribute("TIMESTAMP"); //$NON-NLS-1$
@@ -303,14 +297,7 @@ public class PayloadConverter
                     throw new ConversionException(e);
                 }
             }
-            if (reader.getAttribute("CHECKSUM") != null) //$NON-NLS-1$
-            {
-                payload.setChecksum(reader.getAttribute("CHECKSUM")); //$NON-NLS-1$
-            }
-            if (reader.getAttribute("CHECKSUM_ALG") != null) //$NON-NLS-1$
-            {
-                payload.setChecksumAlg(reader.getAttribute("CHECKSUM_ALG")); //$NON-NLS-1$
-            }
+            
             if (reader.getAttribute("PROCESS_IDS") != null) //$NON-NLS-1$
             {
                 payload.setProcessIds(reader.getAttribute("PROCESS_IDS")); //$NON-NLS-1$
@@ -323,12 +310,7 @@ public class PayloadConverter
             {
                 payload.setResubmissionInfo(reader.getAttribute("RESUBMISSION_INFO")); //$NON-NLS-1$
             }
-            if (reader.getValue() != null)
-            {
-                String content = reader.getValue();
-                content = this.removeCDATASection(content);
-                payload.setContent(content.getBytes());
-            }
+
     
             return payload;
         }

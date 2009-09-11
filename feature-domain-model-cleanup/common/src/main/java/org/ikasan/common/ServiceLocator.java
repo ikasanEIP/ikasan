@@ -28,10 +28,7 @@ package org.ikasan.common;
 
 import java.io.File;
 
-import org.ikasan.common.factory.EnvelopeFactory;
-import org.ikasan.common.factory.JMSMessageFactory;
-import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.common.xml.serializer.XMLSerializer;
+
 import org.springframework.jndi.JndiTemplate;
 
 /**
@@ -43,20 +40,9 @@ import org.springframework.jndi.JndiTemplate;
  */
 public interface ServiceLocator
 {
-    /**
-     * Returns a fully configured instance of <code>PayloadFactory</code>
-     * 
-     * @return PayloadFactory
-     * @deprecated Should configure via Spring Beans
-     */
-    public PayloadFactory getPayloadFactory();
 
-    /**
-     * Returns a fully configured instance of <code>EnvelopeFactory</code>
-     * 
-     * @return EnvelopeFactory
-     */
-    public EnvelopeFactory getEnvelopeFactory();
+
+
 
     /**
      * Returns a fully configured instance of <code>CommonXMLParser</code>
@@ -65,26 +51,9 @@ public interface ServiceLocator
      */
     public CommonXMLParser getCommonXmlParser();
 
-    /**
-     * Returns a fully configured instance of <code>JMSMessageFactory</code>
-     * 
-     * @return JMSMessageFactory
-     */
-    public JMSMessageFactory getJMSMessageFactory();
 
-    /**
-     * Returns a fully configured XML Serialiser/Desrialiser for <code>Envelope</code>s
-     * 
-     * @return XMLSerializer<Envelope>
-     */
-    public XMLSerializer<Envelope> getEnvelopeXMLSerializer();
 
-    /**
-     * Returns a fully configured XML Serialiser/Desrialiser for <code>Payload</code>s
-     * 
-     * @return XMLSerializer<Payload>
-     */
-    public XMLSerializer<Payload> getPayloadXMLSerializer();
+
 
     /**
      * Returns a <code>JNDITemplate</code> for accessing JNDI resources from the JMS server

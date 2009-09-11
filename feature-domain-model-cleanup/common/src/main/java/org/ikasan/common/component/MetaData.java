@@ -77,7 +77,7 @@ public abstract class MetaData implements Serializable
     protected String name;
 
     /** content MIME type specification */
-    protected String spec;
+    protected Spec spec;
 
     /** content encoding ie base64, hex, noenc */
     protected String encoding;
@@ -91,11 +91,7 @@ public abstract class MetaData implements Serializable
     /** content size */
     protected Long size = new Long(0L);
 
-    /** content calculated checksum */
-    protected String checksum;
 
-    /** calculated checksum algorithm */
-    protected String checksumAlg = MetaDataInterface.DEFAULT_CHECKSUM_ALG;
 
     /** originating system */
     protected String srcSystem;
@@ -292,10 +288,9 @@ public abstract class MetaData implements Serializable
      * 
      * @param spec spec to set
      */
-    public void setSpec(final String spec)
+    public void setSpec(final Spec spec)
     {
         this.spec = spec;
-        logger.debug("Spec set to [" + this.spec + "]."); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     /**
@@ -303,7 +298,7 @@ public abstract class MetaData implements Serializable
      * 
      * @return String
      */
-    public String getSpec()
+    public Spec getSpec()
     {
         logger.debug("Returning spec [" + this.spec + "]."); //$NON-NLS-1$//$NON-NLS-2$
         return this.spec;
@@ -402,61 +397,8 @@ public abstract class MetaData implements Serializable
         return this.size;
     }
 
-    /**
-     * Setter for <code>checksum</code>. This can be used to set checksum to an explicit value as provided by the
-     * <code>checksum</code> parameter.
-     * 
-     * @param checksum checksum to set
-     */
-    public void setChecksum(final String checksum)
-    {
-        this.checksum = checksum;
-        logger.debug("Checksum set to [" + this.checksum + "]."); //$NON-NLS-1$ //$NON-NLS-2$
-    }
 
-    /**
-     * Utility setter for checksum. When this setter is used, the checksum is calculated and set automatically. The
-     * checksum is calculated based on the class default <code>MD5</code> algorithm.
-     */
-    public void setChecksum()
-    {
-        this.checksum = this.calculateChecksum();
-        logger.debug("Checksum set to [" + this.checksum + "]."); //$NON-NLS-1$//$NON-NLS-2$
-    }
 
-    /**
-     * Getter for checksum
-     * 
-     * @return String
-     */
-    public String getChecksum()
-    {
-        logger.debug("Returning checksum [" + this.checksum + "]."); //$NON-NLS-1$//$NON-NLS-2$
-        return this.checksum;
-    }
-
-    /**
-     * Utility setter for checksumAlg. When this setter is used, the checksum algorithm is set. The checksumAlg default
-     * is <code>MD5</code> algorithm.
-     * 
-     * @param checksumAlg checksum algorithm to set
-     */
-    public void setChecksumAlg(final String checksumAlg)
-    {
-        this.checksumAlg = checksumAlg;
-        logger.debug("ChecksumAlg set to [" + this.checksumAlg + "]."); //$NON-NLS-1$//$NON-NLS-2$
-    }
-
-    /**
-     * Getter for checksumAlg
-     * 
-     * @return String
-     */
-    public String getChecksumAlg()
-    {
-        logger.debug("Returning checksumAlg [" + this.checksumAlg + "]."); //$NON-NLS-1$ //$NON-NLS-2$
-        return this.checksumAlg;
-    }
 
     /**
      * Setter for srcSystem
@@ -564,13 +506,6 @@ public abstract class MetaData implements Serializable
         // as a requirement of introspection on this class.
     }
 
-    /**
-     * Method used to calculate the checksum of the <code>content</code> byte array. By defaul, the checksum is
-     * calculated using the <code>MD5</code> algorithm.
-     * 
-     * @return The MD5 checksum of the <code>content</code> as a hexadecimal <code>String</code>.
-     */
-    protected abstract String calculateChecksum();
 
     /**
      * Create a formatted string detailing the payload id of the incoming payload.
@@ -645,9 +580,6 @@ public abstract class MetaData implements Serializable
         sb.append("]\n");//$NON-NLS-1$
         sb.append("Size(bytes)      = [");//$NON-NLS-1$
         sb.append(this.size);
-        sb.append("]\n");//$NON-NLS-1$
-        sb.append("Checksum (Hex)   = [");//$NON-NLS-1$
-        sb.append(this.checksum);
         sb.append("]\n");//$NON-NLS-1$
         sb.append("Source System    = [");//$NON-NLS-1$
         sb.append(this.srcSystem);

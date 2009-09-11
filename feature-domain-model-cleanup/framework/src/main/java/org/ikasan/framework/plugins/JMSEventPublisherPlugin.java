@@ -28,6 +28,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
+import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.NamingException;
@@ -63,7 +64,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
     private IkasanSecurityConf ikasanSecurityConf;
 
     /** Converter to a MapMessage */
-    private JmsMessageEventSerialiser jmsMessageEventSerialiser;
+    private JmsMessageEventSerialiser<? extends Message> jmsMessageEventSerialiser;
 
     /** JMS Message Time to live */
     private Long timeToLive;
@@ -143,7 +144,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
         {
             connection = createConnection();
             Session session = connection.createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
-            MapMessage mapMessage = jmsMessageEventSerialiser.toMapMessage(event, session);
+            Message message = jmsMessageEventSerialiser.toMessage(event, session);
             MessageProducer messageProducer = session.createProducer(thisDestination);
             if (timeToLive != null)
             {
@@ -153,16 +154,12 @@ public class JMSEventPublisherPlugin implements EventInvocable
             //use the configured priority if present, otherwise the Event priority
             //note MUST explicitly set priority on the messageProducer, as setting on the message gets ignored
             messageProducer.setPriority(priority!=null?priority:event.getPriority());
-            messageProducer.send(mapMessage);
+            messageProducer.send(message);
             logger.info("successfully sent message to destination [" + thisDestination + "]. " + event.idToString());
         }
         catch (JMSException e)
         {
             throw new PluginInvocationException("JMS Exception caught whilst publishing", e);
-        }
-        catch (EventSerialisationException e)
-        {
-            throw new PluginInvocationException("EventSerialisationException caught whilst creating mapMessage", e);
         }
         finally
         {

@@ -26,13 +26,12 @@
  */
 package org.ikasan.framework.component;
 
-import junit.framework.JUnit4TestAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ikasan.common.Payload;
-import org.ikasan.framework.component.Event;
-import org.junit.After;
+import org.jmock.Mockery;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -42,25 +41,55 @@ import org.junit.Test;
  */
 public class EventTest
 {
-    /** CG name */
-    private String componentGroupName = "groupName";
+	
+	/**
+	 * Mockery for mocking stuff
+	 */
+	private Mockery mockery = new Mockery();
+	
+	/**
+	 * Name for the module that creates an event for the first time
+	 */
+	private String originatingModuleName = "originatingModuleName";
+	
+	
+	/**
+	 * Name for the component that creates an event for the first time
+	 */
+	private String originatingComponentName = "originatingComponentName";
+	
+	/**
+	 * Id supplied by the component that creates an event for the first time
+	 */	
+	private String originatorGeneratedId = "originatorGeneratedId";
     
-    /** Component Name */
-    private String componentName = "componentName";
-    
-    /** The event */
-    private Event event;
-    
+
     /**
-     * Setup runs before each test
+     * Test constructor used to originate new Events
      */
-    @Before
-    public void setUp()
-    {
-        // create a dummy event
-        this.event = new Event(this.componentGroupName, this.componentName);
+    @Test
+    public void testConstructor_StringStringStringListOfPayloads(){
+    	List<Payload> payloads = new ArrayList<Payload>();
+    	
+    	Event event = new Event (originatingModuleName, originatingComponentName, originatorGeneratedId,payloads);
+    	Assert.assertEquals("id should be a function of the originating moduleName, componentName, and generatedId", originatingModuleName+"_"+originatingComponentName+"_"+originatorGeneratedId, event.getId());
+    	Assert.assertEquals("event payloads should be those supplied to constructor", payloads, event.getPayloads());
     }
 
+    /**
+     * Test constructor used to originate new Events
+     */
+    @Test
+    public void testConstructor_StringStringStringPayload(){
+    	Payload payload = mockery.mock(Payload.class);
+    	
+    	Event event = new Event (originatingModuleName, originatingComponentName, originatorGeneratedId,payload);
+    	Assert.assertEquals("id should be a function of the originating moduleName, componentName, and generatedId", originatingModuleName+"_"+originatingComponentName+"_"+originatorGeneratedId, event.getId());
+    	Assert.assertEquals("only payload should be that supplied to constructor", payload, event.getPayloads().get(0));
+    }
+    
+
+    
     /**
      * Test cloning an event.
      * @throws CloneNotSupportedException 
@@ -69,79 +98,44 @@ public class EventTest
     public void test_EventClone()
         throws CloneNotSupportedException
     {
-        Event clone = this.event.clone();
+    	Event event = new Event(originatingModuleName, originatingComponentName, originatorGeneratedId,new ArrayList<Payload>());
+    	
+    	
+        Event clone = event.clone();
         
-        Assert.assertTrue(clone != this.event);
+        Assert.assertTrue(clone != event);
 
-        Assert.assertTrue(clone.getPayloads() != this.event.getPayloads());
-        for(int i=0; i < this.event.getPayloads().size(); i++)
+        Assert.assertTrue(clone.getPayloads() != event.getPayloads());
+        for(int i=0; i < event.getPayloads().size(); i++)
         {
-            Payload eventPayload = this.event.getPayloads().get(i);
+            Payload eventPayload = event.getPayloads().get(i);
             Payload clonePayload = clone.getPayloads().get(i);
             
             Assert.assertTrue(eventPayload != clonePayload);
             Assert.assertEquals(eventPayload, clonePayload);
         }
         
-        Assert.assertEquals(clone.getNoNamespaceSchemaLocation(),
-                this.event.getNoNamespaceSchemaLocation());
-        
-        Assert.assertEquals(clone.getSchemaInstanceNSURI(),
-                this.event.getSchemaInstanceNSURI());
+
 
         Assert.assertEquals(clone.getId(),
-                this.event.getId());
+                event.getId());
 
-        Assert.assertTrue(clone.getTimestamp() != this.event.getTimestamp());
         Assert.assertEquals(clone.getTimestamp(),
-                this.event.getTimestamp());
+                event.getTimestamp());
 
-        Assert.assertEquals(clone.getTimestampFormat(),
-                this.event.getTimestampFormat());
-        
-        Assert.assertEquals(clone.getTimezone(),
-                this.event.getTimezone());
-        
-        Assert.assertTrue(clone.getPriority() != this.event.getPriority());
+
         Assert.assertEquals(clone.getPriority(),
-                this.event.getPriority());
+                event.getPriority());
         
         Assert.assertEquals(clone.getName(),
-                this.event.getName());
+                event.getName());
         
-        Assert.assertEquals(clone.getSpec(),
-                this.event.getSpec());
-        
-        Assert.assertEquals(clone.getEncoding(),
-                this.event.getEncoding());
-        
-        Assert.assertEquals(clone.getFormat(),
-                this.event.getFormat());
-        
-        Assert.assertEquals(clone.getCharset(),
-                this.event.getCharset());
-        
-        Assert.assertTrue(clone.getSize() != this.event.getSize());
-        Assert.assertEquals(clone.getSize(),
-                this.event.getSize());
-        
-        Assert.assertEquals(clone.getChecksum(),
-                this.event.getChecksum());
-        
-        Assert.assertEquals(clone.getChecksumAlg(),
-                this.event.getChecksumAlg());
+
         
         Assert.assertEquals(clone.getSrcSystem(),
-                this.event.getSrcSystem());
+                event.getSrcSystem());
 
-        Assert.assertEquals(clone.getTargetSystems(),
-                this.event.getTargetSystems());
-
-        Assert.assertEquals(clone.getProcessIds(),
-                this.event.getProcessIds());
-
-        Assert.assertEquals(clone.getResubmissionInfo(),
-                this.event.getResubmissionInfo());
+ 
     }
 
     /**
@@ -150,104 +144,52 @@ public class EventTest
      * @throws InterruptedException 
      */
     @Test
-    public void test_EventSpawn()
+    public void testSpawnChild()
         throws CloneNotSupportedException, InterruptedException
     {
+    	Event event = new Event(originatingModuleName, originatingComponentName, originatorGeneratedId,new ArrayList<Payload>());
+    	String spawningModuleName = "moduleName";
+    	String spawningComponentName = "componentName";
+    	
+    	List<Payload> childPayloads = new ArrayList<Payload>();
+    	
+    	
         // TODO - we should look to move to nano precision on timestamp, however,
         // in the meantime....
         // need to sleep to force a change in the timestamp between
         // the current event and the spawned event
         Thread.sleep(100);
         
-        Event spawned = this.event.spawn();
+        //spawn the child Event
+        Event spawned = event.spawnChild(spawningModuleName, spawningComponentName, 0, childPayloads);
         
-        Assert.assertTrue(spawned != this.event);
+        String expectedFirstChildsId = spawningModuleName+"_"+spawningComponentName+"_#"+event.getId()+".0";
+        Assert.assertEquals("spawned child should have an id that is based on it's parents", expectedFirstChildsId, spawned.getId());
+        
+      
+        Assert.assertTrue(spawned != event);
 
-        Assert.assertTrue(spawned.getPayloads() != this.event.getPayloads());
-        for(int i=0; i < this.event.getPayloads().size(); i++)
-        {
-            Payload eventPayload = this.event.getPayloads().get(i);
-            Payload clonePayload = spawned.getPayloads().get(i);
-            
-            Assert.assertTrue(eventPayload != clonePayload);
-            Assert.assertEquals(eventPayload, clonePayload);
-        }
+        Assert.assertEquals(childPayloads, spawned.getPayloads());
         
-        Assert.assertEquals(spawned.getNoNamespaceSchemaLocation(),
-                this.event.getNoNamespaceSchemaLocation());
-        
-        Assert.assertEquals(spawned.getSchemaInstanceNSURI(),
-                this.event.getSchemaInstanceNSURI());
+ 
+        Assert.assertFalse(spawned.getId().equals(event.getId()));
 
-        Assert.assertFalse(spawned.getId().equals(this.event.getId()));
+        Assert.assertTrue(spawned.getTimestamp() != event.getTimestamp());
 
-        Assert.assertTrue(spawned.getTimestamp() != this.event.getTimestamp());
-        Assert.assertFalse(spawned.getTimestamp().equals(this.event.getTimestamp()));
-
-        Assert.assertEquals(spawned.getTimestampFormat(),
-                this.event.getTimestampFormat());
         
-        Assert.assertEquals(spawned.getTimezone(),
-                this.event.getTimezone());
-        
-        Assert.assertTrue(spawned.getPriority() != this.event.getPriority());
         Assert.assertEquals(spawned.getPriority(),
-                this.event.getPriority());
+                event.getPriority());
         
         Assert.assertEquals(spawned.getName(),
-                this.event.getName());
+                event.getName());
         
-        Assert.assertEquals(spawned.getSpec(),
-                this.event.getSpec());
-        
-        Assert.assertEquals(spawned.getEncoding(),
-                this.event.getEncoding());
-        
-        Assert.assertEquals(spawned.getFormat(),
-                this.event.getFormat());
-        
-        Assert.assertEquals(spawned.getCharset(),
-                this.event.getCharset());
-        
-        Assert.assertTrue(spawned.getSize() != this.event.getSize());
-        Assert.assertEquals(spawned.getSize(),
-                this.event.getSize());
-        
-        Assert.assertEquals(spawned.getChecksum(),
-                this.event.getChecksum());
-        
-        Assert.assertEquals(spawned.getChecksumAlg(),
-                this.event.getChecksumAlg());
+   
         
         Assert.assertEquals(spawned.getSrcSystem(),
-                this.event.getSrcSystem());
+                event.getSrcSystem());
 
-        Assert.assertEquals(spawned.getTargetSystems(),
-                this.event.getTargetSystems());
-
-        Assert.assertEquals(spawned.getProcessIds(),
-                this.event.getProcessIds());
-
-        Assert.assertEquals(spawned.getResubmissionInfo(),
-                this.event.getResubmissionInfo());
+      
     }
 
-    /**
-     * Teardown after each test
-     */
-    @After
-    public void tearDown()
-    {
-        this.event = null;
-    }
-
-    /**
-     * The suite is this class
-     * 
-     * @return JUnit Test class
-     */
-    public static junit.framework.Test suite()
-    {
-        return new JUnit4TestAdapter(EventTest.class);
-    }
+ 
 }
