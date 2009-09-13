@@ -105,6 +105,13 @@
       <timezone>0</timezone>
     </developer>
   </developers>
+  <licenses>
+    <license>
+      <name>Modified BSD License</name>
+      <url>http://www.ikasan.org/license</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
 
   <build>
     
