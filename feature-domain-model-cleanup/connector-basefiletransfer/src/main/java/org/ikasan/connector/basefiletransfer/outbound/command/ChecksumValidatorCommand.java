@@ -115,15 +115,21 @@ public class ChecksumValidatorCommand extends AbstractBaseFileTransferTransactio
 
         try
         {
-            String generatedChecksum = payload.getChecksum(); // which we know
-                                                                // to be MD5
-            String generatedChecksumAlgorithm = payload.getChecksumAlg();
-            if (!generatedChecksumAlgorithm.equals(checksumSupplier
-                .getAlgorithmName()))
-            {
-                throw new UnsupportedEncodingException(
-                    "File was previously checksummed with an unsupported algorithm: [" + generatedChecksumAlgorithm + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+        	
+        	//generate an MD5 checksum of the file contents
+            String generatedChecksum = checksumSupplier.calucluateChecksumString(payload.getContent());
+            
+            
+//            String generatedChecksumAlgorithm = "MD5";
+//            if (!generatedChecksumAlgorithm.equals(checksumSupplier
+//                .getAlgorithmName()))
+//            {
+//                throw new UnsupportedEncodingException(
+//                    "File was previously checksummed with an unsupported algorithm: [" + generatedChecksumAlgorithm + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+//            }
+            
+            
+            
 
             // Get the checksum file
             URI checksumURI = new URI(checksumFilePath);

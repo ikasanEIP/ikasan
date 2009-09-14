@@ -26,16 +26,13 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.Payload;
-import org.ikasan.common.ServiceLocator;
-import org.ikasan.common.util.ChecksumUtils;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
@@ -91,34 +88,17 @@ public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactio
             }
             
             // which we know to be MD5
-            String generatedChecksum = payload.getChecksum();
-            
-            // TODO global service locator
-            ServiceLocator serviceLocator = ResourceLoader.getInstance();
-            Payload reloadedPayload = serviceLocator.getPayloadFactory().newPayload(
-                file.getName(), payload.getSpec(),payload.getSrcSystem(),
-                file.getContent());
-            
-            if (!payload.getChecksumAlg().equals(reloadedPayload
-                .getChecksumAlg()))
-            {
-                throw new UnsupportedEncodingException(
-                    "Payload was previously checksummed with a different checksum algorithm: [" + payload.getChecksumAlg() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+            String generatedChecksum = getChecksum(payload.getContent());
+            String reloadedChecksum = getChecksum(file.getContent());
+  
+               
 
-            String checksumFromFile  = reloadedPayload.getChecksum();
-
-            if (!ChecksumUtils.checksumMatch(checksumFromFile,
-                generatedChecksum))
+            if (!generatedChecksum.equals(reloadedChecksum))
             {
                 throw new ChecksumFailedException("Checksums didn't match!"); //$NON-NLS-1$
             }
         }
-        catch (UnsupportedEncodingException e)
-        {
-            logger.warn("An Unsupported Encoding related exception occurred!", e); //$NON-NLS-1$
-            throw new ResourceException(e);
-        }
+
         catch (ChecksumFailedException e)
         {
             logger.warn("A checksum failed related exception occurred!", e); //$NON-NLS-1$
@@ -132,5 +112,34 @@ public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactio
     protected void doRollback()
     {
         logger.info("rollback called on this command: [" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * Get the MD5 checksum given an ImputStream
+     * 
+     * @param byte array for which to calculate the checksum
+     * @return <code>String</code> representing the checksum
+     */
+    public static String getChecksum(byte[] input)
+    {
+        MessageDigest checksum;
+		try {
+			checksum = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		
+		checksum.update(input);
+        
+       
+        byte[] byteDigest = checksum.digest();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteDigest.length; i++)
+        {
+            String hex = Integer.toHexString(0xff & byteDigest[i]);
+            if (hex.length() == 1) sb.append('0');
+            sb.append(hex);
+        }
+        return new String(sb.toString());
     }
 }
