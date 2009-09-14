@@ -191,27 +191,16 @@
   	
   	
   	<!-- default payloadFactory -->
-  	<bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl">
-        <constructor-arg value="org.ikasan.common.component.DefaultPayload" />
-        <constructor-arg ref="documentBuilderFactory" />
-    </bean>
+  	<bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl"/>
   	
   	
      	
   	<bean id="jmsMessageEventSerialiser" 
-      class="org.ikasan.framework.event.serialisation.JmsMessageEventSerialiserEnvelopeImpl">
-        <constructor-arg ref="envelopeFactory"/>
-        <constructor-arg ref="jmsMessageFactory"/>
+      class="org.ikasan.framework.event.serialisation.DefaultMapMessageEventSerialiser">
+        <property name="payloadFactory" ref="payloadFactory"/>
     </bean>
 
-    <bean id="envelopeFactory" class="org.ikasan.common.factory.EnvelopeFactoryImpl">
-        <constructor-arg value="org.ikasan.common.component.DefaultEnvelope" />
-        <constructor-arg ref="jmsMessageFactory" />
-    </bean>
-
-    <bean id="jmsMessageFactory" class="org.ikasan.common.factory.JMSMessageFactoryImpl">
-      <constructor-arg ref="payloadFactory"/>
-    </bean>
+    
   	<!-- ###################################### -->
   	<!-- common transaction services start here -->
     <!-- ###################################### -->  	
