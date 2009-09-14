@@ -17,3 +17,4 @@ Summer Hasani
 Project Contributors
 --------------------
 Matthew Potter
+Ioannis Mavroukakis
