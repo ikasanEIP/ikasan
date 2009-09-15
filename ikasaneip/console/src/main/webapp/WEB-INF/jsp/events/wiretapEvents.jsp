@@ -179,6 +179,7 @@
        	<c:param name="orderBy" value="id"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>       	
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="moduleLink" value="list.htm">
@@ -190,6 +191,7 @@
        	<c:param name="orderBy" value="moduleName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>       	
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="flowLink" value="list.htm">
@@ -201,6 +203,7 @@
        	<c:param name="orderBy" value="flowName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>       	
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="componentLink" value="list.htm">
@@ -212,6 +215,7 @@
         <c:param name="orderBy" value="componentName"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="createdDateTimeLink" value="list.htm">
@@ -223,6 +227,7 @@
         <c:param name="orderBy" value="created"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>        
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:if test="${resultSize > 0}">

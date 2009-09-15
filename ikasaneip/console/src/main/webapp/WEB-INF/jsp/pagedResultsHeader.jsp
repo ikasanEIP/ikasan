@@ -28,6 +28,7 @@
 # // Author:  Ikasan Development Team
 # // 
 --%>
+
 <div id="searchResultsHeader">
 
     <c:url var="firstPageLink" value="list.htm">
@@ -40,6 +41,7 @@
         <c:param name="orderBy" value="${orderBy}"/>
         <c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
     
     <c:url var="nextPageLink" value="list.htm">
@@ -52,6 +54,7 @@
     	<c:param name="orderBy" value="${orderBy}"/>
     	<c:param name="orderAsc" value="${orderAsc}"/>
     	<c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
     
     <c:url var="previousPageLink" value="list.htm">
@@ -63,7 +66,8 @@
     	<c:param name="page" value="${page-1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
     	<c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="selectAll" value="${selectAll}"/>    	
+        <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="lastPageLink" value="list.htm">
@@ -76,7 +80,37 @@
         <c:param name="orderBy" value="${orderBy}"/>
         <c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
+
+    <c:url var="searchLink" value="list.htm">
+        <c:forEach var="entry" items="${searchParams}">
+            <c:forEach var="entryValue" items="${entry.value}">
+               <c:param name="${entry.key}" value="${entryValue}"/>
+            </c:forEach>
+        </c:forEach>
+        <c:param name="page" value="${page}"/>
+        <c:param name="orderBy" value="${orderBy}"/>
+        <c:param name="orderAsc" value="${orderAsc}"/>
+        <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
+    </c:url>
+
+  <script type="text/javascript">
+
+    /* 
+     * A function to fire the search again (triggered by a change in pageSize).
+     */
+    function executeSearch()
+    {
+        var url = '<c:out value="${searchLink}#results" escapeXml="false" />';
+        var newPageSize = document.getElementById('pageSize').value;
+        var newURL = "pageSize=" + newPageSize;
+        url = url.replace(/pageSize=${pageSize}/, newURL);
+        document.location.href = url;
+    }
+
+  </script>
 
     <c:choose>
     	<c:when test="${resultSize==0}">
@@ -88,6 +122,12 @@
     		    <a name="results" />
             	<c:if test="${page gt 0}"><a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;</c:if>
             	<c:if test="${!isLastPage}"><a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a></c:if>
+                <select id="pageSize" name="pageSize" onchange="javascript:executeSearch()">
+                    <option value="10" <c:if test="${pageSize=='10'}">selected="selected"</c:if>>10</option>
+                    <option value="25" <c:if test="${pageSize=='25'}">selected="selected"</c:if>>25</option>
+                    <option value="50" <c:if test="${pageSize=='50'}">selected="selected"</c:if>>50</option>
+                    <option value="100" <c:if test="${pageSize=='100'}">selected="selected"</c:if>>100</option>
+                </select>
     		</span>
     	</c:otherwise>
     </c:choose>

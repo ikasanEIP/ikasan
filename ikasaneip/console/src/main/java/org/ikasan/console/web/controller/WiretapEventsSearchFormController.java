@@ -26,9 +26,7 @@
  */
 package org.ikasan.console.web.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,6 +110,7 @@ public class WiretapEventsSearchFormController
      * @param orderBy - The field to order by
      * @param orderAsc - Ascending flag
      * @param selectAll - Select all boolean
+     * @param pageSize - Number of search results to display per page
      * @param moduleNames - Set of names of modules to include in search - must
      *            contain at least one moduleName
      * @param componentName - The name of the component
@@ -129,11 +128,12 @@ public class WiretapEventsSearchFormController
     @RequestMapping("list.htm")
     public String listWiretapEvents(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch,
             @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy, @RequestParam(required = false) Boolean orderAsc,
-            @RequestParam(required = false) Boolean selectAll, @RequestParam(required = false) Set<String> moduleNames,
-            @RequestParam(required = false) String componentName, @RequestParam(required = false) String eventId,
-            @RequestParam(required = false) String payloadId, @RequestParam(required = false) String fromDateString,
-            @RequestParam(required = false) String fromTimeString, @RequestParam(required = false) String untilDateString,
-            @RequestParam(required = false) String untilTimeString, @RequestParam(required = false) String payloadContent, ModelMap model)
+            @RequestParam(required = false) Boolean selectAll, @RequestParam(required = false) Integer pageSize, 
+            @RequestParam(required = false) Set<String> moduleNames, @RequestParam(required = false) String componentName, 
+            @RequestParam(required = false) String eventId, @RequestParam(required = false) String payloadId, 
+            @RequestParam(required = false) String fromDateString, @RequestParam(required = false) String fromTimeString, 
+            @RequestParam(required = false) String untilDateString, @RequestParam(required = false) String untilTimeString, 
+            @RequestParam(required = false) String payloadContent, ModelMap model)
     {
         boolean noErrors = true;
         // If it's a new search then automatically run the default search
@@ -147,7 +147,7 @@ public class WiretapEventsSearchFormController
         if (logger.isDebugEnabled())
         {
             logger.debug("Form values that came in:");
-            logSearch(newSearch, page, orderBy, orderAsc, selectAll, moduleNames, componentName, eventId, payloadId, fromDateString, fromTimeString,
+            logSearch(newSearch, page, orderBy, orderAsc, selectAll, pageSize, moduleNames, componentName, eventId, payloadId, fromDateString, fromTimeString,
                 untilDateString, untilTimeString, payloadContent);
         }
         // Set the search criteria from the values that came in
@@ -170,7 +170,6 @@ public class WiretapEventsSearchFormController
         }
         // Setup the generic search criteria
         int pageNo = MasterDetailControllerUtil.defaultZero(page);
-        int pageSize = 25;
         String orderByField = MasterDetailControllerUtil.resolveOrderBy(orderBy);
         boolean orderAscending = MasterDetailControllerUtil.defaultFalse(orderAsc);
         Date fromDate = wiretapSearchCriteria.getFromDateTime();
@@ -179,7 +178,7 @@ public class WiretapEventsSearchFormController
         if (logger.isDebugEnabled())
         {
             logger.debug("Executing Search with:");
-            logSearch(newSearch, pageNo, orderByField, orderAscending, selectAll, moduleNames, componentName, eventId, payloadId, fromDateString,
+            logSearch(newSearch, pageNo, orderByField, orderAscending, selectAll, pageSize, moduleNames, componentName, eventId, payloadId, fromDateString,
                 fromTimeString, untilDateString, untilTimeString, payloadContent);
             logger.debug("Page Size [" + pageSize + "]");
             logger.debug("From Date/Time [" + fromDate + "]");
@@ -220,7 +219,7 @@ public class WiretapEventsSearchFormController
         String baseURL = "list.htm?";
         // Build the list of parameters
         List<Module> modules = this.moduleService.getModules();
-        String parameters = "newSearch=false&page=0&orderBy=id&orderAsc=true&selectAll=true";
+        String parameters = "newSearch=false&page=0&orderBy=id&orderAsc=true&selectAll=true&pageSize=10";
         for (Module module : modules)
         {
             parameters = parameters + "&moduleNames=" + module.getName();
@@ -335,6 +334,7 @@ public class WiretapEventsSearchFormController
      * @param orderBy - The field to order by
      * @param orderAsc - Ascending flag
      * @param selectAll - Select all boolean
+     * @param pageSize - Page Size, number of search results per page
      * @param moduleNames - Set of names of modules to include in search
      * @param componentName - The name of the component
      * @param eventId - The Event Id
@@ -345,7 +345,7 @@ public class WiretapEventsSearchFormController
      * @param untilTimeString - untilTime String
      * @param payloadContent - The Payload content
      */
-    private void logSearch(Boolean newSearch, Integer page, String orderBy, Boolean orderAsc, Boolean selectAll, Set<String> moduleNames, String componentName,
+    private void logSearch(Boolean newSearch, Integer page, String orderBy, Boolean orderAsc, Boolean selectAll, Integer pageSize, Set<String> moduleNames, String componentName,
             String eventId, String payloadId, String fromDateString, String fromTimeString, String untilDateString, String untilTimeString,
             String payloadContent)
     {
@@ -354,6 +354,7 @@ public class WiretapEventsSearchFormController
         logger.debug("Order By [" + orderBy + "]");
         logger.debug("Order Ascending Flag [" + orderAsc + "]");
         logger.debug("Select All Flag [" + selectAll + "]");
+        logger.debug("Number of serch results per page [" + pageSize + "]");
         logger.debug("Module Names [" + moduleNames + "]");
         logger.debug("Component Name [" + componentName + "]");
         logger.debug("Event Id [" + eventId + "]");
