@@ -78,6 +78,7 @@ public class MasterDetailControllerUtil
         model.addAttribute("orderBy", orderBy);
         model.addAttribute("orderAsc", orderAsc);
         model.addAttribute("selectAll", selectAll);
+        model.addAttribute("pageSize", pageSize);
         model.addAttribute("page", pageNo);
         model.addAttribute("results", pagedResult);
         // pagedResult can be null if we're returning errors to the user
