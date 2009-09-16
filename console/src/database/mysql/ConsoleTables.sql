@@ -40,10 +40,8 @@ CREATE TABLE  `ikasan01`.`PointToPointFlowProfile` (
 CREATE TABLE  `ikasan01`.`PointToPointFlow` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   KEY 'PTPP_ID_FK' (`PointToPointFlowProfileId`) NOT NULL,
-  KEY 'FROM_MODULE_ID_FK' (`FromModuleId`) DEFAULT NULL,
-  KEY 'TO_MODULE_ID_FK' (`ToModuleId`) DEFAULT NULL,
+  KEY 'FROM_MODULE_ID_FK' (`FromModuleId`) NULL,
+  KEY 'TO_MODULE_ID_FK' (`ToModuleId`) NULL,
   CONSTRAINT `PTPP_ID_FK` FOREIGN KEY (`PointToPointFlowProfileId`) REFERENCES `PointToPointFlowProfile` (`Id`),
-  CONSTRAINT `FROM_MODULE_ID_FK` FOREIGN KEY (`FromModuleId`) REFERENCES `Module` (`Id`),
-  CONSTRAINT `TO_MODULE_ID_FK` FOREIGN KEY (`ToModuleId`) REFERENCES `Module` (`Id`),
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
