@@ -67,17 +67,13 @@ CREATE TABLE PointToPointFlowProfile(
 )
 GO
 
+-- No CONSTRAINT on the FromMOduleId or ToModuleId as constraints enforce not null
 CREATE TABLE PointToPointFlow(
     Id                        NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     PointToPointFlowProfileId NUMERIC NOT NULL,
-    FromModuleId              NUMERIC DEFAULT NULL,
-    ToModuleId                NUMERIC DEFAULT NULL,    
-    CONSTRAINT PTPP_ID_FK FOREIGN KEY(FromModuleId) REFERENCES PointToPointFlowProfile(Id),
-    CONSTRAINT FROM_MODULE_ID_FK FOREIGN KEY(FromModuleId) REFERENCES Module(Id)
-    CONSTRAINT TO_MODULE_ID_FK FOREIGN KEY(ToModuleId) REFERENCES Module(Id)
+    FromModuleId              NUMERIC NULL,
+    ToModuleId                NUMERIC NULL,    
+    CONSTRAINT PTPP_ID_FK FOREIGN KEY(FromModuleId) REFERENCES PointToPointFlowProfile(Id)
 )
 GO
-
---PRIMARY KEY (UserId,AuthorityId),
-    
-   
+--PRIMARY KEY (UserId,AuthorityId)
