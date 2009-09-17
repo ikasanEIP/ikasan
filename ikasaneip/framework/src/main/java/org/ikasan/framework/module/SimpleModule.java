@@ -36,16 +36,20 @@ import org.ikasan.framework.initiator.Initiator;
 
 /**
  * A simple representation of a Module
+ * 
  * @author Ikasan Development Team
  */
 public class SimpleModule implements Module
 {
+    /** Unique id for a module */
+    private long id;
+
     /** Initiators of flows within this module */
     private List<Initiator> initiators;
 
     /** Module name */
     protected String name;
-    
+
     /** Human readable description of this module */
     private String description;
 
@@ -72,6 +76,37 @@ public class SimpleModule implements Module
     }
 
     /**
+     * Constructor - required for hibernate
+     */
+    public SimpleModule()
+    {
+        // Do Nothing
+    }
+    
+    /**
+     * Get the unique id
+     * 
+     * @return id
+     */
+    public long getId()
+    {
+        return id;
+    }
+
+    /**
+     * Set the unique id. 
+     * 
+     * private as it is only referenced by Hibernate and not actually used.
+     * 
+     * @param id - id to set
+     */
+    @SuppressWarnings("unused")
+    private void setId(long id)
+    {
+        this.id = id;
+    }
+
+    /**
      * Accessor for name
      * 
      * @return module name
@@ -82,6 +117,16 @@ public class SimpleModule implements Module
     }
 
     /**
+     * Accessor for name
+     * 
+     * @param name - module name
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * Resolve the initiator
      * 
      * @param initiatorName The name of the initiator
@@ -89,7 +134,6 @@ public class SimpleModule implements Module
      */
     public Initiator getInitiator(String initiatorName)
     {
-
         Initiator initiator = null;
         for (Initiator thisInitiator : initiators)
         {
@@ -101,6 +145,7 @@ public class SimpleModule implements Module
         }
         return initiator;
     }
+
     /**
      * @return the initiators
      */
@@ -109,6 +154,9 @@ public class SimpleModule implements Module
         return new ArrayList<Initiator>(initiators);
     }
 
+    /**
+     * @see org.ikasan.framework.module.Module#getFlows()
+     */
     public Map<String, Flow> getFlows()
     {
         Map<String, Flow> result = new HashMap<String, Flow>();
@@ -120,42 +168,40 @@ public class SimpleModule implements Module
         return result;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.ikasan.framework.module.Module#getDescription()
      */
     public String getDescription()
     {
         return description;
     }
-    
+
     /**
-     * Setter for description
+     * Set the description. 
      * 
-     * @param description
+     * @param description - description to set
      */
-    public void setDescription(String description){
+    public void setDescription(String description)
+    {
         this.description = description;
     }
-    
-    /**
-     * Required for ACL security
-     * 
-     * @return
-     */
-    public Long getId(){
-        Long id = new Long(name.hashCode());
-        return id;
-    }
-    
-    public String toString(){
-        StringBuffer sb = new StringBuffer(getClass().getName()+" [");
-        
-        sb.append("name=");sb.append(name);sb.append(",");
-        sb.append("description=");sb.append(description);sb.append(",");
-        sb.append("initiators=");sb.append(initiators);
 
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer(getClass().getName() + " [");
+        sb.append("name=");
+        sb.append(name);
+        sb.append(",");
+        sb.append("description=");
+        sb.append(description);
+        sb.append(",");
+        sb.append("initiators=");
+        sb.append(initiators);
         sb.append("]");
         return sb.toString();
-    
     }
 }

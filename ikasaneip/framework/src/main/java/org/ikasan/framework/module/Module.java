@@ -40,6 +40,7 @@ import org.ikasan.framework.initiator.Initiator;
  */
 public interface Module
 {
+
     /**
      * Returns the name of the module
      * 
