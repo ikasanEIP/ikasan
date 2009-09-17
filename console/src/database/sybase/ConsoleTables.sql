@@ -34,16 +34,6 @@ BEGIN
 END
 GO
 
-IF OBJECT_ID('PointToPointFlowProfile') IS NOT NULL
-BEGIN
-    DROP TABLE PointToPointFlowProfile
-    IF OBJECT_ID('PointToPointFlowProfile') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE PointToPointFlowProfile >>>'
-    ELSE
-        PRINT '<<< DROPPED TABLE PointToPointFlowProfile >>>'     
-END
-GO
-
 IF OBJECT_ID('PointToPointFlow') IS NOT NULL
 BEGIN
     DROP TABLE PointToPointFlow
@@ -51,6 +41,16 @@ BEGIN
         PRINT '<<< FAILED DROPPING TABLE PointToPointFlow >>>'
     ELSE
         PRINT '<<< DROPPED TABLE PointToPointFlow >>>'     
+END
+GO
+
+IF OBJECT_ID('PointToPointFlowProfile') IS NOT NULL
+BEGIN
+    DROP TABLE PointToPointFlowProfile
+    IF OBJECT_ID('PointToPointFlowProfile') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE PointToPointFlowProfile >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE PointToPointFlowProfile >>>'     
 END
 GO
 
@@ -67,13 +67,13 @@ CREATE TABLE PointToPointFlowProfile(
 )
 GO
 
--- No CONSTRAINT on the FromMOduleId or ToModuleId as constraints enforce not null
+-- No CONSTRAINT on the FromModuleId or ToModuleId as constraints enforce a Not NULL
+-- and we want to allow NULLs
 CREATE TABLE PointToPointFlow(
     Id                        NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     PointToPointFlowProfileId NUMERIC NOT NULL,
     FromModuleId              NUMERIC NULL,
-    ToModuleId                NUMERIC NULL,    
-    CONSTRAINT PTPP_ID_FK FOREIGN KEY(FromModuleId) REFERENCES PointToPointFlowProfile(Id)
+    ToModuleId                NUMERIC NULL,
+    CONSTRAINT PTPP_ID_FK FOREIGN KEY(PointToPointFlowProfileId) REFERENCES PointToPointFlowProfile(Id)
 )
 GO
---PRIMARY KEY (UserId,AuthorityId)
