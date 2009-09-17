@@ -26,29 +26,22 @@
  */
 package org.ikasan.common.component;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.xml.XMLConstants;
-
-// Imported log4j classes
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
-// standard payload interface
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
-import org.ikasan.common.util.ChecksumUtils;
 
 /**
  * Default implementation of the Payload interface.
  * 
  * @author Ikasan Development Team
  */
-public class DefaultPayload extends MetaData implements Payload, Cloneable
+public class DefaultPayload implements Payload, Cloneable
 {
     /** Serialise ID */
     private static final long serialVersionUID = 1L;
@@ -56,8 +49,34 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     /** The logger instance */
     private static Logger logger = Logger.getLogger(DefaultPayload.class);
 
-    /** Actual content of the payload to be delivered */
+    /** id for payload **/
+    private String id;
+    
+    /** name for payload **/
+    private String name;
+    
+    /** spec for payload **/
+    private Spec spec;    
+    
+    /** name for srcSystem **/
+    private String srcSystem;
+    
+    private Map<String, String> attributes = new HashMap<String, String>();
+    
+    /**
+     * indicator of the charset
+     */
+    private String charset;
+    
+    
+   
+
+	/** Actual content of the payload to be delivered */
     private byte[] content;
+    
+    
+    
+    
 
     /**
      * Do not let anyone create a payload based on a no-argument default constructor
@@ -70,63 +89,9 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
 
 
 
-//    /**
-//     * Creates a new instance of <code>Payload</code> with the specified data content.
-//     * 
-//     * @param name Name of the payload
-//     * @param spec Spec of the payload
-//     * @param srcSystem Src System of the payload
-//     * @param content Content of the payload
-//     */
-//    public DefaultPayload(final String name, final String spec, final String srcSystem, final byte content[])
-//    {
-//        this.noNamespaceSchemaLocation = null;
-//        this.schemaInstanceNSURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-//        this.name = name;
-//        this.spec = spec;
-//        this.srcSystem = srcSystem;
-//        this.id = generateId();
-//        this.setTimezone(MetaDataInterface.DEFAULT_TIMEZONE);
-//        this.timestamp = generateTimestamp();
-//        this.timestampFormat = DEFAULT_TIMESTAMP_FORMAT;
-//        this.priority = new Integer(Priority.NORMAL.getLevel());
-//        this.content = content;
-//        this.encoding = Encoding.NOENC.toString();
-//        this.charset = Charset.defaultCharset().toString();
-//        this.checksumAlg = DEFAULT_CHECKSUM_ALG;
-//        this.checksum = this.calculateChecksum();
-//        this.size = new Long(content.length);
-//        if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
-//    }
 
-    /**
-     * This constructor has a serious flaw and does not create a copy of the payload. DO NOT USE THIS CONSTRUCTOR.
-     * 
-     * @param payload The payload to clone off
-     * @deprecated - this is not a deep copy and simply returns a pointer to the same object.
-     */
-    @Deprecated
-    public DefaultPayload(final Payload payload)
-    {
-        this.noNamespaceSchemaLocation = payload.getNoNamespaceSchemaLocation();
-        this.schemaInstanceNSURI = payload.getSchemaInstanceNSURI();
-        this.id = payload.getId();
-        this.priority = payload.getPriority();
-        this.timestamp = payload.getTimestamp();
-        this.timestampFormat = payload.getTimestampFormat();
-        this.timezone = payload.getTimezone();
-        this.content = payload.getContent();
-        this.name = payload.getName();
-        this.spec = payload.getSpec();
-        this.encoding = payload.getEncoding();
-        this.format = payload.getFormat();
-        this.charset = payload.getCharset();
-        this.size = payload.getSize();
-        this.srcSystem = payload.getSrcSystem();
-        this.targetSystems = payload.getTargetSystems();
-        this.processIds = payload.getProcessIds();
-        if (logger.isDebugEnabled()) logger.debug("Payload constructor created payload."); //$NON-NLS-1$
-    }
+
+
 
     /**
      * Construtor
@@ -146,6 +111,72 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
 		this.content = content;
 		
 	}
+    
+    /**
+     * Accessor for id
+     * 
+     * @return id for payload
+     */
+    public String getId(){
+    	return id;
+    }
+    
+    /**
+     * Mutator for id, required by ORM
+     * 
+     * @param id
+     */
+    @SuppressWarnings("unused")
+	private void setId(String id){
+    	this.id=id;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getSpec()
+     */
+    public Spec getSpec(){
+    	return spec;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#setSpec(org.ikasan.common.component.Spec)
+     */
+    public void setSpec(Spec spec){
+    	this.spec = spec;
+    }
+    
+    /**
+     * Accessor for srcSystem
+     * 
+     * @return srcSystem
+     */
+    public String getSrcSystem(){
+    	return srcSystem;
+    }
+    
+    /**
+     * Mutator for srcSystem
+     * 
+     * @param srcSystem
+     */
+    public void setSrcSystem(String srcSystem){
+    	this.srcSystem = srcSystem;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getName()
+     */
+    public String getName(){
+    	return name;
+    }
+    
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#setName(java.lang.String)
+	 */
+	public void setName(String name){
+    	this.name = name;
+    }
 
 	/**
      * Setter for content. This setter by default sets the size and checksum of the particular payload.
@@ -155,30 +186,9 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     public void setContent(final byte[] content)
     {
         this.content = content;
-        if (logger.isDebugEnabled()) logger.debug("Content set to [" + this.content + "]."); //$NON-NLS-1$//$NON-NLS-2$
-  
-        this.size = new Long(content.length);
     }
 
-    /**
-     * Setter for content that allows to override the default functionality of setting the respective size and checksum
-     * automatically.
-     * 
-     * @param content The content to set
-     * @param contentOnly If true, set the content only, otherwise set the content and adjust the size and checksum
-     *            automatically.
-     */
-    public void setContent(final byte[] content, boolean contentOnly)
-    {
-        if (contentOnly)
-        {
-            this.content = content;
-        }
-        else
-        {
-            setContent(content);
-        }
-    }
+
 
     /**
      * Getter for content
@@ -187,56 +197,46 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
      */
     public byte[] getContent()
     {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Returning content [" + this.content + "]."); //$NON-NLS-1$//$NON-NLS-2$
-        }
         return this.content;
     }
-
-    /**
-     * Utility setter for <code>size</code>. When this setter is used, the size is automatically set to the size of the
-     * <code>content</code> byte array.
-     * 
-     * If the <code>content</code> is empty to null, the size is set to zero.
+   
+    
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getCharSet()
      */
-    @Override
-    public void setSize()
-    {
-        if (this.content != null && this.content.length > 0)
-            this.size = new Long(this.content.length);
-        else
-        {
-            logger.warn("Payload content null or empty. Size set to [0]."); //$NON-NLS-1$
-            this.size = new Long(0L);
-        }
-        if (logger.isDebugEnabled()) logger.debug("Size set to [" + this.size + "]."); //$NON-NLS-1$//$NON-NLS-2$
-    }
+    public String getCharset() {
+		return charset;
+	}
 
- 
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#setCharset(java.lang.String)
+	 */
+	public void setCharset(String charset) {
+		this.charset = charset;
+	}
+    
+    
+    
 
     /**
      * Create a formatted string detailing the payload id of the incoming payload.
      * 
      * @return String
      */
-    @Override
+
     public String idToString()
     {
         return "Payload Id[" + this.getId() + "] "; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
-     * Creates a <code>String<code> representation of the <code>Payload</code> showing all the objects properties and an
-     * many characters of the content as specified in the <code>cLength</code> parameter. If the <code>cLength
-     * </code> is negative,
-     * the content is display from the end of the content string.
-     * 
-     * @param cLength Used to restrict the length of the payload to a specific number of chars.
+     * Creates a <code>String<code> representation of the <code>Payload</code>
      * @return A formatted <code>String</code> representing the <code>Payload</code> object.
      */
     @Override
-    public String toString(int cLength)
+    public String toString()
     {
         StringBuilder sb = new StringBuilder(512);
         sb.append(super.toString());
@@ -246,17 +246,7 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
         return sb.toString();
     }
 
-    /**
-     * Wrapper method for <code>toString(int length)</code> which defaults <code>length</code> to the length of the
-     * content.
-     * 
-     * @return A string representation of the complete payload (fields and content).
-     */
-    @Override
-    public String toString()
-    {
-        return toString(this.content.length);
-    }
+
 
     /**
      * Test equality of two payload instances based on the lifetime identifier.
@@ -284,7 +274,6 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     public void base64EncodePayload()
     {
         setContent(Base64.encodeBase64(getContent()));
-        setEncoding(Encoding.BASE64.toString());
         if (logger.isDebugEnabled())
         {
             logger.debug("Binary payload encoded to [" //$NON-NLS-1$ 
@@ -300,37 +289,71 @@ public class DefaultPayload extends MetaData implements Payload, Cloneable
     @Override
     public Payload clone() throws CloneNotSupportedException
     {
-        Payload clone = (Payload) super.clone();
+        DefaultPayload clone = (DefaultPayload) super.clone();
         // sort out non-cloneable objects
-        if (this.getPriority() != null)
+        if (srcSystem != null)
         {
-            clone.setPriority(new Integer(this.getPriority()));
+            clone.setSrcSystem(new String(srcSystem));
         }
-        if (this.getTimestamp() != null)
+        if (name != null)
         {
-            clone.setTimestamp(new Long(this.getTimestamp()));
+            clone.setName(name);
         }
+        if (spec != null)
+        {
+            clone.setSpec(spec);
+        }
+
         byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
         clone.setContent(copiedContent);
-        if (this.getSize() != null)
-        {
-            clone.setSize(new Long(this.getSize()));
-        }
+
         return clone;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.common.Payload#spawn()
-     */
-    public Payload spawn() throws CloneNotSupportedException
-    {
-        Payload spawned = this.clone();
-        // Stamp certain fields with new values
-        spawned.setId(generateId());
-        spawned.setTimestamp(generateTimestamp());
-        return spawned;
+    
+    public long getSize(){
+    	return content.length;
     }
+
+
+
+	public Payload spawnChild(int siblingNo) {
+		byte[] copiedContent = new byte[content.length];
+        System.arraycopy(content, 0, copiedContent, 0, content.length);
+		return new DefaultPayload(id+"_"+siblingNo, new String(name), spec, new String(srcSystem), copiedContent);
+	}
+
+
+
+
+
+
+
+	public String getAttribute(String attributeName) {
+		return attributes.get(attributeName);
+	}
+
+
+
+
+
+
+
+	public List<String> getAttributeNames() {
+		List<String> attributeNames = new ArrayList<String>(attributes.keySet());
+		Collections.sort(attributeNames);
+		return attributeNames;
+	}
+
+
+
+
+
+
+
+	public void setAttribute(String attributeName, String attributeValue) {
+		attributes.put(attributeName,attributeValue);
+	}
+
+
 }

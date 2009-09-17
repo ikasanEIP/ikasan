@@ -257,15 +257,12 @@ public class UserExceptionHandlerImplTest
     @SuppressWarnings("synthetic-access")
 	private void expectPublisherToBeCalled() throws PluginInvocationException
     {
-    	final Integer payloadPriority = 0;
     	final String exceptionPayloadId = "exceptionPayloadId";
     	
         this.classMockery.checking( new Expectations()
         {
             {
                 one(payloadFactory).newPayload("userExceptionPayloadId","emrException",Spec.TEXT_XML, "userExceptionHandler", transformedException.getBytes());will(returnValue(exceptionPayload));
-            	allowing(exceptionPayload).getPriority();
-				will(returnValue(payloadPriority));
 				
             	allowing(exceptionPayload).idToString();
             	will(returnValue(exceptionPayloadId));

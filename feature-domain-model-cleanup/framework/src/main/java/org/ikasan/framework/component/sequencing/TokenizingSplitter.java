@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 
 /**
@@ -55,11 +56,13 @@ public class TokenizingSplitter implements Sequencer
 
     /** Encoding */
     private String encoding;
+    
 
     /**
      * Constructor
      * 
      * @param delimiterRegex A regular expression to delimit the incoming event on.
+     * @param payloadFactory factory for Payloads
      */
     public TokenizingSplitter(final String delimiterRegex)
     {
@@ -178,19 +181,20 @@ public class TokenizingSplitter implements Sequencer
             newPayloads.add(payload);
             return newPayloads;
         }
+        int tokenCount = 0;
         for (String token : tokens)
         {
             if (logger.isDebugEnabled())
             {
                 logger.debug("Creating payload for token [" + token + "]");
             }
-            Payload newPayload = payload.spawn();
-            newPayload.setContent(token.getBytes());
+            Payload newPayload = payload.spawnChild(tokenCount);
             newPayloads.add(newPayload);
             if (logger.isDebugEnabled())
             {
                 logger.debug("Payload id [" + payload.getId() + "] split to payload id [" + newPayload.getId() + "]");
             }
+            tokenCount++;
         }
         if (logger.isDebugEnabled())
         {

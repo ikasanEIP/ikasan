@@ -37,8 +37,6 @@ import org.junit.Test;
 public abstract class JmsMessageEventSerialiserTest {
 
 
-	
-	//private PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
 
 	protected void testSerialisationDesrialisation(
 			JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser, final PayloadFactory payloadFactory, Mockery mockery)
@@ -78,6 +76,29 @@ public abstract class JmsMessageEventSerialiserTest {
 		final String payload1Id = "payload1Id";
 		final String payload2Id = "payload2Id";
 		
+		//payload attributes
+		final String colourPayloadAttributeName = "COLOUR";
+		final String huePayloadAttributeName = "HUE";
+		final String texturePayloadAttributeName = "TEXTURE";
+		
+		//payload 1 knows about attributes colour, hue, and texture
+		final List<String> payload1AttributeNames = new ArrayList<String>();
+		payload1AttributeNames.add(colourPayloadAttributeName);
+		payload1AttributeNames.add(huePayloadAttributeName);
+		payload1AttributeNames.add(texturePayloadAttributeName);
+		
+		final String payload1ColourAttributeValue = "blue";
+		final String payload1HueAttributeValue = "light";
+		final String payload1TextureAttributeValue = "graded";
+		
+		//payload 2 only knows about colour and hue
+		final List<String> payload2AttributeNames = new ArrayList<String>();
+		payload2AttributeNames.add(colourPayloadAttributeName);
+		payload2AttributeNames.add(huePayloadAttributeName);
+
+		final String payload2ColourAttributeValue = "green";
+		final String payload2HueAttributeValue = "dark";
+		
 		//event field content
 		final String eventId = "eventId";
 		final int eventPriority = 8;
@@ -100,6 +121,16 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(payload2).getSpec();will(returnValue(payload2Spec));
 				one(payload1).getId();will(returnValue(payload1Id));
 				one(payload2).getId();will(returnValue(payload2Id));
+				
+				one(payload1).getAttributeNames();will(returnValue(payload1AttributeNames));
+				one(payload1).getAttribute(colourPayloadAttributeName);will(returnValue(payload1ColourAttributeValue));
+				one(payload1).getAttribute(huePayloadAttributeName);will(returnValue(payload1HueAttributeValue));
+				one(payload1).getAttribute(texturePayloadAttributeName);will(returnValue(payload1TextureAttributeValue));
+				
+				one(payload2).getAttributeNames();will(returnValue(payload2AttributeNames));
+				one(payload2).getAttribute(colourPayloadAttributeName);will(returnValue(payload2ColourAttributeValue));
+				one(payload2).getAttribute(huePayloadAttributeName);will(returnValue(payload2HueAttributeValue));
+				
 
 				one(originalEvent).getId();will(returnValue(eventId));
 				one(originalEvent).getPriority();will(returnValue(eventPriority));
@@ -108,6 +139,13 @@ public abstract class JmsMessageEventSerialiserTest {
 				
 				one(payloadFactory).newPayload(payload1Id, payload1Name, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(reconstitutedPayload1));
 				one(payloadFactory).newPayload(payload2Id, payload2Name, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(reconstitutedPayload2));
+				
+				one(reconstitutedPayload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
+				one(reconstitutedPayload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);
+				one(reconstitutedPayload1).setAttribute(texturePayloadAttributeName, payload1TextureAttributeValue);
+
+				one(reconstitutedPayload2).setAttribute(colourPayloadAttributeName, payload2ColourAttributeValue);
+				one(reconstitutedPayload2).setAttribute(huePayloadAttributeName, payload2HueAttributeValue);
 			}
 		});
 

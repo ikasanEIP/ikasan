@@ -169,20 +169,20 @@ public class TokenizingSplitterTest
                 exactly(1).of(payload).getContent();
                 will(returnValue(payloadContentStr.getBytes()));
 
-                //Calls when creating third payload
-                exactly(1).of(payload).spawn();
+                //Calls when creating first payload
+                exactly(1).of(payload).spawnChild(0);
                 will(returnValue(firstNewPayload));
                 exactly(1).of(firstNewPayload).setContent(expectedSinglePayloadContent[0].getBytes());
                 exactly(1).of(firstNewPayload).getId();
 
                 //Calls when creating second payload
-                exactly(1).of(payload).spawn();
+                exactly(1).of(payload).spawnChild(1);
                 will(returnValue(secondNewPayload));
                 exactly(1).of(secondNewPayload).setContent(expectedSinglePayloadContent[1].getBytes());
                 exactly(1).of(secondNewPayload).getId();
 
                 //Calls when creating third payload
-                exactly(1).of(payload).spawn();
+                exactly(1).of(payload).spawnChild(2);
                 will(returnValue(thirdNewPayload));
                 exactly(1).of(thirdNewPayload).setContent(expectedSinglePayloadContent[2].getBytes());
                 exactly(1).of(thirdNewPayload).getId();
@@ -269,7 +269,7 @@ public class TokenizingSplitterTest
                 will(returnValue(payloadContentStr.getBytes()));
 
                 //Calls when creating third payload
-                exactly(1).of(payload).spawn();
+                exactly(1).of(payload).spawnChild(0);
                 will(returnValue(firstNewPayload));
                 exactly(1).of(firstNewPayload).setContent(payloadContentStr.getBytes());
                 exactly(1).of(firstNewPayload).getId();
@@ -348,67 +348,7 @@ public class TokenizingSplitterTest
         Assert.assertEquals(firstNewEvent, events.get(0));
     }
 
-    /**
-     * Test unsuccessful event(1):payload(1) with payload content
-     * tokenized in to three giving event(3):payload(1).
-     * CloneNotSupportedException will be thrown when cloning first payload.
-     * @throws CloneNotSupportedException Thrown when cloning
-     *         <code>Payload</code>
-     */
-    @Test
-    public void test_unsuccessfulTokenisingPayloadCloningException()
-        throws CloneNotSupportedException
-    {
-        //Exception expected to be thrown by payload.spawn()
-        final CloneNotSupportedException payloadCloningException = new CloneNotSupportedException("Exception cloning payload.");
-        // create the class to be tested with
-        // delimiter (regular) expression and null encoding
-        this.tokenSplitter = new TokenizingSplitter("\\$");
 
-        /** real payload list */
-        this.payloads = new ArrayList<Payload>();
-
-        // Populate two payload entries
-        payloads.add(payload);
-
-        /** Real content - from the mocked payload */
-        final String payloadContentStr =
-            new String("A, you're adorable$"
-                     + "B, you're so beautiful$"
-                     + "C, you have some cutiful charms!");
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                //Calls expected during logging
-                exactly(1).of(event).getId();
-                exactly(1).of(event).idToString();
-
-                //Calls expected on incoming event; will be called once only
-                exactly(1).of(event).getPayloads();
-                will(returnValue(payloads));
-
-                //Calls expected on event's payload; here the original event has only one payload
-                //and therefore these methods will be called once.
-                exactly(1).of(payload).getContent();
-                will(returnValue(payloadContentStr.getBytes()));
-
-                //Creating the first payload; will throw CloneNotSupportedException
-                exactly(1).of(payload).spawn();
-                will(throwException(payloadCloningException));
-            }
-        } );
-        try
-        {
-            @SuppressWarnings("unused")/** List of events is never returned as the exception is thrown. */
-            List<Event> events = this.tokenSplitter.onEvent(event,moduleName,componentName);
-            Assert.fail();
-        }
-        catch(SequencerException e)
-        {
-            Assert.assertEquals(payloadCloningException, e.getCause());
-        }
-    }
 
 
 

@@ -69,28 +69,15 @@ public class BaseFileTransferMappedRecordTransformer
     	//calculate a payload id based on the filename and created date
     	int id = createdDayTime.hashCode();
     	id = (37 * id) + (record.getName()).hashCode();
-    	
+    	String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
     	
         Payload payload = payloadFactory.newPayload(""+id,record.getName(),
-                Spec.BYTE_PLAIN, MetaDataInterface.UNDEFINED, record.getContent());
+                Spec.BYTE_PLAIN, componentGroupName,record.getContent());
 
         // Don't set the Checksum, the client doesn't calculate checksum as the payload does it
         // Don't set the name
         
-        // Set the Size
-        payload.setSize(record.getSize());
-        // Set the source system name
-        String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
-        payload.setSrcSystem(componentGroupName);
-        // Set the format to null
-        payload.setFormat(null);
 
-        // Don't set priority, defaults to medium
-        // Don't set NoNamespaceSchemaLocation
-        // Don't set SchemaInstanceNSURI
-        // Don't set timestamp
-        // Don't set Encoding, defaults to noenc;
-        // Don't set Charset, it defaults to system
         
         // The spec is important as it is used by plugins for verification
         // purposes. Currently all supported spec types are set based on file
@@ -154,7 +141,7 @@ public class BaseFileTransferMappedRecordTransformer
         //record.setChecksum(payload.getChecksum(), payload.getChecksumAlg());
         record.setName(payload.getName());
         record.setSize(payload.getSize());
-        record.setCreatedDayTime(new Date(payload.getTimestamp()));
+        //record.setCreatedDayTime(new Date(payload.getTimestamp()));
         record.setRecordName(payload.getName());
         record.setRecordShortDescription(null);
         return record;

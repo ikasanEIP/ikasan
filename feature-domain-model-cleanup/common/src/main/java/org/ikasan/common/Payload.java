@@ -26,18 +26,81 @@
  */
 package org.ikasan.common;
 
+import java.util.List;
+
+import org.ikasan.common.component.Spec;
+
 /**
  * Payload providing the generic facade for all data to be moved around as a common object.
  * 
  * @author Ikasan Development Team
  */
-public interface Payload extends MetaDataInterface
+public interface Payload 
 {
-    /** Root name of the payload */
-    public static final String PAYLOAD_ROOT_NAME = "payload";
-
-    /** Constant for the payload counter in the JMS mapMessage */
-    public static final String PAYLOAD_COUNT_KEY = "payloadCount";
+	
+	/**
+	 * Accessor for id
+	 * 
+	 * @return id
+	 */
+	public String getId();
+	
+	/**
+	 * Accessor for the logical name or the originating system
+	 * 
+	 * @return logical name or the originating system
+	 */
+	public String getSrcSystem();
+	
+	/**
+	 * Mutator for srcSystem
+	 * 
+	 * @param srcSystem
+	 */
+	public void setSrcSystem(String srcSystem);
+	
+	/**
+	 * Accessor for <code>Spec</code>
+	 * 
+	 * @return Spec
+	 */
+	public Spec getSpec();
+	
+	/**
+	 * Accessor for payload's name
+	 * TODO need to clarify what this means
+	 * 
+	 * @return name of payload
+	 */
+	public String getName();
+	
+	/**
+	 * Mutator for name
+	 * 
+	 * @return
+	 */
+	public void setName(String name);
+	
+	/**
+	 * Mutator for the spec
+	 * 
+	 * @param spec
+	 */
+	public void setSpec(Spec spec);
+	
+	/**
+	 * Accessor for charSet
+	 * 
+	 * @return indication of the character set if this is a textual payload
+	 */
+	public String getCharset();
+	
+	/**
+	 * Mutator for charset
+	 * 
+	 * @param charset
+	 */
+	public void setCharset(String charset);
 
     /**
      * Set the content of the payload
@@ -61,22 +124,12 @@ public interface Payload extends MetaDataInterface
      */
     public boolean equals(Payload payload);
 
-    /**
-     * String representation of the payload
-     * 
-     * @return String representation of the payload
-     */
-    public String toString();
+    public String idToString();
 
-    /**
-     * String representation of the payload
-     * 
-     * @param length length of representation
-     * @return String representation of the payload
-     */
-    public String toString(int length);
+
 
     /** Base64 encode the payload */
+    @Deprecated
     public void base64EncodePayload();
 
     /**
@@ -88,14 +141,20 @@ public interface Payload extends MetaDataInterface
      */
     public Payload clone() throws CloneNotSupportedException;
 
-    /**
-     * Returns a completely new instance of the payload with a deep copy of all fields with the exception of id and
-     * timestamp which are populated with new values to reflect that this is a distinctly new instance from the
-     * original. Note the subtle difference in comparison with clone() which does not change any fields from their
-     * original values.
-     * 
-     * @return a Payload
-     * @throws CloneNotSupportedException Exception if clone is not supported by implementer
-     */
-    public Payload spawn() throws CloneNotSupportedException;
+	/**
+	 * Convenience method giving the size of the payload contents
+	 * 
+	 * @return size of payload contents in bytes
+	 */
+	public long getSize();
+	
+	public Payload spawnChild(int siblingNo);
+	
+	public String getAttribute(String attributeName);
+	
+	public void setAttribute(String attributeName, String attributeValue);
+	
+	public List<String> getAttributeNames();
+
+
 }

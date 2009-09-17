@@ -20,6 +20,7 @@ public class DefaultMapMessageEventSerialiser implements
 		JmsMessageEventSerialiser<MapMessage> {
 
 	static final String PAYLOAD_PREFIX = "PAYLOAD_";
+	static final String ATTRIBUTE_PREFIX = "_ATTRIBUTE_";
 
 	static final String PAYLOAD_CONTENT_SUFFIX = "_CONTENT";
 	static final String PAYLOAD_SRC_SYSTEM_SUFFIX = "_SRC_SYSTEM";
@@ -96,7 +97,10 @@ public class DefaultMapMessageEventSerialiser implements
 		String payloadSrcSystem = null;
 		byte[] payloadContent = null;
 		
+		Map<String, String> payloadAttributes = new HashMap<String, String>();
+		
 		for(String fieldName : payloadFieldNames){
+			
 			//payload content
 			if (fieldName.equals(fullPayloadPrefix+PAYLOAD_CONTENT_SUFFIX)){
 				payloadContent=mapMessage.getBytes(fullPayloadPrefix+PAYLOAD_CONTENT_SUFFIX);
@@ -116,6 +120,9 @@ public class DefaultMapMessageEventSerialiser implements
 			//payload spec
 			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_SPEC_SUFFIX)){
 				payloadSpec=Spec.valueOf(mapMessage.getString(fullPayloadPrefix+PAYLOAD_SPEC_SUFFIX));
+			}else if(fieldName.startsWith(fullPayloadPrefix+ATTRIBUTE_PREFIX)){
+				//its a payload attribute
+				payloadAttributes.put(fieldName.substring((fullPayloadPrefix+ATTRIBUTE_PREFIX).length()), mapMessage.getString(fieldName));
 			}
 			else{
 				throw new IllegalArgumentException("Unknown map entry ["+fieldName+"]");
@@ -124,6 +131,13 @@ public class DefaultMapMessageEventSerialiser implements
 		
 		
 		Payload payload = payloadFactory.newPayload(payloadId, payloadName, payloadSpec, payloadSrcSystem, payloadContent);
+		
+		//set any payload attributs
+		for (String attributeName : payloadAttributes.keySet()){
+			payload.setAttribute(attributeName, payloadAttributes.get(attributeName));
+		}
+		
+		
 		return payload;
 	}
 
@@ -196,6 +210,11 @@ public class DefaultMapMessageEventSerialiser implements
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_NAME_SUFFIX, payload.getName());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_ID_SUFFIX, payload.getId());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_SPEC_SUFFIX, payload.getSpec().name());
+			
+			//map any payload attributes
+			for (String attributeName : payload.getAttributeNames()){
+				mapMessage.setString(PAYLOAD_PREFIX + i +ATTRIBUTE_PREFIX+attributeName, payload.getAttribute(attributeName));
+			}
 		}
 		mapMessage.setString(EVENT_FIELD_ID, event.getId());
 		mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());

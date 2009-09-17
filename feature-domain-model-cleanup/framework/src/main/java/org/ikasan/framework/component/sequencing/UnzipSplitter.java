@@ -36,6 +36,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.sequencing.Sequencer;
 import org.ikasan.framework.component.sequencing.SequencerException;
@@ -61,8 +62,9 @@ public class UnzipSplitter implements Sequencer
 
     /** Constant representing end-of-file is reached. */
     private static final int END_OF_FILE = -1;
+    
 
-    /**
+	/**
      * Implementation of {@link org.ikasan.framework.component.sequencing.Sequencer#onEvent(Event)}
      * 
      * @param event - The incoming event with payload containing a zip file
@@ -132,6 +134,7 @@ public class UnzipSplitter implements Sequencer
         // A compressed file within a zip file
         ZipEntry zippedEntry = null;
         // Extract data
+        int zippedFileCount = 0;
         while ((zippedEntry = inputDataInZippedFormat.getNextEntry()) != null)
         {
             if (zippedEntry.isDirectory())
@@ -157,7 +160,7 @@ public class UnzipSplitter implements Sequencer
              * See org.ikasan.common.Payload.spawn() for more details on Payload
              * spawning/cloning method.
              */
-            Payload newPayload = payload.spawn();
+            Payload newPayload = payload.spawnChild(zippedFileCount++);
             newPayload.setName(newPayloadName);
             newPayload.setContent(newPayloadDataContent);
             newPayloads.add(newPayload);

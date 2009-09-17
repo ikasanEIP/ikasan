@@ -33,21 +33,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.sequencing.SequencerException;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
-import junit.framework.JUnit4TestAdapter;
 
 /**
  * This test class supports the <code>UnzipSplitter</class> class.
@@ -83,14 +78,7 @@ public class UnzipSplitterTest
     /** The splitter to be tested. */
     private UnzipSplitter splitter = new UnzipSplitter();
 
-    /**
-     * Setup runs before each test
-     */
-    @Before
-    public void setUp()
-    {
-        // Empty
-    }
+
 
     /**
      * Successfully unzips an incoming event with one payload (zip file with containing two files), into two events,
@@ -125,12 +113,10 @@ public class UnzipSplitterTest
         }
         //check the first event
         Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getName());
-        Assert.assertEquals(firstFileName, newEvents.get(0).getName());
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(0).getPayloads().get(0).getContent()));
         
         //check the second event
         Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getName());
-        Assert.assertEquals(secondFileName, newEvents.get(1).getName());
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(1).getPayloads().get(0).getContent()));
     }
 
@@ -175,73 +161,22 @@ public class UnzipSplitterTest
         
         //check the first event/payload
         Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getName());
-        Assert.assertEquals(firstFileName, newEvents.get(0).getName());
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(0).getPayloads().get(0).getContent()));
         
         //check the second event/payload       
         Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getName());
-        Assert.assertEquals(secondFileName, newEvents.get(1).getName());
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(1).getPayloads().get(0).getContent()));
         
         //check the third event/payload
         Assert.assertEquals(firstFileName, newEvents.get(2).getPayloads().get(0).getName());
-        Assert.assertEquals(firstFileName, newEvents.get(2).getName());
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(2).getPayloads().get(0).getContent()));
         
         //check the fourth event/payload
         Assert.assertEquals(secondFileName, newEvents.get(3).getPayloads().get(0).getName());
-        Assert.assertEquals(secondFileName, newEvents.get(3).getName());
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(3).getPayloads().get(0).getContent()));
     }
 
-    /**
-     * Test unsuccessful incoming event with one payload split into one event with two payloads.
-     * CloneNotSupportedException will be thrown when cloning first payload.
-     * 
-     * @throws CloneNotSupportedException Thrown when cloning <code>Payload</code>
-     * @throws IOException Thrown when error reading in test zipped files
-     */
-    // cannot qualify mocked objects with 'this' within anonymous class
-    @SuppressWarnings( { "unqualified-field-access", "synthetic-access" })
-    @Test
-    public void test_unsuccessfulUnzipSplitterPayloadCloningException() throws CloneNotSupportedException, IOException
-    {
-        final List<Payload> payloads = new ArrayList<Payload>();
-        final CloneNotSupportedException payloadCloningException = new CloneNotSupportedException(
-            "Exception while cloning payload.");
-        final byte[] zippedFileData = this.loadFile("unzipTestZip");
-        final Payload payload = classMockery.mock(Payload.class, "incomingPayload");
-        final Event event = classMockery.mock(Event.class, "incomingEvent");
-        payloads.add(payload);
 
-        
-        this.classMockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(event).idToString();
-                exactly(1).of(event).getPayloads();
-                will(returnValue(payloads));
-                exactly(1).of(payload).getContent();
-                will(returnValue(zippedFileData));
-                exactly(1).of(payload).spawn();
-                will(throwException(payloadCloningException));
-            }
-        });
-        try
-        {
-            /**
-             * This event list is never actually returned as a <code>CloningNotSupportedException</code> was thrown when
-             * cloning exception.
-             */
-            @SuppressWarnings("unused")
-            List<Event> events = splitter.onEvent(event, moduleName, componentName);
-            Assert.fail("Splitting fails due to CloningNotSupportedException being thrown when spawning payload.");
-        }
-        catch (SequencerException e)
-        {
-            Assert.assertEquals(payloadCloningException, e.getCause());
-        }
-    }
 
 
 
@@ -265,22 +200,5 @@ public class UnzipSplitterTest
         return content;
     }
 
-    /**
-     * Teardown after each test
-     */
-    @After
-    public void tearDown()
-    {
-        // Empty
-    }
 
-    /**
-     * The suite is this class
-     * 
-     * @return JUnit Test class
-     */
-    public static junit.framework.Test suite()
-    {
-        return new JUnit4TestAdapter(UnzipSplitterTest.class);
-    }
 }

@@ -37,18 +37,10 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
-import org.ikasan.common.ServiceLocator;
-import org.ikasan.common.component.Format;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.util.checksum.ChecksumSupplier;
 import org.ikasan.common.util.checksum.Md5ChecksumSupplier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import org.ikasan.connector.ConnectorException;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -77,6 +69,8 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.ChunkHeaderLoadException;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class implements the virtual connection to the FTP server.<br>
@@ -397,22 +391,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         return executeCommand(command);
     }
 
-    /**
-     * Determines if we need to handle this as a chunk reference
-     * 
-     * @param payload - The payload to check
-     * @return true if the payload is simply a reference to a set of chunks
-     */
-    private boolean isChunkReference(Payload payload)
-    {
-        boolean result = false;
-        String format = payload.getFormat();
-        if(format != null && Format.REFERENCE.toString().equals(payload.getFormat()))
-        {
-            result = true;
-        }
-        return result;
-    }
+
 
     /**
      * Retrieves lightweight handles to the File Chunks that will be needed for

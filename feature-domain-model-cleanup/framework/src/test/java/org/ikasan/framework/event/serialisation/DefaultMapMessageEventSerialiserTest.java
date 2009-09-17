@@ -75,7 +75,33 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 	final String payload1SpecKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_SPEC_SUFFIX;
 	final String payload2SpecKey = payload2Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_SPEC_SUFFIX;
 	final Spec payload1Spec = Spec.TEXT_HTML;
-	final Spec payload2Spec = Spec.BYTE_ZIP;	
+	final Spec payload2Spec = Spec.BYTE_ZIP;
+	
+	//payload attributes
+	final String colourPayloadAttributeName = "COLOUR";
+	final String huePayloadAttributeName = "HUE";
+	final String texturePayloadAttributeName = "TEXTURE";
+	
+
+	final List<String> payload1AttributeNames = new ArrayList<String>();
+	final List<String> payload2AttributeNames = new ArrayList<String>();
+	
+	
+	final String payload1ColourAttributeKey = payload1Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+colourPayloadAttributeName;
+	final String payload1HueAttributeKey = payload1Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+huePayloadAttributeName;
+	final String payload1TextureAttributeKey = payload1Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+texturePayloadAttributeName;
+
+	final String payload2ColourAttributeKey = payload2Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+colourPayloadAttributeName;
+	final String payload2HueAttributeKey = payload2Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+huePayloadAttributeName;
+	final String payload2TextureAttributeKey = payload2Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+texturePayloadAttributeName;
+
+	
+	final String payload1ColourAttributeValue = "blue";
+	final String payload1HueAttributeValue = "light";
+	final String payload1TextureAttributeValue = "graded";
+
+	final String payload2ColourAttributeValue = "green";
+	final String payload2HueAttributeValue = "dark";
 	
 	//event id
 	final String eventIdKey = DefaultMapMessageEventSerialiser.EVENT_FIELD_ID;
@@ -100,6 +126,15 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 		payloads = new ArrayList<Payload>();
 		payloads.add(payload1);
 		payloads.add(payload2);
+		
+		//payload 1 knows about colour, hue and texture
+		payload1AttributeNames.add(colourPayloadAttributeName);
+		payload1AttributeNames.add(huePayloadAttributeName);
+		payload1AttributeNames.add(texturePayloadAttributeName);
+		
+		//payload 2 just knows about colour and hue 
+		payload2AttributeNames.add(colourPayloadAttributeName);
+		payload2AttributeNames.add(huePayloadAttributeName);
 		
 	}
 	
@@ -150,6 +185,15 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     	map.put(payload1SpecKey, payload1Spec.name());
     	map.put(payload2SpecKey, payload2Spec.name());
     	
+    	
+    	//payload attributes
+		map.put(payload1ColourAttributeKey, payload1ColourAttributeValue);
+    	map.put(payload1HueAttributeKey, payload1HueAttributeValue);
+    	map.put(payload1TextureAttributeKey, payload1TextureAttributeValue);
+
+    	map.put(payload2Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+colourPayloadAttributeName, payload2ColourAttributeValue);
+    	map.put(payload2Prefix + DefaultMapMessageEventSerialiser.ATTRIBUTE_PREFIX+huePayloadAttributeName, payload2HueAttributeValue);
+
     	final Enumeration mapNamesEnumeration = new Vector(map.keySet()).elements();
 
     	
@@ -188,11 +232,23 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	one(mapMessage).getString(payload1SpecKey);will(returnValue(payload1Spec.name()));
             	one(mapMessage).getString(payload2SpecKey);will(returnValue(payload2Spec.name()));
 
- 	
+            	//payload attributes
+            	one(mapMessage).getString(payload1ColourAttributeKey);will(returnValue(payload1ColourAttributeValue));
+            	one(mapMessage).getString(payload1HueAttributeKey);will(returnValue(payload1HueAttributeValue));
+            	one(mapMessage).getString(payload1TextureAttributeKey);will(returnValue(payload1TextureAttributeValue));
+
+            	one(mapMessage).getString(payload2ColourAttributeKey);will(returnValue(payload2ColourAttributeValue));
+            	one(mapMessage).getString(payload2HueAttributeKey);will(returnValue(payload2HueAttributeValue));
+            	
                 one(payloadFactory).newPayload(payload1Id, payload1Name, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(payload1));
                 one(payloadFactory).newPayload(payload2Id, payload2Name, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(payload2));
 
-                
+                one(payload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
+                one(payload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);
+                one(payload1).setAttribute(texturePayloadAttributeName, payload1TextureAttributeValue);
+
+                one(payload2).setAttribute(colourPayloadAttributeName, payload2ColourAttributeValue);
+                one(payload2).setAttribute(huePayloadAttributeName, payload2HueAttributeValue);
             }
         });
     	
@@ -262,6 +318,22 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 
                 one(payload2).getSpec();will(returnValue(payload2Spec));
                 one(mapMessage).setString(payload2SpecKey, payload2Spec.name());
+                
+                //payload attributes
+                one(payload1).getAttributeNames();will(returnValue(payload1AttributeNames));
+                one(payload2).getAttributeNames();will(returnValue(payload2AttributeNames));
+                
+                one(payload1).getAttribute(colourPayloadAttributeName);will(returnValue(payload1ColourAttributeValue));
+                one(payload1).getAttribute(huePayloadAttributeName);will(returnValue(payload1HueAttributeValue));
+                one(payload1).getAttribute(texturePayloadAttributeName);will(returnValue(payload1TextureAttributeValue));
+                one(mapMessage).setString(payload1ColourAttributeKey, payload1ColourAttributeValue);
+                one(mapMessage).setString(payload1HueAttributeKey, payload1HueAttributeValue);
+                one(mapMessage).setString(payload1TextureAttributeKey, payload1TextureAttributeValue);
+                
+                one(payload2).getAttribute(colourPayloadAttributeName);will(returnValue(payload2ColourAttributeValue));
+                one(payload2).getAttribute(huePayloadAttributeName);will(returnValue(payload2HueAttributeValue));
+                one(mapMessage).setString(payload2ColourAttributeKey, payload2ColourAttributeValue);
+                one(mapMessage).setString(payload2HueAttributeKey, payload2HueAttributeValue);
                 
                 
                 //event Id

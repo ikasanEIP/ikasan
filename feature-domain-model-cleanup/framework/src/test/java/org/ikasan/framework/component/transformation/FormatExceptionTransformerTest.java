@@ -134,11 +134,11 @@ public class FormatExceptionTransformerTest
                     one(payload).setContent(with(any(byte[].class)));
                     one(payload).setName(with(any(String.class)));
                     one(payload).setSpec(with(any(Spec.class)));
-                    one(payload).setEncoding(with(any(String.class)));
+
 
 //                    // update event for new payload
 //                    one(event).setPayload(payload);
-                    //dont this this is needed -RJD as payload is already on event
+                    //dont think this is needed as payload is already on event -RJD
                 }
 
             }
