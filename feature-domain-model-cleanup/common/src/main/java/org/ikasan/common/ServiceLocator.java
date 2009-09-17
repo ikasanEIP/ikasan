@@ -28,9 +28,6 @@ package org.ikasan.common;
 
 import java.io.File;
 
-
-import org.springframework.jndi.JndiTemplate;
-
 /**
  * Interface for central service responsible for providing access to numerous other services
  * 
@@ -42,25 +39,6 @@ public interface ServiceLocator
 {
 
 
-
-
-    /**
-     * Returns a fully configured instance of <code>CommonXMLParser</code>
-     * 
-     * @return CommonXMLParser
-     */
-    public CommonXMLParser getCommonXmlParser();
-
-
-
-
-
-    /**
-     * Returns a <code>JNDITemplate</code> for accessing JNDI resources from the JMS server
-     * 
-     * @return <code>JNDITemplate</code>
-     */
-    public JndiTemplate getJMSJndiTemplate();
 
     /**
      * Returns the base Ikasan configuration directory as a <code>File</code>

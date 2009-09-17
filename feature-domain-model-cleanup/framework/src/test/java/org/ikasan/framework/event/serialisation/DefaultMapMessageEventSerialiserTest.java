@@ -143,7 +143,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
      * 
      * @throws EventSerialisationException
      * @throws EnvelopeOperationException
-     * @throws PayloadOperationException
      * @throws JMSException
      */
     @Test

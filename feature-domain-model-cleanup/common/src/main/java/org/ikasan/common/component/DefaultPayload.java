@@ -276,8 +276,7 @@ public class DefaultPayload implements Payload, Cloneable
         setContent(Base64.encodeBase64(getContent()));
         if (logger.isDebugEnabled())
         {
-            logger.debug("Binary payload encoded to [" //$NON-NLS-1$ 
-                    + Encoding.BASE64.toString() + "]"); //$NON-NLS-1$
+            logger.debug("Binary payload encoded to base64");
         }
     }
 

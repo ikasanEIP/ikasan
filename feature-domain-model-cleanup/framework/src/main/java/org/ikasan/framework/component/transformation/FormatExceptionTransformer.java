@@ -31,11 +31,8 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Encoding;
 import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.transformation.TransformationException;
-import org.ikasan.framework.component.transformation.Transformer;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.user.ExceptionTransformer;
 import org.ikasan.framework.exception.user.ExternalExceptionDefinition;
