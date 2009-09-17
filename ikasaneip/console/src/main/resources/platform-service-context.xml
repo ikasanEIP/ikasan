@@ -51,6 +51,11 @@
     <bean id="moduleService" class="org.ikasan.console.module.service.ModuleServiceImpl" >
         <property name="modulesList" ref="modulesList" />
     </bean> 
+
+    <!-- The PointToPointFlowProfile Service -->
+    <bean id="pointToPointFlowProfileService" class="org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileServiceImpl" >
+        <constructor-arg ref="pointToPointFlowProfileDao" />
+    </bean> 
     
     <!-- The Wiretap Service -->
 	<bean id="wiretapService" class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">

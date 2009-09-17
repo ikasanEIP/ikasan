@@ -43,6 +43,9 @@ import org.ikasan.framework.event.wiretap.service.WiretapService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.console.pointtopointflow.PointToPointFlow;
+import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
+import org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService;
 import org.ikasan.console.web.command.WiretapSearchCriteria;
 import org.ikasan.console.web.command.WiretapSearchCriteriaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +76,9 @@ public class WiretapEventsSearchFormController
     /** The module container (effectively holds the DTO) */
     private ModuleService moduleService;
 
+    /** The pointtopointflowprofile container (effectively holds the DTO) */
+    private PointToPointFlowProfileService pointToPointFlowProfileService;
+    
     /** The search criteria validator to use */
     private WiretapSearchCriteriaValidator validator = new WiretapSearchCriteriaValidator();
 
@@ -81,13 +87,15 @@ public class WiretapEventsSearchFormController
      * 
      * @param wiretapService - The wiretap service to use
      * @param moduleService - The module container to use
+     * @param pointToPointFlowProfileService - The point to point flow profile container to use
      */
     @Autowired
-    public WiretapEventsSearchFormController(WiretapService wiretapService, ModuleService moduleService)
+    public WiretapEventsSearchFormController(WiretapService wiretapService, ModuleService moduleService, PointToPointFlowProfileService pointToPointFlowProfileService)
     {
         super();
         this.wiretapService = wiretapService;
         this.moduleService = moduleService;
+        this.pointToPointFlowProfileService = pointToPointFlowProfileService; 
     }
 
     /**
@@ -98,7 +106,33 @@ public class WiretapEventsSearchFormController
     @ModelAttribute("modules")
     public List<Module> getModuleNames()
     {
-        return this.moduleService.getModules();
+        List<Module> modules = new ArrayList<Module>();
+        
+        // TODO This logic should reside elsewhere
+        // TODO The loops can be more efficient
+        // TODO The order needs to be maintained
+        // TODO We're not actually returning a List of Modules anymore
+        List<PointToPointFlowProfile> pointToPointFlowProfiles = this.pointToPointFlowProfileService.getPointToPointFlowProfiles();
+        for (PointToPointFlowProfile profile : pointToPointFlowProfiles)
+        {
+            Set<PointToPointFlow> pointToPointFlows = profile.getPointToPointFlows();
+            for (PointToPointFlow pointToPointFlow : pointToPointFlows)
+            {
+                Module fromModule = pointToPointFlow.getFromModule();
+                if (fromModule != null)
+                {
+                    modules.add(fromModule);
+                }
+                Module toModule = pointToPointFlow.getToModule();
+                if (toModule != null)
+                {
+                    modules.add(toModule);
+                }
+            }
+        }
+        
+        // return this.moduleService.getModules();
+        return modules;
     }
 
     /**
