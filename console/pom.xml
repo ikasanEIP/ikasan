@@ -210,7 +210,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.7.3</version>
+            <version>0.7.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
