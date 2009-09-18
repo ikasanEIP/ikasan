@@ -24,41 +24,83 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-package org.ikasan.console.pointtopointflow.dao;
-
-import java.util.List;
-import java.util.Set;
-
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
+package org.ikasan.console.module;
 
 /**
- * Interface for all PointToPointFlowProfile data access.
+ * Console representation of a Module
  * 
  * @author Ikasan Development Team
  */
-public interface PointToPointFlowProfileDao
+public class Module
 {
 
-    /**
-     * Get a list of all PointToPointFlowProfiles
-     * 
-     * @return A list of PointToPointFlowProfiles
-     */
-    public List<PointToPointFlowProfile> findAllPointToPointFlowProfiles();
+    /** Unique Id */
+    private long id;
 
-    /**
-     * Find all of the module names for all of the PointToPointFlowProfiles
-     * 
-     * @return Set of Module names
-     */
-    public Set<String> findModuleNames();
+    /** Module Name */
+    private String name;
+    
+    /** Module Description */
+    private String description;
     
     /**
-     * Find all of the module names involved in the given PointToPointFlowProfiles
+     * Get the id
      * 
-     * @param pointToPointFlowProfileNames - Names of the point to point profiles to get the module names for 
-     * @return Set of Module names
+     * @return id
      */
-    public Set<String> findModuleNames(Set<String> pointToPointFlowProfileNames);
+    public long getId()
+    {
+        return id;
+    }
+
+    /**
+     * Set the id
+     * 
+     * @param id - id to set
+     */
+    public void setId(long id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * Get the name
+     * 
+     * @return name
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Set the name
+     * 
+     * @param name - name to set
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
+     * Get the description
+     * 
+     * @return description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * Set the description
+     * 
+     * @param description - name to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
 }

@@ -77,10 +77,4 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
-    <!-- The hibernate properties to use for this platform -->
-    <bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="ignoreResourceNotFound" value="true"/>
-        <property name="location" value="classpath:ikasan-hibernate.properties"/>
-    </bean>
-  
 </beans>

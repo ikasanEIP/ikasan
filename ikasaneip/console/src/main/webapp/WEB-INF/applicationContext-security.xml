@@ -107,13 +107,28 @@
             expression="execution(* org.ikasan.framework.security.service.UserService.revokeAuthority(..))"
             access="ROLE_ADMIN" />
 	    <!-- Gaining access to a Module requires security check -->
+        <!-- 
 		<protect-pointcut 
             expression="execution(* org.ikasan.framework.module.service.ModuleService.getModule(..))"
             access="ROLE_USER,AFTER_MODULE_READ" /> 
         <protect-pointcut
             expression="execution(* org.ikasan.framework.module.service.ModuleService.getModules())"
             access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
-		
+        -->
+        <!-- 
+        <protect-pointcut 
+            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames(..))"
+            access="ROLE_USER,AFTER_MODULE_READ" /> 
+        <protect-pointcut
+            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames(..))"
+            access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
+        <protect-pointcut 
+            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames())"
+            access="ROLE_USER,AFTER_MODULE_READ" /> 
+        <protect-pointcut
+            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames())"
+            access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
+		-->
 	</global-method-security>
 
     <!-- The access decision manager -->    

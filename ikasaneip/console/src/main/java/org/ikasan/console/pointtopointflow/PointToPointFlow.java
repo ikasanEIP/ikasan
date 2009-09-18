@@ -26,7 +26,7 @@
  */
 package org.ikasan.console.pointtopointflow;
 
-import org.ikasan.framework.module.Module;
+import org.ikasan.console.module.Module;
 
 /**
  * Object that represents a PointToPointFlow in Ikasan.  A PointToPointFlow 
