@@ -99,6 +99,33 @@
             <legend><fmt:message key="wiretap_events_search"/></legend>
             <ol>
                 <li>
+                    <label for="pointToPointFlowProfiles"><fmt:message key="wiretap_events_pointToPointFlowProfile"/></label>
+                    <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
+                    <div id="eventSearchPointToPointFlowProfileCheckboxes" class="multiSelectCheckboxes">            
+                    <table id="wiretapSearch" class="searchTable">
+                        <thead>
+                            <tr>
+                                <td><fmt:message key="wiretap_event_pointToPointFlowProfile_name"/></td>
+                            </tr>
+                        <thead>
+                        <tbody>
+                            <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
+                                <tr>
+                                    <td class="border" valign="top"><input name="pointToPointFlowProfileNames" type="checkbox" value="${pointToPointFlowProfile.name}" <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName"><c:if test="${pointToPointFlowProfile.name == pointToPointFlowProfileName}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/></td>
+                                </tr>
+                                <c:forEach items="${pointToPointFlowProfile.pointToPointFlows}" var="pointToPointFlow">                                
+                                <tr>
+                                    <td class="border" valign="top"><c:out value="${pointToPointFlow.fromModule.name}" /> --&gt; <c:out value="${pointToPointFlow.toModule.name}" /></td>
+                                </tr>
+                                </c:forEach>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                    </div>
+                </li>
+
+                <!--
+                <li>
                     <label for="modules"><fmt:message key="wiretap_events_module"/></label>
                     <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
                     <div id="eventSearchModuleCheckboxes" class="multiSelectCheckboxes">            
@@ -120,6 +147,7 @@
                     </table>
                     </div>
                 </li>
+                -->
                 <li>
                     <label for="componentName"><fmt:message key="wiretap_events_component"/></label>
                     <input id="componentName" type="text" name="componentName" value="${searchParams["componentName"]}"/>

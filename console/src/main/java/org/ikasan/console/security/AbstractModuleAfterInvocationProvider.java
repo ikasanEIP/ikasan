@@ -27,7 +27,7 @@
 package org.ikasan.console.security;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.module.Module;
+import org.ikasan.console.module.Module;
 import org.springframework.security.Authentication;
 import org.springframework.security.ConfigAttribute;
 import org.springframework.security.GrantedAuthority;

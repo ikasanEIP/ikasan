@@ -27,6 +27,7 @@
 package org.ikasan.console.pointtopointflow.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 
@@ -39,10 +40,25 @@ public interface PointToPointFlowProfileService
 {
 
     /**
-     * Get a list of PointToPointFlows
+     * Get a list of PointToPointFlowProfiles
      * 
-     * @return List of all of the PointToPointProfiles
+     * @return List of all of the PointToPointFlowProfiles
      */
     public List<PointToPointFlowProfile> getPointToPointFlowProfiles();
 
+    /**
+     * Get a set of all of the module names for all of the PointToPointFlowProfile Names
+     * 
+     * @return Set of all of the module names
+     */
+    public Set<String> getModuleNames();
+    
+    /**
+     * Get a set of all of the module names for the given PointToPointFlowProfile Names
+     * 
+     * @param pointToPointFlowProfileNames - The point to point profile names to search on 
+     * @return Set of all of the module names
+     */
+    public Set<String> getModuleNames(Set<String> pointToPointFlowProfileNames);
+    
 }

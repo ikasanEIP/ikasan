@@ -49,9 +49,9 @@
 
         <many-to-one name="pointToPointFlowProfile" column="PointToPointFlowProfileId" />
         
-        <many-to-one name="fromModule" class="org.ikasan.framework.module.SimpleModule" lazy="false" column="FromModuleId" />
+        <many-to-one name="fromModule" class="org.ikasan.console.module.Module" lazy="false" column="FromModuleId" />
 
-        <many-to-one name="toModule" class="org.ikasan.framework.module.SimpleModule" lazy="false" column="ToModuleId" />
+        <many-to-one name="toModule" class="org.ikasan.console.module.Module" lazy="false" column="ToModuleId" />
        
     </class>
 	
