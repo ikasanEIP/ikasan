@@ -127,8 +127,7 @@ public class EventTest
         Assert.assertEquals(clone.getPriority(),
                 event.getPriority());
         
-        Assert.assertEquals(clone.getName(),
-                event.getName());
+
         
 
         
@@ -180,8 +179,6 @@ public class EventTest
         Assert.assertEquals(spawned.getPriority(),
                 event.getPriority());
         
-        Assert.assertEquals(spawned.getName(),
-                event.getName());
         
    
         

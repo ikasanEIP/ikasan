@@ -296,22 +296,7 @@ public class Event implements Cloneable
 
 
 
-    /**
-     * If this event has payloads, return the primary payload's name.
-     * Otherwise, return event name. 
-     * The primary payload being the first in this event's payload list.
-     * @return String
-     */
-    public String getName()
-    {
-        String eventName = this.name;
-        if (this.payloads != null && this.payloads.size() > 0)
-        {
-            eventName = this.payloads.get(0).getName();
-        }
-        logger.debug("Returning name [" + eventName + "].");
-        return eventName;
-    }
+
     
     
 
