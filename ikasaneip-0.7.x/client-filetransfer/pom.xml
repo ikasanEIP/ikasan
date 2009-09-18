@@ -196,34 +196,34 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.7.3</version>
+      <version>0.7.4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Common functionality for Ikasan Connector Clients-->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-client-connection</artifactId>
-      <version>0.7.3</version>
+      <version>0.7.4-SNAPSHOT</version>
     </dependency>
     <!-- base connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-base</artifactId>
-      <version>0.7.3</version>
+      <version>0.7.4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Filetransfer connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>0.7.3</version>
+      <version>0.7.4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Framework -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.7.3</version>
+      <version>0.7.4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- j2ee -->
