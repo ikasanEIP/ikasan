@@ -40,7 +40,7 @@
 <hibernate-mapping>
 	 
     <class
-        name="org.ikasan.framework.module.SimpleModule"
+        name="org.ikasan.console.module.Module"
         table="Module">
 
         <id name="id" type="java.lang.Long" column="Id">

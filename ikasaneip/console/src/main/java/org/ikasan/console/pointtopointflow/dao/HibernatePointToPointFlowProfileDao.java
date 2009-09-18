@@ -26,62 +26,117 @@
  */
 package org.ikasan.console.pointtopointflow.dao;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.ikasan.console.pointtopointflow.PointToPointFlow;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
-import org.ikasan.framework.module.Module;
+import org.ikasan.console.module.Module;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of the <code>PointToPointFlowDao</code>
  * 
+ * TODO Could make code more efficient
+ * 
  * @author Ikasan Development Team
  */
 public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport implements PointToPointFlowProfileDao
 {
-    /** Logger for this class */
-    private static Logger logger = Logger.getLogger(HibernatePointToPointFlowProfileDao.class);
+
+    /** Query for finding all point to point flow profiles based on name */
+    private static final String POINT_TO_POINT_FLOW_PROFILES_BY_NAME = "from PointToPointFlowProfile p where p.name in (:names)";
     
     /**
      * Find all of the PointToPointFlowProfiles
      * 
      * @return List of PointToPointFlowProfiles
      * 
-     * @see
-     * org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findAllPointToPointFlowProfiles()
+     * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findAllPointToPointFlowProfiles()
      */
     @SuppressWarnings("unchecked")
     public List<PointToPointFlowProfile> findAllPointToPointFlowProfiles()
     {
         List<PointToPointFlowProfile> pointToPointFlowProfiles = null;
-        logger.info("about to call search");
         pointToPointFlowProfiles = getHibernateTemplate().loadAll(PointToPointFlowProfile.class);
-        logger.info("Made it.");
-        
+        return pointToPointFlowProfiles;
+    }
+
+    /**
+     * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findModuleNames()
+     */
+    public Set<String> findModuleNames()
+    {
+        List<PointToPointFlowProfile> pointToPointFlowProfiles = this.findAllPointToPointFlowProfiles();
+        Set<String> moduleNames = new HashSet<String>();        
+        if (pointToPointFlowProfiles != null && !pointToPointFlowProfiles.isEmpty())
+        {
+            moduleNames = getModuleNamesFromPointToPointFLowProfiles(pointToPointFlowProfiles);
+        }
+        return moduleNames;
+    }
+    
+    /**
+     * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findModuleNames(Set)
+     */
+    public Set<String> findModuleNames(Set<String> pointToPointFlowProfileNames)
+    {
+        Set<String> moduleNames = new HashSet<String>();
+        List<PointToPointFlowProfile> pointToPointFlowProfiles = this.findPointToPointFlowProfiles(pointToPointFlowProfileNames);
+        if (pointToPointFlowProfiles != null && !pointToPointFlowProfiles.isEmpty())
+        {
+            moduleNames = getModuleNamesFromPointToPointFLowProfiles(pointToPointFlowProfiles);
+        }
+        return moduleNames;
+    }
+    
+    /**
+     * Helper DAO method, returns a list of PointToPointFlowProfiles given their names
+     * 
+     * @param pointToPointFlowProfileNames - Names to search on
+     * @return list of PointToPointFlowProfiles
+     */
+    private List<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<String> pointToPointFlowProfileNames)
+    {
+        List<PointToPointFlowProfile> pointToPointFlowProfiles = (List<PointToPointFlowProfile>) getHibernateTemplate().findByNamedParam(POINT_TO_POINT_FLOW_PROFILES_BY_NAME, "names", pointToPointFlowProfileNames);
+        // List<PointToPointFlowProfile> pointToPointFlowProfiles = (List<PointToPointFlowProfile>) getHibernateTemplate().find(POINT_TO_POINT_FLOW_PROFILES_BY_NAME, pointToPointFlowProfileNames);
+        return pointToPointFlowProfiles;
+    }
+    
+    /**
+     * Helper method to extract a Set of Module names from the given list of PointToPointFlowProfiles
+     * 
+     * @param pointToPointFlowProfiles - Set of PointToPointFlowProfiles to get the module names from 
+     * @return A Set of module names
+     */
+    private Set<String> getModuleNamesFromPointToPointFLowProfiles(List<PointToPointFlowProfile> pointToPointFlowProfiles)
+    {
+        Set<String> moduleNames = new HashSet<String>();
         for (PointToPointFlowProfile profile : pointToPointFlowProfiles)
         {
-            logger.info("PointToPointFlowProfile.getName() [" + profile.getName() +"]");
             Set<PointToPointFlow> pointToPointFlows = profile.getPointToPointFlows();
             for (PointToPointFlow pointToPointFlow : pointToPointFlows)
             {
-                logger.info("PointToPointFlow.getPointToPointFlowProfile().getName() [" + pointToPointFlow.getPointToPointFlowProfile().getName() + "]");
                 Module fromModule = pointToPointFlow.getFromModule();
                 if (fromModule != null)
                 {
-                    logger.info("PointToPointFlow.getFromModule().getName() [" + fromModule.getName() + "]");
+                    if (fromModule.getName() != null)
+                    {
+                        moduleNames.add(fromModule.getName());
+                    }
                 }
                 Module toModule = pointToPointFlow.getToModule();
                 if (toModule != null)
                 {
-                    logger.info("PointToPointFlow.getToModule().getName() [" + toModule.getName() + "]");
+                    if (toModule.getName() != null)
+                    {
+                        moduleNames.add(toModule.getName());
+                    }
                 }
             }
         }
-        
-        return pointToPointFlowProfiles;
+        return moduleNames;
     }
     
 }

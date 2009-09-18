@@ -27,10 +27,13 @@
 package org.ikasan.console.pointtopointflow.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao;
+import org.ikasan.console.module.Module;
 
 /**
  * Console implementation of <code>PointToPointFlowProfileService</code>
@@ -64,6 +67,26 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
         List<PointToPointFlowProfile> pointToPointFlowProfiles = new ArrayList<PointToPointFlowProfile>();
         pointToPointFlowProfiles = pointToPointFlowProfileDao.findAllPointToPointFlowProfiles();
         return pointToPointFlowProfiles;
+    }
+
+    /**
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleNames()
+     */
+    public Set<String> getModuleNames()
+    {
+        Set<String> moduleNames = new HashSet<String>();
+        moduleNames = pointToPointFlowProfileDao.findModuleNames();
+        return moduleNames;
+    }
+    
+    /**
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleNames(Set)
+     */
+    public Set<String> getModuleNames(Set<String> pointToPointFlowProfileNames)
+    {
+        Set<String> moduleNames = new HashSet<String>();
+        moduleNames = pointToPointFlowProfileDao.findModuleNames(pointToPointFlowProfileNames);
+        return moduleNames;
     }
    
 }
