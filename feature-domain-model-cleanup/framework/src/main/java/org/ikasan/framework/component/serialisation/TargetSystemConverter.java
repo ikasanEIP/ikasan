@@ -27,6 +27,7 @@
 package org.ikasan.framework.component.serialisation;
 
 import org.ikasan.framework.FrameworkConst;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;

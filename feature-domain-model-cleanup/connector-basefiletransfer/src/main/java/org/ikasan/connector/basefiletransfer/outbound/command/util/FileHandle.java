@@ -29,6 +29,7 @@ package org.ikasan.connector.basefiletransfer.outbound.command.util;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**

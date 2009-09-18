@@ -31,7 +31,6 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.security.algo.PBE;
-import org.ikasan.common.security.policy.EncryptionPolicy;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

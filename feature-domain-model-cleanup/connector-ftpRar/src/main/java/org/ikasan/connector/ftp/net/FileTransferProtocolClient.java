@@ -52,7 +52,6 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferUtils;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;

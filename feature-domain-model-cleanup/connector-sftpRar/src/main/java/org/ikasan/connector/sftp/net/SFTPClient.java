@@ -42,10 +42,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import javax.resource.ResourceException;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferUtils;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
@@ -63,6 +64,7 @@ import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.ClientPolarisedFilter;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;

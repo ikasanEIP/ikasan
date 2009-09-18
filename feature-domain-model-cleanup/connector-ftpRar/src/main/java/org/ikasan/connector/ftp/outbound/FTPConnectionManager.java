@@ -26,7 +26,7 @@
  */
 package org.ikasan.connector.ftp.outbound;
 
-import org.ikasan.connector.base.outbound.*;
+import org.ikasan.connector.base.outbound.EISConnectionManager;
 
 /**
  * This class implements a default connection manager for the FTP resource

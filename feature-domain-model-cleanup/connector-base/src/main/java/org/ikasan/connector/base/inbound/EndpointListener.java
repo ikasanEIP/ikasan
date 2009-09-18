@@ -27,7 +27,9 @@
 package org.ikasan.connector.base.inbound;
 
 import java.util.List;
+
 import javax.resource.ResourceException;
+
 import org.ikasan.common.Payload;
 
 /**

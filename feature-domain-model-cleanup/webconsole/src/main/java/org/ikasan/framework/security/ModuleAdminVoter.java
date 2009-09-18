@@ -27,15 +27,12 @@ package org.ikasan.framework.security;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-
+import org.springframework.aop.framework.ReflectiveMethodInvocation;
 import org.springframework.security.Authentication;
 import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.GrantedAuthority;
-
 import org.springframework.security.vote.AccessDecisionVoter;
-
-import org.springframework.aop.framework.ReflectiveMethodInvocation;
 
 /**
  * Votes if any {@link ConfigAttribute#getAttribute()} matches MODULE_ADMIN

@@ -35,7 +35,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.ikasan.common.MetaDataInterface;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
 import org.ikasan.common.component.Spec;
@@ -97,7 +97,7 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payload
-        Payload payload = new DefaultPayload("incomingPayload",MetaDataInterface.UNDEFINED,Spec.BYTE_ZIP, "finCal-test", zippedFileData);
+        Payload payload = new DefaultPayload("incomingPayload",Spec.BYTE_ZIP, "finCal-test", zippedFileData);
         
         //create the original Event
         Event event = new Event("finCal", "finCal-calendarSrc","myEvent1",payload);
@@ -112,11 +112,11 @@ public class UnzipSplitterTest
             Assert.assertTrue("each new Event should only have 1 payload",newEvents.get(i).getPayloads().size() == 1);
         }
         //check the first event
-        Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getName());
+        Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getAttribute(FilePayloadAttributeNames.FILE_NAME));
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(0).getPayloads().get(0).getContent()));
         
         //check the second event
-        Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getName());
+        Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getAttribute(FilePayloadAttributeNames.FILE_NAME));
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(1).getPayloads().get(0).getContent()));
     }
 
@@ -137,8 +137,8 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payloads
-        Payload firstOriginalPayload = new DefaultPayload("incomingPayload", MetaDataInterface.UNDEFINED, Spec.BYTE_ZIP, "finCal-test", zippedFileData);
-        Payload secondOriginalPayload = new DefaultPayload("incomingPayload",MetaDataInterface.UNDEFINED, Spec.BYTE_ZIP, "finCal-test",
+        Payload firstOriginalPayload = new DefaultPayload("incomingPayload",  Spec.BYTE_ZIP, "finCal-test", zippedFileData);
+        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP, "finCal-test",
             zippedFileData);
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(firstOriginalPayload);
@@ -158,21 +158,21 @@ public class UnzipSplitterTest
         {
             Assert.assertTrue("each new Event should only have 1 payload",newEvents.get(i).getPayloads().size() == 1);
         }
-        
+
         //check the first event/payload
-        Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getName());
+        Assert.assertEquals(firstFileName, newEvents.get(0).getPayloads().get(0).getAttribute(FilePayloadAttributeNames.FILE_NAME));
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(0).getPayloads().get(0).getContent()));
         
         //check the second event/payload       
-        Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getName());
+        Assert.assertEquals(secondFileName, newEvents.get(1).getPayloads().get(0).getAttribute(FilePayloadAttributeNames.FILE_NAME));
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(1).getPayloads().get(0).getContent()));
         
         //check the third event/payload
-        Assert.assertEquals(firstFileName, newEvents.get(2).getPayloads().get(0).getName());
+        Assert.assertEquals(firstFileName, newEvents.get(2).getPayloads().get(0).getAttribute(FilePayloadAttributeNames.FILE_NAME));
         Assert.assertTrue(Arrays.equals(firstFileData, newEvents.get(2).getPayloads().get(0).getContent()));
         
         //check the fourth event/payload
-        Assert.assertEquals(secondFileName, newEvents.get(3).getPayloads().get(0).getName());
+        Assert.assertEquals(secondFileName, newEvents.get(3).getPayloads().get(0).getAttribute(FilePayloadAttributeNames.FILE_NAME));
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(3).getPayloads().get(0).getContent()));
     }
 

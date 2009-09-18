@@ -28,7 +28,6 @@ package org.ikasan.connector.ftp.outbound;
 
 // Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.base.outbound.EISConnectionProperties;
 
 /**

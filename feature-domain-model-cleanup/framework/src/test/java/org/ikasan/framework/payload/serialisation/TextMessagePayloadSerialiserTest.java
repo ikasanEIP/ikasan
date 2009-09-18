@@ -85,7 +85,7 @@ public class TextMessagePayloadSerialiserTest {
 	          {
 	              one(textMessage).getText();will(returnValue(payloadContentString));
 	              one(textMessage).getJMSMessageID();will(returnValue(messageId));
-	              one(payloadFactory).newPayload(messageId, MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, payloadContent);will(returnValue(payload));
+	              one(payloadFactory).newPayload(messageId,  Spec.TEXT_XML, MetaDataInterface.UNDEFINED, payloadContent);will(returnValue(payload));
 
 	          }
 	      });
@@ -135,6 +135,7 @@ public class TextMessagePayloadSerialiserTest {
 			return 0;
 		}
 
+		@SuppressWarnings("unchecked")
 		public Enumeration getMapNames() throws JMSException {
 			
 			return null;
@@ -326,6 +327,7 @@ public class TextMessagePayloadSerialiserTest {
 			return null;
 		}
 
+		@SuppressWarnings("unchecked")
 		public Enumeration getPropertyNames() throws JMSException {
 			
 			return null;
@@ -572,6 +574,7 @@ public class TextMessagePayloadSerialiserTest {
 			return null;
 		}
 
+		@SuppressWarnings("unchecked")
 		public Enumeration getPropertyNames() throws JMSException {
 			
 			return null;

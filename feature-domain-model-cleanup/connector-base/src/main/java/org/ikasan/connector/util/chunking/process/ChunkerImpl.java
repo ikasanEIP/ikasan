@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.util.checksum.DigestChecksum;
 import org.ikasan.common.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.io.ChunkingInputStreamConsumer;

@@ -20,8 +20,6 @@ import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Test;
 
 /**
  * This class provides an abstract test harness for testing implementations of
@@ -67,8 +65,6 @@ public abstract class JmsMessageEventSerialiserTest {
 		final String payload1SrcSystem = "payload1SrcSystem";
 		final String payload2SrcSystem = "payload2SrcSystem";
 
-		final String payload1Name = "payload1Name";
-		final String payload2Name = "payload2Name";
 
 		final Spec payload1Spec = Spec.BYTE_PLAIN;
 		final Spec payload2Spec = Spec.TEXT_CSV;
@@ -115,8 +111,6 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(payload2).getContent();will(returnValue(payload2Content));
 				one(payload1).getSrcSystem();will(returnValue(payload1SrcSystem));
 				one(payload2).getSrcSystem();will(returnValue(payload2SrcSystem));
-				one(payload1).getName();will(returnValue(payload1Name));
-				one(payload2).getName();will(returnValue(payload2Name));
 				one(payload1).getSpec();will(returnValue(payload1Spec));
 				one(payload2).getSpec();will(returnValue(payload2Spec));
 				one(payload1).getId();will(returnValue(payload1Id));
@@ -137,8 +131,8 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(originalEvent).getTimestamp();will(returnValue(eventTimestamp));
 				one(originalEvent).getSrcSystem();will(returnValue(eventSrcSystem));
 				
-				one(payloadFactory).newPayload(payload1Id, payload1Name, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(reconstitutedPayload1));
-				one(payloadFactory).newPayload(payload2Id, payload2Name, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(reconstitutedPayload2));
+				one(payloadFactory).newPayload(payload1Id, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(reconstitutedPayload1));
+				one(payloadFactory).newPayload(payload2Id, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(reconstitutedPayload2));
 				
 				one(reconstitutedPayload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
 				one(reconstitutedPayload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);
@@ -170,10 +164,12 @@ public abstract class JmsMessageEventSerialiserTest {
 
 
 }
-
+@SuppressWarnings("unchecked")
 class MockMapMessage implements MapMessage {
 	
+
 	Map map = new HashMap();
+
 	Map properties = new HashMap();
 
 	public boolean getBoolean(String arg0) throws JMSException {
@@ -207,6 +203,7 @@ class MockMapMessage implements MapMessage {
 	public long getLong(String arg0) throws JMSException {
 		return (Long) map.get(arg0);
 	}
+
 
 	public Enumeration getMapNames() throws JMSException {
 		Vector mapNamesVector = new Vector(map.keySet());

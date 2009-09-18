@@ -48,6 +48,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unchecked")
 public class EventMessageDrivenInitiatorTest {
 
 	String moduleName = "moduleName";
@@ -61,7 +62,7 @@ public class EventMessageDrivenInitiatorTest {
         }
     };
 	
-	JmsMessageEventSerialiser jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
+	JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
 	
 	Flow flow = mockery.mock(Flow.class);
 	

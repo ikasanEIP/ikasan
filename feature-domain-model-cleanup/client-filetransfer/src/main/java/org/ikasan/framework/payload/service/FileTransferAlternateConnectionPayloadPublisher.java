@@ -35,8 +35,8 @@ import javax.resource.cci.ConnectionSpec;
 
 import org.apache.log4j.Logger;
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.framework.payload.service.PayloadInputStreamAcquirer;
 
 /**
  * <code>PayloadPublisher</code> implementation that delivers a <code>Payload</code> referenced <code>InputStream</code>
@@ -94,7 +94,7 @@ public class FileTransferAlternateConnectionPayloadPublisher extends FileTransfe
             InputStream inputStream = payloadInputStreamProvider.acquireInputStream(payload);
             try
             {
-                activeFileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getName(), outputDir,
+                activeFileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), outputDir,
                     overwrite, renameExtension, checksumDelivered, unzip);
             }
             catch (ResourceException e)

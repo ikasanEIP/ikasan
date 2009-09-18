@@ -34,7 +34,6 @@ import javax.naming.NamingException;
 import javax.resource.cci.ConnectionSpec;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.ConnectorContext;
 import org.ikasan.connector.ConnectorExceptionType;
 import org.ikasan.connector.ConnectorRuntimeException;

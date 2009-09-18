@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hamcrest.Description;
-import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.ikasan.framework.flow.initiator.dao.InitiatorCommandDao;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.InitiatorCommand;

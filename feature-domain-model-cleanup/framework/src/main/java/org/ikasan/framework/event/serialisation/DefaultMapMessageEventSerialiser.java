@@ -24,7 +24,7 @@ public class DefaultMapMessageEventSerialiser implements
 
 	static final String PAYLOAD_CONTENT_SUFFIX = "_CONTENT";
 	static final String PAYLOAD_SRC_SYSTEM_SUFFIX = "_SRC_SYSTEM";
-	static final String PAYLOAD_NAME_SUFFIX = "_NAME";
+
 	static final String PAYLOAD_ID_SUFFIX = "_ID";
 	static final String PAYLOAD_SPEC_SUFFIX = "_SPEC";
 	
@@ -35,11 +35,12 @@ public class DefaultMapMessageEventSerialiser implements
 	
 	private PayloadFactory payloadFactory;
 
+	@SuppressWarnings("unchecked")
 	public Event fromMessage(MapMessage mapMessage, String moduleName,
 			String componentName) throws JMSException {
 		Event result = null;
 		
-		Enumeration mapNames = mapMessage.getMapNames();
+		Enumeration<String> mapNames = mapMessage.getMapNames();
 		
 		List<List<String>> groupedKeys = groupMapNames(mapNames);
 		List<String> eventFieldNames = groupedKeys.get(0);
@@ -92,7 +93,6 @@ public class DefaultMapMessageEventSerialiser implements
 		String fullPayloadPrefix = PAYLOAD_PREFIX+payloadOrdinal;
 		
 		String payloadId = null;
-		String payloadName = null;
 		Spec payloadSpec = null;
 		String payloadSrcSystem = null;
 		byte[] payloadContent = null;
@@ -108,10 +108,6 @@ public class DefaultMapMessageEventSerialiser implements
 			//payload srcSystem
 			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_SRC_SYSTEM_SUFFIX)){
 				payloadSrcSystem=mapMessage.getString(fullPayloadPrefix+PAYLOAD_SRC_SYSTEM_SUFFIX);
-			}
-			//payload name
-			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_NAME_SUFFIX)){
-				payloadName=mapMessage.getString(fullPayloadPrefix+PAYLOAD_NAME_SUFFIX);
 			}
 			//payload id
 			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_ID_SUFFIX)){
@@ -130,7 +126,7 @@ public class DefaultMapMessageEventSerialiser implements
 		}
 		
 		
-		Payload payload = payloadFactory.newPayload(payloadId, payloadName, payloadSpec, payloadSrcSystem, payloadContent);
+		Payload payload = payloadFactory.newPayload(payloadId, payloadSpec, payloadSrcSystem, payloadContent);
 		
 		//set any payload attributs
 		for (String attributeName : payloadAttributes.keySet()){
@@ -155,7 +151,7 @@ public class DefaultMapMessageEventSerialiser implements
 	 * @param mapNames
 	 * @return complex List of Lists as described above
 	 */
-	private List<List<String>> groupMapNames(Enumeration mapNames) {
+	private List<List<String>> groupMapNames(Enumeration<String> mapNames) {
 		List<List<String>> result = new ArrayList<List<String>>();
 		
 		List<String> eventFields = new ArrayList<String>();
@@ -207,7 +203,6 @@ public class DefaultMapMessageEventSerialiser implements
 			mapMessage.setBytes(PAYLOAD_PREFIX + i + PAYLOAD_CONTENT_SUFFIX,
 					payload.getContent());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_SRC_SYSTEM_SUFFIX, payload.getSrcSystem());
-			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_NAME_SUFFIX, payload.getName());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_ID_SUFFIX, payload.getId());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_SPEC_SUFFIX, payload.getSpec().name());
 			

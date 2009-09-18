@@ -38,7 +38,6 @@ import javax.transaction.xa.Xid;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.basefiletransfer.net.ClientConnectionException;

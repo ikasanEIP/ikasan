@@ -34,15 +34,17 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
+import org.ikasan.common.xml.transform.DefaultDOMSerializer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.ikasan.common.xml.transform.DefaultDOMSerializer;
 
 /**
  * Provides functionality to parse a delimited string of single values or

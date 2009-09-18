@@ -26,14 +26,14 @@
  */
 package org.ikasan.framework.event.wiretap.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 
 import junit.framework.JUnit4TestAdapter;
 
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;

@@ -32,10 +32,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.Sequence;
-
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
@@ -44,6 +40,9 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.connector.util.chunking.provider.ChunkableDataProvider;
 import org.ikasan.connector.util.chunking.provider.ChunkableDataProviderAccessException;
 import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.Sequence;
 
 /**
  * Test class for ChunkerImpl

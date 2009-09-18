@@ -35,10 +35,10 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionSpec;
 
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnection;
-import org.ikasan.framework.payload.service.PayloadInputStreamAcquirer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -116,7 +116,7 @@ public class FileTransferInputStreamPayloadPublisherTest {
 			{
 				one(payloadInputStreamAcquirer).acquireInputStream(payload);
 				will(returnValue(byteContentInputStream));
-				one(payload).getName();
+				one(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
 				will(returnValue(payloadName));
 
 				one(connectionFactory).getConnection(connectionSpec);

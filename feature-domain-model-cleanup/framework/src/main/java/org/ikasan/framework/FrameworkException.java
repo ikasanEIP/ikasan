@@ -27,8 +27,8 @@
 package org.ikasan.framework;
 
 import org.ikasan.common.CommonException;
-import org.ikasan.common.ExceptionType;
 import org.ikasan.common.CommonExceptionType;
+import org.ikasan.common.ExceptionType;
 
 /**
  * FrameworkException exception extends the CommonException

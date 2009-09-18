@@ -26,9 +26,7 @@
  */
 package org.ikasan.console.web.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,13 +38,15 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
+import org.ikasan.console.web.command.WiretapSearchCriteria;
+import org.ikasan.console.web.command.WiretapSearchCriteriaValidator;
 import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.ikasan.framework.event.wiretap.service.WiretapService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
-import org.ikasan.console.web.command.WiretapSearchCriteria;
-import org.ikasan.console.web.command.WiretapSearchCriteriaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -54,8 +54,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
 
 /**
  * This class is the Controller for the WiretapEvent Search Form

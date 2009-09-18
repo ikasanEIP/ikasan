@@ -1,8 +1,8 @@
 package org.ikasan.console.web.controller;
 
-import org.springframework.web.servlet.ModelAndView;
-
 import junit.framework.TestCase;
+
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Test class for the AdminController

@@ -29,10 +29,9 @@ package org.ikasan.console.module.service;
 import java.util.List;
 import java.util.Properties;
 
-import org.ikasan.console.module.service.ModuleServiceImpl;
 import org.ikasan.framework.module.Module;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * JUnit based test class for testing WiretapSearchCriteria

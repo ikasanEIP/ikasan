@@ -29,7 +29,6 @@ package org.ikasan.console.web.command;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.ikasan.console.web.command.WiretapSearchCriteria;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;

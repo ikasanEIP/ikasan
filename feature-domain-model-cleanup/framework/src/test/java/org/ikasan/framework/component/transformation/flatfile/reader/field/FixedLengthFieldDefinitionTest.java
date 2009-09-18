@@ -28,7 +28,6 @@ package org.ikasan.framework.component.transformation.flatfile.reader.field;
 
 import static org.junit.Assert.assertEquals;
 
-import org.ikasan.framework.component.transformation.flatfile.reader.field.FixedLengthFieldDefinition;
 import org.junit.Test;
 
 /**

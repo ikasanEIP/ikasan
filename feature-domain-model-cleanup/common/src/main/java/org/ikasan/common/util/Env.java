@@ -31,9 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.CommonEnvironment;
 
 /**

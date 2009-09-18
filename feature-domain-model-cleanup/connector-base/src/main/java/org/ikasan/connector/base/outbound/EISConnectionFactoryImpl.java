@@ -26,19 +26,20 @@
  */
 package org.ikasan.connector.base.outbound;
 
+import java.io.Serializable;
+
+import javax.naming.Reference;
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionSpec;
 import javax.resource.cci.RecordFactory;
 import javax.resource.cci.ResourceAdapterMetaData;
-import javax.resource.spi.*;
-import javax.naming.*;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnectionFactory;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.ConnectorRuntimeException;
-
-import java.io.*;
 
 /**
  * This class implements the ConnectionFactory for the EIS resource adapter.

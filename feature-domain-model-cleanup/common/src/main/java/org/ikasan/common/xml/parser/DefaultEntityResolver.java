@@ -33,15 +33,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-// Imported sax classes
+import org.apache.log4j.Logger;
+import org.ikasan.common.util.ResourceUtils;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-// Imported log4j classes
-import org.apache.log4j.Logger;
-
-import org.ikasan.common.util.ResourceUtils;
 
 /**
  * This class implements interface <code>org.xml.sax.EntityResolver</code>

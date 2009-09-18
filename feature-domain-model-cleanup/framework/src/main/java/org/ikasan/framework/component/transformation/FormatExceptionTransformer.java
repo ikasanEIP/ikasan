@@ -111,7 +111,6 @@ public abstract class FormatExceptionTransformer implements Transformer
             // update payload attributes
             Payload payload = payloads.get(0);
             payload.setContent(formattedException.getBytes());
-            payload.setName(payloadName);
             payload.setSpec(Spec.TEXT_XML);
 
 

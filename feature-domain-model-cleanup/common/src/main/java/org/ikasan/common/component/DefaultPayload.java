@@ -51,9 +51,7 @@ public class DefaultPayload implements Payload, Cloneable
 
     /** id for payload **/
     private String id;
-    
-    /** name for payload **/
-    private String name;
+
     
     /** spec for payload **/
     private Spec spec;    
@@ -97,15 +95,13 @@ public class DefaultPayload implements Payload, Cloneable
      * Construtor
      * 
      * @param id
-     * @param name
      * @param spec
      * @param srcSystem
      * @param content
      */
-    public DefaultPayload(String id, String name, Spec spec, String srcSystem,
+    public DefaultPayload(String id, Spec spec, String srcSystem,
 			byte[] content) {
 		this.id = id;
-		this.name=name;
 		this.spec = spec;
 		this.srcSystem = srcSystem;
 		this.content = content;
@@ -163,20 +159,7 @@ public class DefaultPayload implements Payload, Cloneable
     	this.srcSystem = srcSystem;
     }
     
-    /* (non-Javadoc)
-     * @see org.ikasan.common.Payload#getName()
-     */
-    public String getName(){
-    	return name;
-    }
-    
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.common.Payload#setName(java.lang.String)
-	 */
-	public void setName(String name){
-    	this.name = name;
-    }
 
 	/**
      * Setter for content. This setter by default sets the size and checksum of the particular payload.
@@ -294,10 +277,6 @@ public class DefaultPayload implements Payload, Cloneable
         {
             clone.setSrcSystem(new String(srcSystem));
         }
-        if (name != null)
-        {
-            clone.setName(name);
-        }
         if (spec != null)
         {
             clone.setSpec(spec);
@@ -319,7 +298,7 @@ public class DefaultPayload implements Payload, Cloneable
 	public Payload spawnChild(int siblingNo) {
 		byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
-		return new DefaultPayload(id+"_"+siblingNo, new String(name), spec, new String(srcSystem), copiedContent);
+		return new DefaultPayload(id+"_"+siblingNo, spec, new String(srcSystem), copiedContent);
 	}
 
 

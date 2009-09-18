@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
 
 /**

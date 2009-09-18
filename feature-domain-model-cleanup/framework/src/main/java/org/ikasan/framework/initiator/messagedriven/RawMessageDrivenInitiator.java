@@ -92,7 +92,7 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
         // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
+        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
         //
         Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
         // Reuse the message's priority if we are configured to respect it

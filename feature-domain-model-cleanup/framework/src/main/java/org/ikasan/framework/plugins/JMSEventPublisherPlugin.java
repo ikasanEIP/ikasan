@@ -27,7 +27,6 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -36,7 +35,6 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
@@ -101,7 +99,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
      * @param ikasanSecurityConf THe security configuration
      */
     public JMSEventPublisherPlugin(Destination destination, ConnectionFactory connectionFactory,
-            JmsMessageEventSerialiser jmsMessageEventSerialiser, IkasanSecurityConf ikasanSecurityConf)
+            JmsMessageEventSerialiser<?> jmsMessageEventSerialiser, IkasanSecurityConf ikasanSecurityConf)
     {
         super();
         this.destination = destination;
@@ -119,7 +117,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
      * @param ikasanSecurityConf THe security configuration
      */
     public JMSEventPublisherPlugin(JndiDestinationFactory jndiDestinationFactory, ConnectionFactory connectionFactory,
-            JmsMessageEventSerialiser jmsMessageEventSerialiser, IkasanSecurityConf ikasanSecurityConf)
+            JmsMessageEventSerialiser<?> jmsMessageEventSerialiser, IkasanSecurityConf ikasanSecurityConf)
     {
         super();
         this.jndiDestinationFactory = jndiDestinationFactory;

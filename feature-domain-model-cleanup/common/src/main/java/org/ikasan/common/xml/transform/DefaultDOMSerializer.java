@@ -27,10 +27,6 @@
 package org.ikasan.common.xml.transform;
 
 // Imported ikasan classes
-import org.ikasan.common.CommonXMLTransformer;
-import org.ikasan.common.xml.parser.DefaultXMLParser;
-
-// Imported java classes
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -39,11 +35,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Properties;
 
-// Imported jaxp classes
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-// Imported trax classes
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -51,7 +44,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-// Imported w3c classes
+import org.ikasan.common.CommonXMLTransformer;
+import org.ikasan.common.xml.parser.DefaultXMLParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

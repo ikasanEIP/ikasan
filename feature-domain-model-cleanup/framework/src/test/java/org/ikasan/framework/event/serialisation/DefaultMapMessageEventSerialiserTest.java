@@ -59,11 +59,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 	final String payload1SrcSystem = "payload1SrcSystem";
 	final String payload2SrcSystem = "payload2SrcSystem";
 	
-	//payload name
-	final String payload1NameKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_NAME_SUFFIX;
-	final String payload2NameKey = payload2Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_NAME_SUFFIX;
-	final String payload1Name = "payload1Name";
-	final String payload2Name = "payload2Name";	
 	
 	//payload id
 	final String payload1IdKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_ID_SUFFIX;
@@ -172,9 +167,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     	map.put(payload1SrcSystemKey, payload1SrcSystem);
     	map.put(payload2SrcSystemKey, payload2SrcSystem);
 
-    	//payload name
-    	map.put(payload1NameKey, payload1Name);
-    	map.put(payload2NameKey, payload2Name);
     	
     	//payload id
     	map.put(payload1IdKey, payload1Id);
@@ -219,10 +211,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	one(mapMessage).getString(payload1SrcSystemKey);will(returnValue(payload1SrcSystem));
             	one(mapMessage).getString(payload2SrcSystemKey);will(returnValue(payload2SrcSystem));
 
-            	//payload name
-            	one(mapMessage).getString(payload1NameKey);will(returnValue(payload1Name));
-            	one(mapMessage).getString(payload2NameKey);will(returnValue(payload2Name));
-            	
+           	
             	//payload id
             	one(mapMessage).getString(payload1IdKey);will(returnValue(payload1Id));
             	one(mapMessage).getString(payload2IdKey);will(returnValue(payload2Id));
@@ -239,8 +228,8 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	one(mapMessage).getString(payload2ColourAttributeKey);will(returnValue(payload2ColourAttributeValue));
             	one(mapMessage).getString(payload2HueAttributeKey);will(returnValue(payload2HueAttributeValue));
             	
-                one(payloadFactory).newPayload(payload1Id, payload1Name, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(payload1));
-                one(payloadFactory).newPayload(payload2Id, payload2Name, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(payload2));
+                one(payloadFactory).newPayload(payload1Id, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(payload1));
+                one(payloadFactory).newPayload(payload2Id, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(payload2));
 
                 one(payload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
                 one(payload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);
@@ -297,12 +286,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
                 one(payload2).getSrcSystem();will(returnValue(payload2SrcSystem));
                 one(mapMessage).setString(payload2SrcSystemKey, payload2SrcSystem);
                 
-                //payload name
-                one(payload1).getName();will(returnValue(payload1Name));
-                one(mapMessage).setString(payload1NameKey, payload1Name);
-
-                one(payload2).getName();will(returnValue(payload2Name));
-                one(mapMessage).setString(payload2NameKey, payload2Name);
                 
                 //payload id
                 one(payload1).getId();will(returnValue(payload1Id));

@@ -32,10 +32,9 @@ import javax.resource.ResourceException;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.beans.factory.FactoryBean;
-
 import org.ikasan.connector.ConnectorContext;
 import org.ikasan.connector.ResourceLoader;
+import org.springframework.beans.factory.FactoryBean;
 
 /**
  * 

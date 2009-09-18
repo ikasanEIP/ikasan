@@ -40,7 +40,6 @@ import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
-
 import org.ikasan.connector.ConnectorContext;
 import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.base.command.state.State;

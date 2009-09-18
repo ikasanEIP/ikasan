@@ -28,9 +28,7 @@ package org.ikasan.framework.exception;
 
 import junit.framework.JUnit4TestAdapter;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

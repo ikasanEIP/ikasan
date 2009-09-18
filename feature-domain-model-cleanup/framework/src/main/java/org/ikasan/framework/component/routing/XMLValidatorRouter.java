@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.ExceptionThrowingErrorHandler;
-import org.ikasan.framework.component.transformation.XMLValidator;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 

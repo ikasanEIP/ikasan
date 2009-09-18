@@ -29,10 +29,8 @@ package org.ikasan.connector.basefiletransfer.outbound;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-
-import org.ikasan.common.MetaDataInterface;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.common.ServiceLocator;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.factory.PayloadFactoryImpl;
@@ -71,8 +69,9 @@ public class BaseFileTransferMappedRecordTransformer
     	id = (37 * id) + (record.getName()).hashCode();
     	String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
     	
-        Payload payload = payloadFactory.newPayload(""+id,record.getName(),
+        Payload payload = payloadFactory.newPayload(""+id,
                 Spec.BYTE_PLAIN, componentGroupName,record.getContent());
+        payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, record.getName());
 
         // Don't set the Checksum, the client doesn't calculate checksum as the payload does it
         // Don't set the name
@@ -139,10 +138,10 @@ public class BaseFileTransferMappedRecordTransformer
         BaseFileTransferMappedRecord record = new BaseFileTransferMappedRecord();
         record.setContent(payload.getContent());
         //record.setChecksum(payload.getChecksum(), payload.getChecksumAlg());
-        record.setName(payload.getName());
+        record.setName(payload.getAttribute(FilePayloadAttributeNames.FILE_NAME));
         record.setSize(payload.getSize());
         //record.setCreatedDayTime(new Date(payload.getTimestamp()));
-        record.setRecordName(payload.getName());
+        record.setRecordName(payload.getAttribute(FilePayloadAttributeNames.FILE_NAME));
         record.setRecordShortDescription(null);
         return record;
     }

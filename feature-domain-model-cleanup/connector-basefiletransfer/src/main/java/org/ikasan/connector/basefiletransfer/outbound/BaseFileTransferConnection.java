@@ -26,13 +26,12 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound;
 
-import java.util.Map;
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
-
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.outbound.EISConnection;
 

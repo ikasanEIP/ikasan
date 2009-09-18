@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.routing.Router;

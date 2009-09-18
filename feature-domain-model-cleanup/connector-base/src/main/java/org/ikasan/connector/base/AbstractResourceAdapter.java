@@ -38,10 +38,8 @@ import javax.resource.spi.UnavailableException;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.resource.spi.work.WorkManager;
-
 import javax.transaction.xa.XAResource;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
 
 /**

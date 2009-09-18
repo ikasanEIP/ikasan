@@ -30,20 +30,14 @@ package org.ikasan.common.xml.parser;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.JUnit4TestAdapter;
 
-// Imported classes
-//import org.ikasan.common.CommonXMLParser;
-import org.ikasan.common.ResourceLoader;
-import org.ikasan.common.util.ResourceUtils;
-
-// Imported log4j classes
 import org.apache.log4j.Logger;
+import org.ikasan.common.util.ResourceUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

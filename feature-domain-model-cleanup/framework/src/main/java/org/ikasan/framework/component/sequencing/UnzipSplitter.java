@@ -35,11 +35,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.sequencing.Sequencer;
-import org.ikasan.framework.component.sequencing.SequencerException;
 
 /**
  * Implementation of @see {@link org.ikasan.framework.component.sequencing.Sequencer}.
@@ -161,7 +159,7 @@ public class UnzipSplitter implements Sequencer
              * spawning/cloning method.
              */
             Payload newPayload = payload.spawnChild(zippedFileCount++);
-            newPayload.setName(newPayloadName);
+            newPayload.setAttribute(FilePayloadAttributeNames.FILE_NAME, newPayloadName);
             newPayload.setContent(newPayloadDataContent);
             newPayloads.add(newPayload);
             if (logger.isDebugEnabled())

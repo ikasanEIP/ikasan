@@ -31,10 +31,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 
 /**
  * The <code>ClientListEntry</code> class holds information reflecting a

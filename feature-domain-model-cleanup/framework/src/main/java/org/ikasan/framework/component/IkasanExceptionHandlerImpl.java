@@ -27,9 +27,6 @@
 package org.ikasan.framework.component;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.component.UserExceptionHandler;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionResolution;

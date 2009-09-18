@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-// Imported commons classes
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -44,11 +43,10 @@ import org.ikasan.common.security.algo.AlgorithmConverter;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-// Imported XStream classes
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * This class represents the '<code>Policy</code>'.

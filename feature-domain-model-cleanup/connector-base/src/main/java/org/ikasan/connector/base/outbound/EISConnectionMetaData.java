@@ -26,8 +26,8 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.cci.ConnectionMetaData;
 import javax.resource.ResourceException;
+import javax.resource.cci.ConnectionMetaData;
 
 /**
  * provides information about an EIS instance connected through a Connection instance.

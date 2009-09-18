@@ -26,8 +26,9 @@
  */
 package org.ikasan.common.security;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.CommonEnvironment;

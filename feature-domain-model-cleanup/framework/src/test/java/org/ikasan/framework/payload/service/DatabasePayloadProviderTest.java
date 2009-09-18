@@ -32,7 +32,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
@@ -191,7 +190,7 @@ public class DatabasePayloadProviderTest extends TestCase
                 allowing(unconsumedEvent).getId();will(returnValue(databasePayloadId));
                 one(unconsumedEvent).getEvent();will(returnValue(payloadContent));
                 
-                one(payloadFactory).newPayload("1", MetaDataInterface.UNDEFINED,payloadSpec,
+                one(payloadFactory).newPayload("1", payloadSpec,
                         payloadSrcSystem, payloadContent.getBytes());
                 
                 //set it as consumed and save it
@@ -241,7 +240,7 @@ public class DatabasePayloadProviderTest extends TestCase
                 one(unconsumedEvent).getEvent();will(returnValue(payloadContent));
                 
                 
-                one(payloadFactory).newPayload("1", MetaDataInterface.UNDEFINED,payloadSpec,
+                one(payloadFactory).newPayload("1", payloadSpec,
                         payloadSrcSystem, payloadContent.getBytes());
                 
                 one(unconsumedEvent).setConsumed(true);

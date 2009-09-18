@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 
 /**

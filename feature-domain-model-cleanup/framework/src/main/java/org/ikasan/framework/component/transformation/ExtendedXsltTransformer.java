@@ -107,8 +107,7 @@ public class ExtendedXsltTransformer implements Transformer
     /** Logger instance for this class */
     private static final Logger logger = Logger.getLogger(ExtendedXsltTransformer.class);
 
-    /** A New PayloadName to set on the transformed Payloads */
-    private String payloadName;
+
 
     /**
      * Constructor
@@ -260,25 +259,7 @@ public class ExtendedXsltTransformer implements Transformer
         this.transformationParameters.putAll(parameters);
     }
     
-    /**
-     * Accessor for optional payloadName
-     * 
-     * @return payloadName or null if it has not been set
-     */
-    public String getPayloadName()
-    {
-        return this.payloadName;
-    }
 
-    /**
-     * Mutator for payloadName
-     * 
-     * @param payloadName - The payload name to set
-     */
-    public void setPayloadName(String payloadName)
-    {
-        this.payloadName = payloadName;
-    }
 
     /**
      * Transforms the payload content.
@@ -321,10 +302,7 @@ public class ExtendedXsltTransformer implements Transformer
          * reconsidered, as we sometimes use the payloadName for other things like the fileName if we are later
          * delivering this as a file
          */
-        if (this.payloadName != null)
-        {
-            payload.setName(this.payloadName);
-        }
+
         payload.setSpec(Spec.TEXT_XML);
         logger.debug(new String(transformedData));
     }

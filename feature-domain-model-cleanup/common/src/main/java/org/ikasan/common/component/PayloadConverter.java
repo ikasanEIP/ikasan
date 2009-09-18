@@ -30,7 +30,6 @@ package org.ikasan.common.component;
 import org.apache.log4j.Logger;
 import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.Payload;
-import org.ikasan.common.ResourceLoader;
 import org.ikasan.common.factory.PayloadFactory;
 
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -104,10 +103,7 @@ public class PayloadConverter
             writer.addAttribute("ID", payload.getId()); //$NON-NLS-1$
         }
 
-        if (payload.getName() != null)
-        {
-            writer.addAttribute("NAME", payload.getName()); //$NON-NLS-1$
-        }
+
         if (payload.getSpec() != null)
         {
             writer.addAttribute("SPEC", payload.getSpec().name()); //$NON-NLS-1$
@@ -140,15 +136,12 @@ public class PayloadConverter
         try
         {
         	String id = null;
-            String name = null;
+
             Spec spec = null;
             String srcSystem = null;
             byte [] content = null;
             
-            if (reader.getAttribute("NAME") != null) //$NON-NLS-1$
-            {
-                name = reader.getAttribute("NAME"); //$NON-NLS-1$
-            }
+
             if (reader.getAttribute("SPEC") != null) //$NON-NLS-1$
             {
                 spec = Spec.valueOf(reader.getAttribute("SPEC")); //$NON-NLS-1$
@@ -168,7 +161,7 @@ public class PayloadConverter
                 content = contentString.getBytes();
             }
 
-            Payload payload = payloadFactory.newPayload(id, name, spec, srcSystem, content);
+            Payload payload = payloadFactory.newPayload(id,  spec, srcSystem, content);
     
 
             

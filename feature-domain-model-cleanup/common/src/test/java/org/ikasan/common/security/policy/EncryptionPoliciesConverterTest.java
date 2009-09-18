@@ -34,19 +34,15 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.apache.log4j.Logger;
-
-
 import org.ikasan.common.security.algo.PBE;
-import org.ikasan.common.security.policy.EncryptionPolicy;
-import org.ikasan.common.security.policy.EncryptionPolicies;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import junit.framework.JUnit4TestAdapter;
 
 /**
  * This test class supports the XStream converter for <code>PolicyConverter</code>.

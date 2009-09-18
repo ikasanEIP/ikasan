@@ -42,9 +42,6 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.routing.Router;
-import org.ikasan.framework.component.routing.RouterException;
-import org.ikasan.framework.component.routing.XPathBooleanRouter;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

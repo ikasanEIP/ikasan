@@ -9,8 +9,8 @@ import org.ikasan.common.component.Spec;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.SimpleInitiator;
 import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl;
-import org.ikasan.framework.initiator.scheduled.quartz.QuartzStatefulScheduledDrivenInitiator;
 import org.ikasan.framework.initiator.scheduled.quartz.QuartzSchedulerInitiator;
+import org.ikasan.framework.initiator.scheduled.quartz.QuartzStatefulScheduledDrivenInitiator;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.web.command.PayloadCommand;
@@ -206,7 +206,7 @@ public class InitiatorsController
         if (initiator instanceof SimpleInitiator)
         {
             SimpleInitiator simpleInitiator = ((SimpleInitiator) initiator);
-            boolean success = simpleInitiator.initiate("httpSubmissionPayload", Spec.TEXT_PLAIN,""+System.currentTimeMillis(),
+            boolean success = simpleInitiator.initiate( Spec.TEXT_PLAIN,""+System.currentTimeMillis(),
                 "manualHttpSubmission", payloadCommand.getPayloadContent());
             String initiationResult = "Initiation Failed";
             if (success)

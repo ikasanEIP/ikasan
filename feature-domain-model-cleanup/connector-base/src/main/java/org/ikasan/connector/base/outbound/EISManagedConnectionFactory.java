@@ -26,22 +26,26 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.*;
-import javax.resource.spi.*;
-import javax.security.auth.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.Set;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.InvalidPropertyException;
+import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.CommonXMLParser;
 import org.ikasan.connector.ConnectorContext;
 import org.ikasan.connector.ConnectorEnvironment;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.ConnectorXMLParser;
 import org.ikasan.connector.ConnectorXMLTransformer;
 import org.ikasan.connector.ConnectorXSLTransformer;
-
-import java.util.*;
-import java.io.*;
+import org.ikasan.connector.ResourceLoader;
 
 /**
  * This is the abstract factory class which extends the ManagedConnectionFactory

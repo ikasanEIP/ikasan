@@ -28,8 +28,10 @@ package org.ikasan.common.transform;
 
 import java.io.IOException;
 import java.io.Serializable;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
 import org.ikasan.common.CommonStringTransformer;
 

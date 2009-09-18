@@ -42,7 +42,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.routing.Router;
 import org.ikasan.framework.component.transformation.ExceptionThrowingErrorHandler;
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;

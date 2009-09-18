@@ -27,7 +27,6 @@
 package org.ikasan.framework.initiator;
 
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.initiator.InitiatorOperationException;
 
 /**
  * Ikasan initiator interface defining the operations on an initiator.

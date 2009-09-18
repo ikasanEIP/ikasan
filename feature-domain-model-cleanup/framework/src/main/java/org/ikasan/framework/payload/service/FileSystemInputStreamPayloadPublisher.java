@@ -36,9 +36,8 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.framework.payload.service.PayloadInputStreamAcquirer;
-import org.ikasan.framework.payload.service.PayloadPublisher;
 
 /**
  * <code>PayloadPublisher<code> that knows how to deliver an referenced 
@@ -84,7 +83,7 @@ public class FileSystemInputStreamPayloadPublisher implements PayloadPublisher
             logger.error("path does not refer to a directory [" + parentDir.getAbsolutePath() + "]");
             throw new ResourceException("Parent directory is not a directory [" + parentDir.getAbsolutePath() + "]");
         }
-        File file = new File(parentDir, payload.getName());
+        File file = new File(parentDir, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME));
         FileOutputStream fileOutputStream = null;
         try
         {

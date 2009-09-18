@@ -31,6 +31,7 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
@@ -134,10 +135,11 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
     	String paylaodId = ""+header.getFileName().hashCode();
 
     	String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
-        Payload payload = payloadFactory.newPayload(paylaodId, header.getFileName(), Spec.TEXT_XML, componentGroupName,
+        Payload payload = payloadFactory.newPayload(paylaodId,  Spec.TEXT_XML, componentGroupName,
             header.toXml().getBytes());
         
         payload.setAttribute(REFERENCE_PAYLOAD_ATTRIBUTE, Boolean.TRUE.toString());
+        payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, header.getFileName());
 
         
 

@@ -63,12 +63,7 @@ public class Event implements Cloneable
      */
     private int priority =4;    
 
-    /**
-     * Name of the Event
-     * 
-     * TODO - what does this mean? Does an Event need a name? Why? Do all? How/When should this change?
-     */
-    private String name;
+
     
     /**
      * Description of the external system this event is originated from
@@ -166,28 +161,7 @@ public class Event implements Cloneable
 	}
 
 
-//	/**
-//     * Sets the event from an envelope
-//     * 
-//     * @param envelope
-//     */
-//    public void setEventAttribsFromEnvelope(final Envelope envelope)
-//    {
-//        this.timestamp = envelope.getTimestamp();
-//        this.timestampFormat = envelope.getTimestampFormat();
-//        this.timezone = envelope.getTimezone();
-//        this.priority = envelope.getPriority();
-//        this.name = envelope.getName();
-//        this.spec = envelope.getSpec();
-//        this.encoding = envelope.getEncoding();
-//        this.format = envelope.getFormat();
-//        this.charset = envelope.getCharset();
-//        this.checksum = envelope.getChecksum();
-//        this.checksumAlg = envelope.getChecksumAlg();
-//        this.srcSystem = envelope.getSrcSystem();
-//        this.targetSystems = envelope.getTargetSystems();
-//        this.processIds = envelope.getProcessIds();
-//    }
+
 
     /**
      * Returns a completely new instance of the payload with a deep copy of all
@@ -217,41 +191,6 @@ public class Event implements Cloneable
         
         return clone;
     }
-
-
-
-
-//    /**
-//     * Adds a payload or replaces if exists.
-//     * 
-//     * If the payload already exists, it is overwritten. If it is a new payload
-//     * it is simply added to the end of the payload array list.
-//     * 
-//     * @param payload
-//     */
-//    public void setPayload(final Payload payload)
-//    {
-//        int index = this.payloads.indexOf(payload);
-//        if (index < 0)
-//        {
-//            this.payloads.add(payload);
-//            logger.debug("First payload added at index [" //$NON-NLS-1$
-//                    + this.payloads.indexOf(payload) + "]."); //$NON-NLS-1$
-//            // This is the primary payload, so set the name, spec and srcSystem
-//            logger.debug("Setting name, spec and srcSystem on event from primary payload."); //$NON-NLS-1$
-//            this.name = payload.getName();
-//            this.spec = payload.getSpec();
-//            this.srcSystem = payload.getSrcSystem();
-//        }
-//        else
-//        {
-//            this.payloads.set(index, payload);
-//            logger.debug("Payload set at index [" + index + "]."); //$NON-NLS-1$//$NON-NLS-2$
-//        }
-//    }
-
-
-
 
 
 
@@ -293,11 +232,7 @@ public class Event implements Cloneable
     }
 
 
-
-
-
-
-    
+  
     
 
 	public Event spawnChild(String moduleName, String componentName, int siblingNo,
@@ -381,16 +316,7 @@ public class Event implements Cloneable
     }
     
 
-    
-    /**
-     * Mutator for name
-     * 
-     * @param name
-     */
-    public void setName(String name){
-    	this.name = name;
-    }
-    
+
 
     
     /**

@@ -35,7 +35,6 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.ikasan.common.CommonExceptionType;
 import org.ikasan.common.CommonRuntimeException;
-//import org.ikasan.framework.FrameworkRuntimeException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

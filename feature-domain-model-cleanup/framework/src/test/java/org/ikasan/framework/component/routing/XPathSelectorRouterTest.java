@@ -38,8 +38,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.routing.Router;
-import org.ikasan.framework.component.routing.RouterException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

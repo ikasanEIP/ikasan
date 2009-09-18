@@ -28,8 +28,6 @@ package org.ikasan.common;
 
 import javax.resource.ResourceException;
 
-import org.ikasan.common.ExceptionType;
-
 /**
  * CommonException exception extends the standard Exception
  * and includes an ExceptionType to allow categorisation of the thrown

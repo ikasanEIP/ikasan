@@ -26,9 +26,12 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.*; 
-import javax.resource.spi.*; 
-import java.io.*; 
+import java.io.Serializable;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
 
 import org.apache.log4j.Logger;
 

@@ -33,15 +33,14 @@ import javax.transaction.xa.Xid;
 
 import junit.framework.TestCase;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.junit.Test;
-import org.springframework.beans.factory.BeanFactory;
-
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.command.TransactionalResourceCommandPersistenceException;
 import org.ikasan.connector.base.command.XidImpl;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * Test class for the basic TrasactionJournal

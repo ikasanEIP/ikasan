@@ -31,12 +31,11 @@ import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
-import org.ikasan.client.ConnectionTemplate;
+import junit.framework.TestCase;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-
-import junit.framework.TestCase;
 
 /**
  * @author Ikasan Development Team

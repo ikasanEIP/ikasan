@@ -27,7 +27,6 @@
 package org.ikasan.framework.initiator.scheduled.quartz;
 
 import org.ikasan.framework.initiator.AbortTransactionException;
-import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
 import org.ikasan.framework.initiator.InvocationDrivenInitiator;
 import org.quartz.JobExecutionContext;
 import org.quartz.StatefulJob;

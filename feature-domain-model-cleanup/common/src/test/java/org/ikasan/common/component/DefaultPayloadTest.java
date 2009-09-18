@@ -41,10 +41,7 @@ public class DefaultPayloadTest {
 	/** The logger */
 	private static Logger logger = Logger.getLogger(DefaultPayloadTest.class);
 
-	/** Payload instance being tested */
-	Payload payload;
-	/** Payload is required as a minimum to create an envelope - payload name */
-	String payloadName = "testPayload"; //$NON-NLS-1$
+
 	/**
 	 * Payload is required as a minimum to create an envelope - payload source
 	 * system
@@ -61,34 +58,38 @@ public class DefaultPayloadTest {
 	@Test
 	public void testPayloadClone() throws CloneNotSupportedException {
 
-		this.payload = new DefaultPayload(payloadId, payloadName,
+		DefaultPayload payload = new DefaultPayload(payloadId, 
 				Spec.TEXT_PLAIN, this.srcSystem, "This is a test".getBytes());
+		
+		String attributeName = "someAttributeName";
+		String attributeValue = "someAttributeValue";
+		payload.setAttribute(attributeName, attributeValue);
 
-		Payload clonePayload = this.payload.clone();
+		Payload clonePayload = payload.clone();
 
 		// check we have a different object
-		Assert.assertFalse(this.payload == clonePayload);
+		Assert.assertFalse(payload == clonePayload);
 
-		Assert.assertEquals(this.payload.getId(), clonePayload.getId());
+		Assert.assertEquals(payload.getId(), clonePayload.getId());
 
-		String originalContent = new String(this.payload.getContent());
+		String originalContent = new String(payload.getContent());
 		String cloneContent = new String(clonePayload.getContent());
 		Assert.assertEquals(originalContent, cloneContent);
 
-		Assert.assertEquals(this.payload.getName(), clonePayload.getName());
-
-		Assert.assertEquals(this.payload.getCharset(), clonePayload
+		Assert.assertEquals(payload.getCharset(), clonePayload
 				.getCharset());
 
-		Assert.assertEquals(this.payload.getSpec(), clonePayload.getSpec());
-		Assert.assertEquals(this.payload.getSrcSystem(), clonePayload
+		Assert.assertEquals(payload.getSpec(), clonePayload.getSpec());
+		Assert.assertEquals(payload.getSrcSystem(), clonePayload
 				.getSrcSystem());
+		
+		Assert.assertEquals(attributeValue, clonePayload.getAttribute(attributeName));
 
 	}
 	
 	@Test
 	public void testSetGetAttribute(){
-		DefaultPayload defaultPayload = new DefaultPayload(null, null, Spec.BYTE_JAR, srcSystem, new byte[]{});
+		DefaultPayload defaultPayload = new DefaultPayload( null, Spec.BYTE_JAR, srcSystem, new byte[]{});
 		String someAttributeName = "someAttribute";
 		String someAttributeValue = "someAttributeValue";
 		

@@ -35,13 +35,11 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.factory.ClassInstantiationUtils;
-
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.security.IkasanSecurityService;
 import org.ikasan.common.security.IkasanSecurityServiceImpl;
 import org.ikasan.common.security.SecurityNotConfiguredException;
 import org.ikasan.common.util.ResourceUtils;
-import org.ikasan.common.xml.serializer.XMLSerializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.jndi.JndiTemplate;

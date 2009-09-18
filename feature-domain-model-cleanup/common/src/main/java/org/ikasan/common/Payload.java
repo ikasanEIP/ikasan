@@ -66,20 +66,6 @@ public interface Payload
 	 */
 	public Spec getSpec();
 	
-	/**
-	 * Accessor for payload's name
-	 * TODO need to clarify what this means
-	 * 
-	 * @return name of payload
-	 */
-	public String getName();
-	
-	/**
-	 * Mutator for name
-	 * 
-	 * @return
-	 */
-	public void setName(String name);
 	
 	/**
 	 * Mutator for the spec
