@@ -49,17 +49,12 @@ public class DateUtilsTest extends TestCase
     private DateUtils du = null;
     /** The current time in millisec */
     private long dateMillis = System.currentTimeMillis();
-    /** The new date time format */
-    private String newFormat = "dd-MM-yyyy HH:mm:ss.SSS";
-    /** The new time zone id */
-    private String newTzId = "GMT";
+
     
     @Override
     protected void setUp() throws Exception
     {
         du = new DateUtils(dateMillis);
-        newFormat = "dd-MM-yyyy HH:mm:ss.SSS";
-        newTzId = "GMT";
     }
 
     /**
@@ -206,17 +201,7 @@ public class DateUtilsTest extends TestCase
         // fail("Not yet implemented");
     }
 
-    /**
-     * Test getting the time in a particular format
-     * (Format and TimeZone Id)
-     */
-    @Test
-    public void testGetTimeInFormatStringString()
-    {
-        String expectedResult = "08-10-2008 13:50:40.078";
-        String result = du.getTimeInFormatString(newFormat, newTzId);
-        // TODO, some clever regular expression work here
-    }
+
 
     /**
      * Test getting only the date from the calendar
