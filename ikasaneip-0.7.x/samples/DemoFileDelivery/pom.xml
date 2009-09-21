@@ -31,7 +31,7 @@
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoFileDelivery-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.4</version>
+  <version>0.7.5-SNAPSHOT</version>
 
   <name>demoFileDelivery :: Parent Project</name>
 
@@ -49,7 +49,7 @@
 </build>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.4</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoFileDelivery</connection>
   </scm>
 
      <modules>

@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
-	<version>0.7.4</version>
+	<version>0.7.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: frenchNumberTgt : jar</name>
 
     <scm>
-        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.4</connection>
+        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
     </scm>
 
 
