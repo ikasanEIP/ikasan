@@ -27,7 +27,6 @@
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import java.io.InputStream;
-import java.util.List;
 
 import javax.resource.ResourceException;
 
@@ -219,6 +218,9 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      * Also, deletes an already existing file if the overWriteExisitng flag is true.
      * If the file exists, and overWriteExisting is false, ResourceException will be thrown causing
      * a {@link javax.transaction.HeuristicMixedException} to be thrown.
+     * 
+     * IMPORTANT NOTE: Operations in this commit method should be kept to a 
+     * minimum to reduce potential fails on the commit.
      */
     @Override
     protected void doCommit() throws ResourceException
@@ -246,13 +248,6 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         }
 
         renameFile(tempFileName, fileName);
-
-        // Log the output directory and change back to the working dir
-        if(logger.isDebugEnabled())
-        {
-            List<ClientListEntry> list = listDirectory(CURRENT_DIRECTORY);
-            logFileList(list, outputDirectory);
-        }
 
         if(changeDirectory)
         {
