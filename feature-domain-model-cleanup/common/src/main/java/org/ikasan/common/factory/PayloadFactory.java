@@ -42,11 +42,10 @@ public interface PayloadFactory
      * 
      * @param id of the payload
      * @param spec The payload Spec (as a String)
-     * @param srcSystem The payload source system
      * @param content The payload content
      * @return Payload
      */
-    public Payload newPayload(final String id,  final Spec spec, final String srcSystem, final byte[] content);
+    public Payload newPayload(final String id,  final Spec spec, final byte[] content);
 
 
 

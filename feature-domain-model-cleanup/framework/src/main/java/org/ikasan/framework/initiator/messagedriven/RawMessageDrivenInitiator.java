@@ -30,7 +30,6 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
@@ -92,7 +91,7 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
         // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
+        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), Spec.TEXT_XML, message.getText().getBytes());
         //
         Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
         // Reuse the message's priority if we are configured to respect it

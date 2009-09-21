@@ -85,13 +85,13 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         this.flow = flow;
     }
     
-    public boolean initiate(Spec spec, String srcSystem, String originationId, String payloadContent)
+    public boolean initiate(Spec spec, String originationId, String payloadContent)
     {
         if (!available){
             throw new IllegalStateException("Initiator is not available for business");
         }
         
-        Payload singlePayload = payloadFactory.newPayload(originationId, spec, srcSystem, payloadContent.getBytes());  
+        Payload singlePayload = payloadFactory.newPayload(originationId, spec, payloadContent.getBytes());  
         
         
 

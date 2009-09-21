@@ -40,8 +40,6 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
 /**
@@ -56,13 +54,7 @@ public class UnzipSplitterTest
     /** Constant representing end-of-file is reached. */
     private static final int END_OF_FILE = -1;
 
-    /** Mockery for mocking classes. */
-    private Mockery classMockery = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
+
 
 	/**
 	 * ModuleName
@@ -97,7 +89,7 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payload
-        Payload payload = new DefaultPayload("incomingPayload",Spec.BYTE_ZIP, "finCal-test", zippedFileData);
+        Payload payload = new DefaultPayload("incomingPayload",Spec.BYTE_ZIP,  zippedFileData);
         
         //create the original Event
         Event event = new Event("finCal", "finCal-calendarSrc","myEvent1",payload);
@@ -137,8 +129,8 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payloads
-        Payload firstOriginalPayload = new DefaultPayload("incomingPayload",  Spec.BYTE_ZIP, "finCal-test", zippedFileData);
-        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP, "finCal-test",
+        Payload firstOriginalPayload = new DefaultPayload("incomingPayload",  Spec.BYTE_ZIP,  zippedFileData);
+        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP, 
             zippedFileData);
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(firstOriginalPayload);

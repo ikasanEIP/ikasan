@@ -134,9 +134,7 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
     {    	
     	String paylaodId = ""+header.getFileName().hashCode();
 
-    	String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
-        Payload payload = payloadFactory.newPayload(paylaodId,  Spec.TEXT_XML, componentGroupName,
-            header.toXml().getBytes());
+    	Payload payload = payloadFactory.newPayload(paylaodId,  Spec.TEXT_XML, header.toXml().getBytes());
         
         payload.setAttribute(REFERENCE_PAYLOAD_ATTRIBUTE, Boolean.TRUE.toString());
         payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, header.getFileName());

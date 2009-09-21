@@ -45,19 +45,7 @@ public interface Payload
 	 */
 	public String getId();
 	
-	/**
-	 * Accessor for the logical name or the originating system
-	 * 
-	 * @return logical name or the originating system
-	 */
-	public String getSrcSystem();
-	
-	/**
-	 * Mutator for srcSystem
-	 * 
-	 * @param srcSystem
-	 */
-	public void setSrcSystem(String srcSystem);
+
 	
 	/**
 	 * Accessor for <code>Spec</code>

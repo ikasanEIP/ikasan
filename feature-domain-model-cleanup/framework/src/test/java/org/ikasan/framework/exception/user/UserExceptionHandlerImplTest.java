@@ -262,7 +262,7 @@ public class UserExceptionHandlerImplTest
         this.classMockery.checking( new Expectations()
         {
             {
-                one(payloadFactory).newPayload("userExceptionPayloadId",Spec.TEXT_XML, "userExceptionHandler", transformedException.getBytes());will(returnValue(exceptionPayload));
+                one(payloadFactory).newPayload("userExceptionPayloadId",Spec.TEXT_XML, transformedException.getBytes());will(returnValue(exceptionPayload));
 				
             	allowing(exceptionPayload).idToString();
             	will(returnValue(exceptionPayloadId));

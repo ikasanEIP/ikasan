@@ -5,7 +5,6 @@ import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
@@ -37,7 +36,7 @@ public class TextMessagePayloadSerialiser implements
 	public Payload toPayload(TextMessage message) throws JMSException {
 
 		//strictly speaking this method is not really necessary as the RawMessageDrivenInitiator already handles incoming text messages
-		return  payloadFactory.newPayload(message.getJMSMessageID(),  Spec.TEXT_XML, MetaDataInterface.UNDEFINED, message.getText().getBytes());
+		return  payloadFactory.newPayload(message.getJMSMessageID(),  Spec.TEXT_XML,  message.getText().getBytes());
 	}
 	
 	public void setPayloadFactory(PayloadFactory payloadFactory) {

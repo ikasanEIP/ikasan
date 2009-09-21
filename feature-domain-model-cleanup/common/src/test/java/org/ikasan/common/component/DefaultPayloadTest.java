@@ -26,7 +26,6 @@
  */
 package org.ikasan.common.component;
 
-import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,15 +37,9 @@ import org.junit.Test;
  * 
  */
 public class DefaultPayloadTest {
-	/** The logger */
-	private static Logger logger = Logger.getLogger(DefaultPayloadTest.class);
 
 
-	/**
-	 * Payload is required as a minimum to create an envelope - payload source
-	 * system
-	 */
-	String srcSystem = "JUnit"; //$NON-NLS-1$
+
 
 	String payloadId = "payloadId";
 
@@ -59,7 +52,7 @@ public class DefaultPayloadTest {
 	public void testPayloadClone() throws CloneNotSupportedException {
 
 		DefaultPayload payload = new DefaultPayload(payloadId, 
-				Spec.TEXT_PLAIN, this.srcSystem, "This is a test".getBytes());
+				Spec.TEXT_PLAIN,  "This is a test".getBytes());
 		
 		String attributeName = "someAttributeName";
 		String attributeValue = "someAttributeValue";
@@ -80,8 +73,6 @@ public class DefaultPayloadTest {
 				.getCharset());
 
 		Assert.assertEquals(payload.getSpec(), clonePayload.getSpec());
-		Assert.assertEquals(payload.getSrcSystem(), clonePayload
-				.getSrcSystem());
 		
 		Assert.assertEquals(attributeValue, clonePayload.getAttribute(attributeName));
 
@@ -89,7 +80,7 @@ public class DefaultPayloadTest {
 	
 	@Test
 	public void testSetGetAttribute(){
-		DefaultPayload defaultPayload = new DefaultPayload( null, Spec.BYTE_JAR, srcSystem, new byte[]{});
+		DefaultPayload defaultPayload = new DefaultPayload( null, Spec.BYTE_JAR, new byte[]{});
 		String someAttributeName = "someAttribute";
 		String someAttributeValue = "someAttributeValue";
 		

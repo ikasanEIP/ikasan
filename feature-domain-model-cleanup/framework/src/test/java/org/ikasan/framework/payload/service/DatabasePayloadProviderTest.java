@@ -62,7 +62,7 @@ public class DatabasePayloadProviderTest extends TestCase
     {
         try
         {
-            new DatabasePayloadProvider(null, null, null, false, null, null);
+            new DatabasePayloadProvider(null, null, null, false, null);
         }
         catch (Exception e)
         {
@@ -86,16 +86,15 @@ public class DatabasePayloadProviderTest extends TestCase
 
         boolean destructiveRead = false;
         final Spec payloadSpec = Spec.TEXT_PLAIN;
-        final String payloadSrcSystem = "testSrcSystem";
         
         // housekeeping but not destructive read
         new DatabasePayloadProvider(databaseEventDao, payloadFactory,
             databaseEventHouseKeepingMatcher, destructiveRead,
-            payloadSpec, payloadSrcSystem);
+            payloadSpec);
         // not housekeeping but destructive read
         destructiveRead = true;
         new DatabasePayloadProvider(databaseEventDao, payloadFactory, null, destructiveRead,
-                payloadSpec, payloadSrcSystem);
+                payloadSpec);
     }
 
     /**
@@ -117,7 +116,7 @@ public class DatabasePayloadProviderTest extends TestCase
             boolean destructiveRead = true;
             new DatabasePayloadProvider(databaseEventDao, payloadFactory,
                 databaseEventHouseKeepingMatcher, destructiveRead,
-                payloadSpec, payloadSrcSystem);
+                payloadSpec);
             fail("Exception should have been thrown by constructor as housekeeping and destructive reading are mutuallly exclusive");
         }
         catch (Exception e)
@@ -157,7 +156,7 @@ public class DatabasePayloadProviderTest extends TestCase
         // housekeeping but not destructive read
         DatabasePayloadProvider databaseEventProvider = new DatabasePayloadProvider(
             databaseEventDao, payloadFactory, housekeeper,
-            destructiveRead, payloadSpec, payloadSrcSystem);
+            destructiveRead, payloadSpec);
 
         databaseEventProvider.getNextRelatedPayloads();
     }
@@ -177,7 +176,6 @@ public class DatabasePayloadProviderTest extends TestCase
 //            payloadContent, new Date());
         final DatabasePayload unconsumedEvent = mockery.mock(DatabasePayload.class);
         final Spec payloadSpec = Spec.TEXT_PLAIN;
-        final String payloadSrcSystem = "testSrcSystem";
         final List<DatabasePayload> unconsumedEvents = new ArrayList<DatabasePayload>();
         final Long databasePayloadId = 1l;
         unconsumedEvents.add(unconsumedEvent);
@@ -191,7 +189,7 @@ public class DatabasePayloadProviderTest extends TestCase
                 one(unconsumedEvent).getEvent();will(returnValue(payloadContent));
                 
                 one(payloadFactory).newPayload("1", payloadSpec,
-                        payloadSrcSystem, payloadContent.getBytes());
+                       payloadContent.getBytes());
                 
                 //set it as consumed and save it
                 one(unconsumedEvent).setConsumed(true);
@@ -203,7 +201,7 @@ public class DatabasePayloadProviderTest extends TestCase
         // housekeeping but not destructive read
         DatabasePayloadProvider databaseEventProvider = new DatabasePayloadProvider(
             databaseEventDao, payloadFactory, null,
-            destructiveRead, payloadSpec, payloadSrcSystem);
+            destructiveRead, payloadSpec);
         List<Payload> nextRelatedPayloads = databaseEventProvider
             .getNextRelatedPayloads();
         assertEquals("should have returned a list of 1 related Payload", 1,
@@ -241,7 +239,7 @@ public class DatabasePayloadProviderTest extends TestCase
                 
                 
                 one(payloadFactory).newPayload("1", payloadSpec,
-                        payloadSrcSystem, payloadContent.getBytes());
+                         payloadContent.getBytes());
                 
                 one(unconsumedEvent).setConsumed(true);
                 one(unconsumedEvent).setLastUpdated(with(any(Date.class)));
@@ -252,7 +250,7 @@ public class DatabasePayloadProviderTest extends TestCase
         // housekeeping but not destructive read
         DatabasePayloadProvider databaseEventProvider = new DatabasePayloadProvider(
             databaseEventDao, payloadFactory, null, destructiveRead,
-            payloadSpec, payloadSrcSystem);
+            payloadSpec);
         List<Payload> nextRelatedPayloads = databaseEventProvider
             .getNextRelatedPayloads();
         assertEquals("should have returned a list of 1 related Payload", 1,

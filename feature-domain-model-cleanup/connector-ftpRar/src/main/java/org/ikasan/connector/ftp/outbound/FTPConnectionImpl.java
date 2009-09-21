@@ -245,7 +245,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             }
             result = sourceFile(entry, this.clientId, renameOnSuccess, renameOnSuccessExtension, moveOnSuccess, fullMovePath, chunking, chunkSize, checksum,
                 destructive, baseFileTransferDao);
-            result.setSrcSystem(this.clientId);
+
         }
         return result;
     }
@@ -487,7 +487,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         {
             logger.info("checksumming disabled"); //$NON-NLS-1$
         }
-        result.setSrcSystem(clientId);
         return result;
     }
 

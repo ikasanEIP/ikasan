@@ -43,13 +43,12 @@ public class PayloadFactoryImpl implements PayloadFactory
      * Create a new instance of the Payload for the incoming content.
      * 
      * @param spec The payload Spec (as a String)
-     * @param srcSystem The payload source system
      * @param content The payload content
      * @return Payload
      */
-    public Payload newPayload(final String id, final Spec spec, final String srcSystem, final byte[] content)
+    public Payload newPayload(final String id, final Spec spec,  final byte[] content)
     {
-    	return new DefaultPayload(id,  spec, srcSystem, content);
+    	return new DefaultPayload(id,  spec, content);
     }
 
     /**

@@ -262,7 +262,7 @@ public class UserExceptionHandlerImpl implements UserExceptionHandler, UserExcep
          */
 //        String componentGroupName = null; // really doesn't matter
 //        String componentName = null; // really doesn't matter
-        Payload payload = payloadFactory.newPayload("userExceptionPayloadId", Spec.TEXT_XML, "userExceptionHandler",
+        Payload payload = payloadFactory.newPayload("userExceptionPayloadId", Spec.TEXT_XML, 
             externalExceptionXml.getBytes());
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);

@@ -96,14 +96,12 @@ public class DefaultPayload implements Payload, Cloneable
      * 
      * @param id
      * @param spec
-     * @param srcSystem
      * @param content
      */
-    public DefaultPayload(String id, Spec spec, String srcSystem,
+    public DefaultPayload(String id, Spec spec, 
 			byte[] content) {
 		this.id = id;
 		this.spec = spec;
-		this.srcSystem = srcSystem;
 		this.content = content;
 		
 	}
@@ -298,7 +296,7 @@ public class DefaultPayload implements Payload, Cloneable
 	public Payload spawnChild(int siblingNo) {
 		byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
-		return new DefaultPayload(id+"_"+siblingNo, spec, new String(srcSystem), copiedContent);
+		return new DefaultPayload(id+"_"+siblingNo, spec,  copiedContent);
 	}
 
 

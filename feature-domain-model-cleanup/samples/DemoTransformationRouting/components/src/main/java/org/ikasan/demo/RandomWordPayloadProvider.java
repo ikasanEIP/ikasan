@@ -40,7 +40,7 @@ public class RandomWordPayloadProvider implements PayloadProvider{
 		int payloadId = randomWord.hashCode();
 		payloadId = (int) ((37*payloadId)+ System.currentTimeMillis());
 		
-		Payload newPayload = payloadFactory.newPayload(""+payloadId,  Spec.TEXT_PLAIN,"meaninglessSrcSystem", randomWord.getBytes());
+		Payload newPayload = payloadFactory.newPayload(""+payloadId,  Spec.TEXT_PLAIN, randomWord.getBytes());
 
 		newPayload.setContent(randomWord.getBytes());
 		result.add(newPayload);

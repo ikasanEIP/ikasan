@@ -35,7 +35,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.factory.ClassInstantiationUtils;
-import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.security.IkasanSecurityService;
 import org.ikasan.common.security.IkasanSecurityServiceImpl;
 import org.ikasan.common.security.SecurityNotConfiguredException;
@@ -122,8 +121,6 @@ public class ResourceLoader implements ServiceLocator
     /** instance of the ikasan platform */
     private IkasanSecurityService ikasanSecurityService = null;
 
-    /** A payload Factory */
-    private PayloadFactory payloadFactory;
 
     /** JNDITemplate for accessing JNDI resources from the JMS server */
     private JndiTemplate jmsJndiTemplate;

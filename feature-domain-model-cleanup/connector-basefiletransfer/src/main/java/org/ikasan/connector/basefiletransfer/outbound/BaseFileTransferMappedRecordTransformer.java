@@ -35,7 +35,6 @@ import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.factory.PayloadFactoryImpl;
 import org.ikasan.common.util.FileUtils;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 
 /**
@@ -67,10 +66,9 @@ public class BaseFileTransferMappedRecordTransformer
     	//calculate a payload id based on the filename and created date
     	int id = createdDayTime.hashCode();
     	id = (37 * id) + (record.getName()).hashCode();
-    	String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
     	
         Payload payload = payloadFactory.newPayload(""+id,
-                Spec.BYTE_PLAIN, componentGroupName,record.getContent());
+                Spec.BYTE_PLAIN, record.getContent());
         payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, record.getName());
 
         // Don't set the Checksum, the client doesn't calculate checksum as the payload does it

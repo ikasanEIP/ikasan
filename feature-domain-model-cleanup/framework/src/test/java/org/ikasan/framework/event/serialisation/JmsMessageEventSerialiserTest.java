@@ -62,8 +62,6 @@ public abstract class JmsMessageEventSerialiserTest {
 		final byte[] payload1Content = "payload1Content".getBytes();
 		final byte[] payload2Content = "payload2Content".getBytes();
 
-		final String payload1SrcSystem = "payload1SrcSystem";
-		final String payload2SrcSystem = "payload2SrcSystem";
 
 
 		final Spec payload1Spec = Spec.BYTE_PLAIN;
@@ -109,8 +107,6 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(originalEvent).getPayloads();will(returnValue(payloads));
 				one(payload1).getContent();will(returnValue(payload1Content));
 				one(payload2).getContent();will(returnValue(payload2Content));
-				one(payload1).getSrcSystem();will(returnValue(payload1SrcSystem));
-				one(payload2).getSrcSystem();will(returnValue(payload2SrcSystem));
 				one(payload1).getSpec();will(returnValue(payload1Spec));
 				one(payload2).getSpec();will(returnValue(payload2Spec));
 				one(payload1).getId();will(returnValue(payload1Id));
@@ -131,8 +127,8 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(originalEvent).getTimestamp();will(returnValue(eventTimestamp));
 				one(originalEvent).getSrcSystem();will(returnValue(eventSrcSystem));
 				
-				one(payloadFactory).newPayload(payload1Id, payload1Spec, payload1SrcSystem, payload1Content);will(returnValue(reconstitutedPayload1));
-				one(payloadFactory).newPayload(payload2Id, payload2Spec, payload2SrcSystem, payload2Content);will(returnValue(reconstitutedPayload2));
+				one(payloadFactory).newPayload(payload1Id, payload1Spec, payload1Content);will(returnValue(reconstitutedPayload1));
+				one(payloadFactory).newPayload(payload2Id, payload2Spec, payload2Content);will(returnValue(reconstitutedPayload2));
 				
 				one(reconstitutedPayload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
 				one(reconstitutedPayload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);

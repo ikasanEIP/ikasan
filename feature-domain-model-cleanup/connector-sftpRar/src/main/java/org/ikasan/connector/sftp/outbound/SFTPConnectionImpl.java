@@ -531,7 +531,6 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         {
             logger.info("checksumming disabled"); //$NON-NLS-1$
         }
-        result.setSrcSystem(clientId);
         return result;
     }
 

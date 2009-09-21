@@ -94,7 +94,6 @@ public class DefaultMapMessageEventSerialiser implements
 		
 		String payloadId = null;
 		Spec payloadSpec = null;
-		String payloadSrcSystem = null;
 		byte[] payloadContent = null;
 		
 		Map<String, String> payloadAttributes = new HashMap<String, String>();
@@ -104,10 +103,6 @@ public class DefaultMapMessageEventSerialiser implements
 			//payload content
 			if (fieldName.equals(fullPayloadPrefix+PAYLOAD_CONTENT_SUFFIX)){
 				payloadContent=mapMessage.getBytes(fullPayloadPrefix+PAYLOAD_CONTENT_SUFFIX);
-			}
-			//payload srcSystem
-			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_SRC_SYSTEM_SUFFIX)){
-				payloadSrcSystem=mapMessage.getString(fullPayloadPrefix+PAYLOAD_SRC_SYSTEM_SUFFIX);
 			}
 			//payload id
 			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_ID_SUFFIX)){
@@ -126,7 +121,7 @@ public class DefaultMapMessageEventSerialiser implements
 		}
 		
 		
-		Payload payload = payloadFactory.newPayload(payloadId, payloadSpec, payloadSrcSystem, payloadContent);
+		Payload payload = payloadFactory.newPayload(payloadId, payloadSpec, payloadContent);
 		
 		//set any payload attributs
 		for (String attributeName : payloadAttributes.keySet()){
@@ -202,7 +197,6 @@ public class DefaultMapMessageEventSerialiser implements
 			Payload payload = payloads.get(i);
 			mapMessage.setBytes(PAYLOAD_PREFIX + i + PAYLOAD_CONTENT_SUFFIX,
 					payload.getContent());
-			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_SRC_SYSTEM_SUFFIX, payload.getSrcSystem());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_ID_SUFFIX, payload.getId());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_SPEC_SUFFIX, payload.getSpec().name());
 			

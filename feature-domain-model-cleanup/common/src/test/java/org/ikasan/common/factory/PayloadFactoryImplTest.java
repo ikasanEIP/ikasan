@@ -23,14 +23,12 @@ public class PayloadFactoryImplTest
         PayloadFactoryImpl payloadFactoryImpl = new PayloadFactoryImpl();
         String id = "id";
         Spec spec = Spec.TEXT_HTML;
-        String srcSystem = "srcSystem";
         byte[] content = new byte[]{1,2,3};
         
-        Payload newPayload = payloadFactoryImpl.newPayload(id,  Spec.TEXT_HTML, srcSystem, content);
+        Payload newPayload = payloadFactoryImpl.newPayload(id,  Spec.TEXT_HTML, content);
 
 
         assertEquals("Payload id should be that which was passed into the newInstance method", id, newPayload.getId());
-        assertEquals("Payload srcSystem should be that which was passed into the newInstance method", srcSystem, newPayload.getSrcSystem());
         assertEquals("Payload spec should be that which was passed into the newInstance method", spec, newPayload.getSpec());
         assertTrue("Payload content should be that which was passed into the newInstance method", Arrays.equals(content, newPayload.getContent()) );
 
