@@ -33,10 +33,8 @@ import javax.resource.spi.ManagedConnection;
 
 import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.factory.PayloadFactoryImpl;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
@@ -134,7 +132,7 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
     {    	
     	String paylaodId = ""+header.getFileName().hashCode();
 
-    	Payload payload = payloadFactory.newPayload(paylaodId,  Spec.TEXT_XML, header.toXml().getBytes());
+    	Payload payload = payloadFactory.newPayload(paylaodId,  header.toXml().getBytes());
         
         payload.setAttribute(REFERENCE_PAYLOAD_ATTRIBUTE, Boolean.TRUE.toString());
         payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, header.getFileName());

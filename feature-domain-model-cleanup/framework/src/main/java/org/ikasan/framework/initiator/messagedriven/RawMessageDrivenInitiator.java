@@ -31,7 +31,6 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.flow.Flow;
@@ -90,8 +89,7 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     @Override
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
-        // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), Spec.TEXT_XML, message.getText().getBytes());
+        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), message.getText().getBytes());
         //
         Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
         // Reuse the message's priority if we are configured to respect it

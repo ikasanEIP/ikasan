@@ -14,7 +14,6 @@ import javax.jms.Session;
 import junit.framework.Assert;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
@@ -61,11 +60,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 	final String payload1Id = "payload1Id";
 	final String payload2Id = "payload2Id";	
 	
-	//payload spec
-	final String payload1SpecKey = payload1Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_SPEC_SUFFIX;
-	final String payload2SpecKey = payload2Prefix + DefaultMapMessageEventSerialiser.PAYLOAD_SPEC_SUFFIX;
-	final Spec payload1Spec = Spec.TEXT_HTML;
-	final Spec payload2Spec = Spec.BYTE_ZIP;
 	
 	//payload attributes
 	final String colourPayloadAttributeName = "COLOUR";
@@ -163,9 +157,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     	map.put(payload1IdKey, payload1Id);
     	map.put(payload2IdKey, payload2Id);
     	
-    	//payload spec
-    	map.put(payload1SpecKey, payload1Spec.name());
-    	map.put(payload2SpecKey, payload2Spec.name());
     	
     	
     	//payload attributes
@@ -203,9 +194,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	one(mapMessage).getString(payload1IdKey);will(returnValue(payload1Id));
             	one(mapMessage).getString(payload2IdKey);will(returnValue(payload2Id));
             	
-            	//payload spec
-            	one(mapMessage).getString(payload1SpecKey);will(returnValue(payload1Spec.name()));
-            	one(mapMessage).getString(payload2SpecKey);will(returnValue(payload2Spec.name()));
 
             	//payload attributes
             	one(mapMessage).getString(payload1ColourAttributeKey);will(returnValue(payload1ColourAttributeValue));
@@ -215,8 +203,8 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	one(mapMessage).getString(payload2ColourAttributeKey);will(returnValue(payload2ColourAttributeValue));
             	one(mapMessage).getString(payload2HueAttributeKey);will(returnValue(payload2HueAttributeValue));
             	
-                one(payloadFactory).newPayload(payload1Id, payload1Spec, payload1Content);will(returnValue(payload1));
-                one(payloadFactory).newPayload(payload2Id, payload2Spec, payload2Content);will(returnValue(payload2));
+                one(payloadFactory).newPayload(payload1Id, payload1Content);will(returnValue(payload1));
+                one(payloadFactory).newPayload(payload2Id, payload2Content);will(returnValue(payload2));
 
                 one(payload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
                 one(payload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);
@@ -273,12 +261,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
                 one(payload2).getId();will(returnValue(payload2Id));
                 one(mapMessage).setString(payload2IdKey, payload2Id);
                 
-                //payload spec
-                one(payload1).getSpec();will(returnValue(payload1Spec));
-                one(mapMessage).setString(payload1SpecKey, payload1Spec.name());
 
-                one(payload2).getSpec();will(returnValue(payload2Spec));
-                one(mapMessage).setString(payload2SpecKey, payload2Spec.name());
                 
                 //payload attributes
                 one(payload1).getAttributeNames();will(returnValue(payload1AttributeNames));

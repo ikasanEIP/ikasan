@@ -31,10 +31,8 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.common.factory.PayloadFactoryImpl;
-import org.ikasan.common.util.FileUtils;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 
 /**
@@ -68,7 +66,7 @@ public class BaseFileTransferMappedRecordTransformer
     	id = (37 * id) + (record.getName()).hashCode();
     	
         Payload payload = payloadFactory.newPayload(""+id,
-                Spec.BYTE_PLAIN, record.getContent());
+                record.getContent());
         payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, record.getName());
 
         // Don't set the Checksum, the client doesn't calculate checksum as the payload does it
@@ -76,51 +74,7 @@ public class BaseFileTransferMappedRecordTransformer
         
 
         
-        // The spec is important as it is used by plugins for verification
-        // purposes. Currently all supported spec types are set based on file
-        // extension.
-        int extSeparatorLoc = record.getName().indexOf('.');
-        if (extSeparatorLoc == -1)
-        {
-            // No extension, so set to plain bytes
-            payload.setSpec(Spec.BYTE_PLAIN);
-        }
-        else
-        {
-            String extension = record.getName().substring(extSeparatorLoc + 1,
-                record.getName().length());
-            if (extension.equalsIgnoreCase(FileUtils.ZIP_EXT))
-            {
-                payload.setSpec(Spec.BYTE_ZIP);
-            }
-            else if (extension.equalsIgnoreCase(FileUtils.JAR_EXT))
-            {
-                payload.setSpec(Spec.BYTE_JAR);
-            }
-            else if (extension.equalsIgnoreCase(FileUtils.TEXT_EXT))
-            {
-                payload.setSpec(Spec.TEXT_PLAIN);
-            }
-            else if (extension.equalsIgnoreCase(FileUtils.XML_EXT))
-            {
-                payload.setSpec(Spec.TEXT_XML);
-            }
-            else if (extension.equalsIgnoreCase(FileUtils.HTML_EXT)
-                    || extension.equalsIgnoreCase(FileUtils.HTM_EXT))
-            {
-                payload.setSpec(Spec.TEXT_HTML);
-            }
-            else if (extension.equalsIgnoreCase(FileUtils.CSV_EXT))
-            {
-                payload.setSpec(Spec.TEXT_CSV);
-            }
-            else
-            {
-                logger.info("File extension unknown, setting Spec to: [" //$NON-NLS-1$
-                        + Spec.BYTE_PLAIN.toString() + "]"); //$NON-NLS-1$
-                payload.setSpec(Spec.BYTE_PLAIN);
-            }
-        }
+        
         return payload;
     }
 

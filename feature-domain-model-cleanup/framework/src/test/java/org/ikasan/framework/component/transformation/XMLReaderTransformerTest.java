@@ -37,7 +37,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -144,7 +143,6 @@ public class XMLReaderTransformerTest
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-                one(payload).setSpec(Spec.TEXT_XML);
             }
         });
 

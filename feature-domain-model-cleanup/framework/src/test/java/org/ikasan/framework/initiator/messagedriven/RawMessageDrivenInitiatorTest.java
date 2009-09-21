@@ -35,7 +35,6 @@ import junit.framework.Assert;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.flow.Flow;
@@ -125,11 +124,9 @@ public class RawMessageDrivenInitiatorTest {
 	                one(textMessage).getJMSPriority();
 	                will(returnValue(messagePriority));
                 }
-                one(payloadFactory).newPayload("messageId",  Spec.TEXT_XML,  textMessageText.getBytes());
+                one(payloadFactory).newPayload("messageId",    textMessageText.getBytes());
                 will(returnValue(payload));
                 
-                one(payload).getSpec();
-                will(returnValue(Spec.TEXT_XML.toString()));
                 
                 one(flow).invoke((Event) with(new EventMatcher(messagePriority)));
                 will(returnValue(null));

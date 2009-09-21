@@ -12,7 +12,6 @@ import javax.jms.MapMessage;
 import javax.jms.Session;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 
@@ -93,7 +92,6 @@ public class DefaultMapMessageEventSerialiser implements
 		String fullPayloadPrefix = PAYLOAD_PREFIX+payloadOrdinal;
 		
 		String payloadId = null;
-		Spec payloadSpec = null;
 		byte[] payloadContent = null;
 		
 		Map<String, String> payloadAttributes = new HashMap<String, String>();
@@ -108,10 +106,7 @@ public class DefaultMapMessageEventSerialiser implements
 			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_ID_SUFFIX)){
 				payloadId=mapMessage.getString(fullPayloadPrefix+PAYLOAD_ID_SUFFIX);
 			}
-			//payload spec
-			else if (fieldName.equals(fullPayloadPrefix+PAYLOAD_SPEC_SUFFIX)){
-				payloadSpec=Spec.valueOf(mapMessage.getString(fullPayloadPrefix+PAYLOAD_SPEC_SUFFIX));
-			}else if(fieldName.startsWith(fullPayloadPrefix+ATTRIBUTE_PREFIX)){
+			else if(fieldName.startsWith(fullPayloadPrefix+ATTRIBUTE_PREFIX)){
 				//its a payload attribute
 				payloadAttributes.put(fieldName.substring((fullPayloadPrefix+ATTRIBUTE_PREFIX).length()), mapMessage.getString(fieldName));
 			}
@@ -121,7 +116,7 @@ public class DefaultMapMessageEventSerialiser implements
 		}
 		
 		
-		Payload payload = payloadFactory.newPayload(payloadId, payloadSpec, payloadContent);
+		Payload payload = payloadFactory.newPayload(payloadId, payloadContent);
 		
 		//set any payload attributs
 		for (String attributeName : payloadAttributes.keySet()){
@@ -198,7 +193,6 @@ public class DefaultMapMessageEventSerialiser implements
 			mapMessage.setBytes(PAYLOAD_PREFIX + i + PAYLOAD_CONTENT_SUFFIX,
 					payload.getContent());
 			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_ID_SUFFIX, payload.getId());
-			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_SPEC_SUFFIX, payload.getSpec().name());
 			
 			//map any payload attributes
 			for (String attributeName : payload.getAttributeNames()){

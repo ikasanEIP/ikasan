@@ -27,7 +27,6 @@
 package org.ikasan.common.factory;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 
 /**
  * Interface that defines a Factory for producing Payloads
@@ -41,11 +40,10 @@ public interface PayloadFactory
      * Create a new instance of the Payload for the incoming content.
      * 
      * @param id of the payload
-     * @param spec The payload Spec (as a String)
      * @param content The payload content
      * @return Payload
      */
-    public Payload newPayload(final String id,  final Spec spec, final byte[] content);
+    public Payload newPayload(final String id,  final byte[] content);
 
 
 

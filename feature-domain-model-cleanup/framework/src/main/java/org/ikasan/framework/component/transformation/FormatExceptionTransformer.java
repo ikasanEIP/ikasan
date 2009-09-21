@@ -31,7 +31,6 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.user.ExceptionTransformer;
@@ -111,12 +110,7 @@ public abstract class FormatExceptionTransformer implements Transformer
             // update payload attributes
             Payload payload = payloads.get(0);
             payload.setContent(formattedException.getBytes());
-            payload.setSpec(Spec.TEXT_XML);
 
-
-            // replace event payloads with the new payload
-//            payloads.clear();
-//            event.setPayload(payload);
         }
         catch (TransformerException e)
         {

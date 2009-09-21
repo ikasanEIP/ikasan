@@ -26,7 +26,6 @@
 package org.ikasan.framework.initiator;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -85,13 +84,13 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         this.flow = flow;
     }
     
-    public boolean initiate(Spec spec, String originationId, String payloadContent)
+    public boolean initiate( String originationId, String payloadContent)
     {
         if (!available){
             throw new IllegalStateException("Initiator is not available for business");
         }
         
-        Payload singlePayload = payloadFactory.newPayload(originationId, spec, payloadContent.getBytes());  
+        Payload singlePayload = payloadFactory.newPayload(originationId, payloadContent.getBytes());  
         
         
 

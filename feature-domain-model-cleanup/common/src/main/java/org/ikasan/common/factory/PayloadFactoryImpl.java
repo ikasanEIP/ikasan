@@ -28,7 +28,6 @@ package org.ikasan.common.factory;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
-import org.ikasan.common.component.Spec;
 
 /**
  * The default implementation for PayloadFactory
@@ -42,13 +41,12 @@ public class PayloadFactoryImpl implements PayloadFactory
     /**
      * Create a new instance of the Payload for the incoming content.
      * 
-     * @param spec The payload Spec (as a String)
      * @param content The payload content
      * @return Payload
      */
-    public Payload newPayload(final String id, final Spec spec,  final byte[] content)
+    public Payload newPayload(final String id, final byte[] content)
     {
-    	return new DefaultPayload(id,  spec, content);
+    	return new DefaultPayload(id,   content);
     }
 
     /**

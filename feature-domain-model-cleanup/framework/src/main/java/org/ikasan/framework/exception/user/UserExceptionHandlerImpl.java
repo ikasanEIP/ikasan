@@ -35,7 +35,6 @@ import javax.xml.transform.TransformerException;
 import org.apache.log4j.Logger;
 import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.UserExceptionHandler;
@@ -262,8 +261,7 @@ public class UserExceptionHandlerImpl implements UserExceptionHandler, UserExcep
          */
 //        String componentGroupName = null; // really doesn't matter
 //        String componentName = null; // really doesn't matter
-        Payload payload = payloadFactory.newPayload("userExceptionPayloadId", Spec.TEXT_XML, 
-            externalExceptionXml.getBytes());
+        Payload payload = payloadFactory.newPayload("userExceptionPayloadId", externalExceptionXml.getBytes());
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
         Event event = new Event("userExceptionHandler", "userExceptionHandler", "userExceptionEventId",payloads);

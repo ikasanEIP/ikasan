@@ -38,7 +38,6 @@ import junit.framework.Assert;
 import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 import org.junit.Test;
 
@@ -89,7 +88,7 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payload
-        Payload payload = new DefaultPayload("incomingPayload",Spec.BYTE_ZIP,  zippedFileData);
+        Payload payload = new DefaultPayload("incomingPayload",  zippedFileData);
         
         //create the original Event
         Event event = new Event("finCal", "finCal-calendarSrc","myEvent1",payload);
@@ -129,9 +128,8 @@ public class UnzipSplitterTest
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payloads
-        Payload firstOriginalPayload = new DefaultPayload("incomingPayload",  Spec.BYTE_ZIP,  zippedFileData);
-        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", Spec.BYTE_ZIP, 
-            zippedFileData);
+        Payload firstOriginalPayload = new DefaultPayload("incomingPayload",  zippedFileData);
+        Payload secondOriginalPayload = new DefaultPayload("incomingPayload", zippedFileData);
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(firstOriginalPayload);
         payloads.add(secondOriginalPayload);

@@ -15,7 +15,6 @@ import javax.jms.Session;
 import junit.framework.Assert;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
@@ -62,10 +61,6 @@ public abstract class JmsMessageEventSerialiserTest {
 		final byte[] payload1Content = "payload1Content".getBytes();
 		final byte[] payload2Content = "payload2Content".getBytes();
 
-
-
-		final Spec payload1Spec = Spec.BYTE_PLAIN;
-		final Spec payload2Spec = Spec.TEXT_CSV;
 		
 		final String payload1Id = "payload1Id";
 		final String payload2Id = "payload2Id";
@@ -107,8 +102,6 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(originalEvent).getPayloads();will(returnValue(payloads));
 				one(payload1).getContent();will(returnValue(payload1Content));
 				one(payload2).getContent();will(returnValue(payload2Content));
-				one(payload1).getSpec();will(returnValue(payload1Spec));
-				one(payload2).getSpec();will(returnValue(payload2Spec));
 				one(payload1).getId();will(returnValue(payload1Id));
 				one(payload2).getId();will(returnValue(payload2Id));
 				
@@ -127,8 +120,8 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(originalEvent).getTimestamp();will(returnValue(eventTimestamp));
 				one(originalEvent).getSrcSystem();will(returnValue(eventSrcSystem));
 				
-				one(payloadFactory).newPayload(payload1Id, payload1Spec, payload1Content);will(returnValue(reconstitutedPayload1));
-				one(payloadFactory).newPayload(payload2Id, payload2Spec, payload2Content);will(returnValue(reconstitutedPayload2));
+				one(payloadFactory).newPayload(payload1Id, payload1Content);will(returnValue(reconstitutedPayload1));
+				one(payloadFactory).newPayload(payload2Id, payload2Content);will(returnValue(reconstitutedPayload2));
 				
 				one(reconstitutedPayload1).setAttribute(colourPayloadAttributeName, payload1ColourAttributeValue);
 				one(reconstitutedPayload1).setAttribute(huePayloadAttributeName, payload1HueAttributeValue);

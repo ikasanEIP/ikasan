@@ -28,8 +28,6 @@ package org.ikasan.common;
 
 import java.util.List;
 
-import org.ikasan.common.component.Spec;
-
 /**
  * Payload providing the generic facade for all data to be moved around as a common object.
  * 
@@ -47,20 +45,7 @@ public interface Payload
 	
 
 	
-	/**
-	 * Accessor for <code>Spec</code>
-	 * 
-	 * @return Spec
-	 */
-	public Spec getSpec();
-	
-	
-	/**
-	 * Mutator for the spec
-	 * 
-	 * @param spec
-	 */
-	public void setSpec(Spec spec);
+
 	
 	/**
 	 * Accessor for charSet

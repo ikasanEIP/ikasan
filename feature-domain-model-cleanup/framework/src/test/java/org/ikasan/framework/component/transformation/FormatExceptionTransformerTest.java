@@ -32,7 +32,6 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.user.ExceptionTransformer;
@@ -130,12 +129,6 @@ public class FormatExceptionTransformerTest
                 for(Payload payload:payloads)
                 {
                     one(payload).setContent(with(any(byte[].class)));
-                    one(payload).setSpec(with(any(Spec.class)));
-
-
-//                    // update event for new payload
-//                    one(event).setPayload(payload);
-                    //dont think this is needed as payload is already on event -RJD
                 }
 
             }

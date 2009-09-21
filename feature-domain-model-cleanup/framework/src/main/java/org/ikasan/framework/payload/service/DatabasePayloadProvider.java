@@ -32,7 +32,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.payload.dao.DatabasePayloadDao;
 import org.ikasan.framework.payload.model.DatabasePayload;
@@ -60,8 +59,6 @@ public class DatabasePayloadProvider implements PayloadProvider
     /** Housekeeper for cleaning up old <code>DatabasePayload</code>s */
     private DatabaseHousekeeper housekeeper;
 
-    /** Payload specification for sourced <code>DatabasePayload</code>s */
-    private Spec payloadSpec;
 
 
     /** Logger instance */
@@ -74,11 +71,9 @@ public class DatabasePayloadProvider implements PayloadProvider
      * @param payloadFactory for the construction of new <code>Payload</code>s
      * @param databasePayloadHouseKeepingMatcher used for identifying entries to housekeep
      * @param destructiveRead when set to true, consumed <code>DatabasePayload</code>s will be deleted
-     * @param payloadSpec detailing the nature of the payload i.e. text/xml
-
      */
     public DatabasePayloadProvider(DatabasePayloadDao dao, PayloadFactory payloadFactory,
-            DatabaseHousekeeper databasePayloadHouseKeepingMatcher, boolean destructiveRead, Spec payloadSpec)
+            DatabaseHousekeeper databasePayloadHouseKeepingMatcher, boolean destructiveRead)
     {
         if ((databasePayloadHouseKeepingMatcher != null) && (destructiveRead))
         {
@@ -97,7 +92,7 @@ public class DatabasePayloadProvider implements PayloadProvider
         }
         this.housekeeper = databasePayloadHouseKeepingMatcher;
         this.destructiveRead = destructiveRead;
-        this.payloadSpec = payloadSpec;
+
     }
 
     /*
@@ -118,7 +113,7 @@ public class DatabasePayloadProvider implements PayloadProvider
             {
                 logger.info("consuming DatabasePayload with id [" + databasePayload.getId() + "]");
                 byte[] payloadContent = databasePayload.getEvent().getBytes();
-                Payload payload = payloadFactory.newPayload(databasePayload.getId().toString(), this.payloadSpec, payloadContent);
+                Payload payload = payloadFactory.newPayload(databasePayload.getId().toString(),  payloadContent);
                 payload.setContent(payloadContent);
                 result.add(payload);
                 databasePayload.setConsumed(true);

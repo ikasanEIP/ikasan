@@ -52,7 +52,7 @@ public class DefaultPayloadTest {
 	public void testPayloadClone() throws CloneNotSupportedException {
 
 		DefaultPayload payload = new DefaultPayload(payloadId, 
-				Spec.TEXT_PLAIN,  "This is a test".getBytes());
+				  "This is a test".getBytes());
 		
 		String attributeName = "someAttributeName";
 		String attributeValue = "someAttributeValue";
@@ -71,8 +71,6 @@ public class DefaultPayloadTest {
 
 		Assert.assertEquals(payload.getCharset(), clonePayload
 				.getCharset());
-
-		Assert.assertEquals(payload.getSpec(), clonePayload.getSpec());
 		
 		Assert.assertEquals(attributeValue, clonePayload.getAttribute(attributeName));
 
@@ -80,7 +78,7 @@ public class DefaultPayloadTest {
 	
 	@Test
 	public void testSetGetAttribute(){
-		DefaultPayload defaultPayload = new DefaultPayload( null, Spec.BYTE_JAR, new byte[]{});
+		DefaultPayload defaultPayload = new DefaultPayload( null, new byte[]{});
 		String someAttributeName = "someAttribute";
 		String someAttributeValue = "someAttributeValue";
 		

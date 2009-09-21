@@ -104,10 +104,6 @@ public class PayloadConverter
         }
 
 
-        if (payload.getSpec() != null)
-        {
-            writer.addAttribute("SPEC", payload.getSpec().name()); //$NON-NLS-1$
-        }
 
 
         if (payload.getContent() != null)
@@ -133,14 +129,11 @@ public class PayloadConverter
         {
         	String id = null;
 
-            Spec spec = null;
+
             byte [] content = null;
             
 
-            if (reader.getAttribute("SPEC") != null) //$NON-NLS-1$
-            {
-                spec = Spec.valueOf(reader.getAttribute("SPEC")); //$NON-NLS-1$
-            }
+
             if (reader.getAttribute("ID") != null) //$NON-NLS-1$
             {
                 id = reader.getAttribute("ID"); //$NON-NLS-1$
@@ -152,7 +145,7 @@ public class PayloadConverter
                 content = contentString.getBytes();
             }
 
-            Payload payload = payloadFactory.newPayload(id,  spec, content);
+            Payload payload = payloadFactory.newPayload(id,  content);
     
 
             

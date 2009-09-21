@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.SimpleInitiator;
 import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl;
@@ -206,7 +205,7 @@ public class InitiatorsController
         if (initiator instanceof SimpleInitiator)
         {
             SimpleInitiator simpleInitiator = ((SimpleInitiator) initiator);
-            boolean success = simpleInitiator.initiate( Spec.TEXT_PLAIN,""+System.currentTimeMillis(),
+            boolean success = simpleInitiator.initiate(""+System.currentTimeMillis(),
                  payloadCommand.getPayloadContent());
             String initiationResult = "Initiation Failed";
             if (success)

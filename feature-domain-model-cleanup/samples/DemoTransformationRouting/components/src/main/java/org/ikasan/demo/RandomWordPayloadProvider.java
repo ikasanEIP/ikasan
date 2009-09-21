@@ -8,7 +8,6 @@ import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.payload.service.PayloadProvider;
 
@@ -40,7 +39,7 @@ public class RandomWordPayloadProvider implements PayloadProvider{
 		int payloadId = randomWord.hashCode();
 		payloadId = (int) ((37*payloadId)+ System.currentTimeMillis());
 		
-		Payload newPayload = payloadFactory.newPayload(""+payloadId,  Spec.TEXT_PLAIN, randomWord.getBytes());
+		Payload newPayload = payloadFactory.newPayload(""+payloadId, randomWord.getBytes());
 
 		newPayload.setContent(randomWord.getBytes());
 		result.add(newPayload);

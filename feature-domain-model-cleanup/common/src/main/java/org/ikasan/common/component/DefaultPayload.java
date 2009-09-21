@@ -52,9 +52,7 @@ public class DefaultPayload implements Payload, Cloneable
     /** id for payload **/
     private String id;
 
-    
-    /** spec for payload **/
-    private Spec spec;    
+     
     
     /** name for srcSystem **/
     private String srcSystem;
@@ -95,13 +93,11 @@ public class DefaultPayload implements Payload, Cloneable
      * Construtor
      * 
      * @param id
-     * @param spec
      * @param content
      */
-    public DefaultPayload(String id, Spec spec, 
+    public DefaultPayload(String id,
 			byte[] content) {
 		this.id = id;
-		this.spec = spec;
 		this.content = content;
 		
 	}
@@ -125,19 +121,7 @@ public class DefaultPayload implements Payload, Cloneable
     	this.id=id;
     }
     
-    /* (non-Javadoc)
-     * @see org.ikasan.common.Payload#getSpec()
-     */
-    public Spec getSpec(){
-    	return spec;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.ikasan.common.Payload#setSpec(org.ikasan.common.component.Spec)
-     */
-    public void setSpec(Spec spec){
-    	this.spec = spec;
-    }
+
     
     /**
      * Accessor for srcSystem
@@ -275,10 +259,6 @@ public class DefaultPayload implements Payload, Cloneable
         {
             clone.setSrcSystem(new String(srcSystem));
         }
-        if (spec != null)
-        {
-            clone.setSpec(spec);
-        }
 
         byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
@@ -296,7 +276,7 @@ public class DefaultPayload implements Payload, Cloneable
 	public Payload spawnChild(int siblingNo) {
 		byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
-		return new DefaultPayload(id+"_"+siblingNo, spec,  copiedContent);
+		return new DefaultPayload(id+"_"+siblingNo,  copiedContent);
 	}
 
 

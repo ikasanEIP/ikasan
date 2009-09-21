@@ -42,7 +42,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.common.CommonXSLTransformer;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.PayloadConverter;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.ExceptionContext;
@@ -203,33 +202,7 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
         return xmlFragment;
     }
 
-    /**
-     * Returns the payloads as a String originalEvent
-     * 
-     * @param xstream XStream of the event 
-     * @param originalPayloads The list of original payloads
-     * @param externalExceptionDef The external exception definition
-     * @return The original event
-     */
-    private String getOriginalEvent(XStream xstream, List<Payload> originalPayloads,
-            ExternalExceptionDefinition externalExceptionDef)
-    {
-        logger.info("Creating originalEvent XML...");
-        // TODO - don't think we should touch originals, but this was
-        // in the original code base.
-        if (externalExceptionDef.getMaxPayloadSize().intValue() > 0)
-        {
-            managePayloadSize(originalPayloads, externalExceptionDef);
-        }
-        xstream.registerConverter(payloadConverter, 0);
-        xstream.alias("payload", payloadClass);
-        xstream.alias("originalEvent", List.class);
-        // Base64Encoding of payloads
-        base64EncodePayloads(originalPayloads);
-        String xmlFragment = xstream.toXML(originalPayloads);
-        logger.info("Completed creation of originalEvent XML.");
-        return xmlFragment;
-    }
+    
 
     /**
      * Returns the payloads as a String exceptionEvent
@@ -250,37 +223,13 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
         xstream.registerConverter(payloadConverter, 0);
         xstream.alias("payload", payloadClass);
         xstream.alias("exceptionEvent", List.class);
-        // Base64Encoding of payloads
-        base64EncodePayloads(payloads);
+
         String xmlFragment = xstream.toXML(payloads);
         logger.info("Completed creation of exceptionEvent XML.");
         return xmlFragment;
     }
 
-    /**
-     * Utility method for iterating over a payload list and Base64encoding.
-     * 
-     * TODO - This should be moved to Payload class.
-     * 
-     * @param payloads List of payloads to base64 encode
-     */
-    private static void base64EncodePayloads(List<Payload> payloads)
-    {
-        // Encode binary payloads
-        for (Payload payload : payloads)
-        {
-            if (payload.getSpec().equals(Spec.BYTE_JAR.toString())
-                    || payload.getSpec().equals(Spec.BYTE_ZIP.toString())
-                    || payload.getSpec().equals(Spec.BYTE_PLAIN.toString()))
-            {
-                payload.base64EncodePayload();
-            }
-            else
-            {
-                logger.debug("Text payload returned without encoding."); //$NON-NLS-1$
-            }
-        }
-    }
+   
 
     /**
      * Utility method for calculating payload sizes to see if they require truncation.

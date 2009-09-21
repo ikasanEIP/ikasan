@@ -32,7 +32,6 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.UserExceptionHandler;
@@ -262,7 +261,7 @@ public class UserExceptionHandlerImplTest
         this.classMockery.checking( new Expectations()
         {
             {
-                one(payloadFactory).newPayload("userExceptionPayloadId",Spec.TEXT_XML, transformedException.getBytes());will(returnValue(exceptionPayload));
+                one(payloadFactory).newPayload("userExceptionPayloadId", transformedException.getBytes());will(returnValue(exceptionPayload));
 				
             	allowing(exceptionPayload).idToString();
             	will(returnValue(exceptionPayloadId));
