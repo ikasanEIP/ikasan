@@ -37,7 +37,7 @@
      -->
     <groupId>org.ikasan.demo</groupId>
 	<artifactId>demoFileDelivery-app</artifactId>
-    <version>0.7.4</version>
+    <version>0.7.5-SNAPSHOT</version>
 	<packaging>ear</packaging>
 
 	<name>demoFileDelivery :: demoFileDelivery : ear</name>
@@ -225,7 +225,7 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoFileDelivery-app-war</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<type>war</type>
 			<scope>provided</scope>
 		</dependency>
@@ -234,7 +234,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -283,7 +283,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -320,14 +320,14 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoFileDelivery-ftpTarget-jar</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
@@ -342,28 +342,28 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-client-filetransfer</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-connector-base</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-connector-basefiletransfer</artifactId>
-	      <version>0.7.4</version>
+	      <version>0.7.5-SNAPSHOT</version>
 	      <scope>provided</scope>
 	    </dependency>
 
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 		  <artifactId>ikasan-client-connection</artifactId>
-	      <version>0.7.4</version>
+	      <version>0.7.5-SNAPSHOT</version>
 	      <scope>provided</scope>
 	    </dependency>
 	    <dependency>
@@ -381,7 +381,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-connector-ftpRar</artifactId>
-			<version>0.7.4</version>
+			<version>0.7.5-SNAPSHOT</version>
 			<scope>provided</scope>
 			<type>rar</type>
 		</dependency>
@@ -403,7 +403,7 @@
 	</repositories>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.4</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoFileDelivery-app-0.7.1</connection>
   </scm>
 
   <distributionManagement>
