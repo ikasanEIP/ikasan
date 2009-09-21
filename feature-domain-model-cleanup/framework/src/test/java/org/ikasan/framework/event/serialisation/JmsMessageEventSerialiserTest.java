@@ -92,7 +92,6 @@ public abstract class JmsMessageEventSerialiserTest {
 		final String eventId = "eventId";
 		final int eventPriority = 8;
 		final long eventTimestamp = 1000l;
-		final String eventSrcSystem = "eventSrcSystem";
 
 		mockery.checking(new Expectations() {
 			{
@@ -118,7 +117,6 @@ public abstract class JmsMessageEventSerialiserTest {
 				one(originalEvent).getId();will(returnValue(eventId));
 				one(originalEvent).getPriority();will(returnValue(eventPriority));
 				one(originalEvent).getTimestamp();will(returnValue(eventTimestamp));
-				one(originalEvent).getSrcSystem();will(returnValue(eventSrcSystem));
 				
 				one(payloadFactory).newPayload(payload1Id, payload1Content);will(returnValue(reconstitutedPayload1));
 				one(payloadFactory).newPayload(payload2Id, payload2Content);will(returnValue(reconstitutedPayload2));
@@ -143,7 +141,6 @@ public abstract class JmsMessageEventSerialiserTest {
 		Assert.assertEquals(eventId, reconstitutedEvent.getId());
 		Assert.assertEquals(eventPriority, reconstitutedEvent.getPriority());
 		Assert.assertEquals(eventTimestamp, reconstitutedEvent.getTimestamp());
-		Assert.assertEquals(eventSrcSystem, reconstitutedEvent.getSrcSystem());
 		
 		Assert.assertEquals(reconstitutedPayloads, reconstitutedEvent.getPayloads());
 

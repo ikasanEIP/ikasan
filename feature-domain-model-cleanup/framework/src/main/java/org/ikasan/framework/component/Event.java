@@ -65,10 +65,6 @@ public class Event implements Cloneable
 
 
     
-    /**
-     * Description of the external system this event is originated from
-     */
-    private String srcSystem;   
     
     /** Event contained payloads */
     private List<Payload> payloads = null;
@@ -148,15 +144,13 @@ public class Event implements Cloneable
      * @param id
      * @param priority
      * @param timestamp
-     * @param srcSystem
      * @param paylaods
      */
-    public Event(String id, int priority, long timestamp, String srcSystem, List<Payload> payloads) {
+    public Event(String id, int priority, long timestamp,  List<Payload> payloads) {
 		//System.out.println("new Event called with id["+id+"], priority ["+priority+"] timestamp ["+timestamp+"] srcSystem ["+srcSystem+"] payloads ["+payloads+"]");
     	this.id=id;
 		this.priority = priority;
 		this.timestamp = timestamp;
-		this.srcSystem = srcSystem;
 		this.payloads = new ArrayList<Payload>(payloads);
 	}
 
@@ -319,23 +313,7 @@ public class Event implements Cloneable
 
 
     
-    /**
-     * Accessor for srcSystem
-     * 
-     * @return srcSysterm
-     */
-    public String getSrcSystem(){
-    	return srcSystem;
-    }
-    
-    /**
-     * Mutator for srcSystem, needed by ORM
-     * @param srcSystem
-     */
-    @SuppressWarnings("unused")
-	private void setSrcSystem(String srcSystem){
-    	this.srcSystem = srcSystem;
-    }
+ 
     
     /**
      * Sets payload list.

@@ -64,7 +64,6 @@ public class DefaultMapMessageEventSerialiser implements
 		String eventId = null;
 		int priority = -1;
 		long timestamp = -1;
-		String srcSystem = null;
 		
 		for(String fieldName : eventFieldNames){
 			if (fieldName.equals(EVENT_FIELD_ID)){
@@ -76,15 +75,13 @@ public class DefaultMapMessageEventSerialiser implements
 			else if (fieldName.equals(EVENT_FIELD_TIMESTAMP)){
 				timestamp=mapMessage.getLong(EVENT_FIELD_TIMESTAMP);
 			}
-			else if (fieldName.equals(EVENT_FIELD_SRC_SYSTEM)){
-				srcSystem=mapMessage.getString(EVENT_FIELD_SRC_SYSTEM);
-			}
+			
 			else{
 				throw new IllegalArgumentException("Unknown map entry ["+fieldName+"]");
 			}
 		}
 		
-		return new Event(eventId, priority, timestamp, srcSystem, payloads);
+		return new Event(eventId, priority, timestamp, payloads);
 	}
 
 	private Payload demapPayload(int payloadOrdinal, MapMessage mapMessage,
@@ -202,7 +199,6 @@ public class DefaultMapMessageEventSerialiser implements
 		mapMessage.setString(EVENT_FIELD_ID, event.getId());
 		mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());
 		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp());
-		mapMessage.setString(EVENT_FIELD_SRC_SYSTEM, event.getSrcSystem());
 
 		return mapMessage;
 	}

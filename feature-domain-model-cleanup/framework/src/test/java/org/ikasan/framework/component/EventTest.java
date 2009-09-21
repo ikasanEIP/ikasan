@@ -128,11 +128,6 @@ public class EventTest
                 event.getPriority());
         
 
-        
-
-        
-        Assert.assertEquals(clone.getSrcSystem(),
-                event.getSrcSystem());
 
  
     }
@@ -181,9 +176,7 @@ public class EventTest
         
         
    
-        
-        Assert.assertEquals(spawned.getSrcSystem(),
-                event.getSrcSystem());
+
 
       
     }

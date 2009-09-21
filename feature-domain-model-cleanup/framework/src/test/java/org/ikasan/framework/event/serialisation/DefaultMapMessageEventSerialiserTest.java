@@ -99,9 +99,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 	final String eventTimestampKey = DefaultMapMessageEventSerialiser.EVENT_FIELD_TIMESTAMP;
 	final long timestamp = 1000l;
 	
-	//event srcSystem
-	final String eventSrcSystemKey = DefaultMapMessageEventSerialiser.EVENT_FIELD_SRC_SYSTEM;
-	final String srcSystem = "srcSystem";
+
 	
 	
 	public DefaultMapMessageEventSerialiserTest(){
@@ -146,7 +144,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     	map.put(DefaultMapMessageEventSerialiser.EVENT_FIELD_ID, eventId);
     	map.put(DefaultMapMessageEventSerialiser.EVENT_FIELD_PRIORITY, priority);
     	map.put(DefaultMapMessageEventSerialiser.EVENT_FIELD_TIMESTAMP, timestamp);
-    	map.put(DefaultMapMessageEventSerialiser.EVENT_FIELD_SRC_SYSTEM, srcSystem);
     	
     	//payload content
     	map.put(payload1ContentKey, payload1Content);
@@ -183,7 +180,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	one(mapMessage).getString(DefaultMapMessageEventSerialiser.EVENT_FIELD_ID);will(returnValue(eventId));
             	one(mapMessage).getInt(DefaultMapMessageEventSerialiser.EVENT_FIELD_PRIORITY);will(returnValue(priority));
             	one(mapMessage).getLong(DefaultMapMessageEventSerialiser.EVENT_FIELD_TIMESTAMP);will(returnValue(timestamp));
-            	one(mapMessage).getString(DefaultMapMessageEventSerialiser.EVENT_FIELD_SRC_SYSTEM);will(returnValue(srcSystem));
             	
             	//payload content
             	one(mapMessage).getBytes(payload1ContentKey);will(returnValue(payload1Content));
@@ -223,7 +219,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     	Assert.assertEquals("event should have id, obtained from appropriate field in mapMessage", eventId, event.getId());
     	Assert.assertEquals("event should have priority, obtained from appropriate field in mapMessage", priority, event.getPriority());
     	Assert.assertEquals("event should have timestamp, obtained from appropriate field in mapMessage", timestamp, event.getTimestamp());
-    	Assert.assertEquals("event should have srcSystem, obtained from appropriate field in mapMessage", srcSystem, event.getSrcSystem());
     	
     	//check the payloads are present
     	Assert.assertEquals("event should have payloads as produced by payloadFactory", event.getPayloads(), payloads);
@@ -291,10 +286,6 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
                 //event timestamp
                 one(event).getTimestamp();will(returnValue(timestamp));
                 one(mapMessage).setLong(eventTimestampKey, timestamp);
-                
-                //event srcSystem
-                one(event).getSrcSystem();will(returnValue(srcSystem));
-                one(mapMessage).setString(eventSrcSystemKey, srcSystem);
 
             }
         });
