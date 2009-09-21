@@ -33,40 +33,24 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public interface Payload 
+public interface Payload extends Cloneable
 {
-	
-	/**
-	 * Accessor for id
-	 * 
-	 * @return id
-	 */
-	public String getId();
-	
-
-	
-
-	
-	/**
-	 * Accessor for charSet
-	 * 
-	 * @return indication of the character set if this is a textual payload
-	 */
-	public String getCharset();
-	
-	/**
-	 * Mutator for charset
-	 * 
-	 * @param charset
-	 */
-	public void setCharset(String charset);
+		
 
     /**
-     * Set the content of the payload
-     * 
-     * @param content content to set
-     */
-    public void setContent(final byte[] content);
+	 * Returns the value of the attribute named, or null if no such attribute exists
+	 * 
+	 * @param attributeName
+	 * @return value of the attribute named, or null if no such attribute exists
+	 */
+	public String getAttribute(String attributeName);
+
+    /**
+	 * Returns a List of names of all attributes of this Paylaod
+	 * 
+	 * @return List<String> attribute names
+	 */
+	public List<String> getAttributeNames();
 
     /**
      * Get the content of the payload
@@ -75,31 +59,15 @@ public interface Payload
      */
     public byte[] getContent();
 
-    /**
-     * Test the equality of two payload instances
-     * 
-     * @param payload payload to test against
-     * @return boolean
-     */
-    public boolean equals(Payload payload);
+ 
 
-    public String idToString();
-
-
-
-    /** Base64 encode the payload */
-    @Deprecated
-    public void base64EncodePayload();
-
-    /**
-     * Returns a completely new instance of the payload with a deep copy of all fields. Note the subtle difference in
-     * comparison with spawn() which changes some field values to reflect a newly created instance.
-     * 
-     * @return a Payload
-     * @throws CloneNotSupportedException Exception if clone is not supported by implementer
-     */
-    public Payload clone() throws CloneNotSupportedException;
-
+	/**
+	 * Accessor for id
+	 * 
+	 * @return id
+	 */
+	public String getId();
+	
 	/**
 	 * Convenience method giving the size of the payload contents
 	 * 
@@ -107,13 +75,37 @@ public interface Payload
 	 */
 	public long getSize();
 	
-	public Payload spawnChild(int siblingNo);
-	
-	public String getAttribute(String attributeName);
-	
+	/**
+	 * Sets an attribute on the Payload, overriding any prior value
+	 * 
+	 * @param attributeName
+	 * @param attributeValue
+	 */
 	public void setAttribute(String attributeName, String attributeValue);
 	
-	public List<String> getAttributeNames();
+	/**
+     * Set the content of the payload
+     * 
+     * @param content content to set
+     */
+    public void setContent(final byte[] content);
+	
+	/**
+	 * Spawns a new child Payload based on this Payload
+	 * 
+	 * @param siblingNo
+	 * @return child Payload
+	 */
+	public Payload spawnChild(int siblingNo);
+
+
+	/**
+	 * Clones the Payload
+	 * 
+	 * @return cloned Payload
+	 * @throws CloneNotSupportedException
+	 */
+	public Payload clone() throws CloneNotSupportedException;
 
 
 }

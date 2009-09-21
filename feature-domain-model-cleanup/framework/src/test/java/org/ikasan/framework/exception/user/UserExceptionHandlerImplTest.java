@@ -263,7 +263,7 @@ public class UserExceptionHandlerImplTest
             {
                 one(payloadFactory).newPayload("userExceptionPayloadId", transformedException.getBytes());will(returnValue(exceptionPayload));
 				
-            	allowing(exceptionPayload).idToString();
+            	allowing(exceptionPayload).getId();will(returnValue(exceptionPayloadId));
             	will(returnValue(exceptionPayloadId));
                 
             	one(publisher).invoke(with(any(Event.class)));

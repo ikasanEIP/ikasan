@@ -69,8 +69,6 @@ public class DefaultPayloadTest {
 		String cloneContent = new String(clonePayload.getContent());
 		Assert.assertEquals(originalContent, cloneContent);
 
-		Assert.assertEquals(payload.getCharset(), clonePayload
-				.getCharset());
 		
 		Assert.assertEquals(attributeValue, clonePayload.getAttribute(attributeName));
 

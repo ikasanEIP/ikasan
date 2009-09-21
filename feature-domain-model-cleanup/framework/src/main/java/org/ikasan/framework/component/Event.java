@@ -26,10 +26,11 @@
  */
 package org.ikasan.framework.component;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 
 /**
@@ -42,9 +43,6 @@ public class Event implements Cloneable
 {
     /** Serialize ID */
     private static final long serialVersionUID = 1L;
-    /** Logger instance */
-    private static Logger logger = Logger.getLogger(Event.class);
-
 
     /**
      * Identifier for the Event
@@ -54,7 +52,7 @@ public class Event implements Cloneable
     /**
      * Origination time for the Event
      */
-    private long timestamp;
+    private Date timestamp;
     
     /**
      * Relative priority - see JMS Message Priority
@@ -65,16 +63,15 @@ public class Event implements Cloneable
 
 
     
-    
     /** Event contained payloads */
     private List<Payload> payloads = null;
     
     
-    
-
-
+  
     
     /**
+     * Constructor
+     * 
      * private Default constructor requried by ORM
      */
     @SuppressWarnings("unused")
@@ -96,7 +93,7 @@ public class Event implements Cloneable
     		throw new IllegalArgumentException("Event originator did not provide a generated id!");
     	}
     	this.id=originatingModuleName+"_"+originatingComponentName+"_"+originatorGeneratedId;
-    	this.timestamp=System.currentTimeMillis();
+    	this.timestamp=new Date();
     } 
     
     /**
@@ -147,10 +144,9 @@ public class Event implements Cloneable
      * @param paylaods
      */
     public Event(String id, int priority, long timestamp,  List<Payload> payloads) {
-		//System.out.println("new Event called with id["+id+"], priority ["+priority+"] timestamp ["+timestamp+"] srcSystem ["+srcSystem+"] payloads ["+payloads+"]");
     	this.id=id;
 		this.priority = priority;
-		this.timestamp = timestamp;
+		this.timestamp = new Date(timestamp);
 		this.payloads = new ArrayList<Payload>(payloads);
 	}
 
@@ -171,7 +167,7 @@ public class Event implements Cloneable
     {
         Event clone = (Event) super.clone();
 
-        clone.setTimestamp(timestamp);
+        clone.setTimestamp(getTimestamp());
         clone.setPriority(priority);
         
 
@@ -199,10 +195,8 @@ public class Event implements Cloneable
     {
         StringBuffer payloadStringBuffer = new StringBuffer();
         for(Payload payload:payloads){
-        	payloadStringBuffer.append(payload.idToString());
+        	payloadStringBuffer.append("Payload ["+payload.getId()+"]");
         }
-    	
-    	
     	
         StringBuffer sb = new StringBuffer();
         sb.append("Event Id [" + this.getId() + "] "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -222,13 +216,22 @@ public class Event implements Cloneable
         return "id=[" + this.id + "] "
                 + "priority=[" + this.priority + "] "
                 + "timestamp=[" + this.timestamp + "] "
-                + "payload=[" + this.payloads + "] ";
+                + "payloads=[" + this.payloads + "] ";
     }
 
 
   
     
 
+	/**
+	 * Spawns a new child Event from this Event
+	 * 
+	 * @param moduleName
+	 * @param componentName
+	 * @param siblingNo
+	 * @param payloads
+	 * @return
+	 */
 	public Event spawnChild(String moduleName, String componentName, int siblingNo,
 			List<Payload> payloads) {
 		Event event = new Event(moduleName, componentName, "#"+getId()+"."+siblingNo,payloads);
@@ -236,6 +239,15 @@ public class Event implements Cloneable
 		return event;
 	}
 
+	/**
+	 * Spawns a new child Event from this Event
+	 * 
+	 * @param moduleName
+	 * @param componentName
+	 * @param siblingNo
+	 * @param payload
+	 * @return
+	 */
 	public Event spawnChild(String moduleName, String componentName, int siblingNo,
 			Payload payload) {
 		List<Payload>payloads = new ArrayList<Payload>();
@@ -244,10 +256,7 @@ public class Event implements Cloneable
 	}
 	
 	
-	
-	
-	
-	
+
 	
 	
 	
@@ -278,7 +287,7 @@ public class Event implements Cloneable
      * @return timestamp
      */
     public long getTimestamp(){
-    	return timestamp;
+    	return timestamp.getTime();
     }
     
     /**
@@ -287,8 +296,20 @@ public class Event implements Cloneable
      * @param timestamp
      */
     private void setTimestamp(long timestamp){
-    	this.timestamp = timestamp;
+    	this.timestamp = new Date(timestamp);
     }
+    
+    /**
+     * Retrieves a String representation of the timestamp using the <code>DateFormat</code> provided
+     * 
+     * @param dateFormat
+     * @return
+     */
+    public String getFormattedTimestamp(DateFormat dateFormat){
+		return dateFormat.format(timestamp);
+	}
+	
+
     
     
     /**

@@ -92,7 +92,7 @@ public class XMLValidator implements Transformer
             {
                 if (logger.isDebugEnabled())
                 {
-                    logger.debug(payload.idToString());
+                    logger.debug("Payload ["+payload.getId()+"]");
                 }
                 DocumentBuilder builder = this.factory.newDocumentBuilder();
                 builder.setErrorHandler(this.errorHandler);

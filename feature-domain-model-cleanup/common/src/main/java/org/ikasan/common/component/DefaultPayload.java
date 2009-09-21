@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 
 /**
@@ -41,71 +39,44 @@ import org.ikasan.common.Payload;
  * 
  * @author Ikasan Development Team
  */
-public class DefaultPayload implements Payload, Cloneable
+public class DefaultPayload implements Payload
 {
     /** Serialise ID */
     private static final long serialVersionUID = 1L;
 
-    /** The logger instance */
-    private static Logger logger = Logger.getLogger(DefaultPayload.class);
 
     /** id for payload **/
     private String id;
 
-     
-    
-    /** name for srcSystem **/
-    private String srcSystem;
-    
+    /** optional attributes **/
     private Map<String, String> attributes = new HashMap<String, String>();
-    
-    /**
-     * indicator of the charset
-     */
-    private String charset;
-    
-    
-   
 
 	/** Actual content of the payload to be delivered */
     private byte[] content;
     
-    
-    
-    
+
 
     /**
-     * Do not let anyone create a payload based on a no-argument default constructor
+     * No args constructor required for ORM
      */
     @SuppressWarnings("unused")
-    private DefaultPayload()
-    {
-        // empty
-    }
-
-
-
-
-
+    private DefaultPayload(){}
 
 
     /**
-     * Construtor
+     * Constructor
      * 
      * @param id
      * @param content
      */
-    public DefaultPayload(String id,
-			byte[] content) {
+    public DefaultPayload(String id, byte[] content) {
 		this.id = id;
 		this.content = content;
-		
 	}
     
-    /**
-     * Accessor for id
-     * 
-     * @return id for payload
+
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getId()
      */
     public String getId(){
     	return id;
@@ -119,34 +90,12 @@ public class DefaultPayload implements Payload, Cloneable
     @SuppressWarnings("unused")
 	private void setId(String id){
     	this.id=id;
-    }
-    
-
-    
-    /**
-     * Accessor for srcSystem
-     * 
-     * @return srcSystem
-     */
-    public String getSrcSystem(){
-    	return srcSystem;
-    }
-    
-    /**
-     * Mutator for srcSystem
-     * 
-     * @param srcSystem
-     */
-    public void setSrcSystem(String srcSystem){
-    	this.srcSystem = srcSystem;
-    }
-    
+    } 
 
 
-	/**
-     * Setter for content. This setter by default sets the size and checksum of the particular payload.
-     * 
-     * @param content The content of the payload to set
+
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#setContent(byte[])
      */
     public void setContent(final byte[] content)
     {
@@ -155,95 +104,16 @@ public class DefaultPayload implements Payload, Cloneable
 
 
 
-    /**
-     * Getter for content
-     * 
-     * @return byte[]
+
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getContent()
      */
     public byte[] getContent()
     {
         return this.content;
     }
-   
-    
-    /* (non-Javadoc)
-     * @see org.ikasan.common.Payload#getCharSet()
-     */
-    public String getCharset() {
-		return charset;
-	}
 
 
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.common.Payload#setCharset(java.lang.String)
-	 */
-	public void setCharset(String charset) {
-		this.charset = charset;
-	}
-    
-    
-    
-
-    /**
-     * Create a formatted string detailing the payload id of the incoming payload.
-     * 
-     * @return String
-     */
-
-    public String idToString()
-    {
-        return "Payload Id[" + this.getId() + "] "; //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    /**
-     * Creates a <code>String<code> representation of the <code>Payload</code>
-     * @return A formatted <code>String</code> representing the <code>Payload</code> object.
-     */
-    @Override
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder(512);
-        sb.append(super.toString());
-        sb.append("Content  = [");//$NON-NLS-1$
-        sb.append(new String(this.content));
-        sb.append("]\n");//$NON-NLS-1$
-        return sb.toString();
-    }
-
-
-
-    /**
-     * Test equality of two payload instances based on the lifetime identifier.
-     * 
-     * Only the identifiers are compared as the payload content and associated attributes can change over the life of
-     * the payload, however, the originally assigned id never changes.
-     * 
-     * @param payload The payload to check against
-     * @return true if we can convert, else false
-     */
-    public boolean equals(Payload payload)
-    {
-        if (this.id.equals(payload.getId()))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.common.Payload#base64EncodePayload()
-     */
-    public void base64EncodePayload()
-    {
-        setContent(Base64.encodeBase64(getContent()));
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Binary payload encoded to base64");
-        }
-    }
 
     /*
      * (non-Javadoc)
@@ -255,10 +125,7 @@ public class DefaultPayload implements Payload, Cloneable
     {
         DefaultPayload clone = (DefaultPayload) super.clone();
         // sort out non-cloneable objects
-        if (srcSystem != null)
-        {
-            clone.setSrcSystem(new String(srcSystem));
-        }
+
 
         byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
@@ -267,12 +134,18 @@ public class DefaultPayload implements Payload, Cloneable
         return clone;
     }
     
+    /* (non-Javadoc)
+     * @see org.ikasan.common.Payload#getSize()
+     */
     public long getSize(){
     	return content.length;
     }
 
 
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#spawnChild(int)
+	 */
 	public Payload spawnChild(int siblingNo) {
 		byte[] copiedContent = new byte[content.length];
         System.arraycopy(content, 0, copiedContent, 0, content.length);
@@ -280,21 +153,17 @@ public class DefaultPayload implements Payload, Cloneable
 	}
 
 
-
-
-
-
-
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#getAttribute(java.lang.String)
+	 */
 	public String getAttribute(String attributeName) {
 		return attributes.get(attributeName);
 	}
 
 
-
-
-
-
-
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#getAttributeNames()
+	 */
 	public List<String> getAttributeNames() {
 		List<String> attributeNames = new ArrayList<String>(attributes.keySet());
 		Collections.sort(attributeNames);
@@ -302,14 +171,29 @@ public class DefaultPayload implements Payload, Cloneable
 	}
 
 
-
-
-
-
-
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#setAttribute(java.lang.String, java.lang.String)
+	 */
 	public void setAttribute(String attributeName, String attributeValue) {
 		attributes.put(attributeName,attributeValue);
 	}
 
+    /**
+     * Creates a <code>String<code> representation of the <code>Payload</code>
+     * @return A formatted <code>String</code> representing the <code>Payload</code> object.
+     */
+    @Override
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer("DefaultPayload [");
+        sb.append("id = [");
+        sb.append(id);
+        sb.append("], ");
+        sb.append("content = [");
+        sb.append(new String(this.content));
+        sb.append("]");
+        sb.append("]");
+        return sb.toString();
+    }
 
 }

@@ -123,7 +123,7 @@ public class XMLValidatorTest
                 one(event).getPayloads();
                 will(returnValue(payloads));
                 one(event).idToString();
-                exactly(2).of(payload).idToString();
+                exactly(2).of(payload).getId();will(returnValue("payloadId"));
                 exactly(2).of(payload).getContent();
                 will(returnValue(payloadContent));
 
@@ -164,7 +164,7 @@ public class XMLValidatorTest
                 one(event).getPayloads();
                 will(returnValue(payloads));
                 one(event).idToString();
-                exactly(1).of(payload).idToString();
+                exactly(1).of(payload).getId();will(returnValue("payloadId"));
                 exactly(1).of(payload).getContent();
                 will(returnValue(payloadContent));
                 exactly(2).of(XMLValidatorTest.this.factory).newDocumentBuilder();
