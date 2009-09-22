@@ -26,7 +26,6 @@
  */
 package org.ikasan.console.pointtopointflow.dao;
 
-import java.util.List;
 import java.util.Set;
 
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
@@ -44,21 +43,14 @@ public interface PointToPointFlowProfileDao
      * 
      * @return A list of PointToPointFlowProfiles
      */
-    public List<PointToPointFlowProfile> findAllPointToPointFlowProfiles();
+    public Set<PointToPointFlowProfile> findAllPointToPointFlowProfiles();
 
     /**
-     * Find all of the module names for all of the PointToPointFlowProfiles
+     * Get a list of all PointToPointFlowProfiles matching the Set of names passed in
      * 
-     * @return Set of Module names
+     * @param pointToPointFlowProfileNames - Names of the point to point profiles 
+     * @return A list of PointToPointFlowProfiles
      */
-    public Set<String> findModuleNames();
-    
-    /**
-     * Find all of the module names involved in the given PointToPointFlowProfiles
-     * 
-     * @param pointToPointFlowProfileNames - Names of the point to point profiles to get the module names for 
-     * @return Set of Module names
-     */
-    public Set<String> findModuleNames(Set<String> pointToPointFlowProfileNames);
+    public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<String> pointToPointFlowProfileNames);
 
 }
