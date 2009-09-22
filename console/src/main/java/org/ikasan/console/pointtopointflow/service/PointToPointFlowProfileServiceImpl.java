@@ -26,14 +26,13 @@
  */
 package org.ikasan.console.pointtopointflow.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.ikasan.console.module.Module;
+import org.ikasan.console.pointtopointflow.PointToPointFlow;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao;
-import org.ikasan.console.module.Module;
 
 /**
  * Console implementation of <code>PointToPointFlowProfileService</code>
@@ -58,25 +57,40 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
     }
 
     /**
-     * Get a list of PointToPointFlows
+     * Get a list of all PointToPointFlowProfiles
      * 
-     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getPointToPointFlowProfiles()
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllPointToPointFlowProfiles()
      */
-    public List<PointToPointFlowProfile> getPointToPointFlowProfiles()
+    public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles()
     {
-        List<PointToPointFlowProfile> pointToPointFlowProfiles = new ArrayList<PointToPointFlowProfile>();
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new HashSet<PointToPointFlowProfile>();
         pointToPointFlowProfiles = pointToPointFlowProfileDao.findAllPointToPointFlowProfiles();
         return pointToPointFlowProfiles;
     }
 
     /**
-     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleNames()
+     * Get a list of all PointToPointFlowProfile Names
+     * 
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllPointToPointFlowProfileNames()
      */
-    public Set<String> getModuleNames()
+    public Set<String> getAllPointToPointFlowProfileNames()
     {
-        Set<String> moduleNames = new HashSet<String>();
-        moduleNames = pointToPointFlowProfileDao.findModuleNames();
-        return moduleNames;
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
+        Set<String> pointToPointFlowProfileNames = new HashSet<String>();
+        for (PointToPointFlowProfile pointToPointFlowProfile : pointToPointFlowProfiles)
+        {
+            pointToPointFlowProfileNames.add(pointToPointFlowProfile.getName());
+        }
+        return pointToPointFlowProfileNames;
+    }
+    
+    /**
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllModuleNames()
+     */
+    public Set<String> getAllModuleNames()
+    {
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
+        return this.getModuleNamesFromProfiles(pointToPointFlowProfiles);
     }
     
     /**
@@ -84,9 +98,42 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
      */
     public Set<String> getModuleNames(Set<String> pointToPointFlowProfileNames)
     {
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = pointToPointFlowProfileDao.findPointToPointFlowProfiles(pointToPointFlowProfileNames);
+        return this.getModuleNamesFromProfiles(pointToPointFlowProfiles);
+    }
+
+    /**
+     * Helper method, retrieves MethodNames from the PointToPointFlowProfiles given
+     * 
+     * @param pointToPointFlowProfiles - PointToPointFlowProfiles to get Module Names from
+     * @return Set of Module names
+     */
+    private Set<String> getModuleNamesFromProfiles(Set<PointToPointFlowProfile> pointToPointFlowProfiles)
+    {
         Set<String> moduleNames = new HashSet<String>();
-        moduleNames = pointToPointFlowProfileDao.findModuleNames(pointToPointFlowProfileNames);
+        for (PointToPointFlowProfile profile : pointToPointFlowProfiles)
+        {
+            for (PointToPointFlow pointToPointFlow : profile.getPointToPointFlows())
+            {
+                Module fromModule = pointToPointFlow.getFromModule();
+                if (fromModule != null)
+                {
+                    if (fromModule.getName() != null)
+                    {
+                        moduleNames.add(fromModule.getName());
+                    }
+                }
+                Module toModule = pointToPointFlow.getToModule();
+                if (toModule != null)
+                {
+                    if (toModule.getName() != null)
+                    {
+                        moduleNames.add(toModule.getName());
+                    }
+                }
+            }
+        }
         return moduleNames;
     }
-   
+    
 }
