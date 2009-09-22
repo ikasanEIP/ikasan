@@ -27,6 +27,8 @@
 package org.ikasan.console.web.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -109,9 +111,9 @@ public class WiretapEventsSearchFormController
      * @return List of point to point flow profile names
      */
     @ModelAttribute("pointToPointFlowProfiles")
-    public List<PointToPointFlowProfile> getPointToPointFlowProfiles()
+    public Set<PointToPointFlowProfile> getPointToPointFlowProfiles()
     {
-        List<PointToPointFlowProfile> pointToPointFlowProfiles = this.pointToPointFlowProfileService.getPointToPointFlowProfiles();
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.pointToPointFlowProfileService.getAllPointToPointFlowProfiles();
         return pointToPointFlowProfiles;
     }
     
@@ -149,9 +151,10 @@ public class WiretapEventsSearchFormController
             @RequestParam(required = false) String componentName, @RequestParam(required = false) String eventId, 
             @RequestParam(required = false) String payloadId, @RequestParam(required = false) String fromDateString, 
             @RequestParam(required = false) String fromTimeString, @RequestParam(required = false) String untilDateString, 
-            @RequestParam(required = false) String untilTimeString, @RequestParam(required = false) String payloadContent, 
+            @RequestParam(required = false) String untilTimeString, @RequestParam(required = false) String payloadContent,
             ModelMap model)
     {
+        
         // We should get a list of moduleNames or pointToPointProfileNames, but not both
         // TODO error the case where that does not occur
         if (moduleNames == null)
@@ -168,12 +171,12 @@ public class WiretapEventsSearchFormController
             return newSearchURL;
         }
         // Log the search criteria coming in
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Form values that came in:");
+        //if (logger.isDebugEnabled())
+        //{
+            logger.info("Form values that came in:");
             logSearch(newSearch, page, orderBy, orderAsc, selectAll, pageSize, moduleNames, pointToPointFlowProfileNames, componentName, eventId, payloadId, fromDateString, fromTimeString,
                 untilDateString, untilTimeString, payloadContent);
-        }
+        //}
         // Set the search criteria from the values that came in
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(moduleNames);
         wiretapSearchCriteria.setComponentName(componentName);
@@ -199,15 +202,14 @@ public class WiretapEventsSearchFormController
         Date fromDate = wiretapSearchCriteria.getFromDateTime();
         Date untilDate = wiretapSearchCriteria.getUntilDateTime();
         // Log the search criteria we're sending down
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Executing Search with:");
+        //if (logger.isDebugEnabled())
+        //{
+            logger.info("Executing Search with:");
             logSearch(newSearch, pageNo, orderByField, orderAscending, selectAll, pageSize, moduleNames, pointToPointFlowProfileNames, componentName, eventId, payloadId, fromDateString,
                 fromTimeString, untilDateString, untilTimeString, payloadContent);
-            logger.debug("Page Size [" + pageSize + "]");
-            logger.debug("From Date/Time [" + fromDate + "]");
-            logger.debug("Until Date/Time [" + untilDate + "]");
-        }
+            logger.info("From Date/Time [" + fromDate + "]");
+            logger.info("Until Date/Time [" + untilDate + "]");
+        //}
         // Perform the paged search
         PagedSearchResult<WiretapEvent> pagedResult = null;
         if (noErrors)
@@ -255,11 +257,16 @@ public class WiretapEventsSearchFormController
         String springRedirectCommand = "redirect:";
         String baseURL = "list.htm?";
         // Build the list of parameters
-        Set<String> moduleNames = this.pointToPointFlowProfileService.getModuleNames();
+        Set<String> moduleNames = this.pointToPointFlowProfileService.getAllModuleNames();
+        Set<String> pointToPointFlowProfileNames = this.pointToPointFlowProfileService.getAllPointToPointFlowProfileNames();
         String parameters = "newSearch=false&page=0&orderBy=id&orderAsc=true&selectAll=true&pageSize=10";
         for (String moduleName : moduleNames)
         {
             parameters = parameters + "&moduleNames=" + moduleName;
+        }
+        for (String pointToPointFlowProfileName : pointToPointFlowProfileNames)
+        {
+            parameters = parameters + "&pointToPointFlowProfileNames=" + pointToPointFlowProfileName;
         }
         String finalURL = springRedirectCommand + baseURL + parameters;
         return finalURL;
@@ -387,21 +394,21 @@ public class WiretapEventsSearchFormController
             Set<String> pointToPointFlowProfileNames, String componentName, String eventId, String payloadId, String fromDateString, String fromTimeString, String untilDateString, String untilTimeString,
             String payloadContent)
     {
-        logger.debug("New Search Flag [" + newSearch + "]");
-        logger.debug("Page [" + page + "]");
-        logger.debug("Order By [" + orderBy + "]");
-        logger.debug("Order Ascending Flag [" + orderAsc + "]");
-        logger.debug("Select All Flag [" + selectAll + "]");
-        logger.debug("Number of serch results per page [" + pageSize + "]");
-        logger.debug("Module Names [" + moduleNames + "]");
-        logger.debug("PointToPointFlowProfile Names [" + pointToPointFlowProfileNames + "]");
-        logger.debug("Component Name [" + componentName + "]");
-        logger.debug("Event Id [" + eventId + "]");
-        logger.debug("Payload Id [" + payloadId + "]");
-        logger.debug("From Date String [" + fromDateString + "]");
-        logger.debug("From Time String [" + fromTimeString + "]");
-        logger.debug("Until Date String [" + untilDateString + "]");
-        logger.debug("Until Time String [" + untilTimeString + "]");
-        logger.debug("Payload Content [" + payloadContent + "]");
+        logger.info("New Search Flag [" + newSearch + "]");
+        logger.info("Page [" + page + "]");
+        logger.info("Order By [" + orderBy + "]");
+        logger.info("Order Ascending Flag [" + orderAsc + "]");
+        logger.info("Select All Flag [" + selectAll + "]");
+        logger.info("Number of serch results per page [" + pageSize + "]");
+        logger.info("Module Names [" + moduleNames + "]");
+        logger.info("PointToPointFlowProfile Names [" + pointToPointFlowProfileNames + "]");
+        logger.info("Component Name [" + componentName + "]");
+        logger.info("Event Id [" + eventId + "]");
+        logger.info("Payload Id [" + payloadId + "]");
+        logger.info("From Date String [" + fromDateString + "]");
+        logger.info("From Time String [" + fromTimeString + "]");
+        logger.info("Until Date String [" + untilDateString + "]");
+        logger.info("Until Time String [" + untilTimeString + "]");
+        logger.info("Payload Content [" + payloadContent + "]");
     }
 }

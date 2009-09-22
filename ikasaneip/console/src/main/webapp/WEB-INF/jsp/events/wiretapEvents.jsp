@@ -80,12 +80,38 @@
         }
     }
 
+    /* 
+     * A function to encode the data going down to the server.
+     */
+    function encodeSearch() {
+
+        for (var i=0; i < document.wiretapSearchForm.pointToPointFlowProfileNames.length; i++)
+        {
+            if (document.wiretapSearchForm.pointToPointFlowProfileNames[i].checked)
+                {
+                    document.wiretapSearchForm.pointToPointFlowProfileNames[i].value = escape(document.wiretapSearchForm.pointToPointFlowProfileNames[i].value); 
+                }
+            }
+        }
+        
+        document.wiretapSearchForm.submit();
+        /*
+        alert(document.getElementById("pointToPointFlowProfileNames").value);
+        document.getElementById("pointToPointFlowProfileNames").value = escape(document.getElementById("pointToPointFlowProfileNames").value);
+        alert(document.getElementById("pointToPointFlowProfileNames").value); 
+        document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value = escape(document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value);
+        alert(document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value);
+        document.getElementById('wiretapSearchForm').submit();
+        */
+        // window.location = window.location + "?nickname=" + nickname + "&password=" + password;
+    }
+
   </script>
 
 <div class="middle">
     <a href="javascript:showHideSearchForm()">Show/Hide Search Form</a>
     <div id="searchForm">
-    <form method="get" id="wiretapSearchForm" action="" class="dataform fancydataform">
+    <form method="get" id="wiretapSearchForm" name="wiretapSearchForm" action="javascript:encodeSearch()" class="dataform fancydataform">
 
         <c:if test="${errors != ''}">
             <!-- The list of errors -->
@@ -100,27 +126,40 @@
             <ol>
                 <li>
                     <label for="pointToPointFlowProfiles"><fmt:message key="wiretap_events_pointToPointFlowProfile"/></label>
+                    
                     <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
+
+                    <!-- PointToPointProfile Checkboxes -->
                     <div id="eventSearchPointToPointFlowProfileCheckboxes" class="multiSelectCheckboxes">            
-                    <table id="wiretapSearch" class="searchTable">
-                        <thead>
-                            <tr>
-                                <td><fmt:message key="wiretap_event_pointToPointFlowProfile_name"/></td>
-                            </tr>
-                        <thead>
-                        <tbody>
-                            <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
+                        <table id="wiretapSearch" class="searchTable">
+                            <thead>
                                 <tr>
-                                    <td class="border" valign="top"><input name="pointToPointFlowProfileNames" type="checkbox" value="${pointToPointFlowProfile.name}" <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName"><c:if test="${pointToPointFlowProfile.name == pointToPointFlowProfileName}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/></td>
+                                    <td><fmt:message key="wiretap_event_pointToPointFlowProfile_name"/></td>
                                 </tr>
-                                <c:forEach items="${pointToPointFlowProfile.pointToPointFlows}" var="pointToPointFlow">                                
-                                <tr>
-                                    <td class="border" valign="top"><c:out value="${pointToPointFlow.fromModule.name}" /> --&gt; <c:out value="${pointToPointFlow.toModule.name}" /></td>
-                                </tr>
+                            <thead>
+                            <tbody>
+                                <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
+                                    <tr>
+                                        <td class="border" valign="top">
+                                            <c:out value="${pointToPointFlowProfile.name}" /> :: 
+                                            <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName">
+                                                <c:out value="${pointToPointFlowProfileName}" />
+                                            </c:forEach>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border" valign="top"><input id="pointToPointFlowProfileNames" name="pointToPointFlowProfileNames" type="checkbox" value="${pointToPointFlowProfile.name}" <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName"><c:if test="${pointToPointFlowProfile.name == pointToPointFlowProfileName}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border" valign="top" style="font-size : 8px;">
+                                            <c:forEach items="${pointToPointFlowProfile.pointToPointFlows}" var="pointToPointFlow">                                    
+                                                <c:out value="${pointToPointFlow.fromModule.name}" /> --&gt; <c:out value="${pointToPointFlow.toModule.name}" />
+                                            </c:forEach>
+                                        </td>
+                                    </tr>
                                 </c:forEach>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
                     </div>
                 </li>
 
