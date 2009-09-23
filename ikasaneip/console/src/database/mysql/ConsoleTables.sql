@@ -23,6 +23,8 @@
 -- ====================================================================
 
 DROP TABLE IF EXISTS `ikasan01`.`Module`;
+DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlowProfile`;
+DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlow`;
 
 CREATE TABLE  `ikasan01`.`Module` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -39,9 +41,9 @@ CREATE TABLE  `ikasan01`.`PointToPointFlowProfile` (
 
 CREATE TABLE  `ikasan01`.`PointToPointFlow` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  KEY 'PTPP_ID_FK' (`PointToPointFlowProfileId`) NOT NULL,
-  KEY 'FROM_MODULE_ID_FK' (`FromModuleId`) NULL,
-  KEY 'TO_MODULE_ID_FK' (`ToModuleId`) NULL,
+  `PointToPointFlowProfileId` bigint(20) NOT NULL,
+  `FromModuleId` bigint(20) NULL,
+  `ToModuleId` bigint(20) NULL,
   CONSTRAINT `PTPP_ID_FK` FOREIGN KEY (`PointToPointFlowProfileId`) REFERENCES `PointToPointFlowProfile` (`Id`),
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
