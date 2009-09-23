@@ -1,32 +1,46 @@
 <%-- 
-# //
-# // $Id$
-# // $URL$
-# // 
-# // ====================================================================
-# // Ikasan Enterprise Integration Platform
-# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
-# // by the @authors tag. See the copyright.txt in the distribution for a
-# // full listing of individual contributors.
-# //
-# // This is free software; you can redistribute it and/or modify it
-# // under the terms of the GNU Lesser General Public License as
-# // published by the Free Software Foundation; either version 2.1 of
-# // the License, or (at your option) any later version.
-# //
-# // This software is distributed in the hope that it will be useful,
-# // but WITHOUT ANY WARRANTY; without even the implied warranty of
-# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# // Lesser General Public License for more details.
-# //
-# // You should have received a copy of the GNU Lesser General Public
-# // License along with this software; if not, write to the 
-# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
-# // or see the FSF site: http://www.fsfeurope.org/.
-# // ====================================================================
-# //
-# // Author:  Ikasan Development Team
-# // 
+
+ $Id:
+ $URL: 
+
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+ 
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing 
+ of individual contributors are as shown in the packaged copyright.txt 
+ file. 
+ 
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without 
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+ Author:  Ikasan Development Team
+ 
 --%>
 <%@ include file="/WEB-INF/jsp/events/eventsTop.jsp"%>
 
@@ -80,12 +94,38 @@
         }
     }
 
+    /* 
+     * A function to encode the data going down to the server.
+     */
+    function encodeSearch() {
+
+        for (var i=0; i < document.wiretapSearchForm.pointToPointFlowProfileNames.length; i++)
+        {
+            if (document.wiretapSearchForm.pointToPointFlowProfileNames[i].checked)
+                {
+                    document.wiretapSearchForm.pointToPointFlowProfileNames[i].value = escape(document.wiretapSearchForm.pointToPointFlowProfileNames[i].value); 
+                }
+            }
+        }
+        
+        document.wiretapSearchForm.submit();
+        /*
+        alert(document.getElementById("pointToPointFlowProfileNames").value);
+        document.getElementById("pointToPointFlowProfileNames").value = escape(document.getElementById("pointToPointFlowProfileNames").value);
+        alert(document.getElementById("pointToPointFlowProfileNames").value); 
+        document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value = escape(document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value);
+        alert(document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value);
+        document.getElementById('wiretapSearchForm').submit();
+        */
+        // window.location = window.location + "?nickname=" + nickname + "&password=" + password;
+    }
+
   </script>
 
 <div class="middle">
     <a href="javascript:showHideSearchForm()">Show/Hide Search Form</a>
     <div id="searchForm">
-    <form method="get" id="wiretapSearchForm" action="" class="dataform fancydataform">
+    <form method="get" id="wiretapSearchForm" name="wiretapSearchForm" action="javascript:encodeSearch()" class="dataform fancydataform">
 
         <c:if test="${errors != ''}">
             <!-- The list of errors -->
@@ -98,6 +138,46 @@
         <fieldset>
             <legend><fmt:message key="wiretap_events_search"/></legend>
             <ol>
+                <li>
+                    <label for="pointToPointFlowProfiles"><fmt:message key="wiretap_events_pointToPointFlowProfile"/></label>
+                    
+                    <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
+
+                    <!-- PointToPointProfile Checkboxes -->
+                    <div id="eventSearchPointToPointFlowProfileCheckboxes" class="multiSelectCheckboxes">            
+                        <table id="wiretapSearch" class="searchTable">
+                            <thead>
+                                <tr>
+                                    <td><fmt:message key="wiretap_event_pointToPointFlowProfile_name"/></td>
+                                </tr>
+                            <thead>
+                            <tbody>
+                                <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
+                                    <tr>
+                                        <td class="border" valign="top">
+                                            <c:out value="${pointToPointFlowProfile.name}" /> :: 
+                                            <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName">
+                                                <c:out value="${pointToPointFlowProfileName}" />
+                                            </c:forEach>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border" valign="top"><input id="pointToPointFlowProfileNames" name="pointToPointFlowProfileNames" type="checkbox" value="${pointToPointFlowProfile.name}" <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName"><c:if test="${pointToPointFlowProfile.name == pointToPointFlowProfileName}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border" valign="top" style="font-size : 8px;">
+                                            <c:forEach items="${pointToPointFlowProfile.pointToPointFlows}" var="pointToPointFlow">                                    
+                                                <c:out value="${pointToPointFlow.fromModule.name}" /> --&gt; <c:out value="${pointToPointFlow.toModule.name}" />
+                                            </c:forEach>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+
+                <!--
                 <li>
                     <label for="modules"><fmt:message key="wiretap_events_module"/></label>
                     <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
@@ -120,6 +200,7 @@
                     </table>
                     </div>
                 </li>
+                -->
                 <li>
                     <label for="componentName"><fmt:message key="wiretap_events_component"/></label>
                     <input id="componentName" type="text" name="componentName" value="${searchParams["componentName"]}"/>
@@ -179,6 +260,7 @@
        	<c:param name="orderBy" value="id"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>       	
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="moduleLink" value="list.htm">
@@ -190,6 +272,7 @@
        	<c:param name="orderBy" value="moduleName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>       	
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="flowLink" value="list.htm">
@@ -201,6 +284,7 @@
        	<c:param name="orderBy" value="flowName"/>
        	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>       	
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="componentLink" value="list.htm">
@@ -212,6 +296,7 @@
         <c:param name="orderBy" value="componentName"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:url var="createdDateTimeLink" value="list.htm">
@@ -223,6 +308,7 @@
         <c:param name="orderBy" value="created"/>
         <c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="selectAll" value="${selectAll}"/>        
+        <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
     <c:if test="${resultSize > 0}">

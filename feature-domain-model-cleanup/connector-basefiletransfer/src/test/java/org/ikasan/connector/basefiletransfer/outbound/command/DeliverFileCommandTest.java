@@ -4,24 +4,38 @@
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * 
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing 
+ * of individual contributors are as shown in the packaged copyright.txt 
+ * file. 
+ * 
+ * All rights reserved.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ *  - Redistributions of source code must retain the above copyright notice, 
+ *    this list of conditions and the following disclaimer.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
- * or see the FSF site: http://www.fsfeurope.org/.
+ *  - Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation 
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without 
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
@@ -146,7 +160,7 @@ public class DeliverFileCommandTest extends TestCase
 
     /**
      * Tests that the command successfully handles a non chunked data in the
-     * form of a ready to deliver MappedRecord
+     * form of a ready to deliver MappedRecord. Overwrite existing any file.
      * 
      * 
      * @throws ResourceException
@@ -156,7 +170,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ClientCommandLsException
      * @throws URISyntaxException
      */
-    public void testExecute_withMappedRecord() throws ResourceException, ClientCommandPwdException,
+    public void testExecute_withMappedRecordWithOverwrite() throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
             URISyntaxException
     {
@@ -169,16 +183,10 @@ public class DeliverFileCommandTest extends TestCase
                 will(returnValue(startingDir));
                 // cd to the output dir
                 one(client).cd(outputDir);
-                //list outputDir to check if file to be delivered already exists
-                one(client).ls(".");
                 // put the new file
                 one(client).put(fileName + renameExtension, content);
-                // ls to check that it really is there
-                one(client).ls(".");
-                will(returnValue(resultingDirectoryListing));
                 // return back to the starting dir
                 one(client).cd(startingDir);
-
             }
         });
 
@@ -194,9 +202,111 @@ public class DeliverFileCommandTest extends TestCase
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", fileName + renameExtension, //$NON-NLS-1$
-            tempFilename);
+        assertEquals("temp filename should be the filname with the rename extension", 
+            outputDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename);
+    }
 
+    /**
+     * Tests that the command successfully handles a non chunked data in the
+     * form of a ready to deliver MappedRecord. Delivery to default dot directory.
+     * 
+     * 
+     * @throws ResourceException
+     * @throws ClientCommandPwdException
+     * @throws ClientCommandCdException
+     * @throws ClientCommandPutException
+     * @throws ClientCommandLsException
+     * @throws URISyntaxException
+     */
+    public void testExecute_withMappedRecordToDefaultDotDirectory() 
+        throws ResourceException, ClientCommandPwdException,
+            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+            URISyntaxException
+    {
+
+        final String dotOutputDir = ".";
+        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting);
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // capture the directory that we start out in
+                one(client).pwd();
+                will(returnValue(dotOutputDir));
+                // cd to the output dir
+                one(client).cd(outputDir);
+                // put the new file
+                one(client).put(fileName + renameExtension, content);
+                // return back to the starting dir
+                one(client).cd(startingDir);
+            }
+        });
+
+        BaseFileTransferMappedRecord record = new BaseFileTransferMappedRecord(fileName, content.length, "checksum", "checksumAlg", new Date(),
+            content);
+        ExecutionContext context = new ExecutionContext();
+        context.put(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD, record);
+        deliverFileCommand.setExecutionContext(context);
+
+        deliverFileCommand.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(deliverFileCommand, 3));
+        ExecutionOutput executionOutput = deliverFileCommand.execute(client, new XidImpl(new byte[0], new byte[0],
+            0));
+
+        String tempFilename = (String) executionOutput.getResult();
+
+        assertEquals("temp filename should be the filname with the rename extension", 
+            dotOutputDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename);
+    }
+
+    /**
+     * Tests that the command successfully handles a non chunked data in the
+     * form of a ready to deliver MappedRecord. Delivery to default directory.
+     * 
+     * 
+     * @throws ResourceException
+     * @throws ClientCommandPwdException
+     * @throws ClientCommandCdException
+     * @throws ClientCommandPutException
+     * @throws ClientCommandLsException
+     * @throws URISyntaxException
+     */
+    public void testExecute_withMappedRecordToDefaultDirectory() 
+        throws ResourceException, ClientCommandPwdException,
+            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+            URISyntaxException
+    {
+
+        deliverFileCommand = new DeliverFileCommand(startingDir, renameExtension, overwriteExisting);
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // capture the directory that we start out in
+                one(client).pwd();
+                will(returnValue(startingDir));
+                // cd to the output dir
+                one(client).cd(outputDir);
+                // put the new file
+                one(client).put(fileName + renameExtension, content);
+                // return back to the starting dir
+                one(client).cd(startingDir);
+            }
+        });
+
+        BaseFileTransferMappedRecord record = new BaseFileTransferMappedRecord(fileName, content.length, "checksum", "checksumAlg", new Date(),
+            content);
+        ExecutionContext context = new ExecutionContext();
+        context.put(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD, record);
+        deliverFileCommand.setExecutionContext(context);
+
+        deliverFileCommand.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(deliverFileCommand, 3));
+        ExecutionOutput executionOutput = deliverFileCommand.execute(client, new XidImpl(new byte[0], new byte[0],
+            0));
+
+        String tempFilename = (String) executionOutput.getResult();
+
+        assertEquals("temp filename should be the filname with the rename extension", 
+            startingDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename);
     }
 
     /**
@@ -446,7 +556,7 @@ public class DeliverFileCommandTest extends TestCase
 
     /**
      * Tests that the command successfully handles a non chunked data in the
-     * form of a ready to deliver BaseFileTransferMappedRecord
+     * form of an input stream. Output directory is different from the default directory.
      * 
      * 
      * @throws ResourceException
@@ -471,20 +581,12 @@ public class DeliverFileCommandTest extends TestCase
                 will(returnValue(startingDir));
                 // cd to the output dir
                 one(client).cd(outputDir);
-                one(client).ls(".");
                 // put the new file
                 one(client).putWithOutputStream(nestedFile.getPath() + renameExtension, inputStream);
-                //ensure parents exists
-                one(client).ls("parent1" + FILE_SEPARATOR + "parent2");
-                // ls to check that it really is there
-                one(client).ls(nestedFileDirectory.getPath());
-                will(returnValue(resultingDirectoryListing));
                 // return back to the starting dir
                 one(client).cd(startingDir);
-
             }
         });
-
 
         ExecutionContext context = new ExecutionContext();
         context.put(ExecutionContext.FILE_INPUT_STREAM, inputStream);
@@ -497,7 +599,103 @@ public class DeliverFileCommandTest extends TestCase
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", fileName + renameExtension, //$NON-NLS-1$
+        assertEquals("temp filename should be the filname with the rename extension", outputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename);
+    }
+
+    /**
+     * Tests that the command successfully handles a non chunked data in the
+     * form of an input stream. Output directory is the same as the default directory.
+     * 
+     * 
+     * @throws ResourceException
+     * @throws ClientCommandPwdException
+     * @throws ClientCommandCdException
+     * @throws ClientCommandPutException
+     * @throws ClientCommandLsException
+     * @throws URISyntaxException
+     * @throws ClientCommandMkdirException
+     */
+    public void testExecute_withInputStream_toDefaultDirectory() 
+        throws ResourceException, ClientCommandPwdException,
+            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+            URISyntaxException, ClientCommandMkdirException
+    {
+        final InputStream inputStream = new ByteArrayInputStream(content);
+        final String sameOutputDir = "startingDir";
+        deliverFileCommand = new DeliverFileCommand(sameOutputDir, renameExtension, overwriteExisting);
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // capture the directory that we start out in
+                one(client).pwd();
+                will(returnValue(sameOutputDir));
+                // put the new file
+                one(client).putWithOutputStream(nestedFile.getPath() + renameExtension, inputStream);
+            }
+        });
+
+        ExecutionContext context = new ExecutionContext();
+        context.put(ExecutionContext.FILE_INPUT_STREAM, inputStream);
+        context.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, nestedFile.getPath());
+        deliverFileCommand.setExecutionContext(context);
+
+        deliverFileCommand.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(deliverFileCommand, 3));
+        ExecutionOutput executionOutput = deliverFileCommand.execute(client, new XidImpl(new byte[0], new byte[0],
+            0));
+
+        String tempFilename = (String) executionOutput.getResult();
+
+        assertEquals("temp filename should be the filname with the rename extension", sameOutputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename);
+    }
+
+    /**
+     * Tests that the command successfully handles a non chunked data in the
+     * form of an input stream. Output directory is dot.
+     * 
+     * 
+     * @throws ResourceException
+     * @throws ClientCommandPwdException
+     * @throws ClientCommandCdException
+     * @throws ClientCommandPutException
+     * @throws ClientCommandLsException
+     * @throws URISyntaxException
+     * @throws ClientCommandMkdirException
+     */
+    public void testExecute_withInputStream_toDefaultDotDirectory() 
+        throws ResourceException, ClientCommandPwdException,
+            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+            URISyntaxException, ClientCommandMkdirException
+    {
+        final InputStream inputStream = new ByteArrayInputStream(content);
+        final String dotOutputDir = ".";
+        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting);
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // capture the directory that we start out in
+                one(client).pwd();
+                will(returnValue(dotOutputDir));
+                // put the new file
+                one(client).putWithOutputStream(nestedFile.getPath() + renameExtension, inputStream);
+            }
+        });
+
+        ExecutionContext context = new ExecutionContext();
+        context.put(ExecutionContext.FILE_INPUT_STREAM, inputStream);
+        context.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, nestedFile.getPath());
+        deliverFileCommand.setExecutionContext(context);
+
+        deliverFileCommand.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(deliverFileCommand, 3));
+        ExecutionOutput executionOutput = deliverFileCommand.execute(client, new XidImpl(new byte[0], new byte[0],
+            0));
+
+        String tempFilename = (String) executionOutput.getResult();
+
+        assertEquals("temp filename should be the filname with the rename extension", dotOutputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
             tempFilename);
     }
 
