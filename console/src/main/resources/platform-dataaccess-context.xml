@@ -70,6 +70,12 @@
         <property name="sessionFactory" ref="moduleHibernateSessionFactory" />    
     </bean>
 
+    <!-- The initiatorCommandDao definition for the Ikasan framework -->
+    <bean id="initiatorCommandDao" class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorCommandDao">
+        <property name="sessionFactory" ref="initiatorCommandHibernateSessionFactory" />
+    </bean>
+
+
     <!-- Session Factory for the wiretapDao -->
     <bean id="wiretapHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
@@ -108,5 +114,16 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
+    <!-- Session Factory for the initiatorCommandDao -->
+    <bean id="initiatorCommandHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>InitiatorCommand.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 
 </beans>
