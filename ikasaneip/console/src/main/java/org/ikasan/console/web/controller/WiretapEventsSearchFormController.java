@@ -56,6 +56,7 @@ import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.ikasan.framework.event.wiretap.service.WiretapService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.console.module.Module;
+import org.ikasan.console.module.service.ModuleService;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService;
 import org.ikasan.console.web.command.WiretapSearchCriteria;
@@ -85,6 +86,9 @@ public class WiretapEventsSearchFormController
     /** The wiretap service */
     private WiretapService wiretapService;
 
+    /** The module service */
+    private ModuleService moduleService;
+    
     /** The point to point flow profile service */
     private PointToPointFlowProfileService pointToPointFlowProfileService;
     
@@ -95,13 +99,15 @@ public class WiretapEventsSearchFormController
      * Constructor
      * 
      * @param wiretapService - The wiretap service to use
+     * @param moduleService - The module service to use
      * @param pointToPointFlowProfileService - The point to point flow profile container to use
      */
     @Autowired
-    public WiretapEventsSearchFormController(WiretapService wiretapService, PointToPointFlowProfileService pointToPointFlowProfileService)
+    public WiretapEventsSearchFormController(WiretapService wiretapService, ModuleService moduleService, PointToPointFlowProfileService pointToPointFlowProfileService)
     {
         super();
         this.wiretapService = wiretapService;
+        this.moduleService = moduleService;
         this.pointToPointFlowProfileService = pointToPointFlowProfileService; 
     }
 
@@ -234,7 +240,7 @@ public class WiretapEventsSearchFormController
         PagedSearchResult<WiretapEvent> pagedResult = null;
         if (noErrors)
         {
-            // TODO Set <String> moduleNames = this.moduleService.getModuleNames();
+            Set<String> moduleNames = this.moduleService.getModuleNames();
             pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSize, orderByField, orderAscending, moduleNames, componentName, eventId, payloadId,
                 fromDate, untilDate, payloadContent);
         }
