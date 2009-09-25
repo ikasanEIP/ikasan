@@ -90,5 +90,19 @@ public class ConsoleModuleService implements ModuleService
         Set<Module> modules = this.moduleDao.findAllModules();
         return modules;
     }
+
+    /**
+     * @see org.ikasan.console.module.service.ModuleService#getAllModuleIds()
+     */
+    public Set<Long> getAllModuleIds()
+    {
+        Set<Module> modules = this.getAllModules();
+        Set<Long> moduleIds = new LinkedHashSet<Long>();
+        for (Module module : modules)
+        {
+            moduleIds.add(module.getId());
+        }
+        return moduleIds;
+    }
     
 }

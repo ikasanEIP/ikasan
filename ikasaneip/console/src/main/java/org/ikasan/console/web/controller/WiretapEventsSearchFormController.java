@@ -269,7 +269,7 @@ public class WiretapEventsSearchFormController
      */
     private Set<Long> getModuleIdsFromPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds)
     {
-        Set<Long> moduleIds = pointToPointFlowProfileService.getModuleIds(pointToPointFlowProfileIds);
+        Set<Long> moduleIds = pointToPointFlowProfileService.getModuleIdsFromPointToPointFlowProfiles(pointToPointFlowProfileIds);
         return moduleIds;
     }
     
@@ -283,7 +283,7 @@ public class WiretapEventsSearchFormController
         String springRedirectCommand = "redirect:";
         String baseURL = "list.htm?";
         // Build the list of parameters
-        Set<Long> moduleIds = this.pointToPointFlowProfileService.getAllModuleIds();
+        Set<Long> moduleIds = this.moduleService.getAllModuleIds();
         Set<Long> pointToPointFlowProfileIds = this.pointToPointFlowProfileService.getAllPointToPointFlowProfileIds();
         String parameters = "newSearch=false&page=0&orderBy=id&orderAsc=true&selectAll=true&pageSize=10";
         for (Long moduleId : moduleIds)

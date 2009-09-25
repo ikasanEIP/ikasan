@@ -71,14 +71,18 @@ public interface PointToPointFlowProfileService
      * Get a set of all of the modules for all of the PointToPointFlowProfiles
      * 
      * @return Set of all of the modules
+     * @deprecated - @see org.ikasan.console.module.ModuleService
      */
+    @Deprecated
     public Set<Module> getAllModules();
     
     /**
      * Get a set of all of the module ids for all of the PointToPointFlowProfiles
      * 
      * @return Set of all of the module ids
+     * @deprecated - @see org.ikasan.console.module.ModuleService
      */
+    @Deprecated
     public Set<Long> getAllModuleIds();
     
     /**
@@ -87,6 +91,6 @@ public interface PointToPointFlowProfileService
      * @param pointToPointFlowProfileIds - The point to point profile ids to search on 
      * @return Set of all of the module ids
      */
-    public Set<Long> getModuleIds(Set<Long> pointToPointFlowProfileIds);
+    public Set<Long> getModuleIdsFromPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds);
     
 }

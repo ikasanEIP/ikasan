@@ -214,9 +214,9 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
     }
 
     /**
-     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleIds(Set)
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleIdsFromPointToPointFlowProfiles(Set)
      */
-    public Set<Long> getModuleIds(Set<Long> pointToPointFlowProfileIds)
+    public Set<Long> getModuleIdsFromPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds)
     {
         Set<PointToPointFlowProfile> pointToPointFlowProfiles = pointToPointFlowProfileDao.findPointToPointFlowProfiles(pointToPointFlowProfileIds);
         return this.getModuleIdsFromProfiles(pointToPointFlowProfiles);

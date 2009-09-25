@@ -60,6 +60,13 @@ public interface ModuleService
     public Set<Module> getAllModules();
 
     /**
+     * Returns all available <code>Module</code> Ids
+     * 
+     * @return List of all accessible <code>Module</code> Ids
+     */
+    public Set<Long> getAllModuleIds();
+    
+    /**
      * Returns <code>Module</code> Names given ids
      * 
      * @param moduleIds - modules to search for
