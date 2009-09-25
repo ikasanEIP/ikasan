@@ -53,14 +53,11 @@ import org.ikasan.framework.module.service.ModuleService;
  * 
  * @author Ikasan Development Team
  */
-public class PropertiesModuleService implements ModuleService
+public class ConsoleModuleService implements ModuleService
 {
 
-    /** List of modules names and their descriptions */
-    Properties modulesList;
-    
     /** Constructor */
-    public PropertiesModuleService()
+    public ConsoleModuleService()
     {
         // Do Nothing
     }
@@ -73,20 +70,6 @@ public class PropertiesModuleService implements ModuleService
     public List<Module> getModules()
     {
         List<Module> modules = null;
-        SimpleModule module = null;
-        String moduleName = null; 
-
-        if (this.modulesList != null)
-        {
-            modules = new ArrayList<Module>();
-            for (Object key:this.modulesList.keySet())
-            {
-                moduleName = (String)key;
-                module = new SimpleModule(moduleName);
-                module.setDescription(modulesList.getProperty(moduleName));
-                modules.add(module);
-            }
-        }
         return modules;
     }
 
@@ -126,16 +109,6 @@ public class PropertiesModuleService implements ModuleService
             @SuppressWarnings("unused") String actor)
     {
         // Do Nothing
-    }
-    
-    /**
-     * Set the modules list
-     * 
-     * @param modulesList - List of module names and their descriptions
-     */
-    public void setModulesList(Properties modulesList)
-    {
-        this.modulesList = modulesList;
     }
     
 }
