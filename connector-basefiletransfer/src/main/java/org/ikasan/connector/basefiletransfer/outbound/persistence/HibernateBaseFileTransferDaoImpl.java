@@ -40,7 +40,9 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.persistence;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -62,6 +64,7 @@ import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
  */
 public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
 {
+
     /** Client ID parameter */
     private final static String CLIENT_ID = "clientId";
     
@@ -76,6 +79,9 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
 
     /** Age of Files parameter */
     private final static String AGE_OF_FILES = "ageOfFiles";
+
+    /** Created Date parameter **/
+    private final static String CREATED_DATE_TIME = "createdDateTime"; 
     
     /** Hibernate session factory */
     protected SessionFactory sessionFactory;
@@ -225,19 +231,22 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
     public void housekeep(String clientId, int ageOfFiles, int maxRows) throws HibernateException
     {
         int historyInDays = ageOfFiles * -1;
-        
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        cal.add(Calendar.DATE, historyInDays);
+	        
         StringBuilder hibernateQuery = new StringBuilder(256);
         hibernateQuery.append(" from ");
         hibernateQuery.append(filterTableName);
         hibernateQuery.append(" as ff");
         hibernateQuery.append(" where ff.clientId = :" + CLIENT_ID);
-        hibernateQuery.append(" and dateadd(dd, :" + AGE_OF_FILES + ", getdate()) > ff.createdDateTime");
+        hibernateQuery.append(" and ff.createdDateTime < :" + CREATED_DATE_TIME  ); 
         hibernateQuery.trimToSize();
-        
-        if(logger.isDebugEnabled())
+       
+        if(logger.isDebugEnabled()) 
         {
             logger.debug("About to housekeep by running [" + hibernateQuery 
                 + "], where clientId [" + clientId 
+                + "], createdDateTime [" + cal.getTime()
                 + "] and ageOfFiles parameter is set to (should be a negative number) [" 
                 + historyInDays + "]");
         }
@@ -250,7 +259,7 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
         {
             Query query = session.createQuery(hibernateQuery.toString());
             query.setParameter(CLIENT_ID, clientId);
-            query.setParameter(AGE_OF_FILES, historyInDays);
+            query.setParameter(CREATED_DATE_TIME, cal.getTime());
             query.setMaxResults(maxRows);
             fileFilters = query.list();
             if (fileFilters != null)
