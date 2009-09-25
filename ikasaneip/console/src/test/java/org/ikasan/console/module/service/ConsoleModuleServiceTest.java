@@ -57,12 +57,19 @@ public class ConsoleModuleServiceTest
     /** The ConsoleModuleService we want to test */
     private ModuleService consoleModuleService = new ConsoleModuleService(null);
     
-    /** Test that a 'successful' call of getModules() returns a not null list of 1 */
+    /** Test that a call of getAllModules() with no DAO bombs out */
     @Test
     public void testGetAllModulesWithNullDao()
     {
-        Set<Module> modules = this.consoleModuleService.getAllModules();
-        // Make sure there are no valid Modules in the list
-        Assert.assertNull(modules);
+        try
+        {
+            this.consoleModuleService.getAllModules();
+            Assert.fail();
+        }
+        catch (NullPointerException npe)
+        {
+            // Do Nothing
+        }
+        
     }
 }
