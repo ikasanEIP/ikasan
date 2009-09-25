@@ -55,10 +55,19 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <!-- The console specific Module Service (gets a module list from a properties file) -->
+    <!-- The console specific Module Service -->
     <bean id="moduleService" class="org.ikasan.console.module.service.ConsoleModuleService" >
         <constructor-arg ref="moduleDao" />
     </bean> 
+
+    <!-- The framework specific Module Service -->
+    <bean id="frameworkModuleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="initiatorCommandDao" />
+    </bean>
+
+    <!-- The module container for the framework module service -->
+    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
 
     <!-- The PointToPointFlowProfile Service -->
     <bean id="pointToPointFlowProfileService" class="org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileServiceImpl" >
@@ -69,7 +78,7 @@
     <!-- TODO - might have a problem as we're not giving the wiretap service the module service it's expecting... -->
 	<bean id="wiretapService" class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
 		<constructor-arg ref="wiretapDao" />
-		<constructor-arg ref="moduleService" />
+		<constructor-arg ref="frameworkModuleService" />
 	</bean>
 	
   	<!-- ###################################### -->
