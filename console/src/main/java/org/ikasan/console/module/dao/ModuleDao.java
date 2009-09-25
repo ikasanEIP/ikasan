@@ -1,8 +1,8 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
- * ====================================================================
+ * 
+ * =============================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,35 +36,35 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ * =============================================================================
  */
-package org.ikasan.console.module.service;
+package org.ikasan.console.module.dao;
 
 import java.util.Set;
 
 import org.ikasan.console.module.Module;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * Interface for all Module data access.
  * 
  * @author Ikasan Development Team
  */
-public interface ModuleService
+public interface ModuleDao
 {
 
     /**
-     * Returns all available <code>Module</code>s
+     * Get a list of all Modules
      * 
-     * @return List of all accessible <code>Module</code>s
+     * @return A list of Modules
      */
-    public Set<Module> getAllModules();
+    public Set<Module> findAllModules();
 
     /**
-     * Returns <code>Module</code> Names given ids
+     * Get a list of all Modules matching the Set of ids passed in
      * 
-     * @param moduleIds - modules to search for
-     * @return List of all accessible <code>Module</code> Names
+     * @param moduleIds - Ids of the modules 
+     * @return A list of Modules
      */
-    public Set<String> getModuleNames(Set<Long> moduleIds);
-    
+    public Set<Module> findModules(Set<Long> moduleIds);
+
 }

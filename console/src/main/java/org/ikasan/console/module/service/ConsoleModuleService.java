@@ -40,13 +40,11 @@
  */
 package org.ikasan.console.module.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import org.ikasan.framework.module.Module;
-import org.ikasan.framework.module.SimpleModule;
-import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.console.module.dao.ModuleDao;
+import org.ikasan.console.module.Module;
 
 /**
  * Console implementation of <code>ModuleService</code>
@@ -56,59 +54,41 @@ import org.ikasan.framework.module.service.ModuleService;
 public class ConsoleModuleService implements ModuleService
 {
 
-    /** Constructor */
-    public ConsoleModuleService()
+    /** DAO for this service to use */
+    private ModuleDao moduleDao = null;
+
+    /**
+     * Constructor
+     * 
+     * @param moduleDao - DAO for this service to use
+     */
+    public ConsoleModuleService(ModuleDao moduleDao)
     {
-        // Do Nothing
+        super();
+        this.moduleDao = moduleDao;
     }
 
     /**
-     * Get a list of modules, in this case return null
-     * 
-     * @see org.ikasan.framework.module.service.ModuleService#getModules()
+     * @see org.ikasan.console.module.service.ModuleService#getModuleNames(Set)
      */
-    public List<Module> getModules()
+    public Set<String> getModuleNames(Set<Long> moduleIds)
     {
-        List<Module> modules = null;
+        Set<Module> modules = this.moduleDao.findModules(moduleIds);
+        Set<String> moduleNames = new LinkedHashSet<String>();
+        for (Module module : modules)
+        {
+            moduleNames.add(module.getName());
+        }
+        return moduleNames;
+    }
+
+    /**
+     * @see org.ikasan.console.module.service.ModuleService#getAllModules()
+     */
+    public Set<Module> getAllModules()
+    {
+        Set<Module> modules = this.moduleDao.findAllModules();
         return modules;
-    }
-
-    /**
-     * Get the module given a module name, in this case return null
-     * 
-     * @see org.ikasan.framework.module.service.ModuleService#getModule(java.lang
-     *      .String) Suppress warning because we are deliberately not using the
-     *      parameter
-     */
-    public Module getModule(@SuppressWarnings("unused") String moduleName)
-    {
-        return null;
-    }
-
-    /**
-     * Stop the initiator
-     * 
-     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.
-     *      lang.String, java.lang.String, java.lang.String) Suppress warning
-     *      because we are deliberately not using the parameters
-     */
-    public void stopInitiator(@SuppressWarnings("unused") String moduleName, @SuppressWarnings("unused") String initiatorName,
-            @SuppressWarnings("unused") String actor)
-    {
-        // Do Nothing
-    }
-
-    /**
-     * Start the initiator
-     * 
-     * @see org.ikasan.framework.module.service.ModuleService#startInitiator(java
-     *      .lang.String, java.lang.String, java.lang.String) Suppress warning
-     *      because we are deliberately not using the parameters
-     */
-    public void startInitiator(@SuppressWarnings("unused") String moduleName, @SuppressWarnings("unused") String initiatorName,
-            @SuppressWarnings("unused") String actor)
-    {
-        // Do Nothing
     }
     
 }
