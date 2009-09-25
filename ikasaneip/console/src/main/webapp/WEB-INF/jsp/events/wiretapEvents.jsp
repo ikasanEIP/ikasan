@@ -135,11 +135,10 @@
         <fieldset>
             <legend><fmt:message key="wiretap_events_search"/></legend>
             <ol>
+                <li><input type="checkbox" id="selectAll" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all</li>            
                 <li id="pointToPointFlowProfileCheckboxes">
                     <label for="pointToPointFlowProfiles"><fmt:message key="wiretap_events_pointToPointFlowProfile"/></label>
                     
-                    <input type="checkbox" id="selectAll" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
-
                     <!-- PointToPointProfile Checkboxes -->
                     <div id="eventSearchPointToPointFlowProfileCheckboxes" class="multiSelectCheckboxes">            
                         <table id="wiretapSearch" class="searchTable">
@@ -183,7 +182,6 @@
 
                 <li id="moduleCheckboxes">
                     <label for="modules"><fmt:message key="wiretap_events_module"/></label>
-                    <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
                     <div id="eventSearchModuleCheckboxes" class="multiSelectCheckboxes">            
                     <table id="wiretapSearch" class="searchTable">
                         <thead>
