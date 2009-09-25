@@ -40,7 +40,7 @@
  */
 package org.ikasan.console.web.command;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.ikasan.console.web.command.WiretapSearchCriteria;
@@ -64,7 +64,7 @@ public class WiretapSearchCriteriaValidatorTest
     private Mockery mockery = new Mockery();
 
     /** A set of module names */
-    private static Set<String> someModules = new HashSet<String>();
+    private static Set<String> someModules = new LinkedHashSet<String>();
     
     /** Add a 'aModule' module name to the someModules Set */
     static

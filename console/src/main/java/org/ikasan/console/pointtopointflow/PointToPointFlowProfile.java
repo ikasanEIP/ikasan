@@ -40,7 +40,7 @@
  */
 package org.ikasan.console.pointtopointflow;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -60,7 +60,7 @@ public class PointToPointFlowProfile
     private String name;
 
     /** The set of PointToPointFlow objects that make up this profile */
-    private Set<PointToPointFlow> pointToPointFlows = new HashSet<PointToPointFlow>();
+    private Set<PointToPointFlow> pointToPointFlows = new LinkedHashSet<PointToPointFlow>();
     
     /**
      * Get the unique id

@@ -40,11 +40,18 @@
  */
 package org.ikasan.console.pointtopointflow.service;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.ListIterator;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.ikasan.console.module.Module;
 import org.ikasan.console.pointtopointflow.PointToPointFlow;
+import org.ikasan.console.pointtopointflow.PointToPointFlowComparator;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao;
 
@@ -55,12 +62,14 @@ import org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao;
  */
 public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfileService
 {
-
     /** DAO for this service to use */
     private PointToPointFlowProfileDao pointToPointFlowProfileDao = null;
-    
-    /** 
-     * Constructor 
+
+    /** Logger for this class */
+    private Logger logger = Logger.getLogger(PointToPointFlowProfileServiceImpl.class);
+
+    /**
+     * Constructor
      * 
      * @param pointToPointFlowProfileDao - DAO for this service to use
      */
@@ -77,54 +86,152 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
      */
     public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles()
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new HashSet<PointToPointFlowProfile>();
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
         pointToPointFlowProfiles = pointToPointFlowProfileDao.findAllPointToPointFlowProfiles();
+        this.orderPointToPointFlows(pointToPointFlowProfiles);
         return pointToPointFlowProfiles;
     }
 
     /**
-     * Get a list of all PointToPointFlowProfile Names
+     * Helper method which orders the PointToPointFlows within each
+     * PointToPointFloweProfile
      * 
-     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllPointToPointFlowProfileNames()
+     * TODO This algorithm is an EPIC FAIL
+     * 
+     * @param pointToPointFlowProfiles - Profiles to adjust
      */
-    public Set<String> getAllPointToPointFlowProfileNames()
+    private void orderPointToPointFlows(Set<PointToPointFlowProfile> pointToPointFlowProfiles)
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
-        Set<String> pointToPointFlowProfileNames = new HashSet<String>();
         for (PointToPointFlowProfile pointToPointFlowProfile : pointToPointFlowProfiles)
         {
-            pointToPointFlowProfileNames.add(pointToPointFlowProfile.getName());
+            // TreeSet<PointToPointFlow> pointToPointFlows = new
+            // TreeSet<PointToPointFlow>(pointToPointFlowProfile.getPointToPointFlows());
+            // pointToPointFlowProfile.setPointToPointFlows(pointToPointFlows);
+            logger.info("PointToPointFlowProfile is [" + pointToPointFlowProfile.getName() + "]");
+            logger.info("PointToPointFlowProfile has [" + pointToPointFlowProfile.getPointToPointFlows().size() + "] flows.");
+            TreeSet<PointToPointFlow> pointToPointFlows = new TreeSet<PointToPointFlow>(new PointToPointFlowComparator());
+            pointToPointFlows.addAll(pointToPointFlowProfile.getPointToPointFlows());
+            logger.info("PointToPointFlowProfile now has [" + pointToPointFlows.size() + "] flows.");
+            pointToPointFlowProfile.setPointToPointFlows(pointToPointFlows);
+            for (PointToPointFlow pointToPointFlow : pointToPointFlowProfile.getPointToPointFlows())
+            {
+                if (pointToPointFlow.getFromModule() == null && pointToPointFlow.getToModule() == null)
+                {
+                    logger.warn("Both modules are null, not adding this flow.");
+                }
+                // Starting module
+                else if (pointToPointFlow.getFromModule() == null && pointToPointFlow.getToModule() != null)
+                {
+                    logger.info("NULL --> " + pointToPointFlow.getToModule().getName());
+                }
+                // Linked Modules
+                else if (pointToPointFlow.getFromModule() != null && pointToPointFlow.getToModule() != null)
+                {
+                    logger.info(pointToPointFlow.getFromModule().getName() + " --> " + pointToPointFlow.getToModule().getName());
+                }
+                // Default else, toModule is null therefore it's the End Module
+                else if (pointToPointFlow.getFromModule() != null && pointToPointFlow.getToModule() == null)
+                {
+                    logger.info(pointToPointFlow.getFromModule().getName() + " --> NULL");
+                }
+            }
         }
-        return pointToPointFlowProfileNames;
-    }
-    
-    /**
-     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllModuleNames()
-     */
-    public Set<String> getAllModuleNames()
-    {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
-        return this.getModuleNamesFromProfiles(pointToPointFlowProfiles);
-    }
-    
-    /**
-     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleNames(Set)
-     */
-    public Set<String> getModuleNames(Set<String> pointToPointFlowProfileNames)
-    {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = pointToPointFlowProfileDao.findPointToPointFlowProfiles(pointToPointFlowProfileNames);
-        return this.getModuleNamesFromProfiles(pointToPointFlowProfiles);
+        // Comparator<PointToPointFlow> comparator =
+        // pointToPointFlows.comparator();
+        /*
+         * Set<PointToPointFlow> orderedPointToPointFlows = new
+         * LinkedHashSet<PointToPointFlow>(); Set<PointToPointFlow>
+         * pointToPointFlows = pointToPointFlowProfile.getPointToPointFlows();
+         * long previousToModuleId = -1; PointToPointFlow pointToPointFlow;
+         * logger.info("pointToPointFlowProfile Name [" +
+         * pointToPointFlowProfile.getName() + "]"); Iterator<PointToPointFlow>
+         * iterator = pointToPointFlows.iterator(); boolean startModuleAdded =
+         * false; while (!pointToPointFlows.isEmpty()) {
+         * logger.info("List Size [" + pointToPointFlows.size() + "]");
+         * pointToPointFlow = iterator.next(); if
+         * (pointToPointFlow.getFromModule() == null &&
+         * pointToPointFlow.getToModule() == null) {
+         * logger.warn("Both modules are null, not adding this flow."); } //
+         * Starting module else if (pointToPointFlow.getFromModule() == null &&
+         * pointToPointFlow.getToModule() != null) { logger.info("NULL --> " +
+         * pointToPointFlow.getToModule().getName());
+         * orderedPointToPointFlows.add(pointToPointFlow); previousToModuleId =
+         * pointToPointFlow.getToModule().getId(); startModuleAdded = true;
+         * iterator.remove(); } // Linked Modules else if
+         * (pointToPointFlow.getFromModule() != null &&
+         * pointToPointFlow.getToModule() != null && startModuleAdded) { if
+         * (previousToModuleId == pointToPointFlow.getFromModule().getId()) {
+         * logger.info(pointToPointFlow.getFromModule().getName() + " --> " +
+         * pointToPointFlow.getToModule().getName());
+         * orderedPointToPointFlows.add(pointToPointFlow); previousToModuleId =
+         * pointToPointFlow.getToModule().getId(); iterator.remove(); } } //
+         * Default else, toModule is null therefore it's the End Module else if
+         * (pointToPointFlow.getFromModule() != null &&
+         * pointToPointFlow.getToModule() == null && startModuleAdded &&
+         * pointToPointFlows.size() == 1) {
+         * logger.info(pointToPointFlow.getFromModule().getName() +
+         * " --> NULL"); orderedPointToPointFlows.add(pointToPointFlow);
+         * iterator.remove(); } } // Replace the old collection with the new
+         * pointToPointFlowProfile
+         * .setPointToPointFlows(orderedPointToPointFlows);
+         * 
+         * }
+         */
     }
 
     /**
-     * Helper method, retrieves MethodNames from the PointToPointFlowProfiles given
+     * Get a list of all PointToPointFlowProfile Ids
      * 
-     * @param pointToPointFlowProfiles - PointToPointFlowProfiles to get Module Names from
-     * @return Set of Module names
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllPointToPointFlowProfileIds()
      */
-    private Set<String> getModuleNamesFromProfiles(Set<PointToPointFlowProfile> pointToPointFlowProfiles)
+    public Set<Long> getAllPointToPointFlowProfileIds()
     {
-        Set<String> moduleNames = new HashSet<String>();
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
+        Set<Long> pointToPointFlowProfileIds = new LinkedHashSet<Long>();
+        for (PointToPointFlowProfile pointToPointFlowProfile : pointToPointFlowProfiles)
+        {
+            pointToPointFlowProfileIds.add(pointToPointFlowProfile.getId());
+        }
+        return pointToPointFlowProfileIds;
+    }
+
+    /**
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllModules()
+     */
+    public Set<Module> getAllModules()
+    {
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
+        return this.getModulesFromProfiles(pointToPointFlowProfiles);
+    }
+
+    /**
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getAllModuleIds()
+     */
+    public Set<Long> getAllModuleIds()
+    {
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = this.getAllPointToPointFlowProfiles();
+        return this.getModuleIdsFromProfiles(pointToPointFlowProfiles);
+    }
+
+    /**
+     * @see org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService#getModuleIds(Set)
+     */
+    public Set<Long> getModuleIds(Set<Long> pointToPointFlowProfileIds)
+    {
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = pointToPointFlowProfileDao.findPointToPointFlowProfiles(pointToPointFlowProfileIds);
+        return this.getModuleIdsFromProfiles(pointToPointFlowProfiles);
+    }
+
+    /**
+     * Helper method, retrieves Modules from the PointToPointFlowProfiles given
+     * 
+     * @param pointToPointFlowProfiles - PointToPointFlowProfiles to get Modules
+     *            from
+     * @return Set of Modules
+     */
+    private Set<Module> getModulesFromProfiles(Set<PointToPointFlowProfile> pointToPointFlowProfiles)
+    {
+        Set<Module> modules = new LinkedHashSet<Module>();
         for (PointToPointFlowProfile profile : pointToPointFlowProfiles)
         {
             for (PointToPointFlow pointToPointFlow : profile.getPointToPointFlows())
@@ -132,22 +239,38 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
                 Module fromModule = pointToPointFlow.getFromModule();
                 if (fromModule != null)
                 {
-                    if (fromModule.getName() != null)
-                    {
-                        moduleNames.add(fromModule.getName());
-                    }
+                    modules.add(fromModule);
                 }
                 Module toModule = pointToPointFlow.getToModule();
                 if (toModule != null)
                 {
-                    if (toModule.getName() != null)
-                    {
-                        moduleNames.add(toModule.getName());
-                    }
+                    modules.add(toModule);
                 }
             }
         }
-        return moduleNames;
+        return modules;
     }
-    
+
+    /**
+     * Helper method, retrieves Module ids from the PointToPointFlowProfiles
+     * given
+     * 
+     * @param pointToPointFlowProfiles - PointToPointFlowProfiles to get Module
+     *            ids from
+     * @return Set of Module ids
+     */
+    private Set<Long> getModuleIdsFromProfiles(Set<PointToPointFlowProfile> pointToPointFlowProfiles)
+    {
+        Set<Long> moduleIds = new LinkedHashSet<Long>();
+        Set<Module> modules = this.getModulesFromProfiles(pointToPointFlowProfiles);
+        for (Module module : modules)
+        {
+            if (module != null)
+            {
+                moduleIds.add(module.getId());
+            }
+        }
+        return moduleIds;
+    }
+
 }
