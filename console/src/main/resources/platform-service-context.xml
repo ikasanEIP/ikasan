@@ -55,15 +55,9 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="modulesList" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="location">
-            <value>classpath:modules.properties</value>
-        </property>
-    </bean>
-
     <!-- The console specific Module Service (gets a module list from a properties file) -->
-    <bean id="moduleService" class="org.ikasan.console.module.service.ModuleServiceImpl" >
-        <property name="modulesList" ref="modulesList" />
+    <bean id="moduleService" class="org.ikasan.console.module.service.ConsoleModuleService" >
+        <constructor-arg ref="moduleDao" />
     </bean> 
 
     <!-- The PointToPointFlowProfile Service -->
@@ -72,6 +66,7 @@
     </bean> 
     
     <!-- The Wiretap Service -->
+    <!-- TODO - might have a problem as we're not giving the wiretap service the module service it's expecting... -->
 	<bean id="wiretapService" class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
 		<constructor-arg ref="wiretapDao" />
 		<constructor-arg ref="moduleService" />
