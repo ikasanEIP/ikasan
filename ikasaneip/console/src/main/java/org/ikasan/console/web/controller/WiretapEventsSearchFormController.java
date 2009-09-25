@@ -119,8 +119,7 @@ public class WiretapEventsSearchFormController
     @ModelAttribute("modules")
     public Set<Module> getModules()
     {
-        // TODO - Do this through a separate modules service!!
-        Set<Module> modules = this.pointToPointFlowProfileService.getAllModules();
+        Set<Module> modules = this.moduleService.getAllModules();
         return modules;
     }
 
@@ -240,7 +239,7 @@ public class WiretapEventsSearchFormController
         PagedSearchResult<WiretapEvent> pagedResult = null;
         if (noErrors)
         {
-            Set<String> moduleNames = this.moduleService.getModuleNames();
+            Set<String> moduleNames = this.moduleService.getModuleNames(moduleIds);
             pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSize, orderByField, orderAscending, moduleNames, componentName, eventId, payloadId,
                 fromDate, untilDate, payloadContent);
         }

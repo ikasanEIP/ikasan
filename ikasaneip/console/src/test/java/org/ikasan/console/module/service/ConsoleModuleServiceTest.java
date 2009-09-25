@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -42,29 +42,27 @@ package org.ikasan.console.module.service;
 
 import java.util.Set;
 
+import org.ikasan.console.module.service.ConsoleModuleService;
 import org.ikasan.console.module.Module;
+import org.junit.Test;
+import org.junit.Assert;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * JUnit based test class for testing ConsoleModuleService
  * 
  * @author Ikasan Development Team
  */
-public interface ModuleService
+public class ConsoleModuleServiceTest
 {
-
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public Set<Module> getAllModules();
-
-    /**
-     * Returns <code>Module</code> Names given ids
-     * 
-     * @param moduleIds - modules to search for
-     * @return List of all accessible <code>Module</code> Names
-     */
-    public Set<String> getModuleNames(Set<Long> moduleIds);
+    /** The ConsoleModuleService we want to test */
+    private ModuleService consoleModuleService = new ConsoleModuleService(null);
     
+    /** Test that a 'successful' call of getModules() returns a not null list of 1 */
+    @Test
+    public void testGetAllModulesWithNullDao()
+    {
+        Set<Module> modules = this.consoleModuleService.getAllModules();
+        // Make sure there are no valid Modules in the list
+        Assert.assertNull(modules);
+    }
 }

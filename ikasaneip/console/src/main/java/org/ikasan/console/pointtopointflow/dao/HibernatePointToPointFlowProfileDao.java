@@ -51,21 +51,15 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 /**
  * Hibernate implementation of the <code>PointToPointFlowDao</code>
  * 
- * TODO Could make code more efficient
- * 
  * @author Ikasan Development Team
  */
 public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport implements PointToPointFlowProfileDao
 {
 
-    /** Query for finding all point to point flow profiles based on name */
+    /** Query for finding all point to point flow profiles based on id */
     private static final String POINT_TO_POINT_FLOW_PROFILES_BY_ID = "from PointToPointFlowProfile p where p.id in (:ids) order by name";
     
     /**
-     * Find all of the PointToPointFlowProfiles
-     * 
-     * @return List of PointToPointFlowProfiles
-     * 
      * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findAllPointToPointFlowProfiles()
      */
     @SuppressWarnings("unchecked")
@@ -77,10 +71,7 @@ public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport imp
     }
 
     /**
-     * Returns a list of PointToPointFlowProfiles given their ids
-     * 
-     * @param pointToPointFlowProfileIds - Ids to search on
-     * @return list of PointToPointFlowProfiles
+     * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findPointToPointFlowProfiles(Set)
      */
     public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds)
     {

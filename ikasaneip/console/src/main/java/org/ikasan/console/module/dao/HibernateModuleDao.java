@@ -1,8 +1,8 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
- * ====================================================================
+ * 
+ * =============================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,35 +36,48 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ * =============================================================================
  */
-package org.ikasan.console.module.service;
+package org.ikasan.console.module.dao;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.ikasan.console.module.Module;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * Hibernate implementation of the <code>ModuleDao</code>
  * 
  * @author Ikasan Development Team
  */
-public interface ModuleService
+public class HibernateModuleDao extends HibernateDaoSupport implements ModuleDao
 {
 
+    /** Query for finding all modules based on id */
+    private static final String MODULES_BY_ID = "from Module m where m.id in (:ids) order by name";
+    
     /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
+     * @see org.ikasan.console.module.dao.ModuleDao#findAllModules()
      */
-    public Set<Module> getAllModules();
+    @SuppressWarnings("unchecked")
+    public Set<Module> findAllModules()
+    {
+        Set<Module> modules = new LinkedHashSet<Module>();
+        modules.addAll(getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(Module.class).addOrder(Order.asc("name"))));
+        return modules;
+    }
 
     /**
-     * Returns <code>Module</code> Names given ids
-     * 
-     * @param moduleIds - modules to search for
-     * @return List of all accessible <code>Module</code> Names
+     * @see org.ikasan.console.module.dao.ModuleDao#findModules(Set)
      */
-    public Set<String> getModuleNames(Set<Long> moduleIds);
+    public Set<Module> findModules(Set<Long> modulesIds)
+    {
+        Set<Module> modules = new LinkedHashSet<Module>();
+        modules.addAll(getHibernateTemplate().findByNamedParam(MODULES_BY_ID, "ids", modulesIds));
+        return modules;
+    }
     
 }
