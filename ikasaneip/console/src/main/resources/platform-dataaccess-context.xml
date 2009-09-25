@@ -65,6 +65,11 @@
         <property name="sessionFactory" ref="pointToPointFlowProfileHibernateSessionFactory" />    
     </bean>
 
+    <!-- The moduleDao definition for the Ikasan console -->
+    <bean id="moduleDao" class="org.ikasan.console.module.dao.HibernateModuleDao">
+        <property name="sessionFactory" ref="moduleHibernateSessionFactory" />    
+    </bean>
+
     <!-- Session Factory for the wiretapDao -->
     <bean id="wiretapHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
@@ -85,10 +90,23 @@
             <list>
                 <value>PointToPointFlowProfile.hbm.xml</value>
                 <value>PointToPointFlow.hbm.xml</value>
-                <value>SimpleModule.hbm.xml</value>                
+                <value>Module.hbm.xml</value>                
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
+
+    <!-- Session Factory for the moduleDao -->
+    <bean id="moduleHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>Module.hbm.xml</value>                
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
 
 </beans>
