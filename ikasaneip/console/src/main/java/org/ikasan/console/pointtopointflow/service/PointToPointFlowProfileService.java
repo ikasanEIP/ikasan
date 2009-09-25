@@ -42,6 +42,7 @@ package org.ikasan.console.pointtopointflow.service;
 
 import java.util.Set;
 
+import org.ikasan.console.module.Module;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 
 /**
@@ -60,25 +61,32 @@ public interface PointToPointFlowProfileService
     public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles();
 
     /**
-     * Get a set of all of the names for all of the PointToPointFlowProfiles
+     * Get a set of all of the ids for all of the PointToPointFlowProfiles
      * 
-     * @return Set of all of the PointToPointFlowProfile names
+     * @return Set of all of the PointToPointFlowProfile ids
      */
-    public Set<String> getAllPointToPointFlowProfileNames();
+    public Set<Long> getAllPointToPointFlowProfileIds();
+
+    /**
+     * Get a set of all of the modules for all of the PointToPointFlowProfiles
+     * 
+     * @return Set of all of the modules
+     */
+    public Set<Module> getAllModules();
     
     /**
-     * Get a set of all of the module names for all of the PointToPointFlowProfile Names
+     * Get a set of all of the module ids for all of the PointToPointFlowProfiles
      * 
-     * @return Set of all of the module names
+     * @return Set of all of the module ids
      */
-    public Set<String> getAllModuleNames();
+    public Set<Long> getAllModuleIds();
     
     /**
-     * Get a set of all of the module names for the given PointToPointFlowProfile Names
+     * Get a set of all of the module ids for the given PointToPointFlowProfile Ids
      * 
-     * @param pointToPointFlowProfileNames - The point to point profile names to search on 
-     * @return Set of all of the module names
+     * @param pointToPointFlowProfileIds - The point to point profile ids to search on 
+     * @return Set of all of the module ids
      */
-    public Set<String> getModuleNames(Set<String> pointToPointFlowProfileNames);
+    public Set<Long> getModuleIds(Set<Long> pointToPointFlowProfileIds);
     
 }

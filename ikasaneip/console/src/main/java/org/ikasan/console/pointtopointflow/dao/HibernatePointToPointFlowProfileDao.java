@@ -40,9 +40,11 @@
  */
 package org.ikasan.console.pointtopointflow.dao;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
@@ -57,7 +59,7 @@ public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport imp
 {
 
     /** Query for finding all point to point flow profiles based on name */
-    private static final String POINT_TO_POINT_FLOW_PROFILES_BY_NAME = "from PointToPointFlowProfile p where p.name in (:names)";
+    private static final String POINT_TO_POINT_FLOW_PROFILES_BY_ID = "from PointToPointFlowProfile p where p.id in (:ids) order by name";
     
     /**
      * Find all of the PointToPointFlowProfiles
@@ -69,21 +71,21 @@ public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport imp
     @SuppressWarnings("unchecked")
     public Set<PointToPointFlowProfile> findAllPointToPointFlowProfiles()
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new HashSet<PointToPointFlowProfile>();
-        pointToPointFlowProfiles.addAll(getHibernateTemplate().loadAll(PointToPointFlowProfile.class));
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
+        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(PointToPointFlowProfile.class).addOrder(Order.asc("name"))));
         return pointToPointFlowProfiles;
     }
 
     /**
-     * Returns a list of PointToPointFlowProfiles given their names
+     * Returns a list of PointToPointFlowProfiles given their ids
      * 
-     * @param pointToPointFlowProfileNames - Names to search on
+     * @param pointToPointFlowProfileIds - Ids to search on
      * @return list of PointToPointFlowProfiles
      */
-    public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<String> pointToPointFlowProfileNames)
+    public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds)
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new HashSet<PointToPointFlowProfile>();
-        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByNamedParam(POINT_TO_POINT_FLOW_PROFILES_BY_NAME, "names", pointToPointFlowProfileNames));
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
+        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByNamedParam(POINT_TO_POINT_FLOW_PROFILES_BY_ID, "ids", pointToPointFlowProfileIds));
         return pointToPointFlowProfiles;
     }
     

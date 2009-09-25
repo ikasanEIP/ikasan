@@ -60,11 +60,11 @@ public interface PointToPointFlowProfileDao
     public Set<PointToPointFlowProfile> findAllPointToPointFlowProfiles();
 
     /**
-     * Get a list of all PointToPointFlowProfiles matching the Set of names passed in
+     * Get a list of all PointToPointFlowProfiles matching the Set of ids passed in
      * 
-     * @param pointToPointFlowProfileNames - Names of the point to point profiles 
+     * @param pointToPointFlowProfileIds - Ids of the point to point profiles 
      * @return A list of PointToPointFlowProfiles
      */
-    public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<String> pointToPointFlowProfileNames);
+    public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds);
 
 }
