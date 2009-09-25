@@ -48,20 +48,58 @@
   <script type="text/javascript" src="<c:url value='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
   <script type="text/javascript">
 
-      /* jquery date picker assistance */
+      /* 
+       * JQuery code
+       * 
+       * Isn't enabled unless the document is 'ready' (e.g. Loaded)
+       * # is how jquery references DOM elements by their id attribute
+       */
       $(document).ready(function()
       {
+        // Start the eventSearchModuleCheckboxes as hidden
+        $('#moduleCheckboxes').hide();
+      
+        // jquery date picker assistance      
         $("#fromDateString").datepicker({dateFormat: 'dd/mm/yy' });
         $("#untilDateString").datepicker({dateFormat: 'dd/mm/yy' });
         
-        $("#fromDateString").change(function() {
+        // If the fromDateString changes then set the fromTimeString to be a default value
+        $("#fromDateString").change(function(){
          $("#fromTimeString").val('00:00:00');
         });
-        
+
+        // If the untilDateString changes then set the untilTimeString to be a default value        
         $("#untilDateString").change(function() {
          $("#untilTimeString").val('00:00:00');
         });
+        
+        // Shows/hides the searchFields div on clicking the link with an ID of "showHideSearchForm"
+        $('a#showHideSearchForm').click(function() {
+            $('#searchFields').toggle(400);
+            return false;
+        });
+
+        // Shows/hides the eventSearchPointToPointFlowProfileCheckboxes and moduleFields divs 
+        // on clicking the link with an ID of "toggleSearchMode"
+        $('a#toggleSearchMode').click(function() {
+            $('#pointToPointFlowProfileCheckboxes').toggle(400);
+            $('#moduleCheckboxes').toggle(400);
+            return false;
+        });
+
       });
+
+
+      function showHideRow(id) {
+        $(document).ready(function(id) {
+          // shows/hides the row king the link with an ID of "showHideSearchForm"
+          $('a#${id}').click(function() {
+              $('#${id}').toggle(400);
+              return false;
+          });
+        });
+      }
+
 
     /* 
      * A function to check/uncheck all checkboxes in a form.
@@ -80,57 +118,16 @@
         }
     }
 
-    /* 
-     * A function to show/hide the search form section.
-     */
-    function showHideSearchForm() {
-        if (document.getElementById('searchForm').style.display == "")
-        {
-            document.getElementById('searchForm').style.display = "none";
-        }
-        else
-        {
-            document.getElementById('searchForm').style.display = "";
-        }
-    }
-
-    /* 
-     * A function to encode the data going down to the server.
-     */
-    function encodeSearch() {
-
-        for (var i=0; i < document.wiretapSearchForm.pointToPointFlowProfileNames.length; i++)
-        {
-            if (document.wiretapSearchForm.pointToPointFlowProfileNames[i].checked)
-                {
-                    document.wiretapSearchForm.pointToPointFlowProfileNames[i].value = escape(document.wiretapSearchForm.pointToPointFlowProfileNames[i].value); 
-                }
-            }
-        }
-        
-        document.wiretapSearchForm.submit();
-        /*
-        alert(document.getElementById("pointToPointFlowProfileNames").value);
-        document.getElementById("pointToPointFlowProfileNames").value = escape(document.getElementById("pointToPointFlowProfileNames").value);
-        alert(document.getElementById("pointToPointFlowProfileNames").value); 
-        document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value = escape(document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value);
-        alert(document.getElementById('wiretapSearchForm').pointToPointFlowProfileNames.value);
-        document.getElementById('wiretapSearchForm').submit();
-        */
-        // window.location = window.location + "?nickname=" + nickname + "&password=" + password;
-    }
-
   </script>
 
 <div class="middle">
-    <a href="javascript:showHideSearchForm()">Show/Hide Search Form</a>
-    <div id="searchForm">
-    <form method="get" id="wiretapSearchForm" name="wiretapSearchForm" action="javascript:encodeSearch()" class="dataform fancydataform">
-
+    <a id="showHideSearchForm" href="">Show/Hide Search Form</a>
+    <a id="toggleSearchMode" href="">Toggle Flows vs Modules Search</a>
+    <form method="get" id="wiretapSearchForm" name="wiretapSearchForm" action="" class="dataform fancydataform">
+        <div id="searchFields">
         <c:if test="${errors != ''}">
-            <!-- The list of errors -->
             <c:forEach items="${errors}" var="error">
-                <span class="errorMessages"><c:out value="${error}" /></span><br>
+                <span class="errorMessages"><c:out value="${error}" /></span><br />
             </c:forEach>
         </c:if>
 
@@ -138,10 +135,10 @@
         <fieldset>
             <legend><fmt:message key="wiretap_events_search"/></legend>
             <ol>
-                <li>
+                <li id="pointToPointFlowProfileCheckboxes">
                     <label for="pointToPointFlowProfiles"><fmt:message key="wiretap_events_pointToPointFlowProfile"/></label>
                     
-                    <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
+                    <input type="checkbox" id="selectAll" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
 
                     <!-- PointToPointProfile Checkboxes -->
                     <div id="eventSearchPointToPointFlowProfileCheckboxes" class="multiSelectCheckboxes">            
@@ -155,19 +152,26 @@
                                 <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
                                     <tr>
                                         <td class="border" valign="top">
-                                            <c:out value="${pointToPointFlowProfile.name}" /> :: 
-                                            <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName">
-                                                <c:out value="${pointToPointFlowProfileName}" />
-                                            </c:forEach>
+                                            <input id="pointToPointFlowProfileIds" name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /> <a href="javascript:showHideRow('<c:out value="${pointToPointFlowProfile.id}"/>')" id="<c:out value="${pointToPointFlowProfile.id}"/>"><c:out value="${pointToPointFlowProfile.name}"/></a>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="border" valign="top"><input id="pointToPointFlowProfileNames" name="pointToPointFlowProfileNames" type="checkbox" value="${pointToPointFlowProfile.name}" <c:forEach items="${searchParams['pointToPointFlowProfileNames']}" var="pointToPointFlowProfileName"><c:if test="${pointToPointFlowProfile.name == pointToPointFlowProfileName}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border" valign="top" style="font-size : 8px;">
-                                            <c:forEach items="${pointToPointFlowProfile.pointToPointFlows}" var="pointToPointFlow">                                    
-                                                <c:out value="${pointToPointFlow.fromModule.name}" /> --&gt; <c:out value="${pointToPointFlow.toModule.name}" />
+                                        <td name="<c:out value="${pointToPointFlowProfile.name}"/>" id="<c:out value="${pointToPointFlowProfile.name}"/>" class="border" valign="top" style="font-size : 8px;">
+                                            <c:forEach items="${pointToPointFlowProfile.pointToPointFlows}" var="pointToPointFlow">
+                                                <%-- If its the first element is null then list the 2nd item --%>
+                                                <c:if test="${pointToPointFlow.fromModule == null}">
+                                                    <c:if test="${pointToPointFlow.toModule != null}">
+                                                        <c:out value="${pointToPointFlow.toModule.name}" />
+                                                    </c:if>
+                                                </c:if>
+                                                <%-- If the first element is not null and the 2nd element is not null then list the 2nd item (prefixed with an arrow) --%>
+                                                <c:if test="${pointToPointFlow.fromModule != null}">
+                                                    <%-- If its the middle item then list its 2nd element --%>
+                                                    <c:if test="${pointToPointFlow.toModule != null}">
+                                                        --&gt; <c:out value="${pointToPointFlow.toModule.name}" />
+                                                    </c:if>
+                                                </c:if>
+                                                <%-- We don't care about other uses cases for display purposes --%>
                                             </c:forEach>
                                         </td>
                                     </tr>
@@ -177,8 +181,7 @@
                     </div>
                 </li>
 
-                <!--
-                <li>
+                <li id="moduleCheckboxes">
                     <label for="modules"><fmt:message key="wiretap_events_module"/></label>
                     <input type="checkbox" name="selectAll" <c:if test="${selectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
                     <div id="eventSearchModuleCheckboxes" class="multiSelectCheckboxes">            
@@ -186,13 +189,13 @@
                         <thead>
                             <tr>
                                 <td><fmt:message key="wiretap_event_module_name"/></td>
-                                <td><fmt:message key="wiretap_event_module_position_in_flows"/></td>
+                                <td><fmt:message key="wiretap_event_module_description"/></td>
                             </tr>
                         <thead>
                         <tbody>
                             <c:forEach items="${modules}" var="module">
                                 <tr>
-                                    <td class="border" valign="top"><input name="moduleNames" type="checkbox" value="${module.name}" <c:forEach items="${searchParams['moduleNames']}" var="moduleName"><c:if test="${module.name == moduleName}">checked="checked"</c:if></c:forEach> /> <c:out value="${module.name}"/></td>
+                                    <td class="border" valign="top"><input name="moduleIds" type="checkbox" value="${module.id}" <c:forEach items="${searchParams['moduleIds']}" var="moduleId"><c:if test="${module.id == moduleId}">checked="checked"</c:if></c:forEach> /> <c:out value="${module.name}"/></td>
                                     <td class="border" valign="top"><c:out value="${module.description}" escapeXml="false" /></td>
                                 </tr>
                             </c:forEach>
@@ -200,7 +203,7 @@
                     </table>
                     </div>
                 </li>
-                -->
+
                 <li>
                     <label for="componentName"><fmt:message key="wiretap_events_component"/></label>
                     <input id="componentName" type="text" name="componentName" value="${searchParams["componentName"]}"/>
@@ -246,11 +249,12 @@
         <p>
             <input type="submit" value="Search for Events" class="controlButton"/>
         </p>
-    </form>
-    </div>
-
-    <%@ include file="/WEB-INF/jsp/pagedResultsHeader.jsp"%>
     
+        </div>
+        <%@ include file="/WEB-INF/jsp/pagedResultsHeader.jsp"%>
+    
+    </form>
+
     <c:url var="idLink" value="list.htm">
         <c:forEach var="entry" items="${searchParams}">
             <c:forEach var="entryValue" items="${entry.value}">

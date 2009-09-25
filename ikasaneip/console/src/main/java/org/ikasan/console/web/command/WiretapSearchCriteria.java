@@ -71,36 +71,11 @@ public class WiretapSearchCriteria implements Serializable
     private Logger logger = Logger.getLogger(WiretapSearchCriteria.class);
 
     /**
-     * Constructor
-     * 
-     * @param moduleNames - Set of module names (will ensure that check boxes
-     *            are pre-checked)
-     */
-    public WiretapSearchCriteria(Set<String> moduleNames)
-    {
-        this.ddMMyyyyFormat = new SimpleDateFormat("dd/MM/yyyy");
-        this.ddMMyyyyFormat.setLenient(false);
-        this.HHmmss = new SimpleDateFormat("HH:mm:ss");
-        this.HHmmss.setLenient(false);
-        this.modules = moduleNames;
-    }
-
-    /**
-     * Get the serial uid
-     * 
-     * @return serial uid
-     */
-    public static long getSerialVersionUID()
-    {
-        return serialVersionUID;
-    }
-
-    /**
      * Set of names of modules whose wiretapped events to include
      * 
      * Note that this must be non empty
      */
-    private Set<String> modules;
+    private Set<Long> modules;
 
     /** Name of component to restrict by */
     private String componentName;
@@ -125,6 +100,31 @@ public class WiretapSearchCriteria implements Serializable
 
     /** To time to search on */
     private String untilTime;
+    
+    /**
+     * Constructor
+     * 
+     * @param moduleIds - Set of module ids (will ensure that check boxes
+     *            are pre-checked)
+     */
+    public WiretapSearchCriteria(Set<Long> moduleIds)
+    {
+        this.ddMMyyyyFormat = new SimpleDateFormat("dd/MM/yyyy");
+        this.ddMMyyyyFormat.setLenient(false);
+        this.HHmmss = new SimpleDateFormat("HH:mm:ss");
+        this.HHmmss.setLenient(false);
+        this.modules = moduleIds;
+    }
+
+    /**
+     * Get the serial uid
+     * 
+     * @return serial uid
+     */
+    public static long getSerialVersionUID()
+    {
+        return serialVersionUID;
+    }
 
     /**
      * Get the component name
@@ -211,7 +211,7 @@ public class WiretapSearchCriteria implements Serializable
      * 
      * @return set of modules
      */
-    public Set<String> getModules()
+    public Set<Long> getModules()
     {
         return this.modules;
     }
@@ -221,7 +221,7 @@ public class WiretapSearchCriteria implements Serializable
      * 
      * @param modules - Set of modules to set
      */
-    public void setModules(Set<String> modules)
+    public void setModules(Set<Long> modules)
     {
         this.modules = modules;
     }

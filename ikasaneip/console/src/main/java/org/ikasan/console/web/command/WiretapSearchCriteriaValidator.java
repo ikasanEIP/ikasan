@@ -96,7 +96,7 @@ public class WiretapSearchCriteriaValidator implements Validator
         WiretapSearchCriteria wiretapSearchCriteria = (WiretapSearchCriteria) object;
         
         // Validate the modules (need to select at least one)
-        Set<String> modules = wiretapSearchCriteria.getModules();
+        Set<Long> modules = wiretapSearchCriteria.getModules();
         if (modules == null || modules.isEmpty())
         {
             errors.add("You need to select at least one module");

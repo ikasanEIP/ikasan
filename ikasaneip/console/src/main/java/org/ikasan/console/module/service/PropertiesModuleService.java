@@ -53,14 +53,14 @@ import org.ikasan.framework.module.service.ModuleService;
  * 
  * @author Ikasan Development Team
  */
-public class ModuleServiceImpl implements ModuleService
+public class PropertiesModuleService implements ModuleService
 {
 
     /** List of modules names and their descriptions */
     Properties modulesList;
     
     /** Constructor */
-    public ModuleServiceImpl()
+    public PropertiesModuleService()
     {
         // Do Nothing
     }
