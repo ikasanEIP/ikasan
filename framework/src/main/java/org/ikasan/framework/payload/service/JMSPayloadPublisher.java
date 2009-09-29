@@ -54,12 +54,9 @@ import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.PayloadOperationException;
-import org.ikasan.common.factory.JMSMessageFactory;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
-import org.ikasan.framework.plugins.JMSEventPublisherPlugin;
-import org.ikasan.framework.plugins.invoker.PluginInvocationException;
+import org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser;
 
 /**
  * Publishes a <code>Payload</code> to a JMS {@link Destination} either as a
@@ -71,7 +68,7 @@ import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 public class JMSPayloadPublisher implements PayloadPublisher
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(JMSEventPublisherPlugin.class);
+    private static Logger logger = Logger.getLogger(JMSPayloadPublisher.class);
 
     /** JMS destination topic or queue */
     private Destination destination;
@@ -83,7 +80,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
     private IkasanSecurityConf ikasanSecurityConf;
 
     /** Converter to a <code>javax.jms.Message</code> */
-    private JMSMessageFactory jmsMessageFactory;
+    private JmsMessagePayloadSerialiser<? extends Message> jmsMessagePayloadSerialiser;
     
     /** JMS destination factory to use if destination not directly supplied */
     private JndiDestinationFactory jndiDestinationFactory;
@@ -94,8 +91,6 @@ public class JMSPayloadPublisher implements PayloadPublisher
     /** JMS Message Priority */
     private Integer priority;
 
-    /** Flag for publishing {@link TextMessage} */
-    private boolean textMessage = false;
 
     /**
      * Set the time to live
@@ -117,31 +112,23 @@ public class JMSPayloadPublisher implements PayloadPublisher
         this.priority = priority;
     }
 
-    /**
-     * Set whether to publish a {@link TextMessage} or a {@link MapMessage}.
-     * 
-     * @param textMessage the boolean flag to set.
-     */
-    public void setTextMessage(boolean textMessage)
-    {
-        this.textMessage = textMessage;
-    }
+
 
     /**
      * Constructor
      * 
      * @param destination The destination for the message
      * @param connectionFactory The connection factory
-     * @param jmsMessageFactory The JMS message serializer
+     * @param jmsMessagePayloadSerialiser The JMS message serializer
      * @param ikasanSecurityConf THe security configuration
      */
-    public JMSPayloadPublisher(Destination destination, ConnectionFactory connectionFactory, JMSMessageFactory jmsMessageFactory,
+    public JMSPayloadPublisher(Destination destination, ConnectionFactory connectionFactory, JmsMessagePayloadSerialiser<? extends Message> jmsMessagePayloadSerialiser,
             IkasanSecurityConf ikasanSecurityConf)
     {
         super();
         this.destination = destination;
         this.connectionFactory = connectionFactory;
-        this.jmsMessageFactory = jmsMessageFactory;
+        this.jmsMessagePayloadSerialiser = jmsMessagePayloadSerialiser;
         this.ikasanSecurityConf = ikasanSecurityConf;
     }
 
@@ -150,16 +137,16 @@ public class JMSPayloadPublisher implements PayloadPublisher
      * 
      * @param jndiDestinationFactory used for looking up the destination on demand
      * @param connectionFactory The connection factory
-     * @param jmsMessageFactory The JMS message serializer
+     * @param jmsMessagePayloadSerialiser The JMS message serializer
      * @param ikasanSecurityConf THe security configuration
      */
-    public JMSPayloadPublisher(JndiDestinationFactory jndiDestinationFactory, ConnectionFactory connectionFactory, JMSMessageFactory jmsMessageFactory,
+    public JMSPayloadPublisher(JndiDestinationFactory jndiDestinationFactory, ConnectionFactory connectionFactory, JmsMessagePayloadSerialiser<? extends Message> jmsMessagePayloadSerialiser,
             IkasanSecurityConf ikasanSecurityConf)
     {
         super();
         this.jndiDestinationFactory = jndiDestinationFactory;
         this.connectionFactory = connectionFactory;
-        this.jmsMessageFactory = jmsMessageFactory;
+        this.jmsMessagePayloadSerialiser = jmsMessagePayloadSerialiser;
         this.ikasanSecurityConf = ikasanSecurityConf;
     }
     
@@ -180,15 +167,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
         {
             connection = createConnection();
             Session session = connection.createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
-            Message message;
-            if (this.textMessage)
-            {
-                message = this.jmsMessageFactory.payloadToTextMessage(payload, session);
-            }
-            else
-            {
-                message = this.jmsMessageFactory.payloadToMapMessage(payload, session);
-            }
+            Message message = jmsMessagePayloadSerialiser.toMessage(payload, session);
             MessageProducer messageProducer = session.createProducer(thisDestination);
             if (timeToLive != null)
             {
@@ -204,10 +183,6 @@ public class JMSPayloadPublisher implements PayloadPublisher
         catch (JMSException e)
         {
             throw new ResourceException("JMS Exception caught whilst publishing", e);
-        }
-        catch (PayloadOperationException e)
-        {
-            throw new ResourceException("EventSerialisationException caught whilst creating Message", e);
         }
         finally
         {

@@ -42,7 +42,6 @@ package org.ikasan.framework.exception;
 
 import java.io.Serializable;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
 
 /**

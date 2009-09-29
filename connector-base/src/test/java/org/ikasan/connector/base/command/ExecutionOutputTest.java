@@ -47,8 +47,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import org.ikasan.connector.base.command.ExecutionOutput;
-
 /**
  * Test the ExecutionOutput class
  * 

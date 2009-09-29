@@ -1,8 +1,8 @@
 /*
- * $Id$
- * $URL$
+ * $Id: 
+ * $URL:
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,44 +36,23 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
+
 package org.ikasan.common;
 
-import java.util.List;
-
 /**
- * Envelope providing the generic facade for all data to be moved around in an encapsulated object.
+ * A set of constant <code>Payload</code> attribute names that are relevent to File based <code>Paylaod</code>s
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface Envelope extends MetaDataInterface
-{
-    /** Primary payload is always at the first position in any Payload List */
-    public static final int PRIMARY_PAYLOAD = 0;
+public class FilePayloadAttributeNames {
 
-    /** Root name of the envelope */
-    public static final String ENVELOPE_ROOT_NAME = "envelope"; //$NON-NLS-1$
-
-    /**
-     * Setter for envelope payloads
-     * 
-     * @param payloads payloads to set
-     */
-    public void setPayloads(List<Payload> payloads);
-
-    /**
-     * Getter for envelope payloads
-     * 
-     * @return payloads
-     */
-    public List<Payload> getPayloads();
-
-    /**
-     * Test the equality of two envelope instances
-     * 
-     * @param envelope Envelope to test against
-     * @return boolean
-     */
-    public boolean equals(Envelope envelope);
+	/**
+	 * Private constructor prevents instantiation
+	 */
+	private FilePayloadAttributeNames(){}
+	
+	public static final String FILE_NAME = "fileName";
 }

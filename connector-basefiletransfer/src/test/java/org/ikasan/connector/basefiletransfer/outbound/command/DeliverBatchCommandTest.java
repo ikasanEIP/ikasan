@@ -53,10 +53,6 @@ import junit.framework.TestCase;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.XidImpl;
@@ -69,10 +65,12 @@ import org.ikasan.connector.basefiletransfer.net.ClientCommandRenameException;
 import org.ikasan.connector.basefiletransfer.net.ClientException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
-import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.BatchedFileProvider;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.FileHandle;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UniqueIdGenerator;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 
 /**
  * Tests the function of the DeliverBatchCommand

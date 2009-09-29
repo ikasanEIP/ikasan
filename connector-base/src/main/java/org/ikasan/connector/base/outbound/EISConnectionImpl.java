@@ -40,7 +40,8 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.*; 
+import javax.resource.NotSupportedException;
+import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionMetaData;
 import javax.resource.cci.Interaction;
 import javax.resource.cci.LocalTransaction;
@@ -48,7 +49,6 @@ import javax.resource.cci.ResultSetInfo;
 import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.base.ConnectionState;
 
 /**

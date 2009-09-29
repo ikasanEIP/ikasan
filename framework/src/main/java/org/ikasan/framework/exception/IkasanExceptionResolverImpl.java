@@ -44,12 +44,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.ikasan.common.CommonException;
 import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.ExceptionType;
-
-// Imported log4j classes
-import org.apache.log4j.Logger;
 
 /**
  * Concrete implementation of the Ikasan Exception Resolver. This class resolves the thrown exception to an associated

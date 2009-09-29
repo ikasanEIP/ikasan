@@ -40,8 +40,8 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.CommonExceptionType;
+import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.ExceptionType;
 
 /**

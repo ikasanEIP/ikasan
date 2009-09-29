@@ -43,12 +43,10 @@ package org.ikasan.common.xml.transform;
 // Imported java classes
 import java.util.HashMap;
 
-// Imported TraX classes
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
 
 /**

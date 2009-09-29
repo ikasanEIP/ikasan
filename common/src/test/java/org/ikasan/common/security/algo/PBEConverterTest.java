@@ -44,8 +44,6 @@ package org.ikasan.common.security.algo;
 import junit.framework.JUnit4TestAdapter;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.security.algo.Algorithm;
-import org.ikasan.common.security.algo.PBE;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

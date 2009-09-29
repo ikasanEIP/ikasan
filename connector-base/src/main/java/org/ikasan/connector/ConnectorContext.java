@@ -41,7 +41,6 @@
 package org.ikasan.connector;
 
 import org.ikasan.common.CommonContext;
-import org.ikasan.connector.ResourceLoader;
 
 /**
  * This interface defines the connector context methods to allow support

@@ -55,7 +55,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.ikasan.common.util.checksum.DigestChecksum;
 import org.ikasan.common.util.checksum.Md5Checksum;
-
 import org.ikasan.connector.ConnectorContext;
 import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.util.chunking.model.FileChunk;

@@ -42,7 +42,6 @@ package org.ikasan.framework.component;
 
 // Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.CommonExceptionType;
 import org.ikasan.common.ExceptionType;
 import org.ikasan.framework.FrameworkException;

@@ -44,9 +44,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ikasan.common.configuration.Entry;
 import org.ikasan.common.configuration.Ikasan;
 import org.ikasan.common.util.ResourceUtils;
-import org.ikasan.common.configuration.Entry;
 
 /**
  * Singleton for loading the base Ikasan runtime environment configuration.

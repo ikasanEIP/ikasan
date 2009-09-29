@@ -40,16 +40,26 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.*;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.resource.NotSupportedException;
+import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
-import javax.resource.spi.*;
-import javax.security.auth.*;
+import javax.resource.spi.ConnectionEvent;
+import javax.resource.spi.ConnectionEventListener;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.LocalTransaction;
+import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ManagedConnectionMetaData;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
-import java.util.*;
-import java.io.*;
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.base.ConnectionState;
 
 /**

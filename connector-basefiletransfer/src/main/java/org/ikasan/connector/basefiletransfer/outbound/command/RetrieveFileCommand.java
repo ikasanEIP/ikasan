@@ -43,6 +43,7 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 import java.io.File;
 
 import javax.resource.ResourceException;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.ikasan.connector.base.command.ExecutionContext;

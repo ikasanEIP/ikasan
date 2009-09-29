@@ -48,9 +48,8 @@ import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
-import org.ikasan.framework.payload.service.PayloadInputStreamAcquirer;
-import org.ikasan.framework.payload.service.PayloadPublisher;
 
 /**
  * <code>PayloadPublisher</code> implementation that delivers a <code>Payload</code> referenced <code>InputStream</code>
@@ -110,7 +109,7 @@ public class FileTransferInputStreamPayloadPublisher implements PayloadPublisher
         try
         {
             InputStream inputStream = payloadInputStreamProvider.acquireInputStream(payload);
-            fileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getName(), outputDir, overwrite,
+            fileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), outputDir, overwrite,
                 renameExtension, checksumDelivered, unzip);
         }
         catch (IOException e)

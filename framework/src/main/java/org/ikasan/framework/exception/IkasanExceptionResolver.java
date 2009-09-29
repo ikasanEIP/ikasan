@@ -40,7 +40,6 @@
  */
 package org.ikasan.framework.exception;
 
-import org.ikasan.framework.exception.IkasanExceptionResolutionNotFoundException;
 
 /**
  * Ikasan Exception Resolver interface provides the defined operations in the context of resolving as Ikasan runtime

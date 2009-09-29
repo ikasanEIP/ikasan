@@ -41,6 +41,7 @@
 package org.ikasan.framework.event.service;
 
 import javax.resource.ResourceException;
+
 import org.ikasan.framework.component.Event;
 
 /**

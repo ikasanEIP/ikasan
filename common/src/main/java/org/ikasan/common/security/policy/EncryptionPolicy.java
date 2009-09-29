@@ -44,11 +44,10 @@ import org.apache.log4j.Logger;
 import org.ikasan.common.security.algo.Algorithm;
 import org.ikasan.common.security.algo.AlgorithmConverter;
 
-// Imported XStream classes
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * This class represents the '<code>Policy</code>'.
