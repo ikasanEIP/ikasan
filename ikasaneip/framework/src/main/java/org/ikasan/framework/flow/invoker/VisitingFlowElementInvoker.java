@@ -180,7 +180,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         IkasanExceptionAction result = null;
         try
         {
-            List<Event> events = sequencer.onEvent(event);
+            List<Event> events = sequencer.onEvent(event, moduleName, flowElement.getComponentName());
             if (events!=null){
                 notifyListenersAfterSequencerElement(events, moduleName, flowName, flowElement);
             }

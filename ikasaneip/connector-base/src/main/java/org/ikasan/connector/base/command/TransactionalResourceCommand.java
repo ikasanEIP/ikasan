@@ -43,9 +43,8 @@ package org.ikasan.connector.base.command;
 import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
-import org.springframework.beans.factory.BeanFactory;
-
 import org.ikasan.connector.base.journal.TransactionJournal;
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * An implementation of the Command Pattern to encapsulate a single interaction

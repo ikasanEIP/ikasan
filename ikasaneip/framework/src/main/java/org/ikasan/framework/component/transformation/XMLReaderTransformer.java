@@ -53,7 +53,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -148,7 +147,6 @@ public class XMLReaderTransformer implements Transformer
             byte[] transformedData = transformedDataStream.toByteArray();
             logger.debug("setting payload content [" + new String(transformedData) + "]");
             payload.setContent(transformedData);
-            payload.setSpec(Spec.TEXT_XML.toString());
             logger.debug(new String(transformedData));
         }
     }

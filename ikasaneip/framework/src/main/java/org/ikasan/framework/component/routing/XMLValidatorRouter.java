@@ -53,7 +53,6 @@ import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.ExceptionThrowingErrorHandler;
-import org.ikasan.framework.component.transformation.XMLValidator;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
@@ -66,7 +65,7 @@ import org.xml.sax.SAXException;
 public class XMLValidatorRouter extends SingleResultRouter
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(XMLValidator.class);
+    private static Logger logger = Logger.getLogger(XMLValidatorRouter.class);
 
     /** Result where xml is valid */
     private static final String XML_VALID = "valid";
@@ -105,7 +104,7 @@ public class XMLValidatorRouter extends SingleResultRouter
             {
                 if (logger.isDebugEnabled())
                 {
-                    logger.debug(payload.idToString());
+                    logger.debug("Payload ["+payload.getId()+"]");
                 }
                 DocumentBuilder builder = this.factory.newDocumentBuilder();
                 builder.setErrorHandler(this.errorHandler);
@@ -116,17 +115,14 @@ public class XMLValidatorRouter extends SingleResultRouter
         }
         catch (SAXException e)
         {
-            event.setException(e);
             result = XML_INVALID;
         }
         catch (IOException e)
         {
-            event.setException(e);
             result = XML_INVALID;
         }
         catch (ParserConfigurationException e)
         {
-            event.setException(e);
             result = XML_INVALID;
         }
         if (result == null)

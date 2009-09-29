@@ -42,6 +42,7 @@ package org.ikasan.common.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.XMLConstants;
 
 import org.apache.log4j.Logger;

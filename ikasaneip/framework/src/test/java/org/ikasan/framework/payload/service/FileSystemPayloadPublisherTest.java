@@ -50,6 +50,7 @@ import javax.resource.ResourceException;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -164,7 +165,7 @@ public class FileSystemPayloadPublisherTest extends TestCase
                 will(returnValue("1"));
                 allowing(payload).getContent();
                 will(returnValue(payloadContent));
-                allowing(payload).getName();
+                allowing(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
                 will(returnValue(FILE_NAME));
             }
         });

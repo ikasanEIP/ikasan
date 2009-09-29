@@ -69,11 +69,13 @@ public class TokenizingSplitter implements Sequencer
 
     /** Encoding */
     private String encoding;
+    
 
     /**
      * Constructor
      * 
      * @param delimiterRegex A regular expression to delimit the incoming event on.
+     * @param payloadFactory factory for Payloads
      */
     public TokenizingSplitter(final String delimiterRegex)
     {
@@ -105,7 +107,7 @@ public class TokenizingSplitter implements Sequencer
      * @throws SequencerException Wrapper for CloneNotSupportedException thrown when cloning <code>Event</code>/
      *             <code>Payload</code>
      */
-    public List<Event> onEvent(Event event) throws SequencerException
+    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
     {
         List<Event> returnedEvents = new ArrayList<Event>();
         // TODO - we may need to pop the parent id on each of the spawned events.
@@ -123,12 +125,12 @@ public class TokenizingSplitter implements Sequencer
             {
                 // Get the tokenized list
                 List<Payload> newPayloads = tokenizeToPayloads(payload);
-                for (Payload newPayload : newPayloads)
+                for (int i=0;i<newPayloads.size();i++)
                 {
                     // Create new independent event and clear existing payloads
-                    Event newEvent = event.spawn();
-                    newEvent.getPayloads().clear();
-                    newEvent.setPayload(newPayload);
+                	Payload newPayload = newPayloads.get(i);
+                    Event newEvent = event.spawnChild(moduleName, componentName, i, newPayload);
+
                     // Event to the Event list to be returned
                     returnedEvents.add(newEvent);
                     if (logger.isInfoEnabled())
@@ -192,19 +194,20 @@ public class TokenizingSplitter implements Sequencer
             newPayloads.add(payload);
             return newPayloads;
         }
+        int tokenCount = 0;
         for (String token : tokens)
         {
             if (logger.isDebugEnabled())
             {
                 logger.debug("Creating payload for token [" + token + "]");
             }
-            Payload newPayload = payload.spawn();
-            newPayload.setContent(token.getBytes());
+            Payload newPayload = payload.spawnChild(tokenCount);
             newPayloads.add(newPayload);
             if (logger.isDebugEnabled())
             {
                 logger.debug("Payload id [" + payload.getId() + "] split to payload id [" + newPayload.getId() + "]");
             }
+            tokenCount++;
         }
         if (logger.isDebugEnabled())
         {

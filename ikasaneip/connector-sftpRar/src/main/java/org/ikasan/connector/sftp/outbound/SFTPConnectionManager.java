@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
-import org.ikasan.connector.base.outbound.*;
+import org.ikasan.connector.base.outbound.EISConnectionManager;
 
 /**
  * This class implements a default connection manager for the SFTP resource

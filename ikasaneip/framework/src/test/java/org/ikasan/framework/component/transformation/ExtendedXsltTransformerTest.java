@@ -56,9 +56,7 @@ import javax.xml.transform.TransformerFactory;
 import junit.framework.Assert;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -152,7 +150,6 @@ public class ExtendedXsltTransformerTest
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
         ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null, xmlReader);
@@ -244,7 +241,6 @@ public class ExtendedXsltTransformerTest
                 one(payload).getContent();
                 will(returnValue("content".getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
         ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null);

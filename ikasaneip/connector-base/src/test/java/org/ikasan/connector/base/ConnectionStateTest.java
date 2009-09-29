@@ -40,10 +40,13 @@
  */
 package org.ikasan.connector.base;
 
-import org.apache.log4j.Logger;
-import org.junit.*;
-
 import junit.framework.JUnit4TestAdapter;
+
+import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Connector State Test Class

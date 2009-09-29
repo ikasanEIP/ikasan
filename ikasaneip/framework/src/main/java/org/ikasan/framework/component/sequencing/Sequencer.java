@@ -59,8 +59,10 @@ public interface Sequencer extends FlowComponent
      * Returns an ordered List<Event> for forwarding downstream
      * 
      * @param event The event to perform sequencing on
+     * @param componentName 
+     * @param moduleName 
      * @return List<Event> for forwarding downstream in order
      * @throws SequencerException Exception if we could not sequence
      */
-    public List<Event> onEvent(Event event) throws SequencerException;
+    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException;
 }

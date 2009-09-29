@@ -1,6 +1,6 @@
 /*
- * $Id$
- * $URL$
+ * $Id: 
+ * $URL:
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -40,10 +40,12 @@
  */
 package org.ikasan.framework.component.routing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -53,19 +55,19 @@ import org.junit.Test;
 
 
 /**
- * Unit test class for EventNameRouter
+ * Unit test class for FirstPayloadAttributeRouterTest
  * 
  * @author Ikasan Development Team
  *
  */
-public class EventNameRouterTest
+public class FirstPayloadAttributeRouterTest
 {
 
     
     /**
      * Mockery for mocking concrete classes
      */
-    private Mockery classMockery = new Mockery()
+    private Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
@@ -75,8 +77,74 @@ public class EventNameRouterTest
     /**
      * Mocked Event
      */
-    final Event event = this.classMockery.mock(Event.class);
+    final Event event = this.mockery.mock(Event.class);
 
+    /**
+     * Mocked Payload
+     */
+    final Payload firstPayload = mockery.mock(Payload.class);
+    
+    /**
+     * Event's payloads
+     */
+    final List<Payload> payloads;
+    
+    /**
+     * Constructor
+     */
+    public FirstPayloadAttributeRouterTest(){
+    	payloads = new ArrayList<Payload>();
+    	payloads.add(firstPayload);
+    }
+
+    
+    /**
+     * tests that the constructor throws an illegal argument exception if the attributeName is null
+     * 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void testConstructorWillThrowIllegalArgumentExceptionForNullAttributeName(){
+        new FirstPayloadAttributeRouter(null, null, true);
+    }
+    
+    /**
+     * tests that the constructor throws an illegal argument exception if the attributeName is empty
+     * 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void testConstructorWillThrowIllegalArgumentExceptionForEmptyAttributeName(){
+        new FirstPayloadAttributeRouter("", null, true);
+    }
+    
+    
+    
+    /**
+     * tests the case when the attribute value is null
+     * 
+     * @throws RouterException
+     */
+    @Test
+    public void testEvaluate_withNullAttributeValueReturnsDefaultWhenConfiguredToDoSo() throws RouterException
+    {
+    	
+    	final String attributeName = "attributeName";
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(event).getPayloads();will(returnValue(payloads));
+                one(firstPayload).getAttribute(attributeName);
+                will(returnValue(null));
+                
+                allowing(event).idToString();will(returnValue("idString"));
+            }
+        });
+        
+        FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, null, true);
+        final List<String> result = eventNameRouter.onEvent(event);
+        Assert.assertEquals("Result should be of size 1", 1, result.size());
+        Assert.assertEquals("evaluator should return its default when it cannot match the event name", Router.DEFAULT_RESULT, result.get(0)); 
+    }
+    
     /**
      * tests the case when there is no match to a configured value
      * 
@@ -86,17 +154,20 @@ public class EventNameRouterTest
     @Test
     public void testEvaluate_withUnmatchedEventNameReturnsDefaultWhenConfiguredToDoSo() throws RouterException
     {
-        this.classMockery.checking(new Expectations()
-        {
+
+        final String attributeName = "attributeName";
+           this.mockery.checking(new Expectations()
             {
-                one(event).getName();
+                {
+                one(event).getPayloads();will(returnValue(payloads));
+                one(firstPayload).getAttribute(attributeName);
                 will(returnValue("unknown"));
                 
                 allowing(event).idToString();will(returnValue("idString"));
             }
         });
         
-        EventNameRouter eventNameRouter = new EventNameRouter(null, true);
+        FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, null, true);
         final List<String> result = eventNameRouter.onEvent(event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("evaluator should return its default when it cannot match the event name", Router.DEFAULT_RESULT, result.get(0)); 
@@ -109,15 +180,17 @@ public class EventNameRouterTest
     @SuppressWarnings("unqualified-field-access")//cannot qualify field from with an anonymous class
     public void testEvaluate_withUnmatchedEventNameWhenNotConfiguredToReturnDefault()
     {
-        this.classMockery.checking(new Expectations()
+    	final String attributeName = "attributeName";
+        this.mockery.checking(new Expectations()
         {
             {
-                one(event).getName(); will(returnValue("unknown"));
+                one(event).getPayloads();will(returnValue(payloads));
+                one(firstPayload).getAttribute(attributeName); will(returnValue("unknown"));
                 allowing(event).idToString(); will(returnValue("idString"));
             }
         });
 
-        EventNameRouter eventNameRouter = new EventNameRouter(null, false);
+        FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, null, false);
         RouterException routerException = null;
         try
         {
@@ -148,17 +221,19 @@ public class EventNameRouterTest
         
         eventNamesToResults.put(knownEventName, knownEventResult);
         
-        this.classMockery.checking(new Expectations()
+    	final String attributeName = "attributeName";
+        this.mockery.checking(new Expectations()
         {
             {
-                one(event).getName();
+                one(event).getPayloads();will(returnValue(payloads));
+                one(firstPayload).getAttribute(attributeName);
                 will(returnValue(knownEventName));
                 
                 allowing(event).idToString();will(returnValue("idString"));
             }
         });
         
-        EventNameRouter eventNameRouter = new EventNameRouter(eventNamesToResults, false);
+        FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, eventNamesToResults, false);
         final List<String> result = eventNameRouter.onEvent(this.event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("evaluator should return its configured result for a matched event name", knownEventResult, result.get(0));

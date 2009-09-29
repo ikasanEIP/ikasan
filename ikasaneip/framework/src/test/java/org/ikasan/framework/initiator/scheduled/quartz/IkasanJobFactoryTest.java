@@ -42,9 +42,7 @@ package org.ikasan.framework.initiator.scheduled.quartz;
 
 import junit.framework.JUnit4TestAdapter;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

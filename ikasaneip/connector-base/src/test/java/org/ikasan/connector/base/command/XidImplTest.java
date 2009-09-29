@@ -42,11 +42,11 @@ package org.ikasan.connector.base.command;
 
 import javax.transaction.xa.Xid;
 
+import junit.framework.TestCase;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
-
-import junit.framework.TestCase;
 
 /**
  * Test class for XidImpl 

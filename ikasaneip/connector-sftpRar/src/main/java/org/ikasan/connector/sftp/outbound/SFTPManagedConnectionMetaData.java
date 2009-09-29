@@ -41,7 +41,7 @@
 package org.ikasan.connector.sftp.outbound;
 
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
-import org.ikasan.connector.base.outbound.*;
+import org.ikasan.connector.base.outbound.EISManagedConnectionMetaData;
 
 /**
  * This is the implementation of the metadata for the SFTP resource adapter.

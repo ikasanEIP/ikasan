@@ -40,11 +40,11 @@
  */
 package org.ikasan.framework.initiator.messagedriven;
 
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 
@@ -68,7 +68,7 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     private Logger logger = Logger.getLogger(EventMessageDrivenInitiator.class);
     
     /** Deserialiser */
-    private JmsMessageEventSerialiser jmsMessageEventSerialiser;
+    private JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser;
 
     /**
      * Constructor
@@ -79,16 +79,16 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param jmsMessageEventSerialiser - The serialiser for the JMS message
      */
     public EventMessageDrivenInitiator(String moduleName, String name, Flow flow,
-            JmsMessageEventSerialiser jmsMessageEventSerialiser)
+            JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser)
     {
         super(moduleName, name, flow);
         this.jmsMessageEventSerialiser = jmsMessageEventSerialiser;
     }
 
     @Override
-    protected Event handleMapMessage(MapMessage message) throws EventSerialisationException
+    protected Event handleMapMessage(MapMessage message) throws JMSException
     {
-        Event event = jmsMessageEventSerialiser.fromMapMessage(message, moduleName, name);
+        Event event = jmsMessageEventSerialiser.fromMessage(message, moduleName, name);
         return event;
     }
     

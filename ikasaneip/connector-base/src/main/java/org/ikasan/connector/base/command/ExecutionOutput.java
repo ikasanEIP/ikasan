@@ -42,6 +42,7 @@ package org.ikasan.connector.base.command;
 
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 /**

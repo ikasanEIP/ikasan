@@ -41,7 +41,6 @@
 package org.ikasan.connector;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.ExceptionType;
 
 /**

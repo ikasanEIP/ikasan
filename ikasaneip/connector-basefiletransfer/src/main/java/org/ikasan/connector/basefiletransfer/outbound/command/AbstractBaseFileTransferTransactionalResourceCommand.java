@@ -48,7 +48,6 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResource;

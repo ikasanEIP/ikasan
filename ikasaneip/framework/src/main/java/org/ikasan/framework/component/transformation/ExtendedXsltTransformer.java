@@ -59,7 +59,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -121,8 +120,7 @@ public class ExtendedXsltTransformer implements Transformer
     /** Logger instance for this class */
     private static final Logger logger = Logger.getLogger(ExtendedXsltTransformer.class);
 
-    /** A New PayloadName to set on the transformed Payloads */
-    private String payloadName;
+
 
     /**
      * Constructor
@@ -274,25 +272,7 @@ public class ExtendedXsltTransformer implements Transformer
         this.transformationParameters.putAll(parameters);
     }
     
-    /**
-     * Accessor for optional payloadName
-     * 
-     * @return payloadName or null if it has not been set
-     */
-    public String getPayloadName()
-    {
-        return this.payloadName;
-    }
 
-    /**
-     * Mutator for payloadName
-     * 
-     * @param payloadName - The payload name to set
-     */
-    public void setPayloadName(String payloadName)
-    {
-        this.payloadName = payloadName;
-    }
 
     /**
      * Transforms the payload content.
@@ -325,21 +305,7 @@ public class ExtendedXsltTransformer implements Transformer
         byte[] transformedData = transformedDataStream.toByteArray();
         logger.debug("Setting payload content [" + new String(transformedData) + "]");
         payload.setContent(transformedData);
-        //Update the payload name with something new if we have configured a new value
-        /*
-         * TODO - this is a hangover from the XSLTransformer/DefualtXslTransformer which always sets the payloadName
-         * as the rootName from the DefaultXsltTransformer every time. as we do not set the rootName explicitly
-         * here, we have the option of setting the payloadName as anything arbitrary we want. This is arguably an
-         * entirely separate transformation and therefore doesn't belong here. There is an implied constraint here
-         * that the paylodName of an XML payload is always the same as the root of the XML doc. This needs to be
-         * reconsidered, as we sometimes use the payloadName for other things like the fileName if we are later
-         * delivering this as a file
-         */
-        if (this.payloadName != null)
-        {
-            payload.setName(this.payloadName);
-        }
-        payload.setSpec(Spec.TEXT_XML.toString());
+
         logger.debug(new String(transformedData));
     }
 }

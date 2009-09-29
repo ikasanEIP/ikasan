@@ -41,8 +41,6 @@
 package org.ikasan.common.util;
 import java.util.regex.PatternSyntaxException;
 
-import org.ikasan.common.util.StringMasker;
-
 import junit.framework.TestCase;
 
 

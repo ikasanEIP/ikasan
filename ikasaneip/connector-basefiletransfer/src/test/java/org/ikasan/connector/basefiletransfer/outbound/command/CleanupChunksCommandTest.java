@@ -45,20 +45,18 @@ import javax.transaction.xa.Xid;
 
 import junit.framework.TestCase;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.springframework.beans.factory.BeanFactory;
-
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.base.command.XidImpl;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
-import org.ikasan.connector.basefiletransfer.outbound.command.CleanupChunksCommand;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * Test class for the CleanupChunksCommand

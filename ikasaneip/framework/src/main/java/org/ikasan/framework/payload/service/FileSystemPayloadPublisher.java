@@ -49,6 +49,7 @@ import java.nio.channels.FileChannel;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 
 /**
@@ -89,7 +90,7 @@ public class FileSystemPayloadPublisher implements PayloadPublisher
      */
     public void publish(Payload payload) throws ResourceException
     {
-        logger.info("publishing payload [" + payload.getId() + "] with name [" + payload.getName() + "]");
+        logger.info("publishing payload [" + payload.getId() + "] with name [" + payload.getAttribute(FilePayloadAttributeNames.FILE_NAME) + "]");
         // If the outputDirectory is invalid then throw a ResourceException
         if (isOutputPathADirectory() == false)
         {
@@ -100,7 +101,7 @@ public class FileSystemPayloadPublisher implements PayloadPublisher
         byte[] payloadContent = payload.getContent();
         ByteBuffer inByteBuffer = ByteBuffer.wrap(payloadContent);
         // Get the file name from the payload
-        String fileName = payload.getName();
+        String fileName = payload.getAttribute(FilePayloadAttributeNames.FILE_NAME);
         // Stream and Channel and temp holding structures for data
         FileOutputStream fos = null;
         FileChannel ofc = null;

@@ -44,9 +44,7 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.ikasan.connector.base.outbound.EISResourceAdapter;
 
 /**

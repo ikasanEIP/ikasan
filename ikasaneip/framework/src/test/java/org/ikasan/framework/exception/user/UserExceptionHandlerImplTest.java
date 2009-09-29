@@ -46,7 +46,6 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.UserExceptionHandler;
@@ -154,12 +153,14 @@ public class UserExceptionHandlerImplTest
     public void testInvokeWithConfiguredPublishableAndDuplicateFilteringButIsNotDuplicateTransformsAndPublishes() throws Exception
     {
     	//create and configure the ExceptionHandler
-        UserExceptionDefinition ued = new UserExceptionDefinition(new Integer(999), new Integer(0), "TestExternalExceptionDefRef");
-        ued.setPublishable(new Boolean(true));
-        ued.setDropDuplicate(true);
-        ued.setDropDuplicatePeriod(dropDuplicatePeriod);
+        UserExceptionDefinition userExceptionDefinition = new UserExceptionDefinition(new Integer(999), new Integer(0), "TestExternalExceptionDefRef");
+        userExceptionDefinition.setPublishable(new Boolean(true));
+        userExceptionDefinition.setDropDuplicate(true);
+        userExceptionDefinition.setDropDuplicatePeriod(dropDuplicatePeriod);
+        
         Map<String, UserExceptionDefinition> userExceptionDefsMap = new HashMap<String, UserExceptionDefinition>();
-        userExceptionDefsMap.put(testResolutionId, ued);
+        userExceptionDefsMap.put(testResolutionId, userExceptionDefinition);
+        
         Map<String, ExternalExceptionDefinition> externalExceptionDefsMap = new HashMap<String, ExternalExceptionDefinition>();
         ExternalExceptionDefinition externalExceptionDefinition = ExternalExceptionDefinition.getDefaultExternalExceptionDefinition();
         externalExceptionDefsMap.put("TestExternalExceptionDefRef", externalExceptionDefinition);
@@ -269,17 +270,14 @@ public class UserExceptionHandlerImplTest
     @SuppressWarnings("synthetic-access")
 	private void expectPublisherToBeCalled() throws PluginInvocationException
     {
-    	final Integer payloadPriority = 0;
     	final String exceptionPayloadId = "exceptionPayloadId";
     	
         this.classMockery.checking( new Expectations()
         {
             {
-                one(payloadFactory).newPayload("emrException",Spec.TEXT_XML, null, transformedException.getBytes());will(returnValue(exceptionPayload));
-            	allowing(exceptionPayload).getPriority();
-				will(returnValue(payloadPriority));
+                one(payloadFactory).newPayload("userExceptionPayloadId", transformedException.getBytes());will(returnValue(exceptionPayload));
 				
-            	allowing(exceptionPayload).idToString();
+            	allowing(exceptionPayload).getId();will(returnValue(exceptionPayloadId));
             	will(returnValue(exceptionPayloadId));
                 
             	one(publisher).invoke(with(any(Event.class)));

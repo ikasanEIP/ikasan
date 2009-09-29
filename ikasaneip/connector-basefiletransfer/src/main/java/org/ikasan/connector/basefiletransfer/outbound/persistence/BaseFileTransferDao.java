@@ -41,7 +41,6 @@
 package org.ikasan.connector.basefiletransfer.outbound.persistence;
 
 import org.hibernate.HibernateException;
-
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 
 /**

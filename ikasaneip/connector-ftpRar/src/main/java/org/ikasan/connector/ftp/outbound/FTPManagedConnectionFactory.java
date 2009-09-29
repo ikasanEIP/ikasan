@@ -42,22 +42,21 @@ package org.ikasan.connector.ftp.outbound;
 
 import java.util.Iterator;
 import java.util.Set;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 
+import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
 import org.ikasan.common.CommonEnvironment;
 import org.ikasan.connector.base.command.HibernateTransactionalResourceCommandDAO;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalImpl;
 import org.ikasan.connector.base.outbound.EISManagedConnectionFactory;
-
-import org.apache.log4j.Logger;
-
-import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

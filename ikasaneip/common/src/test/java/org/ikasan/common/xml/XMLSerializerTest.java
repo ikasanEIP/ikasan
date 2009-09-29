@@ -44,8 +44,6 @@ import java.io.StringWriter;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.OutputFormat;
@@ -54,6 +52,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Tests the XMLSerializer

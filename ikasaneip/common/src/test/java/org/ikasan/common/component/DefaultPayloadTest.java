@@ -1,7 +1,7 @@
-/* 
- * $Id$
- * $URL$
- *
+/*
+ * $Id: 
+ * $URL:
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,53 +38,66 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.transformation;
-
-import javax.resource.ResourceException;
+package org.ikasan.common.component;
 
 import org.ikasan.common.Payload;
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.payload.service.PayloadProvider;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * <code>Transformer</code> which adds all <code>Payload</code>s provided by a <code>PayloadProvider</code> to the
- * incoming <code>Event</code>
+ * PayloadHelper JUnit test class
  * 
  * @author Ikasan Development Team
+ * 
  */
-public class PayloadProviderTransformer implements Transformer
-{
-    /** PayloadProvider */
-    protected PayloadProvider payloadProvider;
+public class DefaultPayloadTest {
 
-    /**
-     * Constructor
-     * 
-     * @param payloadProvider The payload provider to use
-     */
-    public PayloadProviderTransformer(PayloadProvider payloadProvider)
-    {
-        super();
-        this.payloadProvider = payloadProvider;
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.transformation.Transformer#onEvent(org.ikasan.framework.component.Event)
-     */
-    public void onEvent(Event event) throws TransformationException
-    {
-        try
-        {
-            for (Payload payload : payloadProvider.getNextRelatedPayloads())
-            {
-                event.setPayload(payload);
-            }
-        }
-        catch (ResourceException e)
-        {
-            throw new TransformationException(e);
-        }
-    }
+
+
+	String payloadId = "payloadId";
+
+	/**
+	 * Test Payload Cloning
+	 * 
+	 * @throws CloneNotSupportedException
+	 */
+	@Test
+	public void testPayloadClone() throws CloneNotSupportedException {
+
+		DefaultPayload payload = new DefaultPayload(payloadId, 
+				  "This is a test".getBytes());
+		
+		String attributeName = "someAttributeName";
+		String attributeValue = "someAttributeValue";
+		payload.setAttribute(attributeName, attributeValue);
+
+		Payload clonePayload = payload.clone();
+
+		// check we have a different object
+		Assert.assertFalse(payload == clonePayload);
+
+		Assert.assertEquals(payload.getId(), clonePayload.getId());
+
+		String originalContent = new String(payload.getContent());
+		String cloneContent = new String(clonePayload.getContent());
+		Assert.assertEquals(originalContent, cloneContent);
+
+		
+		Assert.assertEquals(attributeValue, clonePayload.getAttribute(attributeName));
+
+	}
+	
+	@Test
+	public void testSetGetAttribute(){
+		DefaultPayload defaultPayload = new DefaultPayload( null, new byte[]{});
+		String someAttributeName = "someAttribute";
+		String someAttributeValue = "someAttributeValue";
+		
+		Assert.assertNull("someAttribute should be null before it has been set", defaultPayload.getAttribute(someAttributeName));
+		defaultPayload.setAttribute(someAttributeName, someAttributeValue);
+		Assert.assertEquals("someAttribute should be available after it has been set", someAttributeValue, defaultPayload.getAttribute(someAttributeName));
+		
+	}
+
 }

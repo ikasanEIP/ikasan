@@ -45,16 +45,14 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
-// Imported xstream classes
+import org.apache.log4j.Logger;
+
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-
-// Imported log4j classes
-import org.apache.log4j.Logger;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This class provides XStream converter for an <code>Algorithm</code> class.

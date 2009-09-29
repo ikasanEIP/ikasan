@@ -47,11 +47,9 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 
+import org.apache.log4j.Logger;
 import org.ikasan.connector.base.outbound.EISConnectionFactoryImpl;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnection;
-
-// Imported log4j classes
-import org.apache.log4j.Logger;
 
 /**
  * This class implements the ConnectionFactory for the SFTP resource

@@ -40,11 +40,14 @@
  */
 package org.ikasan.connector.base.outbound.xa;
 
-import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
-import org.ikasan.connector.base.outbound.EISManagedConnection; 
-
 import javax.resource.ResourceException;
-import javax.transaction.xa.*; 
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
+import org.ikasan.connector.base.outbound.EISManagedConnection;
+
+import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 
 /**
  * This is an abstract class representing the XAManagedConnection 

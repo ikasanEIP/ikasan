@@ -41,14 +41,13 @@
 package org.ikasan.common.configuration;
 
 // Imported xstream classes
+import org.apache.log4j.Logger;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-
-// Imported log4j classes
-import org.apache.log4j.Logger;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * This class provides XStream converter for an <code>Ikasan</code> class.

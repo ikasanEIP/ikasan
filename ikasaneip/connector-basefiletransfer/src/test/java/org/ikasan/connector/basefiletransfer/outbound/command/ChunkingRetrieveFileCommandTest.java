@@ -46,11 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.resource.ResourceException;
+
 import junit.framework.TestCase;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.Sequence;
-import org.jmock.lib.legacy.ClassImposteriser;
 
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -60,12 +57,15 @@ import org.ikasan.connector.basefiletransfer.net.ClientCommandGetException;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
-import org.ikasan.connector.basefiletransfer.outbound.command.ChunkingRetrieveFileCommand;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.Sequence;
+import org.jmock.lib.legacy.ClassImposteriser;
 
 /**
  * Test class for the ChunkingRetrieveFileCommand

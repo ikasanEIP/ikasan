@@ -40,7 +40,11 @@
  */
 package org.ikasan.framework.payload.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -330,7 +334,7 @@ public class FileTransferAlternateConnectionPayloadProviderTest
      * Testing getNextRelatedPayloads method with renameOnSuccess true but a
      * null renameOnSuccessExtention Expected to throw a ResourceException.
      */
-    @SuppressWarnings("null")
+
     @Test
     public void testGetNextRelatedPayloads_RenameNullExtention()
     {
@@ -366,7 +370,6 @@ public class FileTransferAlternateConnectionPayloadProviderTest
      * Testing getNextRelatedPayloads method with moveOnSuccess true but a null
      * moveOnSuccessNewPath Expected to throw a ResourceException.
      */
-    @SuppressWarnings("null")
     @Test
     public void testGetNextRelatedPayloads_MoveNullNewPath()
     {
@@ -403,7 +406,6 @@ public class FileTransferAlternateConnectionPayloadProviderTest
      * renameOnSuccess set to true. Expected to throw an
      * IllegalArgumentException
      */
-    @SuppressWarnings("null")
     @Test
     public void testGetNextRelatedPayloads_TrueMoveAndRename()
     {
@@ -439,7 +441,6 @@ public class FileTransferAlternateConnectionPayloadProviderTest
      * Testing getNextRelatedPayloads method with both moveOnSuccess and
      * destructive set to true. Expected to throw an IllegalArgumentExcepton
      */
-    @SuppressWarnings("null")
     @Test
     public void testGetNextRelatedPayloads_TrueMoveAndDestrucive()
     {
@@ -475,7 +476,6 @@ public class FileTransferAlternateConnectionPayloadProviderTest
      * Testing getNextRelatedPayloads method with both renameOnSuccess and
      * destructive set to true. Expected to throw an IllegalArgumentException.
      */
-    @SuppressWarnings("null")
     @Test
     public void testGetNextRelatedPayloads_TrueRenameAndDestrucive()
     {

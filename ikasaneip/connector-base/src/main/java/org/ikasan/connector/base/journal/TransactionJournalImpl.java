@@ -46,12 +46,11 @@ import java.util.List;
 import javax.transaction.xa.Xid;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.BeanFactory;
-
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.command.TransactionalResourceCommandPersistenceException;
 import org.ikasan.connector.base.command.XidImpl;
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * @author Ikasan Development Team

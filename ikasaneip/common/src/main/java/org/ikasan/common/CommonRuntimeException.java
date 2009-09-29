@@ -40,7 +40,6 @@
  */
 package org.ikasan.common;
 
-import org.ikasan.common.ExceptionType;
 
 /**
  * CommonRuntimeException exception extends the standard RuntimeException

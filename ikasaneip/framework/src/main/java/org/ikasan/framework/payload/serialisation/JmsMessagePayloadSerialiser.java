@@ -1,8 +1,8 @@
 /*
- * $Id$
- * $URL$
+ * $Id: 
+ * $URL:
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,56 +36,54 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-package org.ikasan.common.component;
+package org.ikasan.framework.payload.serialisation;
 
-import java.io.Serializable;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import org.ikasan.common.Payload;
 
 /**
- * ScheduleInfo class.
- * @deprecated - This has been deprecated TODO replace with?
+ * Serialisation/Deserialisation interface for converting a <code>Payload</code> to and from a JMS <code>Message</code>
  * 
- * @author Ikasan Development Team
+ * @author IkasanDevelompmentTeam
+ *
+ * @param <T>
  */
-@Deprecated
-public class ScheduleInfo
-    implements Serializable
-{
-    /** Serialize ID */
-    private static final long serialVersionUID = 1L;
+public interface JmsMessagePayloadSerialiser<T extends Message> {
 
-    /** scheduled by a rollback/retry operation */
-    public static final ScheduleInfo UNDEFINED_TASK = 
-        new ScheduleInfo(new Integer(0), "Undefined schedule info.");
-    
-    /** scheduled by a rollback/retry operation */
-    public static final ScheduleInfo ROLLBACK_RETRY_TASK =
-        new ScheduleInfo(new Integer(1), "Scheduled within a rollback/retry.");
-    
-    /** scheduled by normal onTimeout operation */
-    public static final ScheduleInfo ONTIMEOUT_TASK =
-        new ScheduleInfo(new Integer(2), "Scheduled within an onTimeout.");
-    
-    /** schedule cause code */
-    private Integer id;
-    
-    /** schedule description */
-    private String description;
-    
-    /** count */
-    private int count;
-
-    /**
-     * Default constructor
-     * Creates a new instance of <code>ScheduleInfo</code>.
-     * 
-     * @param id 
-     * @param description 
-     */
-    public ScheduleInfo(final Integer id, final String description)
-    {
-        this.id = id;
-        this.description = description;
-    }
+	/**
+	 * Converts a Payload to a Message
+	 * 
+	 * @param payload
+	 * @param session
+	 * @return
+	 * @throws JMSException
+	 */
+	public T toMessage(Payload payload, Session session) throws JMSException;
+	
+	/**
+	 * Converts a Message to a Paylaod
+	 * 
+	 * @param message
+	 * @return
+	 * @throws JMSException
+	 */
+	public Payload toPayload(T message) throws JMSException;
+	
+	/**
+	 * Indicates if a particular Message implementation is supported
+	 * 
+	 * @param messageClass
+	 * @return true if the given message class is supported
+	 */
+	public boolean supports(Class<? extends Message> messageClass);
+	
+	/**
+	 * @return the supported message type
+	 */
+	public Class<? extends Message> getSupportedMessageType();
 }

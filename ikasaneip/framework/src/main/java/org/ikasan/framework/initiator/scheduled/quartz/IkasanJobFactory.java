@@ -43,7 +43,6 @@ package org.ikasan.framework.initiator.scheduled.quartz;
 import java.lang.reflect.Constructor;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
 import org.ikasan.framework.initiator.InvocationDrivenInitiator;
 import org.quartz.Job;
 import org.quartz.JobDetail;
