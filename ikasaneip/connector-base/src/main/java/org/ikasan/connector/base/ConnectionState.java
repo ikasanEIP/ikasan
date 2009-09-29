@@ -41,6 +41,7 @@
 package org.ikasan.connector.base;
 
 import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 
 /**

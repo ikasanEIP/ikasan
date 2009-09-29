@@ -48,9 +48,7 @@ import junit.framework.Assert;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.flow.Flow;
@@ -140,17 +138,9 @@ public class RawMessageDrivenInitiatorTest {
 	                one(textMessage).getJMSPriority();
 	                will(returnValue(messagePriority));
                 }
-                
-                one(payloadFactory).newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
+                one(payloadFactory).newPayload("messageId",    textMessageText.getBytes());
                 will(returnValue(payload));
                 
-                //grrrrrr......all these dumb methods on Payload get called during Event.setPayload
-                one(payload).getName();
-                will(returnValue("payloadName"));
-                one(payload).getSpec();
-                will(returnValue(Spec.TEXT_XML.toString()));
-                one(payload).getSrcSystem();
-                will(returnValue("srcSystem"));
                 
                 one(flow).invoke((Event) with(new EventMatcher(messagePriority)));
                 will(returnValue(null));

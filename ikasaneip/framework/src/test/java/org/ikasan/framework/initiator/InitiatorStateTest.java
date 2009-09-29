@@ -40,13 +40,11 @@
  */
 package org.ikasan.framework.initiator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import junit.framework.JUnit4TestAdapter;
 
-// Imported log4j classes
 import org.apache.log4j.Logger;
-
-import org.ikasan.framework.initiator.InitiatorState;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

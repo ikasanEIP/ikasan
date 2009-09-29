@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 
 /**
@@ -78,7 +79,7 @@ public class FilenameRegexpMatchedTargetDirectorySelector implements TargetDirec
         String targetDirectory = null;
         if (patternTargetDirectoryMap != null)
         {
-            String fileName = payload.getName();
+            String fileName = payload.getAttribute(FilePayloadAttributeNames.FILE_NAME);
 
             // sort the regexp values so that we get the same result everytime,
             // rather than get possibly different matches because java doesnt

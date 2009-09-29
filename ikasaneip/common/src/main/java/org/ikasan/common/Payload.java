@@ -40,25 +40,31 @@
  */
 package org.ikasan.common;
 
+import java.util.List;
+
 /**
  * Payload providing the generic facade for all data to be moved around as a common object.
  * 
  * @author Ikasan Development Team
  */
-public interface Payload extends MetaDataInterface
+public interface Payload extends Cloneable
 {
-    /** Root name of the payload */
-    public static final String PAYLOAD_ROOT_NAME = "payload";
-
-    /** Constant for the payload counter in the JMS mapMessage */
-    public static final String PAYLOAD_COUNT_KEY = "payloadCount";
+		
 
     /**
-     * Set the content of the payload
-     * 
-     * @param content content to set
-     */
-    public void setContent(final byte[] content);
+	 * Returns the value of the attribute named, or null if no such attribute exists
+	 * 
+	 * @param attributeName
+	 * @return value of the attribute named, or null if no such attribute exists
+	 */
+	public String getAttribute(String attributeName);
+
+    /**
+	 * Returns a List of names of all attributes of this Paylaod
+	 * 
+	 * @return List<String> attribute names
+	 */
+	public List<String> getAttributeNames();
 
     /**
      * Get the content of the payload
@@ -67,49 +73,53 @@ public interface Payload extends MetaDataInterface
      */
     public byte[] getContent();
 
-    /**
-     * Test the equality of two payload instances
-     * 
-     * @param payload payload to test against
-     * @return boolean
-     */
-    public boolean equals(Payload payload);
+ 
 
-    /**
-     * String representation of the payload
+	/**
+	 * Accessor for id
+	 * 
+	 * @return id
+	 */
+	public String getId();
+	
+	/**
+	 * Convenience method giving the size of the payload contents
+	 * 
+	 * @return size of payload contents in bytes
+	 */
+	public long getSize();
+	
+	/**
+	 * Sets an attribute on the Payload, overriding any prior value
+	 * 
+	 * @param attributeName
+	 * @param attributeValue
+	 */
+	public void setAttribute(String attributeName, String attributeValue);
+	
+	/**
+     * Set the content of the payload
      * 
-     * @return String representation of the payload
+     * @param content content to set
      */
-    public String toString();
+    public void setContent(final byte[] content);
+	
+	/**
+	 * Spawns a new child Payload based on this Payload
+	 * 
+	 * @param siblingNo
+	 * @return child Payload
+	 */
+	public Payload spawnChild(int siblingNo);
 
-    /**
-     * String representation of the payload
-     * 
-     * @param length length of representation
-     * @return String representation of the payload
-     */
-    public String toString(int length);
 
-    /** Base64 encode the payload */
-    public void base64EncodePayload();
+	/**
+	 * Clones the Payload
+	 * 
+	 * @return cloned Payload
+	 * @throws CloneNotSupportedException
+	 */
+	public Payload clone() throws CloneNotSupportedException;
 
-    /**
-     * Returns a completely new instance of the payload with a deep copy of all fields. Note the subtle difference in
-     * comparison with spawn() which changes some field values to reflect a newly created instance.
-     * 
-     * @return a Payload
-     * @throws CloneNotSupportedException Exception if clone is not supported by implementer
-     */
-    public Payload clone() throws CloneNotSupportedException;
 
-    /**
-     * Returns a completely new instance of the payload with a deep copy of all fields with the exception of id and
-     * timestamp which are populated with new values to reflect that this is a distinctly new instance from the
-     * original. Note the subtle difference in comparison with clone() which does not change any fields from their
-     * original values.
-     * 
-     * @return a Payload
-     * @throws CloneNotSupportedException Exception if clone is not supported by implementer
-     */
-    public Payload spawn() throws CloneNotSupportedException;
 }

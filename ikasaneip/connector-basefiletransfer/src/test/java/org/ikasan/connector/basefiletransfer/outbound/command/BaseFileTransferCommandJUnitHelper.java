@@ -46,15 +46,13 @@ import java.util.Date;
 
 import javax.transaction.xa.Xid;
 
-
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.XidImpl;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 
 /**
  * Base class for common file transfer test code

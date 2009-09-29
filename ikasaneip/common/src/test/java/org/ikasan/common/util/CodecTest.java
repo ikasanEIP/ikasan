@@ -41,12 +41,12 @@
 package org.ikasan.common.util;
 
 // Imported junit classes
-import org.apache.commons.codec.DecoderException;
-
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.commons.codec.DecoderException;
 
 /**
  * unit tests for the {@link org.ikasan.common.util.Codec} class.

@@ -45,15 +45,19 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
-import org.ikasan.connector.base.outbound.EISConnectionImpl;
-
+import org.ikasan.common.FilePayloadAttributeNames;
+import org.ikasan.common.Payload;
+import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.common.factory.PayloadFactoryImpl;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
+import org.ikasan.connector.base.outbound.EISConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFileProvider;
+import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 
 /**
  * A Base implementation for File transfer connections
@@ -61,6 +65,11 @@ import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFile
  */
 public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
 {
+	
+	protected static final String REFERENCE_PAYLOAD_ATTRIBUTE = "referencePayload";
+	
+	private PayloadFactory payloadFactory = new PayloadFactoryImpl();
+	
     /**
      * Constructor which takes ManagedConnection as a parameter
      * 
@@ -123,4 +132,48 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
      */
     protected abstract ExecutionOutput executeCommand(TransactionalResourceCommand deliveryCommand,
             ExecutionContext executionContext) throws ResourceException;
+    
+    /**
+     * Method used to map an <code>FTPMappedRecord</code> object to a
+     * <code>Payload</code> object.
+     * 
+     * TODO Is there any other Payload stuff to set here?
+     * 
+     * @param header The record as returned from the FileTransferProtocolClient
+     * @return A payload constructed from the record.
+     */
+    protected  Payload fileChunkHeaderToPayload(FileChunkHeader header)
+    {    	
+    	String paylaodId = ""+header.getFileName().hashCode();
+
+    	Payload payload = payloadFactory.newPayload(paylaodId,  header.toXml().getBytes());
+        
+        payload.setAttribute(REFERENCE_PAYLOAD_ATTRIBUTE, Boolean.TRUE.toString());
+        payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, header.getFileName());
+
+        
+
+//        // need to do checksumming
+//        payload.setChecksum(header.getInternalMd5Hash());
+//        payload.setChecksumAlg(Md5ChecksumSupplier.MD5);
+        return payload;
+    }
+    
+    /**
+     * Determines if we need to handle this as a chunk reference
+     * 
+     * @param payload - The payload to check
+     * @return true if the payload is simply a reference to a set of chunks
+     */
+    protected boolean isChunkReference(Payload payload)
+    {
+        boolean result = false;
+        String referencePayloadAttribute = payload.getAttribute(REFERENCE_PAYLOAD_ATTRIBUTE);
+        
+        if(referencePayloadAttribute != null && referencePayloadAttribute.equals(Boolean.TRUE.toString()))
+        {
+            result = true;
+        }
+        return result;
+    }
 }

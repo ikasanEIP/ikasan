@@ -46,12 +46,10 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-
-import org.ikasan.connector.basefiletransfer.outbound.command.util.FilenameRegexpMatchedTargetDirectorySelector;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.TargetDirectorySelector;
 
 /**
  * Test class for FilenameRegexpMatchedTargetDirectorySelector
@@ -222,7 +220,7 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest extends TestCase
         context.checking(new Expectations()
         {
             {
-                one(payload).getName();
+                one(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
                 will(returnValue(fileName));
             }
         });

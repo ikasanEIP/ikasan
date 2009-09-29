@@ -44,10 +44,8 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 
-import org.ikasan.connector.base.AbstractResourceAdapter;
-
-// Imported log4j classes
 import org.apache.log4j.Logger;
+import org.ikasan.connector.base.AbstractResourceAdapter;
 
 /**
  * TODO Fix comments This is the main connector class for SFTP connectivity.

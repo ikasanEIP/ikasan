@@ -47,8 +47,6 @@ import javax.xml.transform.TransformerException;
 
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.transformation.FormatExceptionTransformer;
-import org.ikasan.framework.component.transformation.TransformationException;
 import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.user.ExceptionTransformer;
 import org.ikasan.framework.exception.user.ExternalExceptionDefinition;
@@ -145,12 +143,6 @@ public class FormatExceptionTransformerTest
                 for(Payload payload:payloads)
                 {
                     one(payload).setContent(with(any(byte[].class)));
-                    one(payload).setName(with(any(String.class)));
-                    one(payload).setSpec(with(any(String.class)));
-                    one(payload).setEncoding(with(any(String.class)));
-
-                    // update event for new payload
-                    one(event).setPayload(payload);
                 }
 
             }
@@ -205,7 +197,7 @@ public class FormatExceptionTransformerTest
     
     /**
      * Inner class used to test the Abstract class of FormatExceptionTransformer.
-     * @author Iksaan Developmnet Team
+     * @author Ikasan Development Team
      *
      */
     public class RealFormatExceptionTransformer

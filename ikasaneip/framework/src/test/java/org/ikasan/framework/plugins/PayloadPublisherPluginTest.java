@@ -46,7 +46,6 @@ import junit.framework.TestCase;
 
 import org.ikasan.common.Payload;
 import org.ikasan.framework.payload.service.PayloadPublisher;
-import org.ikasan.framework.plugins.PayloadPublisherPlugin;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

@@ -49,7 +49,6 @@ import javax.xml.transform.TransformerException;
 import org.apache.log4j.Logger;
 import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.UserExceptionHandler;
@@ -274,15 +273,13 @@ public class UserExceptionHandlerImpl implements UserExceptionHandler, UserExcep
          * to create an Event simply to be able to publish TODO remove this unnecessary Event creation by making a
          * publisher capable of publishing directly
          */
-        String componentGroupName = null; // really doesn't matter
-        String componentName = null; // really doesn't matter
-        Payload payload = payloadFactory.newPayload("emrException", Spec.TEXT_XML, componentGroupName,
-            externalExceptionXml.getBytes());
+//        String componentGroupName = null; // really doesn't matter
+//        String componentName = null; // really doesn't matter
+        Payload payload = payloadFactory.newPayload("userExceptionPayloadId", externalExceptionXml.getBytes());
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
-        Event event = new Event(payloads, componentGroupName, componentName);
-        event.setName("emrException");
-        event.setSpec(Spec.TEXT_XML.toString());
+        Event event = new Event("userExceptionHandler", "userExceptionHandler", "userExceptionEventId",payloads);
+        //event.setName("emrException");
         // Publish away!
         jmsEventPublisher.invoke(event);
     }

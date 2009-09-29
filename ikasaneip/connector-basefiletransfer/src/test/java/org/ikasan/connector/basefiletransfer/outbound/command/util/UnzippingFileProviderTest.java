@@ -49,10 +49,6 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.ikasan.connector.basefiletransfer.outbound.command.util.FileHandle;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
-import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFileProvider;
-
 import junit.framework.TestCase;
 
 /**

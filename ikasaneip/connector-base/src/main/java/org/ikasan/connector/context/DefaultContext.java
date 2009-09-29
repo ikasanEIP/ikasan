@@ -43,7 +43,6 @@ package org.ikasan.connector.context;
 import java.util.Properties;
 
 import org.ikasan.common.CommonRuntimeException;
-
 import org.ikasan.connector.ConnectorContext;
 
 /**

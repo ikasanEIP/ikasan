@@ -42,6 +42,7 @@ package org.ikasan.framework.initiator.messagedriven;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
+import javax.jms.Message;
 import javax.jms.TextMessage;
 
 import junit.framework.Assert;
@@ -61,6 +62,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unchecked")
 public class EventMessageDrivenInitiatorTest {
 
 	String moduleName = "moduleName";
@@ -74,7 +76,7 @@ public class EventMessageDrivenInitiatorTest {
         }
     };
 	
-	JmsMessageEventSerialiser jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
+	JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
 	
 	Flow flow = mockery.mock(Flow.class);
 	
@@ -82,7 +84,7 @@ public class EventMessageDrivenInitiatorTest {
 	
 	TextMessage textMessage = mockery.mock(TextMessage.class);
 	
-	MapMessage mapMessage = mockery.mock(MapMessage.class);
+	Message message = mockery.mock(Message.class);
 	
 	/**
 	 * Tests that MapMessages are supported
@@ -93,13 +95,14 @@ public class EventMessageDrivenInitiatorTest {
 	@Test
 	public void testOnMessageHandlesMapMessage() throws JMSException, EventSerialisationException {
 		final Event event = mockery.mock(Event.class);
+		final MapMessage mapMessage = mockery.mock(MapMessage.class);
 		
         mockery.checking(new Expectations()
         {
             {
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
             	
-                one(jmsMessageEventSerialiser).fromMapMessage(mapMessage, moduleName, name);
+                one(jmsMessageEventSerialiser).fromMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
                 
                 one(flow).invoke(event);

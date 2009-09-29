@@ -47,23 +47,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.log4j.Logger;
 import org.ikasan.common.factory.ClassInstantiationUtils;
-import org.ikasan.common.factory.EnvelopeFactory;
-import org.ikasan.common.factory.EnvelopeFactoryImpl;
-import org.ikasan.common.factory.JMSMessageFactory;
-import org.ikasan.common.factory.JMSMessageFactoryImpl;
-import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.common.factory.PayloadFactoryImpl;
 import org.ikasan.common.security.IkasanSecurityService;
 import org.ikasan.common.security.IkasanSecurityServiceImpl;
 import org.ikasan.common.security.SecurityNotConfiguredException;
 import org.ikasan.common.util.ResourceUtils;
-import org.ikasan.common.xml.serializer.EnvelopeXmlSerializer;
-import org.ikasan.common.xml.serializer.PayloadXmlSerializer;
-import org.ikasan.common.xml.serializer.XMLSerializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.jndi.JndiTemplate;
@@ -138,8 +127,6 @@ public class ResourceLoader implements ServiceLocator
     /** Concrete class for payload */
     protected Class<? extends Payload> payloadClass;
 
-    /** Concrete class for envelope */
-    protected Class<? extends Envelope> envelopeClass;
 
     /** instance of the ikasan platform */
     protected IkasanEnv ikasanEnv = null;
@@ -148,26 +135,12 @@ public class ResourceLoader implements ServiceLocator
     /** instance of the ikasan platform */
     private IkasanSecurityService ikasanSecurityService = null;
 
-    /** A payload Factory */
-    private PayloadFactory payloadFactory;
-
-    /** An envelope Factory */
-    private EnvelopeFactory envelopeFactory;
-
-    /** XML Serialiser/Deserialser for Envelopes */
-    private XMLSerializer<Envelope> envelopeXMLSerializer;
-
-    /** XML Serialiser/Deserialser for Payloads */
-    private XMLSerializer<Payload> payloadXMLSerializer;
 
     /** JNDITemplate for accessing JNDI resources from the JMS server */
     private JndiTemplate jmsJndiTemplate;
 
     /** A commonly used XML parser */
     private CommonXMLParser commonXmlParser;
-
-    /** JMS Message Factory */
-    private JMSMessageFactory jmsMessageFactory;
 
     /**
      * Singleton constructor
@@ -586,97 +559,16 @@ public class ResourceLoader implements ServiceLocator
         return (CommonEnvironment) ClassInstantiationUtils.instantiate(this.environmentImplClass);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.common.ServiceLocator#getPayloadFactory()
-     * 
-     * @deprecated - use your own configured Spring beans to create a PayloadFactory
-     */
-    public PayloadFactory getPayloadFactory()
-    {
-        if (payloadFactory == null)
-        {
-            payloadFactory = new PayloadFactoryImpl(getPayloadClass(), DocumentBuilderFactory.newInstance());
-        }
-        return payloadFactory;
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.common.ServiceLocator#getEnvelopeFactory()
-     */
-    public EnvelopeFactory getEnvelopeFactory()
-    {
-        if (envelopeFactory == null)
-        {
-            envelopeFactory = new EnvelopeFactoryImpl(getEnvelopeClass(), getJMSMessageFactory());
-        }
-        return envelopeFactory;
-    }
 
-    public XMLSerializer<Envelope> getEnvelopeXMLSerializer()
-    {
-        if (envelopeXMLSerializer == null)
-        {
-            envelopeXMLSerializer = new EnvelopeXmlSerializer(getPayloadClass(), getEnvelopeClass());
-        }
-        return envelopeXMLSerializer;
-    }
 
-    public XMLSerializer<Payload> getPayloadXMLSerializer()
-    {
-        if (payloadXMLSerializer == null)
-        {
-            payloadXMLSerializer = new PayloadXmlSerializer(getPayloadClass());
-        }
-        return payloadXMLSerializer;
-    }
 
-    /**
-     * Get the Payload class
-     * 
-     * @return Class of type Payload
-     */
-    private Class<? extends Payload> getPayloadClass()
-    {
-        if (payloadClass == null)
-        {
-            try
-            {
-                payloadClass = (Class<? extends Payload>) Class.forName((String) resources
-                    .get(PayloadFactoryImpl.PAYLOAD_IMPL_CLASS));
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new CommonRuntimeException(e);
-            }
-        }
-        return payloadClass;
-    }
 
-    /**
-     * Get the envelope class
-     * 
-     * @return Class of type envelope
-     */
-    private Class<? extends Envelope> getEnvelopeClass()
-    {
-        if (envelopeClass == null)
-        {
-            try
-            {
-                envelopeClass = (Class<? extends Envelope>) Class.forName((String) resources
-                    .get(EnvelopeFactoryImpl.ENVELOPE_IMPL_CLASS));
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new CommonRuntimeException(e);
-            }
-        }
-        return envelopeClass;
-    }
+
+
+
+
+
 
     /*
      * (non-Javadoc)
@@ -692,14 +584,7 @@ public class ResourceLoader implements ServiceLocator
         return commonXmlParser;
     }
 
-    public JMSMessageFactory getJMSMessageFactory()
-    {
-        if (jmsMessageFactory == null)
-        {
-            jmsMessageFactory = new JMSMessageFactoryImpl(getPayloadFactory());
-        }
-        return jmsMessageFactory;
-    }
+
 
     public JndiTemplate getJMSJndiTemplate()
     {

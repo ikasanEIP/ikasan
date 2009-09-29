@@ -47,13 +47,12 @@ import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.BeanFactory;
-
 import org.ikasan.connector.base.command.state.State;
 import org.ikasan.connector.base.command.state.StateManager;
 import org.ikasan.connector.base.command.state.Transition;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * This base implementation of the <code>TransactionalResourceCommand</code>

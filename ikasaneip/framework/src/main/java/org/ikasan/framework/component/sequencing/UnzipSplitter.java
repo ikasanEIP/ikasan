@@ -49,10 +49,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
+import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.sequencing.Sequencer;
-import org.ikasan.framework.component.sequencing.SequencerException;
 
 /**
  * Implementation of @see {@link org.ikasan.framework.component.sequencing.Sequencer}.
@@ -75,15 +74,16 @@ public class UnzipSplitter implements Sequencer
 
     /** Constant representing end-of-file is reached. */
     private static final int END_OF_FILE = -1;
+    
 
-    /**
+	/**
      * Implementation of {@link org.ikasan.framework.component.sequencing.Sequencer#onEvent(Event)}
      * 
      * @param event - The incoming event with payload containing a zip file
      * @throws SequencerException Wrapper exception thrown when cloning and/or transforming the<br>
      *         <code>Event</code>/<code>Payload</code>
      */
-    public List<Event> onEvent(Event event) throws SequencerException
+    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
     {
         List<Event> newEvents = new ArrayList<Event>();
         List<Payload> payloads = event.getPayloads();
@@ -96,19 +96,11 @@ public class UnzipSplitter implements Sequencer
             try
             {
                 List<Payload> newPayloads = this.unzipPayload(payload);
-                for (Payload newPayload : newPayloads)
+                for (int i=0;i<newPayloads.size();i++)
                 {
-                    /* 
-                     * Get a new Event instance, that is identical to original Event.
-                     * The new instance will have a different id, timestamp, and payloads.
-                     * See org.ikasan.framework.Event.spawn() for more details on Event 
-                     * spawning/cloning method.
-                     */
-                    Event newEvent = event.spawn();
-                    // Remove all old payloads, before adding the new one.
-                    newEvent.getPayloads().clear();
-                    newEvent.setPayload(newPayload);
-                    newEvents.add(newEvent);
+                	Event newEvent = event.spawnChild(moduleName, componentName, i, newPayloads.get(i));
+					newEvents.add(newEvent);
+
                     if (logger.isDebugEnabled())
                     {
                         logger.debug("Incoming event [" + event.getId() + "] split into event [" + newEvent.getId()
@@ -154,6 +146,7 @@ public class UnzipSplitter implements Sequencer
         // A compressed file within a zip file
         ZipEntry zippedEntry = null;
         // Extract data
+        int zippedFileCount = 0;
         while ((zippedEntry = inputDataInZippedFormat.getNextEntry()) != null)
         {
             if (zippedEntry.isDirectory())
@@ -179,8 +172,8 @@ public class UnzipSplitter implements Sequencer
              * See org.ikasan.common.Payload.spawn() for more details on Payload
              * spawning/cloning method.
              */
-            Payload newPayload = payload.spawn();
-            newPayload.setName(newPayloadName);
+            Payload newPayload = payload.spawnChild(zippedFileCount++);
+            newPayload.setAttribute(FilePayloadAttributeNames.FILE_NAME, newPayloadName);
             newPayload.setContent(newPayloadDataContent);
             newPayloads.add(newPayload);
             if (logger.isDebugEnabled())

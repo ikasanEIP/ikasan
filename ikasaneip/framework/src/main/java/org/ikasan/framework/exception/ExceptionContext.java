@@ -42,9 +42,9 @@ package org.ikasan.framework.exception;
 
 import java.util.HashMap;
 
-import org.ikasan.framework.component.Event;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.ikasan.framework.component.Event;
 
 /**
  * Mutable context for handling of exceptional events

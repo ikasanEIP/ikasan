@@ -52,7 +52,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-// Imported trax classes
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -67,16 +66,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-// Imported w3c classes
-import org.w3c.dom.Document;
-
-// Imported apache commons classes
 import org.apache.commons.io.FileUtils;
-
-// Imported log4j classes
 import org.apache.log4j.Logger;
-
 import org.ikasan.common.CommonXSLTransformer;
+import org.w3c.dom.Document;
 
 /**
  * This class wraps TrAX API for ease of transformation.

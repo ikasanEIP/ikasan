@@ -41,9 +41,9 @@
 package org.ikasan.connector.base.outbound.local;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.*; 
+import javax.resource.spi.LocalTransaction;
 
-import org.ikasan.connector.base.outbound.EISManagedConnection; 
+import org.ikasan.connector.base.outbound.EISManagedConnection;
 
 /**
  * This is an abstract class representing the XAManagedConnection 

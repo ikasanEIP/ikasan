@@ -51,22 +51,15 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
-import org.ikasan.common.ServiceLocator;
-import org.ikasan.common.component.Format;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.util.checksum.ChecksumSupplier;
 import org.ikasan.common.util.checksum.Md5ChecksumSupplier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import org.ikasan.connector.ConnectorException;
-import org.ikasan.connector.ResourceLoader;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
+import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnection;
@@ -85,12 +78,13 @@ import org.ikasan.connector.basefiletransfer.outbound.command.util.TargetDirecto
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFileProvider;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.util.chunking.io.ChunkInputStream;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.ChunkHeaderLoadException;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class implements the virtual connection to the SFTP server. An instance
@@ -449,22 +443,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         return executeCommand(command);
     }
 
-    /**
-     * Determines if we need to handle this as a chunk reference
-     * 
-     * @param payload
-     * @return true if the payload is simply a reference to a set of chunks
-     */
-    private boolean isChunkReference(Payload payload)
-    {
-        boolean result = false;
-        String format = payload.getFormat();
-        if (format != null && Format.REFERENCE.toString().equals(payload.getFormat()))
-        {
-            result = true;
-        }
-        return result;
-    }
+
 
     /**
      * Retrieves lightweight handles to the File Chunks that will be needed for
@@ -566,7 +545,6 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         {
             logger.info("checksumming disabled"); //$NON-NLS-1$
         }
-        result.setSrcSystem(clientId);
         return result;
     }
 
@@ -586,27 +564,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         return result;
     }
 
-    /**
-     * Method used to map an <code>FileChunkHeade</code> object to a
-     * <code>Payload</code> object.
-     * 
-     * @param header The record as returned from the SFTPClient
-     * @return A payload constructed from the record.
-     */
-    public static Payload fileChunkHeaderToPayload(FileChunkHeader header)
-    {
-        // TODO global service locator
-        ServiceLocator serviceLocator = ResourceLoader.getInstance();
-        Payload payload = serviceLocator.getPayloadFactory().newPayload(header.getFileName(), Spec.TEXT_XML,
-            MetaDataInterface.UNDEFINED, header.toXml().getBytes());
-        payload.setFormat(Format.REFERENCE.toString());
-        String componentGroupName = ResourceLoader.getInstance().getProperty("component.group.name");
-        payload.setSrcSystem(componentGroupName);
-        // need to do checksumming
-        payload.setChecksum(header.getInternalMd5Hash());
-        payload.setChecksumAlg(Md5ChecksumSupplier.MD5);
-        return payload;
-    }
+
 
     /**
      * Executes the supplied command

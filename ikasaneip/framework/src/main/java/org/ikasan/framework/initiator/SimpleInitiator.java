@@ -39,11 +39,7 @@
 
 package org.ikasan.framework.initiator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -102,18 +98,18 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         this.flow = flow;
     }
     
-    public boolean initiate(String payloadName, Spec spec, String srcSystem, String payloadContent)
+    public boolean initiate( String originationId, String payloadContent)
     {
         if (!available){
             throw new IllegalStateException("Initiator is not available for business");
         }
         
-        Payload singlePayload = payloadFactory.newPayload(payloadName, spec, srcSystem, payloadContent.getBytes());  
+        Payload singlePayload = payloadFactory.newPayload(originationId, payloadContent.getBytes());  
         
         
-        List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(singlePayload);
-        Event event = new Event(payloads, moduleName, initiatorName);
+
+
+        Event event = new Event(moduleName, initiatorName, originationId, singlePayload);
         IkasanExceptionAction exceptionAction = flow.invoke(event);
         //TODO better error handling
         if (exceptionAction!=null){

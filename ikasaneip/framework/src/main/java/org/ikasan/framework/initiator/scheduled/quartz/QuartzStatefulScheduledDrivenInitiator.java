@@ -58,7 +58,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Quartz implementation of an Ikasan Schedule Driven Initiator.

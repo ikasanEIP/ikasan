@@ -41,17 +41,11 @@
 package org.ikasan.common.xml.parser;
 
 // Imported ikasan classes
-import org.ikasan.common.xml.parser.DefaultEntityResolver;
-import org.ikasan.common.xml.parser.DefaultErrorHandler;
-import org.ikasan.common.CommonXMLParser;
-
-// Imported java classes
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-// Imported jaxp classes
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,20 +53,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-// Imported sax classes
+import org.apache.log4j.Logger;
+import org.ikasan.common.CommonXMLParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-
-// Imported w3c classes
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-// Imported log4j classes
-import org.apache.log4j.Logger;
 
 /**
  * This class wraps JAXP API for ease of XML well-formedness, validation and DOM document creation. Basically, it parses
