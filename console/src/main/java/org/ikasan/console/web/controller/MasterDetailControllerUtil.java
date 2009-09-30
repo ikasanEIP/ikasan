@@ -52,7 +52,6 @@ import org.springframework.ui.ModelMap;
  */
 public class MasterDetailControllerUtil
 {
-    
     /**
      * Adds a parameter to the searchParams map, only if it has a value
      * 
@@ -75,7 +74,11 @@ public class MasterDetailControllerUtil
      * @param orderBy - The field we are ordering by
      * @param orderAsc - Flag to determine if we are ordering by ascending value
      *            or not
-     * @param selectAll - Select All flag  
+     * @param pointToPointFlowProfileSearch - Flag to indicate what type of search            
+     * @param pointToPointFlowProfileSelectAll - Select all boolean for
+     *            pointToPointFlowProfile based search
+     * @param moduleSelectAll - Select all boolean for pointToPointFlowProfile
+     *            based search
      * @param model - The model we are displaying (the data)
      * @param pageNo - The page number we are on
      * @param pageSize - The page Size (how many results to display per page)
@@ -83,15 +86,16 @@ public class MasterDetailControllerUtil
      * @param request - standard HttpRequest
      * @param searchParams - The search parameters we're using
      */
-    public static void addPagedModelAttributes(String orderBy, Boolean orderAsc, Boolean selectAll, 
-            ModelMap model, int pageNo, int pageSize, PagedSearchResult<?> pagedResult,
-            HttpServletRequest request, Map<String, Object> searchParams)
+    public static void addPagedModelAttributes(String orderBy, Boolean orderAsc, String pointToPointFlowProfileSearch, Boolean pointToPointFlowProfileSelectAll, Boolean moduleSelectAll,
+            ModelMap model, int pageNo, int pageSize, PagedSearchResult<?> pagedResult, HttpServletRequest request, Map<String, Object> searchParams)
     {
         String requestUrl = request.getRequestURL() + "?" + request.getQueryString() + "#results";
         model.addAttribute("searchParams", searchParams);
         model.addAttribute("orderBy", orderBy);
         model.addAttribute("orderAsc", orderAsc);
-        model.addAttribute("selectAll", selectAll);
+        model.addAttribute("pointToPointFlowProfileSearch", pointToPointFlowProfileSearch);
+        model.addAttribute("pointToPointFlowProfileSelectAll", pointToPointFlowProfileSelectAll);
+        model.addAttribute("moduleSelectAll", moduleSelectAll);
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("page", pageNo);
         model.addAttribute("results", pagedResult);
@@ -99,19 +103,20 @@ public class MasterDetailControllerUtil
         if (pagedResult != null)
         {
             model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
-            // Calculate the last page (divide total results by page size, round up but take off 1 as indexes are 0 based)
-            int lastPage = (int)Math.ceil(((double)pagedResult.getResultSize() / (double)pageSize)) - 1;
+            // Calculate the last page (divide total results by page size, round
+            // up but take off 1 as indexes are 0 based)
+            int lastPage = (int) Math.ceil(((double) pagedResult.getResultSize() / (double) pageSize)) - 1;
             model.addAttribute("isLastPage", pagedResult.isLastPage());
             model.addAttribute("lastPage", lastPage);
             model.addAttribute("resultSize", pagedResult.getResultSize());
             model.addAttribute("size", pagedResult.size());
         }
-        // Set a default value for the JSP to cleanly deal with errors coming back
+        // Set a default value for the JSP to cleanly deal with errors coming
+        // back
         else
         {
             model.addAttribute("resultSize", 0);
         }
-
         model.addAttribute("searchResultsUrl", requestUrl);
     }
 
@@ -144,7 +149,7 @@ public class MasterDetailControllerUtil
         }
         return input;
     }
-    
+
     /**
      * Returns the input value if not null, otherwise "id"
      * 
@@ -190,5 +195,4 @@ public class MasterDetailControllerUtil
         }
         return result;
     }
-
 }

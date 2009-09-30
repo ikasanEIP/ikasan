@@ -63,7 +63,9 @@ public interface ModuleService
      * Returns all available <code>Module</code> Ids
      * 
      * @return List of all accessible <code>Module</code> Ids
+     * @deprecated - Will only be required if search defaults to module based search
      */
+    @Deprecated
     public Set<Long> getAllModuleIds();
     
     /**
