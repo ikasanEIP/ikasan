@@ -53,7 +53,7 @@
         </c:forEach>
         <c:param name="page" value="0"/>
         <c:param name="orderBy" value="${orderBy}"/>
-        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -68,7 +68,7 @@
         </c:forEach>
     	<c:param name="page" value="${page+1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
-    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>    	
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -83,7 +83,7 @@
 		</c:forEach>    	
     	<c:param name="page" value="${page-1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
-    	<c:param name="orderAsc" value="${!orderAsc}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>    	
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -98,7 +98,7 @@
         </c:forEach>
         <c:param name="page" value="${lastPage}"/>
         <c:param name="orderBy" value="${orderBy}"/>
-        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -113,7 +113,7 @@
         </c:forEach>
         <c:param name="page" value="${page}"/>
         <c:param name="orderBy" value="${orderBy}"/>
-        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="orderAsc" value="${orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
