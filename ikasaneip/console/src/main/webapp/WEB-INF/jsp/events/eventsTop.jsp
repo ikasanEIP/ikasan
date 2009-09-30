@@ -45,18 +45,17 @@
 <%@ include file="/WEB-INF/jsp/top.jsp"%>
 
     <div class="subnavcontainer">
-        <a name="top" />
+        <a name="top"></a>
         <ul>
             <li>
                 <c:choose>
                     <c:when test="${searchResultsUrl != null}">
-                        <a href="<c:out value="${searchResultsUrl}" />">
+                        <a href="<c:out value="${searchResultsUrl}" />"><fmt:message key="menu_search_results_link"/></a>
                     </c:when>
                     <c:otherwise>
-                        <a href="<c:url value="list.htm?newSearch=true"/>">
+                        <a href="<c:url value="newSearch.htm"/>"><fmt:message key="menu_search_results_link"/></a>
                     </c:otherwise>
                 </c:choose>
-                        <fmt:message key="menu_search_results_link"/></a>
             </li>
         </ul>
     </div>
