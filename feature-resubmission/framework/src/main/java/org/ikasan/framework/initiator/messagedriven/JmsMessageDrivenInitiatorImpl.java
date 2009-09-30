@@ -156,8 +156,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
             stopInError();
             throw new RuntimeException(eventSerialisationException);
         }
-        IkasanExceptionAction action = flow.invoke(event);
-        handleAction(action);
+        invokeFlow(event);
     }
 
 

@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -204,6 +205,45 @@ public abstract class AbstractInitiator implements Initiator
             notifyMonitorListeners();
 
     }
+    
+    
+    
+	/**
+	 * Invoke the flow with all available <code>Event</code>s, handing exception actions as we go
+	 * 
+	 * @param events
+	 */
+	protected void invokeFlow(List<Event> events) {
+		IkasanExceptionAction exceptionAction = null;
+    	if (events != null && events.size() > 0){
+
+	        for (Event event : events)
+	        {
+	            IkasanExceptionAction action = this.getFlow().invoke(event);
+	            if (action != null)
+	            {
+	               exceptionAction = action;
+	               break;
+	            }
+	        }
+    	}
+        this.handleAction(exceptionAction);
+	}
+
+	/**
+	 * Invoke the flow with a single <code>Event</code>
+	 * 
+	 * @param event
+	 */
+	protected void invokeFlow(Event event) {
+		List<Event> events = null;
+		if (event !=null){
+			events = new ArrayList<Event>();
+			events.add(event);
+		}
+		invokeFlow(events);
+		
+	}
   
     /**
      * Handle the returned action from the flow invocation

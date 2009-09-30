@@ -40,8 +40,12 @@
  */
 package org.ikasan.framework.initiator;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorSubject;
 
@@ -61,6 +65,11 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
      * TODO - use the exception handler in the flow rather than having specific reference in the initiator
      */
     private IkasanExceptionHandler exceptionHandler;
+    
+    /**
+     * Used for sourcing the Events that will be played
+     */
+    private EventProvider eventProvider;
 
     
 
@@ -71,11 +80,13 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
      * @param name of the Module
      * @param flow The flow leading off from the initiator
      * @param exceptionHandler The exceptionHandler associated with the initiator
+     * @param eventProvider used for sourcing the Events that will be played
      */
-    public AbstractInvocationDrivenInitiator(String name, String moduleName, Flow flow, IkasanExceptionHandler exceptionHandler)
+    public AbstractInvocationDrivenInitiator(String name, String moduleName, Flow flow, IkasanExceptionHandler exceptionHandler, EventProvider eventProvider)
     {
         super(moduleName, name, flow);
         this.exceptionHandler = exceptionHandler;
+        this.eventProvider = eventProvider;
         notifyMonitorListeners();
     }
 
@@ -96,23 +107,24 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
      */
     public void invoke()
     {
+    	logger.info("called");
         if (stopping)
         {
             logger.warn("Attempt to invoke an initiator in a stopped state.");
             return;
         }
         
+        List<Event> events = null;
+        try{
+        	events = eventProvider.getEvents();
+        }catch (Throwable eventSourcingThrowable)
+        {
+        	handleAction(exceptionHandler.invoke(name, eventSourcingThrowable));
+        }
+        
         // invoke flow all the time we have event activity
-        invokeFlow();
+        invokeFlow(events);
     }
-
-
-
-    /**
-     * Invoke the initiator extending classes flow
-     */
-    protected abstract void invokeFlow();
-
 
 
     
