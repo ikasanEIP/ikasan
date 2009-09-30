@@ -53,8 +53,10 @@
         </c:forEach>
         <c:param name="page" value="0"/>
         <c:param name="orderBy" value="${orderBy}"/>
-        <c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
+        <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
     
@@ -66,8 +68,10 @@
         </c:forEach>
     	<c:param name="page" value="${page+1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
-    	<c:param name="orderAsc" value="${orderAsc}"/>
-    	<c:param name="selectAll" value="${selectAll}"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>    	
+        <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
     
@@ -79,8 +83,10 @@
 		</c:forEach>    	
     	<c:param name="page" value="${page-1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
-    	<c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="selectAll" value="${selectAll}"/>
+    	<c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>    	
+        <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
@@ -92,8 +98,10 @@
         </c:forEach>
         <c:param name="page" value="${lastPage}"/>
         <c:param name="orderBy" value="${orderBy}"/>
-        <c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
+        <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
@@ -105,8 +113,10 @@
         </c:forEach>
         <c:param name="page" value="${page}"/>
         <c:param name="orderBy" value="${orderBy}"/>
-        <c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="selectAll" value="${selectAll}"/>
+        <c:param name="orderAsc" value="${!orderAsc}"/>
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
+        <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
@@ -133,7 +143,7 @@
 		<c:otherwise>
     		<span id="currentlyShowing"><fmt:message key="paged_results_header_showing"/> <c:out value="${firstResultIndex+1}"/> <fmt:message key="paged_results_header_to"/> <c:out value="${firstResultIndex + size}"/> <fmt:message key="paged_results_header_of"/> <c:out value="${resultSize}"/> <fmt:message key="paged_results_header_results"/>&nbsp;&nbsp;<a href="#top"><fmt:message key="paged_results_header_back_to_top"/></a></span>
     		<span id="navigationControls">
-    		    <a name="results" />
+    		    <a name="results"></a>
             	<c:if test="${page gt 0}"><a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;</c:if>
             	<c:if test="${!isLastPage}"><a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a></c:if>
                 <select id="pageSize" name="pageSize" onchange="javascript:executeSearch()">

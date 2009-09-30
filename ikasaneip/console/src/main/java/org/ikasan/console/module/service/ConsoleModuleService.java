@@ -93,7 +93,9 @@ public class ConsoleModuleService implements ModuleService
 
     /**
      * @see org.ikasan.console.module.service.ModuleService#getAllModuleIds()
+     * @deprecated - See interface
      */
+    @Deprecated
     public Set<Long> getAllModuleIds()
     {
         Set<Module> modules = this.getAllModules();
