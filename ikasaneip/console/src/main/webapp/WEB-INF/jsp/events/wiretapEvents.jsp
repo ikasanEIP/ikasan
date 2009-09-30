@@ -45,130 +45,8 @@
 <%@ include file="/WEB-INF/jsp/events/eventsTop.jsp"%>
 
   <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.2.custom.css'/>" rel="stylesheet" />
-  <script type="text/javascript" src="<c:url value='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
-  <script type="text/javascript">
-
-      /* 
-       * JQuery code
-       * 
-       * Isn't enabled unless the document is 'ready' (e.g. the DOM is fully loaded)
-       */
-      $(document).ready(function()
-      {
-        if ($('#pointToPointFlowProfileSearch').val() == "true")
-        {
-            $('#pointToPointFlowProfileCheckboxes').show(100);
-            $('#moduleCheckboxes').hide();
-        }
-        else
-        {
-            $('#pointToPointFlowProfileCheckboxes').hide(100);
-            $('#moduleCheckboxes').show();
-        }
-
-        // jquery date picker assistance      
-        $("#fromDateString").datepicker({dateFormat: 'dd/mm/yy'});
-        $("#untilDateString").datepicker({dateFormat: 'dd/mm/yy'});
-        
-        // If the fromDateString changes then set the fromTimeString to be a default value
-        $("#fromDateString").change(function(){
-         $("#fromTimeString").val('00:00:00');
-        });
-
-        // If the untilDateString changes then set the untilTimeString to be a default value        
-        $("#untilDateString").change(function() {
-         $("#untilTimeString").val('00:00:00');
-        });
-        
-        // Shows/hides the searchFields div on clicking the link with an ID of "showHideSearchForm"
-        $('a#showHideSearchForm').click(function() {
-            $('#searchFields').toggle(100);
-            if ($('a#showHideSearchForm').text() == "[+]")
-            {
-                $('a#showHideSearchForm').text("[-]");
-            }
-            else
-            {
-                $('a#showHideSearchForm').text("[+]");
-            }
-            return false;
-        });
-
-        /* 
-         * Shows/hides the eventSearchPointToPointFlowProfileCheckboxes and moduleFields divs 
-         * on clicking the link with an ID of "toggleSearchMode", can't simply use jquery toggle() 
-         * between the two because the show/hide searchFields sets the visibility on both checkbox 
-         * sections.
-         */
-        $('a#toggleSearchMode').click(function() {
-            // Swap to the other search
-            if ($('#pointToPointFlowProfileSearch').val() == "true")
-            {
-                $('#moduleCheckboxes').show(100);
-                $('#pointToPointFlowProfileCheckboxes').hide(100);
-                $('#pointToPointFlowProfileSearch').val("false");
-            }
-            else
-            {
-                $('#moduleCheckboxes').hide(100);
-                $('#pointToPointFlowProfileCheckboxes').show(100);
-                $('#pointToPointFlowProfileSearch').val("true");
-            }
-            
-            // Do not follow the link
-            return false;
-        });
-        
-        // choose text for the show/hide link - can contain HTML (e.g. an image)
-        var showText='[+]';
-        var hideText='[-]';
-        
-        // append show/hide links to the element directly preceding the element with a class of "toggle"
-        $('.toggle').prev().append('<a href="#" class="toggleLink">'+showText+'</a>');
-        
-        // hide all of the elements with a class of 'toggle'
-        $('.toggle').hide();
-        
-        // capture clicks on the toggle links
-        $('a.toggleLink').click(function() {
-        
-            // change the link depending on whether the element is shown or hidden
-            $(this).html ($(this).html()==hideText ? showText : hideText);
-            
-            // toggle the display - uncomment the next line for a basic "accordion" style
-            //$('.toggle').hide();$('a.toggleLink').html(showText);
-            $(this).parent().next('.toggle').toggle();
-            
-            // return false so any link destination is not followed
-            return false;
-        
-        });
-
-      });
-
-    /* 
-     * A function to check/uncheck all checkboxes in a form based on which selectAll checkbox has been ticked.
-     */
-    function checkUncheckAll(theElement) {
-        var theForm = theElement.form
-        var z = 0;
-        for(z = 0; z < theForm.length; z++)
-        {
-            if(theForm[z].type == 'checkbox')
-            {
-                if(theElement.name == 'pointToPointFlowProfileSelectAll' && theForm[z].name == 'pointToPointFlowProfileIds')
-                {
-                    theForm[z].checked = theElement.checked;
-                } 
-                if(theElement.name == 'moduleSelectAll' && theForm[z].name == 'moduleIds')
-                {
-                    theForm[z].checked = theElement.checked;
-                } 
-            }
-        }
-    }
-
-  </script>
+  <script type="text/javascript" src="<c:url value='/js/jquery-ui-1.7.2.custom.min.js'/>" />
+  <script type="text/javascript" src="<c:url value='/js/wiretapevents.js'/>" />
 
 <div class="middle">
     <a id="toggleSearchMode" href="">Toggle Flows vs Modules Search</a>
@@ -203,7 +81,7 @@
                                 <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
                                     <tr>
                                         <td class="border" valign="top">
-                                            <input id="pointToPointFlowProfileIds" name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /><c:out value="${pointToPointFlowProfile.name}"/>
+                                            <input id="pointToPointFlowProfileIds" name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/>
                                         </td>
                                     </tr>
                                     <tr class="toggle" name="<c:out value="${pointToPointFlowProfile.id}"/>" id="<c:out value="${pointToPointFlowProfile.id}"/>">
@@ -222,7 +100,7 @@
                                                         --&gt; <c:out value="${pointToPointFlow.toModule.name}" />
                                                     </c:if>
                                                 </c:if>
-                                                <%-- We don't care about other uses cases for display purposes --%>
+                                                <%-- We don't care about other cases for display purposes --%>
                                             </c:forEach>
                                         </td>
                                     </tr>
@@ -232,6 +110,7 @@
                     </div>
                 </li>
 
+                <!-- Module Checkboxes -->
                 <li id="moduleCheckboxes">
                     <label for="modules"><fmt:message key="wiretap_events_module"/></label>
                     <div id="eventSearchModuleCheckboxes" class="multiSelectCheckboxes">            
@@ -306,6 +185,7 @@
     
     </form>
 
+    <%-- Section for re-executing the searches but with their order reversed --%>
     <c:url var="idLink" value="list.htm">
         <c:forEach var="entry" items="${searchParams}">
             <c:forEach var="entryValue" items="${entry.value}">
@@ -313,7 +193,7 @@
             </c:forEach>
         </c:forEach>
        	<c:param name="orderBy" value="id"/>
-       	<c:param name="orderAsc" value="${orderAsc}"/>
+       	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>       	
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -327,7 +207,7 @@
             </c:forEach>
         </c:forEach>
        	<c:param name="orderBy" value="moduleName"/>
-       	<c:param name="orderAsc" value="${orderAsc}"/>
+       	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>       	
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -341,7 +221,7 @@
             </c:forEach>
         </c:forEach>
        	<c:param name="orderBy" value="flowName"/>
-       	<c:param name="orderAsc" value="${orderAsc}"/>
+       	<c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>       	
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -355,7 +235,7 @@
             </c:forEach>
         </c:forEach>
         <c:param name="orderBy" value="componentName"/>
-        <c:param name="orderAsc" value="${orderAsc}"/>
+        <c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
@@ -369,13 +249,14 @@
             </c:forEach>
         </c:forEach>
         <c:param name="orderBy" value="created"/>
-        <c:param name="orderAsc" value="${orderAsc}"/>
+        <c:param name="orderAsc" value="${!orderAsc}"/>
         <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
+    <%-- Results section --%>
     <c:if test="${resultSize > 0}">
         <table id="wiretapSearchResults" class="listTable">
             <thead>
