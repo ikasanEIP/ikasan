@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: 
+ * $URL: 
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,41 +38,65 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow;
+ 
+package org.ikasan.framework.flow.invoker;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Interface representing a business path for an <code>Event<code>
+ * This class acts as a transfer object holding flow invocation time data relevent only
+ * to a single invocation of an Event down a Flow. 
  * 
- * Invocation represents the traversal of that business path. Problems/errors
- * are represented by the invocation method returning a <code>IkasanExceptionAction</code>
+ * At time of writing, the only data item that we are interested in is the name of the last
+ * component invoked, and only then when dealing with an error scenario.
+ * 
+ * Unlike the Event object, the same FlowInvocation object will be present immediately prior
+ * to the invocation of any component in a flow. The Events of course may be split, aggregated, etc.
+ * 
+ * It remains to be seen if we will need to transport any other data in this object, of if at some
+ * later stage, the FlowComponents themselves will need access to this information
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface Flow
-{
-    /**
-     * Invocation of this method represents the handling of the <code>Event<code>
-     * with respect to some business path
-     * 
-     * @param flowInvocationContext invocation context
-     * @param event The event we're dealing with
-     */
-    public void invoke(FlowInvocationContext flowInvocationContext, Event event);
+public class FlowInvocationContext {
+	
+	/**
+	 * a stack of the names of all components invoked so far
+	 */
+	private List<String> invokedComponents = new ArrayList<String>();
+	
+	
+	/**
+	 * Accessor for the name of the last component invoked
+	 * 
+	 * @return name of the last component invoked, or null if none exists yet
+	 */
+	public String getLastComponentName(){
+		String lastComponentName = null;
+		if (!invokedComponents.isEmpty()){
+			lastComponentName = invokedComponents.get(invokedComponents.size()-1);
+		}
+		return lastComponentName;
+	}
+	
+	/**
+	 * Allows a new componentName to be added to the stack of invoked components
+	 * 
+	 * @param componentName
+	 */
+	public void addInvokedComponentName(String componentName){
+		invokedComponents.add(componentName);
+	}
 
-    /**
-     * Returns the name of this flow
-     * 
-     * @return String name of this flow
-     */
-    public String getName();
+	/**
+	 * Safe accessor for the entire stack of invoked components
+	 * 
+	 * @return List of componentNames of all invoked components
+	 */
+	public List<String> getInvokedComponents(){
+		return new ArrayList<String>(invokedComponents);
+	}
 
-    /**
-     * Accessor for moduleName
-     * 
-     * @return name of the module this flow exist for
-     */
-    public String getModuleName();
 }

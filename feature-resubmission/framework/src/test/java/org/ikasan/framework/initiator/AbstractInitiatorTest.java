@@ -46,15 +46,20 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.hamcrest.Description;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.api.Action;
+import org.jmock.api.Invocation;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
@@ -97,11 +102,12 @@ public class AbstractInitiatorTest
      * mocked Flow
      */
     private Flow flow = mockery.mock(Flow.class);
-    
+        
     /**
-     * System under test
+     * An arbitrary name for a component in the flow
      */
-    private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow);
+    final String componentName = "componentName";
+    
     
     /**
      * List of Events to play
@@ -116,6 +122,17 @@ public class AbstractInitiatorTest
      * mocked Event to play
      */
     private Event event2 = mockery.mock(Event.class, "Event2");
+
+    /**
+     * mocked exception handler
+     */
+    private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
+
+    /**
+     * System under test
+     */
+    private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow, exceptionHandler);
+
     
     public AbstractInitiatorTest() {
 		super();
@@ -307,7 +324,7 @@ public class AbstractInitiatorTest
         final Sequence sequence = mockery.sequence("invocationSequence");
         
         //expect the first event to get played, but fail resulting in an exceptionAction
-        expectFlowInvocationFailure(event1, sequence, exceptionAction);
+        expectFlowInvocationFailure(event1, sequence, exceptionAction, "event1");
         
         
         //invoke the method that will result in invokeFlow being called
@@ -336,7 +353,7 @@ public class AbstractInitiatorTest
         {
             {
             	//event gets played successfully
-                one(flow).invoke((Event) with(equal(event)));
+                one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(event)) );
                 inSequence(sequence);
                 will(returnValue(null)); 
             }
@@ -349,21 +366,29 @@ public class AbstractInitiatorTest
 	 * @param exceptionAction
 	 */
 	private void expectFlowInvocationFailure(final Event event,
-			final Sequence sequence, final IkasanExceptionAction exceptionAction) {
-
+			final Sequence sequence, final IkasanExceptionAction exceptionAction, final String eventId) {
+		final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
             	//invoke the flow will update the flow invocation context before failing
-
-                one(flow).invoke( (Event) with(equal(event)));
+            	//one(event).getId();will(returnValue(eventId));
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 inSequence(sequence);
-                will(returnValue(exceptionAction));
+                will(doAll(addComponentNameToContext(componentName), throwException(throwable)));
 
-                
+
+                //calls off to the exceptionHandler which returns an exceptionAction
+                one(exceptionHandler).invoke(componentName,event,throwable);
+                will(returnValue(exceptionAction));
+                inSequence(sequence);
             }
         });
 	}
+	
+    public static  Action addComponentNameToContext(String componentName) {
+        return new AddComponentNameAction(componentName);
+    }
     
     class MockInitiator extends AbstractInitiator implements Initiator{
         
@@ -399,9 +424,9 @@ public class AbstractInitiatorTest
 
         private boolean stopInitiatorCalled = false;
 
-        public MockInitiator(String moduleName, String name, Flow flow)
+        public MockInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
         {
-            super(moduleName, name, flow);
+            super(moduleName, name, flow, exceptionHandler);
         }
 
         public void setRunning(boolean running){
@@ -501,5 +526,26 @@ public class AbstractInitiatorTest
         	return handleActionArgument;
         }
         
+    }
+
+}
+/**
+ * Models the action of the flow updating the FlowInvocationContext with a componentName
+ *
+ */
+class AddComponentNameAction implements Action {
+    private String componentName;
+    
+    public AddComponentNameAction(String componentName) {
+        this.componentName = componentName;
+    }
+    
+    public void describeTo(Description description) {
+
+    }
+    
+    public Object invoke(Invocation invocation) throws Throwable {
+    	((FlowInvocationContext)invocation.getParameter(0)).addInvokedComponentName(componentName);   
+        return null;
     }
 }

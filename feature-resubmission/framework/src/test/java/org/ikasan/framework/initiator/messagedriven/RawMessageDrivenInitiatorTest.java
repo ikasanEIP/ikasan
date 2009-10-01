@@ -51,7 +51,9 @@ import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -76,6 +78,7 @@ public class RawMessageDrivenInitiatorTest {
 	
 	Flow flow = mockery.mock(Flow.class);
 		
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
 	
 	TextMessage textMessage = mockery.mock(TextMessage.class);
 	
@@ -90,7 +93,7 @@ public class RawMessageDrivenInitiatorTest {
 	public void testOnMessageHandlesTextMessage() throws JMSException {
 		createExpectations(false, DEFAULT_PRIORITY);
         
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
 		rawDrivenInitiator.onMessage(textMessage);
 	
 	}
@@ -110,7 +113,7 @@ public class RawMessageDrivenInitiatorTest {
 		
         createExpectations(true, messagePriority);
         
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
         rawDrivenInitiator.setRespectPriority(true);
         rawDrivenInitiator.onMessage(textMessage);
 	
@@ -142,8 +145,7 @@ public class RawMessageDrivenInitiatorTest {
                 will(returnValue(payload));
                 
                 
-                one(flow).invoke((Event) with(new EventMatcher(messagePriority)));
-                will(returnValue(null));
+                one(flow).invoke((FlowInvocationContext) (with(a(FlowInvocationContext.class))), (with(new EventMatcher(messagePriority))));
             }
         });
 	}
@@ -164,7 +166,7 @@ public class RawMessageDrivenInitiatorTest {
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
             }
         });
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
 		try{
 			rawDrivenInitiator.onMessage(mapMessage);
 			Assert.fail("should have thrown UnsupportedOperationException");

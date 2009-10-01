@@ -41,7 +41,6 @@
 package org.ikasan.framework.flow.invoker;
 
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.FlowElement;
 
 /**
@@ -54,11 +53,11 @@ public interface FlowElementInvoker
     /**
      * Invokes the specified <code>FlowElement</code>with the specified <code>Event</code>
      * 
+     * @param flowInvocationContext
      * @param event argument for the <code>FlowElement</code>'s <code>FlowComponent</code>
      * @param moduleName - name of this module
      * @param flowName - name of this flow
      * @param flowElement for invocation
-     * @return IkasanExceptionAction if there is a problem
      */
-    public IkasanExceptionAction invoke(Event event, String moduleName, String flowName, FlowElement flowElement);
+    public void invoke(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName, FlowElement flowElement);
 }

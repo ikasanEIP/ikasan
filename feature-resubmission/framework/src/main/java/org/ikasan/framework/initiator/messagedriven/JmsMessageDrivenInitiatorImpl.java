@@ -50,6 +50,7 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
@@ -101,10 +102,11 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
+     * @param exceptionHandler handler for Exceptions
      */
-    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
+    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
     }
     
     public String getType(){

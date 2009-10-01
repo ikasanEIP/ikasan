@@ -44,6 +44,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.spring.SpringMessageListenerContainer;
@@ -85,6 +86,9 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 
     /** The flow */
     private Flow flow;
+    
+    /** The Exception Handler */
+    private IkasanExceptionHandler exceptionHandler;
 
     /** The event deserialiser */
     private JmsMessageEventSerialiser eventDeserialiser;
@@ -198,6 +202,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     }
 
     /**
+     * @param exceptionHandler the exceptionHandler to set
+     */
+    public void setExceptionHandler(IkasanExceptionHandler exceptionHandler){
+    	this.exceptionHandler = exceptionHandler;
+    }
+
+    /**
      * @param payloadFactory the payloadFactory to set
      */
     public void setPayloadFactory(PayloadFactory payloadFactory)
@@ -273,6 +284,10 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
         {
             throw new IllegalArgumentException("flow is mandatory for JmsMessageDrivenInitiator creation");
         }
+        if (exceptionHandler == null)
+        {
+            throw new IllegalArgumentException("exceptionHandler is mandatory for JmsMessageDrivenInitiator creation");
+        }
         if (eventDeserialiser == null)
         {
             if (payloadFactory == null)
@@ -284,11 +299,11 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
         JmsMessageDrivenInitiator thisInitiator = null;
         if (eventDeserialiser != null)
         {
-            thisInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, eventDeserialiser);
+            thisInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, eventDeserialiser);
         }
         else
         {
-            thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+            thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
             ((RawMessageDrivenInitiator)thisInitiator).setRespectPriority(respectPriority);
         }
         return thisInitiator;

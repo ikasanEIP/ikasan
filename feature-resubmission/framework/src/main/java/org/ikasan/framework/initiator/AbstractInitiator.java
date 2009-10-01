@@ -43,8 +43,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
 
 /**
@@ -97,6 +99,9 @@ public abstract class AbstractInitiator implements Initiator
     /** Count of how many times this Initiator has retried */
     protected Integer retryCount = null;
     
+    /** Handler for exceptions*/
+    protected IkasanExceptionHandler exceptionHandler;
+    
 
     /**
      * Constructor
@@ -104,12 +109,14 @@ public abstract class AbstractInitiator implements Initiator
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
+     * @param exceptionHandler 
      */
-    public AbstractInitiator(String moduleName, String name, Flow flow)
+    public AbstractInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
         this.moduleName = moduleName;
         this.name = name;
         this.flow = flow;
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -219,12 +226,21 @@ public abstract class AbstractInitiator implements Initiator
 
 	        for (Event event : events)
 	        {
-	            IkasanExceptionAction action = this.getFlow().invoke(event);
-	            if (action != null)
-	            {
-	               exceptionAction = action;
-	               break;
-	            }
+	        	FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
+				try{
+					flow.invoke(flowInvocationContext, event);
+				}catch (Throwable throwable){
+					String lastComponentName = flowInvocationContext.getLastComponentName();
+//					if (errorLoggingService!=null){
+//						errorLoggingService.logError(throwable, moduleName, flow.getName(), lastComponentName, event);
+//					} else{
+//						logger.warn("exception caught by initiator ["+moduleName+"."+name+"], but not errorLoggingService available");
+//					}
+					
+					
+					exceptionAction = exceptionHandler.invoke(lastComponentName, event, throwable);
+					break;
+				}
 	        }
     	}
         this.handleAction(exceptionAction);

@@ -44,8 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.invoker.FlowElementInvoker;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 
 /**
  * Default implementation of a Flow
@@ -97,14 +97,13 @@ public class VisitingInvokerFlow implements Flow
         return name;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.flow.Flow#invoke(org.ikasan.framework.component.Event)
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.flow.Flow#invoke(org.ikasan.framework.flow.FlowInvocationContext, org.ikasan.framework.component.Event)
      */
-    public IkasanExceptionAction invoke(Event event)
+    public void invoke(FlowInvocationContext flowInvocationContext, Event event)
     {
-        return flowElementInvoker.invoke(event, moduleName, name, headElement);
+        flowElementInvoker.invoke(flowInvocationContext, event, moduleName, name, headElement);
     }
 
     /**

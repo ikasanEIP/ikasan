@@ -48,9 +48,11 @@ import javax.jms.TextMessage;
 import junit.framework.Assert;
 
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventSerialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -80,6 +82,8 @@ public class EventMessageDrivenInitiatorTest {
 	
 	Flow flow = mockery.mock(Flow.class);
 	
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
+	
 	
 	
 	TextMessage textMessage = mockery.mock(TextMessage.class);
@@ -104,12 +108,12 @@ public class EventMessageDrivenInitiatorTest {
             	
                 one(jmsMessageEventSerialiser).fromMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
-                
-                one(flow).invoke(event);
+                one(event).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 will(returnValue(null));
             }
         });
-        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, jmsMessageEventSerialiser);
+        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);
     	
 		eventMessageDrivenInitiator.onMessage(mapMessage);
 	
@@ -130,7 +134,7 @@ public class EventMessageDrivenInitiatorTest {
             	allowing(textMessage).getJMSMessageID();will(returnValue("messageId"));
             }
         });
-        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, jmsMessageEventSerialiser);
+        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);
     	
 		try{
 			eventMessageDrivenInitiator.onMessage(textMessage);
