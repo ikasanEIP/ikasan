@@ -50,6 +50,7 @@ import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
@@ -78,7 +79,7 @@ public class AbstractInvocationDrivenInitiatorTest {
 	
 	EventProvider eventProvider = mockery.mock(EventProvider.class);
 	
-	
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
    
     
 	/**
@@ -123,7 +124,55 @@ public class AbstractInvocationDrivenInitiatorTest {
 		mockery.assertIsSatisfied();
 	}	
 
-    
+	/**
+	 * Tests the unhappy path of the EventProvider failing (throwing some Throwable). This should be logged, and the throwable dealt with as a result of the
+	 * ExceptionHandler's action
+	 * @throws ResourceException 
+	 */
+	@Test
+	public void testInvoke_willLogErrorCallExceptionHandlerAndHandleAction_whenEventProviderThrows() throws ResourceException{
+		final String initiatorName = "initiatorName";
+		final String moduleName = "moduleName";
+		
+		MockAbstractInvocationDrivenInitiator initiator = new MockAbstractInvocationDrivenInitiator(initiatorName, moduleName, null, exceptionHandler, eventProvider);
+		
+		final ErrorLoggingService errorLoggingService = mockery.mock(ErrorLoggingService.class);
+		initiator.setErrorLoggingService(errorLoggingService);
+		
+		final Throwable throwable = new NullPointerException();
+		final IkasanExceptionAction exceptionAction = mockery.mock(IkasanExceptionAction.class);
+        
+		final Sequence sequence = mockery.sequence("invocationSequence");
+		mockery.checking(new Expectations()
+        {
+            {
+            	//eventProvider fails
+                one(eventProvider).getEvents();
+                inSequence(sequence);
+                will(throwException(throwable));
+                
+                //errorService notified
+                one(errorLoggingService).logError(throwable, moduleName, initiatorName);
+                inSequence(sequence);
+                
+                //exceptionHandlerCalled
+                one(exceptionHandler).invoke(initiatorName, throwable);
+                inSequence(sequence);
+                will(returnValue(exceptionAction));
+            }
+        });
+        
+        initiator.invoke();
+        
+        mockery.assertIsSatisfied();
+        
+        Assert.assertTrue("handleAction should have been called", initiator.isHandleActionCalled());
+        
+        Assert.assertEquals("exceptionAction passed to handleAction should be that which was returned from the exceptionHandler", exceptionAction, initiator.getHandleActionArgument());
+        
+	
+		
+	} 
 	
 }
 /**
@@ -163,7 +212,6 @@ class MockAbstractInvocationDrivenInitiator extends AbstractInvocationDrivenInit
 	protected void invokeFlow(List<Event>events) {
 		invokeFlowCalled = true;
 		invokeFlowArgument = events;
-		super.invokeFlow(events);
 	}
 
 	/* (non-Javadoc)

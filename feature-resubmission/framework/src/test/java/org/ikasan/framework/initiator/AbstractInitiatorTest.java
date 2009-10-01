@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.hamcrest.Description;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
@@ -137,6 +138,20 @@ public class AbstractInitiatorTest
     final IkasanExceptionAction rollbackRetryOnceAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 1);
 
     /**
+     * mocked error logging service
+     */
+    private ErrorLoggingService errorLoggingService = mockery.mock(ErrorLoggingService.class);
+    
+    
+    /**
+     * An arbitrary name for the flow
+     */
+    final String flowName = "flowName";
+    
+    
+    
+    
+    /**
      * System under test
      */
     private AbstractInitiator abstractInitiator = new MockInitiator(moduleName,initiatorName, flow, exceptionHandler);
@@ -147,6 +162,8 @@ public class AbstractInitiatorTest
 		eventsToPlay = new ArrayList<Event>();
 		eventsToPlay.add(event1);
 		eventsToPlay.add(event2);
+		
+		abstractInitiator.setErrorLoggingService(errorLoggingService);
 	}
 
     
@@ -573,7 +590,15 @@ public class AbstractInitiatorTest
                 inSequence(sequence);
                 will(doAll(addComponentNameToContext(componentName), throwException(throwable)));
 
-
+                //gets the name of the flow from the flow
+                one(flow).getName();
+                inSequence(sequence);
+                will(returnValue(flowName));
+                
+                //invokes the errorLoggingService
+                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event);
+                inSequence(sequence);
+                
                 //calls off to the exceptionHandler which returns an exceptionAction
                 one(exceptionHandler).invoke(componentName,event,throwable);
                 will(returnValue(exceptionAction));

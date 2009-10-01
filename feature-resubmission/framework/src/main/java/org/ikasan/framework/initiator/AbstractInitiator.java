@@ -44,6 +44,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
@@ -102,8 +103,12 @@ public abstract class AbstractInitiator implements Initiator
     /** Handler for exceptions*/
     protected IkasanExceptionHandler exceptionHandler;
     
+    /** Service for logging errors in a heavyweight fashion */
+    protected ErrorLoggingService errorLoggingService;
+    
 
-    /**
+
+	/**
      * Constructor
      * 
      * @param moduleName The name of the module
@@ -231,19 +236,35 @@ public abstract class AbstractInitiator implements Initiator
 					flow.invoke(flowInvocationContext, event);
 				}catch (Throwable throwable){
 					String lastComponentName = flowInvocationContext.getLastComponentName();
-//					if (errorLoggingService!=null){
-//						errorLoggingService.logError(throwable, moduleName, flow.getName(), lastComponentName, event);
-//					} else{
-//						logger.warn("exception caught by initiator ["+moduleName+"."+name+"], but not errorLoggingService available");
-//					}
-					
-					
+					logError(event, throwable, lastComponentName);
 					exceptionAction = exceptionHandler.invoke(lastComponentName, event, throwable);
 					break;
 				}
 	        }
     	}
         this.handleAction(exceptionAction);
+	}
+
+	/**
+	 * Logs errors in a heavy weight fashion using an <code>ErrorLoggingService</code> if available
+	 * 
+	 * @param event
+	 * @param throwable
+	 * @param componentName
+	 */
+	protected void logError(Event event, Throwable throwable,
+			String componentName) {
+		if (errorLoggingService!=null){
+			if (event!=null){
+				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event);
+			}
+			else{
+				//no event available, likely because one was not yet originated
+				errorLoggingService.logError(throwable, moduleName, name);
+			}
+		} else{
+			getLogger().warn("exception caught by initiator ["+moduleName+"."+name+"], but not errorLoggingService available");
+		}
 	}
 
 	/**
@@ -314,7 +335,6 @@ public abstract class AbstractInitiator implements Initiator
      */
     protected void handleRetry(Integer maxAttempts, long delay) throws InitiatorOperationException
     {
-    	System.out.println("inside handleRetry");
         if (retryWouldExceedLimit(maxAttempts, retryCount))
         {
 
@@ -329,7 +349,6 @@ public abstract class AbstractInitiator implements Initiator
         	
             if (isRecovering())
             {
-            	System.out.println("its recovering");
                 if (getLogger().isInfoEnabled())
                 {
                     getLogger().info("Initiator [" +moduleName+"-"+name+ "] failed retry [" + (retryCount) + "/"
@@ -342,7 +361,6 @@ public abstract class AbstractInitiator implements Initiator
                 
             }else
             {
-            	System.out.println("not recovering");
                 startRetryCycle(maxAttempts, delay);
                 retryCount=0;
                 notifyMonitorListeners();
@@ -441,6 +459,14 @@ public abstract class AbstractInitiator implements Initiator
     {
         return stopping;
     }
+    
+    /**
+     * Setter for optional ErrorLoggingService
+     * @param errorLoggingService
+     */
+    public void setErrorLoggingService(ErrorLoggingService errorLoggingService) {
+		this.errorLoggingService = errorLoggingService;
+	}
     
     /**
      * Provides access to the implementation class specific logger instance

@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
+import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorSubject;
 
@@ -115,6 +116,9 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
         	events = eventProvider.getEvents();
         }catch (Throwable eventSourcingThrowable)
         {
+        	//tell the error service
+    		logError(null, eventSourcingThrowable, name);
+
         	handleAction(exceptionHandler.invoke(name, eventSourcingThrowable));
         }
         
