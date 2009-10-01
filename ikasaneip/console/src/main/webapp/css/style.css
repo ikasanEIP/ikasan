@@ -400,3 +400,9 @@ form.fancydataform fieldset li {
 .nowrap{
     white-space: nowrap;
 }
+
+.homeContent
+{
+	padding-left: 10px;
+	margin-left: 10px;
+}
