@@ -127,6 +127,14 @@ public class AbstractInitiatorTest
      * mocked exception handler
      */
     private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
+    
+    private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+    
+    final long retryDelay = 1000;
+    
+    final IkasanExceptionAction rollbackRetryTwiceAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 2);
+    
+    final IkasanExceptionAction rollbackRetryOnceAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 1);
 
     /**
      * System under test
@@ -195,7 +203,7 @@ public class AbstractInitiatorTest
     public void testGetState(){
         Assert.assertEquals("getState should return InitiatorState.RUNNING if initiator implementation isRunning(), but not isRecovering()", InitiatorState.RUNNING,abstractInitiator.getState()); 
         
-        ((MockInitiator)abstractInitiator).setRecovering(true);
+        ((MockInitiator)abstractInitiator).setRetryCount(new Integer(0));
         Assert.assertEquals("getState should return InitiatorState.RECOVERING if initiator implementation isRunning(), AND isRecovering()", InitiatorState.RECOVERING,abstractInitiator.getState()); 
     
         ((MockInitiator)abstractInitiator).setRunning(false);
@@ -226,7 +234,7 @@ public class AbstractInitiatorTest
 
     @Test
     public void testStop_onRecoveringInitiator_willSetStoppingFlagAndCancelRetryBeforeInvokingStopInitiator(){
-        ((MockInitiator)abstractInitiator).setRecovering(true);
+    	((MockInitiator)abstractInitiator).setRetryCount(new Integer(0));
         
         Assert.assertFalse("just checking that our mock implementation has not had stopInitiator called on it before", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
         abstractInitiator.stop();
@@ -235,7 +243,7 @@ public class AbstractInitiatorTest
    
     @Test
     public void testStop_onNonRecoveringInitiator_willSetStoppingBeforeInvokingStopInitiator(){
-        ((MockInitiator)abstractInitiator).setRecovering(false);
+    	((MockInitiator)abstractInitiator).setRetryCount(new Integer(0));
         
         Assert.assertFalse("just checking that our mock implementation has not had stopInitiator called on it before", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
         abstractInitiator.stop();
@@ -247,7 +255,7 @@ public class AbstractInitiatorTest
      */
     @Test
     public void testHandleAction_withNullAction_willCompleteRetryIfRecovering(){
-        ((MockInitiator)abstractInitiator).setRecovering(true);
+    	((MockInitiator)abstractInitiator).setRetryCount(new Integer(0));
         Assert.assertFalse("just checking that our mock implementation has not had completeRetry called on it before", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
         
         //invoke the method that will result in handleAction
@@ -255,7 +263,195 @@ public class AbstractInitiatorTest
         Assert.assertTrue("completeRetry should have been called on concrete implemetation when handling a null action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCompleteRetryCycleCalled());
     }
     
+    /**
+     * Tests that handling a stop action will complete the retry cycle on a recovering initiator, and stop it in error
+     */
+    @Test
+    public void testHandleAction_withStopExceptionAction_onRecoveringInitiator_willCancelRetryAndStopInError(){
+        //set up a recovering initiator
+        ((MockInitiator)abstractInitiator).setRetryCount(0);
+        
 
+        //invoke handeAction with stopAction
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(rollbackStopAction);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+        
+    	
+    	Assert.assertTrue("cancelRetry should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCancelRetryCycleCalled());
+    	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+    	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
+    	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+    }
+    
+    /**
+     * Tests that handling a stop action will stop it in error
+     */
+    @Test
+    public void testHandleAction_withStopExceptionAction_onRunningInitiator_willStopInError(){
+        //invoke handeAction with stopAction
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(rollbackStopAction);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+        
+    	
+    	Assert.assertFalse("cancelRetry should not have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCancelRetryCycleCalled());
+    	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+    	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
+    	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+    }
+    
+    
+//    /**
+//     * Tests that handling an EXCLUDE action will note the exclusion before rolling back
+//     */
+//    @Test
+//    public void testHandleAction_withExcludeAction_willNoteExclusion(){
+//    	final String currentEventId = "currentEventId";
+//    	
+//        //invoke handeAction with excludeAction
+//    	AbortTransactionException abortTransactionException = null;
+//    	try{
+//        	((MockInitiator)abstractInitiator).handleAction(excludeAction);
+//        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+//    	} catch(AbortTransactionException exception){
+//    		abortTransactionException = exception;
+//    	}
+//    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+//        
+//    	Assert.assertTrue("this event should be noted for exclusion following handling of an Exclude action for this event", abstractInitiator.getExclusions().contains(currentEventId));
+//    }
+//    
+//    /**
+//     * Tests that handling an EXCLUDE action will stop and rollback if exclusions are not supported
+//     */
+//    @Test
+//    public void testHandleAction_withExcludeAction_willStopAndRollbackIfExclusionsNotSupported(){
+//    	final String currentEventId = "currentEventId";
+//    	
+//    	//set the excludedEventService to null on the initiator
+//    	abstractInitiator.setExcludedEventService(null);
+//    	
+//        //invoke handeAction with excludeAction
+//    	AbortTransactionException abortTransactionException = null;
+//    	try{
+//        	((MockInitiator)abstractInitiator).handleAction(excludeAction,currentEventId);
+//        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+//    	} catch(AbortTransactionException exception){
+//    		abortTransactionException = exception;
+//    	}
+//    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+//        
+//    	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
+//    	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+//   }
+    
+
+    
+    
+    
+    /**
+     * Tests that handling a retry action on a recovering initiator will increment the retry count and rollback
+     */
+    @Test
+    public void testHandleAction_withRetryExceptionAction_onRecoveringInitiator_willIncrementRetryCountAndContinueRetry(){
+        //set up a recovering initiator - ie it has already run once, failed, and gone into recovery. This invocation will be its first retry
+    	int initialRetryCount = 0;
+    	((MockInitiator)abstractInitiator).setRetryCount(initialRetryCount);
+        
+
+    	
+        //invoke handeAction with retry (once) action
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryTwiceAction);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+        
+    	Assert.assertTrue("retry count should have been incremeneted", initialRetryCount+1==abstractInitiator.getRetryCount());
+    	Assert.assertTrue("continueRetry should have been called on concrete implemetation with the retry delay", ((MockInitiator)abstractInitiator).isContinueRetryCycleCalled());
+
+    }
+    
+ 
+    /**
+     * Tests that handling a retry action on a recovering initiator will increment the retry count and rollback
+     */
+    @Test
+    public void testHandleAction_withRetryExceptionAction_onRunningInitiator_willSetRetryCountAndCallStartRetry(){
+
+        //invoke handeAction with retry (once) action
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+        
+    	
+    	Assert.assertTrue("retry count should be set at 0", 0==abstractInitiator.getRetryCount());
+    	Assert.assertTrue("startRetry should have been called on concrete implemetation with the retry delay", ((MockInitiator)abstractInitiator).isStartRetryCycleCalled());
+    	Assert.assertTrue("startRetry should have been called with maxAttempts 1", 1==((MockInitiator)abstractInitiator).getStartRetryCycleMaxAttemptsArgument());
+    	Assert.assertTrue("startRetry should have been called with delay of 'retryDelay'", retryDelay==((MockInitiator)abstractInitiator).getStartRetryCycleDelayArgument());
+
+    }   
+    
+    
+    
+    
+    
+    
+    /**
+     * Tests when the maximum retry account is reached on a recovering initiator, it will stop in error
+     */
+    @Test
+    public void testHandleAction_withRetryExceptionAction_exceedingRetryCount_willStopInError(){
+
+        //invoke handeAction with retry (once) action
+    	AbortTransactionException abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+    	Assert.assertTrue("retry count should now be 0", 0==abstractInitiator.getRetryCount());
+    	
+    	
+    	//invoke again, as the first retry. This time, receiving the rollbackRetryOnce, should cause it to stop in error as it has already now retried its one time
+    	abortTransactionException = null;
+    	try{
+        	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction);
+        	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
+    	} catch(AbortTransactionException exception){
+    		abortTransactionException = exception;
+    	}
+    	
+    	
+    	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
+    	Assert.assertTrue("cancelRetry should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCancelRetryCycleCalled());
+    	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+    	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
+    	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+
+
+    }
 	
     /**
      * Tests that invocation of invokeFlow with a null Event List will invoke the handleAction(null) routine
@@ -393,19 +589,38 @@ public class AbstractInitiatorTest
     class MockInitiator extends AbstractInitiator implements Initiator{
         
         private boolean running = true;
-        private boolean recovering = false;
+
         private boolean startInitiatorCalled = false;
         private boolean completeRetryCycleCalled = false;
     	private IkasanExceptionAction handleActionArgument = null;
     	private boolean handleActionCalled = false;
+    	private boolean cancelRetryCycleCalled = false;
+    	private boolean continueRetryCycleCalled = false;
+    	private Long continueRetryCycleArgument = null;
+    	private boolean startRetryCycleCalled = false;
+        private boolean stopInitiatorCalled = false;
+		private Integer startRetryCycleMaxAttemptsArgument;
+		private long startRetryCycleDelayArgument;
+		private Logger logger = Logger.getLogger(MockInitiator.class);
         
-        public boolean isCompleteRetryCycleCalled()
+        public boolean isStartRetryCycleCalled() {
+			return startRetryCycleCalled;
+		}
+
+
+		public boolean isCompleteRetryCycleCalled()
         {
             return completeRetryCycleCalled;
         }
 
 
-        public void invokeHandleAction(IkasanExceptionAction ikasanExceptionAction){
+        public void setRetryCount(int i) {
+			retryCount=i;
+			
+		}
+
+
+		public void invokeHandleAction(IkasanExceptionAction ikasanExceptionAction){
             handleAction(ikasanExceptionAction);
         }
         
@@ -422,9 +637,13 @@ public class AbstractInitiatorTest
             return stopInitiatorCalled;
         }
 
-        private boolean stopInitiatorCalled = false;
 
-        public MockInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
+        public Integer getStartRetryCycleMaxAttemptsArgument() {
+			return startRetryCycleMaxAttemptsArgument;
+		}
+
+
+		public MockInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
         {
             super(moduleName, name, flow, exceptionHandler);
         }
@@ -433,9 +652,7 @@ public class AbstractInitiatorTest
             this.running = running;
         }
         
-        public void setRecovering(boolean recovering){
-            this.recovering=recovering;
-        }
+
 
         public String getType()
         {
@@ -455,7 +672,7 @@ public class AbstractInitiatorTest
 
         public boolean isRecovering()
         {
-            return recovering;
+            return retryCount!=null;
         }
 
         public boolean isRunning()
@@ -467,21 +684,22 @@ public class AbstractInitiatorTest
         @Override
         protected void completeRetryCycle()
         {
-            recovering=false;
+            retryCount=null;
             completeRetryCycleCalled = true;
         }
 
         @Override
         protected Logger getLogger()
         {
-            // TODO Auto-generated method stub
-            return null;
+
+            return logger;
         }
 
         @Override
         protected void cancelRetryCycle()
         {
-            recovering=false;
+        	cancelRetryCycleCalled=true;
+            retryCount=null;
             
         }
 
@@ -504,14 +722,34 @@ public class AbstractInitiatorTest
             Assert.assertFalse("isRecovering() should never be true once stopInitiator is called", isRecovering());
         }
 
+
         @Override
+		protected void continueRetryCycle(long delay) {
+			continueRetryCycleCalled=true;
+			continueRetryCycleArgument = delay;
+			super.continueRetryCycle(delay);
+		}
+        
+        public boolean isContinueRetryCycleCalled() {
+			return continueRetryCycleCalled;
+		}
+
+
+		@Override
         protected void startRetryCycle(Integer maxAttempts, long delay) throws InitiatorOperationException
         {
-            // TODO Auto-generated method stub
+            startRetryCycleCalled = true;
+            startRetryCycleMaxAttemptsArgument = maxAttempts;
+            startRetryCycleDelayArgument = delay;
             
         }
         
-        @Override
+        public long getStartRetryCycleDelayArgument() {
+			return startRetryCycleDelayArgument;
+		}
+
+
+		@Override
 		protected void handleAction(IkasanExceptionAction action) {
 			handleActionCalled=true;
 			handleActionArgument = action;
@@ -520,6 +758,10 @@ public class AbstractInitiatorTest
 
         public boolean isHandleActionCalled(){
         	return handleActionCalled;
+        }
+        
+        public boolean isCancelRetryCycleCalled(){
+        	return cancelRetryCycleCalled;
         }
         
         public IkasanExceptionAction getHandleActionArgument(){

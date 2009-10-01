@@ -314,9 +314,10 @@ public abstract class AbstractInitiator implements Initiator
      */
     protected void handleRetry(Integer maxAttempts, long delay) throws InitiatorOperationException
     {
-
+    	System.out.println("inside handleRetry");
         if (retryWouldExceedLimit(maxAttempts, retryCount))
         {
+
             stopInError();
 
             getLogger().warn("Initiator [" +moduleName+"-"+name+ "] stopped. Retry [" + retryCount + "/"
@@ -325,9 +326,10 @@ public abstract class AbstractInitiator implements Initiator
         }
         else
         {
-            
+        	
             if (isRecovering())
             {
+            	System.out.println("its recovering");
                 if (getLogger().isInfoEnabled())
                 {
                     getLogger().info("Initiator [" +moduleName+"-"+name+ "] failed retry [" + (retryCount) + "/"
@@ -340,6 +342,7 @@ public abstract class AbstractInitiator implements Initiator
                 
             }else
             {
+            	System.out.println("not recovering");
                 startRetryCycle(maxAttempts, delay);
                 retryCount=0;
                 notifyMonitorListeners();
@@ -353,9 +356,10 @@ public abstract class AbstractInitiator implements Initiator
     
     private boolean retryWouldExceedLimit(Integer maxAttempts, Integer attemptCount)
     {
-        Integer thisAttemptCount = attemptCount==null?0:attemptCount;
+    	
+        Integer thisAttemptCount = attemptCount==null?-1:attemptCount;
         
-        return (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts <= thisAttemptCount+1);
+        return (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts<=thisAttemptCount+1);
     }
 
 
