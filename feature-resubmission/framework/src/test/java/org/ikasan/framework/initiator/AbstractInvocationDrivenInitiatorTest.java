@@ -190,6 +190,8 @@ class MockAbstractInvocationDrivenInitiator extends AbstractInvocationDrivenInit
 	boolean handleActionCalled = false;
 	boolean completeRetryCalled = false;
 	
+	Logger logger = Logger.getLogger(MockAbstractInvocationDrivenInitiator.class);
+	
 
 	
 	/**
@@ -242,7 +244,7 @@ class MockAbstractInvocationDrivenInitiator extends AbstractInvocationDrivenInit
 	 */
 	@Override
 	protected Logger getLogger() {
-		return null;
+		return logger;
 	}
 
 	/* (non-Javadoc)
