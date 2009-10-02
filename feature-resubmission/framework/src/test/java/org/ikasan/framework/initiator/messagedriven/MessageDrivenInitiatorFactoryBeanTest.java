@@ -49,6 +49,7 @@ import junit.framework.Assert;
 
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.jmock.Mockery;
@@ -72,6 +73,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
     private Topic topic = mockery.mock(Topic.class);
     private PlatformTransactionManager transactionManager = mockery.mock(PlatformTransactionManager.class);
     private JmsMessageEventSerialiser jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
+    private ErrorLoggingService errorLoggingService = mockery.mock(ErrorLoggingService.class);
 
     /**
      * Test mandatory field checking for moduleName
@@ -251,6 +253,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setDestination(topic);
         messageDrivenInitiatorFactoryBean.setTransactionManager(transactionManager);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
+        messageDrivenInitiatorFactoryBean.setErrorLoggingService(errorLoggingService);
         JmsMessageDrivenInitiator initiator = (JmsMessageDrivenInitiator) messageDrivenInitiatorFactoryBean.getObject();
         Assert.assertTrue("RawMessageDrivenInitiator should be returned if serialiser supplied", (initiator instanceof RawMessageDrivenInitiator));
         

@@ -45,8 +45,10 @@ import javax.jms.Destination;
 
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.messagedriven.spring.SpringMessageListenerContainer;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
@@ -98,6 +100,9 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 
     /** The type of object */
     private Class<? extends JmsMessageDrivenInitiatorImpl> objectType;
+    
+    /** The error logging service */
+    private ErrorLoggingService errorLoggingService;
 
     /** The message initiator */
     private JmsMessageDrivenInitiator initiator;
@@ -223,6 +228,14 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 		this.respectPriority = respectPriority;
 	}
 
+    /**
+     * @param errorLoggingService the errorLoggingService to set
+     */   
+	public void setErrorLoggingService(
+			ErrorLoggingService errorLoggingService) {
+		this.errorLoggingService = errorLoggingService;
+	}
+	
     public Object getObject() throws Exception
     {
         if (initiator == null)
@@ -306,6 +319,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
             ((RawMessageDrivenInitiator)thisInitiator).setRespectPriority(respectPriority);
         }
+        ((AbstractInitiator)thisInitiator).setErrorLoggingService(errorLoggingService);
         return thisInitiator;
     }
 
