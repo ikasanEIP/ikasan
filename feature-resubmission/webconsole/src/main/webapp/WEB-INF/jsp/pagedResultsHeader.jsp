@@ -42,24 +42,42 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
-
-
-<div class="middle">
-
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="scheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
+<div id="searchResultsHeader">
     
-</ul>
-</p>
+    <c:url var="nextPageLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="page" value="${page+1}"/>
+    	<c:param name="orderBy" value="${orderBy}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
+    </c:url>
+    
+    <c:url var="previousPageLink" value="list.htm">
+		<c:forEach var="entry" items="${searchParams}">
+			<c:param name="${entry.key}" value="${entry.value}"/>
+		</c:forEach>    	
+    	<c:param name="page" value="${page-1}"/>
+    	<c:param name="orderBy" value="${orderBy}"/>
+    	<c:param name="orderAsc" value="${orderAsc}"/>
+    </c:url>
+    
+    <c:choose>
+    	<c:when test="${resultSize==0}">
+    		<p>Your search did not return any results</p>
+		</c:when>
+		<c:otherwise>
+    		<span id="currentlyShowing">Showing <c:out value="${firstResultIndex+1}"/> to <c:out value="${firstResultIndex + size}"/> of <c:out value="${resultSize}"/> results</span>
+    		<span id="navigationControls" >
+            	<c:if test="${page gt 0}">
+                	<a href="<c:out value="${previousPageLink}" escapeXml="true" />">Previous</a>&nbsp;
+            	</c:if>
+            	<c:if test="${!lastPage}">
+                	<a href="<c:out value="${nextPageLink}" escapeXml="true" />">Next</a>
+            	</c:if>
+    		</span>
+    	</c:otherwise>
+    </c:choose>
+    
 
-</div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+</div> <!--end searchResultsHeader -->

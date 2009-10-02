@@ -1,8 +1,10 @@
-<%-- 
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
 
- $Id:
- $URL: 
 
+ $Id$
+ $URL$
+ 
  ====================================================================
  Ikasan Enterprise Integration Platform
  
@@ -41,25 +43,46 @@
 
  Author:  Ikasan Development Team
  
---%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 
-<div class="middle">
+	<bean id="wiretapService"
+		class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
+		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="moduleService" />
+	</bean>
+	
+	<bean id="wiretapDao"
+		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
 
-<h2>This is the admin home</h2>
+	<bean id="triggerDao"
+		class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
 
-<p>
-From here you can:
-<ul>
-    <li><a href="scheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
+	<bean id="wiretapHibernateSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasanAdminXaDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>WiretapEventImpl.hbm.xml</value>
+				<value>Trigger.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
     
-</ul>
-</p>
-
-</div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+	
+</beans>

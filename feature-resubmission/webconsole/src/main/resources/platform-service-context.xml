@@ -55,27 +55,25 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-
-    <bean id="moduleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
-        <constructor-arg ref="moduleContainer" />
-        <constructor-arg ref="initiatorCommandDao" />
-    </bean>
-    
-    <bean id="moduleInitialisationService" class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
-        <constructor-arg ref="moduleContainer" />
-        <constructor-arg ref="userDetailsService"/>
-        <constructor-arg ref="initiatorCommandDao" />
-    </bean>
-
-    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+	<!-- hibernate properties loading -->
+	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true"/>
+		<property name="location" value="classpath:ikasan-hibernate.properties"/>
+	</bean>
 
 
+	<!--  flow invocation beans -->
+	<bean id="flowElementInvoker"
+		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
+		<property name="flowEventListener" ref="flowEventListener" />
+	</bean>
+	
 	<bean id="flowEventListener"
 		class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
 		<constructor-arg ref="jobsMap"/>
 		<constructor-arg ref="triggerDao"/>
 	</bean>
-
+	
 	<bean id="jobsMap" class="java.util.HashMap">
 		<constructor-arg>
 			<map>
@@ -91,55 +89,9 @@
 		<constructor-arg ref="wiretapService" />
 	</bean>
 
-	<bean id="wiretapService"
-		class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="wiretapDao" />
-		<constructor-arg ref="moduleService" />
-	</bean>
+
 	
-	<bean id="initiatorCommandDao"
-        class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorCommandDao">
-        <property name="sessionFactory" ref="initiatorCommandHibernateSessionFactory" />
-    </bean>
-
-	<bean id="wiretapDao"
-		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
-	</bean>
-
-	<bean id="triggerDao"
-		class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
-	</bean>
-
-	<bean id="wiretapHibernateSessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasanAdminXaDataSource" />
-		<property name="mappingResources">
-			<list>
-				<value>WiretapEventImpl.hbm.xml</value>
-				<value>Trigger.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties"/>
-	</bean>
-	
-	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="ignoreResourceNotFound" value="true"/>
-		<property name="location" value="classpath:ikasan-hibernate.properties"/>
-	</bean>
-	
-	<bean id="initiatorCommandHibernateSessionFactory"
-        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasanAdminXaDataSource" />
-        <property name="mappingResources">
-            <list>
-                <value>InitiatorCommand.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
-
+	<!-- scheduled activities -->
     
 	<bean id="platformScheduler"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -147,6 +99,7 @@
 		<property name="triggers">
 			<list>
 				<ref bean="wiretapEventHousekeepingTrigger" />
+				<ref bean="loggedErrorHousekeepingTrigger" />
 			</list>
 		</property>
 	</bean>
@@ -169,6 +122,26 @@
 			every 2 mins
 		-->
 	</bean>
+	
+	<bean id="loggedErrorHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="errorLoggingService" />
+				<property name="targetMethod" value="housekeep" />
+				<property name="concurrent" value="false" />
+				<property name="name" value="Error Log Housekeeping" />
+			</bean>
+		</property>
+		<property name="name" value="Error Log Housekeeping Trigger" />
+		<property name="cronExpression" value="0 0/2 * * * ?" />
+		<!--
+			every 2 mins
+		-->
+	</bean>
+
+
+
 
 	<!-- default non validating document builder factory -->
 	<bean id="documentBuilderFactory" lazy-init="true"

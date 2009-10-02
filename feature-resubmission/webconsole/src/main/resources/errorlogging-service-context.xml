@@ -1,8 +1,10 @@
-<%-- 
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
 
- $Id:
- $URL: 
 
+ $Id$
+ $URL$
+ 
  ====================================================================
  Ikasan Enterprise Integration Platform
  
@@ -41,25 +43,37 @@
 
  Author:  Ikasan Development Team
  
---%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-
-<div class="middle">
-
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="scheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
+	<bean id="errorLoggingService" class="org.ikasan.framework.error.service.DefaultErrorLoggingServiceImpl">
+		<constructor-arg ref="errorOccurrenceDao" />
+	</bean>
+	
+	<bean id="errorOccurrenceDao"
+		class="org.ikasan.framework.error.dao.HibernateErrorOccurrenceDao">
+		<property name="sessionFactory" ref="errorLoggingHibernateSessionFactory" />
+	</bean>
+	
+	<bean id="errorLoggingHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>ErrorOccurrence.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
     
-</ul>
-</p>
-
-</div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+	
+</beans>
