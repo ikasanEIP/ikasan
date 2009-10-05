@@ -147,7 +147,7 @@
     </mailingList>
   </mailingLists>
   <issueManagement>
-    <url>https://apps.sourceforge.net/trac/ikasaneip/</url>
+    <url>http://open.jira.com/browse/IKASAN</url>
   </issueManagement>
 
   <build>

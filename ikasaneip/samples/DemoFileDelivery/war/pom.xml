@@ -55,7 +55,38 @@
 	
 	<name>demoFileDelivery :: demoFileDelivery : war</name>
 
-	<build>
+  <licenses>
+    <license>
+      <name>Modified BSD License</name>
+      <url>http://www.ikasan.org/license</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
+  <mailingLists>
+    <mailingList>
+      <name>Ikasan Users</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
+    </mailingList>
+    <mailingList>
+      <name>Ikasan Development</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
+    </mailingList>
+    <mailingList>
+      <name>Ikasan Announce</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
+    </mailingList>
+  </mailingLists>
+  <issueManagement>
+    <url>http://open.jira.com/browse/IKASAN</url>
+  </issueManagement>
+  
+  <build>
 
 
 		<!-- end project structure customisation -->
