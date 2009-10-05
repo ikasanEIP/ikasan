@@ -350,6 +350,10 @@ form.fancydataform fieldset li {
 	width: 100%;
 }
 
+#loggedErrors {
+	width: 100%;
+}
+
 #modulesList {
 	width: 100%;
 }
