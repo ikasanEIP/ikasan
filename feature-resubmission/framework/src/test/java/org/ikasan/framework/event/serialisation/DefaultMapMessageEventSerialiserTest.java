@@ -77,6 +77,9 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     };
     
 	private PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
+	
+	final String moduleName = "moduleName";
+	final String componentName = "componentName";
     
 	final Payload payload1 = mockery.mock(Payload.class, "payload1");
 	final Payload payload2 = mockery.mock(Payload.class, "payload2");
@@ -163,22 +166,14 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     /**
      * Tests the successful deserialisation
      * 
-     * @throws EventSerialisationException
-     * @throws EnvelopeOperationException
+     * @throws EventDeserialisationException
      * @throws JMSException
      */
     @SuppressWarnings("unchecked")
 	@Test
-    public void testFromMapMessage() throws EventSerialisationException, JMSException
+    public void testFromMapMessage() throws EventDeserialisationException, JMSException
     {
     	final MapMessage mapMessage = mockery.mock(MapMessage.class);
-    	final String moduleName = "moduleName";
-    	final String componentName = "componentName";
-
-    	
-
-
-    	
     	
     	Map<String, Object> map = new HashMap<String, Object>();
     	//event fields
@@ -265,7 +260,83 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
     	Assert.assertEquals("event should have payloads as produced by payloadFactory", event.getPayloads(), payloads);
 
     }
+    
+    
+    /**
+     * Tests that encountering an unknown Event field in a MapMessage will cause an EventDeserialisationException during fromMapMessage
+     * 
+     * @throws EventDeserialisationException
+     * @throws JMSException
+     */
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testFromMapMessage_willThrowEventDeserialisationException_forUnknownEventField() throws EventDeserialisationException, JMSException
+    {
+    	final MapMessage mapMessage = mockery.mock(MapMessage.class);
+    	
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	//event fields
+    	String unknownFieldName = "unknownFieldName";
+		map.put(unknownFieldName, "unknownFieldValue");
+    	
 
+    	final Enumeration mapNamesEnumeration = new Vector(map.keySet()).elements();
+
+
+    	
+    	mockery.checking(new Expectations()
+        {
+            {
+            	one(mapMessage).getMapNames();will(returnValue(mapNamesEnumeration));
+            }
+        });
+    	
+    	try{
+    		defaultJmsMessageEventSerialiser.fromMessage(mapMessage, moduleName, componentName);
+    		Assert.fail("EventDeserialisationException should have been thrown for MapMessage containing unknown field name");
+    	} catch (EventDeserialisationException eventDeserialisationException){
+    		Assert.assertTrue("exception message should reference problematic field name", eventDeserialisationException.getMessage().indexOf(unknownFieldName)>-1);
+    	}
+    	mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Tests that encountering an unknown Payload field in a MapMessage will cause an EventDeserialisationException during fromMapMessage
+     * 
+     * @throws EventDeserialisationException
+     * @throws JMSException
+     */
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testFromMapMessage_willThrowEventDeserialisationException_forUnknownPayloadField() throws EventDeserialisationException, JMSException
+    {
+    	final MapMessage mapMessage = mockery.mock(MapMessage.class);
+    	
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	//event fields
+    	String unknownFieldName = "unknownFieldName";
+		map.put(payload1Prefix+"_"+unknownFieldName, "unknownFieldValue");
+    	
+
+    	final Enumeration mapNamesEnumeration = new Vector(map.keySet()).elements();
+
+
+    	
+    	mockery.checking(new Expectations()
+        {
+            {
+            	one(mapMessage).getMapNames();will(returnValue(mapNamesEnumeration));
+            }
+        });
+    	
+    	try{
+    		defaultJmsMessageEventSerialiser.fromMessage(mapMessage, moduleName, componentName);
+    		Assert.fail("EventDeserialisationException should have been thrown for MapMessage containing unknown field name");
+    	} catch (EventDeserialisationException eventDeserialisationException){
+    		Assert.assertTrue("exception message should reference problematic field name", eventDeserialisationException.getMessage().indexOf(unknownFieldName)>-1);
+    	}
+    	mockery.assertIsSatisfied();
+    }
 	@Test
 	public void testToMapMessage() throws JMSException {
 		final Event event = mockery.mock(Event.class);
@@ -336,7 +407,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 	}
 	
 	@Test
-	public void testDefaultJmsMessageEventSerialiser() throws JMSException {
+	public void testDefaultJmsMessageEventSerialiser() throws JMSException, EventDeserialisationException {
 		DefaultMapMessageEventSerialiser defaultJmsMessageEventSerialiser = new DefaultMapMessageEventSerialiser();
 
 		defaultJmsMessageEventSerialiser.setPayloadFactory(payloadFactory);

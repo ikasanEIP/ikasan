@@ -77,7 +77,7 @@ public abstract class JmsMessageEventSerialiserTest {
 
 	protected void testSerialisationDesrialisation(
 			JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser, final PayloadFactory payloadFactory, Mockery mockery)
-			throws JMSException {
+			throws JMSException, EventDeserialisationException {
 
 		// setup the Event with all important fields
 		final Event originalEvent = mockery.mock(Event.class);

@@ -41,12 +41,12 @@
 package org.ikasan.framework.event.serialisation;
 
 /**
- * Exception representing a technical problem either serialising or deserialising an <code>Event</code>
+ * Exception representing a technical problem  deserialising an <code>Event</code>
  * 
  * @author Ikasan Development Team
  *
  */
-public class EventSerialisationException extends Exception {
+public class EventDeserialisationException extends Exception {
 
 
 	/**
@@ -59,9 +59,13 @@ public class EventSerialisationException extends Exception {
 	 * 
 	 * @param cause
 	 */
-	public EventSerialisationException(
+	public EventDeserialisationException(
 			Throwable cause) {
 		super(cause);
+	}
+
+	public EventDeserialisationException(String message) {
+		super(message);
 	}
 
 }

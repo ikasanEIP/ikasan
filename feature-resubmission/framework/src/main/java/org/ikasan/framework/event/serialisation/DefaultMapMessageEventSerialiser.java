@@ -85,7 +85,7 @@ public class DefaultMapMessageEventSerialiser implements
 
 	@SuppressWarnings("unchecked")
 	public Event fromMessage(MapMessage mapMessage, String moduleName,
-			String componentName) throws JMSException {
+			String componentName) throws JMSException, EventDeserialisationException {
 		Event result = null;
 		
 		Enumeration<String> mapNames = mapMessage.getMapNames();
@@ -109,7 +109,7 @@ public class DefaultMapMessageEventSerialiser implements
 	}
 
 	private Event demapEvent(MapMessage mapMessage, String moduleName,
-			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException {
+			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException, EventDeserialisationException {
 		String eventId = null;
 		int priority = -1;
 		long timestamp = -1;
@@ -126,7 +126,7 @@ public class DefaultMapMessageEventSerialiser implements
 			}
 			
 			else{
-				throw new IllegalArgumentException("Unknown map entry ["+fieldName+"]");
+				throw new EventDeserialisationException("Unknown map entry ["+fieldName+"]");
 			}
 		}
 		
@@ -134,7 +134,7 @@ public class DefaultMapMessageEventSerialiser implements
 	}
 
 	private Payload demapPayload(int payloadOrdinal, MapMessage mapMessage,
-			List<String> payloadFieldNames) throws JMSException {
+			List<String> payloadFieldNames) throws JMSException, EventDeserialisationException {
 		String fullPayloadPrefix = PAYLOAD_PREFIX+payloadOrdinal;
 		
 		String payloadId = null;
@@ -157,7 +157,7 @@ public class DefaultMapMessageEventSerialiser implements
 				payloadAttributes.put(fieldName.substring((fullPayloadPrefix+ATTRIBUTE_PREFIX).length()), mapMessage.getString(fieldName));
 			}
 			else{
-				throw new IllegalArgumentException("Unknown map entry ["+fieldName+"]");
+				throw new EventDeserialisationException("Unknown map entry ["+fieldName+"]");
 			}
 		}
 		

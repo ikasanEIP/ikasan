@@ -50,7 +50,7 @@ import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
+import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
@@ -259,6 +259,62 @@ public class JmsMessageDrivenInitiatorImplTest
                 
                 
                 
+                one(messageListenerContainer).stop();
+            }
+        });
+        monitorExpectsStoppedInError();
+        AbortTransactionException abortTransactionException = null;
+        try{
+        	stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
+        	fail();
+        } catch(AbortTransactionException exception){
+        	abortTransactionException = exception;
+        }
+        Assert.assertNotNull(abortTransactionException);
+        
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Test that the initiator stops if an EventDeserialisationException is thrown by the underlying derserialisaion implementation
+     */
+    @Test
+    public void testOnMessage_stopsTheInitiatorForAnEventDeserialisationException()
+    {
+    	
+    	stubJmsMessageDrivenInitiatorImpl.setThrowEventDeserialisationExceptionWhenHandlingMessage(true);
+    	
+        mockery.checking(new Expectations()
+        {
+            {
+                one(messageListenerContainer).stop();
+            }
+        });
+        monitorExpectsStoppedInError();
+        AbortTransactionException abortTransactionException = null;
+        try{
+        	stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
+        	fail();
+        } catch(AbortTransactionException exception){
+        	abortTransactionException = exception;
+        }
+        Assert.assertNotNull(abortTransactionException);
+        
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Test that the initiator stops if an UnsupportedOperationException is thrown
+     */
+    @Test
+    public void testOnMessage_stopsTheInitiatorForAnUnsupportedOperationException()
+    {
+    	
+    	stubJmsMessageDrivenInitiatorImpl.setThrowUnsupportedOperationExceptionWhenHandlingMessage(true);
+    	
+        mockery.checking(new Expectations()
+        {
+            {
                 one(messageListenerContainer).stop();
             }
         });
@@ -503,14 +559,34 @@ public class JmsMessageDrivenInitiatorImplTest
     {
         private Logger logger = Logger.getLogger(StubJmsMessageDrivenInitiatorImpl.class);
         
-        public StubJmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
+        private boolean throwEventDeserialisationExceptionWhenHandlingMessage = false;
+        private boolean throwUnsupportedOperationExceptionWhenHandlingMessage = false;
+        
+        public void setThrowEventDeserialisationExceptionWhenHandlingMessage(
+				boolean throwEventDeserialisationExceptionWhenHandlingMessage) {
+			this.throwEventDeserialisationExceptionWhenHandlingMessage = throwEventDeserialisationExceptionWhenHandlingMessage;
+		}
+
+		public void setThrowUnsupportedOperationExceptionWhenHandlingMessage(
+				boolean throwUnsupportedOperationExceptionWhenHandlingMessage) {
+			this.throwUnsupportedOperationExceptionWhenHandlingMessage = throwUnsupportedOperationExceptionWhenHandlingMessage;
+			
+		}
+
+		public StubJmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
         {
             super(moduleName, name, flow, exceptionHandler);
         }
 
         @Override
-        protected Event handleTextMessage(TextMessage message) throws JMSException
+        protected Event handleTextMessage(TextMessage message) throws JMSException, EventDeserialisationException
         {
+        	if (throwEventDeserialisationExceptionWhenHandlingMessage){
+        		throw new EventDeserialisationException("");
+        	} else if(throwUnsupportedOperationExceptionWhenHandlingMessage){
+        		throw new UnsupportedOperationException();
+        	}
+        	
             return eventFromTextMessage;
         }
 
@@ -519,5 +595,7 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             return logger;
         }
+        
+
     }
 }
