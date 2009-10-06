@@ -119,7 +119,7 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
         	//tell the error service
     		logError(null, eventSourcingThrowable, name);
 
-        	handleAction(exceptionHandler.invoke(name, eventSourcingThrowable));
+        	handleAction(exceptionHandler.invoke(name, eventSourcingThrowable),null);
         }
         
         // invoke flow all the time we have event activity

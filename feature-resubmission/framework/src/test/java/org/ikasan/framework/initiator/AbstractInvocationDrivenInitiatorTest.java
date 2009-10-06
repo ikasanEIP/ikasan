@@ -234,7 +234,7 @@ class MockAbstractInvocationDrivenInitiator extends AbstractInvocationDrivenInit
 	}
 	
 	@Override
-	protected void handleAction(IkasanExceptionAction action){
+	protected void handleAction(IkasanExceptionAction action, String eventId){
 		this.handleActionCalled=true;
 		this.handleActionArgument = action;
 	}

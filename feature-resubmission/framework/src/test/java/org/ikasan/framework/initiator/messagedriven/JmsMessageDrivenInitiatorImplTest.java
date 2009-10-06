@@ -206,7 +206,9 @@ public class JmsMessageDrivenInitiatorImplTest
         // overriding of handleTextMessage)
         mockery.checking(new Expectations()
         {
-            {
+            {	
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
+            	
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 will(returnValue(null));
             }
@@ -248,6 +250,8 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
+            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
+            	
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 will(throwException(throwable));
             	
@@ -356,6 +360,8 @@ public class JmsMessageDrivenInitiatorImplTest
             {
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
                 will(throwException(throwable));
+                
+                one(eventFromTextMessage).getId();will(returnValue("eventId"));
             	
                 one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackStopAction));
@@ -410,6 +416,8 @@ public class JmsMessageDrivenInitiatorImplTest
                 one(exceptionHandler).invoke(with(any(String.class)), (Event) with(equal(eventFromTextMessage)), (Throwable) with(equal(throwable)));
                 inSequence(sequence);
                 will(returnValue(retryAction));
+                
+                allowing(eventFromTextMessage).getId();will(returnValue("eventId"));
                 
                 // suspends
                 one(messageListenerContainer).stop();
@@ -514,6 +522,8 @@ public class JmsMessageDrivenInitiatorImplTest
             	one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 inSequence(sequence);
                 will(throwException(throwable));
+                
+                allowing(eventFromTextMessage).getId();will(returnValue("eventId"));
                 
                 //exception handler says RETRY maximum of zero times (slightly nonsensical, but for arguments sake!)
                 one(exceptionHandler).invoke(with(any(String.class)), (Event)with(equal(eventFromTextMessage)), (Throwable)with(equal(throwable)));
