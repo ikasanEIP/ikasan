@@ -40,11 +40,7 @@
  */
 package org.ikasan.console.pointtopointflow.service;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
