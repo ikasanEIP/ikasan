@@ -64,8 +64,8 @@
         <fieldset>
             <legend><a id="showHideSearchForm" href="">[-]</a> <fmt:message key="wiretap_events_search"/> <span title="<fmt:message key="wiretap_event_search_form_help"/>" id="searchFormHelp">(?)</span></legend>
             <div id="searchFields">
-            <a id="toggleSearchMode" href="">Toggle Flows vs Modules Search</a> <span title="<fmt:message key="wiretap_event_toggle_search_mode_help"/>" id="toggleSearchModeHelp">(?)</span>            
             <input name="pointToPointFlowProfileSearch" id="pointToPointFlowProfileSearch" type="hidden" value="<c:out value="${pointToPointFlowProfileSearch}"/>" />
+            <a id="toggleSearchMode" href=""><fmt:message key="wiretap_events_search_toggle_search"/></a>&nbsp;<span title="<fmt:message key="wiretap_event_toggle_search_mode_help"/>" id="toggleSearchModeHelp">(?)</span>
             <ol>
                 <li id="pointToPointFlowProfileCheckboxes">
                     <label for="pointToPointFlowProfileIds"><fmt:message key="wiretap_events_pointToPointFlowProfile"/> <span title="<fmt:message key="wiretap_event_flow_ids_help"/>" id="pointToPointFlowProfileIdsHelp">(?)</span></label>

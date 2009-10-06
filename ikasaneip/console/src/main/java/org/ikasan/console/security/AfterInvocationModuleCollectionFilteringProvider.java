@@ -40,9 +40,9 @@
  */
 package org.ikasan.console.security;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.apache.log4j.Logger;
 import org.ikasan.console.module.Module;
@@ -53,8 +53,9 @@ import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
 
 /**
- * Class for determining access/configuration rights for collection of configuration
- *  
+ * Class for determining access/configuration rights for collection of
+ * configuration
+ * 
  * @author Ikasan Development Team
  */
 public class AfterInvocationModuleCollectionFilteringProvider extends AbstractModuleAfterInvocationProvider
@@ -78,16 +79,16 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
      * @param object - Not used!
      * @param config - The configuration attribute to check
      * @param returnedObject - The return object to seed
-     * @return A list of authorised objects or 
-     * @throws AccessDeniedException - Access was denied 
+     * @return A list of authorised objects or
+     * @throws AccessDeniedException - Access was denied
      */
-    public Object decide(Authentication authentication, @SuppressWarnings("unused") Object object, ConfigAttributeDefinition config,
-            Object returnedObject) throws AccessDeniedException
+    public Object decide(Authentication authentication, @SuppressWarnings("unused") Object object, ConfigAttributeDefinition config, Object returnedObject)
+            throws AccessDeniedException
     {
         Iterator<?> iter = config.getConfigAttributes().iterator();
         while (iter.hasNext())
         {
-            ConfigAttribute attr = (ConfigAttribute)iter.next();
+            ConfigAttribute attr = (ConfigAttribute) iter.next();
             if (!this.supports(attr))
             {
                 continue;
@@ -95,21 +96,23 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
             // Need to process the Collection for this invocation
             if (!(returnedObject instanceof Collection))
             {
-                throw new AuthorizationServiceException("A Collection was required as the "
-                        + "returnedObject, but the returnedObject was [" + returnedObject + "]");
+                throw new AuthorizationServiceException("A Collection was required as the " + "returnedObject, but the returnedObject was [" + returnedObject
+                        + "]");
             }
             // Locate unauthorised Collection elements
-            Collection<Module> authorisedModules = new ArrayList<Module>();
+            Collection<Module> authorisedModules = new LinkedHashSet<Module>();
             Iterator<?> collectionIter = ((Collection<?>) returnedObject).iterator();
             while (collectionIter.hasNext())
             {
                 Object domainObject = collectionIter.next();
-                // Ignore nulls or entries which aren't instances of the configured domain object class
+                // Ignore nulls or entries which aren't instances of the
+                // configured domain object class
                 if (domainObject == null || !Module.class.isAssignableFrom(domainObject.getClass()))
                 {
                     continue;
                 }
                 Module thisModule = (Module) domainObject;
+                logger.info(thisModule.getName());
                 if (mayReadModule(authentication, thisModule))
                 {
                     authorisedModules.add(thisModule);
@@ -122,8 +125,8 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
 
     /**
      * Returns true if the configuration attribute is supported by this provider
-     *  
-     * @param configAttribute configuration attribute to test 
+     * 
+     * @param configAttribute configuration attribute to test
      * @return true if the configuration attribute is supported by this provider
      */
     @Override

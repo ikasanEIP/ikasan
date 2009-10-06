@@ -124,11 +124,14 @@
         <!-- 
 		<protect-pointcut 
             expression="execution(* org.ikasan.framework.module.service.ModuleService.getModule(..))"
-            access="ROLE_USER,AFTER_MODULE_READ" /> 
+            access="ROLE_USER,AFTER_MODULE_READ" />
         <protect-pointcut
-            expression="execution(* org.ikasan.framework.module.service.ModuleService.getModules())"
+            expression="execution(* org.ikasan.framework.module.service.ModuleService.getAllModules())"
             access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
         -->
+        <protect-pointcut
+            expression="execution(* org.ikasan.console.module.service.ModuleService.getAllModules())"
+            access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
         <!-- 
         <protect-pointcut 
             expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames(..))"
