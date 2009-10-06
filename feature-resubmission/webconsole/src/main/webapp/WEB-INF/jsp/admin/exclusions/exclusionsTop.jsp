@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -42,25 +42,21 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+<%@ include file="/WEB-INF/jsp/top.jsp"%>
 
-
-<div class="middle">
-
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="scheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
-    <li><a href="exclusions/list.htm">View Excluded Events</a></li>
-    
-</ul>
-</p>
-
+<div class="subnavcontainer">
+	<ul>
+		<li>            		
+					<c:choose>
+						<c:when test="${searchResultsUrl != null}">
+                			<a href="<c:out value="${searchResultsUrl}" />">
+                		</c:when>
+                		<c:otherwise>
+                			<a href="<c:url value="list.htm"/>">
+                		</c:otherwise>
+                	</c:choose>
+                			Search Results</a>
+            </li>
+		
+	</ul>
 </div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>

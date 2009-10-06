@@ -215,6 +215,10 @@
     <property name="userTransactionName" value="UserTransaction"/>
   </bean>
 
+  
+  <bean id="rawTransactionManager" class="org.springframework.jndi.JndiObjectFactoryBean">
+  	<property name="jndiName" value="java:/TransactionManager"/>
+  </bean>
     <!-- ###################################### -->
     <!-- common transaction services end here   -->
     <!-- ###################################### -->
