@@ -42,6 +42,7 @@ package org.ikasan.framework.event.serialisation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -112,7 +113,7 @@ public class DefaultMapMessageEventSerialiser implements
 			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException, EventDeserialisationException {
 		String eventId = null;
 		int priority = -1;
-		long timestamp = -1;
+		Date timestamp = null;
 		
 		for(String fieldName : eventFieldNames){
 			if (fieldName.equals(EVENT_FIELD_ID)){
@@ -122,7 +123,7 @@ public class DefaultMapMessageEventSerialiser implements
 				priority=mapMessage.getInt(EVENT_FIELD_PRIORITY);
 			}
 			else if (fieldName.equals(EVENT_FIELD_TIMESTAMP)){
-				timestamp=mapMessage.getLong(EVENT_FIELD_TIMESTAMP);
+				timestamp=new Date(mapMessage.getLong(EVENT_FIELD_TIMESTAMP));
 			}
 			
 			else{
@@ -250,7 +251,7 @@ public class DefaultMapMessageEventSerialiser implements
 		}
 		mapMessage.setString(EVENT_FIELD_ID, event.getId());
 		mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());
-		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp());
+		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp().getTime());
 
 		return mapMessage;
 	}

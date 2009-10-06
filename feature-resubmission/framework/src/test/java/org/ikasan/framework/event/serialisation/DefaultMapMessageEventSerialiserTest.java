@@ -41,6 +41,7 @@
 package org.ikasan.framework.event.serialisation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +141,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
 
 	//event timestamp
 	final String eventTimestampKey = DefaultMapMessageEventSerialiser.EVENT_FIELD_TIMESTAMP;
-	final long timestamp = 1000l;
+	final Date timestamp = new Date();
 	
 
 	
@@ -215,7 +216,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
             	//event fields
             	one(mapMessage).getString(DefaultMapMessageEventSerialiser.EVENT_FIELD_ID);will(returnValue(eventId));
             	one(mapMessage).getInt(DefaultMapMessageEventSerialiser.EVENT_FIELD_PRIORITY);will(returnValue(priority));
-            	one(mapMessage).getLong(DefaultMapMessageEventSerialiser.EVENT_FIELD_TIMESTAMP);will(returnValue(timestamp));
+            	one(mapMessage).getLong(DefaultMapMessageEventSerialiser.EVENT_FIELD_TIMESTAMP);will(returnValue(timestamp.getTime()));
             	
             	//payload content
             	one(mapMessage).getBytes(payload1ContentKey);will(returnValue(payload1Content));
@@ -397,7 +398,7 @@ public class DefaultMapMessageEventSerialiserTest extends JmsMessageEventSeriali
                 
                 //event timestamp
                 one(event).getTimestamp();will(returnValue(timestamp));
-                one(mapMessage).setLong(eventTimestampKey, timestamp);
+                one(mapMessage).setLong(eventTimestampKey, timestamp.getTime());
 
             }
         });

@@ -189,7 +189,7 @@ public class ExceptionTransformerImpl implements ExceptionTransformer
         if (event != null)
         {
         	
-            params.put("timestamp", new Date(event.getTimestamp()).toString());
+            params.put("timestamp", event.getTimestamp().toString());
             params.put("timezone", "UTC");
             params.put("originalEvent", null);
             params.put("exceptionEvent", getExceptionEvent(xstream, exceptionContext.getEvent().getPayloads(),

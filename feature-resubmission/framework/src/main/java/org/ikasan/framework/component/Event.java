@@ -157,10 +157,10 @@ public class Event implements Cloneable
      * @param timestamp
      * @param paylaods
      */
-    public Event(String id, int priority, long timestamp,  List<Payload> payloads) {
+    public Event(String id, int priority, Date timestamp,  List<Payload> payloads) {
     	this.id=id;
 		this.priority = priority;
-		this.timestamp = new Date(timestamp);
+		this.timestamp = timestamp;
 		this.payloads = new ArrayList<Payload>(payloads);
 	}
 
@@ -300,8 +300,8 @@ public class Event implements Cloneable
      * 
      * @return timestamp
      */
-    public long getTimestamp(){
-    	return timestamp.getTime();
+    public Date getTimestamp(){
+    	return timestamp;
     }
     
     /**
@@ -309,8 +309,8 @@ public class Event implements Cloneable
      * 
      * @param timestamp
      */
-    private void setTimestamp(long timestamp){
-    	this.timestamp = new Date(timestamp);
+    private void setTimestamp(Date timestamp){
+    	this.timestamp = timestamp;
     }
     
     /**

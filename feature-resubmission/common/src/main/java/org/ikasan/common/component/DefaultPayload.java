@@ -68,9 +68,10 @@ public class DefaultPayload implements Payload
 	/** Actual content of the payload to be delivered */
     private byte[] content;
     
+    private Long persistenceId;
+    
 
-
-    /**
+	/**
      * No args constructor required for ORM
      */
     @SuppressWarnings("unused")
@@ -190,6 +191,26 @@ public class DefaultPayload implements Payload
 	 */
 	public void setAttribute(String attributeName, String attributeValue) {
 		attributes.put(attributeName,attributeValue);
+	}
+	
+    /**
+     * Accessor for persistence Id
+     * Note this field should only be used by ORM
+     * 
+     * @return persistenceId
+     */
+    public Long getPersistenceId() {
+		return persistenceId;
+	}
+
+    /**
+     * Mutator for persistence Id
+     * Note this field should only be used by ORM
+     * 
+	 * @param persistenceId
+	 */
+	public void setPersistenceId(Long persistenceId) {
+		this.persistenceId = persistenceId;
 	}
 
     /**

@@ -41,6 +41,7 @@
 package org.ikasan.framework.event.serialisation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -131,7 +132,7 @@ public abstract class JmsMessageEventSerialiserTest {
 		//event field content
 		final String eventId = "eventId";
 		final int eventPriority = 8;
-		final long eventTimestamp = 1000l;
+		final Date eventTimestamp = new Date();
 
 		mockery.checking(new Expectations() {
 			{
