@@ -48,18 +48,12 @@ package org.ikasan.framework.exception;
 public enum IkasanExceptionActionType
 {
     /** Rollback the operation and stop the event flow */
-    ROLLBACK_STOP(true, true, "Operation will rollback and stop.", 5),
-    /** Roll forward the operation and stop the event flow */
-    ROLLFORWARD_STOP(false, true, "Operation will rollforward and stop.", 4),
+    ROLLBACK_STOP(true, "Operation will rollback and stop."),
     /** Rollback the operation and retry the flow on the same event */
-    ROLLBACK_RETRY(true, false, "Operation will rollback and retry.", 3),
+    ROLLBACK_RETRY(false, "Operation will rollback and retry."),
     /** Skip over this event and continue with the next event. */
-    SKIP_EVENT(false, false, "Operation will skip the event causing this exception and move on to the next event.", 2),
-    /** Do nothing - simply continue with this event from where you are and ignore the exception. */
-    CONTINUE(false, false, "Operation will continue and exception will be ignored.", 1), ;
-    
-    /** Rollback flag */
-    private boolean rollback;
+    EXCLUDE(false, "Operation will rollback and initiator will note to exclude the Event next time it is seen.");
+
 
     /** Flow action */
     private boolean stop;
@@ -67,24 +61,20 @@ public enum IkasanExceptionActionType
     /** Descriptive text for this action - useful for log output */
     private String description;
 
-    /** Relative precedence in terms of priority over each other. Higher precedence = more important */
-    private final int precedence;
+
 
     /**
      * Constructor
      * 
-     * @param rollback Rollback flag
      * @param stop Stop flag
      * @param description description
      * @param precedence precedence
      */
-    private IkasanExceptionActionType(final boolean rollback, final boolean stop, final String description,
-            final int precedence)
+    private IkasanExceptionActionType(final boolean stop, final String description)
     {
-        this.rollback = rollback;
         this.stop = stop;
         this.description = description;
-        this.precedence = precedence;
+
     }
 
     /**
@@ -97,15 +87,7 @@ public enum IkasanExceptionActionType
         return this.description;
     }
 
-    /**
-     * Get rollback option for this action type.
-     * 
-     * @return boolean.
-     */
-    public boolean isRollback()
-    {
-        return this.rollback;
-    }
+
 
     /**
      * Get stop option for this action type.
@@ -117,19 +99,5 @@ public enum IkasanExceptionActionType
         return this.stop;
     }
 
-    /**
-     * Compares this.precedence with that of the incoming type and returns true if this.precedence is higher. Returns
-     * false if this.precedence is equal or lower.
-     * 
-     * @param type The action type to check
-     * @return boolean
-     */
-    public boolean isHigherPrecedence(IkasanExceptionActionType type)
-    {
-        if (this.precedence > type.precedence)
-        {
-            return true;
-        }
-        return false;
-    }
+
 }

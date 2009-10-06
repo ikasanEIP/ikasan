@@ -46,6 +46,7 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.exception.IkasanExceptionActionType;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -282,49 +283,40 @@ public abstract class AbstractInitiator implements Initiator
 		
 	}
   
-    /**
-     * Handle the returned action from the flow invocation
-     * 
-     * @param action IkasanExceptionAction to deal with
-     */
-    protected void handleAction(IkasanExceptionAction action)
-    {
-        try
-        {
-            if (action == null)
-            {
-                resume();
-            }
-            else if (action.getType().isStop())
-            {
-                stopInError();
-                if (action.getType().isRollback()){
-                    throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
-                }
-            }
-            else if (action.getType().isRollback())
-            {
-                if (!stopping){
-                    Integer maxAttempts = action.getMaxAttempts();
-                    long delay = action.getDelay().longValue();
-                    handleRetry(maxAttempts, delay);
-                }
-                throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
-            }
-            else
-            {
-                // continue or skip result in the same initiator action
-                resume();
-            }
-        }
-        catch (InitiatorOperationException e)
-        {
-            getLogger().fatal(e);
-            // try stopping the initiator
-            stopInError();
-            throw e;
-        }
-    }
+	/**
+	 * Handle the returned action from the flow invocation
+	 * 
+	 * @param action
+	 *            IkasanExceptionAction to deal with
+	 */
+	protected void handleAction(IkasanExceptionAction action) {
+		try {
+			if (action != null) {
+
+				IkasanExceptionActionType actionType = action.getType();
+				if (actionType.isStop()) {
+					stopInError();
+				} else if (actionType
+						.equals(IkasanExceptionActionType.ROLLBACK_RETRY)) {
+					if (!stopping) {
+						Integer maxAttempts = action.getMaxAttempts();
+						long delay = action.getDelay().longValue();
+						handleRetry(maxAttempts, delay);
+					}
+				}
+				throw new AbortTransactionException(
+						EXCEPTION_ACTION_IMPLIED_ROLLBACK);
+			} else {
+				resume();
+
+			}
+		} catch (InitiatorOperationException e) {
+			getLogger().fatal(e);
+			// try stopping the initiator
+			stopInError();
+			throw e;
+		}
+	}
     
     /**
      * Handle an IkasanExceptionAction 'retry'

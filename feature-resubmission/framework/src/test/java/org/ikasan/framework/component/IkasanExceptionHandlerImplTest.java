@@ -120,12 +120,12 @@ public class IkasanExceptionHandlerImplTest
         new IkasanExceptionResolutionImpl(moduleExceptionId, exceptionAction);
 
     /** action for NumberFormatException */
-    private static IkasanExceptionAction numberFormatExceptionAction = 
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.CONTINUE,
-                new Long(10), new Integer(10));
+//    private static IkasanExceptionAction numberFormatExceptionAction = 
+//        new IkasanExceptionActionImpl(IkasanExceptionActionType.CONTINUE,
+//                new Long(10), new Integer(10));
     /** resolution for NumberFormatException */
-    private static IkasanExceptionResolution numberFormatExceptionResolution = 
-        new IkasanExceptionResolutionImpl(moduleExceptionId, numberFormatExceptionAction);
+//    private static IkasanExceptionResolution numberFormatExceptionResolution = 
+//        new IkasanExceptionResolutionImpl(moduleExceptionId, numberFormatExceptionAction);
 
    /** dummy event for testing with event signature */
     private Event event;
@@ -160,8 +160,8 @@ public class IkasanExceptionHandlerImplTest
          * java.lang.NumberFormatException
          * java.lang.Exception
          */
-        exceptionDefinition = new DefaultExceptionDefinition(numberFormatExceptionResolution, numberFormatExceptionClassName, type);
-        moduleExceptionDefs.add(exceptionDefinition);
+//        exceptionDefinition = new DefaultExceptionDefinition(numberFormatExceptionResolution, numberFormatExceptionClassName, type);
+//        moduleExceptionDefs.add(exceptionDefinition);
 
         exceptionDefinition = new DefaultExceptionDefinition(exceptionResolution, exceptionClassName, type);
         moduleExceptionDefs.add(exceptionDefinition);
@@ -252,17 +252,17 @@ public class IkasanExceptionHandlerImplTest
         Assert.assertTrue(action.equals(exceptionAction));
     }
 
-    /**
-     * Test invoke based on an Exception which must
-     * result in an exceptionAction.
-     */
-    @Test
-    public void test3InvokeForSuccessfulActionResolutionNoEvent()
-    {
-        Throwable t = new java.lang.NumberFormatException("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, t);
-        Assert.assertTrue(action.equals(numberFormatExceptionAction));
-    }
+//    /**
+//     * Test invoke based on an Exception which must
+//     * result in an exceptionAction.
+//     */
+//    @Test
+//    public void test3InvokeForSuccessfulActionResolutionNoEvent()
+//    {
+//        Throwable t = new java.lang.NumberFormatException("test");
+//        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, t);
+//        Assert.assertTrue(action.equals(numberFormatExceptionAction));
+//    }
 
     /**
      * Test invoke based on no exception match, so the default emergencyStop()
@@ -307,17 +307,17 @@ public class IkasanExceptionHandlerImplTest
         Assert.assertTrue(action.equals(exceptionAction));
     }
 
-    /**
-     * Test invoke based on an Exception which must
-     * result in an exceptionAction.
-     */
-    @Test
-    public void test3InvokeForSuccessfulActionResolutionWithEvent()
-    {
-        Throwable t = new java.lang.NumberFormatException("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, event, t);
-        Assert.assertTrue(action.equals(numberFormatExceptionAction));
-    }
+//    /**
+//     * Test invoke based on an Exception which must
+//     * result in an exceptionAction.
+//     */
+//    @Test
+//    public void test3InvokeForSuccessfulActionResolutionWithEvent()
+//    {
+//        Throwable t = new java.lang.NumberFormatException("test");
+//        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, event, t);
+//        Assert.assertTrue(action.equals(numberFormatExceptionAction));
+//    }
 
     /**
      * Test invoke based on no exception match, so the default emergencyStop()

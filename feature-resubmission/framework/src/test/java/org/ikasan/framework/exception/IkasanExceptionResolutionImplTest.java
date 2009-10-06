@@ -128,7 +128,7 @@ public class IkasanExceptionResolutionImplTest
         String exceptionId = "exceptionId";
         String changedExceptionId = "changedExceptionId";
         IkasanExceptionAction changedAction = 
-            new IkasanExceptionActionImpl(IkasanExceptionActionType.CONTINUE);        
+            new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY);        
         // 
         // create
         IkasanExceptionResolutionImpl resolution = 

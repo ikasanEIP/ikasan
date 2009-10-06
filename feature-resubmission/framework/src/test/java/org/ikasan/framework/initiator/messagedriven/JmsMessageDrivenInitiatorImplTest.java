@@ -93,8 +93,6 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private TextMessage textMessage = mockTextMessage();
 
-    private IkasanExceptionAction rollForwardStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLFORWARD_STOP);
-
     private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
 
     private long retryDelay = 5l;
