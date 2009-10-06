@@ -81,7 +81,7 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
     private Logger logger = Logger.getLogger(PointToPointFlowComparator.class);
     
     /**
-     * Compare two instances of PointToPointFlows
+     * Compare two instances of PointToPointFlow
      * 
      * @param ptpf1 - The first PointToPointFlow to compare 
      * @param ptpf2 - The second PointToPointFlow to compare 
@@ -140,8 +140,8 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
             toModuleName2 = ptpf2.getToModule().getName();
         }
         
-        logger.info("First Module is [" + fromModuleName1 + "] --> [" + toModuleName1 + "]");
-        logger.info("Second Module is [" + fromModuleName2 + "] --> [" + toModuleName2 + "]");
+        logger.debug("First Module is [" + fromModuleName1 + "] --> [" + toModuleName1 + "]");
+        logger.debug("Second Module is [" + fromModuleName2 + "] --> [" + toModuleName2 + "]");
         
         // PointToPointFlows are equal if their From and To ids are equal
         if ((fromModuleId1 == fromModuleId2) && (toModuleId1 == toModuleId2))
@@ -153,42 +153,36 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
         // PointToPointFlow1 is earlier if its fromModuleId is null
         if ((fromModuleId1 == NULL))
         {
-            logger.info("First Module is the SRC [" + toModule1.getName() + "]");
             return -1;
         }
 
         // PointToPointFlow1 is later if its toModuleId is null
         if ((toModuleId1 == NULL))
         {
-            logger.info("First Module is the TGT [" + fromModule1.getName() + "]");            
             return 1;
         }
 
         // PointToPointFlow2 is earlier if its fromModuleId is null
         if ((fromModuleId2 == NULL))
         {
-            logger.info("Second Module is the SRC [" + toModule2.getName() + "]");
             return 1;
         }
 
         // PointToPointFlow2 is later if its toModuleId is null
         if ((toModuleId2 == NULL))
         {
-            logger.info("Second Module is the TGT [" + fromModule2.getName() + "]");
             return -1;
         }
         
         // PointToPointFlow2 is later if its fromModuleId matches the PointToPointFlow1 toModuleId
         if (fromModuleId2 == toModuleId1)
         {
-            logger.info("Second Module is direct follower of the First module [" + fromModule1.getName() + "] --> [" + fromModule2.getName() + "] --> ["  + toModule2.getName() + "]");
             return -1;
         }
 
         // PointToPointFlow1 is later if its fromModuleId matches the PointToPointFlow2 toModuleId        
         if (fromModuleId1 == toModuleId2)
         {
-            logger.info("Second Module is direct follower of the First module [" + fromModule2.getName() + "] --> [" + toModule2.getName() + "] --> ["  + toModule1.getName() + "]");
             return 1;
         }
         
