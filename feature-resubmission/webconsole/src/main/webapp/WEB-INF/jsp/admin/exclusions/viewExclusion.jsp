@@ -113,6 +113,7 @@
 	</table>
 	
 	<c:forEach items="${excludedEvent.event.payloads}" var="payload" varStatus="status">
+	<jsp:useBean id="payload" type="org.ikasan.common.Payload" />  
 	<h2>Payload(<c:out value="${status.count}" />)</h2>
 	
 		<table id="excludedEventEvent" class="keyValueTable">
@@ -125,53 +126,15 @@
 			<c:out value="${payload.id}" />
 		</td>
 	</tr>
-	<tr>
-		<th>
-			Priority
-		</th>
-		<td>
-			<c:out value="${payload.priority}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Timestamp
-		</th>
-		<td>
-			<c:out value="${payload.timestamp}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Name
-		</th>
-		<td>
-			<c:out value="${payload.name}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Spec
-		</th>
-		<td>
-			<c:out value="${payload.spec}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			SrcSystem
-		</th>
-		<td>
-			<c:out value="${payload.srcSystem}" />
-		</td>
-	</tr>
+	
 
 	<tr>
 		<th>
 			Content
 		</th>
 		<td>
-			<c:out value="${payload.displayableContent}" />
+			<% pageContext.setAttribute("displayableContent", new String(payload.getContent())); %>
+			<c:out value="${displayableContent}" />
 		</td>
 	</tr>	
 	</table>
