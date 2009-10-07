@@ -53,36 +53,7 @@
 		<constructor-arg value="${project.name}-${module.name}" />
 	</bean>
 	
-    <bean id="loggingExceptionHandler" class="org.ikasan.demo.ClassMatchingExceptionHandler">
-            <constructor-arg>
-            	<map>
-            		<!-- 
-            		<entry key="org.ikasan.demo.UntimelyEventException">
 
-            				<bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
-                    			<constructor-arg value="EXCLUDE" />
-                    		</bean>
-
-                    </entry>
-                    -->
-            	</map>
-            </constructor-arg>
-            <property name="errorAction">
-                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
-                    <constructor-arg value="ROLLBACK_RETRY" />
-                    <constructor-arg value="10000" />
-                    <constructor-arg value="10" />
-                </bean>
-            </property>
-        </bean>
-
-
-	<bean id="flowElementInvoker"
-		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
-		<property name="flowEventListener" ref="flowEventListener" />
-	</bean>
-	
-	
 	<!-- channel adapter Flow -->
 
 

@@ -65,6 +65,29 @@
     </bean>
 
 
+    <bean id="loggingExceptionHandler" class="org.ikasan.demo.ClassMatchingExceptionHandler">
+            <constructor-arg>
+            	<map>
+            		
+            		<entry key="org.ikasan.demo.UntimelyEventException">
+
+            				<bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    			<constructor-arg value="EXCLUDE" />
+                    		</bean>
+
+                    </entry>
+                    
+            	</map>
+            </constructor-arg>
+            <property name="errorAction">
+                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    <constructor-arg value="ROLLBACK_RETRY" />
+                    <constructor-arg value="10000" />
+                    <constructor-arg value="10" />
+                </bean>
+            </property>
+        </bean>
+
   <!-- =========================================================================== -->
   <!--                   Channel Adapter Flow Initiator                            -->
   <!-- =========================================================================== -->
@@ -81,8 +104,6 @@
     <!-- flow to invoke -->
     <constructor-arg ref="channelAdapterFlow"/>
     <!-- initiator exception handler -->
-    <!-- <constructor-arg ref="exceptionHandler" /> -->
-    <!-- <constructor-arg><null/></constructor-arg>-->
     <constructor-arg ref="loggingExceptionHandler"/>
      <property name="triggers">
         <list>
@@ -122,7 +143,7 @@
         <property name="flow" ref="timeDependentExclusionFlow"/>
         <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
         <property name="exceptionHandler" ref="loggingExceptionHandler"/>
-        <!-- <property name="excludedEventService" ref="excludedEventService"/>-->
+        <property name="excludedEventService" ref="excludedEventService"/>
         <property name="errorLoggingService" ref="errorLoggingService"/>
     </bean>
     
