@@ -85,8 +85,8 @@
                 <value>ExcludedEvent.hbm.xml</value>
             </list>
         </property>
-        <!-- <property name="hibernateProperties" ref="platformHibernateProperties"/>-->
-        <property name="hibernateProperties" >
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+        <!-- <property name="hibernateProperties" >
         	<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 				<property name="ignoreResourceNotFound" value="true"/>
 				<property name="location" value="classpath:ikasan-hibernate.properties"/>
@@ -97,6 +97,7 @@
 				</property>
 			</bean>
         </property>
+        -->
     </bean>
     
 	
