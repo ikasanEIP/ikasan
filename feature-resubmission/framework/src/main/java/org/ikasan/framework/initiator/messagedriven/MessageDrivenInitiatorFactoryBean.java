@@ -46,6 +46,7 @@ import javax.jms.Destination;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.AbstractInitiator;
@@ -103,6 +104,9 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     
     /** The error logging service */
     private ErrorLoggingService errorLoggingService;
+    
+    /** The excludedEvent service */
+    private ExcludedEventService excludedEventService;
 
     /** The message initiator */
     private JmsMessageDrivenInitiator initiator;
@@ -221,6 +225,14 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
         this.payloadFactory = payloadFactory;
     }
     
+    
+    /**
+     * @param excludedEventService the excludedEventService to set
+     */   
+	public void setExcludedEventService(
+			ExcludedEventService excludedEventService) {
+		this.excludedEventService = excludedEventService;
+	}
 	/**
 	 * @param respectPriority the respectPriority to setS
 	 */
@@ -319,6 +331,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
             ((RawMessageDrivenInitiator)thisInitiator).setRespectPriority(respectPriority);
         }
+        ((AbstractInitiator)thisInitiator).setExcludedEventService(excludedEventService);
         ((AbstractInitiator)thisInitiator).setErrorLoggingService(errorLoggingService);
         return thisInitiator;
     }
