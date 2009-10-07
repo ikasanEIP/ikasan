@@ -82,17 +82,14 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
      */
     public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles()
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
-        pointToPointFlowProfiles = pointToPointFlowProfileDao.findAllPointToPointFlowProfiles();
+        Set<PointToPointFlowProfile> pointToPointFlowProfiles = pointToPointFlowProfileDao.findAllPointToPointFlowProfiles();
         this.orderPointToPointFlows(pointToPointFlowProfiles);
         return pointToPointFlowProfiles;
     }
 
     /**
      * Helper method which orders the PointToPointFlows within each
-     * PointToPointFloweProfile
-     * 
-     * TODO This algorithm is an EPIC FAIL
+     * PointToPointFlowProfile
      * 
      * @param pointToPointFlowProfiles - Profiles to adjust
      */
@@ -100,14 +97,8 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
     {
         for (PointToPointFlowProfile pointToPointFlowProfile : pointToPointFlowProfiles)
         {
-            // TreeSet<PointToPointFlow> pointToPointFlows = new
-            // TreeSet<PointToPointFlow>(pointToPointFlowProfile.getPointToPointFlows());
-            // pointToPointFlowProfile.setPointToPointFlows(pointToPointFlows);
-            logger.info("PointToPointFlowProfile is [" + pointToPointFlowProfile.getName() + "]");
-            logger.info("PointToPointFlowProfile has [" + pointToPointFlowProfile.getPointToPointFlows().size() + "] flows.");
             TreeSet<PointToPointFlow> pointToPointFlows = new TreeSet<PointToPointFlow>(new PointToPointFlowComparator());
             pointToPointFlows.addAll(pointToPointFlowProfile.getPointToPointFlows());
-            logger.info("PointToPointFlowProfile now has [" + pointToPointFlows.size() + "] flows.");
             pointToPointFlowProfile.setPointToPointFlows(pointToPointFlows);
             for (PointToPointFlow pointToPointFlow : pointToPointFlowProfile.getPointToPointFlows())
             {
@@ -115,64 +106,23 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
                 {
                     logger.warn("Both modules are null, not adding this flow.");
                 }
-                // Starting module
+                // Starting module, e.g. a --> 
                 else if (pointToPointFlow.getFromModule() == null && pointToPointFlow.getToModule() != null)
                 {
                     logger.info("NULL --> " + pointToPointFlow.getToModule().getName());
                 }
-                // Linked Modules
+                // Linked Modules, e.g. a --> b
                 else if (pointToPointFlow.getFromModule() != null && pointToPointFlow.getToModule() != null)
                 {
                     logger.info(pointToPointFlow.getFromModule().getName() + " --> " + pointToPointFlow.getToModule().getName());
                 }
-                // Default else, toModule is null therefore it's the End Module
+                // Default else, toModule is null therefore it's the End Module e.g.  --> b
                 else if (pointToPointFlow.getFromModule() != null && pointToPointFlow.getToModule() == null)
                 {
                     logger.info(pointToPointFlow.getFromModule().getName() + " --> NULL");
                 }
             }
         }
-        // Comparator<PointToPointFlow> comparator =
-        // pointToPointFlows.comparator();
-        /*
-         * Set<PointToPointFlow> orderedPointToPointFlows = new
-         * LinkedHashSet<PointToPointFlow>(); Set<PointToPointFlow>
-         * pointToPointFlows = pointToPointFlowProfile.getPointToPointFlows();
-         * long previousToModuleId = -1; PointToPointFlow pointToPointFlow;
-         * logger.info("pointToPointFlowProfile Name [" +
-         * pointToPointFlowProfile.getName() + "]"); Iterator<PointToPointFlow>
-         * iterator = pointToPointFlows.iterator(); boolean startModuleAdded =
-         * false; while (!pointToPointFlows.isEmpty()) {
-         * logger.info("List Size [" + pointToPointFlows.size() + "]");
-         * pointToPointFlow = iterator.next(); if
-         * (pointToPointFlow.getFromModule() == null &&
-         * pointToPointFlow.getToModule() == null) {
-         * logger.warn("Both modules are null, not adding this flow."); } //
-         * Starting module else if (pointToPointFlow.getFromModule() == null &&
-         * pointToPointFlow.getToModule() != null) { logger.info("NULL --> " +
-         * pointToPointFlow.getToModule().getName());
-         * orderedPointToPointFlows.add(pointToPointFlow); previousToModuleId =
-         * pointToPointFlow.getToModule().getId(); startModuleAdded = true;
-         * iterator.remove(); } // Linked Modules else if
-         * (pointToPointFlow.getFromModule() != null &&
-         * pointToPointFlow.getToModule() != null && startModuleAdded) { if
-         * (previousToModuleId == pointToPointFlow.getFromModule().getId()) {
-         * logger.info(pointToPointFlow.getFromModule().getName() + " --> " +
-         * pointToPointFlow.getToModule().getName());
-         * orderedPointToPointFlows.add(pointToPointFlow); previousToModuleId =
-         * pointToPointFlow.getToModule().getId(); iterator.remove(); } } //
-         * Default else, toModule is null therefore it's the End Module else if
-         * (pointToPointFlow.getFromModule() != null &&
-         * pointToPointFlow.getToModule() == null && startModuleAdded &&
-         * pointToPointFlows.size() == 1) {
-         * logger.info(pointToPointFlow.getFromModule().getName() +
-         * " --> NULL"); orderedPointToPointFlows.add(pointToPointFlow);
-         * iterator.remove(); } } // Replace the old collection with the new
-         * pointToPointFlowProfile
-         * .setPointToPointFlows(orderedPointToPointFlows);
-         * 
-         * }
-         */
     }
 
     /**
