@@ -72,6 +72,7 @@ public class HibernateModuleDao extends HibernateDaoSupport implements ModuleDao
 
     /**
      * @see org.ikasan.console.module.dao.ModuleDao#findModules(Set)
+     * TODO Test if passed in Set is null
      */
     public Set<Module> findModules(Set<Long> modulesIds)
     {

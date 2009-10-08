@@ -40,10 +40,16 @@
  */
 package org.ikasan.console.module.service;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.ikasan.console.module.service.ConsoleModuleService;
 import org.ikasan.console.module.Module;
+import org.ikasan.console.module.dao.HibernateModuleDao;
+import org.ikasan.console.module.dao.ModuleDao;
+import org.ikasan.console.module.service.ConsoleModuleService;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -54,22 +60,197 @@ import org.junit.Assert;
  */
 public class ConsoleModuleServiceTest
 {
-    /** The ConsoleModuleService we want to test */
-    private ModuleService consoleModuleService = new ConsoleModuleService(null);
-    
-    /** Test that a call of getAllModules() with no DAO bombs out */
-    @Test
-    public void testGetAllModulesWithNullDao()
+
+    /**
+     * The context that the tests run in, allows for mocking actual concrete classes
+     */
+    private Mockery context = new Mockery()
     {
-        try
         {
-            this.consoleModuleService.getAllModules();
-            Assert.fail();
+            setImposteriser(ClassImposteriser.INSTANCE);
         }
-        catch (NullPointerException npe)
-        {
-            // Do Nothing
-        }
-        
+    };
+
+    /** The mocked DAO used in several tests */
+    final ModuleDao moduleDao = context.mock(HibernateModuleDao.class);
+    
+    /** The Console Service we are using in several tests */
+    private final ModuleService consoleModuleService = new ConsoleModuleService(moduleDao);
+    
+    
+    /** Test that a constructor throws an IllegalArgumentException if we pass it a null DAO */
+    @Test(expected=IllegalArgumentException.class)
+    public void testConstructorWithNullDao()
+    {
+        new ConsoleModuleService(null);
     }
+
+    /**
+     * Test that calling getAllModules returns a Set of Modules (Given that 
+     * our DAO is Mocked, we chose to return an empty list).
+     */
+    @Test
+    public void testGetAllModules()
+    {
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findAllModules();
+                will(returnValue(new LinkedHashSet<Module>()));
+            }
+        });
+        // Test
+        Set<Module> modules = consoleModuleService.getAllModules();
+        // Verify
+        Assert.assertTrue(modules.isEmpty());
+        context.assertIsSatisfied();
+    }
+
+    /**
+     * Test that calling findModules with null Ids returns an Empty Set of Module names
+     */
+    @Test
+    public void testfindModulesWithNullIds()
+    {
+        // Setup
+        final Set<Long> moduleIds = null;
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findModules(moduleIds);
+                will(returnValue(new LinkedHashSet<String>()));
+            }
+        });
+        // Test
+        Set<String> moduleNames = consoleModuleService.getModuleNames(moduleIds);
+        // Verify
+        Assert.assertTrue(moduleNames.isEmpty());
+        context.assertIsSatisfied();
+    }
+
+    /**
+     * Test that calling findModules with an empty Set of Ids returns an Empty Set of Module names
+     */
+    @Test
+    public void testfindModulesWithNoIds()
+    {
+        // Setup
+        final Set<Long> moduleIds = new LinkedHashSet<Long>();
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findModules(moduleIds);
+                will(returnValue(new LinkedHashSet<String>()));
+            }
+        });
+        // Test
+        Set<String> moduleNames = consoleModuleService.getModuleNames(moduleIds);
+        // Verify
+        Assert.assertTrue(moduleNames.isEmpty());
+        context.assertIsSatisfied();
+    }
+    
+    /**
+     * Test that calling findModules with an Id that doesn't exist returns an Empty Set of Module names
+     */
+    @Test
+    public void testfindModulesWithNonExistentId()
+    {
+        // Setup
+        final Set<Long> moduleIds = new LinkedHashSet<Long>();
+        moduleIds.add(new Long(-1));
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findModules(moduleIds);
+                will(returnValue(new LinkedHashSet<String>()));
+            }
+        });
+        // Test
+        Set<String> moduleNames = consoleModuleService.getModuleNames(moduleIds);
+        // Verify
+        Assert.assertTrue(moduleNames.isEmpty());
+        context.assertIsSatisfied();
+    }
+
+    /**
+     * Test that calling findModules with valid Ids returns a Set of Module names
+     */
+    @Test
+    public void testfindModulesWithIds()
+    {
+        // Setup
+        final Set<Long> moduleIds = new LinkedHashSet<Long>();
+        moduleIds.add(new Long(1));
+        moduleIds.add(new Long(2));
+        
+        final Set<Module> modules = new LinkedHashSet<Module>();
+        final Module module1 = context.mock(Module.class); 
+        final Module module2 = context.mock(Module.class);
+        modules.add(module1);
+        modules.add(module2);
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findModules(moduleIds);
+                will(returnValue(modules));
+                one(module1).getName();
+                will(returnValue("module1"));
+                one(module2).getName();
+                will(returnValue("module2"));
+            }
+        });
+        // Test
+        Set<String> moduleNames = consoleModuleService.getModuleNames(moduleIds);
+        // Verify
+        Assert.assertEquals(2, moduleNames.size());
+        context.assertIsSatisfied();
+    }
+
+    /**
+     * Test that calling findModules with valid Ids but the same name returns a 
+     * reduced Set of Module names
+     */
+    @Test
+    public void testfindModulesWithSameNames()
+    {
+        // Setup
+        final Set<Long> moduleIds = new LinkedHashSet<Long>();
+        moduleIds.add(new Long(1));
+        moduleIds.add(new Long(1));
+        
+        final Set<Module> modules = new LinkedHashSet<Module>();
+        final Module module1 = context.mock(Module.class); 
+        final Module module2 = context.mock(Module.class);
+        modules.add(module1);
+        modules.add(module2);
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findModules(moduleIds);
+                will(returnValue(modules));
+                one(module1).getName();
+                will(returnValue("module1"));
+                one(module2).getName();
+                will(returnValue("module1"));
+            }
+        });
+        // Test
+        Set<String> moduleNames = consoleModuleService.getModuleNames(moduleIds);
+        // Verify
+        Assert.assertEquals(1, moduleNames.size());
+        context.assertIsSatisfied();
+    }
+    
 }
