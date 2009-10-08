@@ -49,6 +49,7 @@ CREATE TABLE  `ikasan01`.`Module` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) NOT NULL,
   `Description` varchar(255) NOT NULL,
+  CONSTRAINT UNIQUE (`Name`),  
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
