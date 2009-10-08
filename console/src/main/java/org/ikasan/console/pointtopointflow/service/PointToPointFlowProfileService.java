@@ -42,7 +42,6 @@ package org.ikasan.console.pointtopointflow.service;
 
 import java.util.Set;
 
-import org.ikasan.console.module.Module;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 
 /**
@@ -67,24 +66,6 @@ public interface PointToPointFlowProfileService
      */
     public Set<Long> getAllPointToPointFlowProfileIds();
 
-    /**
-     * Get a set of all of the modules for all of the PointToPointFlowProfiles
-     * 
-     * @return Set of all of the modules
-     * @deprecated - @see org.ikasan.console.module.ModuleService
-     */
-    @Deprecated
-    public Set<Module> getAllModules();
-    
-    /**
-     * Get a set of all of the module ids for all of the PointToPointFlowProfiles
-     * 
-     * @return Set of all of the module ids
-     * @deprecated - @see org.ikasan.console.module.ModuleService
-     */
-    @Deprecated
-    public Set<Long> getAllModuleIds();
-    
     /**
      * Get a set of all of the module ids for the given PointToPointFlowProfile Ids
      * 

@@ -45,7 +45,7 @@ import java.util.Set;
 import org.ikasan.console.module.Module;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * Service Tier interface for providing user access to <code>Module</code>s 
  * 
  * @author Ikasan Development Team
  */
@@ -53,26 +53,17 @@ public interface ModuleService
 {
 
     /**
-     * Returns all available <code>Module</code>s
+     * Returns all available <code>Module</code>s or an empty Set
      * 
-     * @return List of all accessible <code>Module</code>s
+     * @return Set of all accessible <code>Module</code>s or an empty Set
      */
     public Set<Module> getAllModules();
 
     /**
-     * Returns all available <code>Module</code> Ids
+     * Returns a Set of <code>Module</code> names, given their ids
      * 
-     * @return List of all accessible <code>Module</code> Ids
-     * @deprecated - Will only be required if search defaults to module based search
-     */
-    @Deprecated
-    public Set<Long> getAllModuleIds();
-    
-    /**
-     * Returns <code>Module</code> Names given ids
-     * 
-     * @param moduleIds - modules to search for
-     * @return List of all accessible <code>Module</code> Names
+     * @param moduleIds - List of Module ids to find names for
+     * @return Set of all accessible <code>Module</code> names or an empty Set
      */
     public Set<String> getModuleNames(Set<Long> moduleIds);
     
