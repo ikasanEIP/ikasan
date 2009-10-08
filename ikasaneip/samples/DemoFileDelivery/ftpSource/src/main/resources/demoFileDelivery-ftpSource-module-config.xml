@@ -83,9 +83,7 @@
     <!-- initiator exception handler -->
     <!-- <constructor-arg ref="exceptionHandler" /> -->
     <!-- <constructor-arg><null/></constructor-arg>-->
-    <constructor-arg>
-        <bean class="org.ikasan.framework.component.LoggingExceptionHandlerImpl"/>
-    </constructor-arg>
+    <constructor-arg ref="loggingExceptionHandler"/>
      <property name="triggers">
 	    <list>
 	       <bean class="org.quartz.CronTrigger">
