@@ -86,24 +86,54 @@ public class ConsoleModuleServiceTest
     }
 
     /**
-     * Test that calling getAllModules returns a Set of Modules (Given that 
-     * our DAO is Mocked, we chose to return an empty list).
+     * Test that calling getAllModules returns an Empty Set if none were found.
      */
     @Test
-    public void testGetAllModules()
+    public void testGetAllModulesReturnsEmpty()
     {
+        // Setup
+        final Set<Module> returnedModules = new LinkedHashSet<Module>();
+        
         // Expectations
         context.checking(new Expectations()
         {
             {
                 one(moduleDao).findAllModules();
-                will(returnValue(new LinkedHashSet<Module>()));
+                will(returnValue(returnedModules));
             }
         });
         // Test
         Set<Module> modules = consoleModuleService.getAllModules();
         // Verify
         Assert.assertTrue(modules.isEmpty());
+        context.assertIsSatisfied();
+    }
+    
+    /**
+     * Test that calling getAllModules returns a Set of Modules.
+     */
+    @Test
+    public void testGetAllModules()
+    {
+        // Setup
+        final Set<Module> returnedModules = new LinkedHashSet<Module>();
+        final Module module1 = context.mock(Module.class);
+        returnedModules.add(module1);
+        final Module module2 = context.mock(Module.class);
+        returnedModules.add(module2);
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).findAllModules();
+                will(returnValue(returnedModules));
+            }
+        });
+        // Test
+        Set<Module> modules = consoleModuleService.getAllModules();
+        // Verify
+        Assert.assertEquals(2, modules.size());
         context.assertIsSatisfied();
     }
 
@@ -181,7 +211,9 @@ public class ConsoleModuleServiceTest
     }
 
     /**
-     * Test that calling findModules with valid Ids returns a Set of Module names
+     * Test that calling findModules with valid Ids returns a Set of Module names.
+     * We prefer mocking the domain objects so that the test is tightly focussed on 
+     * the service.
      */
     @Test
     public void testfindModulesWithIds()
