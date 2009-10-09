@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,42 +36,38 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-package org.ikasan.console.pointtopointflow.service;
+package org.ikasan.console.module;
 
-import java.util.Set;
-
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
+import org.ikasan.console.module.Module;
+import org.junit.Test;
+import org.junit.Assert;
 
 /**
- * Service layer for PointToPointFlowProfiles
+ * JUnit based test class for testing Module
  * 
  * @author Ikasan Development Team
  */
-public interface PointToPointFlowProfileService
+public class ModuleTest
 {
 
     /**
-     * Get a Set of PointToPointFlowProfiles
-     * 
-     * @return Set of all of the PointToPointFlowProfiles or an empty Set
+     * Test Module Getters and Setters
      */
-    public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles();
-
-    /**
-     * Get a Set of all of the ids for all of the PointToPointFlowProfiles or an empty Set
-     * 
-     * @return Set of all of the PointToPointFlowProfile ids or an empty Set
-     */
-    public Set<Long> getAllPointToPointFlowProfileIds();
-
-    /**
-     * Get a Set of all of the module ids for the given PointToPointFlowProfile Ids or an empty Set
-     * 
-     * @param pointToPointFlowProfileIds - The point to point profile ids to search on 
-     * @return Set of all of the module ids or an empty Set
-     */
-    public Set<Long> getModuleIdsFromPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds);
+    @Test
+    public void testModuleGettersAndSetters()
+    {
+        // Setup
+        Module module = new Module();
+        module.setId(1);
+        module.setName("Module 1");
+        module.setDescription("Module 1 Description");
+        
+        // Test and Verify
+        Assert.assertEquals(1, module.getId());
+        Assert.assertEquals("Module 1", module.getName());
+        Assert.assertEquals("Module 1 Description", module.getDescription());
+    }
     
 }
