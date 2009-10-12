@@ -77,7 +77,6 @@ public class ConsoleModuleServiceTest
     /** The Console Service we are using in several tests */
     private final ModuleService consoleModuleService = new ConsoleModuleService(moduleDao);
     
-    
     /** Test that a constructor throws an IllegalArgumentException if we pass it a null DAO */
     @Test(expected=IllegalArgumentException.class)
     public void testConstructorWithNullDao()
