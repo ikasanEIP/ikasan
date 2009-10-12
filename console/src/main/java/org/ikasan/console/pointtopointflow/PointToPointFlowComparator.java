@@ -89,12 +89,55 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
      */
     public int compare(PointToPointFlow ptpf1, PointToPointFlow ptpf2)
     {
-        // Retrieve the modules
+    	// Deal with NULL flows
+        if (ptpf1 == null && ptpf2 == null)
+        {
+        	return 0;
+        }
+    	if (ptpf1 == null)
+        {
+        	return -1;
+        }
+        if (ptpf2 == null)
+        {
+        	return 1;
+        }
+    	
+        // Deal with NULL Profiles (profiles should never be NULL).
+    	PointToPointFlowProfile pointToPointFlowProfile1 = ptpf1.getPointToPointFlowProfile();
+    	PointToPointFlowProfile pointToPointFlowProfile2 = ptpf2.getPointToPointFlowProfile();
+        if (pointToPointFlowProfile1 == null && pointToPointFlowProfile2 == null)
+        {
+        	logger.error("Profile for PointToPointFlow [" + ptpf1.getId() + "] is NULL");
+        	logger.error("Profile for PointToPointFlow [" + ptpf2.getId() + "] is NULL");
+        	return 0;
+        }
+    	if (pointToPointFlowProfile1 == null)
+        {
+        	logger.error("Profile for PointToPointFlow [" + ptpf1.getId() + "] is NULL");
+        	return -1;
+        }
+        if (pointToPointFlowProfile2 == null)
+        {
+        	logger.error("Profile for PointToPointFlow [" + ptpf2.getId() + "] is NULL");
+        	return 1;        	
+        }
+
+        // Retrieve the profile ids
+        long pointToPointFlowProfileId1 = pointToPointFlowProfile1.getId();
+        long pointToPointFlowProfileId2 = pointToPointFlowProfile2.getId();
+        // If the profile ids are different then they're not comparable and get a default of 'equal'
+        if (pointToPointFlowProfileId1 != pointToPointFlowProfileId2)
+        {
+        	 return 0;
+        }
+    	
+    	// Retrieve the modules
         Module fromModule1 = ptpf1.getFromModule();
         Module fromModule2 = ptpf2.getFromModule();
         Module toModule1 = ptpf1.getToModule();
         Module toModule2 = ptpf2.getToModule();
-
+        
         // Retrieve the module ids
         long fromModuleId1 = NULL;
         long fromModuleId2 = NULL;
@@ -102,51 +145,30 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
         long toModuleId2 = NULL;
         if (fromModule1 != null)
         {
-            fromModuleId1 = ptpf1.getFromModule().getId();
+            fromModuleId1 = fromModule1.getId();
         }
         if (fromModule2 != null)
         {
-            fromModuleId2 = ptpf2.getFromModule().getId();
+            fromModuleId2 = fromModule2.getId();
         }
         if (toModule1 != null)
         {
-            toModuleId1 = ptpf1.getToModule().getId();
+            toModuleId1 = toModule1.getId();
         }
         if (toModule2 != null)
         {
-            toModuleId2 = ptpf2.getToModule().getId();
+            toModuleId2 = toModule2.getId();
         }
-
-        // TODO remove once debugged, Retrieve the module names
-        String fromModuleName1 = null;
-        String fromModuleName2 = null;
-        String toModuleName1 = null;
-        String toModuleName2 = null;
-        
-        if (fromModule1 != null)
-        {
-            fromModuleName1 = ptpf1.getFromModule().getName();
-        }
-        if (fromModule2 != null)
-        {
-            fromModuleName2 = ptpf2.getFromModule().getName();
-        }
-        if (toModule1 != null)
-        {
-            toModuleName1 = ptpf1.getToModule().getName();
-        }
-        if (toModule2 != null)
-        {
-            toModuleName2 = ptpf2.getToModule().getName();
-        }
-        
-        logger.debug("First Module is [" + fromModuleName1 + "] --> [" + toModuleName1 + "]");
-        logger.debug("Second Module is [" + fromModuleName2 + "] --> [" + toModuleName2 + "]");
         
         // PointToPointFlows are equal if their From and To ids are equal
         if ((fromModuleId1 == fromModuleId2) && (toModuleId1 == toModuleId2))
         {
-            logger.warn("Never should reach this case in the comparator!");
+            return 0;
+        }
+
+        // PointToPointFlows are considered to be equal if their From ids or their To ids are both NULL
+        if ((fromModuleId1 == NULL && fromModuleId2 == NULL) || (toModuleId1 == NULL && toModuleId2 == NULL))
+        {
             return 0;
         }
 
@@ -185,13 +207,9 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
         {
             return 1;
         }
-        
-        // TODO Maybe we do reach this case if we're comparing 2 that have no numerical relationship 
-        // towards each other!  Then does returning 0 work as it'll be compared against all others in the 
-        // Set?
-        logger.warn("Never should reach this case in the comparator!  Well actually its OK?");
+
+        // Default last case, we can't determine so they're considered equal
         return 0;
-        
     }
 
 }
