@@ -85,10 +85,10 @@ public class PointToPointFlowComparatorTest
     private PointToPointFlow pointToPointFlow2 = new PointToPointFlow();
 
     /** First point to point flow profile for comparison */
-    private PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class);
+    PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class);
     
     /** Second point to point flow profile for comparison */
-    private PointToPointFlowProfile pointToPointFlowProfile2 = context.mock(PointToPointFlowProfile.class);
+    PointToPointFlowProfile pointToPointFlowProfile2 = context.mock(PointToPointFlowProfile.class);
     
     /** The comparator to use */
     private PointToPointFlowComparator comparator = new PointToPointFlowComparator();
@@ -303,14 +303,14 @@ public class PointToPointFlowComparatorTest
     public void testCompareWithNullToModule2()
     {
 	    // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(1);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(4);
-    	Module toModule1 = new Module();
-    	toModule1.setId(7);
+    	Module fModule1 = new Module();
+    	fModule1.setId(1);
+    	Module fModule2 = new Module();
+    	fModule2.setId(4);
+    	Module tModule1 = new Module();
+    	tModule1.setId(7);
     	
-	    this.setModules(fromModule1, toModule1, fromModule2, null);
+	    this.setModules(fModule1, tModule1, fModule2, null);
 	
 	    // Expectations
 	    this.pointToPointFlowProfileIdExpectations();        
@@ -329,9 +329,9 @@ public class PointToPointFlowComparatorTest
     public void testCompareWithNullFromModules()
     {
     	// Setup
-    	Module toModule1 = new Module();
-    	toModule1.setId(1);
-    	this.setModules(null, toModule1, null, new Module());
+    	Module tModule1 = new Module();
+    	tModule1.setId(1);
+    	this.setModules(null, tModule1, null, new Module());
     	
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -350,9 +350,9 @@ public class PointToPointFlowComparatorTest
     public void testCompareWithNullToModules()
     {
         // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(1);
-    	this.setModules(fromModule1, null, new Module(), null);
+    	Module fModule1 = new Module();
+    	fModule1.setId(1);
+    	this.setModules(fModule1, null, new Module(), null);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -371,11 +371,11 @@ public class PointToPointFlowComparatorTest
     public void testCompareSrcAndTgt()
     {
         // Setup
-    	Module toModule1 = new Module();
-    	toModule1.setId(1);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(4);
-    	this.setModules(null, toModule1, fromModule2, null);
+    	Module tModule1 = new Module();
+    	tModule1.setId(1);
+    	Module fModule2 = new Module();
+    	fModule2.setId(4);
+    	this.setModules(null, tModule1, fModule2, null);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -394,11 +394,11 @@ public class PointToPointFlowComparatorTest
     public void testCompareTgtAndSrc()
     {
         // Setup
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(4);
-    	Module toModule1 = new Module();
-    	toModule1.setId(1);
-    	this.setModules(fromModule2, null, null, toModule1);
+    	Module fModule2 = new Module();
+    	fModule2.setId(4);
+    	Module tModule1 = new Module();
+    	tModule1.setId(1);
+    	this.setModules(fModule2, null, null, tModule1);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -417,13 +417,13 @@ public class PointToPointFlowComparatorTest
     public void testCompareSrcAndBridging()
     {
         // Setup
-    	Module toModule1 = new Module();
-    	toModule1.setId(1);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(4);
-    	Module toModule2 = new Module();
-    	toModule1.setId(7);
-    	this.setModules(null, toModule1, fromModule2, toModule2);
+    	Module tModule1 = new Module();
+    	tModule1.setId(1);
+    	Module fModule2 = new Module();
+    	fModule2.setId(4);
+    	Module tModule2 = new Module();
+    	tModule1.setId(7);
+    	this.setModules(null, tModule1, fModule2, tModule2);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -442,13 +442,13 @@ public class PointToPointFlowComparatorTest
     public void testCompareBridgingAndSrc()
     {
         // Setup
-    	Module toModule1 = new Module();
-    	toModule1.setId(1);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(4);
-    	Module toModule2 = new Module();
-    	toModule1.setId(7);
-    	this.setModules(fromModule2, toModule2, null, toModule1);
+    	Module tModule1 = new Module();
+    	tModule1.setId(1);
+    	Module fModule2 = new Module();
+    	fModule2.setId(4);
+    	Module tModule2 = new Module();
+    	tModule1.setId(7);
+    	this.setModules(fModule2, tModule2, null, tModule1);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -467,13 +467,13 @@ public class PointToPointFlowComparatorTest
     public void testCompareTgtAndBridging()
     {
         // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(2);
-    	Module toModule1 = new Module();
-    	toModule1.setId(5);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(8);
-    	this.setModules(fromModule2, null, fromModule1, toModule1);
+    	Module fModule1 = new Module();
+    	fModule1.setId(2);
+    	Module tModule1 = new Module();
+    	tModule1.setId(5);
+    	Module fModule2 = new Module();
+    	fModule2.setId(8);
+    	this.setModules(fModule2, null, fModule1, tModule1);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -492,13 +492,13 @@ public class PointToPointFlowComparatorTest
     public void testCompareBridgingAndTgt()
     {
         // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(2);
-    	Module toModule1 = new Module();
-    	toModule1.setId(5);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(8);
-    	this.setModules(fromModule1, toModule1, fromModule2, null);
+    	Module fModule1 = new Module();
+    	fModule1.setId(2);
+    	Module tModule1 = new Module();
+    	tModule1.setId(5);
+    	Module fModule2 = new Module();
+    	fModule2.setId(8);
+    	this.setModules(fModule1, tModule1, fModule2, null);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -518,15 +518,15 @@ public class PointToPointFlowComparatorTest
     public void testCompareBridgingAndBridging1()
     {
         // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(2);
-    	Module toModule1 = new Module();
-    	toModule1.setId(5);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(5);
-    	Module toModule2 = new Module();
-    	toModule2.setId(10);
-    	this.setModules(fromModule1, toModule1, fromModule2, toModule2);
+    	Module fModule1 = new Module();
+    	fModule1.setId(2);
+    	Module tModule1 = new Module();
+    	tModule1.setId(5);
+    	Module fModule2 = new Module();
+    	fModule2.setId(5);
+    	Module tModule2 = new Module();
+    	tModule2.setId(10);
+    	this.setModules(fModule1, tModule1, fModule2, tModule2);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -546,15 +546,15 @@ public class PointToPointFlowComparatorTest
     public void testCompareBridgingAndBridging2()
     {
         // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(2);
-    	Module toModule1 = new Module();
-    	toModule1.setId(5);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(1);
-    	Module toModule2 = new Module();
-    	toModule2.setId(2);
-    	this.setModules(fromModule1, toModule1, fromModule2, toModule2);
+    	Module fModule1 = new Module();
+    	fModule1.setId(2);
+    	Module tModule1 = new Module();
+    	tModule1.setId(5);
+    	Module fModule2 = new Module();
+    	fModule2.setId(1);
+    	Module tModule2 = new Module();
+    	tModule2.setId(2);
+    	this.setModules(fModule1, tModule1, fModule2, tModule2);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
@@ -574,15 +574,15 @@ public class PointToPointFlowComparatorTest
     public void testCompareBridgingAndBridgingUnrelated()
     {
         // Setup
-    	Module fromModule1 = new Module();
-    	fromModule1.setId(2);
-    	Module toModule1 = new Module();
-    	toModule1.setId(5);
-    	Module fromModule2 = new Module();
-    	fromModule2.setId(1);
-    	Module toModule2 = new Module();
+    	Module fModule1 = new Module();
+    	fModule1.setId(2);
+    	Module tModule1 = new Module();
+    	tModule1.setId(5);
+    	Module fModule2 = new Module();
+    	fModule2.setId(1);
+    	Module tModule2 = new Module();
     	toModule2.setId(4);
-    	this.setModules(fromModule1, toModule1, fromModule2, toModule2);
+    	this.setModules(fModule1, tModule1, fModule2, tModule2);
 
         // Expectations
         this.pointToPointFlowProfileIdExpectations();        
