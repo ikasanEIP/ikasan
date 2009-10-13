@@ -48,6 +48,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 
 /**
@@ -79,6 +81,11 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	private ErrorOccurrenceDao errorOccurrenceDao;
 	
 	/**
+	 * Data access object for the persistence of ExcludedEvents 
+	 */	
+	private ExcludedEventDao excludedEventDao;
+	
+	/**
 	 * List of all registered listeners
 	 */
 	private List<ErrorOccurrenceListener> errorOccurrenceListeners= new ArrayList<ErrorOccurrenceListener>();
@@ -88,19 +95,21 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * 
 	 * @param errorOccurrenceDao
 	 */
-	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao) {
+	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao) {
 		super();
 		this.errorOccurrenceDao = errorOccurrenceDao;
+		this.excludedEventDao = excludedEventDao;
 	}
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param errorOccurrenceDao
+	 * @param excludedEventDao
 	 * @param errorOccurrenceListeners
 	 */
-	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao,List<ErrorOccurrenceListener> errorOccurrenceListeners ) {
-		this(errorOccurrenceDao);
+	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao,List<ErrorOccurrenceListener> errorOccurrenceListeners ) {
+		this(errorOccurrenceDao, excludedEventDao);
 		this.errorOccurrenceListeners = new ArrayList<ErrorOccurrenceListener>();
 		this.errorOccurrenceListeners.addAll(errorOccurrenceListeners);
 	}
@@ -111,8 +120,8 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * @param errorOccurrenceDao
 	 * @param errorOccurrenceListener
 	 */
-	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao,ErrorOccurrenceListener errorOccurrenceListener ) {
-		this(errorOccurrenceDao);
+	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao,ExcludedEventDao excludedEventDao,ErrorOccurrenceListener errorOccurrenceListener ) {
+		this(errorOccurrenceDao, excludedEventDao);
 		this.errorOccurrenceListeners = new ArrayList<ErrorOccurrenceListener>();
 		errorOccurrenceListeners.add(errorOccurrenceListener);
 	}
@@ -175,7 +184,11 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * @see org.ikasan.framework.error.service.ErrorLoggingService#getErrorOccurrence(long)
 	 */
 	public ErrorOccurrence getErrorOccurrence(long errorOccurrenceId) {
-		return errorOccurrenceDao.getErrorOccurrence(errorOccurrenceId);
+		ErrorOccurrence errorOccurrence = errorOccurrenceDao.getErrorOccurrence(errorOccurrenceId);
+		if (errorOccurrence!=null){
+			errorOccurrence.setExcludedEvent(excludedEventDao.getExcludedEvent(errorOccurrence.getEventId()));
+		}
+		return errorOccurrence;
 	}
 
 	/* (non-Javadoc)

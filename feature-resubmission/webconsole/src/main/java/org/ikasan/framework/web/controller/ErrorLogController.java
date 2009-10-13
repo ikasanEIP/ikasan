@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,11 +68,14 @@ public class ErrorLogController {
 	 * Error logging service
 	 */
 	private ErrorLoggingService errorLoggingService;
+	
+
+    
     /**
 	 * @param errorLoggingService
 	 */
 	@Autowired
-	public ErrorLogController(ErrorLoggingService errorLoggingService) {
+	public ErrorLogController(ErrorLoggingService errorLoggingService, ExcludedEventService excludedEventService) {
 		super();
 		this.errorLoggingService = errorLoggingService;
 	}

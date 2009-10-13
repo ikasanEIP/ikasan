@@ -131,15 +131,15 @@ public class ExclusionsController
      * @return excludedEvent view
      */
     @RequestMapping(value="exclusion.htm", method=RequestMethod.GET)
-    public String view(@RequestParam long excludedEventId,  
+    public String view(@RequestParam String eventId,  
     		@RequestParam(required=false) String searchResultsUrl, 
     		ModelMap model)
     {
-        ExcludedEvent excludedEvent = excludedEventService.getExcludedEvent(excludedEventId);
-		if (excludedEvent.getEvent()!=null){
-	        List<ErrorOccurrence> errorOccurrences = errorLoggingService.getErrorOccurrences(excludedEvent.getEvent().getId());
-	        model.addAttribute("errorOccurrences", errorOccurrences);
-		}
+        ExcludedEvent excludedEvent = excludedEventService.getExcludedEvent(eventId);
+//		if (excludedEvent.getEvent()!=null){
+//	        List<ErrorOccurrence> errorOccurrences = errorLoggingService.getErrorOccurrences(excludedEvent.getEvent().getId());
+//	        model.addAttribute("errorOccurrences", errorOccurrences);
+//		}
 		
 		model.addAttribute("excludedEvent", excludedEvent);
         model.addAttribute("searchResultsUrl", searchResultsUrl);
@@ -155,17 +155,17 @@ public class ExclusionsController
      * @return excludedEvent view
      */
     @RequestMapping(value="exclusion.htm", method=RequestMethod.POST)
-    public String requestResubmission(@RequestParam long excludedEventId, ModelMap model)
+    public String requestResubmission(@RequestParam String eventId, ModelMap model)
     {
     	boolean success = true;
     	try{
-    	excludedEventService.resubmit(excludedEventId);
+    	excludedEventService.resubmit(eventId);
     	} catch(Throwable throwable){
     		logger.error("Exception caught trying to resubmit",throwable);
     		success=false;
     	}
-    	logger.info("Resubmission "+(success?"successful":"failed")+"for excludedEvent id:"+excludedEventId);
+    	logger.info("Resubmission "+(success?"successful":"failed")+"for excludedEvent id:"+eventId);
 
-    	return "redirect:list.htm";
+    	return success?"admin/exclusions/resubmissionSuccess":"admin/exclusions/resubmissionFailure";
     }
 }

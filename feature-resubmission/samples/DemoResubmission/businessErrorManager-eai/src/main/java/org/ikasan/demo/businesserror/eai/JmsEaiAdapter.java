@@ -100,6 +100,7 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 
 	public void postBusinessError(final BusinessError businessError) {
 		//publish the business error back to the resubmission topic
+		logger.info("called with businessError["+businessError+"]");
 		jmsTemplate.send(outgoingDestination, new MessageCreator() {
 			
 			public Message createMessage(Session session) throws JMSException {

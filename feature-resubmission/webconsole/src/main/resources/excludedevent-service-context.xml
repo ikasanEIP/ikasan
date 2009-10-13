@@ -57,6 +57,7 @@
 
 	<bean id="excludedEventService" class="org.ikasan.framework.event.exclusion.service.ExcludedEventServiceImpl">
 		<constructor-arg ref="excludedEventDao" />
+		<constructor-arg ref="errorOccurrenceDao" />
 		<constructor-arg>
 			<list>
 				<!-- listeners will go here... -->

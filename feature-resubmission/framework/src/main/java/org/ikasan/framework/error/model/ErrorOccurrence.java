@@ -43,6 +43,7 @@ package org.ikasan.framework.error.model;
 import java.util.Date;
 
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
@@ -105,6 +106,12 @@ public class ErrorOccurrence {
 	 */
 	private Date expiry;
 
+	/** ExcludedEvent may or may not exist */
+	private ExcludedEvent excludedEvent;
+	
+	
+	
+	
 	/**
 	 * No args constructor, required by certain ORM technologies that shall remain nameless
 	 */
@@ -355,6 +362,24 @@ public class ErrorOccurrence {
 	}
 
 
+	/**
+	 * Accessor for ExcludedEvent
+	 * 
+	 * @return excluded event if one exists
+	 */
+	public ExcludedEvent getExcludedEvent() {
+		return excludedEvent;
+	}
+
+	/**
+	 * Setter for excluded Event
+	 * TODO make this non public
+	 * 
+	 * @param excludedEvent
+	 */
+	public void setExcludedEvent(ExcludedEvent excludedEvent) {
+		this.excludedEvent = excludedEvent;
+	}
 
 
 	

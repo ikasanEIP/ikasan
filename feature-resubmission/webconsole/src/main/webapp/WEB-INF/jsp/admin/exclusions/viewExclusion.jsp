@@ -51,7 +51,7 @@
 
 <h2>Excluded Event :: <c:out value="${excludedEvent.id}" /></h2>
 
-<table id="excludedEvent" class="keyValueTable">
+<table id="excludedEventHeaders" class="keyValueTable">
 	<tr>
 		<th>
 			Module Name
@@ -81,10 +81,39 @@
                                 pattern="dd/MM/yyyy h:mma"/>
 		</td>
 	</tr>
+	<tr>
+		<th>
+			Error Occurrences
+		</th>
+		<td>
+		<ol id="excludedEventErrorOccurrences" >
+	<c:forEach items="${excludedEvent.errorOccurrences}" var="errorOccurrence" >
+	    <c:url var="errorLink" value="../errors/viewError.htm">
+            <c:param name="errorId" value="${errorOccurrence.id}"/>
+        </c:url>
+		<li>
+			<a href="<c:out value="${errorLink}"/>"><c:out value="${errorOccurrence.logTime}"/></a> : 
+			<c:out value="${errorOccurrence.moduleName}"/>-<c:out value="${errorOccurrence.flowElementName}"/>
+		</li>
+	</c:forEach>
+	</ol>
+		</td>
+	</tr>
 </table>
+			<c:url var="resubmitLink" value="exclusion.htm">
+                <c:param name="eventId" value="${excludedEvent.event.id}"/>
+                <c:param name="action" value="resubmit"/>
+              </c:url>
 	
-	<table id="excludedEventEvent" class="keyValueTable">
-	
+    	<form:form action="${resubmitLink}" method="post" cssClass="controls">
+        	<input type="submit" value="Resubmit" class="controlButton"/>
+        </form:form>
+
+
+<h2>Event</h2>
+<div class="event">
+
+<table id="excludedEventEvent" class="keyValueTable">	
 	<tr>
 		<th>
 			Event Id
@@ -109,62 +138,45 @@
 			<c:out value="${excludedEvent.event.timestamp}" />
 		</td>
 	</tr>
+
 	
 	</table>
 	
+
 	<c:forEach items="${excludedEvent.event.payloads}" var="payload" varStatus="status">
-	<jsp:useBean id="payload" type="org.ikasan.common.Payload" />  
-	<h2>Payload(<c:out value="${status.count}" />)</h2>
+	<div id="payload">
+		<jsp:useBean id="payload" type="org.ikasan.common.Payload" />  
+		<h3 id="enumerator">Payload(<c:out value="${status.count}" />)</h3>
+		
+		<table id="excludedEventPayload" class="keyValueTable">
+		
+		<tr>
+			<th>
+				Payload Id
+			</th>
+			<td>
+				<c:out value="${payload.id}" />
+			</td>
+		</tr>
+		</table>
 	
-		<table id="excludedEventEvent" class="keyValueTable">
-	
-	<tr>
-		<th>
-			Payload Id
-		</th>
-		<td>
-			<c:out value="${payload.id}" />
-		</td>
-	</tr>
-	
+		<h4>Content</h4>
+		<p id="payloadContent" class="unformattable">
+		<% pageContext.setAttribute("displayableContent", new String(payload.getContent())); %>
+				<c:out value="${displayableContent}" />
+		</p>
+			
+	</div>
+	</c:forEach>
 
-	<tr>
-		<th>
-			Content
-		</th>
-		<td>
-			<% pageContext.setAttribute("displayableContent", new String(payload.getContent())); %>
-			<c:out value="${displayableContent}" />
-		</td>
-	</tr>	
-	</table>
-	</c:forEach>
 	
-	<h2>Error Occurrences</h2>
-	<ol id="excludedEventErrorOccurrences" >
-	<c:forEach items="${errorOccurrences}" var="errorOccurrence" >
-	    <c:url var="errorLink" value="../errors/viewError.htm">
-            <c:param name="errorId" value="${errorOccurrence.id}"/>
-        </c:url>
-		<li>
-			<a href="<c:out value="${errorLink}"/>"><c:out value="${errorOccurrence.logTime}"/></a> : 
-			<c:out value="${errorOccurrence.moduleName}"/>-<c:out value="${errorOccurrence.flowElementName}"/>
-		</li>
-	</c:forEach>
-	</ol>
+</div> <!-- end div event -->
+	
 	
 	
 
-	<p>
-		  <c:url var="resubmitLink" value="exclusion.htm">
-                <c:param name="excludedEventId" value="${excludedEvent.id}"/>
-                <c:param name="action" value="resubmit"/>
-              </c:url>
-              <form:form action="${resubmitLink}" method="post">
-                <input type="submit" value="Resubmit" class="controlButton"/>
-              </form:form>
-	</p>
-</div>
+
+</div> 
 
 
 

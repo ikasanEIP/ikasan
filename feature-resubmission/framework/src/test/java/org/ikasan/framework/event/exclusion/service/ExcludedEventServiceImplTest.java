@@ -51,6 +51,8 @@ import junit.framework.Assert;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
+import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.flow.Flow;
@@ -85,15 +87,29 @@ public class ExcludedEventServiceImplTest {
         }
     };
     
-    private Event excludedEvent = mockery.mock(Event.class);
+    private Event event = mockery.mock(Event.class);
+    
+    private ExcludedEvent excludedEvent = mockery.mock(ExcludedEvent.class);
+    
+    private ErrorOccurrence errorOccurrence = mockery.mock(ErrorOccurrence.class);
+    
+    private List<ErrorOccurrence> errorOccurrences = new ArrayList<ErrorOccurrence>();
     
     private ExcludedEventDao excludedEventDao = mockery.mock(ExcludedEventDao.class);
+    
+    private ErrorOccurrenceDao errorOccurenceDao = mockery.mock(ErrorOccurrenceDao.class);
     
     private ExcludedEventListener excludedEventListener1 = mockery.mock(ExcludedEventListener.class, "excludedEventListener1");
     
     private ExcludedEventListener excludedEventListener2 = mockery.mock(ExcludedEventListener.class, "excludedEventListener2");
 	
     private ModuleService moduleService = mockery.mock(ModuleService.class);
+    
+	final String eventId = "eventId";
+	
+	
+	
+	
 	/**
 	 * Class under test
 	 */
@@ -106,7 +122,8 @@ public class ExcludedEventServiceImplTest {
 		List<ExcludedEventListener> listeners = new ArrayList<ExcludedEventListener>();
 		listeners.add(excludedEventListener1);
 		listeners.add(excludedEventListener2);
-		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao, listeners,moduleService);
+		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao,errorOccurenceDao, listeners,moduleService);
+		errorOccurrences.add(errorOccurrence);
 	}
 	
 	@Test
@@ -119,16 +136,16 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).save(with(new ExcludedEventMatcher(new ExcludedEvent(excludedEvent,moduleName, flowName, new Date()))));
+            	one(excludedEventDao).save(with(new ExcludedEventMatcher(new ExcludedEvent(event,moduleName, flowName, new Date()))));
             	inSequence(sequence);
-            	one(excludedEventListener1).notifyExcludedEvent(excludedEvent);
+            	one(excludedEventListener1).notifyExcludedEvent(event);
             	inSequence(sequence);
-            	one(excludedEventListener2).notifyExcludedEvent(excludedEvent);
+            	one(excludedEventListener2).notifyExcludedEvent(event);
             	inSequence(sequence);
             }
         });
 		
-		excludedEventService.excludeEvent(excludedEvent, moduleName, flowName);
+		excludedEventService.excludeEvent(event, moduleName, flowName);
 		
 		mockery.assertIsSatisfied();
 	}
@@ -206,33 +223,36 @@ public class ExcludedEventServiceImplTest {
 	
 	@Test 
 	public void testGetExcludedEvent(){
-		final long excludedEventId = 1l;
-		final ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
-		
+
+
+		final Sequence sequence = mockery.sequence("invocationSequence");
 		
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId);inSequence(sequence);will(returnValue(excludedEvent));
+            	one(errorOccurenceDao).getErrorOccurrences(eventId);inSequence(sequence);will(returnValue(errorOccurrences));
+            	one(excludedEvent).setErrorOccurrences(errorOccurrences);
             }
         });
 		
-		Assert.assertEquals("ExcludedEvent returned by getExcludedEvent should be that returned by dao method ", excludedEvent, excludedEventService.getExcludedEvent(excludedEventId));
+		ExcludedEvent excludedEventResult = excludedEventService.getExcludedEvent(eventId);
+		Assert.assertEquals("ExcludedEvent returned by getExcludedEvent should be that returned by dao method ", excludedEvent, excludedEventResult);
 		
 		mockery.assertIsSatisfied();
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testResubmit_withNonExistantExcludedEvent_willThrowIllegalArgumentException(){
-		final long excludedEventId = 1l;
+		final String eventId = "eventId";
 		
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(null));
+            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(null));
             }
         });
-		excludedEventService.resubmit(excludedEventId);
+		excludedEventService.resubmit(eventId);
 		mockery.assertIsSatisfied();
 	
 	}
@@ -240,7 +260,7 @@ public class ExcludedEventServiceImplTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testResubmit_withExcludedEventFromUnknownModule_willThrowIllegalArgumentException(){
-		final long excludedEventId = 1l;
+		final String eventId = "eventId";
 		final String moduleName = "unknownModule";
 		
 		final ExcludedEvent excludedEvent = new ExcludedEvent(null, moduleName, null, null);
@@ -249,17 +269,17 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(excludedEvent));
             	one(moduleService).getModule(moduleName);will(returnValue(null));
             }
         });
-		excludedEventService.resubmit(excludedEventId);
+		excludedEventService.resubmit(eventId);
 		mockery.assertIsSatisfied();
 	}
 	
 	@Test
 	public void testResubmit_withSuccessfulResubmission_willDeleteExcludedEvent(){
-		final long excludedEventId = 1l;
+		final String eventId = "eventId";
 		final String moduleName = "moduleName";
 		final String flowName = "unknownFlow";
 		final Event event = mockery.mock(Event.class);
@@ -273,7 +293,7 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(excludedEvent));
             	one(moduleService).getModule(moduleName);will(returnValue(module));
             	one(module).getFlows();will(returnValue(flows));
             	one(flow).invoke(with(any(FlowInvocationContext.class)), with(equal(event)));
@@ -281,12 +301,12 @@ public class ExcludedEventServiceImplTest {
             }
         });
 		
-		excludedEventService.resubmit(excludedEventId);
+		excludedEventService.resubmit(eventId);
 		mockery.assertIsSatisfied();
 	}
 	
 	public void testResubmit_withExcludedEventFromUnknownFlow_willThrowIllegalArgumentException(){
-		final long excludedEventId = 1l;
+		final String eventId = "eventId";
 		final String moduleName = "moduleName";
 		final String flowName = "unknownFlow";
 		
@@ -296,12 +316,12 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(excludedEventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(excludedEvent));
             	one(moduleService).getModule(moduleName);will(returnValue(module));
             	one(module).getFlows();will(returnValue(new HashMap<String,Flow>()));
             }
         });
-		excludedEventService.resubmit(excludedEventId);
+		excludedEventService.resubmit(eventId);
 		mockery.assertIsSatisfied();
 	}
 	

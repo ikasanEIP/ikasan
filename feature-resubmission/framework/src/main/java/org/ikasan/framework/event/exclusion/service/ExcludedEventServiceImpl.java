@@ -50,6 +50,8 @@ import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
+import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.flow.Flow;
@@ -68,6 +70,8 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 
 	private ExcludedEventDao excludedEventDao;
 	
+	private ErrorOccurrenceDao errorOccurrenceDao;
+	
 	private ModuleService moduleService;
 	
 	/**
@@ -81,14 +85,17 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	
 	/**
 	 * @param excludedEventDao
+	 * @param errorOccurrenceDao
 	 * @param listeners
 	 * @param moduleService
 	 */
 	public ExcludedEventServiceImpl(ExcludedEventDao excludedEventDao,
+			ErrorOccurrenceDao errorOccurrenceDao,
 			List<ExcludedEventListener> listeners, ModuleService moduleService) {
 		this.excludedEventDao = excludedEventDao;
 		excludedEventListeners.addAll(listeners);
 		this.moduleService = moduleService;
+		this.errorOccurrenceDao = errorOccurrenceDao;
 	}
 
 	/* (non-Javadoc)
@@ -119,12 +126,15 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 		return excludedEventDao.findExcludedEvents(pageNo, pageSize, orderBy, orderAscending,  moduleName, flowName);
 	}
 
-	public ExcludedEvent getExcludedEvent(long excludedEventId) {
-		return excludedEventDao.getExcludedEvent(excludedEventId);
-	}
 	
 	public ExcludedEvent getExcludedEvent(String eventId) {
-		return excludedEventDao.getExcludedEvent(eventId);
+		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId);
+		if (excludedEvent!=null){
+			List<ErrorOccurrence> errorOccurrences = errorOccurrenceDao.getErrorOccurrences(eventId);
+			excludedEvent.setErrorOccurrences(errorOccurrences);
+		}	
+		
+		return excludedEvent;
 	}
 
 	/* (non-Javadoc)
@@ -134,7 +144,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	 * 
 	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#resubmit(long)
 	 */
-	public void resubmit(long excludedEventId) {
+	public void resubmit(String eventId) {
 		
 		if (transactionManager!=null){
 			try {
@@ -148,10 +158,10 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 		}
 		
         
-		ExcludedEvent excludedEvent = getExcludedEvent(excludedEventId);
+		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId);
 		
 		if (excludedEvent==null){
-			throw new IllegalArgumentException("unknown ExcludedEvent id:"+excludedEventId);
+			throw new IllegalArgumentException("Cannot find Excluded Event id:"+eventId);
 		}
 		
 		Module module = moduleService.getModule(excludedEvent.getModuleName());

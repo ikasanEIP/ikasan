@@ -126,7 +126,7 @@
     <tbody>
         <c:forEach items="${results}" var="exclusion">
             <c:url var="viewExclusionLink" value="exclusion.htm">   	
-    			<c:param name="excludedEventId" value="${exclusion.id}"/>
+    			<c:param name="eventId" value="${exclusion.event.id}"/>
     			<c:param name="searchResultsUrl" value="${searchResultsUrl}"/>
     		</c:url>
             <tr>

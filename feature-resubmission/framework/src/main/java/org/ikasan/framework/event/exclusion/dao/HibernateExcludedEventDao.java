@@ -138,10 +138,10 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 		List excludedEvents = getHibernateTemplate().find("from ExcludedEvent e where e.event.id = ?", eventId);
 		
 		if (excludedEvents.size()>0){
-			
+			result = (ExcludedEvent) excludedEvents.get(0);
 		}
 		
-		return null;
+		return result;
 	}
 
 }

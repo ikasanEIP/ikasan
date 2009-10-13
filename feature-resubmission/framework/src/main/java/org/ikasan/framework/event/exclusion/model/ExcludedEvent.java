@@ -41,8 +41,10 @@
 package org.ikasan.framework.event.exclusion.model;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.error.model.ErrorOccurrence;
 
 /**
  * @author The Ikasan Development Team
@@ -75,6 +77,11 @@ public class ExcludedEvent {
 	 */
 	private Date exclusionTime;
 	
+	/** Error Occurrences related to this ExcludedEvent */
+	private List<ErrorOccurrence> errorOccurrences;
+	
+
+
 	/**
 	 * default constructor required by ORM
 	 */
@@ -189,6 +196,25 @@ public class ExcludedEvent {
 	@SuppressWarnings("unused")
 	private void setExclusionTime(Date exclusionTime) {
 		this.exclusionTime = exclusionTime;
+	}
+	
+	/**
+	 * Accessor for errorOccurrences
+	 * 
+	 * @return listing of occurrences of errors processing the Event
+	 */
+	public List<ErrorOccurrence> getErrorOccurrences() {
+		return errorOccurrences;
+	}
+
+	/**
+	 * Mutator for errorOccurrences
+	 * TODO would be great if this didnt need to be public
+	 * 
+	 * @param errorOccurrences
+	 */
+	public void setErrorOccurrences(List<ErrorOccurrence> errorOccurrences) {
+		this.errorOccurrences = errorOccurrences;
 	}
 
 }

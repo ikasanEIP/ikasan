@@ -74,13 +74,6 @@ public interface ExcludedEventService {
 	 */
 	public PagedSearchResult<ExcludedEvent> getExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
 
-	/**
-	 * Retrieve an ExcludedEvent specified by its Id
-	 * 
-	 * @param excludedEventId
-	 * @return ExcludedEvent
-	 */
-	public ExcludedEvent getExcludedEvent(long excludedEventId);
 	
 	/**
 	 * Retrieve an ExcludedEvent specified by its event Id
@@ -94,13 +87,12 @@ public interface ExcludedEventService {
 	 * Synchronously attempts to resubmit an ExcludedEvent specified by id
 	 * 
 	 * 
-	 * 
 	 * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if referenced
 	 * 	module or flow are not available
 	 * 
-	 * @param excludedEventId
+	 * @param eventId
 	 */
-	public void resubmit(long excludedEventId);
+	public void resubmit(String eventId);
 
 
 

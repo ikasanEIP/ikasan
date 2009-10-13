@@ -76,15 +76,7 @@
 		</td>
 	</tr>
 	</c:if>
-	
-	<tr>
-		<th>
-			Error Detail
-		</th>
-		<td>
-			<c:out value="${error.errorDetail}" />
-		</td>
-	</tr>
+
 	
 	<c:if test="${!empty error.currentEvent}">
 	<tr>
@@ -126,10 +118,25 @@
                                 pattern="dd/MM/yyyy h:mma"/>
 		</td>
 	</tr>
+	<c:if test="${!empty error.excludedEvent}">
+	<c:url var="viewExclusionLink" value="../exclusions/exclusion.htm">   	
+    		<c:param name="eventId" value="${error.excludedEvent.event.id}"/>
+    </c:url>
+	<tr>
+		<th>
+			ExcludedEvent
+		</th>
+		<td>
+			<a href="${viewExclusionLink}"><c:out value="${error.excludedEvent.event.id}"/></a>
+		</td>
+	</tr>
+	</c:if>
 </table>
 
 
-</div>
+		<h3>Error Detail</h3>
+		<p id="errorDetail" class="unformattable"><c:out value="${error.errorDetail}" /></p>
+
 
 
 

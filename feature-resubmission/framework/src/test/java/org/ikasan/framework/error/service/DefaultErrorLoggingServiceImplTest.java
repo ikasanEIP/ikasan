@@ -36,6 +36,8 @@ import org.hamcrest.Description;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
+import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.jmock.Expectations;
@@ -67,6 +69,11 @@ public class DefaultErrorLoggingServiceImplTest {
 	private ErrorOccurrenceDao errorOccurrenceDao = mockery.mock(ErrorOccurrenceDao.class);
 	
 	/**
+	 * mocked excludedEventDao
+	 */
+	private ExcludedEventDao excludedEventDao = mockery.mock(ExcludedEventDao.class);
+	
+	/**
 	 * mocked ErrorOccurrenceListener
 	 */
 	private ErrorOccurrenceListener firstListener = mockery.mock(ErrorOccurrenceListener.class, "firstListerner");
@@ -88,7 +95,7 @@ public class DefaultErrorLoggingServiceImplTest {
 		List<ErrorOccurrenceListener> listeners = new ArrayList<ErrorOccurrenceListener>();
 		listeners.add(firstListener);
 		listeners.add(secondListener);
-		errorLoggingServiceImpl = new DefaultErrorLoggingServiceImpl(errorOccurrenceDao, listeners);
+		errorLoggingServiceImpl = new DefaultErrorLoggingServiceImpl(errorOccurrenceDao,excludedEventDao, listeners);
 	}
 	
 	/**
@@ -174,13 +181,24 @@ public class DefaultErrorLoggingServiceImplTest {
 	@Test
 	public void testGetErrorOccurrence(){
 		final ErrorOccurrence errorOccurrence = mockery.mock(ErrorOccurrence.class);
+		final ExcludedEvent excludedEvent = mockery.mock(ExcludedEvent.class);
 		
 		final long errorOccurrenceId = 1l;
+		
+		final String eventId = "eventId";
 		mockery.checking(new Expectations()
         {
             {
             	one(errorOccurrenceDao).getErrorOccurrence(errorOccurrenceId);
             	will(returnValue(errorOccurrence));
+            	
+            	one(errorOccurrence).getEventId();
+            	will(returnValue(eventId));
+            	
+            	one(excludedEventDao).getExcludedEvent(eventId);
+            	will(returnValue(excludedEvent));
+            	
+            	one(errorOccurrence).setExcludedEvent(excludedEvent);
              }
         });
 		
