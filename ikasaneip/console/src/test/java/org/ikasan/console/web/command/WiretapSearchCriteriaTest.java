@@ -141,10 +141,10 @@ public class WiretapSearchCriteriaTest
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(null);
         wiretapSearchCriteria.setFromDate("11/10/2009");
         wiretapSearchCriteria.setFromTime(null);
-        assertEquals("Sun Oct 11 00:00:00 BST 2009", wiretapSearchCriteria.getFromDateTime().toString());
+        assertNull(wiretapSearchCriteria.getFromDateTime());
         wiretapSearchCriteria.setUntilDate("11/10/2009");
         wiretapSearchCriteria.setUntilTime(null);
-        assertEquals("Sun Oct 11 00:00:00 BST 2009", wiretapSearchCriteria.getUntilDateTime().toString());
+        assertNull(wiretapSearchCriteria.getUntilDateTime());
     }
 
     /** Test valid getFromDateTime and getUntilDateTime with a empty time */
@@ -154,10 +154,10 @@ public class WiretapSearchCriteriaTest
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(null);
         wiretapSearchCriteria.setFromDate("11/10/2009");
         wiretapSearchCriteria.setFromTime("");
-        assertEquals("Sun Oct 11 00:00:00 BST 2009", wiretapSearchCriteria.getFromDateTime().toString());
+        assertNull(wiretapSearchCriteria.getFromDateTime());
         wiretapSearchCriteria.setUntilDate("11/10/2009");
         wiretapSearchCriteria.setUntilTime("");
-        assertEquals("Sun Oct 11 00:00:00 BST 2009", wiretapSearchCriteria.getUntilDateTime().toString());
+        assertNull(wiretapSearchCriteria.getUntilDateTime());
     }
     
     /** Test valid getFromDateTime and getUntilDateTime with an unparsable dates and times */

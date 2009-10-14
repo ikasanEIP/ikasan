@@ -356,16 +356,16 @@ public class WiretapSearchCriteria implements Serializable
         try
         {
             Date time = null;
-            // If we get an invalid time then set it to 00:00:00
-            if (timeString == null || "".equals(timeString))
+            // If we get an invalid time then set it to empty String where the ParseException code will deal with it
+            // We're deliberately being strict, see the Validator class for this domain object
+            if (timeString == null)
             {
-                time = this.HHmmss.parse("00:00:00");
+                time = this.HHmmss.parse("");
             }
             else
             {
                 time = this.HHmmss.parse(timeString);
             }
-            
             Calendar timeCalendar = new GregorianCalendar();
             timeCalendar.setTime(time);
             calendar.setTime(this.ddMMyyyyFormat.parse(dateString));
