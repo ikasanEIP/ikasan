@@ -581,7 +581,7 @@ public class PointToPointFlowComparatorTest
     	Module fModule2 = new Module();
     	fModule2.setId(1);
     	Module tModule2 = new Module();
-    	toModule2.setId(4);
+    	tModule2.setId(4);
     	this.setModules(fModule1, tModule1, fModule2, tModule2);
 
         // Expectations
