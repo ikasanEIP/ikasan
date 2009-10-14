@@ -355,7 +355,17 @@ public class WiretapSearchCriteria implements Serializable
         Calendar calendar = new GregorianCalendar();
         try
         {
-            Date time = this.HHmmss.parse(timeString);
+            Date time = null;
+            // If we get an invalid time then set it to 00:00:00
+            if (timeString == null || "".equals(timeString))
+            {
+                time = this.HHmmss.parse("00:00:00");
+            }
+            else
+            {
+                time = this.HHmmss.parse(timeString);
+            }
+            
             Calendar timeCalendar = new GregorianCalendar();
             timeCalendar.setTime(time);
             calendar.setTime(this.ddMMyyyyFormat.parse(dateString));
@@ -365,7 +375,8 @@ public class WiretapSearchCriteria implements Serializable
         }
         catch (ParseException pe)
         {
-            logger.debug("Silently swallowing ParseException here as we catch this " + "issue and repoprt it to the user in a later validation stage.");
+            logger.debug("Could not parse date and/or time correctly.");
+            return null;
         }
         return calendar.getTime();
     }
