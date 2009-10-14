@@ -277,12 +277,37 @@ public class WiretapSearchCriteriaValidatorTest
         Set<Long> moduleIds = new LinkedHashSet<Long>();
         moduleIds.add(new Long(1));
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(moduleIds);
+
+        wiretapSearchCriteria.setUntilDate("21/10/1978");
+        wiretapSearchCriteria.setUntilTime("00:00:00");
+        wiretapSearchCriteria.setFromDate("21/10/1977");
+        wiretapSearchCriteria.setFromTime("00:00:00");
+        wiretapSearchCriteriaValidator.validate(wiretapSearchCriteria, errors);
+        assertTrue(errors.isEmpty());    
+
         wiretapSearchCriteria.setUntilDate("21/10/1977");
         wiretapSearchCriteria.setUntilTime("00:00:00");
         wiretapSearchCriteria.setFromDate("21/10/1978");
         wiretapSearchCriteria.setFromTime("00:00:00");
         wiretapSearchCriteriaValidator.validate(wiretapSearchCriteria, errors);
         assertEquals("Until date/time cannot be before From date/time.", errors.get(0));    
+        
+        errors = new ArrayList<String>();
+        wiretapSearchCriteria.setFromDate(null);
+        wiretapSearchCriteria.setFromTime(null);
+        wiretapSearchCriteria.setUntilDate("21/10/1977");
+        wiretapSearchCriteria.setUntilTime("00:00:00");
+        wiretapSearchCriteriaValidator.validate(wiretapSearchCriteria, errors);
+        assertTrue(errors.isEmpty());
+        
+        errors = new ArrayList<String>();
+        wiretapSearchCriteria.setFromDate("21/10/1977");
+        wiretapSearchCriteria.setFromTime("00:00:00");
+        wiretapSearchCriteria.setUntilDate(null);
+        wiretapSearchCriteria.setUntilTime(null);
+        wiretapSearchCriteriaValidator.validate(wiretapSearchCriteria, errors);
+        assertTrue(errors.isEmpty());    
+        
     }    
 
 }

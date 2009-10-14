@@ -114,7 +114,8 @@ public class WiretapSearchCriteriaValidator implements Validator
             // is not before from
             Date fromDateTime = wiretapSearchCriteria.getFromDateTime();
             Date untilDateTime = wiretapSearchCriteria.getUntilDateTime();
-            if (fromDateTime != null && untilDateTime != null && fromDateTime.compareTo(untilDateTime) > 0)
+            // fromDateTime and untilDateTime can never be NULL as we've already validated that they are OK
+            if (fromDateTime.compareTo(untilDateTime) > 0)
             {
                 errors.add("Until date/time cannot be before From date/time.");
             }
