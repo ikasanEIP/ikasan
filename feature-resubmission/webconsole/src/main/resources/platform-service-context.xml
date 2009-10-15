@@ -187,6 +187,17 @@
         <property name="payloadFactory" ref="payloadFactory"/>
     </bean>
 
+
+
+
+	   <!-- Connection Factories -->
+	  <bean id="jmsConnectionFactory"
+	      class="org.springframework.jndi.JndiObjectFactoryBean">
+	      <property name="jndiName" value="java:/JmsXA" />
+	      <property name="lookupOnStartup" value="false" />
+	      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+	  </bean>
+  
     
   	<!-- ###################################### -->
   	<!-- common transaction services start here -->

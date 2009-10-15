@@ -64,6 +64,7 @@
 	<bean id="errorLoggingService" class="org.ikasan.framework.error.service.DefaultErrorLoggingServiceImpl">
 		<constructor-arg ref="errorOccurrenceDao" />
 		<constructor-arg ref="excludedEventDao" />
+		<constructor-arg ref="errorOccurrenceTextMessagePublisher" />
 	</bean>
 	
 	<bean id="errorOccurrenceDao"
@@ -82,5 +83,17 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
     
+    <bean id="errorOccurrenceTextMessagePublisher" class="org.ikasan.framework.error.service.ErrorOccurrenceTextMessagePublisher">
+    	<constructor-arg ref="jmsConnectionFactory"/>
+    	<constructor-arg ref="errorsChannel"/>
+    	<constructor-arg>
+    		<bean class="org.ikasan.framework.error.model.serialisation.ErrorOccurrenceXmlSerialiser"/>
+    	</constructor-arg>
+    </bean>
+    
+    <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="/topic/ikasan.errors"/>
+		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
+  	</bean>
 	
 </beans>
