@@ -41,18 +41,17 @@
 package org.ikasan.framework.web.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.error.model.ErrorOccurrence;
-import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,8 +72,7 @@ public class ExclusionsController
     /** The user service to use */
     private ExcludedEventService excludedEventService;
     
-    /** Error error logging service     */
-    private ErrorLoggingService errorLoggingService;
+
 
     /** Logger for this class */
     private Logger logger = Logger.getLogger(ExclusionsController.class);
@@ -83,14 +81,12 @@ public class ExclusionsController
      * Constructor
      * 
      * @param excludedEventService - The ExcludedEventService to use
-     * @param errorLoggingService - The ErrorLoggingService to use
      */
     @Autowired
-    public ExclusionsController(ExcludedEventService excludedEventService, ErrorLoggingService errorLoggingService)
+    public ExclusionsController(ExcludedEventService excludedEventService)
     {
         super();
         this.excludedEventService = excludedEventService;
-        this.errorLoggingService = errorLoggingService;
     }
 
     /**
@@ -157,15 +153,19 @@ public class ExclusionsController
     @RequestMapping(value="exclusion.htm", method=RequestMethod.POST)
     public String requestResubmission(@RequestParam String eventId, ModelMap model)
     {
-    	boolean success = true;
     	try{
-    	excludedEventService.resubmit(eventId);
-    	} catch(Throwable throwable){
-    		logger.error("Exception caught trying to resubmit",throwable);
-    		success=false;
+    		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+    		excludedEventService.resubmit(eventId, currentUser);
+    	} catch(AbortTransactionException abortTransactionException){
+    		logger.info("Resubmission failed for excludedEvent id:"+eventId);
+    		logger.error("Exception caught trying to resubmit",abortTransactionException);
+    		model.addAttribute("resubmissionError", abortTransactionException.getCause());
+    		return view(eventId, null, model);
     	}
-    	logger.info("Resubmission "+(success?"successful":"failed")+"for excludedEvent id:"+eventId);
+    	logger.info("Resubmission succesful for excludedEvent id:"+eventId);
 
-    	return success?"admin/exclusions/resubmissionSuccess":"admin/exclusions/resubmissionFailure";
+    	
+    	
+    	return "redirect:exclusion.htm?eventId="+eventId;
     }
 }

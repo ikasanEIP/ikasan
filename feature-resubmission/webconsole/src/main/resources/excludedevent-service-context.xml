@@ -57,7 +57,7 @@
 
 	<bean id="excludedEventService" class="org.ikasan.framework.event.exclusion.service.ExcludedEventServiceImpl">
 		<constructor-arg ref="excludedEventDao" />
-		<constructor-arg ref="errorOccurrenceDao" />
+		<constructor-arg ref="errorLoggingService" />
 		<constructor-arg>
 			<list>
 				<!-- listeners will go here... -->
@@ -69,8 +69,8 @@
 	
 	<!-- transaction configuration for excludedEventService -->
     <aop:config>
-        <aop:pointcut id="initiatorInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.resubmit(..))" />
-        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="initiatorInvocation" />
+        <aop:pointcut id="resubmissionInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.resubmit(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="resubmissionInvocation" />
     </aop:config>
 	
 	<bean id="excludedEventDao"

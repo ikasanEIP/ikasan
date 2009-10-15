@@ -195,7 +195,7 @@ public class DefaultErrorLoggingServiceImplTest {
             	one(errorOccurrence).getEventId();
             	will(returnValue(eventId));
             	
-            	one(excludedEventDao).getExcludedEvent(eventId);
+            	one(excludedEventDao).getExcludedEvent(eventId, false);
             	will(returnValue(excludedEvent));
             	
             	one(errorOccurrence).setExcludedEvent(excludedEvent);

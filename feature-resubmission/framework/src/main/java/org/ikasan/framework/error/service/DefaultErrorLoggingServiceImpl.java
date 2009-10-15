@@ -186,7 +186,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	public ErrorOccurrence getErrorOccurrence(long errorOccurrenceId) {
 		ErrorOccurrence errorOccurrence = errorOccurrenceDao.getErrorOccurrence(errorOccurrenceId);
 		if (errorOccurrence!=null){
-			errorOccurrence.setExcludedEvent(excludedEventDao.getExcludedEvent(errorOccurrence.getEventId()));
+			errorOccurrence.setExcludedEvent(excludedEventDao.getExcludedEvent(errorOccurrence.getEventId(), false));
 		}
 		return errorOccurrence;
 	}

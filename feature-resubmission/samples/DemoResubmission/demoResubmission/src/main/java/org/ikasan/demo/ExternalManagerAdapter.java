@@ -107,7 +107,7 @@ public class ExternalManagerAdapter implements BusinessErrorListener{
 
 		
 		
-		excludedEventService.resubmit(eventId);
+		excludedEventService.resubmit(eventId, "dummyUser");
 		
 		
 	}

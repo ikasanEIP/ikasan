@@ -76,6 +76,18 @@ public class ExcludedEvent {
 	 * Date/time of event exclusion
 	 */
 	private Date exclusionTime;
+
+	/**
+	 * Date/time of event resubmission
+	 */
+	private Date resubmissionTime;
+	
+	
+
+	/**
+	 * Name of user who resubmitted 
+	 */
+	private String resubmitter;
 	
 	/** Error Occurrences related to this ExcludedEvent */
 	private List<ErrorOccurrence> errorOccurrences;
@@ -197,6 +209,41 @@ public class ExcludedEvent {
 	private void setExclusionTime(Date exclusionTime) {
 		this.exclusionTime = exclusionTime;
 	}
+
+	/**
+	 * Accessor for resubmissionTime
+	 * 
+	 * @return resubmissionTime
+	 */
+	public Date getResubmissionTime() {
+		return resubmissionTime;
+	}
+
+	/**
+	 * Mutator for resubmissionTime
+	 * 
+	 * @param resubmissionTime
+	 */
+	public void setResubmissionTime(Date resubmissionTime) {
+		this.resubmissionTime = resubmissionTime;
+	}
+
+	/**
+	 * Accessor for resubmitter
+	 * @return resubmitter
+	 */ 
+	public String getResubmitter() {
+		return resubmitter;
+	}
+
+	/**
+	 * Mutator for resubmitter
+	 * 
+	 * @param resubmitter
+	 */
+	public void setResubmitter(String resubmitter) {
+		this.resubmitter = resubmitter;
+	}
 	
 	/**
 	 * Accessor for errorOccurrences
@@ -215,6 +262,15 @@ public class ExcludedEvent {
 	 */
 	public void setErrorOccurrences(List<ErrorOccurrence> errorOccurrences) {
 		this.errorOccurrences = errorOccurrences;
+	}
+
+	/**
+	 * Shortcut for determining if this has been resubmitted
+	 * 
+	 * @return true if previously resubmitted
+	 */
+	public boolean isResubmitted() {
+		return resubmissionTime!=null;
 	}
 
 }

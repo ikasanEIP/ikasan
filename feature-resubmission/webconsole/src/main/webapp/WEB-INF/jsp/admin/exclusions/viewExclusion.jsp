@@ -46,6 +46,11 @@
 
 <div class="middle">
 
+<c:if test="${resubmissionError!=null}">
+	<p class="errorMessages">
+		Sorry, resubmission was not successful. See latest Error Occurrence for details
+	</p>
+</c:if>
 
 
 
@@ -99,7 +104,23 @@
 	</ol>
 		</td>
 	</tr>
+	
+	<c:if test="${excludedEvent.resubmitted}">
+	<tr>
+		<th>
+			Resubmitted
+		</th>
+		<td>
+			 at <fmt:formatDate value="${excludedEvent.resubmissionTime}" pattern="dd/MM/yyyy h:mma"/> by <c:out value="${excludedEvent.resubmitter}" />
+		</td>
+	</tr>
+	</c:if>
+	
+	
 </table>
+
+<%-- Only show the resubmit button if ExcludedEvent has not already been resubmitted --%>
+	<c:if test="${!excludedEvent.resubmitted}">
 			<c:url var="resubmitLink" value="exclusion.htm">
                 <c:param name="eventId" value="${excludedEvent.event.id}"/>
                 <c:param name="action" value="resubmit"/>
@@ -108,6 +129,7 @@
     	<form:form action="${resubmitLink}" method="post" cssClass="controls">
         	<input type="submit" value="Resubmit" class="controlButton"/>
         </form:form>
+    </c:if>
 
 
 <h2>Event</h2>

@@ -91,8 +91,9 @@ public interface ExcludedEventService {
 	 * 	module or flow are not available
 	 * 
 	 * @param eventId
+	 * @param resubmitter
 	 */
-	public void resubmit(String eventId);
+	public void resubmit(String eventId, String resubmitter);
 
 
 

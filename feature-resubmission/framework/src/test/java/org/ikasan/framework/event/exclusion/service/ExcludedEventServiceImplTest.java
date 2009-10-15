@@ -51,12 +51,13 @@ import junit.framework.Assert;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.Module;
@@ -64,6 +65,8 @@ import org.ikasan.framework.module.service.ModuleService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.api.Action;
+import org.jmock.api.Invocation;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
@@ -97,7 +100,7 @@ public class ExcludedEventServiceImplTest {
     
     private ExcludedEventDao excludedEventDao = mockery.mock(ExcludedEventDao.class);
     
-    private ErrorOccurrenceDao errorOccurenceDao = mockery.mock(ErrorOccurrenceDao.class);
+    private ErrorLoggingService errorLoggingService = mockery.mock(ErrorLoggingService.class);
     
     private ExcludedEventListener excludedEventListener1 = mockery.mock(ExcludedEventListener.class, "excludedEventListener1");
     
@@ -106,6 +109,8 @@ public class ExcludedEventServiceImplTest {
     private ModuleService moduleService = mockery.mock(ModuleService.class);
     
 	final String eventId = "eventId";
+	
+	final String resubmitter = "resubmitter";
 	
 	
 	
@@ -122,7 +127,7 @@ public class ExcludedEventServiceImplTest {
 		List<ExcludedEventListener> listeners = new ArrayList<ExcludedEventListener>();
 		listeners.add(excludedEventListener1);
 		listeners.add(excludedEventListener2);
-		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao,errorOccurenceDao, listeners,moduleService);
+		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao,errorLoggingService, listeners,moduleService);
 		errorOccurrences.add(errorOccurrence);
 	}
 	
@@ -230,8 +235,8 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(eventId);inSequence(sequence);will(returnValue(excludedEvent));
-            	one(errorOccurenceDao).getErrorOccurrences(eventId);inSequence(sequence);will(returnValue(errorOccurrences));
+            	one(excludedEventDao).getExcludedEvent(eventId, false);inSequence(sequence);will(returnValue(excludedEvent));
+            	one(errorLoggingService).getErrorOccurrences(eventId);inSequence(sequence);will(returnValue(errorOccurrences));
             	one(excludedEvent).setErrorOccurrences(errorOccurrences);
             }
         });
@@ -249,10 +254,10 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(null));
+            	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(null));
             }
         });
-		excludedEventService.resubmit(eventId);
+		excludedEventService.resubmit(eventId, resubmitter);
 		mockery.assertIsSatisfied();
 	
 	}
@@ -269,22 +274,22 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
             	one(moduleService).getModule(moduleName);will(returnValue(null));
             }
         });
-		excludedEventService.resubmit(eventId);
+		excludedEventService.resubmit(eventId, resubmitter);
 		mockery.assertIsSatisfied();
 	}
 	
 	@Test
-	public void testResubmit_withSuccessfulResubmission_willDeleteExcludedEvent(){
+	public void testResubmit_withSuccessfulResubmission_willMarkExcludedEventAsResubmitted(){
 		final String eventId = "eventId";
 		final String moduleName = "moduleName";
 		final String flowName = "unknownFlow";
 		final Event event = mockery.mock(Event.class);
 		
-		final ExcludedEvent excludedEvent = new ExcludedEvent(event, moduleName, flowName, null);
+		final ExcludedEvent excludedEvent = mockery.mock(ExcludedEvent.class);
 		final Module module = mockery.mock(Module.class);
 		final Flow flow = mockery.mock(Flow.class);
 		final Map<String, Flow> flows = new HashMap<String,Flow>();
@@ -293,18 +298,25 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
+            	one(excludedEvent).isResubmitted();will(returnValue(false));
+            	one(excludedEvent).getModuleName();will(returnValue(moduleName));
             	one(moduleService).getModule(moduleName);will(returnValue(module));
             	one(module).getFlows();will(returnValue(flows));
+            	one(excludedEvent).getFlowName();will(returnValue(flowName));
+            	one(excludedEvent).getEvent();will(returnValue(event));
             	one(flow).invoke(with(any(FlowInvocationContext.class)), with(equal(event)));
-            	one(excludedEventDao).delete(excludedEvent);
+            	one(excludedEventDao).getExcludedEvent(eventId, true);will(returnValue(excludedEvent));
+            	one(excludedEvent).setResubmissionTime((Date) with(a(Date.class)));
+            	one(excludedEvent).setResubmitter(resubmitter);
             }
         });
 		
-		excludedEventService.resubmit(eventId);
+		excludedEventService.resubmit(eventId, resubmitter);
 		mockery.assertIsSatisfied();
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
 	public void testResubmit_withExcludedEventFromUnknownFlow_willThrowIllegalArgumentException(){
 		final String eventId = "eventId";
 		final String moduleName = "moduleName";
@@ -316,13 +328,104 @@ public class ExcludedEventServiceImplTest {
 		mockery.checking(new Expectations()
         {
             {
-            	one(excludedEventDao).getExcludedEvent(eventId);will(returnValue(excludedEvent));
+            	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
             	one(moduleService).getModule(moduleName);will(returnValue(module));
             	one(module).getFlows();will(returnValue(new HashMap<String,Flow>()));
             }
         });
-		excludedEventService.resubmit(eventId);
+		excludedEventService.resubmit(eventId, resubmitter);
 		mockery.assertIsSatisfied();
 	}
 	
+	@Test(expected=IllegalStateException.class)
+	public void testResubmit_withAlreadyResubmittedEvent_willThrowIllegalStateException(){
+
+		
+		final ExcludedEvent excludedEvent = mockery.mock(ExcludedEvent.class);
+
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
+            	one(excludedEvent).isResubmitted();will(returnValue(true));
+            }
+        });
+		excludedEventService.resubmit(eventId, resubmitter);
+		mockery.assertIsSatisfied();
+	}
+	
+	@Test(expected=AbortTransactionException.class)
+	public void testResubmit_whereResubmissionFails_willCallErrorLoggingServiceAndThrowAbortTransactionException(){
+		final String eventId = "eventId";
+		final String moduleName = "moduleName";
+		final String flowName = "flowName";
+		final String componentName = "componentName";
+		final Event event = mockery.mock(Event.class);
+		
+		final ExcludedEvent excludedEvent = new ExcludedEvent(event, moduleName, flowName, null);
+		final Module module = mockery.mock(Module.class);
+		final Flow flow = mockery.mock(Flow.class);
+		final Map<String, Flow> flows = new HashMap<String,Flow>();
+		flows.put(flowName, flow);
+		
+		final Throwable throwable = new RuntimeException();
+		
+		final Sequence sequence = mockery.sequence("invocation sequence");
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(eventId, false);
+            	inSequence(sequence);
+            	will(returnValue(excludedEvent));
+            	
+            	
+            	one(moduleService).getModule(moduleName);
+            	inSequence(sequence);
+            	will(returnValue(module));
+            	
+            	
+            	one(module).getFlows();
+            	inSequence(sequence);
+            	will(returnValue(flows));
+            	
+            	//invoke the flow will update the flow invocation context before failing
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
+                inSequence(sequence);
+                will(doAll(addComponentNameToContext(componentName), throwException(throwable)));
+
+                
+                //invokes the errorLoggingService
+                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event);
+                inSequence(sequence);
+            }
+        });
+		excludedEventService.resubmit(eventId, resubmitter);
+		mockery.assertIsSatisfied();
+	}
+	
+    public static  Action addComponentNameToContext(String componentName) {
+        return new AddComponentNameAction(componentName);
+    }
+	
+	
+}
+/**
+ * Models the action of the flow updating the FlowInvocationContext with a componentName
+ *
+ */
+class AddComponentNameAction implements Action {
+    private String componentName;
+    
+    public AddComponentNameAction(String componentName) {
+        this.componentName = componentName;
+    }
+    
+    public void describeTo(Description description) {
+
+    }
+    
+    public Object invoke(Invocation invocation) throws Throwable {
+    	((FlowInvocationContext)invocation.getParameter(0)).addInvokedComponentName(componentName);   
+        return null;
+    }
 }

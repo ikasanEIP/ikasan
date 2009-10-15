@@ -38,61 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.event.exclusion.dao;
+package org.ikasan.framework.event.exclusion.model;
 
-import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
-import org.ikasan.framework.management.search.PagedSearchResult;
+import java.util.Date;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 
 /**
- * @author The Ikasan Development Team
+ * @author Ikasan Development Team
  *
  */
-public interface ExcludedEventDao{
-
-	/**
-	 * Saves an <code>ExcludedEvent</code> to persistent storage
-	 * 
-	 * @param excludedEvent
-	 */
-	public void save(ExcludedEvent excludedEvent);
+public class ExcludedEventTest {
 	
-	/**
-	 * Loads an <code>ExcludedEvent</code> to persistent storage
-	 * 
-	 * @param excludedEventId
-	 */
-	public ExcludedEvent load(Long excludedEventId);
-
-	/**
-	 * Perform a paged search for <code>ExcludedEvent</code>s
-	 * 
-	 * @param pageNo
-	 * @param pageSize
-	 * @param orderBy
-	 * @param orderAscending 
-	 * @param flowName 
-	 * @param moduleName 
-	 * 
-	 * @return PagedSearchResult
-	 */
-	public PagedSearchResult<ExcludedEvent> findExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
-
-
+	@Test
+	public void testIsResubmitted_willReturnTrueIfResubmissionTimeExists(){
+		ExcludedEvent resubmittedEvent = new ExcludedEvent(null, null, null, null);
+		resubmittedEvent.setResubmissionTime(new Date());
+		Assert.assertTrue("ExcludedEvent with a non null resubmissionTime should return true for isResubmitted", resubmittedEvent.isResubmitted());
+	}
 	
-	/**
-	 * Retrieves an ExcludedEvent by event Id
-	 * 
-	 * @param eventId
-	 * @return ExcludedEvent
-	 */
-	public ExcludedEvent getExcludedEvent(String eventId, boolean mutable);
-
-	
-	/**
-	 * Deletes excluded event
-	 * 
-	 * @param excludedEvent
-	 */
-	public void delete(ExcludedEvent excludedEvent);
-
+	@Test
+	public void testIsResubmitted_willReturnFalseIfResubmissionTimeDoesNotExists(){
+		ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
+		Assert.assertFalse("ExcludedEvent with a null resubmissionTime should return false for isResubmitted", excludedEvent.isResubmitted());
+	}
 }

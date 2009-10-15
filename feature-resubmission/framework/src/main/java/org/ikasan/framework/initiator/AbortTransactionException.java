@@ -74,5 +74,15 @@ public class AbortTransactionException
     public AbortTransactionException(String message){
         super(message);
     }
+
+	/**
+	 * Constructor
+	 * 
+	 * @param message
+	 * @param cause
+	 */
+	public AbortTransactionException(String message, Throwable cause) {
+		super(message, cause);
+	}
     
 }

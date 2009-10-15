@@ -50,12 +50,13 @@ import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
@@ -70,7 +71,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 
 	private ExcludedEventDao excludedEventDao;
 	
-	private ErrorOccurrenceDao errorOccurrenceDao;
+	private ErrorLoggingService errorLoggingService;
 	
 	private ModuleService moduleService;
 	
@@ -85,17 +86,17 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	
 	/**
 	 * @param excludedEventDao
-	 * @param errorOccurrenceDao
+	 * @param errorLoggingService
 	 * @param listeners
 	 * @param moduleService
 	 */
 	public ExcludedEventServiceImpl(ExcludedEventDao excludedEventDao,
-			ErrorOccurrenceDao errorOccurrenceDao,
+			ErrorLoggingService errorLoggingService,
 			List<ExcludedEventListener> listeners, ModuleService moduleService) {
 		this.excludedEventDao = excludedEventDao;
 		excludedEventListeners.addAll(listeners);
 		this.moduleService = moduleService;
-		this.errorOccurrenceDao = errorOccurrenceDao;
+		this.errorLoggingService = errorLoggingService;
 	}
 
 	/* (non-Javadoc)
@@ -128,9 +129,9 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 
 	
 	public ExcludedEvent getExcludedEvent(String eventId) {
-		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId);
+		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId, false);
 		if (excludedEvent!=null){
-			List<ErrorOccurrence> errorOccurrences = errorOccurrenceDao.getErrorOccurrences(eventId);
+			List<ErrorOccurrence> errorOccurrences = errorLoggingService.getErrorOccurrences(eventId);
 			excludedEvent.setErrorOccurrences(errorOccurrences);
 		}	
 		
@@ -144,8 +145,9 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	 * 
 	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#resubmit(long)
 	 */
-	public void resubmit(String eventId) {
+	public void resubmit(String eventId, String resubmitter) {
 		
+
 		if (transactionManager!=null){
 			try {
 				int status = transactionManager.getStatus();
@@ -158,10 +160,14 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 		}
 		
         
-		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId);
+		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId, false);
 		
 		if (excludedEvent==null){
 			throw new IllegalArgumentException("Cannot find Excluded Event id:"+eventId);
+		}
+		
+		if (excludedEvent.isResubmitted()){
+			throw new IllegalStateException("Attempt made to resubmit event:"+eventId);
 		}
 		
 		Module module = moduleService.getModule(excludedEvent.getModuleName());
@@ -174,12 +180,26 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 			throw new IllegalArgumentException("unknown Flow"+excludedEvent.getFlowName());
 		}
 		
-	    //invoke the flow with the Event. Any exceptions are left to propagate
-	    flow.invoke(new FlowInvocationContext(), excludedEvent.getEvent());
-	   
 	    
-	    //cleanup the excludedEvent
-	    excludedEventDao.delete(excludedEvent);
+	    //invoke the flow with the Event. Any exceptions are left to propagate
+	    Event event = excludedEvent.getEvent();
+	    FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
+	    try{
+			flow.invoke(flowInvocationContext, event);
+	    } catch (Throwable throwable){
+	    	errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), event);
+	    	
+	    	throw new AbortTransactionException("Resubmission failed!", throwable);
+	    }
+	    
+	    
+	    //mark excludedEvent as resubmitted
+	    //need to get a fresh handle on the ExcludedEvent, because the original now has changes we dont want to save
+	    excludedEvent = excludedEventDao.getExcludedEvent(eventId, true);
+	    excludedEvent.setResubmissionTime(new Date());
+	    excludedEvent.setResubmitter(resubmitter);
+
+
 	    
 	}
 
