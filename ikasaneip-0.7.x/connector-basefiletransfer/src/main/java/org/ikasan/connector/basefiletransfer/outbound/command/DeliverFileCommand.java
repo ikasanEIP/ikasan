@@ -160,8 +160,14 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         {
             if(fileExists(tempFileName))
             {
-                throw new ResourceException("Cannot deliver temp file [" 
+                throw new ResourceException("Cannot deliver tempfile [" 
                     + tempFileName + "] as a file of that name already exists");
+            }
+
+            if(fileExists(fileName))
+            {
+                throw new ResourceException("Cannot deliver file [" 
+                    + fileName + "] as a file of that name already exists");
             }
         }
         
@@ -185,8 +191,14 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         {
             if(fileExists(tempFileName))
             {
-                throw new ResourceException("Cannot deliver temp file [" 
+                throw new ResourceException("Cannot deliver tempfile [" 
                     + tempFileName + "] as a file of that name already exists");
+            }
+
+            if(fileExists(fileName))
+            {
+                throw new ResourceException("Cannot deliver file [" 
+                    + fileName + "] as a file of that name already exists");
             }
         }
         
@@ -215,9 +227,9 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
 
     /**
      * Commit if file delivery is successful: rename file from its temporary name to actual name.
-     * Also, deletes an already existing file if the overWriteExisitng flag is true.
-     * If the file exists, and overWriteExisting is false, ResourceException will be thrown causing
-     * a {@link javax.transaction.HeuristicMixedException} to be thrown.
+     * This method will not check for duplicate file names - it simply overwrites anything of the same
+     * name regardless of the overwrite flag. This is a commit routine and these types
+     * of delivery checks should have already been completed.
      * 
      * IMPORTANT NOTE: Operations in this commit method should be kept to a 
      * minimum to reduce potential fails on the commit.
@@ -235,16 +247,6 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         {
             changeDirectory(outputDirectory);
             changeDirectory = true;
-        }
-
-        if(!overwriteExisting)
-        {
-            if(fileExists(fileName))
-            {
-                throw new ResourceException("Cannot rename temp file [" 
-                    + tempFileName + "] to [" + fileName 
-                    + "] as a file of that name already exists");
-            }
         }
 
         renameFile(tempFileName, fileName);
