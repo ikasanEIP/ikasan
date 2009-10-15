@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -38,7 +38,7 @@
  ====================================================================
 
 
-
+ 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -49,32 +49,32 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	<bean id="demoResubmission-${module.name}"
+		class="org.ikasan.framework.module.loader.ModuleFactoryBean">
+		<constructor-arg>
+			<list>
+				
+			</list>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+			    <value>demoResubmission-${module.name}-module-config.xml</value>
+			    <value>demoResubmission-${module.name}-flow-config.xml</value>
+			    <value>demoResubmission-${module.name}-component-config.xml</value>
+			    <value>demoResubmission-${module.name}-messaging-config.xml</value>
+				
+			</list>
+		</constructor-arg>
+		
+		<constructor-arg ref="ikasanConfDir"/>
+		<constructor-arg value="module" />
+	</bean>
+	
+    <bean id="ikasanConfDir" factory-bean="resourceLoader"
+        factory-method="getIkasanConfigurationDirectory" />
 
-  <!-- 'public' topics -->   
-  <bean id="randomWordsChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.randomWords"/>
-  </bean>
-  <bean id="randomWordsChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="randomWordsChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
-  
-
-  <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.errors"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-  
-  <bean id="resubmissionsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.resubmission"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-
- 
- 
-
-
-  
+    <bean id="resourceLoader"
+        class="org.ikasan.framework.ResourceLoader"
+        factory-method="getInstance"/>
 
 </beans>

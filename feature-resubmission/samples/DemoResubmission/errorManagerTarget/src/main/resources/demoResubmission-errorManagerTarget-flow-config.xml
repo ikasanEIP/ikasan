@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -38,11 +38,10 @@
  ====================================================================
 
 
-
+ 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
@@ -50,31 +49,37 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 
-  <!-- 'public' topics -->   
-  <bean id="randomWordsChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.randomWords"/>
-  </bean>
-  <bean id="randomWordsChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="randomWordsChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
-  
-
-  <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.errors"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-  
-  <bean id="resubmissionsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.resubmission"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-
- 
- 
+	<!-- delivery Flow -->
 
 
-  
+	<bean id="deliveryFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
+		<constructor-arg value="deliveryFlow" />
+		<constructor-arg ref="moduleName" />
+		<constructor-arg ref="errorOccurrenceTransformerElement" />
+		<constructor-arg ref="flowElementInvoker" />
+
+	</bean>
+
+    <bean id="errorOccurrenceTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="errorOccurrenceTransformationStep" />
+        <constructor-arg ref="errorOccurrenceToBusinessErrorTransformer" />
+        <constructor-arg ref="jmsPublishingElement" />
+        <property name="description">
+          <value>Transforms the Ikasan ErrorOccurrence XML into a BusinessError XML</value>
+        </property>
+    </bean>
+
+    <bean id="jmsPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="errorManagerChannelPublishingStep" />
+        <constructor-arg ref="errorManagerInputChannelPublishingEndpoint" />
+        <property name="description">
+          <value>Publishes the ErrorManager formatted error to ErrorManager's input channel</value>
+        </property>
+    </bean>
+    
+    
+    
+	
+
 
 </beans>

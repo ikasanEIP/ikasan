@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -38,43 +38,60 @@
  ====================================================================
 
 
-
+ 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	<bean id="moduleName" class="java.lang.String">
+		<constructor-arg value="demoResubmission-${module.name}" />
+	</bean>
+    
+    <bean id="module"
+        class="org.ikasan.framework.module.SimpleModule">
+        <constructor-arg ref="moduleName" />
+        <constructor-arg>
+            <list>
+            	<ref bean="deliveryFlowInitiator"/>
+            </list>
+        </constructor-arg>
+        <property name="description">
+            <value>This is a target module for the demo ErrorManager application. It consumes ErrorOccurrences from the ikasan.errors channel and transforms them into BusinessError XML that the ErrorManager application understands</value>
+        </property>
+    </bean>
 
-  <!-- 'public' topics -->   
-  <bean id="randomWordsChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.randomWords"/>
-  </bean>
-  <bean id="randomWordsChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="randomWordsChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
-  
-
-  <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.errors"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-  
-  <bean id="resubmissionsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.resubmission"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-
- 
- 
+    <bean id="loggingExceptionHandler" class="org.ikasan.framework.component.LoggingExceptionHandlerImpl">
+            <property name="errorAction">
+                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    <constructor-arg value="ROLLBACK_RETRY" />
+                    <constructor-arg value="10000" />
+                    <constructor-arg value="10" />
+                </bean>
+            </property>
+    </bean>
 
 
-  
+  <!-- =========================================================================== -->
+  <!--                   Delivery Flow Initiator                                     -->
+  <!-- =========================================================================== -->
+    
+    <bean id="deliveryFlowInitiator" class="org.ikasan.framework.initiator.messagedriven.MessageDrivenInitiatorFactoryBean">
+        <property name="moduleName" ref="moduleName"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="destination" ref="errorsChannel"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="flow" ref="deliveryFlow"/>
+        <property name="payloadFactory" ref="payloadFactory" />
+        <property name="exceptionHandler" ref="loggingExceptionHandler"/>
+        <property name="errorLoggingService" ref="errorLoggingService"/>
+    </bean>
+    
+
 
 </beans>

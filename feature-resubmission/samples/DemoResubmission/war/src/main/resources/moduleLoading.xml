@@ -54,6 +54,7 @@
     <constructor-arg>
       <list>
         <value>demoResubmission-demoResubmission-loader-config.xml</value>
+        <value>demoResubmission-errorManagerTarget-loader-config.xml</value>
       </list>
     </constructor-arg>
   </bean>

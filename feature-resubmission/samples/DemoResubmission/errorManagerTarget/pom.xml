@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -38,43 +38,62 @@
  ====================================================================
 
 
-
+ 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    <!-- 
+	<parent>
+		
+		<artifactId>demoFileDelivery-parent</artifactId>
+		<version>0.8.0-SNAPSHOT-SNAPSHOT</version>
+	</parent>
+     -->
+    <groupId>org.ikasan.demo</groupId>
+	<artifactId>demoResubmission-errorManagerTarget-jar</artifactId>
+    <version>0.8.0-SNAPSHOT</version>    
+	<packaging>jar</packaging>
 
 
-  <!-- 'public' topics -->   
-  <bean id="randomWordsChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.randomWords"/>
-  </bean>
-  <bean id="randomWordsChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="randomWordsChannelName"/>
-    <constructor-arg ref="jmsJndiEnvironment"/>
-    <constructor-arg value="true"/>
-  </bean>
-  
+	<name>demoResubmission :: errorManagerTarget : jar</name>
 
-  <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.errors"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-  
-  <bean id="resubmissionsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.resubmission"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 
- 
- 
+		<filters>
+			<filter>./module.properties</filter>
+		</filters>
+    	<plugins>
+      		<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-compiler-plugin</artifactId>
+        		<configuration>
+          			<source>1.5</source>
+          			<target>1.5</target>
+        		</configuration>
+      		</plugin>
 
+      	</plugins>
+	</build>
 
-  
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+    
+    
+</project>
 
-</beans>

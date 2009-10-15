@@ -166,16 +166,19 @@
 							<artifactId>demoResubmission-jar</artifactId>
 							<bundleDir>lib</bundleDir>
 						</javaModule>
-
-                        
-						<!-- additional jars required by the module -->
-						
 						<jarModule>
 							<groupId>org.ikasan.demo</groupId>
-							<artifactId>demoResubmission-jar</artifactId>
+							<artifactId>demoResubmission-errorManagerTarget-jar</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
-
+                        
+						<!-- additional jars required by the module -->
+                        <jarModule>
+                            <groupId>xalan</groupId>
+                            <artifactId>xalan</artifactId>
+                            <bundleDir>lib</bundleDir>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
 					
 					</modules>
 				</configuration>
@@ -329,9 +332,22 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-		      
+		<dependency>
+			<groupId>org.ikasan.demo</groupId>
+			<artifactId>demoResubmission-errorManagerTarget-jar</artifactId>
+			<version>0.8.0-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+				      
 		<!-- dependencies of the module -->
-
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.0</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
 
 
 		

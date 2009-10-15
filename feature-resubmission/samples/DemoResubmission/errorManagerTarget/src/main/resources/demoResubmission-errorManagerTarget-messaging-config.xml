@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -38,7 +38,7 @@
  ====================================================================
 
 
-
+ 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -51,30 +51,24 @@
 
 
   <!-- 'public' topics -->   
-  <bean id="randomWordsChannelName" class="java.lang.String">
-        <constructor-arg value="/topic/demo.randomWords"/>
+  <bean id="errorManagerInputChannelName" class="java.lang.String">
+        <constructor-arg value="/queue/demo.errorManager.errors"/>
   </bean>
-  <bean id="randomWordsChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
-    <constructor-arg ref="randomWordsChannelName"/>
+  <bean id="errorManagerInputChannel" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
+    <constructor-arg ref="errorManagerInputChannelName"/>
     <constructor-arg ref="jmsJndiEnvironment"/>
     <constructor-arg value="true"/>
   </bean>
-  
-
-  <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.errors"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-  
-  <bean id="resubmissionsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="/queue/demo.errorManager.resubmission"/>
-		<property name="jndiTemplate" ref="jmsJndiTemplate"/>
-  </bean>
-
  
  
 
+   <!-- Connection Factories -->
+  <bean id="jmsConnectionFactory"
+      class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="jndiName" value="java:/JmsXA" />
+      <property name="lookupOnStartup" value="false" />
+      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+  </bean>
 
-  
 
 </beans>
