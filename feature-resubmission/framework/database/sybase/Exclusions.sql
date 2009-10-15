@@ -69,6 +69,8 @@ CREATE TABLE ExcludedEvent
     EventId            varchar(255)  NOT NULL,
     Priority        int  NULL,
     Timestamp       datetime  NULL,
+    ResubmissionTime       datetime  NULL,
+    Resubmitter        varchar(255) NULL,
     CONSTRAINT ExcludedEv_125240472
     PRIMARY KEY CLUSTERED (Id)
 
@@ -132,6 +134,6 @@ go
 ALTER TABLE ExcludedPayloadAttribute
     ADD CONSTRAINT FKDDC43AB89439F4DD
     FOREIGN KEY (ExcludedPayloadId)
-    REFERENCES ExcludedPayload (Id)
+    REFERENCES ExcludedPayload (PersistenceId)
 go
 
