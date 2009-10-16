@@ -52,60 +52,69 @@ import org.ikasan.common.factory.PayloadFactory;
  * Default <code>TextMessage</code> implementation of <code>JmsMessagePayloadSerialiser</code>
  * 
  * @author Ikasan Development Team
- *
  */
-public class TextMessagePayloadSerialiser implements
-		JmsMessagePayloadSerialiser<TextMessage> {
-	
-	/**
-	 * factory for creating Payloads
-	 */
-	private PayloadFactory payloadFactory;
+public class TextMessagePayloadSerialiser implements JmsMessagePayloadSerialiser<TextMessage>
+{
+    /** Factory for creating Payloads */
+    private PayloadFactory payloadFactory;
 
+    /**
+     * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#getSupportedMessageType()
+     */
+    public Class<? extends Message> getSupportedMessageType()
+    {
+        return TextMessage.class;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#getSupportedMessageType()
-	 */
-	public Class<? extends Message> getSupportedMessageType() {
-		return TextMessage.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser
+     * #supports(java.lang.Class)
+     */
+    public boolean supports(Class<? extends Message> messageClass)
+    {
+        return TextMessage.class.isAssignableFrom(messageClass);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#supports(java.lang.Class)
-	 */
-	public boolean supports(Class<? extends Message> messageClass) {
-		return TextMessage.class.isAssignableFrom(messageClass);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#toMessage(org.ikasan.common.Payload, javax.jms.Session)
-	 */
-	public TextMessage toMessage(Payload payload, Session session) throws JMSException {
-		TextMessage textMessage = session.createTextMessage();
-		//TODO, how do we handle the payload encoding??
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser
+     * #toMessage(org.ikasan.common.Payload, javax.jms.Session)
+     */
+    public TextMessage toMessage(Payload payload, Session session) throws JMSException
+    {
+        TextMessage textMessage = session.createTextMessage();
+        // TODO, how do we handle the payload encoding??
         textMessage.setText(new String(payload.getContent()));
+        // TODO do we need to set any of the QOS properties on the message?
+        return textMessage;
+    }
 
-        //TODO do we need to set any of the QOS properties on the message?
+    /*
+     * (non-Javadoc)
+     * 
+     * Strictly speaking this method is not really necessary as the
+     * RawMessageDrivenInitiator already handles incoming text messages
+     * 
+     * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser(javax.jms.Message)#toPayload(javax.jms.Message)
+     */
+    public Payload toPayload(TextMessage message) throws JMSException
+    {
+        return payloadFactory.newPayload(message.getJMSMessageID(), message.getText().getBytes());
+    }
 
-		return textMessage;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#toPayload(javax.jms.Message)
-	 */
-	public Payload toPayload(TextMessage message) throws JMSException {
-
-		//strictly speaking this method is not really necessary as the RawMessageDrivenInitiator already handles incoming text messages
-		return  payloadFactory.newPayload(message.getJMSMessageID(),  message.getText().getBytes());
-	}
-	
-	/**
-	 * Allows the payload factory to be set, only necessary if we are deserialising
-	 * 
-	 * @param payloadFactory
-	 */
-	public void setPayloadFactory(PayloadFactory payloadFactory) {
-		this.payloadFactory = payloadFactory;
-	}
-
+    /**
+     * Allows the payload factory to be set, only necessary if we are
+     * deserialising
+     * 
+     * @param payloadFactory - The PayloadFactory for deserialising 
+     */
+    public void setPayloadFactory(PayloadFactory payloadFactory)
+    {
+        this.payloadFactory = payloadFactory;
+    }
 }
