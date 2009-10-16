@@ -227,6 +227,8 @@ public class MasterDetailControllerUtilTest extends TestCase
                 will(returnValue(1));
             }
         });
+
+        // Test
         MasterDetailControllerUtil.addPagedModelAttributes(orderBy, orderAsc, pointToPointFlowProfileSearch, pointToPointFlowProfileSelectAll, moduleSelectAll, model, pageNo, pageSize, pagedResult2, request2, searchParams);
         assertEquals(2, model.get("firstResultIndex"));
         assertTrue((Boolean)model.get("isLastPage"));
