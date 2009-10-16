@@ -61,7 +61,7 @@ public class MasterDetailControllerUtil
      */
     public static void addParam(Map<String, Object> searchParams, String paramName, Object paramValue)
     {
-        if (paramValue != null)
+        if (searchParams != null && paramName != null && paramValue != null)
         {
             searchParams.put(paramName, paramValue);
         }
@@ -89,7 +89,16 @@ public class MasterDetailControllerUtil
     public static void addPagedModelAttributes(String orderBy, Boolean orderAsc, String pointToPointFlowProfileSearch, Boolean pointToPointFlowProfileSelectAll, Boolean moduleSelectAll,
             ModelMap model, int pageNo, int pageSize, PagedSearchResult<?> pagedResult, HttpServletRequest request, Map<String, Object> searchParams)
     {
-        String requestUrl = request.getRequestURL() + "?" + request.getQueryString() + "#results";
+        if (model == null)
+        {
+            throw new IllegalArgumentException("Model should not be NULL at this point.");
+        }
+        String requestUrl = "";
+        if (request != null)
+        {
+            // TODO We are not checking that the getRequestURL and getQuery String are not null
+            requestUrl = request.getRequestURL() + "?" + request.getQueryString() + "#results";
+        }
         model.addAttribute("searchParams", searchParams);
         model.addAttribute("orderBy", orderBy);
         model.addAttribute("orderAsc", orderAsc);
