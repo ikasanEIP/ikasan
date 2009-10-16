@@ -75,7 +75,7 @@
 	</tr>
 </table>
 
-<h2>Event :: <c:out value="${wiretapEvent.eventId}" /></h2>
+<h2><fmt:message key="wiretap_event_event_id"/> :: <c:out value="${wiretapEvent.eventId}" /></h2>
 <table id="wiretapContent" class="keyValueTable">
 	<tr>
 		<th><fmt:message key="wiretap_event_event_id"/></th>
