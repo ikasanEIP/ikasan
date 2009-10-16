@@ -229,7 +229,7 @@ public class DefaultMapMessageEventSerialiser implements
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser#toMessage(org.ikasan.framework.component.Event, javax.jms.Session)
 	 */
 	public MapMessage toMessage(Event event, Session session)
