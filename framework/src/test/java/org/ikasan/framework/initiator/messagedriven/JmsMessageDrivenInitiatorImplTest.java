@@ -42,7 +42,11 @@ package org.ikasan.framework.initiator.messagedriven;
 
 import static org.junit.Assert.fail;
 
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import junit.framework.Assert;
@@ -86,7 +90,7 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private final String initiatorName = "initiatorName";
 
-    private Event eventFromTextMessage = mockery.mock(Event.class);
+    private Event eventFromMessage = mockery.mock(Event.class);
 
     private TextMessage textMessage = mockTextMessage();
 
@@ -101,6 +105,14 @@ public class JmsMessageDrivenInitiatorImplTest
     private IkasanExceptionAction retryAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, maxRetryAttempts);
 
     private IkasanExceptionAction retryZeroAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 0);
+    
+    private MapMessage mapMessage = mockMapMessage();
+    
+    private ObjectMessage objectMessage = mockObjectMessage();
+    
+    private StreamMessage streamMessage = mockStreamMessage();
+    
+    private BytesMessage bytesMessage = mockBytesMessage(); 
 
     /**
      * System under test
@@ -198,12 +210,10 @@ public class JmsMessageDrivenInitiatorImplTest
     @Test
     public void testOnMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
     {
-        // lets pretend that our subclass handles TextMessages (hence the
-        // overriding of handleTextMessage)
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(eventFromTextMessage);
+                one(flow).invoke(eventFromMessage);
                 will(returnValue(null));
             }
         });
@@ -241,7 +251,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(eventFromTextMessage);
+                one(flow).invoke(eventFromMessage);
                 will(returnValue(rollForwardStopAction));
                 one(messageListenerContainer).stop();
             }
@@ -274,7 +284,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(eventFromTextMessage);
+                one(flow).invoke(eventFromMessage);
                 will(returnValue(rollbackStopAction));
                 one(messageListenerContainer).stop();
             }
@@ -314,7 +324,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(eventFromTextMessage);
+                one(flow).invoke(eventFromMessage);
                 inSequence(sequence);
                 will(returnValue(retryAction));
                 // suspends
@@ -390,7 +400,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(eventFromTextMessage);
+                one(flow).invoke(eventFromMessage);
                 inSequence(sequence);
                 will(returnValue(null));
                 one(monitorListener).notify(with(equal("running")));
@@ -413,7 +423,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).invoke(eventFromTextMessage);
+                one(flow).invoke(eventFromMessage);
                 inSequence(sequence);
                 will(returnValue(retryZeroAction));
                 // stops
@@ -447,6 +457,146 @@ public class JmsMessageDrivenInitiatorImplTest
 
         mockery.assertIsSatisfied();
     }
+    
+    @Test
+    public void testOnMapMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(eventFromMessage);
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(mapMessage);
+        mockery.assertIsSatisfied();
+    }
+
+    private MapMessage mockMapMessage()
+    {
+        final MapMessage result = mockery.mock(MapMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    @Test
+    public void testOnObjectMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(eventFromMessage);
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(objectMessage);
+        mockery.assertIsSatisfied();
+    }
+    
+    private ObjectMessage mockObjectMessage()
+    {
+        final ObjectMessage result = mockery.mock(ObjectMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    @Test
+    public void testOnStreamMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(eventFromMessage);
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(streamMessage);
+        mockery.assertIsSatisfied();
+    }
+    
+    private StreamMessage mockStreamMessage()
+    {
+        final StreamMessage result = mockery.mock(StreamMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    @Test
+    public void testOnBytesMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).invoke(eventFromMessage);
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(bytesMessage);
+        mockery.assertIsSatisfied();
+    }
+    
+    private BytesMessage mockBytesMessage()
+    {
+        final BytesMessage result = mockery.mock(BytesMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     final class StubJmsMessageDrivenInitiatorImpl extends JmsMessageDrivenInitiatorImpl
     {
@@ -460,7 +610,31 @@ public class JmsMessageDrivenInitiatorImplTest
         @Override
         protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
         {
-            return eventFromTextMessage;
+            return eventFromMessage;
+        }
+        
+        @Override
+        protected Event handleMapMessage(MapMessage message) throws JMSException, EventSerialisationException
+        {
+            return eventFromMessage;
+        }
+        
+        @Override
+        protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventSerialisationException
+        {
+            return eventFromMessage;
+        }
+        
+        @Override
+        protected Event handleStreamMessage(StreamMessage message)
+        {
+            return eventFromMessage;
+        }
+        
+        @Override
+        protected Event handleBytesMessage(BytesMessage message) throws JMSException, EventSerialisationException
+        {
+            return eventFromMessage;
         }
 
         @Override
