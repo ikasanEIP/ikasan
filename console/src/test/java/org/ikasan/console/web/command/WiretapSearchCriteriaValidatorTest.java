@@ -104,7 +104,7 @@ public class WiretapSearchCriteriaValidatorTest
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(null);
         List<String> errors = new ArrayList<String>();
         wiretapSearchCriteriaValidator.validate(wiretapSearchCriteria, errors);
-        assertEquals("You need to select at least one module.", errors.get(0));
+        assertEquals("You need to select at least one module, if there are no modules for you to select please contact your System Administrator.", errors.get(0));
     }
 
     /** Test the case where empty list of modules are supplied */
@@ -114,7 +114,7 @@ public class WiretapSearchCriteriaValidatorTest
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(new LinkedHashSet<Long>());
         List<String> errors = new ArrayList<String>();
         wiretapSearchCriteriaValidator.validate(wiretapSearchCriteria, errors);
-        assertEquals("You need to select at least one module.", errors.get(0));
+        assertEquals("You need to select at least one module, if there are no modules for you to select please contact your System Administrator.", errors.get(0));
     }
 
     /** Test the fromDate and fromTime field validation */

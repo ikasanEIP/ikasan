@@ -132,6 +132,9 @@
         <protect-pointcut 
             expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getAllPointToPointFlowProfiles(..))"
             access="ROLE_USER,AFTER_POINT_TO_POINT_FLOW_PROFILE_COLLECTION_READ" />
+        <protect-pointcut 
+            expression="execution(* org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao.findPointToPointFlowProfiles(..))"
+            access="ROLE_USER,AFTER_POINT_TO_POINT_FLOW_PROFILE_COLLECTION_READ" />
 	</global-method-security>
 
     <!-- The access decision manager -->    
