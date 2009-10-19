@@ -70,12 +70,8 @@ public class WiretapSearchCriteria implements Serializable
     /** The logger */
     private Logger logger = Logger.getLogger(WiretapSearchCriteria.class);
 
-    /**
-     * Set of names of modules whose wiretapped events to include
-     * 
-     * Note that this must be non empty
-     */
-    private Set<Long> modules;
+    /** Set of module ids whose wiretapped events we're going to search for */
+    private Set<Long> moduleIds;
 
     /** Name of component to restrict by */
     private String componentName;
@@ -113,7 +109,7 @@ public class WiretapSearchCriteria implements Serializable
         this.ddMMyyyyFormat.setLenient(false);
         this.HHmmss = new SimpleDateFormat("HH:mm:ss");
         this.HHmmss.setLenient(false);
-        this.modules = moduleIds;
+        this.moduleIds = moduleIds;
     }
 
     /**
@@ -213,7 +209,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public Set<Long> getModules()
     {
-        return this.modules;
+        return this.moduleIds;
     }
 
     /**
@@ -223,7 +219,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public void setModules(Set<Long> modules)
     {
-        this.modules = modules;
+        this.moduleIds = modules;
     }
 
     /**

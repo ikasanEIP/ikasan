@@ -53,8 +53,7 @@ import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
 
 /**
- * Class for determining access/configuration rights for collection of
- * configuration
+ * Class for determining access/configuration rights for collection of Modules
  * 
  * @author Ikasan Development Team
  */
@@ -82,7 +81,7 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
      * @return A list of authorised objects or
      * @throws AccessDeniedException - Access was denied
      */
-    public Object decide(Authentication authentication, @SuppressWarnings("unused") Object object, ConfigAttributeDefinition config, Object returnedObject)
+    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config, Object returnedObject)
             throws AccessDeniedException
     {
         Iterator<?> iter = config.getConfigAttributes().iterator();
@@ -94,7 +93,7 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
                 continue;
             }
             // Need to process the Collection for this invocation
-            if (!(returnedObject instanceof Collection))
+            if (!(returnedObject instanceof Collection<?>))
             {
                 throw new AuthorizationServiceException("A Collection was required as the " + "returnedObject, but the returnedObject was [" + returnedObject
                         + "]");
@@ -112,7 +111,6 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
                     continue;
                 }
                 Module thisModule = (Module) domainObject;
-                logger.info(thisModule.getName());
                 if (mayReadModule(authentication, thisModule))
                 {
                     authorisedModules.add(thisModule);
