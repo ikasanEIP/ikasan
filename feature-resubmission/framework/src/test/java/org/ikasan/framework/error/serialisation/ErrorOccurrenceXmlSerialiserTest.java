@@ -1,4 +1,4 @@
-package org.ikasan.framework.error.model.serialisation;
+package org.ikasan.framework.error.serialisation;
 
 import java.util.Date;
 

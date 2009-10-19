@@ -55,10 +55,25 @@
 	<bean id="deliveryFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
 		<constructor-arg value="deliveryFlow" />
 		<constructor-arg ref="moduleName" />
-		<constructor-arg ref="errorOccurrenceTransformerElement" />
+		<constructor-arg ref="errorOccurrenceFilteringElement" />
 		<constructor-arg ref="flowElementInvoker" />
 
 	</bean>
+
+    <bean id="errorOccurrenceFilteringElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="errorOccurrenceFilteringStep" />
+        <constructor-arg ref="errorOccurrenceFilter" />
+        <constructor-arg>
+        	<map>
+        		<entry key="include" value-ref="errorOccurrenceTransformerElement"/>
+        		<entry key="exclude" value-ref="deadEndpointElement"/>
+        	</map>
+        </constructor-arg>
+        <property name="description">
+          <value>Transforms the Ikasan ErrorOccurrence XML into a BusinessError XML</value>
+        </property>
+    </bean>
+
 
     <bean id="errorOccurrenceTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
         <constructor-arg value="errorOccurrenceTransformationStep" />
@@ -74,6 +89,14 @@
         <constructor-arg ref="errorManagerInputChannelPublishingEndpoint" />
         <property name="description">
           <value>Publishes the ErrorManager formatted error to ErrorManager's input channel</value>
+        </property>
+    </bean>
+    
+    <bean id="deadEndpointElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="deadEndpointStep" />
+        <constructor-arg ref="deadEndpoint" />
+        <property name="description">
+          <value>dev/null type endpoint for filtered error occurrences</value>
         </property>
     </bean>
     

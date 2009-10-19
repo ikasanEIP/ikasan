@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * $URL$ 
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,104 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.demo.businesserror.model;
+package org.ikasan.framework.error.grouping;
 
-import java.util.Date;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
+import org.ikasan.framework.error.model.ErrorOccurrence;
 
-import org.apache.log4j.Logger;
+/**
+ * Matcher for ErrorOccurrences of a given moduleName
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class ModuleNameMatcher extends TypeSafeMatcher<ErrorOccurrence> {
 
-public class BusinessError {
+	private String moduleName;
 	
-	private Long id;
-	
-	private String errorMessage;
-	
-	private Date timeReceived;
-	
-
-	private String originatingSystem;
-	
-	private boolean resubmittable = true;
-	
-	private static Logger logger = Logger.getLogger(BusinessError.class);
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	public void setExternalReference(String externalReference) {
-		this.externalReference = externalReference;
-	}
-
-	private String externalReference;
-
-	public BusinessError(String originatingSystem, String externalReference, String errorMessage) {
-		this.originatingSystem = originatingSystem;
-		this.externalReference = externalReference;
-		this.errorMessage = errorMessage;
-	}
-
-	public String getExternalReference() {
-		return externalReference;
-	}
-	
-	public String getErrorSummary(){
-		String result;
-		String firstLine = errorMessage;
-		int endOfFirstLine = errorMessage.indexOf("\n");
-		if (endOfFirstLine>-1){
-			firstLine = errorMessage.substring(0, endOfFirstLine);
-		}
-		result = firstLine;
-		if (result.length()>80){
-			result = result.substring(0, 77)+"...";
-		}
-		return result;
-	}
-	
-
-	
-	public void setOriginatingSystem(String originatingSystem){
-		this.originatingSystem = originatingSystem;
-	}
-	
-	public String getOriginatingSystem(){
-		return originatingSystem;
+	public ModuleNameMatcher(String moduleName) {
+		super();
+		this.moduleName = moduleName;
 	}
 
 	@Override
-	public String toString() {
-		return "BusinessError ["
-				+ ", errorSummary=" + getErrorSummary() + ", externalReference="
-				+ externalReference + ", id=" + id + "]";
-	}
-	
-	public boolean isResubmittable(){
-		return resubmittable;
+	public boolean matchesSafely(ErrorOccurrence errorOccurrence) {
+		return moduleName.equals(errorOccurrence.getModuleName());
 	}
 
-	public void setTimeReceived(Date timeReceived) {
-		this.timeReceived = timeReceived;
+	public void describeTo(Description arg0) {
+		// TODO Auto-generated method stub
+		
 	}
-	
-	public Date getTimeReceived(){
-		return timeReceived;
-	}
-
-
-
 
 }

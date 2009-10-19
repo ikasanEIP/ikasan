@@ -40,6 +40,8 @@
  */
 package org.ikasan.demo.businesserror.eai;
 
+import java.util.Date;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -49,7 +51,6 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.ikasan.demo.businesserror.eai.converter.BusinessErrorConverter;
 import org.ikasan.demo.businesserror.model.BusinessError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
@@ -71,7 +72,7 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 	
 
 	
-	private BusinessErrorConverter<String> errorConverter;
+	private BusinessErrorConverter errorConverter;
 
 	
 	public void onMessage(Message message) {
@@ -86,7 +87,8 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 		BusinessError businessError = null;
 		try {
 			String text = textMessage.getText();
-			businessError = errorConverter.convertFrom(text, originatingSystem);
+			businessError = errorConverter.toObject(text);
+			businessError.setTimeReceived(new Date());
 			
 		
 			
@@ -104,7 +106,7 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 		jmsTemplate.send(outgoingDestination, new MessageCreator() {
 			
 			public Message createMessage(Session session) throws JMSException {
-				return session.createTextMessage(errorConverter.convertTo(businessError));
+				return session.createTextMessage(errorConverter.toXml(businessError));
 			}
 		});
 		
@@ -127,7 +129,7 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 	}
 	
 	@Autowired
-	public void setErrorConverter(BusinessErrorConverter<String> errorConverter){
+	public void setErrorConverter(BusinessErrorConverter errorConverter){
 		this.errorConverter = errorConverter;
 	}
 	

@@ -1,0 +1,49 @@
+/* Every element is treated to padding and margin of 0 */
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+/* Body */
+body {
+    font-family: sans-serif;
+}
+
+#pageWrapper {
+	background: #F0F0F0;
+	margin:auto;
+	min-height:1000px;
+	width:900px;
+}
+
+.pageBody{
+	
+}
+
+.pageBody h1{
+	font-size: 1.3em;
+}
+
+
+
+
+#header {
+	margin-bottom: 40px;
+}
+
+#header #mainTitle{
+
+}
+
+#header #subTitle{
+	font-size:1em;
+	font-style:italic;
+}
+
+#messageListPage {
+
+}
+
+#messageDetailPage {
+
+}

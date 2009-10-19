@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 
- *
- *
+/*
  * $Id$
  * $URL$
  * 
@@ -40,22 +37,48 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
- *
- * Author:  Ikasan Development Team
+ */
+package org.ikasan.framework.error.serialisation;
+
+import org.ikasan.common.xml.serializer.XMLSerializer;
+import org.ikasan.framework.error.model.ErrorOccurrence;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+/**
  * 
--->
+ * Implementation of the XMLSerializer interface that uses XStream as the
+ * underlying serializer/deserializer
+ * 
+ * @author Ikasan Development Team
+ * 
+ */
+public class ErrorOccurrenceXmlSerialiser implements XMLSerializer<ErrorOccurrence>
+{
+    /** The xstream */
+    private XStream xstream;
 
-<xsl:stylesheet  version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    /**
+     * Constructor
+     * 
+     */
+    public ErrorOccurrenceXmlSerialiser()
+    {
+        xstream = new XStream(new DomDriver()); 
+        xstream.alias("errorOccurrence", ErrorOccurrence.class);
 
 
-  <xsl:template match="/">
-	<businessError>
-		<errorMessage><xsl:value-of select="errorOccurrence/errorDetail"/></errorMessage>
-		<originatingSystem>ikasan</originatingSystem>
-	</businessError>
+    }
 
-  </xsl:template>
+    public ErrorOccurrence toObject(String xml)
+    {
+        return (ErrorOccurrence) xstream.fromXML(xml);
+    }
 
-  
-</xsl:stylesheet>
+    public String toXml(ErrorOccurrence subject)
+    {
+        return xstream.toXML(subject);
+    }
+}
+

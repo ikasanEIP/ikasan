@@ -151,6 +151,16 @@
 				    		<groupId>org.freemarker</groupId>
 				    		<artifactId>freemarker</artifactId>
 			                <bundleDir>lib</bundleDir>
+						</jarModule>
+						<jarModule>
+	       					<groupId>org.hamcrest</groupId>
+        					<artifactId>hamcrest-library</artifactId>
+			                <bundleDir>lib</bundleDir>            
+						</jarModule> 
+						<jarModule>
+	       					<groupId>org.hamcrest</groupId>
+        					<artifactId>hamcrest-core</artifactId>
+			                <bundleDir>lib</bundleDir>            
 						</jarModule> 
 						<jarModule>
 							<groupId>org.ikasan.demo</groupId>
@@ -317,6 +327,18 @@
 		    <version>2.3.15</version>
       	    <scope>provided</scope>
 		</dependency> 
+		<dependency>
+        	<groupId>org.hamcrest</groupId>
+        	<artifactId>hamcrest-library</artifactId>
+        	<version>1.1</version>
+        	<scope>provided</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.hamcrest</groupId>
+        	<artifactId>hamcrest-core</artifactId>
+        	<version>1.1</version>
+        	<scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>businessErrorManager-eai</artifactId>

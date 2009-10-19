@@ -1,8 +1,8 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
- * =============================================================================
+ *
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,49 +36,84 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-package org.ikasan.framework.error.model.serialisation;
+package org.ikasan.framework.error.grouping;
 
-import org.ikasan.common.xml.serializer.XMLSerializer;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.hamcrest.TypeSafeMatcher;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 /**
+ * Simple named logical group that can identify ErrorOccurrence instances that pertain to itself
  * 
- * Implementation of the XMLSerializer interface that uses XStream as the
- * underlying serializer/deserializer
- * 
- * @author Ikasan Development Team
- * 
+ * @author Ikasan Devlopment Team
+ *
  */
-public class ErrorOccurrenceXmlSerialiser implements XMLSerializer<ErrorOccurrence>
-{
-    /** The xstream */
-    private XStream xstream;
+public class ErrorOccurrenceGroup {
 
-    /**
-     * Constructor
-     * 
-     */
-    public ErrorOccurrenceXmlSerialiser()
-    {
-        xstream = new XStream(new DomDriver()); 
-        xstream.alias("errorOccurrence", ErrorOccurrence.class);
+	/**
+	 * matcher for ErrorOccurrences
+	 */
+	private TypeSafeMatcher<ErrorOccurrence> matcher;
+	
+	/**
+	 * Name of group
+	 */
+	private String groupName;
+	
+	/**
+	 * Additional attributes that can be applied collectively to the group
+	 */
+	private Map<String, Object> attributes = new HashMap<String, Object>();
+	
+	/**
+	 * @param groupName
+	 * @param matcher
+	 * @param attributes
+	 */
+	public ErrorOccurrenceGroup(String groupName,
+			TypeSafeMatcher<ErrorOccurrence> matcher, Map<String, Object> attributes) {
+		super();
+		this.groupName = groupName;
+		this.matcher = matcher;
+		this.attributes = attributes;
+	}
 
 
-    }
+	
+	/**
+	 * Determines if the specfied ErrorOccurrence is a member of this group
+	 * 
+	 * @param errorOccurrence
+	 * @return true if is a memeber
+	 */
+	public boolean hasAsMember(ErrorOccurrence errorOccurrence){
+		return matcher.matchesSafely(errorOccurrence);
+	}
+	
+	/**
+	 * Retrieves a named attribute
+	 * 
+	 * @param attributeName
+	 * @return attribute value or null if non-existent
+	 */
+	public Object getAttribute(String attributeName){
+		return attributes.get(attributeName);
+	}
 
-    public ErrorOccurrence toObject(String xml)
-    {
-        throw new UnsupportedOperationException();
-    }
 
-    public String toXml(ErrorOccurrence subject)
-    {
-        return xstream.toXML(subject);
-    }
+
+	/**
+	 * Accessor for groupName
+	 * 
+	 * @return groupName
+	 */
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	
 }
-

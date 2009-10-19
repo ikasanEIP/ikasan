@@ -148,40 +148,6 @@
     </bean>
     
     
-    <!-- Error Reporting service -->
-	<bean id="myErrorReportingService" class="org.ikasan.demo.DemoErrorReportingService">
-		<constructor-arg ref="errorLoggingService"/>
-		<constructor-arg ref="excludedEventService"/>
-		<constructor-arg ref="externalManagerAdapter"/>
-	</bean>
-	
-	<bean id="externalManagerAdapter" class="org.ikasan.demo.ExternalManagerAdapter">
-		<constructor-arg ref="excludedEventService"/>
-		<constructor-arg ref="errorLoggingService"/>
-		<constructor-arg ref="demoResubmissionJmsEaiAdapter"/>
-	</bean>
-	
-	<bean id="errorChannelListenerConatiner"
-		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="destination" ref="resubmissionsChannel"/>
-		<property name="messageListener" ref="demoResubmissionJmsEaiAdapter" />
-	</bean>
-	
-	
-	<bean id="demoResubmissionJmsEaiAdapter" class="org.ikasan.demo.businesserror.eai.JmsEaiAdapter">
-		<property name="errorConverter">
-			<bean
-				class="org.ikasan.demo.businesserror.eai.converter.IkasanXmlBusinessErrorConverter">
-				<constructor-arg>
-					<bean class="org.apache.xalan.processor.TransformerFactoryImpl"
-						factory-method="newInstance" />
-				</constructor-arg>
-			</bean>
-		</property>
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="outgoingDestination" ref="errorsChannel" />
-	</bean>
-
+   
 
 </beans>

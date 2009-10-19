@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * $URL$ 
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,104 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.demo.businesserror.model;
+package org.ikasan.framework.error.grouping;
 
-import java.util.Date;
+import junit.framework.Assert;
 
-import org.apache.log4j.Logger;
+import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.junit.Test;
 
-public class BusinessError {
+public class ModuleNameMatcherTest {
+
+	/**
+	 * Module name that test matcher will attempt to match
+	 */
+	private String moduleName = "moduleName";
 	
-	private Long id;
+	/**
+	 * System Under Test
+	 */
+	private ModuleNameMatcher matcher = new ModuleNameMatcher(moduleName);
 	
-	private String errorMessage;
+	/**
+	 * A dummy ErrorOccurrence with a matching moduleName
+	 */
+	private ErrorOccurrence matchingOnModuleName= new ErrorOccurrence(null, moduleName, null, null);
+
+	/**
+	 * A dummy ErrorOccurrence with a non-matching moduleName
+	 */
+	private ErrorOccurrence nonMatchingModuleName= new ErrorOccurrence(null, "nonMatch", null, null);
 	
-	private Date timeReceived;
 	
-
-	private String originatingSystem;
-	
-	private boolean resubmittable = true;
-	
-	private static Logger logger = Logger.getLogger(BusinessError.class);
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	public void setExternalReference(String externalReference) {
-		this.externalReference = externalReference;
-	}
-
-	private String externalReference;
-
-	public BusinessError(String originatingSystem, String externalReference, String errorMessage) {
-		this.originatingSystem = originatingSystem;
-		this.externalReference = externalReference;
-		this.errorMessage = errorMessage;
-	}
-
-	public String getExternalReference() {
-		return externalReference;
+	@Test
+	public void testMatchesSafely_willReturnTrueForErrorOccurrenceWithMatchingModuleName() {
+		Assert.assertTrue("Matcher should return true when passed an ErrorOccurrence whose moduleName matches its own", matcher.matchesSafely(matchingOnModuleName));
 	}
 	
-	public String getErrorSummary(){
-		String result;
-		String firstLine = errorMessage;
-		int endOfFirstLine = errorMessage.indexOf("\n");
-		if (endOfFirstLine>-1){
-			firstLine = errorMessage.substring(0, endOfFirstLine);
-		}
-		result = firstLine;
-		if (result.length()>80){
-			result = result.substring(0, 77)+"...";
-		}
-		return result;
+	@Test
+	public void testMatchesSafely_willReturnFalseForErrorOccurrenceWithNonMatchingModuleName() {
+		Assert.assertFalse("Matcher should return false when passed an ErrorOccurrence whose moduleName does not match its own", matcher.matchesSafely(nonMatchingModuleName));
 	}
-	
-
-	
-	public void setOriginatingSystem(String originatingSystem){
-		this.originatingSystem = originatingSystem;
-	}
-	
-	public String getOriginatingSystem(){
-		return originatingSystem;
-	}
-
-	@Override
-	public String toString() {
-		return "BusinessError ["
-				+ ", errorSummary=" + getErrorSummary() + ", externalReference="
-				+ externalReference + ", id=" + id + "]";
-	}
-	
-	public boolean isResubmittable(){
-		return resubmittable;
-	}
-
-	public void setTimeReceived(Date timeReceived) {
-		this.timeReceived = timeReceived;
-	}
-	
-	public Date getTimeReceived(){
-		return timeReceived;
-	}
-
-
-
 
 }

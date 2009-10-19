@@ -102,7 +102,21 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 			<scope>provided</scope>
-		</dependency> 			
+		</dependency> 	
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.2.2</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		    <!-- Needed to run the Unit Tests -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>		
 	</dependencies>
 
 

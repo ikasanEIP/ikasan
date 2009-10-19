@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * $URL$ 
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,14 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.demo.businesserror.eai.converter;
 
-import org.ikasan.demo.businesserror.model.BusinessError;
+package org.ikasan.framework.component.endpoint;
 
-public interface BusinessErrorConverter<T> {
-	
-	public BusinessError convertFrom(T type, String originatingSystem);
-	
-	public T convertTo(BusinessError businessError);
+import org.ikasan.framework.component.Event;
+
+/**
+ * True Dead End
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public final class DeadEndpoint implements Endpoint{
+
+	public void onEvent(Event event) throws EndpointException {
+		//do absolutely nothing
+	}
 
 }

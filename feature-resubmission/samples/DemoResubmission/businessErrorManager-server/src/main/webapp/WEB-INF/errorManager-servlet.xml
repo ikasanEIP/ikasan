@@ -108,12 +108,8 @@
 		<property name="originatingSystem" value="demoResubmission" />
 		<property name="errorConverter">
 			<bean
-				class="org.ikasan.demo.businesserror.eai.converter.IkasanXmlBusinessErrorConverter">
-				<constructor-arg>
-					<bean class="org.apache.xalan.processor.TransformerFactoryImpl"
-						factory-method="newInstance" />
-				</constructor-arg>
-			</bean>
+				class="org.ikasan.demo.businesserror.eai.BusinessErrorConverter"/>
+				
 		</property>
 		<property name="connectionFactory" ref="jmsConnectionFactory" />
 		<property name="outgoingDestination" ref="resubmissionDestination" />
