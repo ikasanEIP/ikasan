@@ -144,8 +144,22 @@
     		<span id="currentlyShowing"><fmt:message key="paged_results_header_showing"/> <c:out value="${firstResultIndex+1}"/> <fmt:message key="paged_results_header_to"/> <c:out value="${firstResultIndex + size}"/> <fmt:message key="paged_results_header_of"/> <c:out value="${resultSize}"/> <fmt:message key="paged_results_header_results"/>&nbsp;&nbsp;<a href="#top"><fmt:message key="paged_results_header_back_to_top"/></a></span>
     		<span id="navigationControls">
     		    <a name="results"></a>
-            	<c:if test="${page gt 0}"><a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;</c:if>
-            	<c:if test="${!isLastPage}"><a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a></c:if>
+		 		<c:choose>
+					<c:when test="${page gt 0}">
+				        <a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;
+					</c:when>
+					<c:otherwise>
+				        <fmt:message key="paged_results_header_first"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_previous"/>
+					</c:otherwise>
+				</c:choose>
+		 		<c:choose>
+					<c:when test="${!isLastPage}">
+				        <a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a>
+					</c:when>
+					<c:otherwise>
+						<fmt:message key="paged_results_header_next"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_last"/>
+					</c:otherwise>
+				</c:choose>
                 <select id="pageSize" name="pageSize" onchange="javascript:executeSearch()">
                     <option value="10" <c:if test="${pageSize=='10'}">selected="selected"</c:if>>10</option>
                     <option value="25" <c:if test="${pageSize=='25'}">selected="selected"</c:if>>25</option>
