@@ -58,7 +58,13 @@ public class WiretapSearchCriteriaValidator implements Validator
 {
     /** A flag to indicate whether a date time validation has already created an error */
     private boolean dateTimeInError = false;
-    
+
+    /** A representation day/month/year */
+    private SimpleDateFormat ddMMyyyyFormat;
+
+    /** A representation hour/minutes/seconds */
+    private SimpleDateFormat HHmmss;
+
     /** Constructor */
     public WiretapSearchCriteriaValidator()
     {
@@ -68,12 +74,6 @@ public class WiretapSearchCriteriaValidator implements Validator
         this.HHmmss = new SimpleDateFormat("HH:mm:ss");
         this.HHmmss.setLenient(false);
     }
-
-    /** A representation day/month/year */
-    private SimpleDateFormat ddMMyyyyFormat;
-
-    /** A representation hour/minutes/seconds */
-    private SimpleDateFormat HHmmss;
 
     /**
      * Warning suppressed because .equals method does not support Generics
@@ -99,10 +99,11 @@ public class WiretapSearchCriteriaValidator implements Validator
         WiretapSearchCriteria wiretapSearchCriteria = (WiretapSearchCriteria) object;
         
         // Validate the modules (need to select at least one)
-        Set<Long> modules = wiretapSearchCriteria.getModules();
-        if (modules == null || modules.isEmpty())
+        Set<Long> moduleIds = wiretapSearchCriteria.getModules();
+        
+        if (moduleIds == null || moduleIds.isEmpty())
         {
-            errors.add("You need to select at least one module.");
+            errors.add("You need to select at least one module, if there are no modules for you to select please contact your System Administrator.");
         }
         
         // Validate the Date and Time
@@ -198,7 +199,7 @@ public class WiretapSearchCriteriaValidator implements Validator
      * 
      * @see org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors)
      */
-    public void validate(@SuppressWarnings("unused") Object arg0, @SuppressWarnings("unused") Errors arg1)
+    public void validate(Object arg0, Errors arg1)
     {
         // Unused on purpose, we're providing our own version.
         throw new UnsupportedOperationException("Unused on purpose, we're providing our own version.");

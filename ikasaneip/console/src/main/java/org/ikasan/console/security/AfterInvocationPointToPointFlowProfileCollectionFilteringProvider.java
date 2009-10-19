@@ -82,7 +82,7 @@ public class AfterInvocationPointToPointFlowProfileCollectionFilteringProvider e
      * @return TODO A list of authorised objects or
      * @throws AccessDeniedException - Access was denied
      */
-    public Object decide(Authentication authentication, @SuppressWarnings("unused") Object object, ConfigAttributeDefinition config, Object returnedObject)
+    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config, Object returnedObject)
             throws AccessDeniedException
     {
         Iterator<?> iter = config.getConfigAttributes().iterator();
@@ -94,7 +94,7 @@ public class AfterInvocationPointToPointFlowProfileCollectionFilteringProvider e
                 continue;
             }
             // Need to process the Collection for this invocation
-            if (!(returnedObject instanceof Collection))
+            if (!(returnedObject instanceof Collection<?>))
             {
                 throw new AuthorizationServiceException("A Collection was required as the " + "returnedObject, but the returnedObject was [" + returnedObject
                         + "]");
@@ -112,7 +112,6 @@ public class AfterInvocationPointToPointFlowProfileCollectionFilteringProvider e
                     continue;
                 }
                 PointToPointFlowProfile thisPointToPointFlowProfile = (PointToPointFlowProfile) domainObject;
-                logger.info(thisPointToPointFlowProfile.getName());
                 if (mayReadPointToPointFlowProfile(authentication, thisPointToPointFlowProfile))
                 {
                     authorisedPointToPointFlowProfiles.add(thisPointToPointFlowProfile);

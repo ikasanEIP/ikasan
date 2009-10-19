@@ -114,9 +114,9 @@ public class WiretapEventsSearchFormController
     }
 
     /**
-     * Get the module names
+     * Get the modules
      * 
-     * @return List of module names
+     * @return Set of modules
      */
     @ModelAttribute("modules")
     public Set<Module> getModules()
@@ -126,9 +126,9 @@ public class WiretapEventsSearchFormController
     }
 
     /**
-     * Get the point to point flow profile names
+     * Get the point to point flow profiles
      * 
-     * @return List of point to point flow profile names
+     * @return List of point to point flow profiles
      */
     @ModelAttribute("pointToPointFlowProfiles")
     public Set<PointToPointFlowProfile> getPointToPointFlowProfiles()
