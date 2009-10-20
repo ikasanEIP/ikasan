@@ -51,6 +51,7 @@ CREATE TABLE ErrorOccurrence
     InitiatorName       VARCHAR(128) NULL,
     FlowElementName     VARCHAR(128) NULL,
     EventId             VARCHAR(128) NULL,
+    Url          		VARCHAR(512)  NULL,
     CurrentEvent        TEXT NULL,
     ErrorDetail         TEXT NOT NULL,
     LogTime       		DATETIME NOT NULL,

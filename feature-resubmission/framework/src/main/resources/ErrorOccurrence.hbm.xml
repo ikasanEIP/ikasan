@@ -73,6 +73,8 @@
                   column="EventId"         />
         <property name="currentEvent"      type="java.lang.String" 
                   column="CurrentEvent"    />
+        <property name="url"      type="java.lang.String" 
+                  column="Url"    />
         <property name="errorDetail"    type="java.lang.String" 
                   column="ErrorDetail "    not-null="true" />
         <property name="logTime"           type="java.util.Date" 

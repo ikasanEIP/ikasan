@@ -109,6 +109,9 @@ public class ErrorOccurrence {
 	/** ExcludedEvent may or may not exist */
 	private ExcludedEvent excludedEvent;
 	
+	/** URL for locating this error */
+	private String url;
+	
 	
 	
 	
@@ -342,7 +345,7 @@ public class ErrorOccurrence {
 	 * @param id the id to set
 	 */
 	@SuppressWarnings("unused")
-	private void setId(Long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	
@@ -381,7 +384,23 @@ public class ErrorOccurrence {
 		this.excludedEvent = excludedEvent;
 	}
 
-
+	/**
+	 * Mutator for url
+	 * 
+	 * @param url
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	/**
+	 * Accessor for url
+	 * 
+	 * @return
+	 */
+	public String getUrl(){
+		return url;
+	}
 	
 	public String toString(){
 		StringBuffer sb = new StringBuffer(getClass().getName()+" [");
@@ -394,10 +413,13 @@ public class ErrorOccurrence {
 		sb.append("currentEvent=");sb.append(currentEvent);sb.append(",");
 		sb.append("eventId=");sb.append(eventId);sb.append(",");
 		sb.append("logTime=");sb.append(logTime);sb.append(",");
-		sb.append("expiry=");sb.append(expiry);
+		sb.append("expiry=");sb.append(expiry);sb.append(",");
+		sb.append("url=");sb.append(url);
 		sb.append("]");
 		return sb.toString();
 	}
+
+
 
 
 
