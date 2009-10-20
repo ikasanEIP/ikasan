@@ -40,6 +40,7 @@
  */
 package org.ikasan.framework.error.service;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +50,6 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 
 /**
@@ -91,37 +91,51 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	private List<ErrorOccurrenceListener> errorOccurrenceListeners= new ArrayList<ErrorOccurrenceListener>();
 
 	/**
-	 * Constructor
-	 * 
-	 * @param errorOccurrenceDao
+	 * Base URL for URL creation on ErrorOccurrence
 	 */
-	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao) {
+	private URL baseUrl;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param errorOccurrenceDao
+	 * @param excludedEventDao
+	 * @param baseUrl
+	 */
+	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao, URL baseUrl) {
 		super();
 		this.errorOccurrenceDao = errorOccurrenceDao;
 		this.excludedEventDao = excludedEventDao;
+		this.baseUrl = baseUrl;
 	}
 	
+
 	/**
 	 * Constructor
 	 * 
 	 * @param errorOccurrenceDao
 	 * @param excludedEventDao
+	 * @param baseUrl
 	 * @param errorOccurrenceListeners
 	 */
-	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao,List<ErrorOccurrenceListener> errorOccurrenceListeners ) {
-		this(errorOccurrenceDao, excludedEventDao);
+	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao,URL baseUrl,List<ErrorOccurrenceListener> errorOccurrenceListeners ) {
+		this(errorOccurrenceDao, excludedEventDao, baseUrl);
 		this.errorOccurrenceListeners = new ArrayList<ErrorOccurrenceListener>();
 		this.errorOccurrenceListeners.addAll(errorOccurrenceListeners);
 	}
 	
+
 	/**
 	 * Constructor
 	 * 
 	 * @param errorOccurrenceDao
+	 * @param excludedEventDao
+	 * @param baseURl
 	 * @param errorOccurrenceListener
 	 */
-	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao,ExcludedEventDao excludedEventDao,ErrorOccurrenceListener errorOccurrenceListener ) {
-		this(errorOccurrenceDao, excludedEventDao);
+	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao,ExcludedEventDao excludedEventDao,URL baseURl, ErrorOccurrenceListener errorOccurrenceListener ) {
+		this(errorOccurrenceDao, excludedEventDao, baseURl);
 		this.errorOccurrenceListeners = new ArrayList<ErrorOccurrenceListener>();
 		errorOccurrenceListeners.add(errorOccurrenceListener);
 	}
@@ -150,6 +164,14 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	private void persistAndNotifyListeners(ErrorOccurrence errorOccurrence) {
 		logger.info("logging error");
 		errorOccurrenceDao.save(errorOccurrence);
+		
+		//once its persisted it will have an id, so we can generate its URL
+
+		String url = baseUrl+"/admin/errors/viewError.htm?errorId="+errorOccurrence.getId();
+		logger.info("setting URL as:"+url);
+		errorOccurrence.setUrl(url);
+		
+		
 		if (errorOccurrenceListeners!=null){
 			for (ErrorOccurrenceListener errorOccurrenceListener : errorOccurrenceListeners){
 				errorOccurrenceListener.notifyErrorOccurrence(errorOccurrence);

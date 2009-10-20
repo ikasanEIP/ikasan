@@ -26,6 +26,8 @@
  */
 package org.ikasan.framework.error.service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +45,8 @@ import org.ikasan.framework.management.search.PagedSearchResult;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.api.Action;
+import org.jmock.api.Invocation;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.junit.matchers.TypeSafeMatcher;
@@ -54,6 +58,7 @@ import org.junit.matchers.TypeSafeMatcher;
  */
 public class DefaultErrorLoggingServiceImplTest {
 	
+
 	/**
 	 * Mockery for testing
 	 */
@@ -84,25 +89,33 @@ public class DefaultErrorLoggingServiceImplTest {
 	private ErrorOccurrenceListener secondListener = mockery.mock(ErrorOccurrenceListener.class, "firstListerner");
 	
 	/**
+	 * Base URL for URL Construction
+	 */
+	private static final String BASE_URL_STRING = "http://yourserver:9999/yourcontext";
+
+	
+	/**
 	 * System under tests
 	 */
 	private DefaultErrorLoggingServiceImpl errorLoggingServiceImpl;
 	
 	/**
 	 * Constructor
+	 * @throws MalformedURLException 
 	 */
-	public DefaultErrorLoggingServiceImplTest(){
+	public DefaultErrorLoggingServiceImplTest() throws MalformedURLException{
 		List<ErrorOccurrenceListener> listeners = new ArrayList<ErrorOccurrenceListener>();
 		listeners.add(firstListener);
 		listeners.add(secondListener);
-		errorLoggingServiceImpl = new DefaultErrorLoggingServiceImpl(errorOccurrenceDao,excludedEventDao, listeners);
+		errorLoggingServiceImpl = new DefaultErrorLoggingServiceImpl(errorOccurrenceDao,excludedEventDao,new URL(BASE_URL_STRING), listeners);
 	}
 	
 	/**
 	 * Test method for {@link org.ikasan.framework.error.service.DefaultErrorLoggingServiceImpl#logError(java.lang.Throwable, java.lang.String, java.lang.String, java.lang.String, org.ikasan.framework.component.Event)}.
+	 * @throws MalformedURLException 
 	 */
 	@Test
-	public void testLogError_withEvent_willCreateErrorOccurrencePersistAndNotify() {
+	public void testLogError_withEvent_willCreateErrorOccurrencePersistAndNotify() throws MalformedURLException {
 		Throwable throwable = new NullPointerException();
 		String moduleName = "moduleName";
 		String flowName = "flowName";
@@ -120,20 +133,33 @@ public class DefaultErrorLoggingServiceImplTest {
             }
         });
 		
-		final ErrorOccurrence expectedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date());
-		final ErrorOccurrenceMatcher matcher = new ErrorOccurrenceMatcher(expectedErrorOccurrence);
+		
+		final Long errorOccurrenceId = new Long(1000);
+		
+		final ErrorOccurrence expectedUnpersistedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date());
+		final ErrorOccurrenceMatcher unpersistedMatcher = new ErrorOccurrenceMatcher(expectedUnpersistedErrorOccurrence);
+
+		final ErrorOccurrence persistedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date());
+		persistedErrorOccurrence.setId(errorOccurrenceId);
+		persistedErrorOccurrence.setUrl(BASE_URL_STRING+"/admin/errors/viewError.htm?errorId="+errorOccurrenceId);
+		
+		final ErrorOccurrenceMatcher persistedMatcher = new ErrorOccurrenceMatcher(persistedErrorOccurrence);
 
 		
+
 		
 		mockery.checking(new Expectations()
         {
             {
             	
-				one(errorOccurrenceDao).save((ErrorOccurrence) with(matcher));
+				one(errorOccurrenceDao).save((ErrorOccurrence) with(unpersistedMatcher));
             	inSequence(sequence);
-            	one(firstListener).notifyErrorOccurrence(with(matcher));
-            	one(secondListener).notifyErrorOccurrence(with(matcher));
+            	will(setId(errorOccurrenceId));
+            	one(firstListener).notifyErrorOccurrence(with(persistedMatcher));
+            	one(secondListener).notifyErrorOccurrence(with(persistedMatcher));
             }
+
+
         });
 		
 		
@@ -141,6 +167,11 @@ public class DefaultErrorLoggingServiceImplTest {
 	
 		mockery.assertIsSatisfied();
 	
+	}
+	
+	private Action setId(Long errorOccurrenceId) {
+	    return new SetErrorOccurrenceId(errorOccurrenceId);
+
 	}
 	
 	/**
@@ -156,19 +187,27 @@ public class DefaultErrorLoggingServiceImplTest {
 		final Sequence sequence = mockery.sequence("invocationSequence");
 		
 		
-		final ErrorOccurrence expectedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date());
-		final ErrorOccurrenceMatcher matcher = new ErrorOccurrenceMatcher(expectedErrorOccurrence);
+		final Long errorOccurrenceId = new Long(1000);
+		
+		final ErrorOccurrence expectedUnpersistedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date());
+		final ErrorOccurrenceMatcher unpersistedMatcher = new ErrorOccurrenceMatcher(expectedUnpersistedErrorOccurrence);
 
+		final ErrorOccurrence persistedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date());
+		persistedErrorOccurrence.setId(errorOccurrenceId);
+		persistedErrorOccurrence.setUrl(BASE_URL_STRING+"/admin/errors/viewError.htm?errorId="+errorOccurrenceId);
+
+		final ErrorOccurrenceMatcher persistedMatcher = new ErrorOccurrenceMatcher(persistedErrorOccurrence);
 		
 		
 		mockery.checking(new Expectations()
         {
             {
             	
-				one(errorOccurrenceDao).save((ErrorOccurrence) with(matcher));
+				one(errorOccurrenceDao).save((ErrorOccurrence) with(unpersistedMatcher));
             	inSequence(sequence);
-            	one(firstListener).notifyErrorOccurrence(with(matcher));
-            	one(secondListener).notifyErrorOccurrence(with(matcher));
+            	will(setId(errorOccurrenceId));
+            	one(firstListener).notifyErrorOccurrence(with(persistedMatcher));
+            	one(secondListener).notifyErrorOccurrence(with(persistedMatcher));
             }
         });
 		
@@ -248,6 +287,8 @@ public class DefaultErrorLoggingServiceImplTest {
 		mockery.assertIsSatisfied();
 	}
 	
+	
+
 	public class ErrorOccurrenceMatcher extends TypeSafeMatcher<ErrorOccurrence> {
 
 		private ErrorOccurrence errorOccurrence;
@@ -287,7 +328,13 @@ public class DefaultErrorLoggingServiceImplTest {
 			}	
 			if (!same(errorOccurrence.getModuleName(),item.getModuleName())){
 				result = false;
+			}
+			if (!same(errorOccurrence.getId(),item.getId())){
+				result = false;
 			}	
+			if (!same(errorOccurrence.getUrl(),item.getUrl())){
+				result = false;
+			}
 			return result;
 		}
 
@@ -309,4 +356,20 @@ public class DefaultErrorLoggingServiceImplTest {
 		
 	}
 
+	public class SetErrorOccurrenceId implements Action {
+	    private Long id;
+	    
+	    public SetErrorOccurrenceId(Long id) {
+	        this.id = id;
+	    }
+	    
+	    public void describeTo(Description description) {
+	        description.appendText("call the setId method with "+id);
+	    }
+	    
+	    public Object invoke(Invocation invocation) throws Throwable {
+	        ((ErrorOccurrence)invocation.getParameter(0)).setId(id);
+	        return null;
+	    }
+	}
 }
