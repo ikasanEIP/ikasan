@@ -118,6 +118,14 @@
                                 pattern="dd/MM/yyyy h:mma"/>
 		</td>
 	</tr>
+	<tr>
+		<th>
+			URL
+		</th>
+		<td>
+			<a href="${error.url}"><c:out value="${error.url}" /></a>
+		</td>
+	</tr>
 	<c:if test="${!empty error.excludedEvent}">
 	<c:url var="viewExclusionLink" value="../exclusions/exclusion.htm">   	
     		<c:param name="eventId" value="${error.excludedEvent.event.id}"/>
