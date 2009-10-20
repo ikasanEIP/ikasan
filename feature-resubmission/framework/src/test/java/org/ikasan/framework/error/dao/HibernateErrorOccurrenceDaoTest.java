@@ -78,6 +78,7 @@ public class HibernateErrorOccurrenceDaoTest{
 		
 		
 		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName, null);
+		errorOccurrence.setUrl("URL");
 		errorOccurrenceDao.save(errorOccurrence);
 		
 		Long id = errorOccurrence.getId();
@@ -88,6 +89,10 @@ public class HibernateErrorOccurrenceDaoTest{
 		
 		
 		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getId().equals(reloaded.getId()));
+		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getModuleName().equals(reloaded.getModuleName()));
+		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getInitiatorName().equals(reloaded.getInitiatorName()));
+		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getUrl().equals(reloaded.getUrl()));
+		
 	}
 
 
