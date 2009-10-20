@@ -26,9 +26,17 @@ body {
 
 
 
+.keyLabel{
+	
+}
+
+
+
 
 #header {
-	margin-bottom: 40px;
+	margin-bottom:40px;
+	margin-left:225px;
+	width:450px;
 }
 
 #header #mainTitle{
@@ -45,5 +53,15 @@ body {
 }
 
 #messageDetailPage {
+
+}
+
+#errorMessage {
+	border:1px solid #E1E1E1;
+	overflow:auto;
+	padding:0 5px;
+}
+
+table#messages{
 
 }

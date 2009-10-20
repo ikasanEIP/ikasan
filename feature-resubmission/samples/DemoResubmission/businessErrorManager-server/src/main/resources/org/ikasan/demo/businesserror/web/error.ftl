@@ -3,15 +3,16 @@
 <div id="messageDetailPage" class="pageBody">
 <div id="errorsPage" class="pageBody">
 <h1>Error Message</h1>
-<p id="errorId">
-	Id: ${error.id}
+
+<p id="externalReference" >
+	<span class="keyLabel">External Reference:</span> 
+	<a href="${error.externalReference!"none"}">${error.externalReference!"none"}</a>
 </p>
-<p id="externalReference">
-	External Reference: ${error.externalReference!"none"}
-</p>
-<p id="errorSummary">
+<p id="errorSummary" >
+	<span class="keyLabel">Summary:</span>
 	${error.errorSummary!"none"}
 </p>
+<p class="keyLabel">Message Detail</p>
 <p id="errorMessage">
 	${error.errorMessage!"none"}
 </p>
