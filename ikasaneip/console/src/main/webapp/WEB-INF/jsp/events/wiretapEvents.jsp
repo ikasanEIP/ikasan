@@ -82,7 +82,7 @@
                                 <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
                                     <tr>
                                         <td class="border" valign="top">
-                                            <input id="pointToPointFlowProfileIds" name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /> <c:out value="${pointToPointFlowProfile.name}"/>
+                                            <input id="pointToPointFlowProfileIds" name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /> <span><c:out value="${pointToPointFlowProfile.name}"/></span>
                                         </td>
                                     </tr>
                                     <tr class="toggle">

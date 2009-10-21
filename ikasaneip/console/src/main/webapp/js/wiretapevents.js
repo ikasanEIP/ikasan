@@ -85,8 +85,10 @@ $(document).ready(
 			 * append show/hide links to the element directly preceding the
 			 * element with a class of "toggle"
 			 */
-			$('.toggle').prev().append(
-					'<a href="#" class="toggleLink">' + showText + '</a>');
+      /* $('.toggle').prev().append(
+          '<a href="#" class="toggleLink">' + showText + '</a>'); */
+			$('.toggle').prev().children().children("span").prepend(
+					'<a href="#" class="toggleLink">' + showText + '</a>&nbsp;');
 
 			/* hide all of the elements with a class of 'toggle' */
 			$('.toggle').hide();
@@ -97,12 +99,9 @@ $(document).ready(
 				/* change the link depending on whether the element is shown or hidden */
 				$(this).html($(this).html() == hideText ? showText : hideText);
 
-				/*
-				 * toggle the display - uncomment the next line for a basic
-				 * "accordion" style
-				 */
-
-				$(this).parent().next('.toggle').toggle();
+				/* toggle the display */
+				/* $(this).parent().next('.toggle').toggle(); */
+				$(this).parent().parent().parent().next('.toggle').toggle();
 
 				/* return false so any link destination is not followed */
 				return false;
