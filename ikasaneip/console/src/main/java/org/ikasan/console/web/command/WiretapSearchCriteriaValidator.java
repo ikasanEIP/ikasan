@@ -199,7 +199,7 @@ public class WiretapSearchCriteriaValidator implements Validator
      * 
      * @see org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors)
      */
-    public void validate(Object arg0, Errors arg1)
+    public void validate(@SuppressWarnings("unused") Object arg0, @SuppressWarnings("unused") Errors arg1)
     {
         // Unused on purpose, we're providing our own version.
         throw new UnsupportedOperationException("Unused on purpose, we're providing our own version.");

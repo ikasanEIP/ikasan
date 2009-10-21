@@ -176,6 +176,7 @@ public class WiretapEventsSearchFormController
      * @param pointToPointFlowProfileIds - Set of ids of point to point flow
      *            profiles to include in search - must contain at least one
      *            pointToPointFlowProfileId
+     * @param moduleFlow - The internal Flow of the Module to search on
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -193,11 +194,12 @@ public class WiretapEventsSearchFormController
             @RequestParam(required = false) Boolean orderAsc, @RequestParam(required = false) String pointToPointFlowProfileSearch,
             @RequestParam(required = false) Boolean pointToPointFlowProfileSelectAll, @RequestParam(required = false) Boolean moduleSelectAll,
             @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Set<Long> moduleIds,
-            @RequestParam(required = false) Set<Long> pointToPointFlowProfileIds, @RequestParam(required = false) String componentName,
-            @RequestParam(required = false) String eventId, @RequestParam(required = false) String payloadId,
-            @RequestParam(required = false) String fromDateString, @RequestParam(required = false) String fromTimeString,
-            @RequestParam(required = false) String untilDateString, @RequestParam(required = false) String untilTimeString,
-            @RequestParam(required = false) String payloadContent, ModelMap model)
+            @RequestParam(required = false) Set<Long> pointToPointFlowProfileIds, @RequestParam(required = false) String moduleFlow, 
+            @RequestParam(required = false) String componentName, @RequestParam(required = false) String eventId, 
+            @RequestParam(required = false) String payloadId, @RequestParam(required = false) String fromDateString, 
+            @RequestParam(required = false) String fromTimeString, @RequestParam(required = false) String untilDateString, 
+            @RequestParam(required = false) String untilTimeString, @RequestParam(required = false) String payloadContent, 
+            ModelMap model)
     {
         Integer pageSizeToReturn = pageSize;
         Set<Long> moduleIdsToSearchOn = moduleIds;
@@ -222,12 +224,13 @@ public class WiretapEventsSearchFormController
         {
             logger.debug("Form values that came in:");
             logSearch(page, orderBy, orderAsc, pointToPointFlowProfileSearch, pointToPointFlowProfileSelectAll, moduleSelectAll, pageSizeToReturn,
-                moduleIdsToSearchOn, pointToPointFlowProfileIds, componentName, eventId, payloadId, fromDateString, fromTimeString, untilDateString,
+                moduleIdsToSearchOn, pointToPointFlowProfileIds, moduleFlow, componentName, eventId, payloadId, fromDateString, fromTimeString, untilDateString,
                 untilTimeString, payloadContent);
         }
         // Set the search criteria from the values that came in and then
         // validate them
         WiretapSearchCriteria wiretapSearchCriteria = new WiretapSearchCriteria(moduleIdsToSearchOn);
+        wiretapSearchCriteria.setModuleFlow(moduleFlow);
         wiretapSearchCriteria.setComponentName(componentName);
         wiretapSearchCriteria.setEventId(eventId);
         wiretapSearchCriteria.setPayloadId(payloadId);
@@ -247,8 +250,6 @@ public class WiretapEventsSearchFormController
         int pageNo = MasterDetailControllerUtil.defaultZero(page);
         String orderByField = MasterDetailControllerUtil.resolveOrderBy(orderBy);
         boolean orderAscending = MasterDetailControllerUtil.defaultFalse(orderAsc);
-        // boolean pointToPointFlowProfileSearchFlag =
-        // MasterDetailControllerUtil.defaultTrue(pointToPointFlowProfileSearch);
         Date fromDate = wiretapSearchCriteria.getFromDateTime();
         Date untilDate = wiretapSearchCriteria.getUntilDateTime();
         // Log the search criteria we're sending down
@@ -256,7 +257,7 @@ public class WiretapEventsSearchFormController
         {
             logger.debug("Executing Search with:");
             logSearch(pageNo, orderByField, orderAscending, pointToPointFlowProfileSearch, pointToPointFlowProfileSelectAll, moduleSelectAll,
-                pageSizeToReturn, moduleIdsToSearchOn, pointToPointFlowProfileIds, componentName, eventId, payloadId, fromDateString, fromTimeString,
+                pageSizeToReturn, moduleIdsToSearchOn, pointToPointFlowProfileIds, moduleFlow, componentName, eventId, payloadId, fromDateString, fromTimeString,
                 untilDateString, untilTimeString, payloadContent);
             logger.debug("From Date/Time [" + fromDate + "]");
             logger.debug("Until Date/Time [" + untilDate + "]");
@@ -266,7 +267,7 @@ public class WiretapEventsSearchFormController
         if (noErrors)
         {
             Set<String> moduleNames = this.moduleService.getModuleNames(moduleIdsToSearchOn);
-            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, componentName, eventId,
+            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, moduleFlow, componentName, eventId,
                 payloadId, fromDate, untilDate, payloadContent);
         }
         // Store the search parameters used
@@ -279,6 +280,7 @@ public class WiretapEventsSearchFormController
         {
             MasterDetailControllerUtil.addParam(searchParams, "moduleIds", moduleIdsToSearchOn);
         }
+        MasterDetailControllerUtil.addParam(searchParams, "moduleFlow", moduleFlow);
         MasterDetailControllerUtil.addParam(searchParams, "componentName", componentName);
         MasterDetailControllerUtil.addParam(searchParams, "eventId", eventId);
         MasterDetailControllerUtil.addParam(searchParams, "payloadId", payloadId);
@@ -377,6 +379,38 @@ public class WiretapEventsSearchFormController
     }
 
     /**
+     * Retrieve a link to a module design resource that can be displayed to the end user (or perhaps downloaded)
+     * 
+     * TODO Improve Error handling?
+     * 
+     * @param moduleId - The id of the module to get the resource for
+     * @param response - The response stream to output the resource to
+     * @return null
+     */
+    @RequestMapping("viewModuleDesign.htm")
+    public ModelAndView viewModuleDesign(@RequestParam("moduleId") long moduleId, HttpServletResponse response)
+    {
+        this.logger.debug("inside viewModuleDesign, moduleId= [" + moduleId + "]");
+        Module module = this.moduleService.getModule(new Long(moduleId));
+        try
+        {
+            if (module != null)
+            {
+                response.sendRedirect(module.getDesignDiagramURL());
+            }
+            else
+            {
+                throw new IOException("Module was NULL.");
+            }
+        }
+        catch (IOException e)
+        {
+            logger.error("URL could not be resolved.");
+        }
+        return null;
+    }
+    
+    /**
      * Download the payload content as a file
      * 
      * TODO Improve Error handling?
@@ -420,6 +454,7 @@ public class WiretapEventsSearchFormController
      * @param moduleIds - Set of ids of modules to include in search
      * @param pointToPointFlowProfileIds - Set of ids of
      *            pointToPointFlowProfiles to include in search
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -431,7 +466,7 @@ public class WiretapEventsSearchFormController
      */
     private void logSearch(Integer page, String orderBy, Boolean orderAsc, String pointToPointFlowProfileSearch,
             Boolean pointToPointFlowProfileSelectAll, Boolean moduleSelectAll, Integer pageSize, Set<Long> moduleIds, Set<Long> pointToPointFlowProfileIds,
-            String componentName, String eventId, String payloadId, String fromDateString, String fromTimeString, String untilDateString,
+            String moduleFlow, String componentName, String eventId, String payloadId, String fromDateString, String fromTimeString, String untilDateString,
             String untilTimeString, String payloadContent)
     {
         logger.debug("Page [" + page + "]");
@@ -443,6 +478,7 @@ public class WiretapEventsSearchFormController
         logger.debug("Number of search results per page [" + pageSize + "]");
         logger.debug("Module Ids [" + moduleIds + "]");
         logger.debug("PointToPointFlowProfile Ids [" + pointToPointFlowProfileIds + "]");
+        logger.debug("Module Flow [" + moduleFlow + "]");
         logger.debug("Component Name [" + componentName + "]");
         logger.debug("Event Id [" + eventId + "]");
         logger.debug("Payload Id [" + payloadId + "]");

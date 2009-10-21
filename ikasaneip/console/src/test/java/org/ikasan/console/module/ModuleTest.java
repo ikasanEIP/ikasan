@@ -63,11 +63,13 @@ public class ModuleTest
         module.setId(1);
         module.setName("Module 1");
         module.setDescription("Module 1 Description");
+        module.setDesignDiagramURL("http://www.ikasan.org");
         
         // Test and Verify
         Assert.assertEquals(1, module.getId());
         Assert.assertEquals("Module 1", module.getName());
         Assert.assertEquals("Module 1 Description", module.getDescription());
+        Assert.assertEquals("http://www.ikasan.org", module.getDesignDiagramURL());
     }
     
 }
