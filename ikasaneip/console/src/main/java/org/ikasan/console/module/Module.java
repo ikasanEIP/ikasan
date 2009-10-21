@@ -57,6 +57,9 @@ public class Module
     /** Module Description */
     private String description;
     
+    /** The URL to the resource that shows the design of this module */
+    private String designDiagramURL;
+    
     /**
      * Get the id
      * 
@@ -117,4 +120,24 @@ public class Module
         this.description = description;
     }
 
+    /**
+     * Get the design diagram URL
+     * 
+     * @return the design diagram URL
+     */
+    public String getDesignDiagramURL()
+    {
+        return designDiagramURL;
+    }
+
+    /**
+     * Set the design diagram URL
+     * 
+     * @param designDiagramURL - The design diagram URL to set
+     */
+    public void setDesignDiagramURL(String designDiagramURL)
+    {
+        this.designDiagramURL = designDiagramURL;
+    }
+    
 }

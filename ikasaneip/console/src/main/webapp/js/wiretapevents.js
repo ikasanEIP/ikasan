@@ -113,6 +113,7 @@ $(document).ready(
 			$('#toggleSearchModeHelp').hovertip();
 			$('#pointToPointFlowProfileIdsHelp').hovertip();
 			$('#moduleIdsHelp').hovertip();
+			$('#moduleFlowHelp').hovertip();
 			$('#componentNameHelp').hovertip();
       $('#eventIdHelp').hovertip();
       $('#payloadIdHelp').hovertip();

@@ -72,9 +72,10 @@ END
 GO
 
 CREATE TABLE Module(
-    Id          NUMERIC IDENTITY NOT NULL PRIMARY KEY,
-    Name        VARCHAR(255) NOT NULL,
-    Description VARCHAR(255) NOT NULL,
+    Id               NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+    Name             VARCHAR(255) NOT NULL,
+    Description      VARCHAR(255) NOT NULL,
+    DesignDiagramURL VARCHAR(255) NULL,
     UNIQUE (Name)
 )
 GO

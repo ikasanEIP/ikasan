@@ -60,6 +60,14 @@ public interface ModuleService
     public Set<Module> getAllModules();
 
     /**
+     * Returns the <code>Module</code> for the given id (or returns null) 
+     * 
+     * @param moduleId Module id to search on 
+     * @return the <code>Module</code> for the given id (or null)
+     */
+    public Module getModule(Long moduleId);
+    
+    /**
      * Returns a Set of <code>Module</code> names, given their ids
      * 
      * @param moduleIds - List of Module ids to find names for

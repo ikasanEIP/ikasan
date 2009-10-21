@@ -137,6 +137,77 @@ public class ConsoleModuleServiceTest
     }
 
     /**
+     * Test that calling getModule with null Id returns a null Module
+     */
+    @Test
+    public void testGetModuleWithNullId()
+    {
+        // Setup
+        final Long moduleId = null;
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).getModule(moduleId);
+                will(returnValue(null));
+            }
+        });
+        // Test
+        Module module = consoleModuleService.getModule(moduleId);
+        // Verify
+        Assert.assertNull(module);
+        context.assertIsSatisfied();
+    }
+
+    /**
+     * Test that calling getModule with non existent Id returns a null Module
+     */
+    @Test
+    public void testGetModuleWithIncorrectId()
+    {
+        // Setup
+        final Long moduleId = new Long(-1);
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).getModule(moduleId);
+                will(returnValue(null));
+            }
+        });
+        // Test
+        Module module = consoleModuleService.getModule(moduleId);
+        // Verify
+        Assert.assertNull(module);
+        context.assertIsSatisfied();
+    }
+
+    /**
+     * Test that calling getModule with non existent Id returns a null Module
+     */
+    @Test
+    public void testGetModule()
+    {
+        // Setup
+        final Long moduleId = new Long(-1);
+        final Module module = context.mock(Module.class);
+        
+        // Expectations
+        context.checking(new Expectations()
+        {
+            {
+                one(moduleDao).getModule(moduleId);
+                will(returnValue(module));
+            }
+        });
+        // Test & Verify
+        Assert.assertNotNull(consoleModuleService.getModule(moduleId));
+        context.assertIsSatisfied();
+    }
+    
+    /**
      * Test that calling findModules with null Ids returns an Empty Set of Module names
      */
     @Test

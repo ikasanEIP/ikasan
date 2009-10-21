@@ -60,6 +60,14 @@ public interface ModuleDao
     public Set<Module> findAllModules();
 
     /**
+     * Returns the <code>Module</code> for the given id (or returns null) 
+     * 
+     * @param moduleId Module id to search on 
+     * @return the <code>Module</code> for the given id (or null)
+     */
+    public Module getModule(Long moduleId);
+    
+    /**
      * Get a list of all Modules matching the Set of ids passed in
      * 
      * @param moduleIds - Ids of the modules 

@@ -118,13 +118,13 @@ public class WiretapServiceImplTest {
 	@Test (expected= IllegalArgumentException.class)
 	public void testFindWiretapEvents_willThrowIllegalArgumentExceptionForNullModuleNames(){
 	    WiretapServiceImpl wiretapServiceImpl = new WiretapServiceImpl(wiretapDao,moduleService);
-	    wiretapServiceImpl.findWiretapEvents(null, null, null, null, null, null, null, 10, 1);
+	    wiretapServiceImpl.findWiretapEvents(null, null, null, null, null, null, null, null, 10, 1);
 	}
     
     @Test (expected= IllegalArgumentException.class)
     public void testFindWiretapEvents_willThrowIllegalArgumentExceptionForEmptyModuleNames(){
         WiretapServiceImpl wiretapServiceImpl = new WiretapServiceImpl(wiretapDao,moduleService);
-        wiretapServiceImpl.findWiretapEvents(new HashSet<String>(), null, null, null, null, null, null, 10, 1);
+        wiretapServiceImpl.findWiretapEvents(new HashSet<String>(), null, null, null, null, null, null, null, 10, 1);
     } 
     
     /**
