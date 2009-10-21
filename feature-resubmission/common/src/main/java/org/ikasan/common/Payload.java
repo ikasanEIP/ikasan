@@ -41,6 +41,7 @@
 package org.ikasan.common;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Payload providing the generic facade for all data to be moved around as a common object.
@@ -65,6 +66,13 @@ public interface Payload extends Cloneable
 	 * @return List<String> attribute names
 	 */
 	public List<String> getAttributeNames();
+	
+	/**
+	 * Return all Payload attributes as a Map
+	 * 
+	 * @return Map of payload attribute values keyed by attribute names
+	 */
+	public Map<String, String> getAttributeMap();
 
     /**
      * Get the content of the payload

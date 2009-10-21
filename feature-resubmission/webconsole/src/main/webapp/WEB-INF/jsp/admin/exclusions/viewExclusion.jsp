@@ -180,6 +180,17 @@
 				<c:out value="${payload.id}" />
 			</td>
 		</tr>
+		
+		<c:forEach items="${payload.attributeMap}" var="attribute" >
+		<tr>
+			<th>
+				Attribute [<c:out value="${attribute.key}" />]
+			</th>
+			<td>
+				<c:out value="${attribute.value}" />
+			</td>
+		</tr>
+		</c:forEach>
 		</table>
 	
 		<h4>Content</h4>

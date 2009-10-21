@@ -231,4 +231,14 @@ public class DefaultPayload implements Payload
         return sb.toString();
     }
 
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#getAttributeMap()
+	 */
+	public Map<String, String> getAttributeMap() {
+		Map<String, String> result = new HashMap<String, String>();
+		result.putAll(attributes);
+		return result;
+	}
+
 }

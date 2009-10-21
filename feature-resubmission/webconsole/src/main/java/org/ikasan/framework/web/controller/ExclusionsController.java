@@ -132,11 +132,6 @@ public class ExclusionsController
     		ModelMap model)
     {
         ExcludedEvent excludedEvent = excludedEventService.getExcludedEvent(eventId);
-//		if (excludedEvent.getEvent()!=null){
-//	        List<ErrorOccurrence> errorOccurrences = errorLoggingService.getErrorOccurrences(excludedEvent.getEvent().getId());
-//	        model.addAttribute("errorOccurrences", errorOccurrences);
-//		}
-		
 		model.addAttribute("excludedEvent", excludedEvent);
         model.addAttribute("searchResultsUrl", searchResultsUrl);
         return "admin/exclusions/viewExclusion";

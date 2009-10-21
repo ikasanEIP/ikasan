@@ -85,6 +85,7 @@ public class RandomWordPayloadProvider implements PayloadProvider{
 		Payload newPayload = payloadFactory.newPayload(""+payloadId, randomWord.getBytes());
 
 		newPayload.setContent(randomWord.getBytes());
+		newPayload.setAttribute("description", "A randomly generated element");
 		result.add(newPayload);
 		return result;
 	}
