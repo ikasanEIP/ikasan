@@ -74,6 +74,12 @@ public class WiretapSearchCriteriaTest
 
         wiretapSearchCriteria.setModules(new LinkedHashSet<Long>());
         assertTrue(wiretapSearchCriteria.getModules().isEmpty());
+
+        // Module Flow
+        wiretapSearchCriteria.setModuleFlow("moduleFlow");
+        assertEquals("moduleFlow", wiretapSearchCriteria.getModuleFlow());
+        wiretapSearchCriteria.setModuleFlow("");
+        assertNull(wiretapSearchCriteria.getModuleFlow());
         
         // Component Name
         wiretapSearchCriteria.setComponentName("componentName");

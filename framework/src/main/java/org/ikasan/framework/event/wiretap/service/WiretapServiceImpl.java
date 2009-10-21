@@ -93,6 +93,7 @@ public class WiretapServiceImpl implements WiretapService
      * @param orderAscending - Ascending flag
      * @param moduleNames - Set of names of modules to include in search - must
      *            contain at least one moduleName
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -105,7 +106,7 @@ public class WiretapServiceImpl implements WiretapService
      *         of the search
      */
     public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
-            String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
+            String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent)
     {
         if (pageNo < 0)
         {
@@ -115,7 +116,7 @@ public class WiretapServiceImpl implements WiretapService
         {
             throw new IllegalArgumentException("pageSize must be > 0");
         }
-        return wiretapDao.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, componentName, eventId, payloadId, fromDate, untilDate,
+        return wiretapDao.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate,
             payloadContent);
     }
 
@@ -128,6 +129,7 @@ public class WiretapServiceImpl implements WiretapService
      * @param pageSize - how many results to return in the result
      * @param moduleNames - Set of names of modules to include in search - must
      *            contain at least one moduleName
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -139,14 +141,14 @@ public class WiretapServiceImpl implements WiretapService
      * @return List of <code>WiretapEventHeader</code> representing the result
      *         of the search
      */
-    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String componentName, String eventId, String payloadId, Date fromDate,
+    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate,
             Date untilDate, String payloadContent, int pageSize, int pageNo)
     {
         if (moduleNames == null || moduleNames.isEmpty())
         {
             throw new IllegalArgumentException("moduleNames must be nonEmpty");
         }
-        return wiretapDao.findPaging(moduleNames, componentName, eventId, payloadId, fromDate, untilDate, payloadContent, pageSize, (pageSize * (pageNo - 1)));
+        return wiretapDao.findPaging(moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate, payloadContent, pageSize, (pageSize * (pageNo - 1)));
     }
 
     /**

@@ -73,6 +73,14 @@ public class ConsoleModuleService implements ModuleService
     }
 
     /**
+     * @see org.ikasan.console.module.service.ModuleService#getModule(Long)
+     */
+    public Module getModule(Long moduleId)
+    {
+        return this.moduleDao.getModule(moduleId);
+    }
+    
+    /**
      * @see org.ikasan.console.module.service.ModuleService#getModuleNames(Set)
      */
     public Set<String> getModuleNames(Set<Long> moduleIds)

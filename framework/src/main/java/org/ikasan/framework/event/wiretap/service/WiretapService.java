@@ -67,6 +67,7 @@ public interface WiretapService
      * 
      * @param moduleNames - Set of names of modules to include in search - must
      *            contain at least one moduleName
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -80,7 +81,7 @@ public interface WiretapService
      * @return List of <code>WiretapEventHeader</code> representing the result
      *         of the search
      */
-    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String componentName, String eventId, String payloadId, Date fromDate,
+    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate,
             Date untilDate, String payloadContent, int pageSize, int pageNo);
 
     /**
@@ -92,6 +93,7 @@ public interface WiretapService
      * @param orderAscending - Ascending flag
      * @param moduleNames - Set of names of modules to include in search - must
      *            contain at least one moduleName
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
      * @param eventId - The Event Id
      * @param payloadId - The Payload Id
@@ -104,7 +106,7 @@ public interface WiretapService
      *         of the search
      */
     public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
-            String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
+            String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
 
     /**
      * Retrieve a specific <code>WiretapEvent</code> by Id

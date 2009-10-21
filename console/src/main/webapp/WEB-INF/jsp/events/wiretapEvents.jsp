@@ -62,20 +62,20 @@
 
         <!-- The Search criteria for the user to search with -->
         <fieldset>
-            <legend><a id="showHideSearchForm" href="">[-]</a> <fmt:message key="wiretap_events_search"/> <span title="<fmt:message key="wiretap_event_search_form_help"/>" id="searchFormHelp">(?)</span></legend>
+            <legend><a id="showHideSearchForm" href="">[-]</a> <fmt:message key="wiretap_events_search"/> <span title="<fmt:message key="wiretap_events_search_form_help"/>" id="searchFormHelp">(?)</span></legend>
             <div id="searchFields">
             <input name="pointToPointFlowProfileSearch" id="pointToPointFlowProfileSearch" type="hidden" value="<c:out value="${pointToPointFlowProfileSearch}"/>" />
-            <a id="toggleSearchMode" href=""><fmt:message key="wiretap_events_search_toggle_search"/></a>&nbsp;<span title="<fmt:message key="wiretap_event_toggle_search_mode_help"/>" id="toggleSearchModeHelp">(?)</span>
+            <a id="toggleSearchMode" href=""><fmt:message key="wiretap_events_search_toggle_search"/></a>&nbsp;<span title="<fmt:message key="wiretap_events_toggle_search_mode_help"/>" id="toggleSearchModeHelp">(?)</span>
             <ol>
                 <li id="pointToPointFlowProfileCheckboxes">
-                    <label for="pointToPointFlowProfileIds"><fmt:message key="wiretap_events_pointToPointFlowProfile"/> <span title="<fmt:message key="wiretap_event_flow_ids_help"/>" id="pointToPointFlowProfileIdsHelp">(?)</span></label>
+                    <label for="pointToPointFlowProfileIds"><fmt:message key="wiretap_events_pointToPointFlowProfile"/> <span title="<fmt:message key="wiretap_events_flow_ids_help"/>" id="pointToPointFlowProfileIdsHelp">(?)</span></label>
                     <!-- PointToPointProfile Checkboxes -->
                     <div id="eventSearchPointToPointFlowProfileCheckboxes" class="multiSelectCheckboxes">
                         <input type="checkbox" id="pointToPointFlowProfileSelectAll" name="pointToPointFlowProfileSelectAll" <c:if test="${pointToPointFlowProfileSelectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
                         <table class="searchTable">
                             <thead>
                                 <tr>
-                                    <td><fmt:message key="wiretap_event_pointToPointFlowProfile_name"/></td>
+                                    <td><fmt:message key="wiretap_events_pointToPointFlowProfile_name"/></td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,14 +91,14 @@
                                                 <%-- If its the first element is null then list the 2nd item --%>
                                                 <c:if test="${pointToPointFlow.fromModule == null}">
                                                     <c:if test="${pointToPointFlow.toModule != null}">
-                                                        <c:out value="${pointToPointFlow.toModule.name}" />
+                                                        <a href="viewModuleDesign.htm?moduleId=<c:out value="${pointToPointFlow.toModule.id}" />" class="new-window"><c:out value="${pointToPointFlow.toModule.name}" /></a>
                                                     </c:if>
                                                 </c:if>
                                                 <%-- If the first element is not null and the 2nd element is not null then list the 2nd item (prefixed with an arrow) --%>
                                                 <c:if test="${pointToPointFlow.fromModule != null}">
                                                     <%-- If its the middle item then list its 2nd element --%>
                                                     <c:if test="${pointToPointFlow.toModule != null}">
-                                                        --&gt; <c:out value="${pointToPointFlow.toModule.name}" />
+                                                        --&gt; <a href="viewModuleDesign.htm?moduleId=<c:out value="${pointToPointFlow.toModule.id}" />" class="new-window"><c:out value="${pointToPointFlow.toModule.name}" /></a>
                                                     </c:if>
                                                 </c:if>
                                                 <%-- We don't care about other cases for display purposes --%>
@@ -113,20 +113,20 @@
 
                 <!-- Module Checkboxes -->
                 <li id="moduleCheckboxes">
-                    <label for="moduleIds"><fmt:message key="wiretap_events_module"/> <span title="<fmt:message key="wiretap_event_module_ids_help"/>" id="moduleIdsHelp">(?)</span></label>
+                    <label for="moduleIds"><fmt:message key="wiretap_events_module"/> <span title="<fmt:message key="wiretap_events_module_ids_help"/>" id="moduleIdsHelp">(?)</span></label>
                     <div id="eventSearchModuleCheckboxes" class="multiSelectCheckboxes">            
                         <input type="checkbox" id="moduleSelectAll" name="moduleSelectAll" <c:if test="${moduleSelectAll == 'true'}">checked="checked"</c:if> onclick="checkUncheckAll(this);"/> (de)select all
                         <table class="searchTable">
                             <thead>
                                 <tr>
-                                    <td><fmt:message key="wiretap_event_module_name"/></td>
-                                    <td><fmt:message key="wiretap_event_module_description"/></td>
+                                    <td><fmt:message key="wiretap_events_module_name"/></td>
+                                    <td><fmt:message key="wiretap_events_module_description"/></td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="${modules}" var="module">
                                     <tr>
-                                        <td class="border" valign="top"><input name="moduleIds" type="checkbox" value="${module.id}" <c:forEach items="${searchParams['moduleIds']}" var="moduleId"><c:if test="${module.id == moduleId}">checked="checked"</c:if></c:forEach> /> <c:out value="${module.name}"/></td>
+                                        <td class="border" valign="top"><input name="moduleIds" type="checkbox" value="${module.id}" <c:forEach items="${searchParams['moduleIds']}" var="moduleId"><c:if test="${module.id == moduleId}">checked="checked"</c:if></c:forEach> /> <a href="viewModuleDesign.htm?moduleId=<c:out value="${module.id}" />" class="new-window"> <c:out value="${module.name}"/></a></td>
                                         <td class="border" valign="top"><c:out value="${module.description}" escapeXml="false" /></td>
                                     </tr>
                                 </c:forEach>
@@ -136,33 +136,37 @@
                 </li>
 
                 <li>
-                    <label for="componentName"><fmt:message key="wiretap_events_component"/> <span title="<fmt:message key="wiretap_event_component_name_help"/>" id="componentNameHelp">(?)</span></label>
+                    <label for="moduleFlow"><fmt:message key="wiretap_events_module_flow"/> <span title="<fmt:message key="wiretap_events_module_flow_help"/>" id="moduleFlowHelp">(?)</span></label>
+                    <input id="moduleFlow" type="text" name="moduleFlow" value="${searchParams["moduleFlow"]}"/>
+                </li>
+                <li>
+                    <label for="componentName"><fmt:message key="wiretap_events_component"/> <span title="<fmt:message key="wiretap_events_component_name_help"/>" id="componentNameHelp">(?)</span></label>
                     <input id="componentName" type="text" name="componentName" value="${searchParams["componentName"]}"/>
                 </li>
                 <li>
-                    <label for="eventId"><fmt:message key="wiretap_events_event_id"/> <span title="<fmt:message key="wiretap_event_event_id_help"/>" id="eventIdHelp">(?)</span></label>
+                    <label for="eventId"><fmt:message key="wiretap_events_event_id"/> <span title="<fmt:message key="wiretap_events_event_id_help"/>" id="eventIdHelp">(?)</span></label>
                     <input id="eventId" type="text" name="eventId" value="${searchParams["eventId"]}"/>
                 </li>
                 <li>
-                    <label for="payloadId"><fmt:message key="wiretap_events_payload_id"/> <span title="<fmt:message key="wiretap_event_payload_id_help"/>" id="payloadIdHelp">(?)</span></label>
+                    <label for="payloadId"><fmt:message key="wiretap_events_payload_id"/> <span title="<fmt:message key="wiretap_events_payload_id_help"/>" id="payloadIdHelp">(?)</span></label>
                     <input id="payloadId" type="text" name="payloadId" value="${searchParams["payloadId"]}"/>
                 </li>
                 <li>
-                    <label for="fromDateString"><fmt:message key="wiretap_events_from"/> <span title="<fmt:message key="wiretap_event_from_date_help"/>" id="fromDateStringHelp">(?)</span></label>
+                    <label for="fromDateString"><fmt:message key="wiretap_events_from"/> <span title="<fmt:message key="wiretap_events_from_date_help"/>" id="fromDateStringHelp">(?)</span></label>
                     <input id="fromDateString" type="text" name="fromDateString" size="10" value="${searchParams["fromDateString"]}"/>
                     <input id="fromTimeString" type="text" name="fromTimeString" size="8" value="${searchParams["fromTimeString"]}"/>
                 </li>
                 <li>
-                    <label for="untilDateString"><fmt:message key="wiretap_events_until"/> <span title="<fmt:message key="wiretap_event_to_date_help"/>" id="toDateStringHelp">(?)</span></label>
+                    <label for="untilDateString"><fmt:message key="wiretap_events_until"/> <span title="<fmt:message key="wiretap_events_to_date_help"/>" id="toDateStringHelp">(?)</span></label>
                     <input id="untilDateString" type="text" name="untilDateString" size="10" value="${searchParams["untilDateString"]}"/>
                     <input id="untilTimeString" type="text" name="untilTimeString" size="8" value="${searchParams["untilTimeString"]}"/>
                 </li>
                 <li>
-                    <label for="payloadContent"><fmt:message key="wiretap_events_payload_content"/> <span title="<fmt:message key="wiretap_event_payload_content_help"/>" id="payloadContentHelp">(?)</span></label>
+                    <label for="payloadContent"><fmt:message key="wiretap_events_payload_content"/> <span title="<fmt:message key="wiretap_events_payload_content_help"/>" id="payloadContentHelp">(?)</span></label>
                     <input id="payloadContent" type="text" name="payloadContent" value="${searchParams["payloadContent"]}" />
                 </li>
                 <li>
-                    <label for="orderBy"><fmt:message key="wiretap_events_order_by"/> <span title="<fmt:message key="wiretap_event_order_by_help"/>" id="orderByHelp">(?)</span></label>
+                    <label for="orderBy"><fmt:message key="wiretap_events_order_by"/> <span title="<fmt:message key="wiretap_events_order_by_help"/>" id="orderByHelp">(?)</span></label>
                     <select id="orderBy" name="orderBy">
                         <option value="id" <c:if test="${orderBy=='id'}">selected="selected"</c:if>>Id</option>
                         <option value="moduleName" <c:if test="${orderBy=='moduleName'}">selected="selected"</c:if>>Module</option>                 
@@ -172,7 +176,7 @@
                         <option value="payloadId" <c:if test="${orderBy=='payloadId'}">selected="selected"</c:if>>Payload Id</option>
                         <option value="created" <c:if test="${orderBy=='created'}">selected="selected"</c:if>>Created Date/Time</option>
                     </select>
-                    <label for="orderAsc"><fmt:message key="wiretap_events_order_ascending"/> <span title="<fmt:message key="wiretap_event_order_asc_help"/>" id="orderAscHelp">(?)</span></label>
+                    <label for="orderAsc"><fmt:message key="wiretap_events_order_ascending"/> <span title="<fmt:message key="wiretap_events_order_asc_help"/>" id="orderAscHelp">(?)</span></label>
                     <input id="orderAsc" type="checkbox" name="orderAsc" <c:if test="${orderAsc=='true'}">checked="checked"</c:if>/>
                 </li>
             </ol>

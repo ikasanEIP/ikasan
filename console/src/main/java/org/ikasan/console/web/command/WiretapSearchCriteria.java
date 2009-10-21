@@ -73,6 +73,9 @@ public class WiretapSearchCriteria implements Serializable
     /** Set of module ids whose wiretapped events we're going to search for */
     private Set<Long> moduleIds;
 
+    /** Name of Flow internal to the Module Flow to restrict by */
+    private String moduleFlow;
+    
     /** Name of component to restrict by */
     private String componentName;
 
@@ -123,6 +126,16 @@ public class WiretapSearchCriteria implements Serializable
     }
 
     /**
+     * Get the module flow
+     * 
+     * @return moule flow
+     */
+    public String getModuleFlow()
+    {
+        return this.moduleFlow;
+    }
+    
+    /**
      * Get the component name
      * 
      * @return component name
@@ -162,6 +175,16 @@ public class WiretapSearchCriteria implements Serializable
         return this.payloadId;
     }
 
+    /**
+     * Set the module flow
+     * 
+     * @param moduleFlow - module flow to set
+     */
+    public void setModuleFlow(String moduleFlow)
+    {
+        this.moduleFlow = MasterDetailControllerUtil.nullForEmpty(moduleFlow);
+    }
+    
     /**
      * Set the component name
      * 
