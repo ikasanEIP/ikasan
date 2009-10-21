@@ -51,8 +51,19 @@
 
   <xsl:template match="/">
 	<businessError>
-		<errorMessage><xsl:value-of select="errorOccurrence/errorDetail"/></errorMessage>
+		<errorMessage>
+			An error has occurred on Ikasan
+			
+			- at the following location:
+			<xsl:value-of select="errorOccurrence/moduleName"/>.<xsl:value-of select="errorOccurrence/flowName"/>.<xsl:value-of select="errorOccurrence/flowElementName"/>
+			
+			- at the following time:
+			<xsl:value-of select="errorOccurrence/logTime"/>
+		
+			- error detail follows.....
+		<xsl:value-of select="errorOccurrence/errorDetail"/></errorMessage>
 		<originatingSystem>ikasan</originatingSystem>
+		<externalReference><xsl:value-of select="errorOccurrence/url"/></externalReference>
 	</businessError>
 
   </xsl:template>

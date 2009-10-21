@@ -1,7 +1,6 @@
 <#include "top.ftl">
 
 <div id="messageDetailPage" class="pageBody">
-<div id="errorsPage" class="pageBody">
 <h1>Error Message</h1>
 
 <p id="externalReference" >
@@ -14,7 +13,9 @@
 </p>
 <p class="keyLabel">Message Detail</p>
 <p id="errorMessage">
-	${error.errorMessage!"none"}
+	<#list errorDetailLines as errorDetailLine>
+		${errorDetailLine}</br>
+	</#list>
 </p>
 
 <p>

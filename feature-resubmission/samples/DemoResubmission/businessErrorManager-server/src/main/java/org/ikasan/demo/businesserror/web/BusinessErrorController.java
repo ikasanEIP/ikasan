@@ -40,7 +40,9 @@
  */
 package org.ikasan.demo.businesserror.web;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.demo.businesserror.model.BusinessError;
@@ -79,10 +81,21 @@ public class BusinessErrorController {
     public String viewError(@RequestParam(ERROR_ID_PARAMETER) Long errorId, ModelMap modelMap){
 
     	BusinessError businessError = errorManagerService.getBusinessError(errorId);
+    	modelMap.addAttribute("errorDetailLines", getLines(businessError.getErrorMessage()));
 		modelMap.addAttribute("error", businessError);
     	return "error";
     }
 	
+	private List<String> getLines(String message) {
+		ArrayList<String> result = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(message, "\n");
+		while (st.hasMoreTokens()){
+			result.add(st.nextToken());
+		}
+		
+		return result;
+	}
+
 	@RequestMapping("/requestResubmission.htm")
     public String requestResubmission(@RequestParam(ERROR_ID_PARAMETER) Long errorId){
     	errorManagerService.requestResubmission(errorId);

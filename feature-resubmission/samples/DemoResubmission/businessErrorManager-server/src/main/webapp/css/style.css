@@ -17,7 +17,7 @@ body {
 }
 
 .pageBody{
-	
+	margin:20px;
 }
 
 .pageBody h1{
@@ -27,7 +27,7 @@ body {
 
 
 .keyLabel{
-	
+	font-weight:bold;
 }
 
 
@@ -57,11 +57,14 @@ body {
 }
 
 #errorMessage {
+	background:#E9E9A9;
 	border:1px solid #E1E1E1;
+	font-size:12px;
 	overflow:auto;
 	padding:0 5px;
 }
 
 table#messages{
-
+	text-align:justify;
+	width:100%;
 }
