@@ -176,7 +176,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
 
         //expectations for handleNullAction
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
 
         // invoke initiator
         sdi.invoke();
@@ -209,7 +209,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         this.setEventExpectations();
         
         //for a successful execution we will be handling a null action
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
 
         // invoke initiator
         sdi.invoke();
@@ -247,7 +247,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         this.setMultipleEventExpectations(numOfEvents);       
         
         //for a successful execution we will be handling a null action
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
         
         // invoke initiator
         sdi.invoke();
@@ -438,7 +438,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setEventExpectations();
 
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
     
         // invoke initiator
         sdi.invoke();
@@ -482,7 +482,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setMultipleEventExpectations(numOfEvents);
 
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
         
         // invoke initiator
         sdi.invoke();
@@ -516,7 +516,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         this.setEventExpectations();
         
         //SKIP and continue are handle together
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
         
         // invoke initiator
         sdi.invoke();
@@ -560,7 +560,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         this.setMultipleEventExpectations(numOfEvents);
         
         //SKIP and continue are handle together
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
     
         // invoke initiator
         sdi.invoke();
@@ -595,7 +595,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         this.setEventExpectations();
 
 
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(sdi, false);
 
         // invoke initiator
         sdi.invoke();
@@ -634,7 +634,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setMultipleEventExpectations(numOfEvents);
         
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(sdi, false);
 
         // invoke initiator
         sdi.invoke();
@@ -668,7 +668,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         
@@ -694,7 +694,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         });     
         setEventExpectations();
-        setExpectationsForHandleRetryAction(true);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, true);
         
 
         // invoke initiator on retry (recovering)
@@ -736,7 +736,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
 
   
         Assert.assertNull("Retry count should be null initially", scheduledDrivenInitiator.getRetryCount());
@@ -767,7 +767,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForHandleRetryAction(true);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, true);
         
 
         
@@ -804,7 +804,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         // invoke initiator
@@ -865,7 +865,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         // invoke initiator
@@ -926,7 +926,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         // invoke initiator
@@ -945,7 +945,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setEventExpectations();
-        setExpectationsForResume(true);       
+        setExpectationsForResume(scheduledDrivenInitiator, true);       
         
         // invoke initiator on retry (recovering)
         scheduledDrivenInitiator.invoke();
@@ -984,7 +984,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         // invoke initiator
@@ -1010,7 +1010,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForResume(true);       
+        setExpectationsForResume(scheduledDrivenInitiator, true);       
         
         // invoke initiator on retry (recovering)
         scheduledDrivenInitiator.invoke();
@@ -1041,7 +1041,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         // invoke initiator
@@ -1060,7 +1060,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setEventExpectations();
-        setExpectationsForResume(true);       
+        setExpectationsForResume(scheduledDrivenInitiator, true);       
         
         // invoke initiator on retry (recovering)
         scheduledDrivenInitiator.invoke();
@@ -1098,7 +1098,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
         
         
         // invoke initiator
@@ -1125,7 +1125,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
         setMultipleEventExpectations(numOfEvents);
-        setExpectationsForResume(true);       
+        setExpectationsForResume(scheduledDrivenInitiator, true);       
         
         // invoke initiator on retry (recovering)
         scheduledDrivenInitiator.invoke();       
@@ -1352,7 +1352,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
     }
     
-    private void setExpectationsForResume(boolean isRecovering)
+    private void setExpectationsForResume(final QuartzStatefulScheduledDrivenInitiator sdi, boolean isRecovering)
     {
         //expectations for handleNullAction
         setExpectationsForIsRecovering(isRecovering);
@@ -1365,7 +1365,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 classMockery.checking(new Expectations()
                 {
                     {
-                exactly(1).of(scheduler).resumeJobGroup(with(equal(moduleName+"-"+initiatorName)));
+                exactly(1).of(scheduler).resumeJob(with(equal(sdi.getInitiatorJobName())), with(equal(moduleName+"-"+initiatorName)));
                     }
                 });
             }
@@ -1392,18 +1392,18 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         
     }
     
-    private void setExpectationsForHandleRetryAction(boolean isRecovering)
+    private void setExpectationsForHandleRetryAction(QuartzStatefulScheduledDrivenInitiator sdi, boolean isRecovering)
     {
         //expectations for handleRetryAction
         setExpectationsForIsRecovering(isRecovering);
         if (!isRecovering){
-            setStartRetryCycleExpectations();
+            setStartRetryCycleExpectations(sdi);
             setNotifyMonitorListenerExpectations();
         }
         
     }
     
-    private void setStartRetryCycleExpectations()
+    private void setStartRetryCycleExpectations(final QuartzStatefulScheduledDrivenInitiator sdi)
     {
         // set expectations
         try
@@ -1411,8 +1411,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             classMockery.checking(new Expectations()
             {
                 {
-                    // we must stop the scheduled triggers on this job on group name            
-                    one(scheduler).pauseJobGroup(with(equal(moduleName+"-"+initiatorName))); 
+                    // we must stop the scheduled triggers on this job             
+                    one(scheduler).pauseJob(with(equal(sdi.getInitiatorJobName())), with(equal(moduleName+"-"+initiatorName))); 
                      
                     // and then start retry trigger
                     //TODO - can we match the retry trigger a little tighter                    
