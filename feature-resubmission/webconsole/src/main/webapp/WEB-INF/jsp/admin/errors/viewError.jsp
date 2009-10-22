@@ -106,7 +106,7 @@
 		</th>
 		<td>
 			<fmt:formatDate value="${error.logTime}"
-                                pattern="dd/MM/yyyy h:mma"/>
+                                pattern="dd/MM/yyyy h:mm:ss a"/>
 		</td>
 	</tr>
 	<tr>
@@ -115,7 +115,7 @@
 		</th>
 		<td>
 			<fmt:formatDate value="${error.expiry}"
-                                pattern="dd/MM/yyyy h:mma"/>
+                                pattern="dd/MM/yyyy h:mm:ss a"/>
 		</td>
 	</tr>
 	<tr>
@@ -143,7 +143,7 @@
 
 
 		<h3>Error Detail</h3>
-		<p id="errorDetail" class="unformattable"><c:out value="${error.errorDetail}" /></p>
+		<p id="errorDetail" class="unformattable data"><c:out value="${error.errorDetail}" /></p>
 
 
 

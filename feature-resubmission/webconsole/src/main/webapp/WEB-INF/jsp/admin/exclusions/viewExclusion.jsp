@@ -83,7 +83,7 @@
 		</th>
 		<td>
 			<fmt:formatDate value="${excludedEvent.exclusionTime}"
-                                pattern="dd/MM/yyyy h:mma"/>
+                                pattern="dd/MM/yyyy h:mm:ss a"/>
 		</td>
 	</tr>
 	<tr>
@@ -132,78 +132,68 @@
     </c:if>
 
 
-<h2>Event</h2>
-<div class="event">
-
-<table id="excludedEventEvent" class="keyValueTable">	
-	<tr>
-		<th>
-			Event Id
-		</th>
-		<td>
-			<c:out value="${excludedEvent.event.id}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Priority
-		</th>
-		<td>
-			<c:out value="${excludedEvent.event.priority}" />
-		</td>
-	</tr>
-	<tr>
-		<th>
-			Timestamp
-		</th>
-		<td>
-			<c:out value="${excludedEvent.event.timestamp}" />
-		</td>
-	</tr>
-
-	
-	</table>
-	
-
-	<c:forEach items="${excludedEvent.event.payloads}" var="payload" varStatus="status">
-	<div id="payload">
-		<jsp:useBean id="payload" type="org.ikasan.common.Payload" />  
-		<h3 id="enumerator">Payload(<c:out value="${status.count}" />)</h3>
-		
-		<table id="excludedEventPayload" class="keyValueTable">
-		
+		<h3>Event</h3>
+<div id="eventDump">
+		<table id="currentEventDetails" class="keyValueTable">
 		<tr>
 			<th>
-				Payload Id
+				Event Id
 			</th>
 			<td>
-				<c:out value="${payload.id}" />
+				<c:out value="${excludedEvent.event.id}" />
 			</td>
 		</tr>
-		
-		<c:forEach items="${payload.attributeMap}" var="attribute" >
 		<tr>
 			<th>
-				Attribute [<c:out value="${attribute.key}" />]
+				Priority
 			</th>
 			<td>
-				<c:out value="${attribute.value}" />
+				<c:out value="${excludedEvent.event.priority}" />
 			</td>
 		</tr>
-		</c:forEach>
+		<tr>
+			<th>
+				Timestamp
+			</th>
+			<td>
+				<c:out value="${excludedEvent.event.timestamp}" />
+			</td>
+		</tr>
 		</table>
-	
-		<h4>Content</h4>
-		<p id="payloadContent" class="unformattable">
-		<% pageContext.setAttribute("displayableContent", new String(payload.getContent())); %>
-				<c:out value="${displayableContent}" />
-		</p>
-			
-	</div>
-	</c:forEach>
-
-	
-</div> <!-- end div event -->
+		<c:forEach items="${excludedEvent.event.payloads}" var="payload" varStatus="status">
+		<jsp:useBean id="payload" type="org.ikasan.common.Payload" />
+		<h4 id="enumerator">Payload(<c:out value="${status.count}" />)</h4>  
+			<table id="currentEventPayloadDetails" class="keyValueTable">
+			<tr>
+				<th>
+					Payload Id
+				</th>
+				<td>
+					<c:out value="${payload.id}" />
+				</td>
+			</tr>
+			<c:forEach items="${payload.attributeMap}" var="attribute" >
+			<tr>
+				<th>
+					Attribute [<c:out value="${attribute.key}" />]
+				</th>
+				<td>
+					<c:out value="${attribute.value}" />
+				</td>
+			</tr>
+			</c:forEach>
+			<tr>
+				<th>
+					Content
+				</th>
+				<td class="unformattable data">
+					<% pageContext.setAttribute("displayableContent", new String(payload.getContent())); %>
+					<c:out value="${displayableContent}" />
+				</td>
+			</tr>
+		</table>
+		</c:forEach>
+	</div><!-- end eventDump -->
 	
 	
 	

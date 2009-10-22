@@ -246,6 +246,9 @@ form.fancydataform fieldset li {
     overflow: auto;
     padding: 0 5px;
 }
+.data {
+    background: #FFFFF0;
+}
 /* 
  #######################
  #  specific elements  #
@@ -324,7 +327,10 @@ form.fancydataform fieldset li {
 }
 
 
-
+#eventDump{
+	border:1px solid #E1E1E1;
+	padding:10px;
+}
 
 
 /* search results elements */
@@ -393,5 +399,5 @@ form.fancydataform fieldset li {
 }
 
 #errorDetail {
-	background: #FFFFF0;
+	
 }
