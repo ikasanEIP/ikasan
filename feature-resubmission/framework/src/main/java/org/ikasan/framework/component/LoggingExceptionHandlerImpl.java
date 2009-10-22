@@ -104,7 +104,7 @@ public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
     /* (non-Javadoc)
      * @see org.ikasan.framework.component.IkasanExceptionHandler#invoke(java.lang.String, java.lang.Throwable)
      */
-    public IkasanExceptionAction invoke(String componentName, Throwable throwable)
+    public IkasanExceptionAction handleThrowable(String componentName, Throwable throwable)
     {
         logger.error("Throwable caught, componentName ["+componentName+"], throwable message["+throwable.getMessage()+"], stacktrace follows:");
         logErrorThrowable(throwable);

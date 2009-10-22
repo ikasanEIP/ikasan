@@ -255,7 +255,7 @@ public class JmsMessageDrivenInitiatorImplTest
             	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
                 will(throwException(throwable));
             	
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
             	will(returnValue(rollbackStopAction));
                 
                 
@@ -363,7 +363,7 @@ public class JmsMessageDrivenInitiatorImplTest
                 
                 one(eventFromTextMessage).getId();will(returnValue("eventId"));
             	
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackStopAction));
             	
             	
@@ -413,7 +413,7 @@ public class JmsMessageDrivenInitiatorImplTest
                 will(throwException(throwable));
                 
                 //exceptionhandler says RETRY
-                one(exceptionHandler).invoke(with(any(String.class)), (Event) with(equal(eventFromTextMessage)), (Throwable) with(equal(throwable)));
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable) with(equal(throwable)));
                 inSequence(sequence);
                 will(returnValue(retryAction));
                 
@@ -526,7 +526,7 @@ public class JmsMessageDrivenInitiatorImplTest
                 allowing(eventFromTextMessage).getId();will(returnValue("eventId"));
                 
                 //exception handler says RETRY maximum of zero times (slightly nonsensical, but for arguments sake!)
-                one(exceptionHandler).invoke(with(any(String.class)), (Event)with(equal(eventFromTextMessage)), (Throwable)with(equal(throwable)));
+                one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));
                 inSequence(sequence);
                 will(returnValue(retryZeroAction));
                 

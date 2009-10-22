@@ -168,7 +168,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
         	//tell the error service
     		logError(null, eventSourcingThrowable, name);
 
-        	handleAction(exceptionHandler.invoke(name, eventSourcingThrowable),null);
+        	handleAction(exceptionHandler.handleThrowable(name, eventSourcingThrowable),null);
         }
         invokeFlow(event);
     }

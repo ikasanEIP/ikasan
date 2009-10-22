@@ -263,7 +263,7 @@ public abstract class AbstractInitiator implements Initiator
 				}catch (Throwable throwable){
 					String lastComponentName = flowInvocationContext.getLastComponentName();
 					logError(event, throwable, lastComponentName);
-					exceptionAction = exceptionHandler.invoke(lastComponentName, event, throwable);
+					exceptionAction = exceptionHandler.handleThrowable(lastComponentName, throwable);
 					break;
 				}
 	        }

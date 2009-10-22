@@ -271,7 +271,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
                 
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));
+                one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackStopAction));
             }
         });
@@ -324,7 +324,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
                 
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackRetryAction));
             }
         });
@@ -376,7 +376,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
                 
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackRetryAction));
 
             }
@@ -405,7 +405,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
                 
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackRetryAction));
             }
 
@@ -445,7 +445,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
                 
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackRetryAction));
             }
         });
@@ -467,7 +467,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
                 
-                one(exceptionHandler).invoke(with(any(String.class)), with(any(Event.class)), (Throwable)with(equal(throwable)));                
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
                 will(returnValue(rollbackStopAction));
             }
         });

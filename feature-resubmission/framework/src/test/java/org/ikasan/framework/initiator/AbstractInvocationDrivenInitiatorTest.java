@@ -156,7 +156,7 @@ public class AbstractInvocationDrivenInitiatorTest {
                 inSequence(sequence);
                 
                 //exceptionHandlerCalled
-                one(exceptionHandler).invoke(initiatorName, throwable);
+                one(exceptionHandler).handleThrowable(initiatorName, throwable);
                 inSequence(sequence);
                 will(returnValue(exceptionAction));
             }

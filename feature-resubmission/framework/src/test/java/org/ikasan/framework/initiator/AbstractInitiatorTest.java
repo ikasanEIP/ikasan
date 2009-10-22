@@ -666,7 +666,7 @@ public class AbstractInitiatorTest
                 inSequence(sequence);
                 
                 //calls off to the exceptionHandler which returns an exceptionAction
-                one(exceptionHandler).invoke(componentName,event,throwable);
+                one(exceptionHandler).handleThrowable(componentName,throwable);
                 will(returnValue(exceptionAction));
                 inSequence(sequence);
             }

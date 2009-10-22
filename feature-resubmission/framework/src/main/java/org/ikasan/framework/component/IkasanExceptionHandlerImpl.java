@@ -41,7 +41,6 @@
 package org.ikasan.framework.component;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionResolution;
 import org.ikasan.framework.exception.IkasanExceptionResolutionImpl;
@@ -66,11 +65,7 @@ public class IkasanExceptionHandlerImpl implements IkasanExceptionHandler
     /** Exception resolver configuration for this module */
     private IkasanExceptionResolver exceptionResolver;
 
-    /** Configuration for the user steps for exception handling */
-    private UserExceptionHandler userExceptionHandler;
 
-    /** Listener object for handling Exceptions thrown during UserExceptionHandling */
-    private UserExceptionHandlingExceptionListener userExceptionHandlingExceptionListener;
 
     /**
      * Constructor
@@ -79,19 +74,6 @@ public class IkasanExceptionHandlerImpl implements IkasanExceptionHandler
      * @param exceptionResolver - must not be 'null'
      */
     public IkasanExceptionHandlerImpl(final String moduleName, final IkasanExceptionResolver exceptionResolver)
-    {
-        this(moduleName, exceptionResolver, (UserExceptionHandler) null);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param moduleName - must be a value other than 'empty' or 'null'
-     * @param exceptionResolver - must not be 'null'
-     * @param userExceptionHandler - may be null
-     */
-    public IkasanExceptionHandlerImpl(final String moduleName, final IkasanExceptionResolver exceptionResolver,
-            UserExceptionHandler userExceptionHandler)
     {
         this.moduleName = moduleName;
         if (this.moduleName == null || this.moduleName.length() == 0)
@@ -105,8 +87,9 @@ public class IkasanExceptionHandlerImpl implements IkasanExceptionHandler
             throw new IllegalArgumentException("Cannot instantiate IkasanExceptionResolver with moduleName ["
                     + this.exceptionResolver + "]!");
         }
-        this.userExceptionHandler = userExceptionHandler;
     }
+
+
 
     /**
      * Invoke the exception handling
@@ -115,20 +98,7 @@ public class IkasanExceptionHandlerImpl implements IkasanExceptionHandler
      * @param thrown The exception that was thrown
      * @return IkasanExceptionAction
      */
-    public IkasanExceptionAction invoke(final String componentName, final Throwable thrown)
-    {
-        return this.invoke(componentName, (Event) null, thrown);
-    }
-
-    /**
-     * Invoke the exception handling
-     * 
-     * @param componentName The name of the component
-     * @param event The event
-     * @param thrown The exception that was thrown
-     * @return IkasanExceptionAction
-     */
-    public IkasanExceptionAction invoke(final String componentName, Event event, Throwable thrown)
+    public IkasanExceptionAction handleThrowable(final String componentName, Throwable thrown)
     {
         IkasanExceptionResolution frameworkResolution = null;
         try
@@ -142,61 +112,9 @@ public class IkasanExceptionHandlerImpl implements IkasanExceptionHandler
             frameworkResolution = IkasanExceptionResolutionImpl.getEmergencyResolution();
         }
         // invoke any user defined exception handling
-        invokeUserExceptionHandling(componentName, frameworkResolution, thrown, event);
         logger.info("handled throwable [" + thrown + "] componentName [" + componentName + "] returning action ["
                 + frameworkResolution.getAction().getType().toString() + "]");
         return frameworkResolution.getAction();
     }
 
-    /**
-     * Invoke any user defined exception handling
-     * 
-     * @param componentName The name of the component
-     * @param resolution The resolution for the exception
-     * @param thrown The exception that was thrown
-     * @param event The event
-     */
-    private void invokeUserExceptionHandling(String componentName, IkasanExceptionResolution resolution,
-            Throwable thrown, Event event)
-    {
-        if (userExceptionHandler != null)
-        {
-            try
-            {
-                ExceptionContext exceptionContext = new ExceptionContext(thrown, event, componentName);
-                exceptionContext.setResolutionId(resolution.getId());
-                userExceptionHandler.invoke(exceptionContext);
-            }
-            catch (Throwable t)
-            {
-                logger.warn("Exception encountered on user defined actions. "
-                        + "This will just be logged as only the original exception will be acted upon.", t);
-                if (userExceptionHandlingExceptionListener != null)
-                {
-                    userExceptionHandlingExceptionListener.notify(t);
-                }
-            }
-        }
-    }
-
-    /**
-     * Accessor for userExceptionHandlingExceptionListener
-     * 
-     * @return userExceptionHandlingExceptionListener
-     */
-    public UserExceptionHandlingExceptionListener getUserExceptionHandlingExceptionListener()
-    {
-        return userExceptionHandlingExceptionListener;
-    }
-
-    /**
-     * Mutator for userExceptionHandlingExceptionListener
-     * 
-     * @param userExceptionHandlingExceptionListener Exception if user exception handlnig fails
-     */
-    public void setUserExceptionHandlingExceptionListener(
-            UserExceptionHandlingExceptionListener userExceptionHandlingExceptionListener)
-    {
-        this.userExceptionHandlingExceptionListener = userExceptionHandlingExceptionListener;
-    }
 }

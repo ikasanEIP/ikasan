@@ -52,7 +52,6 @@ import org.ikasan.common.CommonRuntimeException;
 import org.ikasan.common.ExceptionType;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.exception.DefaultExceptionDefinition;
-import org.ikasan.framework.exception.ExceptionContext;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.IkasanExceptionActionImpl;
 import org.ikasan.framework.exception.IkasanExceptionActionType;
@@ -131,8 +130,7 @@ public class IkasanExceptionHandlerImplTest
     private Event event;
 
     // mutable test data
-    /** numberFormatExceptionClassName */
-    private String numberFormatExceptionClassName = "java.lang.NumberFormatException";
+
     /** exceptionClassName */
     private String exceptionClassName = "java.lang.Exception";
     /** nullPointerExceptionClassName */
@@ -143,8 +141,6 @@ public class IkasanExceptionHandlerImplTest
     private IkasanExceptionResolver ikasanExceptionResolver;
     /** IkasanExceptionHandler */
     private IkasanExceptionHandler ikasanExceptionHandler;
-    /** Movked userExceptionHandler */
-    private UserExceptionHandler userExceptionHandler = mockery.mock(UserExceptionHandler.class);
     
     /**
      * Setup runs before each test
@@ -194,7 +190,7 @@ public class IkasanExceptionHandlerImplTest
         
         //
         // create the exception handler
-        ikasanExceptionHandler = new IkasanExceptionHandlerImpl(moduleName, ikasanExceptionResolver, null);
+        ikasanExceptionHandler = new IkasanExceptionHandlerImpl(moduleName, ikasanExceptionResolver);
         
         event = new Event("","", "myEvent1",new ArrayList<Payload>());
     }
@@ -205,7 +201,7 @@ public class IkasanExceptionHandlerImplTest
     @Test
     public void testHappyConstructor()
     {
-        new IkasanExceptionHandlerImpl(moduleName, ikasanExceptionResolver, userExceptionHandler);
+        new IkasanExceptionHandlerImpl(moduleName, ikasanExceptionResolver);
     }
 
     /**
@@ -215,7 +211,7 @@ public class IkasanExceptionHandlerImplTest
     @Test(expected = IllegalArgumentException.class)    
     public void testFailedConstructorWithNullModuleName()
     {
-        new IkasanExceptionHandlerImpl(null, ikasanExceptionResolver, userExceptionHandler);
+        new IkasanExceptionHandlerImpl(null, ikasanExceptionResolver);
     }
 
     /**
@@ -225,7 +221,7 @@ public class IkasanExceptionHandlerImplTest
     @Test(expected = IllegalArgumentException.class)    
     public void testFailedConstructorWithNullExceptionResolver()
     {
-        new IkasanExceptionHandlerImpl(moduleName, null, userExceptionHandler);
+        new IkasanExceptionHandlerImpl(moduleName, null);
     }
 
     /**
@@ -236,7 +232,7 @@ public class IkasanExceptionHandlerImplTest
     public void test1InvokeForSuccessfulActionResolutionNoEvent()
     {
         Throwable t = new java.lang.NullPointerException("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, t);
+        IkasanExceptionAction action = ikasanExceptionHandler.handleThrowable(componentName, t);
         Assert.assertTrue(action.equals(nullPointerExceptionAction));
     }
 
@@ -248,7 +244,7 @@ public class IkasanExceptionHandlerImplTest
     public void test2InvokeForSuccessfulActionResolutionNoEvent()
     {
         Throwable t = new java.lang.Exception("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, t);
+        IkasanExceptionAction action = ikasanExceptionHandler.handleThrowable(componentName, t);
         Assert.assertTrue(action.equals(exceptionAction));
     }
 
@@ -277,7 +273,7 @@ public class IkasanExceptionHandlerImplTest
 
         // invoke a resolver which will fail and hopefully do the emergency stuff
         Throwable t = new java.lang.InstantiationException("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, t);
+        IkasanExceptionAction action = ikasanExceptionHandler.handleThrowable(componentName, t);
 
         // did it fail and resolve to the emergency resolution ?
         Assert.assertTrue(action.equals(emergencyResolution.getAction()));
@@ -291,7 +287,7 @@ public class IkasanExceptionHandlerImplTest
     public void test1InvokeForSuccessfulActionResolutionWithEvent()
     {
         Throwable t = new java.lang.NullPointerException("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, event, t);
+        IkasanExceptionAction action = ikasanExceptionHandler.handleThrowable(componentName,  t);
         Assert.assertTrue(action.equals(nullPointerExceptionAction));
     }
 
@@ -303,7 +299,7 @@ public class IkasanExceptionHandlerImplTest
     public void test2InvokeForSuccessfulActionResolutionWithEvent()
     {
         Throwable t = new java.lang.Exception("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, event, t);
+        IkasanExceptionAction action = ikasanExceptionHandler.handleThrowable(componentName,  t);
         Assert.assertTrue(action.equals(exceptionAction));
     }
 
@@ -332,7 +328,7 @@ public class IkasanExceptionHandlerImplTest
 
         // invoke a resolver which will fail and hopefully do the emergency stuff
         Throwable t = new java.lang.InstantiationException("test");
-        IkasanExceptionAction action = ikasanExceptionHandler.invoke(componentName, event, t);
+        IkasanExceptionAction action = ikasanExceptionHandler.handleThrowable(componentName,  t);
 
         // did it fail and resolve to the emergency resolution ?
         Assert.assertTrue(action.equals(emergencyResolution.getAction()));
@@ -343,25 +339,21 @@ public class IkasanExceptionHandlerImplTest
      */
     public void testInvokePropgatesToUserExceptionHandler() throws Exception{
         final IkasanExceptionResolver exceptionResolver = mockery.mock(IkasanExceptionResolver.class);
-        final UserExceptionHandler usrExceptionHandler = mockery.mock(UserExceptionHandler.class);
         final Throwable throwable = new Throwable();
-        final ExceptionContext exceptionContext = new ExceptionContext(throwable, event,componentName);
-        final String frameworkResoultionnId = "frameworkResoultionnId";
         final IkasanExceptionAction ikasanExceptionAction = mockery.mock(IkasanExceptionAction.class);
         
-        exceptionContext.setResolutionId(frameworkResoultionnId);
         
         mockery.checking(new Expectations()
         {
             {    
                 one(exceptionResolver).resolve(componentName, throwable);will(returnValue(ikasanExceptionAction));
-                one(usrExceptionHandler).invoke(with(equal(exceptionContext)));
+            
             }
         });
-        IkasanExceptionHandlerImpl ikasanExceptionHandlerImpl = new IkasanExceptionHandlerImpl("moduleName", exceptionResolver, usrExceptionHandler);
+        IkasanExceptionHandlerImpl ikasanExceptionHandlerImpl = new IkasanExceptionHandlerImpl("moduleName", exceptionResolver);
         
 
-        ikasanExceptionHandlerImpl.invoke(componentName, event, throwable);
+        ikasanExceptionHandlerImpl.handleThrowable(componentName,  throwable);
         mockery.assertIsSatisfied();
     }
 

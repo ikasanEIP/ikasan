@@ -93,13 +93,13 @@ public class ClassMatchingExceptionHandler extends LoggingExceptionHandlerImpl i
      * @param throwable The exception
      * @return IkasanExceptionAction
      */
-    public IkasanExceptionAction invoke(final String componentName, final Throwable throwable){
+    public IkasanExceptionAction handleThrowable(final String componentName, final Throwable throwable){
     	IkasanExceptionAction mappedAction = resolveAction(throwable);
     	if (mappedAction!=null){
     		return mappedAction;
     	}
     	
-    	return super.invoke(componentName, throwable);
+    	return super.handleThrowable(componentName, throwable);
     }
 
 	private IkasanExceptionAction resolveAction(Throwable throwable) {
