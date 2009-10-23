@@ -94,5 +94,11 @@ public class MatcherBasedExceptionGroup implements ExceptionGroup  {
 	}
 	
 
+	public String toString(){
+		StringBuffer sb = new StringBuffer(getClass().getName());
+		sb.append("action = ["+action+"]");sb.append(", ");
+		sb.append("matcher = ["+matcher+"]");
+		return sb.toString();
+	}
 
 }

@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$ 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -42,22 +42,18 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/modules/initiators/initiatorTop.jsp"%>
 
-
-
-
-
-
-<p>
-<c:out value="${initiationResult}"/>
+<h3>Exception Handler</h3>
+<p class="bordered">
+<c:out value="${initiator.exceptionHandler}"/>
 </p>
 
-<form:form action="simpleInitiatorPost.htm"  commandName="payloadCommand" >
-
-    <form:textarea cols="80" rows="10" path="payloadContent"/>
-        <input type="submit" value="Execute" class="controlButton"/>
-    </form:form>
 
 
-<%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>
+</div>
+
+
+
+<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+
+

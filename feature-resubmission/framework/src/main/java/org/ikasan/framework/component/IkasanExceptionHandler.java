@@ -58,4 +58,5 @@ public interface IkasanExceptionHandler
      * @return IkasanExceptionAction
      */
     public IkasanExceptionAction handleThrowable(final String componentName, final Throwable throwable);
+
 }

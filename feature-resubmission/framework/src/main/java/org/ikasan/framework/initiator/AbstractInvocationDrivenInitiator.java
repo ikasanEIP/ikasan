@@ -88,16 +88,6 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
     }
 
 
-    /**
-     * Return the exception handler for this initiator
-     * 
-     * @return exceptionHandler
-     */
-    protected IkasanExceptionHandler getExceptionHandler()
-    {
-        return this.exceptionHandler;
-    }
-
 
     /**
      * Standard invocation of an initiator.

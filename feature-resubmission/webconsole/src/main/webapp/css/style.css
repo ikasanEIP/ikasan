@@ -249,6 +249,11 @@ form.fancydataform fieldset li {
 .data {
     background: #FFFFF0;
 }
+
+.bordered {
+	border: 1px solid #E1E1E1;
+	padding: 5px;
+}
 /* 
  #######################
  #  specific elements  #

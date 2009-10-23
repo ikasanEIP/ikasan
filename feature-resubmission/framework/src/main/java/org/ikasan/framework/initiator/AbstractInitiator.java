@@ -173,6 +173,13 @@ public abstract class AbstractInitiator implements Initiator
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.initiator.Initiator#getExceptionHandler()
+     */
+    public IkasanExceptionHandler getExceptionHandler(){
+    	return exceptionHandler;
+    }
+    
     /**
      * Accessor for monitorListeners
      * 

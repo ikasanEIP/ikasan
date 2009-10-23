@@ -120,4 +120,6 @@ public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
     {
         this.errorAction = errorAction;
     }
+    
+
 }

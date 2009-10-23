@@ -130,5 +130,16 @@ public class MatchingExceptionHandler implements IkasanExceptionHandler {
 		//otherwise return the default
 		return defaultAction;
 	}
+	
+	@Override
+	public String toString(){
+		StringBuffer sb = new StringBuffer(getClass().getName()+" [");
+		
+		sb.append("exceptionGroupings = ["+exceptionGroupings+"]");sb.append(", ");
+		sb.append("componentExceptionGroupings = ["+componentExceptionGroupings+"]");sb.append(", ");
+		sb.append("defaultAction = ["+defaultAction+"]");
+		sb.append("]");
+		return sb.toString();
+	}
 
 }
