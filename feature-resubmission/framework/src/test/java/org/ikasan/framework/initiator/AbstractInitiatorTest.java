@@ -671,7 +671,7 @@ public class AbstractInitiatorTest
                 
                 
                 //invokes the errorLoggingService
-                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event);
+                one(errorLoggingService).logError(with(equal(throwable)),with(equal(moduleName)),with(equal(flowName)),with(equal(componentName)),with(equal(event)), (String)with(a(String.class)));
                 inSequence(sequence);
             }
         });

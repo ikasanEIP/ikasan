@@ -92,6 +92,8 @@ public class DefaultErrorLoggingServiceImplTest {
 	 * Base URL for URL Construction
 	 */
 	private static final String BASE_URL_STRING = "http://yourserver:9999/yourcontext";
+	
+	private String actionTaken = "actionTaken";
 
 	
 	/**
@@ -136,10 +138,10 @@ public class DefaultErrorLoggingServiceImplTest {
 		
 		final Long errorOccurrenceId = new Long(1000);
 		
-		final ErrorOccurrence expectedUnpersistedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date());
+		final ErrorOccurrence expectedUnpersistedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date(), null);
 		final ErrorOccurrenceMatcher unpersistedMatcher = new ErrorOccurrenceMatcher(expectedUnpersistedErrorOccurrence);
 
-		final ErrorOccurrence persistedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date());
+		final ErrorOccurrence persistedErrorOccurrence = new ErrorOccurrence(throwable, currentEvent,  moduleName, flowName, flowElementName, new Date(), null);
 		persistedErrorOccurrence.setId(errorOccurrenceId);
 		persistedErrorOccurrence.setUrl(BASE_URL_STRING+"/admin/errors/viewError.htm?errorId="+errorOccurrenceId);
 		
@@ -163,7 +165,7 @@ public class DefaultErrorLoggingServiceImplTest {
         });
 		
 		
-		errorLoggingServiceImpl.logError(throwable, moduleName, flowName, flowElementName, currentEvent);
+		errorLoggingServiceImpl.logError(throwable, moduleName, flowName, flowElementName, currentEvent, actionTaken);
 	
 		mockery.assertIsSatisfied();
 	
@@ -189,10 +191,10 @@ public class DefaultErrorLoggingServiceImplTest {
 		
 		final Long errorOccurrenceId = new Long(1000);
 		
-		final ErrorOccurrence expectedUnpersistedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date());
+		final ErrorOccurrence expectedUnpersistedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date(), actionTaken);
 		final ErrorOccurrenceMatcher unpersistedMatcher = new ErrorOccurrenceMatcher(expectedUnpersistedErrorOccurrence);
 
-		final ErrorOccurrence persistedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date());
+		final ErrorOccurrence persistedErrorOccurrence = new ErrorOccurrence(throwable,  moduleName, initiatorName, new Date(), actionTaken);
 		persistedErrorOccurrence.setId(errorOccurrenceId);
 		persistedErrorOccurrence.setUrl(BASE_URL_STRING+"/admin/errors/viewError.htm?errorId="+errorOccurrenceId);
 
@@ -212,7 +214,7 @@ public class DefaultErrorLoggingServiceImplTest {
         });
 		
 		
-		errorLoggingServiceImpl.logError(throwable, moduleName, initiatorName);
+		errorLoggingServiceImpl.logError(throwable, moduleName, initiatorName, actionTaken);
 	
 		mockery.assertIsSatisfied();
 	

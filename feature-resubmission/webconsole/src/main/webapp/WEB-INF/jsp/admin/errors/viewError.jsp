@@ -111,6 +111,14 @@
 	</tr>
 	<tr>
 		<th>
+			Action Taken
+		</th>
+		<td>
+			<c:out value="${error.actionTaken}"/>
+		</td>
+	</tr>
+	<tr>
+		<th>
 			Expiry
 		</th>
 		<td>

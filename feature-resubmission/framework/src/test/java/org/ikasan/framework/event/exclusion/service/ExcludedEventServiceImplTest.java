@@ -395,7 +395,7 @@ public class ExcludedEventServiceImplTest {
 
                 
                 //invokes the errorLoggingService
-                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event);
+                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event, null);
                 inSequence(sequence);
             }
         });

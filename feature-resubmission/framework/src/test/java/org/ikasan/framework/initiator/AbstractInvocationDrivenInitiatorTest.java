@@ -157,7 +157,7 @@ public class AbstractInvocationDrivenInitiatorTest {
                 will(returnValue(exceptionAction));
                 
                 //errorService notified
-                one(errorLoggingService).logError(throwable, moduleName, initiatorName);
+                one(errorLoggingService).logError(with(equal(throwable)), with(equal(moduleName)), with(equal((initiatorName))), (String)with(a(String.class)));
                 inSequence(sequence);
                 
 

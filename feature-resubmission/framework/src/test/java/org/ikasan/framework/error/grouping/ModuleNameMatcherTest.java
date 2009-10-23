@@ -60,12 +60,12 @@ public class ModuleNameMatcherTest {
 	/**
 	 * A dummy ErrorOccurrence with a matching moduleName
 	 */
-	private ErrorOccurrence matchingOnModuleName= new ErrorOccurrence(null, moduleName, null, null);
+	private ErrorOccurrence matchingOnModuleName= new ErrorOccurrence(null, moduleName, null, null, null);
 
 	/**
 	 * A dummy ErrorOccurrence with a non-matching moduleName
 	 */
-	private ErrorOccurrence nonMatchingModuleName= new ErrorOccurrence(null, "nonMatch", null, null);
+	private ErrorOccurrence nonMatchingModuleName= new ErrorOccurrence(null, "nonMatch", null, null, null);
 	
 	
 	@Test

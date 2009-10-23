@@ -75,6 +75,8 @@
                   column="CurrentEvent"    />
         <property name="url"      type="java.lang.String" 
                   column="Url"    />
+        <property name="actionTaken"      type="java.lang.String" 
+                  column="ActionTaken"    />
         <property name="errorDetail"    type="java.lang.String" 
                   column="ErrorDetail "    not-null="true" />
         <property name="logTime"           type="java.util.Date" 

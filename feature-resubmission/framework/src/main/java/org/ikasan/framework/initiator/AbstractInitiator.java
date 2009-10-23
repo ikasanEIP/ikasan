@@ -291,17 +291,20 @@ public abstract class AbstractInitiator implements Initiator
 			String componentName, IkasanExceptionAction exceptionAction) {
 		if (errorLoggingService!=null){
 			String actionTaken = null;
-//			if (exceptionAction!=null){
-//				actionTaken = exceptionAction.
-//			}
+			if (exceptionAction!=null){
+				actionTaken = exceptionAction.toString();
+				if (exceptionAction instanceof RetryAction){
+					actionTaken+=" retryCount ["+retryCount+"]";
+				}
+			}
 			
 			
 			if (event!=null){
-				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event);
+				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event, actionTaken);
 			}
 			else{
 				//no event available, likely because one was not yet originated
-				errorLoggingService.logError(throwable, moduleName, name);
+				errorLoggingService.logError(throwable, moduleName, name, actionTaken);
 			}
 		} else{
 			getLogger().warn("exception caught by initiator ["+moduleName+"."+name+"], but not errorLoggingService available");

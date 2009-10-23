@@ -144,8 +144,8 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * @see org.ikasan.framework.error.service.ErrorLoggingService#logError(java.lang.Throwable, java.lang.String, java.lang.String, java.lang.String, org.ikasan.framework.component.Event)
 	 */
 	public void logError(Throwable throwable, String moduleName,
-			String flowName, String flowElementName, Event currentEvent) {
-		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, currentEvent, moduleName, flowName, flowElementName, calculateExpiry());
+			String flowName, String flowElementName, Event currentEvent, String actionTaken) {
+		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, currentEvent, moduleName, flowName, flowElementName, calculateExpiry(), actionTaken);
 		persistAndNotifyListeners(errorOccurrence);
 	}
 
@@ -196,9 +196,8 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	/* (non-Javadoc)
 	 * @see org.ikasan.framework.error.service.ErrorLoggingService#logError(java.lang.Throwable, java.lang.String, java.lang.String)
 	 */
-	public void logError(Throwable throwable, String moduleName,
-			String initiatorName) {
-		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName, calculateExpiry());
+	public void logError(Throwable throwable, String moduleName,String initiatorName, String actionTaken) {
+		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName, calculateExpiry(), actionTaken);
 		persistAndNotifyListeners(errorOccurrence);
 	}
 

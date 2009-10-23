@@ -187,7 +187,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	    try{
 			flow.invoke(flowInvocationContext, event);
 	    } catch (Throwable throwable){
-	    	errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), event);
+	    	errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), event, null);
 	    	
 	    	throw new AbortTransactionException("Resubmission failed!", throwable);
 	    }

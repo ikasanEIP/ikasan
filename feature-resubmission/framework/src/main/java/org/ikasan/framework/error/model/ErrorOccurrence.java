@@ -112,6 +112,9 @@ public class ErrorOccurrence {
 	/** URL for locating this error */
 	private String url;
 	
+	/** Description of the action taken by the system as a result of this error */
+	private String actionTaken;
+	
 	
 	
 	
@@ -129,9 +132,10 @@ public class ErrorOccurrence {
 	 * @param initiatorName
 	 * @param moduleName
 	 * @param expiry
+	 * @param actionTaken
 	 */
-	public ErrorOccurrence(Throwable throwable, Event event, String moduleName, String flowName, String flowElementName, Date expiry) {
-		this(throwable, moduleName, expiry);
+	public ErrorOccurrence(Throwable throwable, Event event, String moduleName, String flowName, String flowElementName, Date expiry, String actionTaken) {
+		this(throwable, moduleName, expiry, actionTaken);
 		this.currentEvent = flattenEvent(event);
 		this.flowElementName = flowElementName;
 		this.flowName = flowName;
@@ -147,10 +151,11 @@ public class ErrorOccurrence {
 	 * @param moduleName
 	 * @param initiatorName
 	 * @param expiry
+	 * @param actionTaken
 	 */
 	public ErrorOccurrence(Throwable throwable, String moduleName,
-			String initiatorName, Date expiry) {
-		this(throwable, moduleName, expiry);
+			String initiatorName, Date expiry, String actionTaken) {
+		this(throwable, moduleName, expiry, actionTaken);
 		this.initiatorName = initiatorName;
 	}
 	
@@ -160,12 +165,14 @@ public class ErrorOccurrence {
 	 * @param throwable
 	 * @param moduleName
 	 * @param expiry
+	 * @param actionTaken
 	 */
-	private ErrorOccurrence(Throwable throwable, String moduleName, Date expiry){
+	private ErrorOccurrence(Throwable throwable, String moduleName, Date expiry, String actionTaken){
 		this.errorDetail = flattenThrowable(throwable);
 		this.moduleName = moduleName;
 		this.logTime = new Date();
 		this.expiry = expiry;
+		this.actionTaken = actionTaken;
 	}
 
 
@@ -344,7 +351,6 @@ public class ErrorOccurrence {
 	/**
 	 * @param id the id to set
 	 */
-	@SuppressWarnings("unused")
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -402,6 +408,24 @@ public class ErrorOccurrence {
 		return url;
 	}
 	
+	/**
+	 * Accessor for actionTaken
+	 * 
+	 * @return actionTaken
+	 */
+	public String getActionTaken(){
+		return actionTaken;
+	}
+	
+	/**
+	 * Mutator for actionTaken
+	 * 
+	 * @param actionTaken
+	 */
+	public void setActionTaken(String actionTaken){
+		this.actionTaken = actionTaken;
+	}
+	
 	public String toString(){
 		StringBuffer sb = new StringBuffer(getClass().getName()+" [");
 		sb.append("id=");sb.append(id);sb.append(",");
@@ -414,7 +438,8 @@ public class ErrorOccurrence {
 		sb.append("eventId=");sb.append(eventId);sb.append(",");
 		sb.append("logTime=");sb.append(logTime);sb.append(",");
 		sb.append("expiry=");sb.append(expiry);sb.append(",");
-		sb.append("url=");sb.append(url);
+		sb.append("url=");sb.append(url);sb.append(",");
+		sb.append("actionTaken=");sb.append(actionTaken);
 		sb.append("]");
 		return sb.toString();
 	}

@@ -42,7 +42,7 @@ BEGIN
     ELSE
         PRINT '<<< DROPPED TABLE ErrorOccurrence >>>'
 END
-
+GO
 CREATE TABLE ErrorOccurrence
 (
     Id                  NUMERIC IDENTITY NOT NULL,
@@ -52,6 +52,7 @@ CREATE TABLE ErrorOccurrence
     FlowElementName     VARCHAR(128) NULL,
     EventId             VARCHAR(128) NULL,
     Url          		VARCHAR(512)  NULL,
+    ActionTaken   		VARCHAR(128)  NULL,
     CurrentEvent        TEXT NULL,
     ErrorDetail         TEXT NOT NULL,
     LogTime       		DATETIME NOT NULL,

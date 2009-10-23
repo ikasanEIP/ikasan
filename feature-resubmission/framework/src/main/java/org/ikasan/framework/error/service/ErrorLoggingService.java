@@ -63,8 +63,9 @@ public interface ErrorLoggingService {
 	 * @param flowName
 	 * @param flowElementName
 	 * @param currentEvent
+	 * @param actionTaken
 	 */
-	public void logError(Throwable throwable, String moduleName, String flowName, String flowElementName, Event currentEvent);
+	public void logError(Throwable throwable, String moduleName, String flowName, String flowElementName, Event currentEvent, String actionTaken);
 
 	/**
 	 * Returns a paged listing of errors
@@ -84,8 +85,9 @@ public interface ErrorLoggingService {
 	 * @param throwable
 	 * @param moduleName
 	 * @param initiatorName
+	 * @param actionTaken
 	 */
-	public void logError(Throwable throwable, String moduleName, String initiatorName);
+	public void logError(Throwable throwable, String moduleName, String initiatorName, String actionTaken);
 	
 	/**
 	 * Retrieve an ErrorOccurrence specified by its Id

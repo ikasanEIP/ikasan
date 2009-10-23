@@ -59,6 +59,9 @@
 			
 			- at the following time:
 			<xsl:value-of select="errorOccurrence/logTime"/>
+			
+			- Ikasan took the following action:
+			<xsl:value-of select="errorOccurrence/actionTaken"/>
 		
 			- error detail follows.....
 		<xsl:value-of select="errorOccurrence/errorDetail"/></errorMessage>

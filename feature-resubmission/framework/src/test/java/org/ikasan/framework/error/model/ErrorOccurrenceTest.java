@@ -49,6 +49,7 @@ public class ErrorOccurrenceTest {
 		String moduleName = "moduleName";
 		String flowName = "flowName";
 		String flowElementName = "flowElementName";
+		String actionTaken = "actionTaken";
 		Date expiry = new Date();
 		
 		Throwable cause = new NullPointerException();
@@ -57,12 +58,13 @@ public class ErrorOccurrenceTest {
 		Event event = new Event(null, null, "myEvent1",new ArrayList<Payload>());
 		
 		
-		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, event, moduleName, flowName, flowElementName, expiry);
+		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, event, moduleName, flowName, flowElementName, expiry, actionTaken);
 	
 		Assert.assertEquals("moduleName should be set by constructor",moduleName, errorOccurrence.getModuleName());
 		Assert.assertEquals("flowName should be set by constructor",flowName, errorOccurrence.getFlowName());
 		Assert.assertEquals("flowElementName should be set by constructor",flowElementName, errorOccurrence.getFlowElementName());	
 		Assert.assertEquals("expiry should be set by constructor",expiry, errorOccurrence.getExpiry());	
+		Assert.assertEquals("actionTaken should be set by constructor",actionTaken, errorOccurrence.getActionTaken());	
 	
 		Assert.assertEquals("eventId should be set by constructor",event.getId(), errorOccurrence.getEventId());	
 		Assert.assertNull("initiatorName should be null when flowName/event are used",errorOccurrence.getInitiatorName());	
@@ -76,16 +78,19 @@ public class ErrorOccurrenceTest {
 	public void testErrorOccurrence_constructorWithoutEvent() {
 		String moduleName = "moduleName";
 		String initiatorName = "initiatorName";
+		String actionTaken = "actionTaken";
 		Date expiry = new Date();
 		
 		Throwable cause = new NullPointerException();
 		Throwable throwable = new Throwable(cause);
 	
-		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName,expiry);
+		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName,expiry, actionTaken);
 	
 		Assert.assertEquals("moduleName should be set by constructor",moduleName, errorOccurrence.getModuleName());
 		Assert.assertEquals("initiatorName should be set by constructor",initiatorName, errorOccurrence.getInitiatorName());
 		Assert.assertEquals("expiry should be set by constructor",expiry, errorOccurrence.getExpiry());	
+		Assert.assertEquals("actionTaken should be set by constructor",actionTaken, errorOccurrence.getActionTaken());	
+
 	}
 	
 }

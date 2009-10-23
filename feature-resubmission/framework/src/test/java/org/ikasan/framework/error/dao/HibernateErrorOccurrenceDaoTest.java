@@ -75,9 +75,10 @@ public class HibernateErrorOccurrenceDaoTest{
 		Throwable throwable = new RuntimeException();
 		String moduleName = "moduleName";
 		String initiatorName = "initiatorName";
+		String actionTaken = "actionTaken";
 		
 		
-		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName, null);
+		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, moduleName, initiatorName, null, actionTaken);
 		errorOccurrence.setUrl("URL");
 		errorOccurrenceDao.save(errorOccurrence);
 		
@@ -92,6 +93,7 @@ public class HibernateErrorOccurrenceDaoTest{
 		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getModuleName().equals(reloaded.getModuleName()));
 		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getInitiatorName().equals(reloaded.getInitiatorName()));
 		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getUrl().equals(reloaded.getUrl()));
+		Assert.assertTrue("reloaded should be the same as orignal",errorOccurrence.getActionTaken().equals(reloaded.getActionTaken()));
 		
 	}
 
