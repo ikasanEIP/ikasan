@@ -75,9 +75,7 @@
 	            			</bean>
 	            		</constructor-arg>
 	            		<constructor-arg>
-	            			<bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
-	                    			<constructor-arg value="EXCLUDE" />
-	                    		</bean>
+	            			<bean class="org.ikasan.framework.exception.ExcludeEventAction" factory-method="instance"/>
 	                    </constructor-arg>
             		</bean>
             	</list>

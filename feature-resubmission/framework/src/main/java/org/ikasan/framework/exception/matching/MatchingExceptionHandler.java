@@ -45,8 +45,7 @@ import java.util.Map;
 
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionImpl;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.StopAction;
 
 /**
  * Implementation of <code>IkasanExceptionHandler</code> that relies on a configuration of <code>ExceptionGroup</code>s
@@ -62,7 +61,7 @@ public class MatchingExceptionHandler implements IkasanExceptionHandler {
 	/**
 	 * Default Action if Throwable is not matched by any configured groups
 	 */
-	private static final IkasanExceptionAction defaultAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+	private static final IkasanExceptionAction defaultAction = StopAction.instance();
 		
 	/**
 	 * Non component specific exception groupings

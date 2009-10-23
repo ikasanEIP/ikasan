@@ -53,6 +53,8 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.exception.RetryAction;
+import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
@@ -80,7 +82,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
     /**
      * Maximum number of times underlying container will attempt to set up (poll) for messages
      */
-    private int maxListenerSetupFailureRetries = IkasanExceptionAction.RETRY_INFINITE;
+    private int maxListenerSetupFailureRetries = RetryAction.RETRY_INFINITE;
 
 
 	public static final String JMS_MESSAGE_DRIVEN_INITIATOR_TYPE = "JmsMessageDrivenInitiator";
@@ -151,24 +153,26 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
         }
         catch (UnsupportedOperationException unsupportedOperationException){
         	//tell the error service
-    		logError(null, unsupportedOperationException, name);
+    		logError(null, unsupportedOperationException, name, StopAction.instance());
         	
         	stopInError();
         	throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
         }
         catch (EventDeserialisationException eventDeserialisationException){
         	//tell the error service
-    		logError(null, eventDeserialisationException, name);
+    		logError(null, eventDeserialisationException, name, StopAction.instance());
         	
         	stopInError();
         	throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
         }
         catch (Throwable eventSourcingThrowable)
         {
-        	//tell the error service
-    		logError(null, eventSourcingThrowable, name);
 
-        	handleAction(exceptionHandler.handleThrowable(name, eventSourcingThrowable),null);
+
+        	IkasanExceptionAction action = exceptionHandler.handleThrowable(name, eventSourcingThrowable);
+        	//tell the error service
+    		logError(null, eventSourcingThrowable, name, action);
+        	handleAction(action,null);
         }
         invokeFlow(event);
     }

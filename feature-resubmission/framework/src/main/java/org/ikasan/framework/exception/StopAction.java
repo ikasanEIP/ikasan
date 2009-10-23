@@ -40,73 +40,35 @@
  */
 package org.ikasan.framework.exception;
 
-import junit.framework.JUnit4TestAdapter;
-
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
- * This test class supports the <code>IkasanExceptionActionType</code> concrete
- * implementation class.
+ * Exception action indicating the Initiator should be stopped
  * 
  * @author Ikasan Development Team
+ *
  */
-public class IkasanExceptionActionTypeTest
-{
-    /**
-     * The logger instance.
-     */
-    private static Logger logger = Logger.getLogger(IkasanExceptionActionTypeTest.class);
+public class StopAction implements IkasanExceptionAction{
+	
+	/**
+	 * Static instance, probably all that is needed, as one StopAction is the same as another
+	 */
+	private static StopAction instance = new StopAction();
+	
+	/**
+	 * Private constructor prevents construction other than static instance
+	 */
+	private StopAction(){}
 
-    /**
-     * Setup runs before each test
-     */
-    @Before
-    public void setUp()
-    {
-        // nothing to do here
-    }
-
-    /**
-     * Test param based Constructor
-     */
-    @Test
-    public void testIkasanExceptionActionTypeGetters()
-    {
-        // 
-        // set up
-        IkasanExceptionActionType type = IkasanExceptionActionType.ROLLBACK_RETRY;
-        String currentText = "Operation will rollback and retry.";
-        
-        // 
-        // create
-        String actionTypeText = type.getDescription();
-        
-        // 
-        // test
-        Assert.assertTrue(actionTypeText.equals(currentText));
-    }
-
-    /**
-     * Teardown after each test
-     */
-    @After
-    public void tearDown()
-    {
-        // nothing to tear down
-        logger.info("tearDown");
-    }
-
-    /**
-     * The suite is this class
+	/**
+     * Accessor for static instance
      * 
-     * @return JUnit Test class
-     */
-    public static junit.framework.Test suite()
-    {
-        return new JUnit4TestAdapter(IkasanExceptionActionTypeTest.class);
-    }
+	 * @return static instance
+	 */
+	public static StopAction instance() {
+		return instance;
+	}
+
+	@Override
+	public String toString(){
+		return "Stop";
+	}
 }

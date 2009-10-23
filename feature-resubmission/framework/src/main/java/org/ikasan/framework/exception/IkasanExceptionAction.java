@@ -47,34 +47,5 @@ package org.ikasan.framework.exception;
  */
 public interface IkasanExceptionAction
 {
-    /** Default delay is 5000 milliseconds (5 seconds) */
-    public final static String DEFAULT_DELAY = "5000";
 
-    /** Default maxAttempts is infinite (-1) */
-    public final static String DEFAULT_MAX_ATTEMPTS = "-1";
-    
-    /** Retry Indefinitely */
-    public static final int RETRY_INFINITE = -1;
-
-    /**
-     * Get the action type which will dictate the outcome of the transactional flow.
-     * 
-     * @return IkasanExceptionActionType - action to take
-     */
-    public IkasanExceptionActionType getType();
-
-    /**
-     * Get the delay period. This is a delay time in milliseconds before the above action type is 'actioned'.
-     * 
-     * @return Long - period to wait before taking the action
-     */
-    public Long getDelay();
-
-    /**
-     * Get the maximum number of attempts of this action before we call it a day and go off and do something more
-     * interesting. i.e. stopping the flow.
-     * 
-     * @return Integer - maximum attempts at the action before trying something else
-     */
-    public Integer getMaxAttempts();
 }

@@ -54,8 +54,8 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionImpl;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.RetryAction;
+import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
@@ -103,10 +103,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     /**
      * Real objects
      */
-    final IkasanExceptionAction rollbackRetryAction =
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY);
-    final IkasanExceptionAction rollbackStopAction =
-        new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+    final IkasanExceptionAction rollbackRetryAction = new RetryAction();
+    final IkasanExceptionAction rollbackStopAction =StopAction.instance();
     
     final String initiatorName = "initiatorName";
     final String moduleName = "moduleName";

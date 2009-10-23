@@ -151,14 +151,16 @@ public class AbstractInvocationDrivenInitiatorTest {
                 inSequence(sequence);
                 will(throwException(throwable));
                 
-                //errorService notified
-                one(errorLoggingService).logError(throwable, moduleName, initiatorName);
-                inSequence(sequence);
-                
                 //exceptionHandlerCalled
                 one(exceptionHandler).handleThrowable(initiatorName, throwable);
                 inSequence(sequence);
                 will(returnValue(exceptionAction));
+                
+                //errorService notified
+                one(errorLoggingService).logError(throwable, moduleName, initiatorName);
+                inSequence(sequence);
+                
+
             }
         });
         

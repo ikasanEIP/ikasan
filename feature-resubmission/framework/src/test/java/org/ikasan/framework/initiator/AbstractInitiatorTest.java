@@ -51,9 +51,10 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
+import org.ikasan.framework.exception.ExcludeEventAction;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionImpl;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.RetryAction;
+import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -131,15 +132,15 @@ public class AbstractInitiatorTest
      */
     private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
     
-    private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+    private IkasanExceptionAction rollbackStopAction = StopAction.instance();
     
     final long retryDelay = 1000;
     
-    final IkasanExceptionAction rollbackRetryTwiceAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 2);
+    final IkasanExceptionAction rollbackRetryTwiceAction =  new RetryAction( retryDelay, 2);
     
-    final IkasanExceptionAction rollbackRetryOnceAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 1);
+    final IkasanExceptionAction rollbackRetryOnceAction =  new RetryAction( retryDelay, 1);
 
-    final IkasanExceptionAction excludeAction =  new IkasanExceptionActionImpl(IkasanExceptionActionType.EXCLUDE);
+    final ExcludeEventAction excludeAction =  ExcludeEventAction.instance();
 
     /**
      * mocked error logging service
@@ -551,7 +552,7 @@ public class AbstractInitiatorTest
     @Test
     public void testInvokeFlow_withTwoEventsFirstFailing_willHandleAction(){        
        
-        final IkasanExceptionAction exceptionAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+        final IkasanExceptionAction exceptionAction = StopAction.instance();
         final Sequence sequence = mockery.sequence("invocationSequence");
         
         //expect the first event to get played, but fail resulting in an exceptionAction
@@ -655,19 +656,22 @@ public class AbstractInitiatorTest
                 one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 inSequence(sequence);
                 will(doAll(addComponentNameToContext(componentName), throwException(throwable)));
-
+                
+                
+                //calls off to the exceptionHandler which returns an exceptionAction
+                one(exceptionHandler).handleThrowable(componentName,throwable);
+                will(returnValue(exceptionAction));
+                inSequence(sequence);
+                
+                
                 //gets the name of the flow from the flow
                 one(flow).getName();
                 inSequence(sequence);
                 will(returnValue(flowName));
                 
+                
                 //invokes the errorLoggingService
                 one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event);
-                inSequence(sequence);
-                
-                //calls off to the exceptionHandler which returns an exceptionAction
-                one(exceptionHandler).handleThrowable(componentName,throwable);
-                will(returnValue(exceptionAction));
                 inSequence(sequence);
             }
         });

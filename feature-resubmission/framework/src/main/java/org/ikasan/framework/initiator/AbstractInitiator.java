@@ -48,8 +48,10 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
+import org.ikasan.framework.exception.ExcludeEventAction;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.RetryAction;
+import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
@@ -269,8 +271,8 @@ public abstract class AbstractInitiator implements Initiator
 					flow.invoke(flowInvocationContext, event);
 				}catch (Throwable throwable){
 					String lastComponentName = flowInvocationContext.getLastComponentName();
-					logError(event, throwable, lastComponentName);
 					exceptionAction = exceptionHandler.handleThrowable(lastComponentName, throwable);
+					logError(event, throwable, lastComponentName, exceptionAction);
 					break;
 				}
 	        }
@@ -286,8 +288,14 @@ public abstract class AbstractInitiator implements Initiator
 	 * @param componentName
 	 */
 	protected void logError(Event event, Throwable throwable,
-			String componentName) {
+			String componentName, IkasanExceptionAction exceptionAction) {
 		if (errorLoggingService!=null){
+			String actionTaken = null;
+//			if (exceptionAction!=null){
+//				actionTaken = exceptionAction.
+//			}
+			
+			
 			if (event!=null){
 				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event);
 			}
@@ -325,7 +333,7 @@ public abstract class AbstractInitiator implements Initiator
 		try {
 			if (action != null) {
 
-	            if (action.getType().isStop())
+	            if (action instanceof StopAction)
 	            {
 	                stopInError();
 	                throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
@@ -333,7 +341,7 @@ public abstract class AbstractInitiator implements Initiator
 	            else 
 	            {
 	            	//exclude
-	                if(action.getType().equals(IkasanExceptionActionType.EXCLUDE)){
+	                if(action instanceof ExcludeEventAction){
 	                	if (!supportsExclusions()){
 	                		//what do we do here?#
 	                		getLogger().error("Initiator that doesnt support Exclusions was asked to handle an EXCLUDE! Switching to rollback and stop instead!");
@@ -346,8 +354,9 @@ public abstract class AbstractInitiator implements Initiator
 	            	
 	            	//retry 
 	                else if (!stopping){
-	                    Integer maxAttempts = action.getMaxAttempts();
-	                    long delay = action.getDelay().longValue();
+	                	RetryAction retryAction = (RetryAction)action;
+	                    Integer maxAttempts = retryAction.getMaxRetries();
+	                    long delay = retryAction.getDelay();
 	                    handleRetry(maxAttempts, delay);
 	                }
 	                throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
@@ -415,7 +424,7 @@ public abstract class AbstractInitiator implements Initiator
     	
         Integer thisAttemptCount = attemptCount==null?-1:attemptCount;
         
-        return (maxAttempts != null) && (maxAttempts != IkasanExceptionAction.RETRY_INFINITE) && (maxAttempts<=thisAttemptCount+1);
+        return (maxAttempts != null) && (maxAttempts != RetryAction.RETRY_INFINITE) && (maxAttempts<=thisAttemptCount+1);
     }
 
 

@@ -52,8 +52,8 @@ import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionImpl;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.RetryAction;
+import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
@@ -93,15 +93,15 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private TextMessage textMessage = mockTextMessage();
 
-    private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
+    private IkasanExceptionAction rollbackStopAction = StopAction.instance();
 
     private long retryDelay = 5l;
 
     private int maxRetryAttempts = 3;
 
-    private IkasanExceptionAction retryAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, maxRetryAttempts);
+    private IkasanExceptionAction retryAction = new RetryAction( retryDelay, maxRetryAttempts);
 
-    private IkasanExceptionAction retryZeroAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_RETRY, retryDelay, 0);
+    private IkasanExceptionAction retryZeroAction = new RetryAction( retryDelay, 0);
 
     private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
     

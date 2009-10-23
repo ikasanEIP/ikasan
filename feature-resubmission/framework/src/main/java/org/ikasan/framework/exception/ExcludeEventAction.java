@@ -41,63 +41,35 @@
 package org.ikasan.framework.exception;
 
 /**
- * Ikasan interface defining all possible exception action types
+ * Exception action indicating the Initiator should be Excluded
  * 
  * @author Ikasan Development Team
+ *
  */
-public enum IkasanExceptionActionType
-{
-    /** Rollback the operation and stop the event flow */
-    ROLLBACK_STOP(true, "Operation will rollback and stop."),
-    /** Rollback the operation and retry the flow on the same event */
-    ROLLBACK_RETRY(false, "Operation will rollback and retry."),
-    /** Skip over this event and continue with the next event. */
-    EXCLUDE(false, "Operation will rollback and initiator will note to exclude the Event next time it is seen.");
+public class ExcludeEventAction implements IkasanExceptionAction {
 
-
-    /** Flow action */
-    private boolean stop;
-
-    /** Descriptive text for this action - useful for log output */
-    private String description;
-
-
-
-    /**
-     * Constructor
+	/**
+	 * Static instance, probably all that is needed, as one ExcludeEventAction is the same as another
+	 */
+	private static ExcludeEventAction instance = new ExcludeEventAction();
+	
+	/**
+	 * Private constructor prevents construction other than static instance
+	 */
+	private ExcludeEventAction(){}
+	
+	/**
+     * Accessor for static instance
      * 
-     * @param stop Stop flag
-     * @param description description
-     * @param precedence precedence
-     */
-    private IkasanExceptionActionType(final boolean stop, final String description)
-    {
-        this.stop = stop;
-        this.description = description;
-
-    }
-
-    /**
-     * Get the action's descriptive text.
-     * 
-     * @return the action's descriptive text.
-     */
-    public String getDescription()
-    {
-        return this.description;
-    }
-
-
-
-    /**
-     * Get stop option for this action type.
-     * 
-     * @return boolean.
-     */
-    public boolean isStop()
-    {
-        return this.stop;
-    }
-
+	 * @return static instance
+	 */
+	public static ExcludeEventAction instance(){
+		return instance;
+	}
+	
+	@Override
+	public String toString(){
+		return "Exclude Event";
+	}
 
 }

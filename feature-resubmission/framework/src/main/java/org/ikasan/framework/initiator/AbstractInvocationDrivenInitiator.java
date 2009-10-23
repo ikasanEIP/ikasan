@@ -106,10 +106,11 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
         	events = eventProvider.getEvents();
         }catch (Throwable eventSourcingThrowable)
         {
-        	//tell the error service
-    		logError(null, eventSourcingThrowable, name);
+        	IkasanExceptionAction action = exceptionHandler.handleThrowable(name, eventSourcingThrowable);
 
-        	handleAction(exceptionHandler.handleThrowable(name, eventSourcingThrowable),null);
+        	//tell the error service
+    		logError(null, eventSourcingThrowable, name,action);
+			handleAction(action,null);
         }
         
         // invoke flow all the time we have event activity

@@ -43,8 +43,7 @@ package org.ikasan.framework.component;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionImpl;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.StopAction;
 
 /**
  * Simple implementation of <code>IkasanExceptionHandler</code>, that simply logs the
@@ -60,7 +59,7 @@ public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
     /**
      * Default error action
      */
-    private IkasanExceptionAction rollbackAndStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP,0l,0);
+    private IkasanExceptionAction rollbackAndStopAction = StopAction.instance();
 
     /**
      * The action to return, note that this defaults to the rollbackAndStopAction

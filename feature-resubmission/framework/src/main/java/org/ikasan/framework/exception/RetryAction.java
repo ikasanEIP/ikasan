@@ -41,23 +41,69 @@
 package org.ikasan.framework.exception;
 
 /**
- * Interface for the standard definition of Ikasan Exceptions when resolving thrown Java exceptions.
+ * Exception Action indicating the operation should be retried
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface IkasanExceptionResolution
-{
-    /**
-     * Get the identifier string for this exception definition.
-     * 
-     * @return id
-     */
-    public String getId();
+public class RetryAction implements IkasanExceptionAction{
 
-    /**
-     * Get the required action to be taken within the scope of this flow based
-     * 
-     * @return action
-     */
-    public IkasanExceptionAction getAction();
+	/**
+	 * indicator for an infinite retry
+	 */
+	public static final Integer RETRY_INFINITE =  -1;
+	
+	/**
+	 * Length of time in milliseconds between retries
+	 */
+	private long delay = 5000l;
+	
+	/**
+	 * Maximum no of times to retry
+	 */
+	private int maxRetries = RETRY_INFINITE;
+
+	/**
+	 * Default Constructor
+	 */
+	public RetryAction() {
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param delay
+	 * @param maxRetries
+	 */
+	public RetryAction(long delay, int maxRetries) {
+		super();
+		this.delay = delay;
+		this.maxRetries = maxRetries;
+	}
+
+
+
+	/**
+	 * Accessor for delay
+	 * 
+	 * @return delay
+	 */
+	public long getDelay() {
+		return delay;
+	}
+
+	/**
+	 * Accessor for maxRetries
+	 * 
+	 * @return maxRetries
+	 */
+	public int getMaxRetries() {
+		return maxRetries;
+	}
+	
+	@Override
+	public String toString(){
+		return "Retry (delay="+delay+", maxRetries="+maxRetries+")";
+	}
+    
 }

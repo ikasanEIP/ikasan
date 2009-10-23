@@ -1,5 +1,5 @@
 /*
- * $Id$
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.exception.IkasanExceptionActionType;
+import org.ikasan.framework.exception.StopAction;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -80,7 +80,7 @@ public class MatchingExceptionHandlerTest {
 	@Test
 	public void testHandleThrowable_withUnmatchedThrowable_willReturnRollBackStopAction() {
 		MatchingExceptionHandler matchingExceptionHandler = new MatchingExceptionHandler(null);
-		assertEquals("handling an unmatched exception should result in a RollbackStop Action", IkasanExceptionActionType.ROLLBACK_STOP, matchingExceptionHandler.handleThrowable(null, new RuntimeException()).getType());
+		assertEquals("handling an unmatched exception should result in a RollbackStop Action", StopAction.instance(), matchingExceptionHandler.handleThrowable(null, new RuntimeException()));
 	}
 	
 	
