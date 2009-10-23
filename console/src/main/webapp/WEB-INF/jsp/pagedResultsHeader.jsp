@@ -149,7 +149,7 @@
 				        <a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;
 					</c:when>
 					<c:otherwise>
-				        <fmt:message key="paged_results_header_first"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_previous"/>
+				        <span style="color : #A9A9A9;"><fmt:message key="paged_results_header_first"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_previous"/></span>
 					</c:otherwise>
 				</c:choose>
 		 		<c:choose>
@@ -157,7 +157,7 @@
 				        <a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a>
 					</c:when>
 					<c:otherwise>
-						<fmt:message key="paged_results_header_next"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_last"/>
+						<span style="color : #A9A9A9;"><fmt:message key="paged_results_header_next"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_last"/></a>
 					</c:otherwise>
 				</c:choose>
                 <select id="pageSize" name="pageSize" onchange="javascript:executeSearch()">
