@@ -70,7 +70,9 @@
 	<!-- transaction configuration for excludedEventService -->
     <aop:config>
         <aop:pointcut id="resubmissionInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.resubmit(..))" />
+        <aop:pointcut id="cancelInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.cancel(..))" />
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="resubmissionInvocation" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="cancelInvocation" />
     </aop:config>
 	
 	<bean id="excludedEventDao"

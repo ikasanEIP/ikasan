@@ -43,6 +43,8 @@ package org.ikasan.framework.event.exclusion.model;
 import java.util.Date;
 import java.util.List;
 
+import java.lang.IllegalStateException;
+
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 
@@ -51,6 +53,17 @@ import org.ikasan.framework.error.model.ErrorOccurrence;
  *
  */
 public class ExcludedEvent {
+	
+	/**
+	 * Resolution indicator for a Resubmitted ExcludedEvent
+	 */
+	public static final String RESOLUTION_RESUBMITTED = "Resubmitted";
+	
+	/**
+	 * Resolution indicator for a Cancelled ExcludedEvent
+	 */
+	public static final String RESOLUTION_CANCELLED = "Cancelled";
+	
 	
 	/**
 	 * unique identifier set by ORM
@@ -80,14 +93,19 @@ public class ExcludedEvent {
 	/**
 	 * Date/time of event resubmission
 	 */
-	private Date resubmissionTime;
+	private Date lastUpdatedTime;
+	
+	/**
+	 * Indication of how this ExcludedEvent was resolved (ie cancelled, resubmitted)
+	 */
+	private String resolution = null;
 	
 	
 
 	/**
-	 * Name of user who resubmitted 
+	 * Name of user who updated (resubmitted, canceled) 
 	 */
-	private String resubmitter;
+	private String lastUpdatedBy;
 	
 	/** Error Occurrences related to this ExcludedEvent */
 	private List<ErrorOccurrence> errorOccurrences;
@@ -113,6 +131,34 @@ public class ExcludedEvent {
 		this.moduleName=moduleName;
 		this.flowName=flowName;
 		this.exclusionTime = exclusionTime;
+	}
+	
+	
+	/**
+	 * Marks the ExcludedEvent as Resubmitted, setting the lastUpdatedBy and lastUpdatedTime fields
+	 * 
+	 * @param resolver to be used for lastUpdatedBy
+	 */
+	public void resolveAsResubmitted(String resolver){
+	    resolve(resolver, RESOLUTION_RESUBMITTED);
+	}
+	
+	/**
+	 * Marks the ExcludedEvent as Cancelled, setting the lastUpdatedBy and lastUpdatedTime fields
+	 * 
+	 * @param resolver to be used for lastUpdatedBy
+	 */	
+	public void resolveAsCancelled(String resolver){
+	    resolve(resolver, RESOLUTION_CANCELLED);
+	}
+	
+	private void resolve(String resolver, String resolution) throws IllegalStateException {
+		if (isResolved()){
+			throw new IllegalStateException("Cannot resolve excludedEvent ["+id+"], as it was previously resolved as ["+resolution+"]");
+		}
+		setLastUpdatedTime(new Date());
+	    setLastUpdatedBy(resolver);
+	    setResolution(resolution);
 	}
 
 	/**
@@ -215,34 +261,34 @@ public class ExcludedEvent {
 	 * 
 	 * @return resubmissionTime
 	 */
-	public Date getResubmissionTime() {
-		return resubmissionTime;
+	public Date getLastUpdatedTime() {
+		return lastUpdatedTime;
 	}
 
 	/**
-	 * Mutator for resubmissionTime
+	 * Mutator for lastUpdatedTime
 	 * 
-	 * @param resubmissionTime
+	 * @param lastUpdatedTime
 	 */
-	public void setResubmissionTime(Date resubmissionTime) {
-		this.resubmissionTime = resubmissionTime;
+	public void setLastUpdatedTime(Date lastUpdatedTime) {
+		this.lastUpdatedTime = lastUpdatedTime;
 	}
 
 	/**
-	 * Accessor for resubmitter
-	 * @return resubmitter
+	 * Accessor for lastUpdatedBy
+	 * @return lastUpdatedBy
 	 */ 
-	public String getResubmitter() {
-		return resubmitter;
+	public String getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
 	/**
-	 * Mutator for resubmitter
+	 * Mutator for lastUpdatedBy
 	 * 
-	 * @param resubmitter
+	 * @param lastUpdatedBy
 	 */
-	public void setResubmitter(String resubmitter) {
-		this.resubmitter = resubmitter;
+	public void setLastUpdatedBy(String lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 	
 	/**
@@ -265,12 +311,31 @@ public class ExcludedEvent {
 	}
 
 	/**
-	 * Shortcut for determining if this has been resubmitted
+	 * Shortcut for determining if this has been resolved
 	 * 
-	 * @return true if previously resubmitted
+	 * @return true if resolution exists
 	 */
-	public boolean isResubmitted() {
-		return resubmissionTime!=null;
+	public boolean isResolved() {
+		return resolution!=null;
+	}
+	
+	/**
+	 * Accessor for resolution 
+	 * 
+	 * @return resolution
+	 */
+	public String getResolution(){
+		return resolution;
+	}
+	
+	/**
+	 * Mutator for resolution
+	 * 
+	 * @param resolution
+	 */
+	@SuppressWarnings("unused")
+	private void setResolution(String resolution){
+		this.resolution = resolution;
 	}
 
 }

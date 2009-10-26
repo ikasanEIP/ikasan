@@ -69,9 +69,11 @@ a
 		<property name="exclusionTime" column="ExclusionTime"
 			not-null="true" />
 				
-		<property name="resubmissionTime" column="ResubmissionTime"/>
+		<property name="lastUpdatedTime" column="LastUpdatedTime"/>
 
-		<property name="resubmitter" column="Resubmitter"/>
+		<property name="lastUpdatedBy" column="LastUpdatedBy"/>
+		
+		<property name="resolution" column="Resolution"/>
 		
 		<!-- The Event itself -->
 		<component name="event">

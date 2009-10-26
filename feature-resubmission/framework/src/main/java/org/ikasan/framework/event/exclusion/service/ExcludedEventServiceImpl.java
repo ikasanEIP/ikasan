@@ -166,7 +166,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 			throw new IllegalArgumentException("Cannot find Excluded Event id:"+eventId);
 		}
 		
-		if (excludedEvent.isResubmitted()){
+		if (excludedEvent.isResolved()){
 			throw new IllegalStateException("Attempt made to resubmit event:"+eventId);
 		}
 		
@@ -196,9 +196,40 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	    //mark excludedEvent as resubmitted
 	    //need to get a fresh handle on the ExcludedEvent, because the original now has changes we dont want to save
 	    excludedEvent = excludedEventDao.getExcludedEvent(eventId, true);
-	    excludedEvent.setResubmissionTime(new Date());
-	    excludedEvent.setResubmitter(resubmitter);
+	    excludedEvent.resolveAsResubmitted(resubmitter);
 
+	    excludedEventDao.save(excludedEvent);
+	    
+	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#cancel(java.lang.String, java.lang.String)
+	 */
+	public void cancel(String eventId, String canceller) {
+
+		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId, true);
+		
+		if (excludedEvent==null){
+			throw new IllegalArgumentException("Cannot find Excluded Event id:"+eventId);
+		}
+		
+		if (excludedEvent.isResolved()){
+			throw new IllegalStateException("Attempt made to resubmit event:"+eventId);
+		}
+		
+		Module module = moduleService.getModule(excludedEvent.getModuleName());
+		if (module==null){
+			throw new IllegalArgumentException("unknown Module:"+excludedEvent.getModuleName());
+		}	
+			
+	    //mark excludedEvent as cancelled
+	    excludedEvent.resolveAsCancelled(canceller);
+
+	    excludedEventDao.save(excludedEvent);
+	    
+	    
 
 	    
 	}

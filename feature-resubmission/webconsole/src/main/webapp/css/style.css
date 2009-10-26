@@ -25,6 +25,7 @@ a:hover {
 input.controlButton {
 	background:#F6F9FB;
     border:1px solid #999999;
+	margin-left:10px;
     padding-left:10px;
     padding-right:10px;
 }

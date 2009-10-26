@@ -110,7 +110,7 @@ public class ExcludedEventServiceImplTest {
     
 	final String eventId = "eventId";
 	
-	final String resubmitter = "resubmitter";
+	final String resolver = "resolver";
 	
 	
 	
@@ -257,7 +257,22 @@ public class ExcludedEventServiceImplTest {
             	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(null));
             }
         });
-		excludedEventService.resubmit(eventId, resubmitter);
+		excludedEventService.resubmit(eventId, resolver);
+		mockery.assertIsSatisfied();
+	
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testCancel_withNonExistantExcludedEvent_willThrowIllegalArgumentException(){
+		final String eventId = "eventId";
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(eventId, true);will(returnValue(null));
+            }
+        });
+		excludedEventService.cancel(eventId, resolver);
 		mockery.assertIsSatisfied();
 	
 	}
@@ -278,7 +293,7 @@ public class ExcludedEventServiceImplTest {
             	one(moduleService).getModule(moduleName);will(returnValue(null));
             }
         });
-		excludedEventService.resubmit(eventId, resubmitter);
+		excludedEventService.resubmit(eventId, resolver);
 		mockery.assertIsSatisfied();
 	}
 	
@@ -299,7 +314,7 @@ public class ExcludedEventServiceImplTest {
         {
             {
             	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
-            	one(excludedEvent).isResubmitted();will(returnValue(false));
+            	one(excludedEvent).isResolved();will(returnValue(false));
             	one(excludedEvent).getModuleName();will(returnValue(moduleName));
             	one(moduleService).getModule(moduleName);will(returnValue(module));
             	one(module).getFlows();will(returnValue(flows));
@@ -307,12 +322,37 @@ public class ExcludedEventServiceImplTest {
             	one(excludedEvent).getEvent();will(returnValue(event));
             	one(flow).invoke(with(any(FlowInvocationContext.class)), with(equal(event)));
             	one(excludedEventDao).getExcludedEvent(eventId, true);will(returnValue(excludedEvent));
-            	one(excludedEvent).setResubmissionTime((Date) with(a(Date.class)));
-            	one(excludedEvent).setResubmitter(resubmitter);
+            	one(excludedEvent).resolveAsResubmitted(resolver);
+            	one(excludedEventDao).save(excludedEvent);
             }
         });
 		
-		excludedEventService.resubmit(eventId, resubmitter);
+		excludedEventService.resubmit(eventId, resolver);
+		mockery.assertIsSatisfied();
+	}
+	
+	@Test
+	public void testCancel_willMarkExcludedEventAsCancelled(){
+		final String eventId = "eventId";
+		final String moduleName = "moduleName";
+		
+		final ExcludedEvent excludedEvent = mockery.mock(ExcludedEvent.class);
+		final Module module = mockery.mock(Module.class);
+		
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(eventId, true);will(returnValue(excludedEvent));
+            	one(excludedEvent).isResolved();will(returnValue(false));
+            	one(excludedEvent).getModuleName();will(returnValue(moduleName));
+            	one(moduleService).getModule(moduleName);will(returnValue(module));
+            	one(excludedEvent).resolveAsCancelled(resolver);
+            	one(excludedEventDao).save(excludedEvent);
+            }
+        });
+		
+		excludedEventService.cancel(eventId, resolver);
 		mockery.assertIsSatisfied();
 	}
 	
@@ -333,7 +373,7 @@ public class ExcludedEventServiceImplTest {
             	one(module).getFlows();will(returnValue(new HashMap<String,Flow>()));
             }
         });
-		excludedEventService.resubmit(eventId, resubmitter);
+		excludedEventService.resubmit(eventId, resolver);
 		mockery.assertIsSatisfied();
 	}
 	
@@ -347,10 +387,10 @@ public class ExcludedEventServiceImplTest {
         {
             {
             	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
-            	one(excludedEvent).isResubmitted();will(returnValue(true));
+            	one(excludedEvent).isResolved();will(returnValue(true));
             }
         });
-		excludedEventService.resubmit(eventId, resubmitter);
+		excludedEventService.resubmit(eventId, resolver);
 		mockery.assertIsSatisfied();
 	}
 	
@@ -399,7 +439,7 @@ public class ExcludedEventServiceImplTest {
                 inSequence(sequence);
             }
         });
-		excludedEventService.resubmit(eventId, resubmitter);
+		excludedEventService.resubmit(eventId, resolver);
 		mockery.assertIsSatisfied();
 	}
 	

@@ -94,6 +94,18 @@ public interface ExcludedEventService {
 	 * @param resubmitter
 	 */
 	public void resubmit(String eventId, String resubmitter);
+	
+	/**
+	 * attempts to resolve an ExcludedEvent specified by id as cancelled
+	 * 
+	 * 
+	 * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if referenced
+	 * 	module or flow are not available
+	 * 
+	 * @param eventId
+	 * @param canceller
+	 */
+	public void cancel(String eventId, String canceller);
 
 
 

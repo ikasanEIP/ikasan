@@ -105,8 +105,8 @@ public class HibernateExcludedEventDaoTest {
 		//set some resubmission details on the ExcludedEvent
 		Date resubmissionTime = new Date(1000l);
 		String resubmitter = "resubmitter";
-		excludedEvent.setResubmissionTime(resubmissionTime);
-		excludedEvent.setResubmitter(resubmitter);
+		excludedEvent.setLastUpdatedTime(resubmissionTime);
+		excludedEvent.setLastUpdatedBy(resubmitter);
 		
 		
 		
@@ -124,8 +124,8 @@ public class HibernateExcludedEventDaoTest {
 		Assert.assertTrue("reloaded flowName should be same size as original flowName", excludedEvent.getFlowName().equals(reloadedExcludedEvent.getFlowName()));
 		Assert.assertTrue("reloaded exclusionTime should be same size as original exclusionTime", excludedEvent.getExclusionTime().equals(reloadedExcludedEvent.getExclusionTime()));
 		
-		Assert.assertTrue("resubmissionTime should be the same as that set on the original", resubmissionTime.equals(reloadedExcludedEvent.getResubmissionTime()));
-		Assert.assertTrue("resubmitter should be the same as that set on the original", resubmitter.equals(reloadedExcludedEvent.getResubmitter()));
+		Assert.assertTrue("resubmissionTime should be the same as that set on the original", resubmissionTime.equals(reloadedExcludedEvent.getLastUpdatedTime()));
+		Assert.assertTrue("resubmitter should be the same as that set on the original", resubmitter.equals(reloadedExcludedEvent.getLastUpdatedBy()));
 		
 		Event reloadedEvent = reloadedExcludedEvent.getEvent();
 		List<Payload> reloadedPayloads = reloadedEvent.getPayloads();

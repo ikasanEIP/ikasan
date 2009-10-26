@@ -140,17 +140,23 @@ public class ExclusionsController
 
     
 	/**
-     * Handle Resubmission request POST
+     * Handle Resolution request POST
      * 
      * @param model - The model (map)
      * @return excludedEvent view
      */
     @RequestMapping(value="exclusion.htm", method=RequestMethod.POST)
-    public String requestResubmission(@RequestParam String eventId, ModelMap model)
+    public String requestResolution(@RequestParam String eventId,@RequestParam String action, ModelMap model)
     {
     	try{
     		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-    		excludedEventService.resubmit(eventId, currentUser);
+    		if (action.equals("resubmit")){
+    			excludedEventService.resubmit(eventId, currentUser);
+    		} else if (action.equals("cancel")){
+    			excludedEventService.cancel(eventId, currentUser);
+    		} else {
+    			throw new IllegalArgumentException("unknown action ["+action+"]");
+    		}
     	} catch(AbortTransactionException abortTransactionException){
     		logger.info("Resubmission failed for excludedEvent id:"+eventId);
     		logger.error("Exception caught trying to resubmit",abortTransactionException);

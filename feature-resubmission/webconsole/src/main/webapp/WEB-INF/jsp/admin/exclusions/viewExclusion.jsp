@@ -105,13 +105,13 @@
 		</td>
 	</tr>
 	
-	<c:if test="${excludedEvent.resubmitted}">
+	<c:if test="${excludedEvent.resolved}">
 	<tr>
 		<th>
-			Resubmitted
+			Resolved
 		</th>
 		<td>
-			 at <fmt:formatDate value="${excludedEvent.resubmissionTime}" pattern="dd/MM/yyyy h:mma"/> by <c:out value="${excludedEvent.resubmitter}" />
+			 as <c:out value="${excludedEvent.resolution}" /> by <c:out value="${excludedEvent.lastUpdatedBy}" /> at <fmt:formatDate value="${excludedEvent.lastUpdatedTime}" pattern="dd/MM/yyyy h:mma"/> 
 		</td>
 	</tr>
 	</c:if>
@@ -119,13 +119,21 @@
 	
 </table>
 
-<%-- Only show the resubmit button if ExcludedEvent has not already been resubmitted --%>
-	<c:if test="${!excludedEvent.resubmitted}">
+<%-- Only show the resubmit, cancel buttons if ExcludedEvent has not already been resolved --%>
+	<c:if test="${!excludedEvent.resolved}">
 			<c:url var="resubmitLink" value="exclusion.htm">
                 <c:param name="eventId" value="${excludedEvent.event.id}"/>
                 <c:param name="action" value="resubmit"/>
-              </c:url>
-	
+             </c:url>
+             
+             <c:url var="cancelLink" value="exclusion.htm">
+                <c:param name="eventId" value="${excludedEvent.event.id}"/>
+                <c:param name="action" value="cancel"/>
+             </c:url>
+    	
+    	<form:form action="${cancelLink}" method="post" cssClass="controls">
+        	<input type="submit" value="Cancel" class="controlButton"/>
+        </form:form>	
     	<form:form action="${resubmitLink}" method="post" cssClass="controls">
         	<input type="submit" value="Resubmit" class="controlButton"/>
         </form:form>

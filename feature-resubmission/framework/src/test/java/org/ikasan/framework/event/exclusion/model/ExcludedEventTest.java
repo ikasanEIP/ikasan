@@ -40,7 +40,7 @@
  */
 package org.ikasan.framework.event.exclusion.model;
 
-import java.util.Date;
+
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,16 +52,56 @@ import org.junit.Test;
  */
 public class ExcludedEventTest {
 	
+	private static final String RESOLVER = "resolver";
+
+	
 	@Test
-	public void testIsResubmitted_willReturnTrueIfResubmissionTimeExists(){
-		ExcludedEvent resubmittedEvent = new ExcludedEvent(null, null, null, null);
-		resubmittedEvent.setResubmissionTime(new Date());
-		Assert.assertTrue("ExcludedEvent with a non null resubmissionTime should return true for isResubmitted", resubmittedEvent.isResubmitted());
+	public void testResolutionFieldsWillBeUnsetByDefault(){
+		ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
+		Assert.assertNull("lastUpdatedBy should be null by default",  excludedEvent.getLastUpdatedBy());
+		Assert.assertNull("lastUpdatedTime should be null by default",  excludedEvent.getLastUpdatedTime());
+		Assert.assertNull("resolution should be null by default", excludedEvent.getResolution());
+		Assert.assertFalse("isResolved should be false by default",  excludedEvent.isResolved());
 	}
 	
 	@Test
-	public void testIsResubmitted_willReturnFalseIfResubmissionTimeDoesNotExists(){
+	public void testResolveAsCancelled_willSetResolutionFields(){
 		ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
-		Assert.assertFalse("ExcludedEvent with a null resubmissionTime should return false for isResubmitted", excludedEvent.isResubmitted());
+		excludedEvent.resolveAsCancelled(RESOLVER);
+		Assert.assertEquals("lastUpdatedBy should be set with the resolver following resolveAsCancelled",  RESOLVER, excludedEvent.getLastUpdatedBy());
+		Assert.assertNotNull("lastUpdatedTime should be set following resolveAsCancelled",  excludedEvent.getLastUpdatedTime());
+		Assert.assertTrue("isResolved should be true following resolveAsCancelled",  excludedEvent.isResolved());
+		Assert.assertEquals("resolution field should be cancelled following resolveAsCancelled",ExcludedEvent.RESOLUTION_CANCELLED, excludedEvent.getResolution());
 	}
+	
+	@Test
+	public void testResolveAsResubmitted_willSetResolutionFields(){
+		ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
+		excludedEvent.resolveAsResubmitted(RESOLVER);
+		Assert.assertEquals("lastUpdatedBy should be set with the resolver following resolveAsResubmitted",  RESOLVER, excludedEvent.getLastUpdatedBy());
+		Assert.assertNotNull("lastUpdatedTime should be set following resolveAsResubmitted",  excludedEvent.getLastUpdatedTime());
+		Assert.assertTrue("isResolved should be true following resolveAsResubmitted",  excludedEvent.isResolved());
+		Assert.assertEquals("resolution field should be resubmitted following resolveAsCancelled",ExcludedEvent.RESOLUTION_RESUBMITTED, excludedEvent.getResolution());
+
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testResolveAsResubmitted_willThrowIllegalStateExceptionIfAlreadyResolved(){
+		ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
+		excludedEvent.resolveAsResubmitted(RESOLVER);
+		Assert.assertTrue("isResolved should be true following resolveAsResubmitted",  excludedEvent.isResolved());
+		excludedEvent.resolveAsResubmitted(RESOLVER);
+		Assert.fail("Should have thrown IllegalStateException when attempting to resolveAsResubmitted an ExcludedEvent which was already resolved");
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testResolveAsCancelled_willThrowIllegalStateExceptionIfAlreadyResolved(){
+		ExcludedEvent excludedEvent = new ExcludedEvent(null, null, null, null);
+		excludedEvent.resolveAsResubmitted(RESOLVER);
+		Assert.assertTrue("isResolved should be true following resolveAsResubmitted",  excludedEvent.isResolved());
+		excludedEvent.resolveAsCancelled(RESOLVER);
+		Assert.fail("Should have thrown IllegalStateException when attempting to resolveAsCancelled an ExcludedEvent which was already resolved");
+	}
+	
+
 }
