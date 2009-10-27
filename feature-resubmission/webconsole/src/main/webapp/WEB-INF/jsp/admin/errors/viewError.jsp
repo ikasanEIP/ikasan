@@ -154,6 +154,67 @@
 		<p id="errorDetail" class="unformattable data"><c:out value="${error.errorDetail}" /></p>
 
 
-
+		<h3>Event</h3>
+<div id="eventDump">
+		<table id="currentEventDetails" class="keyValueTable">
+		<tr>
+			<th>
+				Event Id
+			</th>
+			<td>
+				<c:out value="${error.errorEvent.id}" />
+			</td>
+		</tr>
+		<tr>
+			<th>
+				Priority
+			</th>
+			<td>
+				<c:out value="${error.errorEvent.priority}" />
+			</td>
+		</tr>
+		<tr>
+			<th>
+				Timestamp
+			</th>
+			<td>
+				<c:out value="${error.errorEvent.timestamp}" />
+			</td>
+		</tr>
+		</table>
+		<c:forEach items="${error.errorEvent.payloads}" var="payload" varStatus="status">
+		<jsp:useBean id="payload" type="org.ikasan.common.Payload" />
+		<h4 id="enumerator">Payload(<c:out value="${status.count}" />)</h4>  
+			<table id="currentEventPayloadDetails" class="keyValueTable">
+			<tr>
+				<th>
+					Payload Id
+				</th>
+				<td>
+					<c:out value="${payload.id}" />
+				</td>
+			</tr>
+			<c:forEach items="${payload.attributeMap}" var="attribute" >
+			<tr>
+				<th>
+					Attribute [<c:out value="${attribute.key}" />]
+				</th>
+				<td>
+					<c:out value="${attribute.value}" />
+				</td>
+			</tr>
+			</c:forEach>
+			<tr>
+				<th>
+					Content
+				</th>
+				<td class="unformattable data">
+					<% pageContext.setAttribute("displayableContent", new String(payload.getContent())); %>
+					<c:out value="${displayableContent}" />
+				</td>
+			</tr>
+		</table>
+		</c:forEach>
+	</div><!-- end eventDump -->
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

@@ -33,7 +33,33 @@
 -- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
-
+IF OBJECT_ID('ErrorPayloadAttribute') IS NOT NULL
+BEGIN
+    DROP TABLE ErrorPayloadAttribute
+    IF OBJECT_ID('ErrorPayloadAttribute') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ErrorPayloadAttribute >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE ErrorPayloadAttribute >>>'
+END
+go
+IF OBJECT_ID('ErrorPayload') IS NOT NULL
+BEGIN
+    DROP TABLE ErrorPayload
+    IF OBJECT_ID('ErrorPayload') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ErrorPayload >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE ErrorPayload >>>'
+END
+go
+IF OBJECT_ID('ErrorEvent') IS NOT NULL
+BEGIN
+    DROP TABLE ErrorEvent
+    IF OBJECT_ID('ErrorEvent') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ErrorEvent >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE ErrorEvent >>>'
+END
+go
 IF OBJECT_ID('ErrorOccurrence') IS NOT NULL
 BEGIN
     DROP TABLE ErrorOccurrence
@@ -43,6 +69,25 @@ BEGIN
         PRINT '<<< DROPPED TABLE ErrorOccurrence >>>'
 END
 GO
+
+CREATE TABLE ErrorEvent
+(
+    PersistenceId numeric(19,0) IDENTITY,
+    EventId       varchar(255)  NOT NULL,
+    Priority      int           NOT NULL,
+    Timestamp     datetime      NOT NULL,
+    CONSTRAINT ErrorEvent_1620965872
+    PRIMARY KEY CLUSTERED (PersistenceId)
+)
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
+go
+IF OBJECT_ID('ErrorEvent') IS NOT NULL
+    PRINT '<<< CREATED TABLE ErrorEvent >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE ErrorEvent >>>'
+go
+
 CREATE TABLE ErrorOccurrence
 (
     Id                  NUMERIC IDENTITY NOT NULL,
@@ -56,7 +101,8 @@ CREATE TABLE ErrorOccurrence
     CurrentEvent        TEXT NULL,
     ErrorDetail         TEXT NOT NULL,
     LogTime       		DATETIME NOT NULL,
-    Expiry       		DATETIME NULL
+    Expiry       		DATETIME NULL,
+    ErrorEventId		NUMERIC(19,0) NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
@@ -67,5 +113,50 @@ IF OBJECT_ID('ErrorOccurrence') IS NOT NULL
     PRINT '<<< CREATED TABLE ErrorOccurrence >>>'
 ELSE
     PRINT '<<< FAILED CREATING TABLE ErrorOccurrence >>>'
-    
+go
+CREATE TABLE ErrorPayload
+(
+    PersistenceId   numeric(19,0)  IDENTITY,
+    PayloadId       varchar(255)   NULL,
+    Content         image          NULL,
+    EventId         numeric(19,0)  NULL,
+    PayloadPosition int            NULL,
+    CONSTRAINT ErrorPaylo_2260968152
+    PRIMARY KEY CLUSTERED (PersistenceId),
+    CONSTRAINT FKE9B42286240C75AB
+    FOREIGN KEY (EventId)
+    REFERENCES ErrorEvent (PersistenceId)
+    match full
+)
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
+go
+IF OBJECT_ID('ErrorPayload') IS NOT NULL
+    PRINT '<<< CREATED TABLE ErrorPayload >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE ErrorPayload >>>'
+go
+
+
+
+
+CREATE TABLE ErrorPayloadAttribute
+(
+    ErrorPayloadId numeric(19,0) NOT NULL,
+    AttributeValue varchar(255)  NULL,
+    AttributeName  varchar(255)  NOT NULL,
+    CONSTRAINT ErrorPaylo_2580969292
+    PRIMARY KEY CLUSTERED (ErrorPayloadId,AttributeName),
+    CONSTRAINT FKD87D1EB6E50BE65F
+    FOREIGN KEY (ErrorPayloadId)
+    REFERENCES ErrorPayload (PersistenceId)
+    match full
+)
+LOCK DATAROWS
+go
+IF OBJECT_ID('ErrorPayloadAttribute') IS NOT NULL
+    PRINT '<<< CREATED TABLE ErrorPayloadAttribute >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE ErrorPayloadAttribute >>>'
+go 
 

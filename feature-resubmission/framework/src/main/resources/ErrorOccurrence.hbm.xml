@@ -51,7 +51,7 @@
     This is the hibernate mapping configuration for ErrorOccurrence persistence.
     @author Ikasan Development Team 
  -->
-<hibernate-mapping>
+<hibernate-mapping default-access="field">
 	 
 	<class
 		name="org.ikasan.framework.error.model.ErrorOccurrence"
@@ -60,6 +60,7 @@
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity" />
         </id>
+
 		
         <property name="moduleName"        type="java.lang.String" 
                   column="ModuleName"      not-null="true" />
@@ -83,6 +84,44 @@
                   column="LogTime" not-null="true" />
         <property name="expiry"           type="java.util.Date" 
                   column="Expiry" />
+        <many-to-one name="errorEvent" class="org.ikasan.framework.component.Event" cascade="all" lazy="false" column="ErrorEventId" unique="true"/>
+        <!-- <one-to-one name="errorEvent" 
+        			class="org.ikasan.framework.component.Event" cascade="all" lazy="false" />-->
+	</class>
+	
+	<class name="org.ikasan.framework.component.Event" table="ErrorEvent">
+		<id name="persistenceId" type="long" column="PersistenceId">
+			<generator class="identity" />
+		</id>
+		<property name="id" column="EventId" not-null="true"/>
+		<property name="priority" column="Priority" not-null="true"/>
+		<property name="timestamp" column="Timestamp" not-null="true"/>
+		
+		<!--
+			Use a standard parent/child relationship for payloads, this a
+			persistent list
+		-->
+		<list name="payloads" cascade="all" lazy="false">
+			<key not-null="true"> <!-- NOT NULL has to be here! -->
+				<column name="EventId" />
+			</key>
+			<list-index column="PayloadPosition"/>
+			<one-to-many class="org.ikasan.common.component.DefaultPayload" />
+		</list>
+	</class>
+	
+	<class name="org.ikasan.common.component.DefaultPayload" table="ErrorPayload">
+		<id name="persistenceId" type="long" column="PersistenceId">
+			<generator class="identity" />
+		</id>
+		<property name="id" column="PayloadId" />
+		<property name="content" column="Content" />
+		<map name="attributes" table="ErrorPayloadAttribute" cascade="all"
+			lazy="false">
+			<key column="ErrorPayloadId" />
+			<index column="AttributeName" type="java.lang.String" />
+			<element column="AttributeValue" type="java.lang.String" />
+		</map>
 	</class>
 	
 </hibernate-mapping>

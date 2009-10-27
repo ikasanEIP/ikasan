@@ -1,6 +1,6 @@
 /* 
- * $Id: 
- * $URL: 
+ * $Id$
+ * $URL$ 
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -116,6 +116,11 @@ public class ErrorOccurrence {
 	private String actionTaken;
 	
 	
+	/**
+	 * Representation of the Event at the time that the error took place
+	 */
+	private Event errorEvent;
+
 	
 	
 	/**
@@ -140,6 +145,9 @@ public class ErrorOccurrence {
 		this.flowElementName = flowElementName;
 		this.flowName = flowName;
 		this.eventId = event.getId();
+		
+		
+		this.errorEvent = event;
 	}
 	
 
@@ -425,6 +433,18 @@ public class ErrorOccurrence {
 	public void setActionTaken(String actionTaken){
 		this.actionTaken = actionTaken;
 	}
+	
+	
+	/**
+	 * Accessor for ErrorEvent
+	 * 
+	 * @return errorEvent if any
+	 */
+	public Event getErrorEvent(){
+		return errorEvent;
+	}
+	
+
 	
 	public String toString(){
 		StringBuffer sb = new StringBuffer(getClass().getName()+" [");

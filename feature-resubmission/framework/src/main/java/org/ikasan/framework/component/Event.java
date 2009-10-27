@@ -74,10 +74,14 @@ public class Event implements Cloneable
      * TODO, if this really is just a number from 0-9, then this constraint should be modelled somehow
      */
     private int priority =4;    
-
-
     
-    /** Event contained payloads */
+    /**
+     * Unique identifier required when persisting using ORM
+     */
+    private Long persistenceId;
+    
+
+	/** Event contained payloads */
     private List<Payload> payloads = null;
     
     
@@ -369,4 +373,22 @@ public class Event implements Cloneable
     {
         return this.payloads;
     }
+    
+    /**
+     * Accessor for persistenceId
+     * 
+     * @return persistenceId if set
+     */
+    public Long getPersistenceId() {
+		return persistenceId;
+	}
+
+	/**
+	 * Mutator for persistenceId
+	 * 
+	 * @param persistenceId
+	 */
+	private void setPersistenceId(Long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
 }
