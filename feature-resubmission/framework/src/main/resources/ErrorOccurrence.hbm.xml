@@ -72,8 +72,6 @@
                   column="FlowElementName" />
         <property name="eventId"           type="java.lang.String" 
                   column="EventId"         />
-        <property name="currentEvent"      type="java.lang.String" 
-                  column="CurrentEvent"    />
         <property name="url"      type="java.lang.String" 
                   column="Url"    />
         <property name="actionTaken"      type="java.lang.String" 

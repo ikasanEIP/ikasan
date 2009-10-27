@@ -310,9 +310,6 @@ public class DefaultErrorLoggingServiceImplTest {
 		public boolean matchesSafely(ErrorOccurrence item) {
 			boolean result = true;
 			
-			if (!same(errorOccurrence.getCurrentEvent(),item.getCurrentEvent())){
-				result = false;
-			}
 			if (!same(errorOccurrence.getErrorDetail(),item.getErrorDetail())){
 				result = false;
 			}

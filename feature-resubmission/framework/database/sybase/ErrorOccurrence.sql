@@ -98,7 +98,6 @@ CREATE TABLE ErrorOccurrence
     EventId             VARCHAR(128) NULL,
     Url          		VARCHAR(512)  NULL,
     ActionTaken   		VARCHAR(128)  NULL,
-    CurrentEvent        TEXT NULL,
     ErrorDetail         TEXT NOT NULL,
     LogTime       		DATETIME NOT NULL,
     Expiry       		DATETIME NULL,

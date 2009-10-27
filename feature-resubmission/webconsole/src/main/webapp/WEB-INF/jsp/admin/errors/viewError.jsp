@@ -78,17 +78,6 @@
 	</c:if>
 
 	
-	<c:if test="${!empty error.currentEvent}">
-	<tr>
-		<th>
-			Current Event
-		</th>
-		<td>
-			<c:out value="${error.currentEvent}" />
-		</td>
-	</tr>
-	</c:if>
-	
 	<c:if test="${!empty error.eventId}">
 	<tr>
 		<th>

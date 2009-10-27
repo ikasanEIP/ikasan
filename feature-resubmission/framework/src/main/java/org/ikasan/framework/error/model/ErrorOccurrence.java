@@ -61,10 +61,7 @@ public class ErrorOccurrence {
 	private Long id;
 
 
-	/**
-	 * raw dump of the event associated with this error, if it was event/flow related
-	 */
-	private String currentEvent;
+
 	
 	/**
 	 * raw dump of the error as it occurred
@@ -141,7 +138,6 @@ public class ErrorOccurrence {
 	 */
 	public ErrorOccurrence(Throwable throwable, Event event, String moduleName, String flowName, String flowElementName, Date expiry, String actionTaken) {
 		this(throwable, moduleName, expiry, actionTaken);
-		this.currentEvent = flattenEvent(event);
 		this.flowElementName = flowElementName;
 		this.flowName = flowName;
 		this.eventId = event.getId();
@@ -186,15 +182,7 @@ public class ErrorOccurrence {
 
 
 
-	/**
-	 * Flattens the Event into a human readable String value
-	 * 
-	 * @param event
-	 * @return String representation of the event
-	 */
-	private String flattenEvent(Event event) {
-		return event.toString();
-	}
+
 
 
 
@@ -225,12 +213,6 @@ public class ErrorOccurrence {
 
 
 
-	/**
-	 * @return the currentEvent
-	 */
-	public String getCurrentEvent() {
-		return currentEvent;
-	}
 
 	/**
 	 * @return the errorDetail
@@ -281,12 +263,7 @@ public class ErrorOccurrence {
 		return moduleName;
 	}
 
-	/**
-	 * @param currentEvent the currentEvent to set
-	 */
-	public void setCurrentEvent(String currentEvent) {
-		this.currentEvent = currentEvent;
-	}
+
 
 	/**
 	 * @param errorDetail the errorDetail to set
@@ -454,7 +431,6 @@ public class ErrorOccurrence {
 		sb.append("initiatorName=");sb.append(initiatorName);sb.append(",");
 		sb.append("flowElementName=");sb.append(flowElementName);sb.append(",");
 		sb.append("errorDetail=");sb.append(errorDetail);sb.append(",");
-		sb.append("currentEvent=");sb.append(currentEvent);sb.append(",");
 		sb.append("eventId=");sb.append(eventId);sb.append(",");
 		sb.append("logTime=");sb.append(logTime);sb.append(",");
 		sb.append("expiry=");sb.append(expiry);sb.append(",");
