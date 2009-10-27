@@ -90,11 +90,6 @@
     
     <bean id="businessErrorService" class="org.ikasan.demo.businesserror.service.BusinessErrorService">
     	<constructor-arg ref="inMemoryBusinessErrorDao" />
-    	<constructor-arg>
-    		<list>
-    			<ref bean="demoResubmissionJmsEaiAdapter"/>
-    		</list>
-    	</constructor-arg>
     </bean>
     
     <bean id="inMemoryBusinessErrorDao" class="org.ikasan.demo.businesserror.dao.InMemoryBusinessErrorDao"/>
@@ -105,14 +100,10 @@
 
 
 	<bean id="demoResubmissionJmsEaiAdapter" class="org.ikasan.demo.businesserror.eai.JmsEaiAdapter">
-		<property name="originatingSystem" value="demoResubmission" />
 		<property name="errorConverter">
-			<bean
-				class="org.ikasan.demo.businesserror.eai.BusinessErrorConverter"/>
-				
+			<bean class="org.ikasan.demo.businesserror.eai.BusinessErrorConverter"/>
 		</property>
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="outgoingDestination" ref="resubmissionDestination" />
+		<property name="businessErrorListener" ref="businessErrorService"/>
 	</bean>
 
 

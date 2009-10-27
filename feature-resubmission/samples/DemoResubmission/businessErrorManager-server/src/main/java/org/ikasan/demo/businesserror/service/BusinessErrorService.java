@@ -40,13 +40,10 @@
  */
 package org.ikasan.demo.businesserror.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.ikasan.demo.businesserror.dao.BusinessErrorDao;
-import org.ikasan.demo.businesserror.eai.EaiAdapter;
 import org.ikasan.demo.businesserror.eai.BusinessErrorListener;
 import org.ikasan.demo.businesserror.model.BusinessError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,18 +56,14 @@ public class BusinessErrorService implements BusinessErrorListener{
 	
 	private BusinessErrorDao businessErrorDao;
 	
-	private Map<String, EaiAdapter> eaiAdapters = new HashMap<String, EaiAdapter>();
+	
 	
 	
 	@Autowired
-	public BusinessErrorService(BusinessErrorDao businessErrorDao,
-			List<EaiAdapter> eaiAdapters) {
+	public BusinessErrorService(BusinessErrorDao businessErrorDao) {
 		super();
 		this.businessErrorDao = businessErrorDao;
-		for (EaiAdapter eaiAdapter : eaiAdapters){
-			this.eaiAdapters.put(eaiAdapter.getOriginatingSystem(), eaiAdapter);
-			eaiAdapter.setBusinessErrorListener(this);
-		}
+
 	}
 
 
@@ -82,18 +75,7 @@ public class BusinessErrorService implements BusinessErrorListener{
 		return businessErrorDao.load(businessErrorId);
 	}
 	
-	public void requestResubmission(Long businessErrorId){
-		logger.info("called with errorId ["+businessErrorId+"]");
-		final BusinessError businessError = businessErrorDao.load(businessErrorId);
-		
-		EaiAdapter eaiAdapter = eaiAdapters.get(businessError.getOriginatingSystem());
-		
-		eaiAdapter.postBusinessError(businessError);
-		
-		//delete the businessError locally
-		businessErrorDao.delete(businessError);
-		
-	}
+	
 
 
 	public void onBusinessError(BusinessError businessError) {

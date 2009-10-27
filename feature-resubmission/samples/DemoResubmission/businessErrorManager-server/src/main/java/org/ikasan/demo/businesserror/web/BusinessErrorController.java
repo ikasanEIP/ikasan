@@ -96,9 +96,4 @@ public class BusinessErrorController {
 		return result;
 	}
 
-	@RequestMapping("/requestResubmission.htm")
-    public String requestResubmission(@RequestParam(ERROR_ID_PARAMETER) Long errorId){
-    	errorManagerService.requestResubmission(errorId);
-    	return "redirect:errors.htm";
-    }
 }

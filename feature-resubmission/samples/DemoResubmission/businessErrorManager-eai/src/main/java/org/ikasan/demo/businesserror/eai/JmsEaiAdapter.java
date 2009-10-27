@@ -42,33 +42,24 @@ package org.ikasan.demo.businesserror.eai;
 
 import java.util.Date;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.demo.businesserror.model.BusinessError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JmsEaiAdapter implements EaiAdapter, MessageListener{
-	
-	private JmsTemplate jmsTemplate;
-	
-	private Destination outgoingDestination;
+public class JmsEaiAdapter implements MessageListener{
+
 	
 	private BusinessErrorListener businessErrorListener;
 	
 	private Logger logger = Logger.getLogger(JmsEaiAdapter.class);
-	
-	private String originatingSystem;
+
 	
 
 	
@@ -100,27 +91,9 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 		businessErrorListener.onBusinessError(businessError);
 	}
 
-	public void postBusinessError(final BusinessError businessError) {
-		//publish the business error back to the resubmission topic
-		logger.info("called with businessError["+businessError+"]");
-		jmsTemplate.send(outgoingDestination, new MessageCreator() {
-			
-			public Message createMessage(Session session) throws JMSException {
-				return session.createTextMessage(errorConverter.toXml(businessError));
-			}
-		});
-		
-	}
 
-	@Autowired
-	public void setConnectionFactory(ConnectionFactory connectionFactory) {
-		this.jmsTemplate = new JmsTemplate(connectionFactory);
-	}
-	
-	@Autowired
-	public void setOutgoingDestination(Destination outgoingDestination){
-		this.outgoingDestination = outgoingDestination;
-	}
+
+
 
 	@Autowired
 	public void setBusinessErrorListener(
@@ -133,13 +106,7 @@ public class JmsEaiAdapter implements EaiAdapter, MessageListener{
 		this.errorConverter = errorConverter;
 	}
 	
-	public String getOriginatingSystem() {
-		return originatingSystem;
-	}
 
-	public void setOriginatingSystem(String originatingSystem) {
-		this.originatingSystem = originatingSystem;
-	}
 	
 
 
