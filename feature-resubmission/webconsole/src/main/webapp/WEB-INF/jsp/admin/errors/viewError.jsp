@@ -142,7 +142,7 @@
 		<h3>Error Detail</h3>
 		<p id="errorDetail" class="unformattable data"><c:out value="${error.errorDetail}" /></p>
 
-
+<c:if test="${!empty error.errorEvent}">
 		<h3>Event</h3>
 <div id="eventDump">
 		<table id="currentEventDetails" class="keyValueTable">
@@ -205,5 +205,6 @@
 		</table>
 		</c:forEach>
 	</div><!-- end eventDump -->
-
+</c:if>
+ 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
