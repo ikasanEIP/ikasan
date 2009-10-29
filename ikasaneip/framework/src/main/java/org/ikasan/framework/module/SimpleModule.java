@@ -55,9 +55,6 @@ import org.ikasan.framework.initiator.Initiator;
  */
 public class SimpleModule implements Module
 {
-    /** Unique id for a module */
-    private long id;
-
     /** Initiators of flows within this module */
     private List<Initiator> initiators;
 
@@ -90,37 +87,6 @@ public class SimpleModule implements Module
     }
 
     /**
-     * Constructor - required for hibernate
-     */
-    public SimpleModule()
-    {
-        // Do Nothing
-    }
-    
-    /**
-     * Get the unique id
-     * 
-     * @return id
-     */
-    public long getId()
-    {
-        return id;
-    }
-
-    /**
-     * Set the unique id. 
-     * 
-     * private as it is only referenced by Hibernate and not actually used.
-     * 
-     * @param id - id to set
-     */
-    @SuppressWarnings("unused")
-    private void setId(long id)
-    {
-        this.id = id;
-    }
-
-    /**
      * Accessor for name
      * 
      * @return module name
@@ -128,16 +94,6 @@ public class SimpleModule implements Module
     public String getName()
     {
         return name;
-    }
-
-    /**
-     * Accessor for name
-     * 
-     * @param name - module name
-     */
-    public void setName(String name)
-    {
-        this.name = name;
     }
 
     /**
