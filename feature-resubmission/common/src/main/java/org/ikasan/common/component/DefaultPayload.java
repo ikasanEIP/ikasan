@@ -221,12 +221,12 @@ public class DefaultPayload implements Payload
     public String toString()
     {
         StringBuffer sb = new StringBuffer("DefaultPayload [");
-        sb.append("id = [");
-        sb.append(id);
-        sb.append("], ");
+        sb.append("id = [");sb.append(id);sb.append("], ");
+        sb.append("persistenceId = [");sb.append(persistenceId);sb.append("], ");
         sb.append("content = [");
         sb.append(new String(this.content));
-        sb.append("]");
+        sb.append("], ");
+        sb.append("class = [");sb.append(getClass());sb.append("]");
         sb.append("]");
         return sb.toString();
     }

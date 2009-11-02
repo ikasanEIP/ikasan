@@ -231,10 +231,12 @@ public class Event implements Cloneable
     @Override
     public String toString()
     {
-        return "id=[" + this.id + "] "
-                + "priority=[" + this.priority + "] "
-                + "timestamp=[" + this.timestamp + "] "
-                + "payloads=[" + this.payloads + "] ";
+        return "id=[" + id + "] "
+        		+ "persistenceId=[" + persistenceId + "] "
+                + "priority=[" + priority + "] "
+                + "timestamp=[" + timestamp + "] "
+                + "payloads=[" + payloads + "] "
+        		+ "class=[" + getClass() + "] ";
     }
 
 

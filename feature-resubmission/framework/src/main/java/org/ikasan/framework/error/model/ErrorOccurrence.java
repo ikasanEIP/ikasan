@@ -435,7 +435,9 @@ public class ErrorOccurrence {
 		sb.append("logTime=");sb.append(logTime);sb.append(",");
 		sb.append("expiry=");sb.append(expiry);sb.append(",");
 		sb.append("url=");sb.append(url);sb.append(",");
-		sb.append("actionTaken=");sb.append(actionTaken);
+		sb.append("actionTaken=");sb.append(actionTaken);sb.append(",");
+		sb.append("excludedEvent=");sb.append(excludedEvent);sb.append(",");
+		sb.append("errorEvent=");sb.append(errorEvent);
 		sb.append("]");
 		return sb.toString();
 	}
