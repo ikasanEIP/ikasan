@@ -560,7 +560,7 @@ public class ClientListEntry
         sb.append(this.gid);
         sb.append("]\nuid               = ["); //$NON-NLS-1$
         sb.append(this.uid);
-        sb.append("]\nPersmissions      = ["); //$NON-NLS-1$
+        sb.append("]\nPermissions       = ["); //$NON-NLS-1$
         sb.append(this.permissions);
         sb.append("]\nPermissionsString = ["); //$NON-NLS-1$
         sb.append(this.permissionsString);
