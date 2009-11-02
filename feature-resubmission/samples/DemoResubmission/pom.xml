@@ -67,10 +67,7 @@
   </scm>
 
      <modules>
-       <module>businessErrorManager-eai</module>
-       <module>businessErrorManager-server</module>
        <module>demoResubmission</module>
-       <module>errorManagerTarget</module>
        <module>war</module>
        <module>ear</module>
      </modules>
