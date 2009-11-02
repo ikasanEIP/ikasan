@@ -266,6 +266,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @see org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener#notifyListenerSetupFailure(java.lang.Throwable)
      */
     public void notifyListenerSetupFailure(Throwable throwable){
+    	logError(null, throwable, name, new RetryAction(listenerSetupFailureRetryDelay, maxListenerSetupFailureRetries));
         handleRetry(maxListenerSetupFailureRetries, listenerSetupFailureRetryDelay);
     }
 
