@@ -58,28 +58,5 @@
     <attribute name="DownCacheSize">99</attribute>
   </mbean>
   
-    <!--  demo.errorManager.errors -->
-  <mbean code="org.jboss.jms.server.destination.QueueService"
-    name="jboss.messaging.destination:service=Queue,name=demo.errorManager.errors"
-    xmbean-dd="xmdesc/Queue-xmbean.xml">
-    <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
-    <depends>jboss.messaging:service=PostOffice</depends>
-    <attribute name="FullSize">100</attribute>
-    <attribute name="PageSize">99</attribute>
-    <attribute name="DownCacheSize">99</attribute>
-  </mbean>
-
-  <!--  demo.errorManager.resubmission -->
-  <mbean code="org.jboss.jms.server.destination.QueueService"
-    name="jboss.messaging.destination:service=Queue,name=demo.errorManager.resubmission"
-    xmbean-dd="xmdesc/Queue-xmbean.xml">
-    <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
-    <depends>jboss.messaging:service=PostOffice</depends>
-    <attribute name="FullSize">100</attribute>
-    <attribute name="PageSize">99</attribute>
-    <attribute name="DownCacheSize">99</attribute>
-  </mbean>
-
-
 
 </server>
