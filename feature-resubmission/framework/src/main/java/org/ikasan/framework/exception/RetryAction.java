@@ -93,6 +93,14 @@ public class RetryAction implements IkasanExceptionAction{
 	}
 
 	/**
+	 * Mutator for delay
+	 * 
+	 * @param delay
+	 */
+	public void setDelay(long delay){
+		this.delay=delay;
+	}
+	/**
 	 * Accessor for maxRetries
 	 * 
 	 * @return maxRetries
