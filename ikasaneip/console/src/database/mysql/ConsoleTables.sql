@@ -42,8 +42,8 @@
 -- 
 
 DROP TABLE IF EXISTS `ikasan01`.`Module`;
-DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlowProfile`;
 DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlow`;
+DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlowProfile`;
 
 CREATE TABLE  `ikasan01`.`Module` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
