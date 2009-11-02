@@ -80,6 +80,7 @@
         <module>samples/DemoFileDelivery</module>
         <module>samples/DemoTransformationRouting</module>
         <module>samples/DemoResubmission</module>
+        <module>samples/DemoErrorPublication</module>
 
        <!-- documentation  -->
        <!-- <module>documentation/ArchitectureGuide</module> -->
