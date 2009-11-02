@@ -108,7 +108,9 @@
         </list>
      </property>
     <property name="scheduler" ref="channelAdapterFlowScheduler"/>
-    </bean>
+    <property name="excludedEventService" ref="excludedEventService"/>
+    <property name="errorLoggingService" ref="errorLoggingService"/>
+  </bean>
 
   <bean id="channelAdapterFlowScheduler"
     class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -141,7 +143,16 @@
         <property name="errorLoggingService" ref="errorLoggingService"/>
     </bean>
     
-    
+   <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+    <property name="beans">
+      <map>
+      	<entry key="bean:name=module" value-ref="module"/>
+        <entry key="bean:name=timeDependentExclusionFlowInitiator" value-ref="timeDependentExclusionFlowInitiator"/>
+      	<entry key="bean:name=channelAdapterFlowInitiator" value-ref="channelAdapterFlowInitiator"/>
+      </map>
+      
+    </property>
+  </bean> 
    
 
 </beans>
