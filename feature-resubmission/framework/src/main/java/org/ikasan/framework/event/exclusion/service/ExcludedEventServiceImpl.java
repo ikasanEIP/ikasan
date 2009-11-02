@@ -187,7 +187,16 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	    try{
 			flow.invoke(flowInvocationContext, event);
 	    } catch (Throwable throwable){
-	    	errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), event, null);
+	    	try {
+	    		
+	    		//for some reason, if dont clone event for error occurrence, hibernate fails to persist
+	    		//dont know why this is
+				Event clonedEvent = event.clone();
+				errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), clonedEvent, null);
+			} catch (CloneNotSupportedException e) {
+				//ignore
+			}
+			
 	    	
 	    	throw new AbortTransactionException("Resubmission failed!", throwable);
 	    }

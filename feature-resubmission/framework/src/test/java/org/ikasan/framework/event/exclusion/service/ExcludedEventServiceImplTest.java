@@ -395,12 +395,13 @@ public class ExcludedEventServiceImplTest {
 	}
 	
 	@Test(expected=AbortTransactionException.class)
-	public void testResubmit_whereResubmissionFails_willCallErrorLoggingServiceAndThrowAbortTransactionException(){
+	public void testResubmit_whereResubmissionFails_willCallErrorLoggingServiceAndThrowAbortTransactionException() throws CloneNotSupportedException{
 		final String eventId = "eventId";
 		final String moduleName = "moduleName";
 		final String flowName = "flowName";
 		final String componentName = "componentName";
 		final Event event = mockery.mock(Event.class);
+		final Event clonedEvent = mockery.mock(Event.class);
 		
 		final ExcludedEvent excludedEvent = new ExcludedEvent(event, moduleName, flowName, null);
 		final Module module = mockery.mock(Module.class);
@@ -435,7 +436,9 @@ public class ExcludedEventServiceImplTest {
 
                 
                 //invokes the errorLoggingService
-                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,event, null);
+                one(event).clone();will(returnValue(clonedEvent));
+                
+                one(errorLoggingService).logError(throwable,moduleName,flowName,componentName,clonedEvent, null);
                 inSequence(sequence);
             }
         });

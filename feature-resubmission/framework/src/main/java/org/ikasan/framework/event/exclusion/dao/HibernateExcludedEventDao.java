@@ -49,6 +49,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.common.Payload;
+import org.ikasan.common.component.DefaultPayload;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
@@ -143,6 +145,11 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 		}
 		if (!mutable){
 			getHibernateTemplate().evict(result);
+			
+			//also clear persistenceIds from payloads
+			for (Payload payload : result.getEvent().getPayloads()){
+				((DefaultPayload)payload).setPersistenceId(null);
+			}
 		}
 		return result;
 	}
