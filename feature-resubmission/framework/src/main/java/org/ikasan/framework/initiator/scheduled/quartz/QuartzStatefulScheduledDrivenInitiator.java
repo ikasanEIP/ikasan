@@ -120,8 +120,8 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         //ScheduledDrivenQuartzContext sdContext = this.getScheduledDrivenContext(context);
         try
         {
-            // pause the existing schedules
-            scheduler.pauseJobGroup(getJobGroup());
+            // pause the existing schedules of this initiator job
+        	scheduler.pauseJob(INITIATOR_JOB_NAME, this.getJobGroup());
             
             // create a retry schedule
             Trigger recoveryTrigger = TriggerUtils.makeImmediateTrigger(RETRY_TRIGGER_NAME, maxAttempts, delay);
@@ -172,8 +172,8 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
             //context.clearRetry();
 
             
-            // resume normal schedules
-            this.scheduler.resumeJobGroup(getJobGroup());
+            // resume normal schedules of this initiator job
+            this.scheduler.resumeJob(INITIATOR_JOB_NAME, this.getJobGroup());
             if (logger.isInfoEnabled())
             {
                 logger.info("Successfully completed retry cycle on Initiator [" + this.getName() + "].");
@@ -409,4 +409,12 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         this.triggers = triggers;
     }
 
+    /**
+     * Returns the Quartz job name of this initiator
+     * @return
+     */
+    public String getInitiatorJobName()
+    {
+        return this.INITIATOR_JOB_NAME;
+    }
 }

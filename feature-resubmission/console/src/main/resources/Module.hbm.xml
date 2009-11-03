@@ -60,6 +60,8 @@
         
         <property name="description" column="Description" type="string" />
         
+        <property name="designDiagramURL" column="DesignDiagramURL" type="string" />
+        
     </class>
 	
 </hibernate-mapping>

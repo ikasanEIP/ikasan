@@ -281,7 +281,7 @@ public class WiretapEventsSearchFormController
     {
         modelMap.addAttribute("pageNo", pageNo);
         PagedWiretapSearchResult pagedResult = wiretapService.findWiretapEvents(searchCriteria.getModules(),
-            searchCriteria.getComponentName(), searchCriteria.getEventId(), searchCriteria.getPayloadId(),
+            null, searchCriteria.getComponentName(), searchCriteria.getEventId(), searchCriteria.getPayloadId(),
             searchCriteria.getFromDateTime(), searchCriteria.getUntilDateTime(), searchCriteria.getPayloadContent(),
             20, pageNo);
         modelMap.addAttribute("searchResults", pagedResult);

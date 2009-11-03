@@ -91,6 +91,10 @@ public class UsersController
     public UsersController(UserService userService)
     {
         super();
+        if (userService == null)
+        {
+            throw new IllegalArgumentException("UserService cannot be NULL");
+        }
         this.userService = userService;
     }
 
@@ -103,11 +107,14 @@ public class UsersController
     @RequestMapping("list.htm")
     public String listUsers(ModelMap model)
     {
+        if (model != null)
+        {
         if (model.get("user") == null)
         {
             model.addAttribute("user", new User(null, null, true));
         }
         model.addAttribute("users", this.userService.getUsers());
+        }
         return "admin/users/users";
     }
 

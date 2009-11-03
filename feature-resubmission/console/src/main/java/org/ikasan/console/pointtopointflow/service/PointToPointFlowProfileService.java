@@ -42,7 +42,6 @@ package org.ikasan.console.pointtopointflow.service;
 
 import java.util.Set;
 
-import org.ikasan.console.module.Module;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 
 /**
@@ -54,42 +53,24 @@ public interface PointToPointFlowProfileService
 {
 
     /**
-     * Get a list of PointToPointFlowProfiles
+     * Get a Set of PointToPointFlowProfiles
      * 
-     * @return List of all of the PointToPointFlowProfiles
+     * @return Set of all of the PointToPointFlowProfiles or an empty Set
      */
     public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles();
 
     /**
-     * Get a set of all of the ids for all of the PointToPointFlowProfiles
+     * Get a Set of all of the ids for all of the PointToPointFlowProfiles or an empty Set
      * 
-     * @return Set of all of the PointToPointFlowProfile ids
+     * @return Set of all of the PointToPointFlowProfile ids or an empty Set
      */
     public Set<Long> getAllPointToPointFlowProfileIds();
 
     /**
-     * Get a set of all of the modules for all of the PointToPointFlowProfiles
-     * 
-     * @return Set of all of the modules
-     * @deprecated - @see org.ikasan.console.module.ModuleService
-     */
-    @Deprecated
-    public Set<Module> getAllModules();
-    
-    /**
-     * Get a set of all of the module ids for all of the PointToPointFlowProfiles
-     * 
-     * @return Set of all of the module ids
-     * @deprecated - @see org.ikasan.console.module.ModuleService
-     */
-    @Deprecated
-    public Set<Long> getAllModuleIds();
-    
-    /**
-     * Get a set of all of the module ids for the given PointToPointFlowProfile Ids
+     * Get a Set of all of the module ids for the given PointToPointFlowProfile Ids or an empty Set
      * 
      * @param pointToPointFlowProfileIds - The point to point profile ids to search on 
-     * @return Set of all of the module ids
+     * @return Set of all of the module ids or an empty Set
      */
     public Set<Long> getModuleIdsFromPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds);
     

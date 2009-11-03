@@ -42,13 +42,15 @@
 -- 
 
 DROP TABLE IF EXISTS `ikasan01`.`Module`;
-DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlowProfile`;
 DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlow`;
+DROP TABLE IF EXISTS `ikasan01`.`PointToPointFlowProfile`;
 
 CREATE TABLE  `ikasan01`.`Module` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) NOT NULL,
   `Description` varchar(255) NOT NULL,
+  `DesignDiagramURL` varchar(255) NULL,  
+  CONSTRAINT UNIQUE (`Name`),  
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

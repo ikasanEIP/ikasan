@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$ 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -75,7 +75,8 @@
 	</tr>
 </table>
 
-<h2>Event :: <c:out value="${wiretapEvent.eventId}" /></h2>
+<h2><fmt:message key="wiretap_event_event_id"/> :: <c:out value="${wiretapEvent.eventId}" /></h2>
+
 <table id="wiretapContent" class="keyValueTable">
 	<tr>
 		<th><fmt:message key="wiretap_event_event_id"/></th>
@@ -84,13 +85,15 @@
 	
 	<tr>
 		<th><fmt:message key="wiretap_event_payload_id"/></th>
-		<td><c:out value="${wiretapEvent.payloadId}" /></td>
-		<td>
+		<td colspan="2">
+		  <c:out value="${wiretapEvent.payloadId}" />
+		  &nbsp;
 	 		<c:choose>
 				<c:when test="${wiretapEvent.previousByPayload != null}">
 			        <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
 				</c:when>
 				<c:otherwise>
+                  <span style="color : #A9A9A9;">(<fmt:message key="wiretap_event_previous"/>)</span>             
 				</c:otherwise>
 			</c:choose>
 			&nbsp;
@@ -99,6 +102,7 @@
 			        <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
 				</c:when>
 				<c:otherwise>
+                  <span style="color : #A9A9A9;">(<fmt:message key="wiretap_event_next"/>)</span>             
 				</c:otherwise>
 			</c:choose>					
 		</td>
@@ -135,7 +139,7 @@
 
 	<tr>
 		<th class="top"><fmt:message key="wiretap_event_payload_content"/></th>
-		<td colspan="2"><c:out value="${payloadContent}" escapeXml="false" /></td>
+		<td class="payloadContent" colspan="2"><c:out value="${payloadContent}" escapeXml="false" /></td>
 	</tr>	
 
 </table>

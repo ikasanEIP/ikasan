@@ -1,40 +1,40 @@
- /* 
+ /*
  * $Id$
  * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -42,7 +42,11 @@ package org.ikasan.framework.initiator.messagedriven;
 
 import static org.junit.Assert.fail;
 
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.ObjectMessage;
+import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import junit.framework.Assert;
@@ -68,9 +72,9 @@ import org.junit.Test;
 
 /**
  * Test for <code>JmsMessageDrivenInitiatorImpl</code>
- * 
+ *
  * @author Ikasan Development Team
- * 
+ *
  */
 public class JmsMessageDrivenInitiatorImplTest
 {
@@ -89,7 +93,7 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private final String initiatorName = "initiatorName";
 
-    private Event eventFromTextMessage = mockery.mock(Event.class);
+    private Event eventFromMessage = mockery.mock(Event.class);
 
     private TextMessage textMessage = mockTextMessage();
 
@@ -103,9 +107,17 @@ public class JmsMessageDrivenInitiatorImplTest
 
     private IkasanExceptionAction retryZeroAction = new RetryAction( retryDelay, 0);
 
+    private MapMessage mapMessage = mockMapMessage();
+
+    private ObjectMessage objectMessage = mockObjectMessage();
+
+    private StreamMessage streamMessage = mockStreamMessage();
+
+    private BytesMessage bytesMessage = mockBytesMessage();
+
     private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
-    
-    
+
+
     /**
      * System under test
      */
@@ -120,10 +132,10 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             {
                 one(messageListenerContainer).setListenerSetupExceptionListener(stubJmsMessageDrivenInitiatorImpl);
-                
+
             }
         });
-        
+
         stubJmsMessageDrivenInitiatorImpl.setMessageListenerContainer(messageListenerContainer);
         stubJmsMessageDrivenInitiatorImpl.addListener(monitorListener);
     }
@@ -202,14 +214,12 @@ public class JmsMessageDrivenInitiatorImplTest
     @Test
     public void testOnMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
     {
-        // lets pretend that our subclass handles TextMessages (hence the
-        // overriding of handleTextMessage)
         mockery.checking(new Expectations()
         {
-            {	
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
+            {
+            	one(eventFromMessage).getId();will(returnValue("eventId"));
+
+            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
                 will(returnValue(null));
             }
         });
@@ -245,22 +255,22 @@ public class JmsMessageDrivenInitiatorImplTest
     public void testOnMessage_stopsTheInitiatorInResponseToFlowReturningStopAction()
     {
     	final Throwable throwable = new RuntimeException();
-    	
-    	
+
+
         mockery.checking(new Expectations()
         {
             {
-            	one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
+            	one(eventFromMessage).getId();will(returnValue("eventId"));
+
+            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
                 will(throwException(throwable));
-            	
-                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));
             	will(returnValue(rollbackStopAction));
-                
-                
-                
-                
+
+
+
+
                 one(messageListenerContainer).stop();
             }
         });
@@ -273,19 +283,19 @@ public class JmsMessageDrivenInitiatorImplTest
         	abortTransactionException = exception;
         }
         Assert.assertNotNull(abortTransactionException);
-        
+
         mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test that the initiator stops if an EventDeserialisationException is thrown by the underlying derserialisaion implementation
      */
     @Test
     public void testOnMessage_stopsTheInitiatorForAnEventDeserialisationException()
     {
-    	
+
     	stubJmsMessageDrivenInitiatorImpl.setThrowEventDeserialisationExceptionWhenHandlingMessage(true);
-    	
+
         mockery.checking(new Expectations()
         {
             {
@@ -301,19 +311,19 @@ public class JmsMessageDrivenInitiatorImplTest
         	abortTransactionException = exception;
         }
         Assert.assertNotNull(abortTransactionException);
-        
+
         mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test that the initiator stops if an UnsupportedOperationException is thrown
      */
     @Test
     public void testOnMessage_stopsTheInitiatorForAnUnsupportedOperationException()
     {
-    	
+
     	stubJmsMessageDrivenInitiatorImpl.setThrowUnsupportedOperationExceptionWhenHandlingMessage(true);
-    	
+
         mockery.checking(new Expectations()
         {
             {
@@ -329,7 +339,7 @@ public class JmsMessageDrivenInitiatorImplTest
         	abortTransactionException = exception;
         }
         Assert.assertNotNull(abortTransactionException);
-        
+
         mockery.assertIsSatisfied();
     }
 
@@ -353,20 +363,20 @@ public class JmsMessageDrivenInitiatorImplTest
     @Test
     public void testOnMessage_stopsTheInitiatorAndThrowsRuntimeExceptionInResponseToFlowReturningStopRollbackAction()
     {
-    	
+
     	final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
+            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromMessage)));
                 will(throwException(throwable));
-                
-                one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	
-                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
+
+                one(eventFromMessage).getId();will(returnValue("eventId"));
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackStopAction));
-            	
-            	
+
+
                 one(messageListenerContainer).stop();
             }
         });
@@ -395,30 +405,30 @@ public class JmsMessageDrivenInitiatorImplTest
     /**
      * Test that the initiator suspends the underlying container for the
      * configured delay period for a retry action
-     * 
+     *
      */
     @Test
     public void testOnMessage_suspendsTheContainerForARetryAction()
     {
     	final Throwable throwable = new RuntimeException();
-    	
+
         final Sequence sequence = mockery.sequence("invocationSequence");
         // expectations for the suspension
         mockery.checking(new Expectations()
         {
             {
             	//flow invocation fails
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
+            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromMessage)));
                 inSequence(sequence);
                 will(throwException(throwable));
-                
+
                 //exceptionhandler says RETRY
                 one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable) with(equal(throwable)));
                 inSequence(sequence);
                 will(returnValue(retryAction));
-                
-                allowing(eventFromTextMessage).getId();will(returnValue("eventId"));
-                
+
+                allowing(eventFromMessage).getId();will(returnValue("eventId"));
+
                 // suspends
                 one(messageListenerContainer).stop();
                 // inSequence(sequence);
@@ -448,14 +458,14 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             fail("thrownException was null.");
         }
-        
-        mockery.assertIsSatisfied(); 
-        
+
+        mockery.assertIsSatisfied();
+
         // Assert.assertTrue("we should now be in recovering mode",
         // stubJmsMessageDrivenInitiatorImpl.getState().isRecovering());
-        
+
         // expectations for the resumption
-        
+
         mockery.checking(new Expectations()
         {
             {
@@ -469,12 +479,12 @@ public class JmsMessageDrivenInitiatorImplTest
         /*
          * go to sleep for a while, then come back hopefully after the container
          * has been woken
-         * 
+         *
          * Note that this sleep period needs to be substantially longer than the
          * retryDelay to ensure that there is time to reawaken the container.
          * However it should never be so long that it starts to drag on the
          * performance of this test running
-         * 
+         *
          * Note though, that if you see intermittent failures of this test, it
          * could be a timing issue
          */
@@ -492,8 +502,8 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-            	//one(eventFromTextMessage).getId();will(returnValue("eventId"));
-            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromTextMessage)));
+            	//one(eventFromMessage).getId();will(returnValue("eventId"));
+            	one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event) with(equal(eventFromMessage)));
                 inSequence(sequence);
                 will(returnValue(null));
                 one(monitorListener).notify(with(equal("running")));
@@ -513,24 +523,24 @@ public class JmsMessageDrivenInitiatorImplTest
     public void testOnMessage_rollsbackAndStopsInErrorWhenExceedingMaxAttemptsOnRetry()
     {
         final Sequence sequence = mockery.sequence("invocationSequence");
-        
+
         final Throwable throwable = new RuntimeException();
         mockery.checking(new Expectations()
         {
             {
             	//flow invocation fails
-            	one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromTextMessage)));
+            	one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
                 inSequence(sequence);
                 will(throwException(throwable));
-                
-                allowing(eventFromTextMessage).getId();will(returnValue("eventId"));
-                
+
+                allowing(eventFromMessage).getId();will(returnValue("eventId"));
+
                 //exception handler says RETRY maximum of zero times (slightly nonsensical, but for arguments sake!)
                 one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));
                 inSequence(sequence);
                 will(returnValue(retryZeroAction));
-                
-                
+
+
                 // which of course results in a stop
                 one(messageListenerContainer).stop();
                 inSequence(sequence);
@@ -538,8 +548,8 @@ public class JmsMessageDrivenInitiatorImplTest
             }
         });
 
-        
-        
+
+
         RuntimeException thrownException = null;
         try
         {
@@ -552,7 +562,7 @@ public class JmsMessageDrivenInitiatorImplTest
         }
         if (thrownException != null)
         {
-            
+
             Assert.assertEquals(AbstractInitiator.EXCEPTION_ACTION_IMPLIED_ROLLBACK, thrownException.getMessage());
         }
         else
@@ -563,13 +573,157 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void testOnMapMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+				one(eventFromMessage).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(mapMessage);
+        mockery.assertIsSatisfied();
+    }
+
+    private MapMessage mockMapMessage()
+    {
+        final MapMessage result = mockery.mock(MapMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Test
+    public void testOnObjectMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+				one(eventFromMessage).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(objectMessage);
+        mockery.assertIsSatisfied();
+    }
+
+    private ObjectMessage mockObjectMessage()
+    {
+        final ObjectMessage result = mockery.mock(ObjectMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Test
+    public void testOnStreamMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+				one(eventFromMessage).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(streamMessage);
+        mockery.assertIsSatisfied();
+    }
+
+    private StreamMessage mockStreamMessage()
+    {
+        final StreamMessage result = mockery.mock(StreamMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Test
+    public void testOnBytesMessage_withSupportedMessageTypeInvokesFlowWithEventFromHandleMethod()
+    {
+        mockery.checking(new Expectations()
+        {
+            {
+				one(eventFromMessage).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext) with(a(FlowInvocationContext.class)), (Event)with(equal(eventFromMessage)));
+                will(returnValue(null));
+            }
+        });
+        stubJmsMessageDrivenInitiatorImpl.onMessage(bytesMessage);
+        mockery.assertIsSatisfied();
+    }
+
+    private BytesMessage mockBytesMessage()
+    {
+        final BytesMessage result = mockery.mock(BytesMessage.class);
+        try
+        {
+            mockery.checking(new Expectations()
+            {
+                {
+                    allowing(result).getJMSMessageID();
+                    will(returnValue("messageId"));
+                }
+            });
+        }
+        catch (JMSException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     final class StubJmsMessageDrivenInitiatorImpl extends JmsMessageDrivenInitiatorImpl
     {
         private Logger logger = Logger.getLogger(StubJmsMessageDrivenInitiatorImpl.class);
-        
+
         private boolean throwEventDeserialisationExceptionWhenHandlingMessage = false;
         private boolean throwUnsupportedOperationExceptionWhenHandlingMessage = false;
-        
+
         public void setThrowEventDeserialisationExceptionWhenHandlingMessage(
 				boolean throwEventDeserialisationExceptionWhenHandlingMessage) {
 			this.throwEventDeserialisationExceptionWhenHandlingMessage = throwEventDeserialisationExceptionWhenHandlingMessage;
@@ -578,7 +732,7 @@ public class JmsMessageDrivenInitiatorImplTest
 		public void setThrowUnsupportedOperationExceptionWhenHandlingMessage(
 				boolean throwUnsupportedOperationExceptionWhenHandlingMessage) {
 			this.throwUnsupportedOperationExceptionWhenHandlingMessage = throwUnsupportedOperationExceptionWhenHandlingMessage;
-			
+
 		}
 
 		public StubJmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
@@ -594,8 +748,32 @@ public class JmsMessageDrivenInitiatorImplTest
         	} else if(throwUnsupportedOperationExceptionWhenHandlingMessage){
         		throw new UnsupportedOperationException();
         	}
-        	
-            return eventFromTextMessage;
+
+            return eventFromMessage;
+        }
+
+        @Override
+        protected Event handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
+        {
+            return eventFromMessage;
+        }
+
+        @Override
+        protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventDeserialisationException
+        {
+            return eventFromMessage;
+        }
+
+        @Override
+        protected Event handleStreamMessage(StreamMessage message)
+        {
+            return eventFromMessage;
+        }
+
+        @Override
+        protected Event handleBytesMessage(BytesMessage message) throws JMSException
+        {
+            return eventFromMessage;
         }
 
         @Override
@@ -603,7 +781,7 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             return logger;
         }
-        
+
 
     }
 }

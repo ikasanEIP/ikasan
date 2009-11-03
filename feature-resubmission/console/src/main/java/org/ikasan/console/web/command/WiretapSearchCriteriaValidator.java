@@ -56,6 +56,15 @@ import org.springframework.validation.Validator;
  */
 public class WiretapSearchCriteriaValidator implements Validator
 {
+    /** A flag to indicate whether a date time validation has already created an error */
+    private boolean dateTimeInError = false;
+
+    /** A representation day/month/year */
+    private SimpleDateFormat ddMMyyyyFormat;
+
+    /** A representation hour/minutes/seconds */
+    private SimpleDateFormat HHmmss;
+
     /** Constructor */
     public WiretapSearchCriteriaValidator()
     {
@@ -65,12 +74,6 @@ public class WiretapSearchCriteriaValidator implements Validator
         this.HHmmss = new SimpleDateFormat("HH:mm:ss");
         this.HHmmss.setLenient(false);
     }
-
-    /** A representation day/month/year */
-    private SimpleDateFormat ddMMyyyyFormat;
-
-    /** A representation hour/minutes/seconds */
-    private SimpleDateFormat HHmmss;
 
     /**
      * Warning suppressed because .equals method does not support Generics
@@ -96,24 +99,26 @@ public class WiretapSearchCriteriaValidator implements Validator
         WiretapSearchCriteria wiretapSearchCriteria = (WiretapSearchCriteria) object;
         
         // Validate the modules (need to select at least one)
-        Set<Long> modules = wiretapSearchCriteria.getModules();
-        if (modules == null || modules.isEmpty())
+        Set<Long> moduleIds = wiretapSearchCriteria.getModules();
+        
+        if (moduleIds == null || moduleIds.isEmpty())
         {
-            errors.add("You need to select at least one module");
+            errors.add("You need to select at least one module, if there are no modules for you to select please contact your System Administrator.");
         }
         
         // Validate the Date and Time
         validateDateAndTime(errors, wiretapSearchCriteria.getFromDate(), "fromDate", wiretapSearchCriteria.getFromTime(), "fromTime");
         validateDateAndTime(errors, wiretapSearchCriteria.getUntilDate(), "untilDate", wiretapSearchCriteria.getUntilTime(), "untilTime");
-        if (!errors.isEmpty() && !isEmpty(wiretapSearchCriteria.getFromDate()) && !isEmpty(wiretapSearchCriteria.getUntilDate()))
+        if (!dateTimeInError && !isEmpty(wiretapSearchCriteria.getFromDate()) && !isEmpty(wiretapSearchCriteria.getUntilDate()))
         {
             // If both from and until date times are populated, check if until
             // is not before from
             Date fromDateTime = wiretapSearchCriteria.getFromDateTime();
             Date untilDateTime = wiretapSearchCriteria.getUntilDateTime();
-            if (fromDateTime != null && untilDateTime != null && fromDateTime.compareTo(untilDateTime) > 0)
+            // fromDateTime and untilDateTime can never be NULL as we've already validated that they are OK
+            if (fromDateTime.compareTo(untilDateTime) > 0)
             {
-                errors.add("Until date/time cannot be before From date/time");
+                errors.add("Until date/time cannot be before From date/time.");
             }
         }
     }
@@ -134,16 +139,22 @@ public class WiretapSearchCriteriaValidator implements Validator
         {
             if (isEmpty(dateFieldValue))
             {
-                errors.add(dateFieldName + " must be supplied if " + timeFieldName + " has been set");
+                errors.add(dateFieldName + " must be supplied if " + timeFieldName + " has been set.");
+                dateTimeInError = true;
             }
             else
             {
-                errors.add(timeFieldName + " must be supplied if " + dateFieldName + " has been set");
+                errors.add(timeFieldName + " must be supplied if " + dateFieldName + " has been set.");
+                dateTimeInError = true;
             }
         }
         if (!isEmpty(dateFieldValue))
         {
             boolean validDate = true;
+            if (dateFieldValue.length() != 10)
+            {
+                validDate = false;
+            }
             try
             {
                 this.ddMMyyyyFormat.parse(dateFieldValue);
@@ -152,13 +163,10 @@ public class WiretapSearchCriteriaValidator implements Validator
             {
                 validDate = false;
             }
-            if (dateFieldValue.length() != 10)
-            {
-                validDate = false;
-            }
             if (!validDate)
             {
                 errors.add(dateFieldName + " must be supplied as dd/MM/yyyy");
+                dateTimeInError = true;
             }
         }
         if (!isEmpty(timeFieldValue))
@@ -169,7 +177,8 @@ public class WiretapSearchCriteriaValidator implements Validator
             }
             catch (ParseException e)
             {
-                errors.add(timeFieldName + " must be supplied as HH:mm:ss, eg 00:30:00 for 12:30.00am");
+                errors.add(timeFieldName + " must be supplied as HH:mm:ss, eg 00:30:00 for 12:30.00AM");
+                dateTimeInError = true;
             }
         }
     }
@@ -193,5 +202,6 @@ public class WiretapSearchCriteriaValidator implements Validator
     public void validate(@SuppressWarnings("unused") Object arg0, @SuppressWarnings("unused") Errors arg1)
     {
         // Unused on purpose, we're providing our own version.
+        throw new UnsupportedOperationException("Unused on purpose, we're providing our own version.");
     }
 }

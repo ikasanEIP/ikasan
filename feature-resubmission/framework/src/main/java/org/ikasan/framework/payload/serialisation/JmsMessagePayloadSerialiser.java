@@ -1,6 +1,6 @@
 /*
- * $Id: 
- * $URL:
+ * $Id$ 
+ * $URL$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -49,40 +49,42 @@ import org.ikasan.common.Payload;
 /**
  * Serialisation/Deserialisation interface for converting a <code>Payload</code> to and from a JMS <code>Message</code>
  * 
- * @author IkasanDevelompmentTeam
+ * @author Ikasan Development Team
  *
- * @param <T>
+ * @param <T> - A class that extends Message
  */
 public interface JmsMessagePayloadSerialiser<T extends Message> {
 
 	/**
 	 * Converts a Payload to a Message
 	 * 
-	 * @param payload
-	 * @param session
-	 * @return
-	 * @throws JMSException
+	 * @param payload - Payload to convert into a Message
+	 * @param session - JMS Session we're in
+	 * @return a Message
+	 * @throws JMSException - JMS related exception
 	 */
 	public T toMessage(Payload payload, Session session) throws JMSException;
 	
 	/**
-	 * Converts a Message to a Paylaod
+	 * Converts a Message to a Payload
 	 * 
-	 * @param message
-	 * @return
-	 * @throws JMSException
+	 * @param message - Message to convert into a Payload
+	 * @return a Payload
+	 * @throws JMSException - JMS related exception
 	 */
 	public Payload toPayload(T message) throws JMSException;
 	
 	/**
 	 * Indicates if a particular Message implementation is supported
 	 * 
-	 * @param messageClass
+	 * @param messageClass - A class that extends Message
 	 * @return true if the given message class is supported
 	 */
 	public boolean supports(Class<? extends Message> messageClass);
 	
 	/**
+	 * Get the supported message type
+	 * 
 	 * @return the supported message type
 	 */
 	public Class<? extends Message> getSupportedMessageType();

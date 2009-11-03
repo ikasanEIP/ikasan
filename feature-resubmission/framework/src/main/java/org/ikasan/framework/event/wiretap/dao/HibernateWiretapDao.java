@@ -122,6 +122,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * Find paging list of wiretaps
      * 
      * @param moduleNames - The list of module names
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The component name
      * @param eventId - The event id
      * @param payloadId - The payload id
@@ -136,7 +137,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     @Deprecated
     @SuppressWarnings("unchecked")
-    public PagedWiretapSearchResult findPaging(final Set<String> moduleNames, final String componentName, final String eventId, final String payloadId,
+    public PagedWiretapSearchResult findPaging(final Set<String> moduleNames, final String moduleFlow, final String componentName, final String eventId, final String payloadId,
             final Date fromDate, final Date untilDate, final String payloadContent, final int maxResults, final int firstResult) throws DataAccessException
     {
         return (PagedWiretapSearchResult) getHibernateTemplate().execute(new HibernateCallback()
@@ -145,6 +146,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 Criteria criteria = session.createCriteria(WiretapEvent.class, "event");
                 criteria.add(Restrictions.in("moduleName", moduleNames));
+                if (restrictionExists(moduleFlow))
+                {
+                    criteria.add(Restrictions.eq("flowName", moduleFlow));
+                }
                 if (restrictionExists(componentName))
                 {
                     criteria.add(Restrictions.eq("componentName", componentName));
@@ -193,6 +198,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * @param orderBy - order by field
      * @param orderAscending - ascending flag
      * @param moduleNames - The list of module names
+     * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The component name
      * @param eventId - The event id
      * @param payloadId - The payload id
@@ -204,7 +210,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     @SuppressWarnings("unchecked")
     public PagedSearchResult<WiretapEvent> findWiretapEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
-            final Set<String> moduleNames, final String componentName, final String eventId, final String payloadId, final Date fromDate, final Date untilDate,
+            final Set<String> moduleNames, final String moduleFlow, final String componentName, final String eventId, final String payloadId, final Date fromDate, final Date untilDate,
             final String payloadContent)
     {
         return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback()
@@ -229,6 +235,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 if (restrictionExists(moduleNames))
                 {
                     criteria.add(Restrictions.in("moduleName", moduleNames));
+                }
+                if (restrictionExists(moduleFlow))
+                {
+                    criteria.add(Restrictions.eq("flowName", moduleFlow));
                 }
                 if (restrictionExists(componentName))
                 {

@@ -65,9 +65,21 @@ public class ConsoleModuleService implements ModuleService
     public ConsoleModuleService(ModuleDao moduleDao)
     {
         super();
+        if (moduleDao == null)
+        {
+            throw new IllegalArgumentException("ModuleDao must not be NULL");
+        }
         this.moduleDao = moduleDao;
     }
 
+    /**
+     * @see org.ikasan.console.module.service.ModuleService#getModule(Long)
+     */
+    public Module getModule(Long moduleId)
+    {
+        return this.moduleDao.getModule(moduleId);
+    }
+    
     /**
      * @see org.ikasan.console.module.service.ModuleService#getModuleNames(Set)
      */
@@ -87,22 +99,7 @@ public class ConsoleModuleService implements ModuleService
      */
     public Set<Module> getAllModules()
     {
-        Set<Module> modules = this.moduleDao.findAllModules();
-        return modules;
-    }
-
-    /**
-     * @see org.ikasan.console.module.service.ModuleService#getAllModuleIds()
-     */
-    public Set<Long> getAllModuleIds()
-    {
-        Set<Module> modules = this.getAllModules();
-        Set<Long> moduleIds = new LinkedHashSet<Long>();
-        for (Module module : modules)
-        {
-            moduleIds.add(module.getId());
-        }
-        return moduleIds;
+        return this.moduleDao.findAllModules();
     }
     
 }

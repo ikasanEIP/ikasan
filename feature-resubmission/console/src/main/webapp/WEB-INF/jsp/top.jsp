@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$ 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -71,7 +71,7 @@
         <div id="subheader">
         	<ul id="mainNavigation">
         		<li><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
-        		 | <li><a href="<c:url value='/events/list.htm?newSearch=true'/>"><fmt:message key="menu_events_link"/></a></li>
+        		 | <li><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
         		<!-- Security around the admin pages -->
                 <security:authorize ifAllGranted="ROLE_ADMIN">
                    | <li><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>

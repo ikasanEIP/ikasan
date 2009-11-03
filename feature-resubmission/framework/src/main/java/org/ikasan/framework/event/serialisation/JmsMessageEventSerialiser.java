@@ -63,7 +63,7 @@ public interface JmsMessageEventSerialiser<T extends Message>
      * @return reconstituted <code>Event</code>
      * @throws EventDeserialisationException 
      * 
-     * @throws J Exception if we could not deserialise the event
+     * @throws JMSException if we could not deserialise the event
      */
     public Event fromMessage(T message, String moduleName, String componentName) throws JMSException, EventDeserialisationException;
 

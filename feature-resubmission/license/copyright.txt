@@ -16,5 +16,10 @@ Summer Hasani
 
 Project Contributors
 --------------------
-Matthew Potter
+Chia-Hung Lin
 Ioannis Mavroukakis
+Jaikiran Pai
+Kamlesh Bhatt
+Matthew Potter
+Prasad Saya
+

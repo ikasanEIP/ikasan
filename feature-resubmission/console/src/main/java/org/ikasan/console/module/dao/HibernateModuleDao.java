@@ -58,6 +58,15 @@ public class HibernateModuleDao extends HibernateDaoSupport implements ModuleDao
 
     /** Query for finding all modules based on id */
     private static final String MODULES_BY_ID = "from Module m where m.id in (:ids) order by name";
+
+    /**
+     * @see org.ikasan.console.module.dao.ModuleDao#getModule(Long)
+     */
+    public Module getModule(Long moduleId)
+    {
+        Module module = (Module)getHibernateTemplate().get(Module.class, moduleId);
+        return module;
+    }
     
     /**
      * @see org.ikasan.console.module.dao.ModuleDao#findAllModules()

@@ -70,13 +70,12 @@ public class WiretapSearchCriteria implements Serializable
     /** The logger */
     private Logger logger = Logger.getLogger(WiretapSearchCriteria.class);
 
-    /**
-     * Set of names of modules whose wiretapped events to include
-     * 
-     * Note that this must be non empty
-     */
-    private Set<Long> modules;
+    /** Set of module ids whose wiretapped events we're going to search for */
+    private Set<Long> moduleIds;
 
+    /** Name of Flow internal to the Module Flow to restrict by */
+    private String moduleFlow;
+    
     /** Name of component to restrict by */
     private String componentName;
 
@@ -113,7 +112,7 @@ public class WiretapSearchCriteria implements Serializable
         this.ddMMyyyyFormat.setLenient(false);
         this.HHmmss = new SimpleDateFormat("HH:mm:ss");
         this.HHmmss.setLenient(false);
-        this.modules = moduleIds;
+        this.moduleIds = moduleIds;
     }
 
     /**
@@ -126,6 +125,16 @@ public class WiretapSearchCriteria implements Serializable
         return serialVersionUID;
     }
 
+    /**
+     * Get the module flow
+     * 
+     * @return moule flow
+     */
+    public String getModuleFlow()
+    {
+        return this.moduleFlow;
+    }
+    
     /**
      * Get the component name
      * 
@@ -166,6 +175,16 @@ public class WiretapSearchCriteria implements Serializable
         return this.payloadId;
     }
 
+    /**
+     * Set the module flow
+     * 
+     * @param moduleFlow - module flow to set
+     */
+    public void setModuleFlow(String moduleFlow)
+    {
+        this.moduleFlow = MasterDetailControllerUtil.nullForEmpty(moduleFlow);
+    }
+    
     /**
      * Set the component name
      * 
@@ -213,7 +232,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public Set<Long> getModules()
     {
-        return this.modules;
+        return this.moduleIds;
     }
 
     /**
@@ -223,7 +242,7 @@ public class WiretapSearchCriteria implements Serializable
      */
     public void setModules(Set<Long> modules)
     {
-        this.modules = modules;
+        this.moduleIds = modules;
     }
 
     /**
@@ -355,7 +374,17 @@ public class WiretapSearchCriteria implements Serializable
         Calendar calendar = new GregorianCalendar();
         try
         {
-            Date time = this.HHmmss.parse(timeString);
+            Date time = null;
+            // If we get an invalid time then set it to empty String where the ParseException code will deal with it
+            // We're deliberately being strict, see the Validator class for this domain object
+            if (timeString == null)
+            {
+                time = this.HHmmss.parse("");
+            }
+            else
+            {
+                time = this.HHmmss.parse(timeString);
+            }
             Calendar timeCalendar = new GregorianCalendar();
             timeCalendar.setTime(time);
             calendar.setTime(this.ddMMyyyyFormat.parse(dateString));
@@ -365,7 +394,8 @@ public class WiretapSearchCriteria implements Serializable
         }
         catch (ParseException pe)
         {
-            logger.debug("Silently swallowing ParseException here as we catch this " + "issue and repoprt it to the user in a later validation stage.");
+            logger.debug("Could not parse date and/or time correctly.");
+            return null;
         }
         return calendar.getTime();
     }

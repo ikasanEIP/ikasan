@@ -1,40 +1,40 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -72,7 +72,7 @@ import org.quartz.Trigger;
 
 /**
  * This test class supports the <code>QuartzStatefulScheduledDrivenInitiator</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 public class QuartzStatefulScheduledDrivenInitiatorTest
@@ -94,7 +94,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             .mock(EventProvider.class);
     final Event event = classMockery.mock(Event.class);
     final Flow flow = classMockery.mock(Flow.class);
-    final IkasanExceptionHandler exceptionHandler = 
+    final IkasanExceptionHandler exceptionHandler =
         classMockery.mock(IkasanExceptionHandler.class);
     final Scheduler scheduler = classMockery.mock(Scheduler.class);
 
@@ -105,7 +105,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
      */
     final IkasanExceptionAction rollbackRetryAction = new RetryAction();
     final IkasanExceptionAction rollbackStopAction =StopAction.instance();
-    
+
     final String initiatorName = "initiatorName";
     final String moduleName = "moduleName";
 
@@ -115,7 +115,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * failure due to initiator being in a 'STOPPED' state.
-     * 
+     *
      * @throws SchedulerException
      */
     public void test_failed_InvokeDueToInitiatorNotBeingInAStartedState()
@@ -125,7 +125,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         //
         // expectations due to stop() being called as part of the test set-up
         setStopInitiatorExpectations();
-        
+
         //
         // run test
         QuartzStatefulScheduledDrivenInitiator sdi = new QuartzStatefulScheduledDrivenInitiator(
@@ -146,19 +146,19 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     }
 
 
-    
+
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * successful initiator execute callback, but no returned event.
-     * 
+     *
      * @throws ResourceException
      */
     @Test
-    public void test_successful_ExecuteWithNoEvent() 
+    public void test_successful_ExecuteWithNoEvent()
         throws ResourceException
     {
         QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
+
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -170,25 +170,25 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
 
         //expectations for handleNullAction
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
 
         // invoke initiator
         sdi.invoke();
     }
 
-    
+
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * successful initiator execute callback with returned event.
-     * 
+     *
      * @throws ResourceException
      */
     @Test
-    public void test_successful_ExecuteWithEvent() 
+    public void test_successful_ExecuteWithEvent()
         throws ResourceException
     {
         QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
+
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -201,9 +201,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         // set common expectations
         this.setEventExpectations();
-        
+
         //for a successful execution we will be handling a null action
-        setExpectationsForResume(false);
+        setExpectationsForResume(sdi, false);
 
         // invoke initiator
         sdi.invoke();
@@ -214,18 +214,18 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * successful initiator execute callback with returned multiple events.
-     * 
+     *
      * @throws ResourceException
      */
     @Test
-    public void test_successful_ExecuteWithMultipleEvents() 
+    public void test_successful_ExecuteWithMultipleEvents()
         throws ResourceException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();       
-        
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+
         final int numOfEvents = 3;
 
-        // 
+        //
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -236,31 +236,31 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
 
-        
+
         // set common expectations
-        this.setMultipleEventExpectations(numOfEvents);       
-        
+        this.setMultipleEventExpectations(numOfEvents);
+
         //for a successful execution we will be handling a null action
-        setExpectationsForResume(false);
-        
+        setExpectationsForResume(sdi, false);
+
         // invoke initiator
         sdi.invoke();
     }
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator handling a 'STOP_ROLLBACK' action.
-     * 
+     *
      * @throws ResourceException
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_ExecuteWithReturnedStopRollbackAction() 
+    public void test_successful_ExecuteWithReturnedStopRollbackAction()
         throws ResourceException, SchedulerException
     {
         QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
+
         final Throwable throwable = new RuntimeException();
-        
+
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -268,7 +268,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 // return 'rollforwardStop' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
-                
+
                 one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackStopAction));
             }
@@ -280,7 +280,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         setExpectationsForHandleStopAction(false);
 
         // invoke initiator
-       
+
         AbortTransactionException abortTransactionException = null;
         try{
         	sdi.invoke();
@@ -289,7 +289,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         	abortTransactionException = exception;
         }
         Assert.assertNotNull("AbortTransactionException should have been thrown for rollback scenario",abortTransactionException);
-        
+
         // check initiator is error
         assertTrue(sdi.isError());
     }
@@ -298,21 +298,24 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
 
 
+
+
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
+     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * flow invocation returning a 'ROLLBACK_RETRY' action.
-     * 
+     *
      * @throws ResourceException
      * @throws SchedulerException
-     * 
+     *
      * TODO - RJD for #13 change name and description to something like testStartRetryCycle
      */
-    @Test    
-    public void test_successful_ExecuteWithReturnedRollbackRetryAction() 
+    @Test
+    public void test_successful_ExecuteWithReturnedRollbackRetryAction()
         throws ResourceException, SchedulerException
     {
         QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
-        
+
         final Throwable throwable = new RuntimeException();
         // set expectations
         classMockery.checking(new Expectations()
@@ -321,8 +324,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
-                
-                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackRetryAction));
             }
         });
@@ -331,8 +334,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         this.setEventExpectations();
 
 
-        //expect startRetryCycle to be hit
-        setExpectationsForHandleRetryAction(false);
+        setExpectationsForHandleRetryAction(sdi, false);
 
         // invoke initiator
         AbortTransactionException abortTransactionException = null;
@@ -345,21 +347,21 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         Assert.assertNotNull("AbortTransactionException should have been thrown for rollback scenario",abortTransactionException);
 
     }
-    
- 
-    
+
+
+
 
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
-     * flow invocation returning a 'ROLLBACK_RETRY' action followed by 
+     * flow invocation returning a 'ROLLBACK_RETRY' action followed by
      * a subsequent 'ROLLBACK_RETRY' action.
-     * 
+     *
      * @throws ResourceException
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_RollbackRetryActionFollowedByRollbackRetryAction() 
+    public void test_successful_RollbackRetryActionFollowedByRollbackRetryAction()
         throws ResourceException, SchedulerException
     {
         QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator();
@@ -373,22 +375,22 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
-                
-                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackRetryAction));
 
             }
         });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
-        
-        
-        
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
+
+
+
         Assert.assertNull("Retry count should be null initially", scheduledDrivenInitiator.getRetryCount());
-        
+
         // invoke initiator
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
-        
+
         Assert.assertEquals("Retry count should still be 0 before retry has fired for the first time", new Integer(0),scheduledDrivenInitiator.getRetryCount());
 
         //everything cool so far?
@@ -402,19 +404,19 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
-                
-                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackRetryAction));
             }
 
-        });     
+        });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(true);
-        
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, true);
+
 
         // invoke initiator on retry (recovering)
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
-        
+
         Assert.assertEquals("Retry count should 1 after retry has fired for the first time", new Integer(1),scheduledDrivenInitiator.getRetryCount());
     }
 
@@ -422,14 +424,14 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
-     * flow invocation returning a 'ROLLBACK_RETRY' action followed by 
+     * flow invocation returning a 'ROLLBACK_RETRY' action followed by
      * a subsequent '*_STOP' action.
-     * 
+     *
      * @throws ResourceException
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_RollbackRetryActionFollowedByAnyStopAction() 
+    public void test_successful_RollbackRetryActionFollowedByAnyStopAction()
         throws ResourceException, SchedulerException
     {
         QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator();
@@ -442,21 +444,21 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
-                
-                one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));                
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)),  (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackRetryAction));
             }
         });
         setEventExpectations();
-        setExpectationsForHandleRetryAction(false);
-        
-        
+        setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
+
+
         // invoke initiator
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
-         
+
         //everything cool so far?
-        classMockery.assertIsSatisfied(); 
-        
+        classMockery.assertIsSatisfied();
+
         // second pass
         classMockery.checking(new Expectations()
         {
@@ -464,21 +466,21 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
-                
-                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));                
+
+                one(exceptionHandler).handleThrowable(with(any(String.class)), (Throwable)with(equal(throwable)));
                 will(returnValue(rollbackStopAction));
             }
         });
         setEventExpectations();
         setExpectationsForHandleStopAction(true);
 
-        
+
         // invoke initiator second time
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
-        
+
         //check that its now in error
         assertTrue(scheduledDrivenInitiator.isError());
-        
+
         classMockery.assertIsSatisfied();
 
     }
@@ -491,13 +493,14 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
 
 
+
     /**
      * Test successful external start of an initiator.
-     * 
+     *
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_StartInitiator() 
+    public void test_successful_StartInitiator()
         throws SchedulerException
     {
         QuartzStatefulScheduledDrivenInitiator scheduleDrivenInitiator = new QuartzStatefulScheduledDrivenInitiator(
@@ -509,26 +512,26 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         //expect it to be started
         setStartInitiatorExpectations(scheduleDrivenInitiator,false);
-        
+
         // invoke start on the initiator
         scheduleDrivenInitiator.start();
     }
 
     /**
      * Test successful external stop of an initiator.
-     * 
+     *
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_StopInitiator() 
+    public void test_successful_StopInitiator()
         throws SchedulerException
     {
         QuartzStatefulScheduledDrivenInitiator scheduleDrivenInitiator = new QuartzStatefulScheduledDrivenInitiator(
             initiatorName,moduleName, eventProvider, flow,
             exceptionHandler);
-        
+
         setStopInitiatorExpectations();
-        
+
         setExpectationsForIsRecovering(false);
 
         // give the initiator a quartz scheduler
@@ -542,7 +545,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
     }
 
- 
+
 
     /**
      * Teardown after each test
@@ -553,7 +556,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // check all expectations were satisfied
         classMockery.assertIsSatisfied();
     }
-    
+
     private void setStopInitiatorExpectations()
 
     {
@@ -573,18 +576,18 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             throw new RuntimeException(e);
         }
     }
-   
-    
+
+
     /**
      * Usual expectations for the notifyMonitorListener method.
-     * 
+     *
      * Note that the only aspects of state that we may potentially care about
      * concern the error flag as the rest should be derived.
-     * 
+     *
      */
     private void setNotifyMonitorListenerExpectations()
     {
-        // 
+        //
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -597,21 +600,21 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
     }
-    
+
     private void setExpectationsForIsRecovering(final boolean isRecovering){
         setExpectationsForGetRecoveryTrigger(isRecovering);
     }
-    
+
     private void setExpectationsForGetRecoveryTrigger(final boolean isRecovering){
         final Trigger recoveryTrigger = classMockery.mock(Trigger.class, "recoveryTrigger");
-        
+
         try
         {
             classMockery.checking(new Expectations()
             {
                 {
-                    
-                    
+
+
                     one(scheduler).getTrigger("retry_trigger",moduleName+"-"+initiatorName);
                     if (!isRecovering){
                         will(returnValue(null));
@@ -627,12 +630,12 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         {
            throw new RuntimeException(e);
         }
-        
+
     }
-    
-    
+
+
     private void setExpectationsForIsRunning(final boolean isRunning){
-        
+
         final Trigger trigger = classMockery.mock(Trigger.class);
         final Trigger[] triggers = new Trigger[]{trigger};
         final String triggerName = "triggerName";
@@ -666,7 +669,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         {
            throw new RuntimeException(e);
         }
-        
+
     }
 
     private void setEventExpectations()
@@ -675,7 +678,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         final List<Event> events = new ArrayList<Event>();
         events.add(event);
 
-        // 
+        //
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -697,8 +700,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         {
             events.add(event);
         }
-    
-        // 
+
+        //
         // set expectations
         classMockery.checking(new Expectations()
         {
@@ -711,8 +714,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             }
         });
     }
-    
-    private void setExpectationsForResume(boolean isRecovering)
+
+    private void setExpectationsForResume(final QuartzStatefulScheduledDrivenInitiator sdi, boolean isRecovering)
     {
         //expectations for handleNullAction
         setExpectationsForIsRecovering(isRecovering);
@@ -725,7 +728,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 classMockery.checking(new Expectations()
                 {
                     {
-                exactly(1).of(scheduler).resumeJobGroup(with(equal(moduleName+"-"+initiatorName)));
+                exactly(1).of(scheduler).resumeJob(with(equal(sdi.getInitiatorJobName())), with(equal(moduleName+"-"+initiatorName)));
                     }
                 });
             }
@@ -734,11 +737,11 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                 throw new RuntimeException(e);
             }
         }
-        
-    }
-    
 
-    
+    }
+
+
+
     private void setExpectationsForHandleStopAction(boolean isRecovering)
     {
         //expectations for handleStopAction
@@ -749,21 +752,21 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         }
         setStopInitiatorExpectations();
         setNotifyMonitorListenerExpectations();
-        
+
     }
-    
-    private void setExpectationsForHandleRetryAction(boolean isRecovering)
+
+    private void setExpectationsForHandleRetryAction(QuartzStatefulScheduledDrivenInitiator sdi, boolean isRecovering)
     {
         //expectations for handleRetryAction
         setExpectationsForIsRecovering(isRecovering);
         if (!isRecovering){
-            setStartRetryCycleExpectations();
+            setStartRetryCycleExpectations(sdi);
             setNotifyMonitorListenerExpectations();
         }
-        
+
     }
-    
-    private void setStartRetryCycleExpectations()
+
+    private void setStartRetryCycleExpectations(final QuartzStatefulScheduledDrivenInitiator sdi)
     {
         // set expectations
         try
@@ -771,11 +774,11 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             classMockery.checking(new Expectations()
             {
                 {
-                    // we must stop the scheduled triggers on this job on group name            
-                    one(scheduler).pauseJobGroup(with(equal(moduleName+"-"+initiatorName))); 
-                     
+                    // we must stop the scheduled triggers on this job
+                    one(scheduler).pauseJob(with(equal(sdi.getInitiatorJobName())), with(equal(moduleName+"-"+initiatorName)));
+
                     // and then start retry trigger
-                    //TODO - can we match the retry trigger a little tighter                    
+                    //TODO - can we match the retry trigger a little tighter
                     one(scheduler).scheduleJob(with(any(Trigger.class)));
                 }
             });
@@ -785,8 +788,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             throw new RuntimeException(e);
         }
     }
-    
-    
+
+
     private void invokeInitiatorExpectingRollback(QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator)
     {
         AbortTransactionException abortTransactionException = null;
@@ -813,15 +816,15 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         // add a monitor
         sdi.addListener(monitorListener);
-        
+
         return sdi;
     }
-    
+
     private void setCancelRetryCycleExpectations(final boolean isRecovering)
     {
-        
+
         setExpectationsForGetRecoveryTrigger(isRecovering);
-        
+
         // set expectations
         try
         {
@@ -847,12 +850,12 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     {
         final Trigger businessAsUsualTrigger1 = classMockery.mock(Trigger.class, "businessAsUsualTrigger1");
         final Trigger businessAsUsualTrigger2 = classMockery.mock(Trigger.class, "businessAsUsualTrigger2");
-        
+
         List<Trigger> triggers = new ArrayList<Trigger>();
         triggers.add(businessAsUsualTrigger1);
         triggers.add(businessAsUsualTrigger2);
         scheduleDrivenInitiator.setTriggers(triggers);
-        
+
         try
         {
             classMockery.checking(new Expectations()
@@ -863,20 +866,20 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
                         will(returnValue(new Trigger[]{businessAsUsualTrigger1, businessAsUsualTrigger2}));
                     } else{
                         will(returnValue(new Trigger[]{}));
-                        
+
                         //first trigger
                         one(businessAsUsualTrigger1).setGroup(moduleName+"-"+initiatorName);
                         one(scheduler).scheduleJob((JobDetail)with(any(JobDetail.class)), with(equal(businessAsUsualTrigger1)));
-                        
+
                         //subsequent trigger
                         one(businessAsUsualTrigger2).setGroup(moduleName+"-"+initiatorName);
                         one(businessAsUsualTrigger2).setJobGroup(moduleName+"-"+initiatorName);
                         one(businessAsUsualTrigger2).setJobName("initiatorJob");
                         one(scheduler).scheduleJob(businessAsUsualTrigger2 );
                     }
-                    
-                    
-                    
+
+
+
                     // resume the flow
                     exactly(1).of(scheduler).resumeJobGroup(with(equal(moduleName+"-"+initiatorName)));
                 }

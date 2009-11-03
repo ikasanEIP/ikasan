@@ -29,8 +29,8 @@
  */</template><template autoinsert="true" context="filecomment_context" deleted="false" description="Comment for created JavaScript files" enabled="true" id="org.eclipse.wst.jsdt.ui.text.codetemplates.filecomment" name="filecomment">/**
  * 
  */</template><template autoinsert="false" context="filecomment_context" deleted="false" description="Comment for created Java files" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.filecomment" name="filecomment"> /* 
- * $$Id$$
- * $$URL$$
+ * $Id$
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform

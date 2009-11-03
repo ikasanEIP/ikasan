@@ -124,25 +124,17 @@
         <!-- 
 		<protect-pointcut 
             expression="execution(* org.ikasan.framework.module.service.ModuleService.getModule(..))"
-            access="ROLE_USER,AFTER_MODULE_READ" /> 
-        <protect-pointcut
-            expression="execution(* org.ikasan.framework.module.service.ModuleService.getModules())"
-            access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
+            access="ROLE_USER,AFTER_MODULE_READ" />
         -->
-        <!-- 
-        <protect-pointcut 
-            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames(..))"
-            access="ROLE_USER,AFTER_MODULE_READ" /> 
         <protect-pointcut
-            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames(..))"
+            expression="execution(* org.ikasan.console.module.service.ModuleService.getAllModules())"
             access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
         <protect-pointcut 
-            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames())"
-            access="ROLE_USER,AFTER_MODULE_READ" /> 
-        <protect-pointcut
-            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getModuleNames())"
-            access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
-		-->
+            expression="execution(* org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService.getAllPointToPointFlowProfiles(..))"
+            access="ROLE_USER,AFTER_POINT_TO_POINT_FLOW_PROFILE_COLLECTION_READ" />
+        <protect-pointcut 
+            expression="execution(* org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao.findPointToPointFlowProfiles(..))"
+            access="ROLE_USER,AFTER_POINT_TO_POINT_FLOW_PROFILE_COLLECTION_READ" />
 	</global-method-security>
 
     <!-- The access decision manager -->    
@@ -162,9 +154,25 @@
     </beans:bean>
     
     <!-- The access decision manager for what modules are allowed to be invoked by a user -->
+    <!--
     <beans:bean id="moduleAfterInvocationProvider"
         class="org.ikasan.console.security.ModuleAfterInvocationProvider">
         <custom-after-invocation-provider />
     </beans:bean>
+    -->
+    
+    <!-- The access decision manager for what point to point flow profiles are allowed to be viewed by a user -->
+    <beans:bean id="pointToPointFlowProfileCollectionFilteringAfterInvocationProvider"
+        class="org.ikasan.console.security.AfterInvocationPointToPointFlowProfileCollectionFilteringProvider">
+        <custom-after-invocation-provider />
+    </beans:bean>
+    
+    <!-- The access decision manager for what point to point flow profiles are allowed to be invoked by a user -->
+    <!--
+    <beans:bean id="moduleAfterInvocationProvider"
+        class="org.ikasan.console.security.ModuleAfterInvocationProvider">
+        <custom-after-invocation-provider />
+    </beans:bean>
+    -->
 
 </beans:beans>
