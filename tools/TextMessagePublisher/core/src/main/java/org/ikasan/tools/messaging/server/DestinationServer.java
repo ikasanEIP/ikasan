@@ -38,67 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.destination.discovery;
+package org.ikasan.tools.messaging.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.ikasan.tools.messaging.destination.DestinationHandle;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
+import org.ikasan.tools.messaging.publisher.TextMessagePublisher;
 
-import org.apache.log4j.Logger;
+public class DestinationServer {
 
-public class JndiDestinationDiscoverer implements
-		DestinationDiscoverer {
-
-	private Properties jndiEnvironment;
-    private List<String> parentPaths;
-    
-    private Logger logger = Logger.getLogger(JndiDestinationDiscoverer.class);
-    
-	public JndiDestinationDiscoverer(Properties jndiEnvironment,
-			List<String> parentPaths) {
-		super();
-		this.jndiEnvironment = jndiEnvironment;
-		this.parentPaths = parentPaths;
+	
+	private List<DestinationHandle> destinations = new ArrayList<DestinationHandle>();
+	
+	private TextMessagePublisher textMessagePublisher;
+	
+	public DestinationServer(DestinationDiscoverer destinationDiscoverer, TextMessagePublisher textMessagePublisher){
+		this.destinations = destinationDiscoverer.findDestinations();
+		this.textMessagePublisher = textMessagePublisher;
+	}
+	
+	
+	
+	public List<DestinationHandle> getDestinations() {
+		return destinations;
 	}
 
-	public List<DestinationHandle> findDestinations() {
-		List<DestinationHandle> result = new ArrayList<DestinationHandle>();
-		
-		try{
-			Context ctx = new InitialContext(jndiEnvironment);
-			for (String parentPath : parentPaths){
-				NamingEnumeration<NameClassPair> list = ctx.list(parentPath);
-				while(list.hasMore()){
-	                NameClassPair next = list.next();
-	                String name = next.getName();
-	                String destinationPath = findDestination(ctx, parentPath,name);
-	                result.add(new DestinationHandle(destinationPath));
+	
+	public void publishTextMessage(String destinationPath, String messageText){
+		textMessagePublisher.publishTextMessage(destinationPath, messageText);
+	}
 
-	            }
+
+
+	public DestinationHandle getDestination(String destinationPath) {
+		for (DestinationHandle destinationHandle : destinations){
+			if (destinationHandle.getDestinationPath().equals(destinationPath)){
+				return destinationHandle;
 			}
-		} catch (NamingException namingException){
-			logger.error(namingException);
 		}
+		return null;
 		
-		
-		return result;
 	}
-
-    private String findDestination(Context ctx, String parentPath, String name) throws NamingException
-    {
-    	String fullPath = parentPath+"/"+name;
-        Object lookup = ctx.lookup(parentPath+"/"+name);
-        
-        if (!(lookup instanceof javax.jms.Destination)){
-            throw new RuntimeException("Only expecting to find Destination under ["+parentPath+"]");
-        }
-        return fullPath;
-    }
+	
+	
 }

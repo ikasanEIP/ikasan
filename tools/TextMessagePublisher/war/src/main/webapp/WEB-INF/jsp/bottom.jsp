@@ -42,39 +42,9 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Text Message Publisher</title>
-
-</head>
-<body>
-
-
-<form method="post" action="publishTextMessage.htm">
-	<table>
-		<tr>
-			<td>Destination Path:</td>
-			<td>
-				<select name="destinationPath">
-					<c:forEach items="${destinations}" var="destination" >
-						<option value="<c:out value="${destination}"/>"><c:out value="${destination}"/></option>
-					</c:forEach>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>Message Text:</td>
-			<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
-		</tr>
-		<tr>
-			<td colspan="2"><input type="submit" value="Publish"/></td>
-		</tr>
-	</table>
-	
-</form>
 
 </body>
+
+</html>
 

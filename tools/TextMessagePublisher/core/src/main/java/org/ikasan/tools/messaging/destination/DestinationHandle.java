@@ -38,67 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.destination.discovery;
+package org.ikasan.tools.messaging.destination;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+public class DestinationHandle {
+	
+	public String destinationPath;
 
-import org.ikasan.tools.messaging.destination.DestinationHandle;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+	public String getDestinationPath() {
+		return destinationPath;
+	}
 
-import org.apache.log4j.Logger;
-
-public class JndiDestinationDiscoverer implements
-		DestinationDiscoverer {
-
-	private Properties jndiEnvironment;
-    private List<String> parentPaths;
-    
-    private Logger logger = Logger.getLogger(JndiDestinationDiscoverer.class);
-    
-	public JndiDestinationDiscoverer(Properties jndiEnvironment,
-			List<String> parentPaths) {
+	public DestinationHandle(String destinationPath) {
 		super();
-		this.jndiEnvironment = jndiEnvironment;
-		this.parentPaths = parentPaths;
+		this.destinationPath = destinationPath;
 	}
 
-	public List<DestinationHandle> findDestinations() {
-		List<DestinationHandle> result = new ArrayList<DestinationHandle>();
-		
-		try{
-			Context ctx = new InitialContext(jndiEnvironment);
-			for (String parentPath : parentPaths){
-				NamingEnumeration<NameClassPair> list = ctx.list(parentPath);
-				while(list.hasMore()){
-	                NameClassPair next = list.next();
-	                String name = next.getName();
-	                String destinationPath = findDestination(ctx, parentPath,name);
-	                result.add(new DestinationHandle(destinationPath));
-
-	            }
-			}
-		} catch (NamingException namingException){
-			logger.error(namingException);
-		}
-		
-		
-		return result;
-	}
-
-    private String findDestination(Context ctx, String parentPath, String name) throws NamingException
-    {
-    	String fullPath = parentPath+"/"+name;
-        Object lookup = ctx.lookup(parentPath+"/"+name);
-        
-        if (!(lookup instanceof javax.jms.Destination)){
-            throw new RuntimeException("Only expecting to find Destination under ["+parentPath+"]");
-        }
-        return fullPath;
-    }
 }
