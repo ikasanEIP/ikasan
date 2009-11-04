@@ -52,10 +52,28 @@
 </head>
 <body>
 
+
 <form method="post" action="publishTextMessage.htm">
-	Channel Destination Path: <input name="destinationPath"/>
-	Message Text: <input name="messageText"/>
-	<input type="submit" value="Publish"/>
+	<table>
+		<tr>
+			<td>Destination Path:</td>
+			<td>
+				<select name="destinationPath">
+					<c:forEach items="${destinations}" var="destination" >
+						<option value="<c:out value="${destination}"/>"><c:out value="${destination}"/></option>
+					</c:forEach>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Message Text:</td>
+			<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type="submit" value="Publish"/></td>
+		</tr>
+	</table>
+	
 </form>
 
 </body>

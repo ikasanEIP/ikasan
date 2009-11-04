@@ -38,44 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.publisher;
+package org.ikasan.tools.messaging.destination.resolution;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import java.util.Map;
+
+import javax.jms.Destination;
 import javax.naming.NamingException;
 
-import org.ikasan.tools.messaging.destination.resolution.DestinationResolver;
-import org.springframework.jms.JmsException;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
+/**
+ * Interface definition for factory bean that provides runtime JNDI lookup for <code>Destination</code>s
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public interface DestinationResolver
+{
+    /**
+     * Retrieves the configured <code>Destination</code> if possible
+     *
+     * @return <code>Destination</code> specified by jndiName 
+     * 
+     * @throws NamingException
+     */
+    public Destination getDestination(String destinationJndiName) throws NamingException;
+    
+    /**
+     * Accessor for environment
+     * 
+     * @return environment
+     */
+    public Map<?,?> getEnvironment();
+    
 
-public class TextMessagePublisherImpl implements TextMessagePublisher {
-
-	private JmsTemplate jmsTemplate;
-	
-	private DestinationResolver jndiDestinationResolver;
-	
-	public TextMessagePublisherImpl(ConnectionFactory connectionFactory, DestinationResolver jndiDestinationResolver){
-		this.jmsTemplate = new JmsTemplate(connectionFactory);
-		this.jndiDestinationResolver = jndiDestinationResolver;
-	}
-	
-	public void publishTextMessage(String destinationPath, final String messageText) {
-		try {
-			jmsTemplate.send(jndiDestinationResolver.getDestination(destinationPath), new MessageCreator() {
-				
-				public Message createMessage(Session session) throws JMSException {
-					return session.createTextMessage(messageText);
-				}
-			});
-		} catch (JmsException e) {
-			throw new RuntimeException(e);
-		} catch (NamingException e) {
-			throw new RuntimeException(e);
-		}
-
-	}
-
+    
 }

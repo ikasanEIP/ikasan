@@ -1,6 +1,6 @@
 /*
- * $Id: 
- * $URL:
+ * $Id$
+ * $URL$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,37 +38,11 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.destination;
+package org.ikasan.tools.messaging.destination.discovery;
 
-import java.util.Map;
+import java.util.List;
 
-import javax.jms.Destination;
-import javax.naming.NamingException;
+public interface DestinationDiscoverer {
 
-/**
- * Interface definition for factory bean that provides runtime JNDI lookup for <code>Destination</code>s
- * 
- * @author Ikasan Development Team
- *
- */
-public interface JndiDestinationResolver
-{
-    /**
-     * Retrieves the configured <code>Destination</code> if possible
-     *
-     * @return <code>Destination</code> specified by jndiName 
-     * 
-     * @throws NamingException
-     */
-    public Destination getDestination(String destinationJndiName) throws NamingException;
-    
-    /**
-     * Accessor for environment
-     * 
-     * @return environment
-     */
-    public Map<?,?> getEnvironment();
-    
-
-    
+	public List<String> findDestinations();
 }
