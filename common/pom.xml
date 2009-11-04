@@ -193,10 +193,11 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
       </plugin>
+      <!-- Report from the day we became Ikasan -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <!-- Report from the day we became Ikasan -->
         <configuration>
           <type>date</type>
           <dates>
@@ -205,7 +206,7 @@
           <dateFormat>yyyy-MM-dd</dateFormat>
         </configuration>
       </plugin>
-
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
