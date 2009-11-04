@@ -1,5 +1,6 @@
 package org.ikasan.tools.messaging.web;
 
+import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
 import org.ikasan.tools.messaging.publisher.TextMessagePublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,15 +14,19 @@ public class MessagePublicationController {
 
 	private TextMessagePublisher textMessagePublisher;
 	
+	private DestinationDiscoverer destinationDiscoverer;
+	
 	public static final String DESTINATION_PATH_PARAMETER_NAME = "destinationPath";
 	
 	public static final String MESSAGE_TEXT_PARAMETER_NAME = "messageText";
 
 	@Autowired
 	public MessagePublicationController(
-			TextMessagePublisher textMessagePublisher) {
+			TextMessagePublisher textMessagePublisher,
+			DestinationDiscoverer destinationDiscoverer) {
 		super();
 		this.textMessagePublisher = textMessagePublisher;
+		this.destinationDiscoverer = destinationDiscoverer;
 	}
 	
 
@@ -34,8 +39,11 @@ public class MessagePublicationController {
     }
     
     @RequestMapping("/home.htm")
-    public String setupForm() 
+    public String setupForm(ModelMap model) 
     {	
+
+    	model.addAttribute("destinations", destinationDiscoverer.findDestinations());
+    	
         return "form";
     }
 }
