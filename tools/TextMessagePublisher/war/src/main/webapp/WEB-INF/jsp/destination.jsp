@@ -42,7 +42,28 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="/WEB-INF/jsp/top.jsp" %>
 
-<%-- Redirected because we can't set the welcome page to a virtual URL. --%>
-<c:redirect url="/destinations.htm"/>
+
+<h2><c:out value="${destination.destinationPath}"/></h2>
+
+
+
+<c:url var="publicationLink" value="publishTextMessage.htm">
+	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+</c:url>
+
+<form method="post" action="${publicationLink}">
+	<table>
+		
+		<tr>
+			<td>Message Text:</td>
+			<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type="submit" value="Publish"/></td>
+		</tr>
+	</table>
+	
+<%@ include file="/WEB-INF/jsp/bottom.jsp" %>
+

@@ -42,7 +42,9 @@ package org.ikasan.tools.messaging.destination.discovery;
 
 import java.util.List;
 
+import org.ikasan.tools.messaging.destination.DestinationHandle;
+
 public interface DestinationDiscoverer {
 
-	public List<String> findDestinations();
+	public List<DestinationHandle> findDestinations();
 }

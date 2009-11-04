@@ -42,7 +42,17 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="/WEB-INF/jsp/top.jsp" %>
 
-<%-- Redirected because we can't set the welcome page to a virtual URL. --%>
-<c:redirect url="/destinations.htm"/>
+
+<ul>
+		<c:forEach items="${destinations}" var="destination" >
+			<c:url var="destinationLink" value="destination.htm">
+            	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+            </c:url>
+			<li><a href="${destinationLink}"><c:out value="${destination.destinationPath}"/></a></li>
+		</c:forEach>
+</ul>
+
+<%@ include file="/WEB-INF/jsp/bottom.jsp" %>
+

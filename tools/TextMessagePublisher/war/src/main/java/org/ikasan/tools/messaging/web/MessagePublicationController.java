@@ -1,7 +1,7 @@
 package org.ikasan.tools.messaging.web;
 
-import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
-import org.ikasan.tools.messaging.publisher.TextMessagePublisher;
+import org.ikasan.tools.messaging.destination.DestinationHandle;
+import org.ikasan.tools.messaging.server.DestinationServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class MessagePublicationController {
 
-	private TextMessagePublisher textMessagePublisher;
-	
-	private DestinationDiscoverer destinationDiscoverer;
+	private DestinationServer destinationServer;
 	
 	public static final String DESTINATION_PATH_PARAMETER_NAME = "destinationPath";
 	
@@ -22,11 +20,9 @@ public class MessagePublicationController {
 
 	@Autowired
 	public MessagePublicationController(
-			TextMessagePublisher textMessagePublisher,
-			DestinationDiscoverer destinationDiscoverer) {
+			DestinationServer destinationServer) {
 		super();
-		this.textMessagePublisher = textMessagePublisher;
-		this.destinationDiscoverer = destinationDiscoverer;
+		this.destinationServer = destinationServer;
 	}
 	
 
@@ -34,16 +30,27 @@ public class MessagePublicationController {
     public String viewFlow(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
             @RequestParam(MESSAGE_TEXT_PARAMETER_NAME) String messageText, ModelMap model)
     {	
-    	textMessagePublisher.publishTextMessage(destinationPath, messageText);
+    	destinationServer.publishTextMessage(destinationPath, messageText);
         return "success";
     }
     
-    @RequestMapping("/home.htm")
-    public String setupForm(ModelMap model) 
+
+    
+    @RequestMapping("/destinations.htm")
+    public String showDestinations(ModelMap model) 
     {	
 
-    	model.addAttribute("destinations", destinationDiscoverer.findDestinations());
+    	model.addAttribute("destinations", destinationServer.getDestinations());
     	
-        return "form";
+        return "destinations";
+    }
+    
+    @RequestMapping(value="/destination.htm", method = RequestMethod.GET)
+    public String viewDestination(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+             ModelMap model)
+    {	
+    	DestinationHandle   destination = destinationServer.getDestination(destinationPath);
+    	model.addAttribute("destination", destination);
+    	return "destination";
     }
 }
