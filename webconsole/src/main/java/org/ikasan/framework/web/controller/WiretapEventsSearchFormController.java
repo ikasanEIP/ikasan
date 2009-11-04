@@ -256,6 +256,19 @@ public class WiretapEventsSearchFormController
     }
 
     /**
+     * Handle the request to execute the housekeeper
+     * 
+     * @return a redirect to search form
+     * @throws Exception - Catch all
+     */
+    @RequestMapping(value = "housekeeping.htm", method = RequestMethod.POST)
+    public String housekeepWiretaps() throws Exception
+    {
+        wiretapService.housekeep();
+        return "redirect:/events/search.htm";
+    }
+    
+    /**
      * Search for and display a page of search results
      * 
      * @param modelMap The model

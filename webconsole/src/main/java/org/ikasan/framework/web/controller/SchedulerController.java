@@ -47,7 +47,6 @@ import org.quartz.Trigger;
  * @author Ikasan Development Team
  */
 @Controller
-// @RequestMapping("/admin/*Scheduler.htm")
 public class SchedulerController
 {
     /** Logger for this class */
