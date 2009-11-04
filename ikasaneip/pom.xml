@@ -88,6 +88,9 @@
              gotta keep the order correct here, dependent projects first, not alphabetical!
 
         -->
+	<!-- The build module acts the parent of the rest of the modules,
+	     controlling the repos, dependencies etc... -->
+	<module>build</module>
         <!-- ikasan core -->
         <module>common</module>
         <module>framework</module>
