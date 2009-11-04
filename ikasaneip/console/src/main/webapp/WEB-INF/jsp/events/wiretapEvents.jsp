@@ -137,33 +137,33 @@
 
                 <li>
                     <label for="moduleFlow"><fmt:message key="wiretap_events_module_flow"/> <span title="<fmt:message key="wiretap_events_module_flow_help"/>" id="moduleFlowHelp">(?)</span></label>
-                    <input id="moduleFlow" type="text" name="moduleFlow" value="${searchParams["moduleFlow"]}"/>
+                    <input id="moduleFlow" type="text" name="moduleFlow" value="${searchParams['moduleFlow']}"/>
                 </li>
                 <li>
                     <label for="componentName"><fmt:message key="wiretap_events_component"/> <span title="<fmt:message key="wiretap_events_component_name_help"/>" id="componentNameHelp">(?)</span></label>
-                    <input id="componentName" type="text" name="componentName" value="${searchParams["componentName"]}"/>
+                    <input id="componentName" type="text" name="componentName" value="${searchParams['componentName']}"/>
                 </li>
                 <li>
                     <label for="eventId"><fmt:message key="wiretap_events_event_id"/> <span title="<fmt:message key="wiretap_events_event_id_help"/>" id="eventIdHelp">(?)</span></label>
-                    <input id="eventId" type="text" name="eventId" value="${searchParams["eventId"]}"/>
+                    <input id="eventId" type="text" name="eventId" value="${searchParams['eventId']}"/>
                 </li>
                 <li>
                     <label for="payloadId"><fmt:message key="wiretap_events_payload_id"/> <span title="<fmt:message key="wiretap_events_payload_id_help"/>" id="payloadIdHelp">(?)</span></label>
-                    <input id="payloadId" type="text" name="payloadId" value="${searchParams["payloadId"]}"/>
+                    <input id="payloadId" type="text" name="payloadId" value="${searchParams['payloadId']}"/>
                 </li>
                 <li>
                     <label for="fromDateString"><fmt:message key="wiretap_events_from"/> <span title="<fmt:message key="wiretap_events_from_date_help"/>" id="fromDateStringHelp">(?)</span></label>
-                    <input id="fromDateString" type="text" name="fromDateString" size="10" value="${searchParams["fromDateString"]}"/>
-                    <input id="fromTimeString" type="text" name="fromTimeString" size="8" value="${searchParams["fromTimeString"]}"/>
+                    <input id="fromDateString" type="text" name="fromDateString" size="10" value="${searchParams['fromDateString']}"/>
+                    <input id="fromTimeString" type="text" name="fromTimeString" size="8" value="${searchParams['fromTimeString']}"/>
                 </li>
                 <li>
                     <label for="untilDateString"><fmt:message key="wiretap_events_until"/> <span title="<fmt:message key="wiretap_events_to_date_help"/>" id="toDateStringHelp">(?)</span></label>
-                    <input id="untilDateString" type="text" name="untilDateString" size="10" value="${searchParams["untilDateString"]}"/>
-                    <input id="untilTimeString" type="text" name="untilTimeString" size="8" value="${searchParams["untilTimeString"]}"/>
+                    <input id="untilDateString" type="text" name="untilDateString" size="10" value="${searchParams['untilDateString']}"/>
+                    <input id="untilTimeString" type="text" name="untilTimeString" size="8" value="${searchParams['untilTimeString']}"/>
                 </li>
                 <li>
                     <label for="payloadContent"><fmt:message key="wiretap_events_payload_content"/> <span title="<fmt:message key="wiretap_events_payload_content_help"/>" id="payloadContentHelp">(?)</span></label>
-                    <input id="payloadContent" type="text" name="payloadContent" value="${searchParams["payloadContent"]}" />
+                    <input id="payloadContent" type="text" name="payloadContent" value="${searchParams['payloadContent']}" />
                 </li>
                 <li>
                     <label for="orderBy"><fmt:message key="wiretap_events_order_by"/> <span title="<fmt:message key="wiretap_events_order_by_help"/>" id="orderByHelp">(?)</span></label>
