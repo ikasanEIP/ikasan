@@ -125,18 +125,21 @@
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-
     
 	<bean id="platformScheduler"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="schedulerName" value="platformScheduler"/>
-		<property name="triggers">
+		<!-- 
+        <property name="triggers">
 			<list>
 				<ref bean="wiretapEventHousekeepingTrigger" />
 			</list>
 		</property>
+        -->
+        <property name="autoStartup" value="false" />
 	</bean>
 
+    <!--
 	<bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
 			<bean
@@ -148,13 +151,9 @@
 			</bean>
 		</property>
 		<property name="name" value="WiretapEvent Housekeeping Trigger" />
-		<!-- run every morning at 6 AM -->
-		<!-- <property name="cronExpression" value="0 0 6 * * ?" />-->
-		<property name="cronExpression" value="0 0/2 * * * ?" />
-		<!--
-			every 2 mins
-		-->
+        <property name="cronExpression" value="0 0/2 * * * ?" />
 	</bean>
+    -->
 
 	<!-- default non validating document builder factory -->
 	<bean id="documentBuilderFactory" lazy-init="true"

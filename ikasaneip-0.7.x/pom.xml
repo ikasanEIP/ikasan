@@ -12,6 +12,7 @@
 
         -->
         <!-- ikasan core -->
+        <module>platform</module>
         <module>common</module>
         <module>framework</module>
 
