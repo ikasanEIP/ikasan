@@ -62,7 +62,6 @@
         <ref bean="wiretapEventHousekeepingTrigger" />
       </list>
     </property>
-    <!-- TODO set AutoStart to false and provide buttons on console to execute this -->
   </bean>
 
   <bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
