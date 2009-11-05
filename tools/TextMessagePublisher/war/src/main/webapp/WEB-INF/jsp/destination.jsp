@@ -42,28 +42,43 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/top.jsp" %>
+<%@ include file="/WEB-INF/jsp/top.jsp"%>
 
 
-<h2><c:out value="${destination.destinationPath}"/></h2>
+<h2><c:out value="${destination.destinationPath}" /></h2>
 
 
 
 <c:url var="publicationLink" value="publishTextMessage.htm">
-	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	<c:param name="destinationPath" value="${destination.destinationPath}" />
 </c:url>
 
 <form method="post" action="${publicationLink}">
-	<table>
-		
-		<tr>
-			<td>Message Text:</td>
-			<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
-		</tr>
-		<tr>
-			<td colspan="2"><input type="submit" value="Publish"/></td>
-		</tr>
-	</table>
-	
-<%@ include file="/WEB-INF/jsp/bottom.jsp" %>
+<table>
 
+	<tr>
+		<td>Message Text:</td>
+		<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
+	</tr>
+	<tr>
+		<td>Message Priority:</td>
+		<td><select name="priority">
+                <option value="4">4 - default normal</option>
+				<option value="0">0 - lowest</option>
+                <option value="9">9 - highest</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+		    </select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><input type="submit" value="Publish" /></td>
+	</tr>
+</table>
+
+<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
