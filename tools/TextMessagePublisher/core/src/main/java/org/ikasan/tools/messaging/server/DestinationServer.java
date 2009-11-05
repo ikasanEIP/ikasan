@@ -66,8 +66,8 @@ public class DestinationServer {
 	}
 
 	
-	public void publishTextMessage(String destinationPath, String messageText){
-		textMessagePublisher.publishTextMessage(destinationPath, messageText);
+	public void publishTextMessage(String destinationPath, String messageText, int priority){
+		textMessagePublisher.publishTextMessage(destinationPath, messageText, priority);
 	}
 
 

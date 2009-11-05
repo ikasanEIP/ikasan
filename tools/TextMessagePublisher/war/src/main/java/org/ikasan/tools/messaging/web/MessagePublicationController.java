@@ -18,7 +18,9 @@ public class MessagePublicationController {
 	
 	public static final String MESSAGE_TEXT_PARAMETER_NAME = "messageText";
 
-	@Autowired
+    public static final String MESSAGE_PRIORITY_PARAMETER_NAME = "priority";
+
+    @Autowired
 	public MessagePublicationController(
 			DestinationServer destinationServer) {
 		super();
@@ -28,12 +30,12 @@ public class MessagePublicationController {
 
     @RequestMapping(value="/publishTextMessage.htm", method = RequestMethod.POST)
     public String viewFlow(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
-            @RequestParam(MESSAGE_TEXT_PARAMETER_NAME) String messageText, ModelMap model)
+            @RequestParam(MESSAGE_TEXT_PARAMETER_NAME) String messageText, 
+            @RequestParam(MESSAGE_PRIORITY_PARAMETER_NAME) int priority, ModelMap model)
     {	
-    	destinationServer.publishTextMessage(destinationPath, messageText);
+    	destinationServer.publishTextMessage(destinationPath, messageText, priority);
         return "success";
     }
-    
 
     
     @RequestMapping("/destinations.htm")

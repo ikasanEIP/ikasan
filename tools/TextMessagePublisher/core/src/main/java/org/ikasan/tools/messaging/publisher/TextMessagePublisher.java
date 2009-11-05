@@ -42,6 +42,5 @@ package org.ikasan.tools.messaging.publisher;
 
 public interface TextMessagePublisher {
 
-	public void publishTextMessage(String destinationPath, String messageText);
-	
+    public void publishTextMessage(String destinationPath, String messageText, int priority);
 }
