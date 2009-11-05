@@ -68,14 +68,16 @@ public class TextMessagePublisherImpl implements TextMessagePublisher
     {
         try
         {
+            // explicit QoS must be set when defined priority, deliveryMode, or timeToLive
+            jmsTemplate.setPriority(priority);
+            jmsTemplate.setExplicitQosEnabled(true);
+
             jmsTemplate.send(jndiDestinationResolver.getDestination(destinationPath), new MessageCreator()
             {
 
                 public Message createMessage(Session session) throws JMSException
                 {
-                    Message msg = session.createTextMessage(messageText);
-                    msg.setJMSPriority(priority);
-                    return msg;
+                    return session.createTextMessage(messageText);
                 }
             });
         }
