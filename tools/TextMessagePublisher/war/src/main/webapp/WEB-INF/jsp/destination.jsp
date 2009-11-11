@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$ 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -52,66 +52,69 @@
 	<c:param name="destinationPath" value="${destination.destinationPath}"/>
 </c:url>
 
-<form method="post" action="${publicationLink}">
-	<table>
-		
-		<tr>
-			<td>Message Text:</td>
-			<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
-		</tr>
-		<tr>
-			<td>Message Priority:</td>
-			<td>
-				<select name="priority">
-                	<option value="4">4 - default normal</option>
-					<option value="0">0 - lowest</option>
-                	<option value="9">9 - highest</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-                	<option value="3">3</option>
-                	<option value="5">5</option>
-                	<option value="6">6</option>
-                	<option value="7">7</option>
-                	<option value="8">8</option>
-		    	</select>
-			</td>
-		</tr>		
-		<tr>
-			<td colspan="2"><input type="submit" value="Publish"/></td>
-		</tr>
-	</table>
-</form>
+<div id="textMessagePublisher" class="destinationAspect">
+	<h3>Publish Text Message</h3>
+	<form method="post" action="${publicationLink}">
+		<table>
+			
+			<tr>
+				<td>Message Text:</td>
+				<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
+			</tr>
+			<tr>
+				<td>Message Priority:</td>
+				<td>
+					<select name="priority">
+	                	<option value="4">4 - default normal</option>
+						<option value="0">0 - lowest</option>
+	                	<option value="9">9 - highest</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+	                	<option value="3">3</option>
+	                	<option value="5">5</option>
+	                	<option value="6">6</option>
+	                	<option value="7">7</option>
+	                	<option value="8">8</option>
+			    	</select>
+				</td>
+			</tr>		
+			<tr>
+				<td colspan="2"><input type="submit" value="Publish"/></td>
+			</tr>
+		</table>
+	</form>
+</div>
+	
+<div id="simpleSubscriber" class="destinationAspect">
+	<h3>Simple Subscriber</h3>
+	<c:url var="stopSubscriptionLink" value="stopSimpleSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>
+	
+	<c:url var="startSubscriptionLink" value="startSimpleSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>	
+	<c:if test="${destination.simpleSubscriber!=null}">
+	<form method="post" action="${stopSubscriptionLink}">
+		<input type="submit" value="Stop Simple Subscription"/></td>
+	</form>
+	
+			<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
+				<c:url var="messageLink" value="message.htm">
+					<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	            	<c:param name="messageId" value="${message.JMSMessageID}"/>
+	            </c:url>
+				<li><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></li>
+			</c:forEach>
 	
 	
-<h3>Simple Subscriber</h3>
-<c:url var="stopSubscriptionLink" value="stopSimpleSubscription.htm">
-	<c:param name="destinationPath" value="${destination.destinationPath}"/>
-</c:url>
-
-<c:url var="startSubscriptionLink" value="startSimpleSubscription.htm">
-	<c:param name="destinationPath" value="${destination.destinationPath}"/>
-</c:url>	
-<c:if test="${destination.simpleSubscriber!=null}">
-<form method="post" action="${stopSubscriptionLink}">
-	<input type="submit" value="Stop Simple Subscription"/></td>
-</form>
-
-		<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
-			<c:url var="messageLink" value="message.htm">
-				<c:param name="destinationPath" value="${destination.destinationPath}"/>
-            	<c:param name="messageId" value="${message.JMSMessageID}"/>
-            </c:url>
-			<li><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></li>
-		</c:forEach>
-
-
-</c:if>
-
-<c:if test="${destination.simpleSubscriber==null}">
-<form method="post" action="${startSubscriptionLink}">
-	<input type="submit" value="Start Simple Subscription"/></td>
-</form>
-</c:if>
+	</c:if>
 	
+	<c:if test="${destination.simpleSubscriber==null}">
+	<form method="post" action="${startSubscriptionLink}">
+		<input type="submit" value="Start Simple Subscription"/></td>
+	</form>
+	</c:if>
+</div>	
 <%@ include file="/WEB-INF/jsp/bottom.jsp" %>
 
