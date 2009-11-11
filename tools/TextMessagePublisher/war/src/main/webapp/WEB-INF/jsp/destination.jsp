@@ -42,43 +42,76 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/top.jsp"%>
+<%@ include file="/WEB-INF/jsp/top.jsp" %>
 
 
-<h2><c:out value="${destination.destinationPath}" /></h2>
-
+<h2><c:out value="${destination.destinationPath}"/></h2>
 
 
 <c:url var="publicationLink" value="publishTextMessage.htm">
-	<c:param name="destinationPath" value="${destination.destinationPath}" />
+	<c:param name="destinationPath" value="${destination.destinationPath}"/>
 </c:url>
 
 <form method="post" action="${publicationLink}">
-<table>
+	<table>
+		
+		<tr>
+			<td>Message Text:</td>
+			<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
+		</tr>
+		<tr>
+			<td>Message Priority:</td>
+			<td>
+				<select name="priority">
+                	<option value="4">4 - default normal</option>
+					<option value="0">0 - lowest</option>
+                	<option value="9">9 - highest</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+                	<option value="3">3</option>
+                	<option value="5">5</option>
+                	<option value="6">6</option>
+                	<option value="7">7</option>
+                	<option value="8">8</option>
+		    	</select>
+			</td>
+		</tr>		
+		<tr>
+			<td colspan="2"><input type="submit" value="Publish"/></td>
+		</tr>
+	</table>
+</form>
+	
+	
+<h3>Simple Subscriber</h3>
+<c:url var="stopSubscriptionLink" value="stopSimpleSubscription.htm">
+	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+</c:url>
 
-	<tr>
-		<td>Message Text:</td>
-		<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
-	</tr>
-	<tr>
-		<td>Message Priority:</td>
-		<td><select name="priority">
-                <option value="4">4 - default normal</option>
-				<option value="0">0 - lowest</option>
-                <option value="9">9 - highest</option>
-				<option value="1">1</option>
-				<option value="2">2</option>
-                <option value="3">3</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-		    </select>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2"><input type="submit" value="Publish" /></td>
-	</tr>
-</table>
+<c:url var="startSubscriptionLink" value="startSimpleSubscription.htm">
+	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+</c:url>	
+<c:if test="${destination.simpleSubscriber!=null}">
+<form method="post" action="${stopSubscriptionLink}">
+	<input type="submit" value="Stop Simple Subscription"/></td>
+</form>
 
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+		<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
+			<c:url var="messageLink" value="message.htm">
+				<c:param name="destinationPath" value="${destination.destinationPath}"/>
+            	<c:param name="messageId" value="${message.JMSMessageID}"/>
+            </c:url>
+			<li><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></li>
+		</c:forEach>
+
+
+</c:if>
+
+<c:if test="${destination.simpleSubscriber==null}">
+<form method="post" action="${startSubscriptionLink}">
+	<input type="submit" value="Start Simple Subscription"/></td>
+</form>
+</c:if>
+	
+<%@ include file="/WEB-INF/jsp/bottom.jsp" %>
+

@@ -51,5 +51,10 @@
 </head>
 <body>
 
+<c:url var="destinationsLink" value="destinations.htm"/>
+	
 
+<p>
+<a href="${destinationsLink}">destinations</a>
+</p>
 

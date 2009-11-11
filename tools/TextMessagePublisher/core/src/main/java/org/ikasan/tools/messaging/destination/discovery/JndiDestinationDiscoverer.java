@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.ikasan.tools.messaging.destination.DestinationHandle;
+
+import javax.jms.Destination;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
@@ -78,8 +80,15 @@ public class JndiDestinationDiscoverer implements
 				while(list.hasMore()){
 	                NameClassPair next = list.next();
 	                String name = next.getName();
-	                String destinationPath = findDestination(ctx, parentPath,name);
-	                result.add(new DestinationHandle(destinationPath));
+	                
+	                String fullPath = parentPath+"/"+name;
+	                Object lookup = ctx.lookup(parentPath+"/"+name);
+	                
+	                if (!(lookup instanceof javax.jms.Destination)){
+	                    throw new RuntimeException("Only expecting to find Destination under ["+parentPath+"]");
+	                }
+	                
+	                result.add(new DestinationHandle(fullPath, (Destination)lookup));
 
 	            }
 			}
@@ -91,14 +100,5 @@ public class JndiDestinationDiscoverer implements
 		return result;
 	}
 
-    private String findDestination(Context ctx, String parentPath, String name) throws NamingException
-    {
-    	String fullPath = parentPath+"/"+name;
-        Object lookup = ctx.lookup(parentPath+"/"+name);
-        
-        if (!(lookup instanceof javax.jms.Destination)){
-            throw new RuntimeException("Only expecting to find Destination under ["+parentPath+"]");
-        }
-        return fullPath;
-    }
+    
 }
