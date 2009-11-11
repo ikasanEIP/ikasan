@@ -66,7 +66,12 @@
 
 <h2>Wiretapped Events</h2>
 
+<h3>Wiretapped Events</h3>
+<form method="post" id="housekeepingForm" action="housekeeping.htm">
+    <input type="submit" value="Housekeep Wiretap Events" class="controlButton" />
+</form>
 
+<h3>Search</h3>
 <form:form id="wiretapSearchForm" commandName="searchCriteria" cssClass="dataform fancydataform">
 
 <form:errors path="*" cssClass="errorMessages"/>
