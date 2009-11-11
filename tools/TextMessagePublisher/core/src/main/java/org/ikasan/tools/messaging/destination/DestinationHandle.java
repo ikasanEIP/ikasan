@@ -40,17 +40,73 @@
  */
 package org.ikasan.tools.messaging.destination;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import org.ikasan.tools.messaging.subscriber.SimpleSubscriber;
+import org.springframework.jms.JmsException;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
+
 public class DestinationHandle {
 	
-	public String destinationPath;
+	private String destinationPath;
+	
+	private Destination destination;
+	
+	private SimpleSubscriber simpleSubscriber = null;
 
 	public String getDestinationPath() {
 		return destinationPath;
 	}
 
-	public DestinationHandle(String destinationPath) {
+	public DestinationHandle(String destinationPath, Destination destination) {
 		super();
 		this.destinationPath = destinationPath;
+		this.destination = destination;
 	}
+	
+	public SimpleSubscriber getSimpleSubscriber(){
+		return simpleSubscriber;
+	}
+	
+	public void startSimpleSubscription(ConnectionFactory connectionFactory){
+		if (simpleSubscriber!=null){
+			throw new IllegalStateException("SimpleSubscriber already exists for ["+destinationPath+"]");
+		}
+		simpleSubscriber = new SimpleSubscriber(connectionFactory, destination);
+	}
+	
+	public void publishTextMessage(ConnectionFactory connectionFactory,final String messageText, int priority) {
+		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
+        
+		// explicit QoS must be set when defined priority, deliveryMode, or timeToLive
+        jmsTemplate.setPriority(priority);
+        jmsTemplate.setExplicitQosEnabled(true);
+		try {
+			jmsTemplate.send(destination, new MessageCreator() {
+				
+				public Message createMessage(Session session) throws JMSException {
+					return session.createTextMessage(messageText);
+				}
+			});
+		} catch (JmsException e) {
+			throw new RuntimeException(e);
+		} 
+
+	}
+
+	public void stopSimpleSubscription() {
+		if (simpleSubscriber!=null){
+			simpleSubscriber.shutdown();
+		}
+		this.simpleSubscriber= null;
+		
+	}
+	
+	
 
 }

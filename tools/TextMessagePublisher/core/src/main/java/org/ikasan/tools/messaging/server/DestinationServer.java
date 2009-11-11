@@ -43,20 +43,23 @@ package org.ikasan.tools.messaging.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Message;
+
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
-import org.ikasan.tools.messaging.publisher.TextMessagePublisher;
 
 public class DestinationServer {
 
 	
 	private List<DestinationHandle> destinations = new ArrayList<DestinationHandle>();
 	
-	private TextMessagePublisher textMessagePublisher;
+	private ConnectionFactory connectionFactory;
 	
-	public DestinationServer(DestinationDiscoverer destinationDiscoverer, TextMessagePublisher textMessagePublisher){
+	
+	public DestinationServer(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
 		this.destinations = destinationDiscoverer.findDestinations();
-		this.textMessagePublisher = textMessagePublisher;
+		this.connectionFactory = connectionFactory;
 	}
 	
 	
@@ -67,7 +70,15 @@ public class DestinationServer {
 
 	
 	public void publishTextMessage(String destinationPath, String messageText, int priority){
-		textMessagePublisher.publishTextMessage(destinationPath, messageText, priority);
+		getDestination(destinationPath).publishTextMessage(connectionFactory,  messageText, priority);
+	}
+	
+	public void createSimpleSubscription(String destinationPath){
+		getDestination(destinationPath).startSimpleSubscription(connectionFactory);
+	}
+	
+	public void destroySimpleSubscription(String destinationPath){
+		getDestination(destinationPath).stopSimpleSubscription();
 	}
 
 
@@ -80,6 +91,12 @@ public class DestinationServer {
 		}
 		return null;
 		
+	}
+
+
+
+	public Message getMessage(String destinationPath, String messageId) {
+		return getDestination(destinationPath).getSimpleSubscriber().getMessage(messageId);
 	}
 	
 	

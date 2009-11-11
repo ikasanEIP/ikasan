@@ -44,7 +44,7 @@
 --%>
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
 
-
+<h2>Choose your destination</h2>
 <ul>
 		<c:forEach items="${destinations}" var="destination" >
 			<c:url var="destinationLink" value="destination.htm">

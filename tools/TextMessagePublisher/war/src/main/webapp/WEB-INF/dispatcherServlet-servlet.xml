@@ -40,18 +40,10 @@
     
     <bean id="destinationServer" class="org.ikasan.tools.messaging.server.DestinationServer">
     	<constructor-arg ref="destinationDiscoverer"/>
-    	<constructor-arg ref="textMessagePublisher"/>
-    </bean>
-    
-    
-    <bean id="textMessagePublisher" class="org.ikasan.tools.messaging.publisher.TextMessagePublisherImpl">
-    	<constructor-arg>
-    		<bean class="org.ikasan.tools.messaging.destination.resolution.DefaultJndiDestinationResolver">
-    			<constructor-arg ref="jmsJndiEnvironment"/>
-    		</bean>
-    	</constructor-arg>
     	<constructor-arg ref="jmsConnectionFactory"/>
     </bean>
+    
+    
     
     <bean id="destinationDiscoverer" class = "org.ikasan.tools.messaging.destination.discovery.JndiDestinationDiscoverer">
     	<constructor-arg ref="jmsJndiEnvironment"/>

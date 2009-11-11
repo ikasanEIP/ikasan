@@ -17,6 +17,8 @@ public class MessagePublicationController {
 	public static final String DESTINATION_PATH_PARAMETER_NAME = "destinationPath";
 	
 	public static final String MESSAGE_TEXT_PARAMETER_NAME = "messageText";
+	
+	public static final String MESSAGE_ID_PARAMETER_NAME = "messageId";
 
     public static final String MESSAGE_PRIORITY_PARAMETER_NAME = "priority";
 
@@ -34,8 +36,9 @@ public class MessagePublicationController {
             @RequestParam(MESSAGE_PRIORITY_PARAMETER_NAME) int priority, ModelMap model)
     {	
     	destinationServer.publishTextMessage(destinationPath, messageText, priority);
-        return "success";
+    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
     }
+    
 
     
     @RequestMapping("/destinations.htm")
@@ -54,5 +57,32 @@ public class MessagePublicationController {
     	DestinationHandle   destination = destinationServer.getDestination(destinationPath);
     	model.addAttribute("destination", destination);
     	return "destination";
+    }
+    
+    
+    @RequestMapping(value="/startSimpleSubscription.htm", method = RequestMethod.POST)
+    public String startSimpleSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
+    {	
+    	destinationServer.createSimpleSubscription(destinationPath);
+    	
+    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
+    }
+    
+    @RequestMapping(value="/stopSimpleSubscription.htm", method = RequestMethod.POST)
+    public String stopSimpleSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
+    {	
+    	destinationServer.destroySimpleSubscription(destinationPath);
+    	
+    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
+    }
+    
+    @RequestMapping(value="/message.htm", method = RequestMethod.GET)
+    public String viewMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(MESSAGE_ID_PARAMETER_NAME) String messageId,
+             ModelMap model)
+    {	
+    	model.addAttribute("message", destinationServer.getMessage(destinationPath, messageId));
+
+    	return "textMessage";
     }
 }

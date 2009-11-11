@@ -41,9 +41,17 @@
 
  Author:  Ikasan Development Team
  
---%>       
+--%>
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
 
-Publication Successful
 
+<h2><c:out value="${message.JMSMessageID}"/></h2>
+
+
+<p>
+	<c:out value="${message.text}"/>	
+</p>
+
+	
 <%@ include file="/WEB-INF/jsp/bottom.jsp" %>
+
