@@ -17,7 +17,9 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 public class SimpleSubscriber implements MessageListener{
 
-	private BlockingQueue<Message> receivedMessages = new LinkedBlockingQueue<Message>(10);
+	private int maximumMessages = 10;
+	
+	private BlockingQueue<Message> receivedMessages = new LinkedBlockingQueue<Message>(maximumMessages);
 	
 	private DefaultMessageListenerContainer container;
 	
@@ -77,6 +79,10 @@ public class SimpleSubscriber implements MessageListener{
 	
 	public Date getSubscribingSince(){
 		return subscribingSince;
+	}
+	
+	public int getMaximumMessages(){
+		return maximumMessages;
 	}
 
 }
