@@ -142,15 +142,17 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 		
 		if (excludedEvents.size()>0){
 			result = (ExcludedEvent) excludedEvents.get(0);
-		}
-		if (!mutable){
-			getHibernateTemplate().evict(result);
 			
-			//also clear persistenceIds from payloads
-			for (Payload payload : result.getEvent().getPayloads()){
-				((DefaultPayload)payload).setPersistenceId(null);
+			if (!mutable){
+				getHibernateTemplate().evict(result);
+			
+				//also clear persistenceIds from payloads
+				for (Payload payload : result.getEvent().getPayloads()){
+					((DefaultPayload)payload).setPersistenceId(null);
+				}
 			}
 		}
+		
 		return result;
 	}
 
