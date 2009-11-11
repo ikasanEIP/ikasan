@@ -28,6 +28,11 @@ body {
 	text-align: right;
 }
 
+.message {
+	font-style: italic;
+	padding: 2px;	
+}
+
 #header{
 	margin-bottom: 5px;
 }
