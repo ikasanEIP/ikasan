@@ -51,9 +51,48 @@
 <c:url var="publicationLink" value="publishTextMessage.htm">
 	<c:param name="destinationPath" value="${destination.destinationPath}"/>
 </c:url>
+	
+<div id="simpleSubscriber" class="destinationAspect">
+	<h3>Simple Subscriber</h3>
+	<c:url var="stopSubscriptionLink" value="stopSimpleSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>
+	
+	<c:url var="startSubscriptionLink" value="startSimpleSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>	
+	<c:if test="${destination.simpleSubscriber!=null}">
+	<p class="message">
+		Simple Subscriber subscribing since <c:out value="${destination.simpleSubscriber.subscribingSince}"/>
+	</p>
+	<ol>
+			<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
+				<c:url var="messageLink" value="message.htm">
+					<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	            	<c:param name="messageId" value="${message.JMSMessageID}"/>
+	            </c:url>
+				<li><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></li>
+			</c:forEach>
+	</ol>
+	<form method="post" action="${stopSubscriptionLink}">
+		<input type="submit" value="Stop Simple Subscription"/></td>
+	</form>	
+	
+	</c:if>
+	
+	<c:if test="${destination.simpleSubscriber==null}">
+	<p class="message">
+		Simple Subscriber is not active on this destination
+	</p>
+	
+	<form method="post" action="${startSubscriptionLink}">
+		<input type="submit" value="Start Simple Subscription"/></td>
+	</form>
+	</c:if>
+</div>
 
 <div id="textMessagePublisher" class="destinationAspect">
-	<h3>Publish Text Message</h3>
+	<h3>Text Message Publisher</h3>
 	<form method="post" action="${publicationLink}">
 		<table>
 			
@@ -83,38 +122,6 @@
 			</tr>
 		</table>
 	</form>
-</div>
-	
-<div id="simpleSubscriber" class="destinationAspect">
-	<h3>Simple Subscriber</h3>
-	<c:url var="stopSubscriptionLink" value="stopSimpleSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>
-	
-	<c:url var="startSubscriptionLink" value="startSimpleSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>	
-	<c:if test="${destination.simpleSubscriber!=null}">
-	<form method="post" action="${stopSubscriptionLink}">
-		<input type="submit" value="Stop Simple Subscription"/></td>
-	</form>
-	
-			<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
-				<c:url var="messageLink" value="message.htm">
-					<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	            	<c:param name="messageId" value="${message.JMSMessageID}"/>
-	            </c:url>
-				<li><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></li>
-			</c:forEach>
-	
-	
-	</c:if>
-	
-	<c:if test="${destination.simpleSubscriber==null}">
-	<form method="post" action="${startSubscriptionLink}">
-		<input type="submit" value="Start Simple Subscription"/></td>
-	</form>
-	</c:if>
 </div>	
 <%@ include file="/WEB-INF/jsp/bottom.jsp" %>
 

@@ -1,6 +1,7 @@
 package org.ikasan.tools.messaging.subscriber;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,6 +25,8 @@ public class SimpleSubscriber implements MessageListener{
 	
 	private Destination destination;
 	
+	private Date subscribingSince;
+	
 	public void onMessage(Message message) {
 		logger.info("onMessage called with ["+message+"]");
 		if (receivedMessages.remainingCapacity()==0){
@@ -40,6 +43,7 @@ public class SimpleSubscriber implements MessageListener{
 		container.setConcurrentConsumers(1);
 		container.setMessageListener(this);
 		container.initialize();
+		subscribingSince = new Date();
 	}
 	
 	public void shutdown(){
@@ -69,6 +73,10 @@ public class SimpleSubscriber implements MessageListener{
 			}
 		}
 		return null;
+	}
+	
+	public Date getSubscribingSince(){
+		return subscribingSince;
 	}
 
 }

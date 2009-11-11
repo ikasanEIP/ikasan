@@ -54,7 +54,7 @@
 <c:url var="destinationsLink" value="destinations.htm"/>
 
 <div id="header">	
-	<h1>Destination Manager</h1>
+	<h1>Destination Tool</h1>
 	<ul>
 		<li><a href="${destinationsLink}">destinations</a></li>
 	</ul>
