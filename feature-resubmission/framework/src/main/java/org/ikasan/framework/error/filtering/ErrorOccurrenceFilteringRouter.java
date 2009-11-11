@@ -41,84 +41,107 @@
 
 package org.ikasan.framework.error.filtering;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
-import org.hamcrest.TypeSafeMatcher;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.hamcrest.Matcher;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.routing.AbstractFilteringRouter;
 import org.ikasan.framework.component.routing.Router;
 import org.ikasan.framework.component.routing.RouterException;
-import org.ikasan.framework.component.routing.SingleResultRouter;
-import org.ikasan.framework.error.grouping.ErrorOccurrenceGroup;
-import org.ikasan.framework.error.model.ErrorOccurrence;
-import org.ikasan.framework.error.serialisation.ErrorOccurrenceXmlSerialiser;
 import org.ikasan.framework.exception.user.ExceptionCache;
+import org.ikasan.framework.util.grouping.AttributedGroup;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
- * Specialist router for filtering ErrorOccurrence Events based on a predefined set of rules
+ * Specialist router for filtering Events based on a predefined set of rules for suppression 
+ * and duplicate filtering
+ * 
+ * Originally written for filtering Events containing ErrorOccurrence XML
  * 
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceFilteringRouter extends SingleResultRouter implements Router {
+public class ErrorOccurrenceFilteringRouter extends AbstractFilteringRouter implements Router {
 	
 	public static final String DUPLICATE_PERIOD_ATTRIBUTE_NAME = "duplicatePeriod";
 
-	private ErrorOccurrenceXmlSerialiser errorOccurrenceXmlSerialiser;
-	
 
-
-	private List<TypeSafeMatcher<ErrorOccurrence>> suppressableMatchers = null;
+	private List<Matcher<Document>> suppressableMatchers = null;
 	
-	private List<ErrorOccurrenceGroup> duplicateGroupings; 
+	private List<AttributedGroup> duplicateGroupings; 
 	
 	private ExceptionCache exceptionCache;
 
-	public final static String EXCLUSION_TRANSITION = "exclude";
+
 	
-	public final static String INCLUSION_TRANSITION = "include";
+	private DocumentBuilder documentBuilder;
+	
+
 
 	/**
-	 * @param errorOccurrenceXmlSerialiser
 	 * @param exceptionCache
+	 * @throws ParserConfigurationException 
 	 */
 	public ErrorOccurrenceFilteringRouter(
-			ErrorOccurrenceXmlSerialiser errorOccurrenceXmlSerialiser,
-			ExceptionCache exceptionCache) {
+			ExceptionCache exceptionCache, DocumentBuilderFactory documentBuilderFactory) throws ParserConfigurationException {
 		super();
-		this.errorOccurrenceXmlSerialiser = errorOccurrenceXmlSerialiser;
 		this.exceptionCache = exceptionCache;
+
+        documentBuilder = documentBuilderFactory.newDocumentBuilder();
 	}
 	
 	
-	public String evaluate(Event event) throws RouterException {
+	public boolean filter(Event event) throws RouterException {
 
 		List<Payload> payloads = event.getPayloads();
 		Payload solePayload = payloads.get(0);
 		
 		String xmlString = new String(solePayload.getContent());
 		
-		ErrorOccurrence errorOccurrence = errorOccurrenceXmlSerialiser.toObject(xmlString);
+		
+
+        InputSource is = new InputSource();
+        is.setCharacterStream(new StringReader(xmlString));
+        Document errorOccurrenceDocument;
+		try {
+			errorOccurrenceDocument = documentBuilder.parse(is);
+		} catch (SAXException e) {
+			throw new RouterException(e);
+		} catch (IOException e) {
+			throw new RouterException(e);
+		}
+		
+		
+		
 		
 		
 		//explicit suppression
 		if (suppressableMatchers!=null){
-			for (TypeSafeMatcher<ErrorOccurrence> suppressableMatcher : suppressableMatchers){
-				if (suppressableMatcher.matchesSafely(errorOccurrence)){
-					return EXCLUSION_TRANSITION;
+			for (Matcher<Document> suppressableMatcher : suppressableMatchers){
+				if (suppressableMatcher.matches(errorOccurrenceDocument)){
+					return true;
 				}
 			}
 		}
 		
 		//duplicate suppression
 		if (duplicateGroupings!=null){
-			for (ErrorOccurrenceGroup errorOccurrenceGroup : duplicateGroupings){
-				if (errorOccurrenceGroup.hasAsMember(errorOccurrence)){
+			for (AttributedGroup errorOccurrenceGroup : duplicateGroupings){
+				if (errorOccurrenceGroup.hasAsMember(errorOccurrenceDocument)){
 					String groupName = errorOccurrenceGroup.getGroupName();
 					Long duplicatePeriod = (Long) errorOccurrenceGroup.getAttribute(DUPLICATE_PERIOD_ATTRIBUTE_NAME);
 					if (duplicatePeriod!=null){
 						if (exceptionCache.notifiedSince(groupName, duplicatePeriod)){
-							return EXCLUSION_TRANSITION;
+							return true;
 						}
 						else{
 							exceptionCache.notify(groupName);
@@ -128,15 +151,15 @@ public class ErrorOccurrenceFilteringRouter extends SingleResultRouter implement
 			}
 		}
 		
-		return INCLUSION_TRANSITION;
+		return false;
 	}
 
 	public void setSupressableMatchers(
-			List<TypeSafeMatcher<ErrorOccurrence>> suppressableMatchers) {
+			List<Matcher<Document>> suppressableMatchers) {
 		this.suppressableMatchers = suppressableMatchers;
 	}
 	
-	public void setDuplicateGroupings(List<ErrorOccurrenceGroup> duplicateGroupings) {
+	public void setDuplicateGroupings(List<AttributedGroup> duplicateGroupings) {
 		this.duplicateGroupings = duplicateGroupings;
 	}
 	

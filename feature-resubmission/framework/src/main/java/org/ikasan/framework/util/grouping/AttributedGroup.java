@@ -38,35 +38,81 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.error.grouping;
+package org.ikasan.framework.util.grouping;
 
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
-import org.ikasan.framework.error.model.ErrorOccurrence;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.hamcrest.Matcher;
 
 /**
- * Matcher for ErrorOccurrences of a given moduleName
+ * Simple named logical group that can identify members that pertain to itself
  * 
- * @author Ikasan Development Team
+ * @author Ikasan Devlopment Team
  *
  */
-public class ModuleNameMatcher extends TypeSafeMatcher<ErrorOccurrence> {
+public class AttributedGroup {
 
-	private String moduleName;
+	/**
+	 * matcher for members
+	 */
+	private Matcher<?> matcher;
 	
-	public ModuleNameMatcher(String moduleName) {
+	/**
+	 * Name of group
+	 */
+	private String groupName;
+	
+	/**
+	 * Additional attributes that can be applied collectively to the group
+	 */
+	private Map<String, Object> attributes = new HashMap<String, Object>();
+	
+	/**
+	 * @param groupName
+	 * @param matcher
+	 * @param attributes
+	 */
+	public AttributedGroup(String groupName,
+			Matcher<?> matcher, Map<String, Object> attributes) {
 		super();
-		this.moduleName = moduleName;
+		this.groupName = groupName;
+		this.matcher = matcher;
+		this.attributes = attributes;
 	}
 
-	@Override
-	public boolean matchesSafely(ErrorOccurrence errorOccurrence) {
-		return moduleName.equals(errorOccurrence.getModuleName());
+
+	
+	/**
+	 * Determines if the specfied Object is a member of this group
+	 * 
+	 * @param object
+	 * @return true if is a memeber
+	 */
+	public boolean hasAsMember(Object object){
+		return matcher.matches(object);
+	}
+	
+	/**
+	 * Retrieves a named attribute
+	 * 
+	 * @param attributeName
+	 * @return attribute value or null if non-existent
+	 */
+	public Object getAttribute(String attributeName){
+		return attributes.get(attributeName);
 	}
 
-	public void describeTo(Description arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
+
+	/**
+	 * Accessor for groupName
+	 * 
+	 * @return groupName
+	 */
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	
 }

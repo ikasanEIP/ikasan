@@ -87,10 +87,10 @@
     <bean id="errorOccurrenceTextMessagePublisher" class="org.ikasan.framework.error.service.ErrorOccurrenceTextMessagePublisher">
     	<constructor-arg ref="jmsConnectionFactory"/>
     	<constructor-arg ref="errorsChannel"/>
-    	<constructor-arg ref="errorOccurrenceXmlSerialiser"/>
+    	<constructor-arg ref="errorOccurrenceXmlConverter"/>
     </bean>
     
-    <bean id="errorOccurrenceXmlSerialiser" class="org.ikasan.framework.error.serialisation.ErrorOccurrenceXmlSerialiser"/>
+    <bean id="errorOccurrenceXmlConverter" class="org.ikasan.framework.error.serialisation.DefaultErrorOccurrenceXmlConverter"/>
     
     <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
     	<property name="jndiName" value="/topic/ikasan.errors"/>

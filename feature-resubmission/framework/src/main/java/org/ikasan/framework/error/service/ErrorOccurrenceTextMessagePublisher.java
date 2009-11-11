@@ -47,10 +47,12 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.xml.serializer.XMLSerializer;
 import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.error.serialisation.ErrorOccurrenceXmlConverter;
 
 public class ErrorOccurrenceTextMessagePublisher implements
 		ErrorOccurrenceListener {
@@ -66,15 +68,15 @@ public class ErrorOccurrenceTextMessagePublisher implements
      * 
 	 * @param connectionFactory
 	 * @param errorOccurrenceChannel
-	 * @param errorOccurrenceSerialiser
+	 * @param errorOccurrenceXmlConverter
 	 */
 	public ErrorOccurrenceTextMessagePublisher(
 			ConnectionFactory connectionFactory,
 			Destination errorOccurrenceChannel,
-			XMLSerializer<ErrorOccurrence> errorOccurrenceSerialiser) {
+			ErrorOccurrenceXmlConverter errorOccurrenceXmlConverter) {
 		this.connectionFactory = connectionFactory;
 		this.errorOccurrenceChannel = errorOccurrenceChannel;
-		this.errorOccurrenceSerialiser = errorOccurrenceSerialiser;
+		this.converter = errorOccurrenceXmlConverter;
 	}
 
 	/** JMS Connection Factory */
@@ -84,7 +86,7 @@ public class ErrorOccurrenceTextMessagePublisher implements
     private Long timeToLive;
 
 	/** toXml serialiser for ErrorOccurrences **/
-    private XMLSerializer<ErrorOccurrence> errorOccurrenceSerialiser;
+    private ErrorOccurrenceXmlConverter converter;
     
 	/* (non-Javadoc)
 	 * @see org.ikasan.framework.error.service.ErrorOccurrenceListener#notifyErrorOccurrence(org.ikasan.framework.error.model.ErrorOccurrence)
@@ -96,14 +98,20 @@ public class ErrorOccurrenceTextMessagePublisher implements
         {
             connection = connectionFactory.createConnection();
             Session session = connection.createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);
-            TextMessage message = session.createTextMessage(errorOccurrenceSerialiser.toXml(errorOccurrence));
-            MessageProducer messageProducer = session.createProducer(errorOccurrenceChannel);
-            if (timeToLive != null)
-            {
-                messageProducer.setTimeToLive(timeToLive.longValue());
-            }
-            messageProducer.send(message);
-            logger.info("Successfully published ErrorOccurrence["+errorOccurrence.getId()+"] to ErrorOccurrenceChannel");
+            TextMessage message;
+			try {
+				message = session.createTextMessage(converter.toXml(errorOccurrence));
+	            MessageProducer messageProducer = session.createProducer(errorOccurrenceChannel);
+	            if (timeToLive != null)
+	            {
+	                messageProducer.setTimeToLive(timeToLive.longValue());
+	            }
+	            messageProducer.send(message);
+	            logger.info("Successfully published ErrorOccurrence["+errorOccurrence.getId()+"] to ErrorOccurrenceChannel");
+
+			} catch (TransformerException e) {
+				logger.error("Could not transform ErrorOccurrence to XML ["+errorOccurrence+"]");
+			}
         }
         catch (JMSException e)
         {

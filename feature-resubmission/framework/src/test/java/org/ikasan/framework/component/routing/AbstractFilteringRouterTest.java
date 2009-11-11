@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,82 +38,58 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.error.grouping;
+package org.ikasan.framework.component.routing;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.hamcrest.TypeSafeMatcher;
-import org.ikasan.framework.error.model.ErrorOccurrence;
+import junit.framework.Assert;
 
-/**
- * Simple named logical group that can identify ErrorOccurrence instances that pertain to itself
- * 
- * @author Ikasan Devlopment Team
- *
- */
-public class ErrorOccurrenceGroup {
+import org.ikasan.framework.component.Event;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Test;
 
-	/**
-	 * matcher for ErrorOccurrences
-	 */
-	private TypeSafeMatcher<ErrorOccurrence> matcher;
+public class AbstractFilteringRouterTest {
+
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+    
+    private Event eventThatShouldBeExcluded = mockery.mock(Event.class);
+    
+    private Event eventThatShouldBeIncluded = mockery.mock(Event.class);
 	
-	/**
-	 * Name of group
-	 */
-	private String groupName;
 	
-	/**
-	 * Additional attributes that can be applied collectively to the group
-	 */
-	private Map<String, Object> attributes = new HashMap<String, Object>();
-	
-	/**
-	 * @param groupName
-	 * @param matcher
-	 * @param attributes
-	 */
-	public ErrorOccurrenceGroup(String groupName,
-			TypeSafeMatcher<ErrorOccurrence> matcher, Map<String, Object> attributes) {
-		super();
-		this.groupName = groupName;
-		this.matcher = matcher;
-		this.attributes = attributes;
+	@Test
+	public void testEvaluate() {
+		AbstractFilteringRouter filteringRouter = new DummyFilteringRouter();
+		((DummyFilteringRouter)filteringRouter).addToExcludables(eventThatShouldBeExcluded);
+		
+		Assert.assertEquals(AbstractFilteringRouter.EXCLUSION_TRANSITION, filteringRouter.evaluate(eventThatShouldBeExcluded));
+		Assert.assertEquals(AbstractFilteringRouter.INCLUSION_TRANSITION, filteringRouter.evaluate(eventThatShouldBeIncluded));
+		
 	}
 
+	class DummyFilteringRouter extends AbstractFilteringRouter{
 
-	
-	/**
-	 * Determines if the specfied ErrorOccurrence is a member of this group
-	 * 
-	 * @param errorOccurrence
-	 * @return true if is a memeber
-	 */
-	public boolean hasAsMember(ErrorOccurrence errorOccurrence){
-		return matcher.matchesSafely(errorOccurrence);
+		private List<Event> excludables = new ArrayList<Event>();
+		
+		
+		@Override
+		protected boolean filter(Event event) {
+			return excludables.contains(event);
+		}
+		
+		public void addToExcludables(Event event){
+			excludables.add(event);
+		}
+		
 	}
-	
-	/**
-	 * Retrieves a named attribute
-	 * 
-	 * @param attributeName
-	 * @return attribute value or null if non-existent
-	 */
-	public Object getAttribute(String attributeName){
-		return attributes.get(attributeName);
-	}
-
-
-
-	/**
-	 * Accessor for groupName
-	 * 
-	 * @return groupName
-	 */
-	public String getGroupName() {
-		return groupName;
-	}
-	
-	
 }

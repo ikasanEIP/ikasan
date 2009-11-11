@@ -38,44 +38,36 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.error.grouping;
+package org.ikasan.framework.component.routing;
 
-import junit.framework.Assert;
+import org.ikasan.framework.component.Event;
 
-import org.ikasan.framework.error.model.ErrorOccurrence;
-import org.junit.Test;
-
-public class ModuleNameMatcherTest {
-
-	/**
-	 * Module name that test matcher will attempt to match
-	 */
-	private String moduleName = "moduleName";
+public abstract class AbstractFilteringRouter extends SingleResultRouter{
 	
 	/**
-	 * System Under Test
+	 * Transition for exclusion of the event
 	 */
-	private ModuleNameMatcher matcher = new ModuleNameMatcher(moduleName);
+	public final static String EXCLUSION_TRANSITION = "exclude";
 	
 	/**
-	 * A dummy ErrorOccurrence with a matching moduleName
+	 * Default Transition for letting an even pass
 	 */
-	private ErrorOccurrence matchingOnModuleName= new ErrorOccurrence(null, moduleName, null, null, null);
+	public final static String INCLUSION_TRANSITION = "include";
 
-	/**
-	 * A dummy ErrorOccurrence with a non-matching moduleName
-	 */
-	private ErrorOccurrence nonMatchingModuleName= new ErrorOccurrence(null, "nonMatch", null, null, null);
-	
-	
-	@Test
-	public void testMatchesSafely_willReturnTrueForErrorOccurrenceWithMatchingModuleName() {
-		Assert.assertTrue("Matcher should return true when passed an ErrorOccurrence whose moduleName matches its own", matcher.matchesSafely(matchingOnModuleName));
+	@Override
+	protected String evaluate(Event event) throws RouterException {
+		if (filter(event)){
+			return EXCLUSION_TRANSITION;
+		}
+		return INCLUSION_TRANSITION;
 	}
-	
-	@Test
-	public void testMatchesSafely_willReturnFalseForErrorOccurrenceWithNonMatchingModuleName() {
-		Assert.assertFalse("Matcher should return false when passed an ErrorOccurrence whose moduleName does not match its own", matcher.matchesSafely(nonMatchingModuleName));
-	}
+
+	/**
+	 * Should this Event be caught by the filter?
+	 * 
+	 * @param event
+	 * @return true if this event should be filtered out
+	 */
+	protected abstract boolean filter(Event event);
 
 }

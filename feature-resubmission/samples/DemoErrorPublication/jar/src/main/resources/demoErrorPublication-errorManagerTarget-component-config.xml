@@ -50,15 +50,28 @@
 
 
 	<bean id="errorOccurrenceFilter" class="org.ikasan.framework.error.filtering.ErrorOccurrenceFilteringRouter">
-		<constructor-arg ref="errorOccurrenceXmlSerialiser"/>
 		<constructor-arg><bean class="org.ikasan.framework.exception.user.ExceptionCacheImpl"/></constructor-arg>
+		<constructor-arg ref="documentBuilderFactory"/>
 		<property name="duplicateGroupings">
 		<list>
-			<bean class="org.ikasan.framework.error.grouping.ErrorOccurrenceGroup">
+		
+			<!-- 
+				Read as:
+					"demoResubmissionModuleErrors" defined as errors whose xml 
+					Xpath (/errorOccurrence/moduleName) results in "demoResubmission-demoResubmission",
+					treat as duplicates within three minutes
+			 -->
+		
+			<bean class="org.ikasan.framework.util.grouping.AttributedGroup">
 				<constructor-arg value="demoResubmissionModuleErrors"/>
 				<constructor-arg>
-					<bean class="org.ikasan.framework.error.grouping.ModuleNameMatcher">
-						<constructor-arg value="demoResubmission-demoResubmission"/>
+					<bean class="org.hamcrest.xml.HasXPath">
+						<constructor-arg value="/errorOccurrence/moduleName"/>
+						<constructor-arg>
+							<bean class="org.hamcrest.core.IsEqual">
+								<constructor-arg value="demoResubmission-demoResubmission"/>
+							</bean>
+						</constructor-arg>
 					</bean>
 				</constructor-arg>
 				<constructor-arg>
@@ -67,6 +80,8 @@
 					</map>
 				</constructor-arg>
 			</bean>
+			
+			
 		</list>
 		</property>
 	</bean>

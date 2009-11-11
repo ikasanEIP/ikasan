@@ -47,9 +47,10 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.xml.transform.TransformerException;
 
-import org.ikasan.common.xml.serializer.XMLSerializer;
 import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.ikasan.framework.error.serialisation.ErrorOccurrenceXmlConverter;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -72,7 +73,7 @@ public class ErrorOccurrenceTextMessagePublisherTest {
         }
     };
 	
-	private XMLSerializer<ErrorOccurrence> errorOccurrenceSerialiser = mockery.mock(XMLSerializer.class);
+	private ErrorOccurrenceXmlConverter errorOccurrenceXmlConverter = mockery.mock(ErrorOccurrenceXmlConverter.class);
 	private Destination errorOccurrenceChannel = mockery.mock(Destination.class);
 	private ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class);
 	private ErrorOccurrence errorOccurrence = mockery.mock(ErrorOccurrence.class);
@@ -87,14 +88,14 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 
 	
 	@Test
-	public void testNotifyErrorOccurrence_willSerialiseErrorOccurrenceAndPublishToErrorOccurrenceChannel() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willSerialiseErrorOccurrenceAndPublishToErrorOccurrenceChannel() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 				allowing(errorOccurrence).getId();will(returnValue(errorOccurrenceId));
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(returnValue(textMessage));
 				one(session).createProducer(errorOccurrenceChannel);will(returnValue(messageProducer));
 				one(messageProducer).send(textMessage);
@@ -108,15 +109,15 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	}
 	
 	@Test
-	public void testNotifyErrorOccurrence_willRespectTimeToLiveIfSet() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willRespectTimeToLiveIfSet() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		errorOccurrenceTextMessagePublisher.setTimeToLive(timeToLive);
 		mockery.checking(new Expectations() {
 			{
 				allowing(errorOccurrence).getId();will(returnValue(errorOccurrenceId));
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(returnValue(textMessage));
 				one(session).createProducer(errorOccurrenceChannel);will(returnValue(messageProducer));
 				one(messageProducer).setTimeToLive(timeToLive);
@@ -131,14 +132,14 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	}
 	
 	@Test
-	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromClose() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromClose() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 				allowing(errorOccurrence).getId();will(returnValue(errorOccurrenceId));
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));				
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(returnValue(textMessage));
 				one(session).createProducer(errorOccurrenceChannel);will(returnValue(messageProducer));
 				one(messageProducer).send(textMessage);
@@ -153,7 +154,7 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	
 	@Test
 	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromCreateConnection() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 
@@ -168,7 +169,7 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	
 	@Test
 	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromCreateSession() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 				one(connectionFactory).createConnection();will(returnValue(connection));
@@ -183,13 +184,13 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	}
 	
 	@Test
-	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromCreateTextMessage() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromCreateTextMessage() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));				
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(throwException(jmsException));
 				one(connection).close();
 			}
@@ -201,13 +202,13 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	}
 	
 	@Test
-	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromCreateProducer() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromCreateProducer() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));				
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(returnValue(textMessage));
 				one(session).createProducer(errorOccurrenceChannel);will(throwException(jmsException));
 				one(connection).close();
@@ -220,14 +221,14 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	}
 	
 	@Test
-	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromSetTimeToLive() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromSetTimeToLive() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		errorOccurrenceTextMessagePublisher.setTimeToLive(timeToLive);
 		mockery.checking(new Expectations() {
 			{
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));				
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(returnValue(textMessage));
 				one(session).createProducer(errorOccurrenceChannel);will(returnValue(messageProducer));
 				one(messageProducer).setTimeToLive(timeToLive);will(throwException(jmsException));
@@ -241,13 +242,13 @@ public class ErrorOccurrenceTextMessagePublisherTest {
 	}
 	
 	@Test
-	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromSend() throws JMSException {
-		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceSerialiser);
+	public void testNotifyErrorOccurrence_willSwallowJmsExceptionFromSend() throws JMSException, TransformerException {
+		ErrorOccurrenceTextMessagePublisher errorOccurrenceTextMessagePublisher = new ErrorOccurrenceTextMessagePublisher(connectionFactory, errorOccurrenceChannel,errorOccurrenceXmlConverter);
 		mockery.checking(new Expectations() {
 			{
 				one(connectionFactory).createConnection();will(returnValue(connection));
 				one(connection).createSession(true, javax.jms.Session.AUTO_ACKNOWLEDGE);will(returnValue(session));				
-				one(errorOccurrenceSerialiser).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
+				one(errorOccurrenceXmlConverter).toXml(errorOccurrence);will(returnValue(serialisedErrorOccurrence));
 				one(session).createTextMessage(serialisedErrorOccurrence);will(returnValue(textMessage));
 				one(session).createProducer(errorOccurrenceChannel);will(returnValue(messageProducer));
 				one(messageProducer).send(textMessage);will(throwException(jmsException));

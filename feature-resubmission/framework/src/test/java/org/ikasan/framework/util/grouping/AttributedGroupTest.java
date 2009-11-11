@@ -38,21 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.error.grouping;
+package org.ikasan.framework.util.grouping;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.hamcrest.TypeSafeMatcher;
-import org.ikasan.framework.error.model.ErrorOccurrence;
+import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
-public class ErrorOccurrenceGroupTest {
+public class AttributedGroupTest {
 
 	final String groupName = "groupName";
 	
@@ -66,23 +65,23 @@ public class ErrorOccurrenceGroupTest {
         }
     };
 	
-	final TypeSafeMatcher<ErrorOccurrence> matcher = mockery.mock(TypeSafeMatcher.class);
+	final Matcher<?> matcher = mockery.mock(Matcher.class);
 	
 	final Map<String, Object> attributes = new HashMap<String, Object>();
 	
-	final ErrorOccurrence errorOccurrence= mockery.mock(ErrorOccurrence.class);
+	final Object candidate = new Object();
 	
 	@Test
 	public void testHasAsMember_willReturnTrueWhenInternalMatcherMatchesErrorOccurrence() {
 		mockery.checking(new Expectations()
         {
             {
-                one(matcher).matchesSafely(errorOccurrence);
+                one(matcher).matches(candidate);
                 will(returnValue(true));
             }
         });
-		ErrorOccurrenceGroup errorOccurrenceGroup = new ErrorOccurrenceGroup(groupName, matcher, attributes);
-		Assert.assertTrue(errorOccurrenceGroup.hasAsMember(errorOccurrence));
+		AttributedGroup errorOccurrenceGroup = new AttributedGroup(groupName, matcher, attributes);
+		Assert.assertTrue(errorOccurrenceGroup.hasAsMember(candidate));
 	}
 	
 	@Test
@@ -90,12 +89,12 @@ public class ErrorOccurrenceGroupTest {
 		mockery.checking(new Expectations()
         {
             {
-                one(matcher).matchesSafely(errorOccurrence);
+                one(matcher).matches(candidate);
                 will(returnValue(false));
             }
         });
-		ErrorOccurrenceGroup errorOccurrenceGroup = new ErrorOccurrenceGroup(groupName, matcher, attributes);
-		Assert.assertFalse(errorOccurrenceGroup.hasAsMember(errorOccurrence));
+		AttributedGroup errorOccurrenceGroup = new AttributedGroup(groupName, matcher, attributes);
+		Assert.assertFalse(errorOccurrenceGroup.hasAsMember(candidate));
 	}
 
 	@Test
@@ -103,13 +102,13 @@ public class ErrorOccurrenceGroupTest {
 		String attributeName = "attributeName";
 		String attributeValue = "attributeValue";
 		attributes.put(attributeName, attributeValue);
-		ErrorOccurrenceGroup errorOccurrenceGroup = new ErrorOccurrenceGroup(groupName, matcher, attributes);
+		AttributedGroup errorOccurrenceGroup = new AttributedGroup(groupName, matcher, attributes);
 		Assert.assertEquals(attributeValue, errorOccurrenceGroup.getAttribute(attributeName));
 	}
 
 	@Test
 	public void testGetGroupName() {
-		ErrorOccurrenceGroup errorOccurrenceGroup = new ErrorOccurrenceGroup(groupName, matcher, attributes);
+		AttributedGroup errorOccurrenceGroup = new AttributedGroup(groupName, matcher, attributes);
 		Assert.assertEquals(groupName, errorOccurrenceGroup.getGroupName());
 	}
 

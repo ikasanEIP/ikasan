@@ -40,45 +40,26 @@
  */
 package org.ikasan.framework.error.serialisation;
 
-import org.ikasan.common.xml.serializer.XMLSerializer;
+import javax.xml.transform.TransformerException;
+
 import org.ikasan.framework.error.model.ErrorOccurrence;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
+ * Simple XML Serialisation interface for ErrorOccurrences
  * 
- * Implementation of the XMLSerializer interface that uses XStream as the
- * underlying serializer/deserializer
  * 
  * @author Ikasan Development Team
- * 
+ *
  */
-public class ErrorOccurrenceXmlSerialiser implements XMLSerializer<ErrorOccurrence>
-{
-    /** The xstream */
-    private XStream xstream;
+public interface ErrorOccurrenceXmlConverter {
 
-    /**
-     * Constructor
-     * 
-     */
-    public ErrorOccurrenceXmlSerialiser()
-    {
-        xstream = new XStream(new DomDriver()); 
-        xstream.alias("errorOccurrence", ErrorOccurrence.class);
-
-
-    }
-
-    public ErrorOccurrence toObject(String xml)
-    {
-        return (ErrorOccurrence) xstream.fromXML(xml);
-    }
-
-    public String toXml(ErrorOccurrence subject)
-    {
-        return xstream.toXML(subject);
-    }
+	/**
+	 * Convert the ErrorOccurrence to XML
+	 * 
+	 * @param errorOccurence
+	 * @return
+	 * @throws TransformerException
+	 */
+	public String toXml(ErrorOccurrence errorOccurence) throws TransformerException;
 }
-
