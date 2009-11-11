@@ -42,6 +42,7 @@ package org.ikasan.framework.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.quartz.Scheduler;
@@ -60,7 +61,6 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/admin/scheduler.htm")
 public class SchedulerController
 {
     /** Logger for this class */
@@ -102,23 +102,70 @@ public class SchedulerController
      * @throws Exception - Catch all
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView handleRequest() throws Exception
+    @RequestMapping(value = "/admin/viewScheduler.htm", method = RequestMethod.GET)
+    public ModelAndView viewScheduler() throws Exception
     {
-        List<Trigger> triggers = new ArrayList<Trigger>();
-        String[] triggerGroupNames = platformScheduler.getTriggerGroupNames();
-        logger.info("found triggerGroupNames:" + triggerGroupNames.length);
-        for (String triggerGroupName : triggerGroupNames)
-        {
-            String[] triggerNames = platformScheduler.getTriggerNames(triggerGroupName);
-            logger.info("found triggerNames:" + triggerNames.length + ", for triggerGroupName:" + triggerGroupName);
-            for (String triggerName : triggerNames)
-            {
-                triggers.add(platformScheduler.getTrigger(triggerName, triggerGroupName));
-            }
-        }
+        List<Trigger> triggers = getTriggers();
         ModelMap myModel = new ModelMap();
         myModel.put("triggers", triggers);
         return new ModelAndView("admin/viewScheduler", myModel);
     }
+    
+    /**
+     * Handle the request to put the scheduler on standby
+     * 
+     * @return a redirect to viewScheduler
+     * @throws Exception - Catch all
+     */
+    @RequestMapping(value = "/admin/schedulerStandby.htm", method = RequestMethod.POST)
+    public String stopScheduler() throws Exception
+    {
+        if (!platformScheduler.isInStandbyMode())
+        {
+            platformScheduler.standby();
+        }
+        return "redirect:viewScheduler.htm";
+    }
+
+    /**
+     * Handle the request to resume the scheduler
+     * 
+     * @return a redirect to viewScheduler
+     * @throws Exception - Catch all
+     */
+    @RequestMapping(value = "/admin/schedulerResume.htm", method = RequestMethod.POST)
+    public String resumeScheduler() throws Exception
+    {
+        if (platformScheduler.isInStandbyMode())
+        {
+            platformScheduler.start();
+        }
+        return "redirect:viewScheduler.htm";
+    }
+
+    /**
+     * Helper wmethod to return a list of triggers fro a started scheduler
+     * 
+     * @return List of Triggers
+     */
+    private List<Trigger> getTriggers() throws Exception
+    {
+        List<Trigger> triggers = new ArrayList<Trigger>();
+        if (!platformScheduler.isShutdown())
+        {
+            String[] triggerGroupNames = platformScheduler.getTriggerGroupNames();
+            logger.info("found triggerGroupNames:" + triggerGroupNames.length);
+            for (String triggerGroupName : triggerGroupNames)
+            {
+                String[] triggerNames = platformScheduler.getTriggerNames(triggerGroupName);
+                logger.info("found triggerNames:" + triggerNames.length + ", for triggerGroupName:" + triggerGroupName);
+                for (String triggerName : triggerNames)
+                {
+                    triggers.add(platformScheduler.getTrigger(triggerName, triggerGroupName));
+                }
+            }
+        }
+        return triggers;
+    }
+    
 }
