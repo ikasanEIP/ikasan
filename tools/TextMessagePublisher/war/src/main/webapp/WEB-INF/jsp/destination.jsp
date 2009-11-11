@@ -63,17 +63,40 @@
 	</c:url>	
 	<c:if test="${destination.simpleSubscriber!=null}">
 	<p class="message">
-		Simple Subscriber subscribing since <c:out value="${destination.simpleSubscriber.subscribingSince}"/>
+		Simple Subscriber subscribing since <c:out value="${destination.simpleSubscriber.subscribingSince}"/>, will retain the <c:out value="${destination.simpleSubscriber.maximumMessages}"/> most recent messages received
 	</p>
-	<ol>
+	<table>
+				<tr>
+					<th>&nbsp;</th>
+					<th>Type</th>
+					<th>Timestamp</th>
+				</tr>
 			<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
-				<c:url var="messageLink" value="message.htm">
-					<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	            	<c:param name="messageId" value="${message.JMSMessageID}"/>
-	            </c:url>
-				<li><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></li>
+				<jsp:useBean id="message" type="javax.jms.Message" />
+				<% 
+					String messageType="unsupported";
+					if (message instanceof javax.jms.TextMessage){
+						messageType="Text Message";
+					} else if (message instanceof javax.jms.MapMessage){
+						messageType="Map Message";
+					} 
+					pageContext.setAttribute("messageType", messageType);	
+					pageContext.setAttribute("messageTimestamp", new java.util.Date(message.getJMSTimestamp()));
+					
+					
+					
+				%>
+				<tr>
+					<c:url var="messageLink" value="message.htm">
+						<c:param name="destinationPath" value="${destination.destinationPath}"/>
+		            	<c:param name="messageId" value="${message.JMSMessageID}"/>
+		            </c:url>
+					<td><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></td>
+					<td><c:out value="${messageType}"/></td>
+					<td><c:out value="${messageTimestamp}"/></td>
+				</tr>
 			</c:forEach>
-	</ol>
+	</table>
 	<form method="post" action="${stopSubscriptionLink}">
 		<input type="submit" value="Stop Simple Subscription"/></td>
 	</form>	
