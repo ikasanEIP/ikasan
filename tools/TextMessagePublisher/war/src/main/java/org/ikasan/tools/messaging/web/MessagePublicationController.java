@@ -1,5 +1,8 @@
 package org.ikasan.tools.messaging.web;
 
+import javax.jms.Message;
+import javax.jms.TextMessage;
+
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.server.DestinationServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +84,12 @@ public class MessagePublicationController {
     		@RequestParam(MESSAGE_ID_PARAMETER_NAME) String messageId,
              ModelMap model)
     {	
-    	model.addAttribute("message", destinationServer.getMessage(destinationPath, messageId));
-
-    	return "textMessage";
+    	Message message = destinationServer.getMessage(destinationPath, messageId);
+    	model.addAttribute("message", message);
+    	if (message instanceof TextMessage){
+    		return "textMessage";
+    	}
+    	return "unsupportedMessage";
+    	
     }
 }
