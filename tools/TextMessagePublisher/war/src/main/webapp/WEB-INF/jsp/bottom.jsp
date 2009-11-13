@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$
 
  ====================================================================
  Ikasan Enterprise Integration Platform

@@ -1,5 +1,10 @@
 package org.ikasan.tools.messaging.web;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
@@ -82,10 +87,21 @@ public class MessagePublicationController {
     @RequestMapping(value="/message.htm", method = RequestMethod.GET)
     public String viewMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
     		@RequestParam(MESSAGE_ID_PARAMETER_NAME) String messageId,
-             ModelMap model)
+             ModelMap model) throws JMSException
     {	
     	Message message = destinationServer.getMessage(destinationPath, messageId);
     	model.addAttribute("message", message);
+    	
+    	Map<String, String> messageProperties = new HashMap<String, String>();
+    	Enumeration propertyNames = message.getPropertyNames();
+    	while (propertyNames.hasMoreElements()){
+    		String propertyName = (String)propertyNames.nextElement();
+    		messageProperties.put(propertyName, message.getStringProperty(propertyName));
+    	}
+    	model.addAttribute("messageProperties", messageProperties);
+    	
+    	
+    	
     	if (message instanceof TextMessage){
     		return "textMessage";
     	}
