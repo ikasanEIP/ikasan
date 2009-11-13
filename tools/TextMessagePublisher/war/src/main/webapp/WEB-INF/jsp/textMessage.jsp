@@ -1,7 +1,7 @@
 <%-- 
 
- $Id:
- $URL: 
+ $Id$
+ $URL$
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -47,6 +47,41 @@
 
 <h2><c:out value="${message.JMSMessageID}"/></h2>
 
+<table class="keyValue">
+	<tr>
+		<th>JMS Correlation Id</th>
+		<td><c:out value="${message.JMSCorrelationID}"/></td>
+		<th>JMS Delivery Mode</th>
+		<td><c:out value="${message.JMSDeliveryMode}"/></td>
+
+		<th>JMS Expiration</th>
+		<td><c:out value="${message.JMSExpiration}"/></td>
+		<th>JMS Priority</th>
+		<td><c:out value="${message.JMSPriority}"/></td>
+	</tr>
+	<tr>
+		<th>JMS Redelivered</th>
+		<td><c:out value="${message.JMSRedelivered}"/></td>
+		<th>JMS Reply To</th>
+		<td><c:out value="${message.JMSReplyTo}"/></td>
+		<th>JMS Timestamp</th>
+		<td><c:out value="${message.JMSTimestamp}"/></td>
+		<th>JMS Type</th>
+		<td><c:out value="${message.JMSType}"/></td>
+	</tr>
+</table>
+
+<table class="keyValue">
+	<c:forEach items="${messageProperties}" var="property" >
+
+	<tr>
+		<th><c:out value="${property.key}"/></th>
+		<td><c:out value="${property.value}"/></td>
+		
+	</tr>
+	</c:forEach>
+	
+</table>
 
 <p>
 	<c:out value="${message.text}"/>	

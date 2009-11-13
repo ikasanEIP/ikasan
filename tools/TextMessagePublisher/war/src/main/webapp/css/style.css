@@ -14,6 +14,16 @@ body {
 #header ul li a{
 	text-decoration: none;
 }
+
+.keyValue {
+	text-align: justify;
+}
+
+.keyValue td{
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 .destinationAspect {
 	border: 1px solid #E1E1E1;
 	margin-bottom: 10px;
