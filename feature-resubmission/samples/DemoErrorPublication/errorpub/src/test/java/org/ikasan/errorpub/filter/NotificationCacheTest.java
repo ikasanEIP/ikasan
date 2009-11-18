@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,29 +38,36 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.exception.user;
+package org.ikasan.errorpub.filter;
 
-/**
- * Potentially stateful component capable of determining if an Exception has been notified previously.
- * 
- * @author Ikasan Development Team
- */
-public interface ExceptionCache
-{
-    /**
-     * Notifies of an exception, referenced by exceptionResoultionId
-     * 
-     * @param exceptionResoultionId The id of the exception resolution to notify
-     */
-    public void notify(String exceptionResoultionId);
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-    /**
-     * Determines if the specified exception has been notified within the time window defined by the notificationPeriod
-     * 
-     * @param exceptionResoultionId The id of the exception resolution
-     * @param notificationPeriod The notification period
-     * 
-     * @return true if equivalent exception notified within notificationPeriod
-     */
-    public boolean notifiedSince(String exceptionResoultionId, long notificationPeriod);
+import org.junit.Test;
+
+
+public class NotificationCacheTest {
+
+    /** One minute in millisec */
+    private static final int ONE_MINUTE = 60000;
+
+
+    @Test
+    public void testNotifiedSince_cacheHit()
+    {
+        InMemoryNotificationCache notificationCache = new InMemoryNotificationCache();
+        String notificationKey = "notificationKey";
+        notificationCache.notify(notificationKey);
+        assertTrue("notifiedSince should return true for a exception we just published", notificationCache.notifiedSince(notificationKey, ONE_MINUTE));
+    }
+    
+
+    @Test
+    public void testNotifiedSince_cacheMiss()
+    {
+        InMemoryNotificationCache notificationCache = new InMemoryNotificationCache();
+        String notificationKey = "notificationKey";
+        assertFalse("notifiedSince should return false for a notification not previously made", notificationCache.notifiedSince(notificationKey, ONE_MINUTE));
+
+    }
 }

@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,28 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
+package org.ikasan.errorpub.filter;
 
-package org.ikasan.framework.error.filtering;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.hamcrest.Matcher;
+import org.ikasan.attributes.AttributeResolver;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.routing.AbstractFilteringRouter;
 import org.ikasan.framework.component.routing.Router;
 import org.ikasan.framework.component.routing.RouterException;
-import org.ikasan.framework.exception.user.ExceptionCache;
-import org.ikasan.framework.util.grouping.AttributedGroup;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+
 
 /**
  * Specialist router for filtering Events based on a predefined set of rules for suppression 
@@ -70,36 +71,44 @@ import org.xml.sax.SAXException;
  * @author Ikasan Development Team
  *
  */
-public class ErrorOccurrenceFilteringRouter extends AbstractFilteringRouter implements Router {
+public class ErrorOccurrenceDuplicateFilteringRouter extends AbstractFilteringRouter implements Router {
 	
 	public static final String DUPLICATE_PERIOD_ATTRIBUTE_NAME = "duplicatePeriod";
-
-
-	private List<Matcher<Document>> suppressableMatchers = null;
+	public static final String DUPLICATE_GROUPING_ID_ATTRIBUTE_NAME = "duplicateGroupingId";
 	
-	private List<AttributedGroup> duplicateGroupings; 
+	private AttributeResolver attributeResolver; 
 	
-	private ExceptionCache exceptionCache;
-
-
+	private NotificationCache notificationCache;
 	
 	private DocumentBuilder documentBuilder;
 	
 
 
+
 	/**
-	 * @param exceptionCache
-	 * @throws ParserConfigurationException 
+	 * Constructor
+	 * 
+	 * @param attributeResolver
+	 * @param notificationCache
+	 * @param documentBuilderFactory
+	 * @throws ParserConfigurationException
 	 */
-	public ErrorOccurrenceFilteringRouter(
-			ExceptionCache exceptionCache, DocumentBuilderFactory documentBuilderFactory) throws ParserConfigurationException {
+	public ErrorOccurrenceDuplicateFilteringRouter(
+			AttributeResolver attributeResolver,
+			NotificationCache notificationCache, 
+			DocumentBuilderFactory documentBuilderFactory) throws ParserConfigurationException {
 		super();
-		this.exceptionCache = exceptionCache;
+		this.attributeResolver = attributeResolver;
+		this.notificationCache = notificationCache;
+		
 
         documentBuilder = documentBuilderFactory.newDocumentBuilder();
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.component.routing.AbstractFilteringRouter#filter(org.ikasan.framework.component.Event)
+	 */
 	public boolean filter(Event event) throws RouterException {
 
 		List<Payload> payloads = event.getPayloads();
@@ -120,47 +129,32 @@ public class ErrorOccurrenceFilteringRouter extends AbstractFilteringRouter impl
 			throw new RouterException(e);
 		}
 		
-		
-		
-		
-		
-		//explicit suppression
-		if (suppressableMatchers!=null){
-			for (Matcher<Document> suppressableMatcher : suppressableMatchers){
-				if (suppressableMatcher.matches(errorOccurrenceDocument)){
-					return true;
-				}
-			}
-		}
+
 		
 		//duplicate suppression
-		if (duplicateGroupings!=null){
-			for (AttributedGroup errorOccurrenceGroup : duplicateGroupings){
-				if (errorOccurrenceGroup.hasAsMember(errorOccurrenceDocument)){
-					String groupName = errorOccurrenceGroup.getGroupName();
-					Long duplicatePeriod = (Long) errorOccurrenceGroup.getAttribute(DUPLICATE_PERIOD_ATTRIBUTE_NAME);
-					if (duplicatePeriod!=null){
-						if (exceptionCache.notifiedSince(groupName, duplicatePeriod)){
-							return true;
-						}
-						else{
-							exceptionCache.notify(groupName);
-						}
-					}
-				}
+		
+		Map<String, Object> attributes = attributeResolver.resolveAttributes(errorOccurrenceDocument);
+		
+		String duplicateGroupingId = (String)attributes.get(DUPLICATE_GROUPING_ID_ATTRIBUTE_NAME);
+		Long duplicatePeriod = (Long) attributes.get(DUPLICATE_PERIOD_ATTRIBUTE_NAME);
+		if (duplicateGroupingId!=null){
+			//check that there is a non-negative duplicate period also
+			if (duplicatePeriod ==null || duplicatePeriod<0){
+				throw new RouterException("invalid duplicatePeriod for duplicateGrouping ["+duplicateGroupingId+"]");
+			}
+			
+			if (notificationCache.notifiedSince(duplicateGroupingId, duplicatePeriod)){
+				return true;
+			}
+			else{
+				notificationCache.notify(duplicateGroupingId);
 			}
 		}
 		
 		return false;
 	}
 
-	public void setSupressableMatchers(
-			List<Matcher<Document>> suppressableMatchers) {
-		this.suppressableMatchers = suppressableMatchers;
-	}
-	
-	public void setDuplicateGroupings(List<AttributedGroup> duplicateGroupings) {
-		this.duplicateGroupings = duplicateGroupings;
-	}
+
 	
 }
+

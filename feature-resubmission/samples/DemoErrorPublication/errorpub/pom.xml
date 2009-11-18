@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
  ====================================================================
  Ikasan Enterprise Integration Platform
@@ -38,39 +38,87 @@
  ====================================================================
 
 
-
+ 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.ikasan.demo</groupId>
-  <artifactId>demoErrorPublication-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>0.8.0-SNAPSHOT</version>
+	<modelVersion>4.0.0</modelVersion>
 
-	<name>demoErrorPublication :: Parent Project</name>
+    <groupId>org.ikasan</groupId>
+    <version>0.8.0-SNAPSHOT</version>
+    <artifactId>ikasan-errorpub</artifactId>    
+	<packaging>jar</packaging>
 
-    <build>
-    <plugins>
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.2</version>
-        <configuration>
-          <connectionType>connection</connectionType>
-        </configuration>
-      </plugin>
-      </plugins>
-</build>
 
-  <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoResubmission</connection>
-  </scm>
+	<name>ikasan :: error publication : jar</name>
 
-     <modules>
-       <module>errorpub</module>
-       <module>jar</module>
-       <module>war</module>
-       <module>ear</module>
-     </modules>
+	<build>
 
+
+    	<plugins>
+      		<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-compiler-plugin</artifactId>
+        		<configuration>
+          			<source>1.5</source>
+          			<target>1.5</target>
+        		</configuration>
+      		</plugin>
+
+      	</plugins>
+	</build>
+
+  	<dependencies>
+  		<dependency>
+  			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-framework</artifactId>
+			<version>0.8.0-SNAPSHOT</version>
+			<scope>provided</scope>
+  		</dependency>
+   		<dependency>
+  			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-common</artifactId>
+			<version>0.8.0-SNAPSHOT</version>
+			<scope>provided</scope>
+  		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring</artifactId>
+			<version>2.5.6</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+        	<groupId>org.hamcrest</groupId>
+        	<artifactId>hamcrest-all</artifactId>
+        	<version>1.1</version>
+        	<scope>provided</scope>
+        </dependency>	
+
+		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>		        	  	
+  	</dependencies>
+    
 </project>
+

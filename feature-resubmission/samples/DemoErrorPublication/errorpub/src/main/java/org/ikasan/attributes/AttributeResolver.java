@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,81 +38,22 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.util.grouping;
+package org.ikasan.attributes;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
-
 /**
- * Simple named logical group that can identify members that pertain to itself
+ * Interface for provider of objects arbitrarily associated externally with another object
  * 
- * @author Ikasan Devlopment Team
- *
+ * @author Ikasan Development Team
  */
-public class AttributedGroup {
+public interface AttributeResolver {
 
 	/**
-	 * matcher for members
-	 */
-	private Matcher<?> matcher;
-	
-	/**
-	 * Name of group
-	 */
-	private String groupName;
-	
-	/**
-	 * Additional attributes that can be applied collectively to the group
-	 */
-	private Map<String, Object> attributes = new HashMap<String, Object>();
-	
-	/**
-	 * @param groupName
-	 * @param matcher
-	 * @param attributes
-	 */
-	public AttributedGroup(String groupName,
-			Matcher<?> matcher, Map<String, Object> attributes) {
-		super();
-		this.groupName = groupName;
-		this.matcher = matcher;
-		this.attributes = attributes;
-	}
-
-
-	
-	/**
-	 * Determines if the specfied Object is a member of this group
+	 * Resolves any attributes appropriate for specified object
 	 * 
 	 * @param object
-	 * @return true if is a memeber
+	 * @return any applicable attributes
 	 */
-	public boolean hasAsMember(Object object){
-		return matcher.matches(object);
-	}
-	
-	/**
-	 * Retrieves a named attribute
-	 * 
-	 * @param attributeName
-	 * @return attribute value or null if non-existent
-	 */
-	public Object getAttribute(String attributeName){
-		return attributes.get(attributeName);
-	}
-
-
-
-	/**
-	 * Accessor for groupName
-	 * 
-	 * @return groupName
-	 */
-	public String getGroupName() {
-		return groupName;
-	}
-	
-	
+	public Map<String, Object> resolveAttributes(Object object);
 }

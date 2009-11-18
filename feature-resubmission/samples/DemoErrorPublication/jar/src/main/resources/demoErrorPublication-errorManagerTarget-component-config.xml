@@ -49,45 +49,17 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 
-	<bean id="errorOccurrenceFilter" class="org.ikasan.framework.error.filtering.ErrorOccurrenceFilteringRouter">
-		<constructor-arg><bean class="org.ikasan.framework.exception.user.ExceptionCacheImpl"/></constructor-arg>
+	<bean id="errorOccurrenceFilter" class="org.ikasan.errorpub.filter.ErrorOccurrenceDuplicateFilteringRouter">
+		<constructor-arg ref="attributeResolver"/>
+		<constructor-arg>
+			<bean class="org.ikasan.errorpub.filter.InMemoryNotificationCache"/>
+		</constructor-arg>
 		<constructor-arg ref="documentBuilderFactory"/>
-		<property name="duplicateGroupings">
-		<list>
-		
-			<!-- 
-				Read as:
-					"demoResubmissionModuleErrors" defined as errors whose xml 
-					Xpath (/errorOccurrence/moduleName) results in "demoResubmission-demoResubmission",
-					treat as duplicates within three minutes
-			 -->
-		
-			<bean class="org.ikasan.framework.util.grouping.AttributedGroup">
-				<constructor-arg value="demoResubmissionModuleErrors"/>
-				<constructor-arg>
-					<bean class="org.hamcrest.xml.HasXPath">
-						<constructor-arg value="/errorOccurrence/moduleName"/>
-						<constructor-arg>
-							<bean class="org.hamcrest.core.IsEqual">
-								<constructor-arg value="demoResubmission-demoResubmission"/>
-							</bean>
-						</constructor-arg>
-					</bean>
-				</constructor-arg>
-				<constructor-arg>
-					<map>
-						<entry key="duplicatePeriod" value-ref="threeMinutesInMilliseconds"/>
-					</map>
-				</constructor-arg>
-			</bean>
-			
-			
-		</list>
-		</property>
 	</bean>
 	
-	<bean id="threeMinutesInMilliseconds" class="java.lang.Long">
-		<constructor-arg value="180000"/>
+	
+	<bean id="attributeResolver" class="org.ikasan.attributes.FirstStrikeAttributeResolverFactoryBean" >
+		<constructor-arg value="classpath:/errors/*-context.xml"/>
 	</bean>
 	
 	<bean id="deadEndpoint" class="org.ikasan.framework.component.endpoint.DeadEndpoint"/>

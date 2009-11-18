@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
- * $URL$ 
- *
+ * $URL$
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,11 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.error.filtering;
+package org.ikasan.errorpub.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,11 +52,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.Assert;
 
-import org.hamcrest.Matcher;
+import org.ikasan.attributes.AttributeResolver;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.exception.user.ExceptionCache;
-import org.ikasan.framework.util.grouping.AttributedGroup;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -63,7 +63,12 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ErrorOccurrenceFilteringRouterTest {
+
+/**
+ * @author Ikasan Development Team
+ *
+ */
+public class ErrorOccurrenceDuplicateFilteringRouterTest {
 
     /**
      * Mockery for mocking concrete classes
@@ -87,18 +92,13 @@ public class ErrorOccurrenceFilteringRouterTest {
     
     private String payloadContent = "payloadContent";
     
+    private ErrorOccurrenceDuplicateFilteringRouter router;
     
-    private Matcher<Document> errorOccurrenceMatcher = mockery.mock(Matcher.class);
-    
-    private ExceptionCache exceptionCache = mockery.mock(ExceptionCache.class);
-    
-    private AttributedGroup duplicateGrouping = mockery.mock(AttributedGroup.class);
+    private NotificationCache notificationCache = mockery.mock(NotificationCache.class);
     
     private String duplicateGroupingName = "duplicateGroupingName";
     
     private Long duplicatePeriod = new Long(1000);
-    
-    private ErrorOccurrenceFilteringRouter router;
     
     private DocumentBuilderFactory documentBuilderFactory = mockery.mock(DocumentBuilderFactory.class);
     
@@ -106,7 +106,9 @@ public class ErrorOccurrenceFilteringRouterTest {
     
     private Document document = mockery.mock(Document.class);
     
-    public ErrorOccurrenceFilteringRouterTest() throws ParserConfigurationException{
+    private AttributeResolver attributeResolver = mockery.mock(AttributeResolver.class);
+    
+    public ErrorOccurrenceDuplicateFilteringRouterTest() throws ParserConfigurationException{
     	
     	mockery.checking(new Expectations()
         {
@@ -117,37 +119,11 @@ public class ErrorOccurrenceFilteringRouterTest {
         });	
     	
     	
-    	router = new ErrorOccurrenceFilteringRouter(exceptionCache, documentBuilderFactory);
+    	router = new ErrorOccurrenceDuplicateFilteringRouter(attributeResolver, notificationCache, documentBuilderFactory);
     }
 	@Test
-	public void testFilter_withErrorOccurrenceMatchedBySuppressionMatcher_willReturnTrue() throws ParserConfigurationException, SAXException, IOException {
-		List<Matcher<Document>> suppressableMatchers = new ArrayList<Matcher<Document>>();
-		
-		suppressableMatchers.add(errorOccurrenceMatcher);
-		router.setSupressableMatchers(suppressableMatchers);
-		
-		
-		mockery.checking(new Expectations()
-        {
-            {
-            	
-            	
-                one(event).getPayloads();will(returnValue(payloads));
-                one(payload).getContent();
-                will(returnValue(payloadContent.getBytes()));
-                
-                one(documentBuilder).parse((InputSource) with(an(InputSource.class)));will(returnValue(document));
-                
-                one(errorOccurrenceMatcher).matches(with(a(Document.class)));
-                will(returnValue(true));
-                
-            }
-        });	
-		Assert.assertTrue("Event containing ErrorOccurrence that matches one of the suppress matchers, should result in the exclusion transition", router.filter(event));
-	}
-	
-	@Test
 	public void testFilter_withErrorOccurrenceUnmatched_willReturnFalse() throws SAXException, IOException {
+		final Map<String, Object> resolvedAttributes = new HashMap<String, Object>();
 
 		mockery.checking(new Expectations()
         {
@@ -158,20 +134,23 @@ public class ErrorOccurrenceFilteringRouterTest {
                 
                 one(documentBuilder).parse((InputSource) with(an(InputSource.class)));will(returnValue(document));
 
+                one(attributeResolver).resolveAttributes(document);
+                will(returnValue(resolvedAttributes));
             }
         });
 		
 		
 		Assert.assertFalse("Event containing ErrorOccurrence that does not match any configured rules, should result in the inclusion transition", router.filter(event));
+	
+		mockery.assertIsSatisfied();
 	}
 	
 	@Test
-	public void testFilter_withErrorOccurrenceInDuplicateGroup_andKnownToDuplicateCache_willReturnTrue() throws SAXException, IOException {
-		List<AttributedGroup> duplicteGroupings = new ArrayList<AttributedGroup>();
-		
-		duplicteGroupings.add(duplicateGrouping);
-		router.setDuplicateGroupings(duplicteGroupings);
-		
+	public void testFilter_withDuplicateAttributes_andKnownToDuplicateCache_willReturnTrue() throws SAXException, IOException {
+
+		final Map<String, Object> resolvedAttributes = new HashMap<String, Object>();
+		resolvedAttributes.put(ErrorOccurrenceDuplicateFilteringRouter.DUPLICATE_GROUPING_ID_ATTRIBUTE_NAME, duplicateGroupingName);
+		resolvedAttributes.put(ErrorOccurrenceDuplicateFilteringRouter.DUPLICATE_PERIOD_ATTRIBUTE_NAME, duplicatePeriod);
 		
 		mockery.checking(new Expectations()
         {
@@ -182,30 +161,24 @@ public class ErrorOccurrenceFilteringRouterTest {
                 
                 one(documentBuilder).parse((InputSource) with(an(InputSource.class)));will(returnValue(document));
                 
-                one(duplicateGrouping).hasAsMember(document);
-                will(returnValue(true));
+                one(attributeResolver).resolveAttributes(document);
+                will(returnValue(resolvedAttributes));
                 
-                one(duplicateGrouping).getGroupName();
-                will(returnValue(duplicateGroupingName));
-                
-                one(duplicateGrouping).getAttribute(ErrorOccurrenceFilteringRouter.DUPLICATE_PERIOD_ATTRIBUTE_NAME);
-                will(returnValue(duplicatePeriod));
-                
-                one(exceptionCache).notifiedSince(duplicateGroupingName, duplicatePeriod);
+                one(notificationCache).notifiedSince(duplicateGroupingName, duplicatePeriod);
                 will(returnValue(true));
                 
             }
         });	
 		Assert.assertTrue("Event containing ErrorOccurrence that is a member of a duplicate group that is known to the cache within the duplicate period, should result in the exclusion transition", router.filter(event));
+	
+		mockery.assertIsSatisfied();
 	}
 	
 	@Test
 	public void testFilter_withErrorOccurrenceInDuplicateGroup_butUnknownToDuplicateCache_willReturnFalse() throws SAXException, IOException {
-		List<AttributedGroup> duplicteGroupings = new ArrayList<AttributedGroup>();
-		
-		duplicteGroupings.add(duplicateGrouping);
-		router.setDuplicateGroupings(duplicteGroupings);
-		
+		final Map<String, Object> resolvedAttributes = new HashMap<String, Object>();
+		resolvedAttributes.put(ErrorOccurrenceDuplicateFilteringRouter.DUPLICATE_GROUPING_ID_ATTRIBUTE_NAME, duplicateGroupingName);
+		resolvedAttributes.put(ErrorOccurrenceDuplicateFilteringRouter.DUPLICATE_PERIOD_ATTRIBUTE_NAME, duplicatePeriod);
 		
 		mockery.checking(new Expectations()
         {
@@ -216,25 +189,20 @@ public class ErrorOccurrenceFilteringRouterTest {
                 
                 one(documentBuilder).parse((InputSource) with(an(InputSource.class)));will(returnValue(document));
                 
-                one(duplicateGrouping).hasAsMember(document);
-                will(returnValue(true));
+                one(attributeResolver).resolveAttributes(document);
+                will(returnValue(resolvedAttributes));
                 
-                one(duplicateGrouping).getGroupName();
-                will(returnValue(duplicateGroupingName));
-                
-                one(duplicateGrouping).getAttribute(ErrorOccurrenceFilteringRouter.DUPLICATE_PERIOD_ATTRIBUTE_NAME);
-                will(returnValue(duplicatePeriod));
-                
-                one(exceptionCache).notifiedSince(duplicateGroupingName, duplicatePeriod);
+                one(notificationCache).notifiedSince(duplicateGroupingName, duplicatePeriod);
                 will(returnValue(false));
                 
                 //because it wasnt know to the cache beforehand, the cache gets notified now
-                one(exceptionCache).notify(duplicateGroupingName);
+                one(notificationCache).notify(duplicateGroupingName);
                 
             }
         });	
 		Assert.assertFalse("Event containing ErrorOccurrence that is a member of a duplicate group that is not known to the cache within the duplicate period, should not result in the exclusion transition", router.filter(event));
-	}
 	
+		mockery.assertIsSatisfied();
+	}
 
 }

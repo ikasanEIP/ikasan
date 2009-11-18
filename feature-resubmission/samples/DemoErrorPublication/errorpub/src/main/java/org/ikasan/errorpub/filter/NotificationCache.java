@@ -1,4 +1,4 @@
- /* 
+/* 
  * $Id$
  * $URL$
  *
@@ -38,44 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.exception.user;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+package org.ikasan.errorpub.filter;
 
 /**
+ * Potentially stateful component capable of determining if a notification has been made recently.
+ * 
  * @author Ikasan Development Team
- *
  */
-public class ExceptionCacheImplTest
+public interface NotificationCache
 {
-
-    /** One minute in millisec */
-    private static final int ONE_MINUTE = 60000;
+    /**
+     * Notifies of a some notification represented by a unique key
+     * 
+     * @param key - unique key for the notification
+     */
+    public void notify(String key);
 
     /**
-     * Test method for {@link org.ikasan.framework.exception.user.ExceptionCacheImpl#notifiedSince(java.lang.String, long)}.
+     * Determines if the specified notification has been made within the time window defined by the notificationPeriod
+     * 
+     * @param key - unique key for the notification
+     * @param notificationPeriod - retrospective period of notification to consider in milliseconds
+     * 
+     * @return true if equivalent exception notified within notificationPeriod
      */
-    @Test
-    public void testPublishedSince_cacheHit()
-    {
-        ExceptionCacheImpl publicationCacheImpl = new ExceptionCacheImpl();
-        String exceptionResolutionId = "exceptionResoultionId";
-        publicationCacheImpl.notify(exceptionResolutionId);
-        assertTrue("publishedSince should return true for a exception we just published", publicationCacheImpl.notifiedSince(exceptionResolutionId, ONE_MINUTE));
-    }
-    
-    /**
-     * Test method for {@link org.ikasan.framework.exception.user.ExceptionCacheImpl#notifiedSince(java.lang.String, long)}.
-     */
-    @Test
-    public void testPublishedSince_cacheMiss()
-    {
-        ExceptionCacheImpl publicationCacheImpl = new ExceptionCacheImpl();
-        String exceptionResolutionId = "exceptionResoultionId";
-        assertFalse("publishedSince should return false for a previously unpublished exception", publicationCacheImpl.notifiedSince(exceptionResolutionId, ONE_MINUTE));
-
-    }
+    public boolean notifiedSince(String key, long notificationPeriod);
 }

@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,38 +38,45 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.exception.user;
+package org.ikasan.attributes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Simple in memory cache that recalls the last time an exception resolution Id was added and can determine if an
- * incoming resolution Id is already in the cache
+ * 
+ * <code>AttributeResolver</code> implementation based on a List of delegate
+ * <code>AttributeResolver</code>s
+ * 
+ * If more than one underlying resolver has a result for the candidate object
+ * passed to resolveAttributes, then only the result from the first successful
+ * AttributeResolver is returned
  * 
  * @author Ikasan Development Team
+ * 
  */
-public class ExceptionCacheImpl implements ExceptionCache
-{
-    /** Map to store resolutionIds and last added timestamp */
-    private Map<String, Long> cache = new HashMap<String, Long>();
+public class FirstStrikeAttributeResolver implements AttributeResolver {
 
-    public void notify(String exceptionResoultionId)
-    {
-        cache.put(exceptionResoultionId, System.currentTimeMillis());
-    }
+	private List<AttributeResolver> resolvers = new ArrayList<AttributeResolver>();
 
-    public boolean notifiedSince(String exceptionResoultionId, long publicationPeriod)
-    {
-        boolean result = false;
-        Long lastAddedTimestamp = cache.get(exceptionResoultionId);
-        if (lastAddedTimestamp != null)
-        {
-            if ((System.currentTimeMillis() - lastAddedTimestamp) < publicationPeriod)
-            {
-                result = true;
-            }
-        }
-        return result;
-    }
+	public FirstStrikeAttributeResolver(List<AttributeResolver> resolvers) {
+		super();
+		this.resolvers = resolvers;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.attributes.AttributeResolver#resolveAttributes(java.lang.Object)
+	 */
+	public Map<String, Object> resolveAttributes(Object object) {
+		for (AttributeResolver resolver : resolvers) {
+			Map<String, Object> attributes = resolver.resolveAttributes(object);
+			if (!attributes.isEmpty()) {
+				return attributes;
+			}
+		}
+		return new HashMap<String, Object>();
+	}
+
 }
