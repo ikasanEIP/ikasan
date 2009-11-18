@@ -249,6 +249,21 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             changeDirectory = true;
         }
 
+        if (this.fileExists(this.fileName))
+        {
+            if (this.overwriteExisting)
+            {
+                logger.debug("Deleting existing file of the same name as the one we are delivering [" //$NON-NLS-1$
+                    + this.fileName + "]");
+                deleteFile(this.fileName);
+            }
+            else
+            {
+                throw new ResourceException("Cannot rename file as it a file of the destination name already exists ["
+                        + this.tempFileName + "]");
+            }
+        }
+
         renameFile(tempFileName, fileName);
 
         if(changeDirectory)
