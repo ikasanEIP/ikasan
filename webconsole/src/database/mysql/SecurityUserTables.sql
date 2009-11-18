@@ -42,8 +42,8 @@ DROP TABLE IF EXISTS `ikasan01`.`users`;
 
 CREATE TABLE  `ikasan01`.`users` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Username` varchar(255) DEFAULT NULL,
-  `Password` varchar(255) NOT NULL,
+  `Username` varchar(50) DEFAULT NULL,
+  `Password` varchar(50) NOT NULL,
   `Enabled` bit(1) NOT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Username` (`Username`)
@@ -51,8 +51,8 @@ CREATE TABLE  `ikasan01`.`users` (
 
 CREATE TABLE  `ikasan01`.`authorities` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Authority` varchar(255) DEFAULT NULL,
-  `Description` varchar(255) DEFAULT NULL,
+  `Authority` varchar(50) DEFAULT NULL,
+  `Description` varchar(512) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Authority` (`Authority`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;

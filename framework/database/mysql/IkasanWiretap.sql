@@ -38,12 +38,12 @@
 DROP TABLE IF EXISTS `ikasan01`.`ikasanwiretap`;
 CREATE TABLE  `ikasan01`.`ikasanwiretap` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ModuleName` varchar(255) NOT NULL,
-  `FlowName` varchar(255) NOT NULL,
-  `ComponentName` varchar(255) NOT NULL,
-  `EventId` varchar(255) NOT NULL,
-  `PayloadId` varchar(255) NOT NULL,
-  `PayloadContent` varchar(255) NOT NULL,
+  `ModuleName` varchar(128) NOT NULL,
+  `FlowName` varchar(128) NOT NULL,
+  `ComponentName` varchar(128) NOT NULL,
+  `EventId` varchar(64) NOT NULL,
+  `PayloadId` varchar(64) NOT NULL,
+  `PayloadContent` longtext NOT NULL,
   `CreatedDateTime` datetime NOT NULL,
   `UpdatedDateTime` datetime NOT NULL,
   `Expiry` datetime NOT NULL,

@@ -37,10 +37,10 @@
 DROP TABLE IF EXISTS `ikasan01`.`initiatorcommand`;
 CREATE TABLE  `ikasan01`.`initiatorcommand` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ModuleName` varchar(255) NOT NULL,
-  `InitiatorName` varchar(255) NOT NULL,
-  `Action` varchar(255) NOT NULL,
-  `Actor` varchar(255) NOT NULL,
+  `ModuleName` varchar(128) NOT NULL,
+  `InitiatorName` varchar(128) NOT NULL,
+  `Action` varchar(64) NOT NULL,
+  `Actor` varchar(64) NOT NULL,
   `SubmittedTime` datetime NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
