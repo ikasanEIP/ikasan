@@ -69,7 +69,7 @@ CREATE TABLE  `eai`.`transactionalresourcecommand` (
   `Type` varchar(255) NOT NULL,
   `State` varchar(255) NOT NULL,
   `Xid_Id` bigint(20) DEFAULT NULL,
-  `ExecutionTimestamp` varchar(255) DEFAULT NULL,
+  `ExecutionTimestamp` varchar(24) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK9936B0B44985F7BE` (`Xid_Id`),
   CONSTRAINT `FK9936B0B44985F7BE` FOREIGN KEY (`Xid_Id`) REFERENCES `xid` (`Id`)

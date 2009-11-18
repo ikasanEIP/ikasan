@@ -39,18 +39,18 @@ DROP TABLE IF EXISTS `ikasan01`.`floweventtriggerparameters`;
 DROP TABLE IF EXISTS `ikasan01`.`floweventtrigger`;
 CREATE TABLE  `ikasan01`.`floweventtrigger` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ModuleName` varchar(255) NOT NULL,
-  `FlowName` varchar(255) NOT NULL,
-  `Relationship` varchar(255) NOT NULL,
-  `FlowElementName` varchar(255) DEFAULT NULL,
-  `JobName` varchar(255) NOT NULL,
+  `ModuleName` varchar(128) NOT NULL,
+  `FlowName` varchar(128) NOT NULL,
+  `Relationship` varchar(32) NOT NULL,
+  `FlowElementName` varchar(128) DEFAULT NULL,
+  `JobName` varchar(64) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE  `ikasan01`.`floweventtriggerparameters` (
   `TriggerId` bigint(20) NOT NULL,
-  `ParamValue` varchar(255) DEFAULT NULL,
-  `ParamName` varchar(255) NOT NULL,
+  `ParamValue` varchar(128) DEFAULT NULL,
+  `ParamName` varchar(128) NOT NULL,
   PRIMARY KEY (`TriggerId`,`ParamName`),
   KEY `FK71FA5536C7DD805` (`TriggerId`),
   CONSTRAINT `FK71FA5536C7DD805` FOREIGN KEY (`TriggerId`) REFERENCES `floweventtrigger` (`Id`)
