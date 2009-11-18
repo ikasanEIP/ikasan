@@ -3,7 +3,7 @@ IKASAN ENTERPRISE INTEGRATION PLATFORM COPYRIGHT NOTICE
 
 Organisation
 ------------
-Copyright (c) 2003-2008 Mizuho International plc.
+Copyright (c) 2003-2009 Mizuho International plc.
 
 
 Project Administrators
