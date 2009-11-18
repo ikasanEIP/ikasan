@@ -136,8 +136,6 @@ CREATE TABLE  `eai`.`retrievefilecommand` (
   `MoveNewPath` varchar(255) DEFAULT NULL,
   `Destructive` bit(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `FK6C459033E706058A` (`Id`),
   KEY `FK6C4590332501531F` (`Id`),
-  CONSTRAINT `FK6C4590332501531F` FOREIGN KEY (`Id`) REFERENCES `transactionalresourcecommand` (`Id`),
   CONSTRAINT `FK6C459033E706058A` FOREIGN KEY (`Id`) REFERENCES `transactionalresourcecommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
