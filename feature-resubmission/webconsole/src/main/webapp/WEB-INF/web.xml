@@ -107,16 +107,17 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
-	<taglib>
-		<taglib-uri>/spring</taglib-uri>
-		<taglib-location>/WEB-INF/spring.tld</taglib-location>
-	</taglib>
-
-	<taglib>
-		<taglib-uri>/spring-form</taglib-uri>
-		<taglib-location>/WEB-INF/spring-form.tld</taglib-location>
-	</taglib>
-
+	<jsp-config>
+		<taglib>
+			<taglib-uri>/spring</taglib-uri>
+			<taglib-location>/WEB-INF/spring.tld</taglib-location>
+		</taglib>
+	
+		<taglib>
+			<taglib-uri>/spring-form</taglib-uri>
+			<taglib-location>/WEB-INF/spring-form.tld</taglib-location>
+		</taglib>
+	</jsp-config>
 
 
 </web-app>

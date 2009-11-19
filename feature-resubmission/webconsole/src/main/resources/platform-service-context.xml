@@ -90,55 +90,7 @@
 	</bean>
 
 
-	
-	<!-- scheduled activities -->
-    
-	<bean id="platformScheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="schedulerName" value="platformScheduler"/>
-		<property name="triggers">
-			<list>
-				<ref bean="wiretapEventHousekeepingTrigger" />
-				<ref bean="loggedErrorHousekeepingTrigger" />
-			</list>
-		</property>
-	</bean>
 
-	<bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<bean
-				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-				<property name="targetObject" ref="wiretapService" />
-				<property name="targetMethod" value="housekeep" />
-				<property name="concurrent" value="false" />
-				<property name="name" value="WiretapEvent Housekeeping" />
-			</bean>
-		</property>
-		<property name="name" value="WiretapEvent Housekeeping Trigger" />
-		<!-- run every morning at 6 AM -->
-		<!-- <property name="cronExpression" value="0 0 6 * * ?" />-->
-		<property name="cronExpression" value="0 0/2 * * * ?" />
-		<!--
-			every 2 mins
-		-->
-	</bean>
-	
-	<bean id="loggedErrorHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<bean
-				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-				<property name="targetObject" ref="errorLoggingService" />
-				<property name="targetMethod" value="housekeep" />
-				<property name="concurrent" value="false" />
-				<property name="name" value="Error Log Housekeeping" />
-			</bean>
-		</property>
-		<property name="name" value="Error Log Housekeeping Trigger" />
-		<property name="cronExpression" value="0 0/2 * * * ?" />
-		<!--
-			every 2 mins
-		-->
-	</bean>
 
 
 

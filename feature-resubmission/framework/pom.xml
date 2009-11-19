@@ -44,80 +44,88 @@
 # //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.ikasan</groupId>
-	<artifactId>ikasan-framework</artifactId>
-	<packaging>jar</packaging>
-	<version>0.8.0-SNAPSHOT</version>
-	<name>Ikasan Framework</name>
-	<organization>
-		<name>Ikasan</name>
-		<url>http://www.ikasan.org</url>
-	</organization>
-	<inceptionYear>2007</inceptionYear>
-	<description>The framework library for the Ikasan Enterprise Integration Platform</description>
-	<developers>
-		<developer>
-			<id>verbma</id>
-			<name>Martijn Verburg</name>
-			<organization>Ikasan</organization>
-			<organizationUrl>http://www.ikasan.org</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-		<developer>
-			<id>duncro</id>
-			<name>Ross Duncan</name>
-			<organization>Ikasan</organization>
-			<organizationUrl>http://www.ikasan.org</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-		<developer>
-			<id>mitcje</id>
-			<name>Jeff Mitchell</name>
-			<organization>Ikasan</organization>
-			<organizationUrl>http://www.ikasan.org</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-		<developer>
-			<id>hasasu</id>
-			<name>Summer Hasani</name>
-			<organization>Ikasan</organization>
-			<organizationUrl>http://www.ikasan.org</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-		<developer>
-			<id>suetju</id>
-			<name>Junichi Suetake</name>
-			<organization>Ikasan</organization>
-			<organizationUrl>http://www.ikasan.org</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-		<developer>
-			<id>koukhe</id>
-			<name>Herodotos Koukkides</name>
-			<organization>Ikasan</organization>
-			<organizationUrl>http://www.ikasan.org</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>0</timezone>
-		</developer>
-	</developers>
+  <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-build</artifactId>
+        <version>0.8.0-SNAPSHOT</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
+    
+  <groupId>org.ikasan</groupId>
+  <artifactId>ikasan-framework</artifactId>
+  <packaging>jar</packaging>
+  <version>0.8.0-SNAPSHOT</version>
+  <name>Ikasan Framework</name>
+  <organization>
+    <name>Ikasan</name>
+    <url>http://www.ikasan.org</url>
+  </organization>
+  <inceptionYear>2007</inceptionYear>
+  <description>The framework library for the Ikasan Enterprise Integration Platform</description>
+  <developers>
+    <developer>
+      <id>verbma</id>
+      <name>Martijn Verburg</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>duncro</id>
+      <name>Ross Duncan</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>mitcje</id>
+      <name>Jeff Mitchell</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>hasasu</id>
+      <name>Summer Hasani</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>suetju</id>
+      <name>Junichi Suetake</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>koukhe</id>
+      <name>Herodotos Koukkides</name>
+      <organization>Ikasan</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
@@ -221,73 +229,73 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 			</plugin>
 
-		</plugins>
-	</reporting>
-	<dependencies>
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-common</artifactId>
-			<version>0.8.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.3</version>
-			<scope>provided</scope>
-		</dependency>
-   		<!-- email -->
-    	<dependency>
-    		<groupId>org.apache.geronimo.specs</groupId>
-    		<artifactId>geronimo-javamail_1.4_spec</artifactId>
-      		<version>1.2</version>
-      		<scope>provided</scope>
-		</dependency>
-		<!-- java activation framework required for email in Java5 -->
-    	<dependency>
-      		<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-activation_1.1_spec</artifactId>
-      		<version>1.0.1</version>
-      		<scope>provided</scope>
-    	</dependency>
-		<!-- J2EE -->
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-j2ee_1.4_spec</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>2.5.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>2.5.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>2.5.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
-			<version>2.5.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
+    </plugins>
+  </reporting>
+  <dependencies>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-common</artifactId>
+      <version>0.8.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.3</version>
+      <scope>provided</scope>
+    </dependency>
+      <!-- email -->
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-javamail_1.4_spec</artifactId>
+          <version>1.2</version>
+          <scope>provided</scope>
+    </dependency>
+    <!-- java activation framework required for email in Java5 -->
+      <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-activation_1.1_spec</artifactId>
+          <version>1.0.1</version>
+          <scope>provided</scope>
+      </dependency>
+    <!-- J2EE -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee_1.4_spec</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>2.5.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>2.5.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>2.5.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jms</artifactId>
+      <version>2.5.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <!--
 			<groupId>quartz</groupId>
       -->

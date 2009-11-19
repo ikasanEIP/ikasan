@@ -69,7 +69,7 @@ CREATE TABLE  `eai`.`transactionalresourcecommand` (
   `Type` varchar(255) NOT NULL,
   `State` varchar(255) NOT NULL,
   `Xid_Id` bigint(20) DEFAULT NULL,
-  `ExecutionTimestamp` varchar(255) DEFAULT NULL,
+  `ExecutionTimestamp` varchar(24) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK9936B0B44985F7BE` (`Xid_Id`),
   CONSTRAINT `FK9936B0B44985F7BE` FOREIGN KEY (`Xid_Id`) REFERENCES `xid` (`Id`)
@@ -136,8 +136,6 @@ CREATE TABLE  `eai`.`retrievefilecommand` (
   `MoveNewPath` varchar(255) DEFAULT NULL,
   `Destructive` bit(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `FK6C459033E706058A` (`Id`),
   KEY `FK6C4590332501531F` (`Id`),
-  CONSTRAINT `FK6C4590332501531F` FOREIGN KEY (`Id`) REFERENCES `transactionalresourcecommand` (`Id`),
   CONSTRAINT `FK6C459033E706058A` FOREIGN KEY (`Id`) REFERENCES `transactionalresourcecommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
