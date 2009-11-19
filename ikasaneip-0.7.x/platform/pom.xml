@@ -35,11 +35,11 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-platform</artifactId>
   <packaging>war</packaging>
-  <version>0.7.6</version>
+  <version>0.7.7-SNAPSHOT</version>
   <name>ikasan :: platform</name>
 
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.6</connection>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
   </scm>
 
   <build>
