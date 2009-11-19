@@ -7,7 +7,7 @@
 	<version>0.7.6-SNAPSHOT</version>
 	<name>demoTransformationRouting :: demoTransformationRouting : ear</name>
     <scm>
-        <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
     </scm>
 
 	<build>
