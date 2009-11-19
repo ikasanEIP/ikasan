@@ -48,7 +48,7 @@
 
 <c:if test="${resubmissionError!=null}">
 	<p class="errorMessages">
-		Sorry, resubmission was not successful. See latest Error Occurrence for details
+		<c:out value="${resubmissionError}"/>
 	</p>
 </c:if>
 

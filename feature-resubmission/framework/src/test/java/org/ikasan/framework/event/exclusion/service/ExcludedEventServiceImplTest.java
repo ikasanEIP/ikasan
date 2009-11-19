@@ -58,6 +58,7 @@ import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
+import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.Module;
@@ -108,6 +109,10 @@ public class ExcludedEventServiceImplTest {
 	
     private ModuleService moduleService = mockery.mock(ModuleService.class);
     
+    private List<Initiator> initiators = new ArrayList<Initiator>();
+    
+    private Initiator initiator = mockery.mock(Initiator.class);
+    
 	final String eventId = "eventId";
 	
 	final String resolver = "resolver";
@@ -129,6 +134,7 @@ public class ExcludedEventServiceImplTest {
 		listeners.add(excludedEventListener2);
 		excludedEventService = new ExcludedEventServiceImpl(excludedEventDao,errorLoggingService, listeners,moduleService);
 		errorOccurrences.add(errorOccurrence);
+		initiators.add(initiator);
 	}
 	
 	@Test
@@ -319,6 +325,9 @@ public class ExcludedEventServiceImplTest {
             	one(moduleService).getModule(moduleName);will(returnValue(module));
             	one(module).getFlows();will(returnValue(flows));
             	one(excludedEvent).getFlowName();will(returnValue(flowName));
+            	one(module).getInitiators();will(returnValue(initiators));
+            	one(initiator).getFlow();will(returnValue(flow));
+            	one(initiator).isRunning();will(returnValue(true));
             	one(excludedEvent).getEvent();will(returnValue(event));
             	one(flow).invoke(with(any(FlowInvocationContext.class)), with(equal(event)));
             	one(excludedEventDao).getExcludedEvent(eventId, true);will(returnValue(excludedEvent));
@@ -330,6 +339,42 @@ public class ExcludedEventServiceImplTest {
 		excludedEventService.resubmit(eventId, resolver);
 		mockery.assertIsSatisfied();
 	}
+	
+	
+	@Test(expected=IllegalStateException.class)
+	public void testResubmit_withOnFlowWithStoppedInitiator_willThrowIllegalStateException(){
+		final String eventId = "eventId";
+		final String moduleName = "moduleName";
+		final String flowName = "unknownFlow";
+		
+		final ExcludedEvent excludedEvent = mockery.mock(ExcludedEvent.class);
+		final Module module = mockery.mock(Module.class);
+		final Flow flow = mockery.mock(Flow.class);
+		final Map<String, Flow> flows = new HashMap<String,Flow>();
+		flows.put(flowName, flow);
+		
+		mockery.checking(new Expectations()
+        {
+            {
+            	one(excludedEventDao).getExcludedEvent(eventId, false);will(returnValue(excludedEvent));
+            	one(excludedEvent).isResolved();will(returnValue(false));
+            	one(excludedEvent).getModuleName();will(returnValue(moduleName));
+            	one(moduleService).getModule(moduleName);will(returnValue(module));
+            	one(module).getFlows();will(returnValue(flows));
+            	one(excludedEvent).getFlowName();will(returnValue(flowName));
+            	one(module).getInitiators();will(returnValue(initiators));
+            	one(initiator).getFlow();will(returnValue(flow));
+            	one(initiator).isRunning();will(returnValue(false));
+            	one(flow).getName();will(returnValue(flowName));
+            }
+        });
+		
+		excludedEventService.resubmit(eventId, resolver);
+		mockery.assertIsSatisfied();
+	}
+	
+	
+	
 	
 	@Test
 	public void testCancel_willMarkExcludedEventAsCancelled(){
@@ -428,6 +473,19 @@ public class ExcludedEventServiceImplTest {
             	one(module).getFlows();
             	inSequence(sequence);
             	will(returnValue(flows));
+            	
+            	one(module).getInitiators();
+            	inSequence(sequence);
+            	will(returnValue(initiators));
+            	
+            	one(initiator).getFlow();
+            	inSequence(sequence);
+            	will(returnValue(flow));
+            	
+            	
+            	one(initiator).isRunning();
+            	inSequence(sequence);
+            	will(returnValue(true));
             	
             	//invoke the flow will update the flow invocation context before failing
                 one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));

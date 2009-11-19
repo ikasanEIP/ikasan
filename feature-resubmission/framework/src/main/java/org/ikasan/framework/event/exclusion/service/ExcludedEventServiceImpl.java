@@ -57,6 +57,7 @@ import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
+import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
@@ -146,7 +147,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#resubmit(long)
 	 */
 	public void resubmit(String eventId, String resubmitter) {
-		
+		logger.info("resubmit called with eventId ["+eventId+"], resubmitter ["+resubmitter+"]");
 
 		if (transactionManager!=null){
 			try {
@@ -179,6 +180,24 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	    if (flow==null){ 
 			throw new IllegalArgumentException("unknown Flow"+excludedEvent.getFlowName());
 		}
+	    
+	    
+	    
+	    
+	    //Check if any of the initiators for the flow are stopped. If so, then disallow resubmission.
+	    for (Initiator initiator : module.getInitiators()){
+	    	logger.info("considering initiator ["+initiator+"]");
+	    	if (initiator.getFlow().equals(flow)){
+	    		logger.info("matched flow ["+flow+"]");
+	    		if (!initiator.isRunning()){
+	    			throw new IllegalStateException("Cannot resubmit to Flow ["+flow.getName()+"] as not all Initiators are running");
+	    		}
+	    	}
+	    }
+	    
+	    logger.info("all good!");
+	    
+	    
 		
 	    
 	    //invoke the flow with the Event. Any exceptions are left to propagate

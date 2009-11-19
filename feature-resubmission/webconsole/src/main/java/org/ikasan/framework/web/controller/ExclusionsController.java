@@ -160,7 +160,11 @@ public class ExclusionsController
     	} catch(AbortTransactionException abortTransactionException){
     		logger.info("Resubmission failed for excludedEvent id:"+eventId);
     		logger.error("Exception caught trying to resubmit",abortTransactionException);
-    		model.addAttribute("resubmissionError", abortTransactionException.getCause());
+    		model.addAttribute("resubmissionError", "Sorry, resubmission was not successful. See latest Error Occurrence for details");
+    		return view(eventId, null, model);
+    	}catch(IllegalStateException illegalStateException){
+    		logger.info("Resumission failed."+illegalStateException.getMessage());
+    		model.addAttribute("resubmissionError", illegalStateException.getMessage());
     		return view(eventId, null, model);
     	}
     	logger.info("Resubmission succesful for excludedEvent id:"+eventId);
