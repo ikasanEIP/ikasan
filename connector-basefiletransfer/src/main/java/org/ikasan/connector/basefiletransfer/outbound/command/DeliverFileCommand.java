@@ -265,6 +265,29 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             changeDirectory = true;
             }
 
+        try
+        {
+            /*
+             * The extra delete operation is added to cater for the SFTP rename behavior:
+             * the existing file must be first removed, before delivering another with the
+             * same name.
+             * 
+             * The case were we are trying to deliver a file that already exists on target system
+             * and overwrite flag is false is handled at the execute stage; an exception would be thrown
+             * and we never reach this stage.
+             */
+            if (this.overwriteExisting && this.fileExists(this.fileName))
+            {
+                logger.debug("Deleting existing file of the same name as the one we are delivering [" //$NON-NLS-1$
+                        + this.fileName + "]");
+                deleteFile(this.fileName);
+            }
+        }
+        catch (ResourceException e)
+        {
+            logger.warn(e);
+        }
+
         renameFile(tempFileName, fileName);
 
         if(changeDirectory)

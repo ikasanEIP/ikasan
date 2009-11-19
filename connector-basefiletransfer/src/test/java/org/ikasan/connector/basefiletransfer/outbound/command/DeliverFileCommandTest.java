@@ -320,10 +320,11 @@ public class DeliverFileCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ResourceException
      * @throws ClientCommandRenameException
+     * @throws ClientException 
      */
     public void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
             ClientCommandPutException, ClientCommandLsException, URISyntaxException, ResourceException,
-            ClientCommandRenameException
+            ClientCommandRenameException, ClientException
     {
 
         classMockery.checking(new Expectations()
@@ -351,6 +352,8 @@ public class DeliverFileCommandTest extends TestCase
                 one(client).cd(outputDir);
                 // look for the file to rename
                 one(client).ls(".");
+                one(client).ensureConnection();
+                one(client).deleteRemoteFile(fileName);
                 one(client).ensureConnection();
                 one(client).rename(fileName + renameExtension, fileName);
                 // look for the renamed file
