@@ -403,7 +403,7 @@
 	</repositories>
 
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/demoFileDelivery-app-0.7.1</connection>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
   </scm>
 
   <distributionManagement>
