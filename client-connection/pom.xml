@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-client-connection</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.6</version>
+  <version>0.7.6-SNAPSHOT</version>
   <name>Connector Client</name>
   <organization>
     <name>Ikasan</name>
@@ -106,7 +106,7 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/tags/ikasan-0.7.6</connection>
+    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/branches/ikasan-0.7.x</connection>
   </scm>
   <build>
     
