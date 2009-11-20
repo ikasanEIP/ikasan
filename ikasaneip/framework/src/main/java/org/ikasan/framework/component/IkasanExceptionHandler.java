@@ -49,16 +49,7 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
  */
 public interface IkasanExceptionHandler
 {
-    /**
-     * Push an exception that occurred whilst handling a data event to the Exception Handler
-     * 
-     * @param componentName name of the component within which the exception occurred
-     * @param event The original event
-     * @param throwable The exception
-     * @return IkasanExceptionAction
-     */
-    public IkasanExceptionAction invoke(final String componentName, final Event event, final Throwable throwable);
-
+ 
     /**
      * Push an exception that occurred outside the scope of handling a data event to the Exception Handler
      * 
@@ -66,5 +57,6 @@ public interface IkasanExceptionHandler
      * @param throwable The exception
      * @return IkasanExceptionAction
      */
-    public IkasanExceptionAction invoke(final String componentName, final Throwable throwable);
+    public IkasanExceptionAction handleThrowable(final String componentName, final Throwable throwable);
+
 }

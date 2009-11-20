@@ -43,13 +43,9 @@ package org.ikasan.framework.initiator.scheduled.quartz;
 import java.util.Date;
 import java.util.List;
 
-import javax.resource.ResourceException;
-
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
-import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
 import org.ikasan.framework.initiator.InitiatorOperationException;
@@ -76,8 +72,6 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     /** name for the retry trigger when it exists */
     private static final String RETRY_TRIGGER_NAME = "retry_trigger";
 
-    /** Ikasan Event provider instance for this initiator */
-    protected EventProvider eventProvider;
 
     /** Quartz scheduler */
     protected Scheduler scheduler;
@@ -101,8 +95,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     public QuartzStatefulScheduledDrivenInitiator(String initiatorName, String moduleName, EventProvider eventProvider, Flow flow,
             IkasanExceptionHandler exceptionHandler)
     {
-        super(initiatorName, moduleName, flow, exceptionHandler);
-        this.eventProvider = eventProvider;
+        super(initiatorName, moduleName, flow, exceptionHandler, eventProvider);
         
         
     }
@@ -119,50 +112,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         
     }
 
-    /**
-     * Internal method for getting payloads, creating the event and invoking the flow.
-     */
-    @Override
-    protected void invokeFlow()
-    {
-        // invoke flow
-        try
-        {
-            List<Event> events = this.eventProvider.getEvents();
-            if (events == null || events.size() == 0)
-            {
-                this.handleAction(null);
-                return;
-            }
-            // Within the event handling we need to accommodate for a
-            // single event outcome action; and for batched events outcome
-            // action.
-            // The batched events have multiple potential outcome actions,
-            // therefore, we need to use the highest precedent outcome action.
-            IkasanExceptionAction precedentAction = null;
-            for (Event event : events)
-            {
-                IkasanExceptionAction action = this.getFlow().invoke(event);
-                if (action != null)
-                {
-                    if (precedentAction == null || action.getType().isHigherPrecedence(precedentAction.getType()))
-                    {
-                        precedentAction = action;
-                        if (precedentAction.getType().isRollback())
-                        {
-                            // if rollback then we may as well get out now
-                            break;
-                        }
-                    }
-                }
-            }
-            this.handleAction(precedentAction);
-        }
-        catch (ResourceException e)
-        {
-            this.handleAction(this.getExceptionHandler().invoke(this.getName(), e));
-        }
-    }
+
 
     @Override
     protected void startRetryCycle(Integer maxAttempts, long delay) throws InitiatorOperationException

@@ -48,9 +48,12 @@ import javax.jms.TextMessage;
 import junit.framework.Assert;
 
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
+import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -80,6 +83,10 @@ public class EventMessageDrivenInitiatorTest {
 	
 	Flow flow = mockery.mock(Flow.class);
 	
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
+	
+	MessageListenerContainer messageListenerContainer = mockery.mock(MessageListenerContainer.class);
+	
 	
 	
 	TextMessage textMessage = mockery.mock(TextMessage.class);
@@ -90,10 +97,10 @@ public class EventMessageDrivenInitiatorTest {
 	 * Tests that MapMessages are supported
 	 * 
 	 * @throws JMSException
-	 * @throws EventSerialisationException 
+	 * @throws EventDeserialisationException 
 	 */
 	@Test
-	public void testOnMessageHandlesMapMessage() throws JMSException, EventSerialisationException {
+	public void testOnMessageHandlesMapMessage() throws JMSException, EventDeserialisationException {
 		final Event event = mockery.mock(Event.class);
 		final MapMessage mapMessage = mockery.mock(MapMessage.class);
 		
@@ -104,12 +111,12 @@ public class EventMessageDrivenInitiatorTest {
             	
                 one(jmsMessageEventSerialiser).fromMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
-                
-                one(flow).invoke(event);
+                one(event).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 will(returnValue(null));
             }
         });
-        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, jmsMessageEventSerialiser);
+        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);
     	
 		eventMessageDrivenInitiator.onMessage(mapMessage);
 	
@@ -123,23 +130,27 @@ public class EventMessageDrivenInitiatorTest {
 	 */
 	@Test
 	public void testOnMessageDoesNotHandleTextMessage() throws JMSException {
-		UnsupportedOperationException exception = null;
+		AbortTransactionException exception = null;
         mockery.checking(new Expectations()
         {
             {
+            	one(messageListenerContainer).setListenerSetupExceptionListener((ListenerSetupFailureListener) with(anything()));
+            	
             	allowing(textMessage).getJMSMessageID();will(returnValue("messageId"));
+            	one(messageListenerContainer).stop();
             }
         });
-        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, jmsMessageEventSerialiser);
+        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);
+    	eventMessageDrivenInitiator.setMessageListenerContainer(messageListenerContainer);
     	
 		try{
 			eventMessageDrivenInitiator.onMessage(textMessage);
-			Assert.fail("should have thrown UnsupportedOperationException");
-		} catch(UnsupportedOperationException unsupportedOperationException){
-				exception = unsupportedOperationException;
+			Assert.fail("should have thrown AbortTransactionException");
+		} catch(AbortTransactionException abortTransactionException){
+				exception = abortTransactionException;
 		}
 		
-		Assert.assertNotNull("should have thrown UnsupportedOperationException", exception);
+		Assert.assertNotNull("should have thrown AbortTransactionException", exception);
 	}
 
 

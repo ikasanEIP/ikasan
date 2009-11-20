@@ -44,6 +44,7 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.EventMessageDrivenInitiator;
@@ -91,6 +92,10 @@ public class JcaMessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNa
 
     /** The flow */
     private Flow flow;
+
+
+	/** The Exception Handler */
+    private IkasanExceptionHandler exceptionHandler;
 
     /** The event deserialiser */
     private JmsMessageEventSerialiser eventDeserialiser;
@@ -186,6 +191,13 @@ public class JcaMessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNa
 		this.respectPriority = respectPriority;
 	}
 
+	/*
+	* @param exceptionHandler the exceptionHandler to set
+	*/
+	public void setExceptionHandler(IkasanExceptionHandler exceptionHandler){
+	    	this.exceptionHandler = exceptionHandler;
+    }
+
     public Object getObject() throws Exception
     {
         if (this.initiator == null)
@@ -240,11 +252,11 @@ public class JcaMessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNa
         JmsMessageDrivenInitiator thisInitiator = null;
         if (eventDeserialiser != null)
         {
-            thisInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, eventDeserialiser);
+            thisInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler,eventDeserialiser);
         }
         else
         {
-            thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+            thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
             ((RawMessageDrivenInitiator)thisInitiator).setRespectPriority(respectPriority);
         }
         return thisInitiator;

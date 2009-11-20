@@ -42,6 +42,7 @@ package org.ikasan.framework.event.serialisation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +86,7 @@ public class DefaultMapMessageEventSerialiser implements
 
 	@SuppressWarnings("unchecked")
 	public Event fromMessage(MapMessage mapMessage, String moduleName,
-			String componentName) throws JMSException {
+			String componentName) throws JMSException, EventDeserialisationException {
 		Event result = null;
 		
 		Enumeration<String> mapNames = mapMessage.getMapNames();
@@ -109,10 +110,10 @@ public class DefaultMapMessageEventSerialiser implements
 	}
 
 	private Event demapEvent(MapMessage mapMessage, String moduleName,
-			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException {
+			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException, EventDeserialisationException {
 		String eventId = null;
 		int priority = -1;
-		long timestamp = -1;
+		Date timestamp = null;
 		
 		for(String fieldName : eventFieldNames){
 			if (fieldName.equals(EVENT_FIELD_ID)){
@@ -122,11 +123,11 @@ public class DefaultMapMessageEventSerialiser implements
 				priority=mapMessage.getInt(EVENT_FIELD_PRIORITY);
 			}
 			else if (fieldName.equals(EVENT_FIELD_TIMESTAMP)){
-				timestamp=mapMessage.getLong(EVENT_FIELD_TIMESTAMP);
+				timestamp=new Date(mapMessage.getLong(EVENT_FIELD_TIMESTAMP));
 			}
 			
 			else{
-				throw new IllegalArgumentException("Unknown map entry ["+fieldName+"]");
+				throw new EventDeserialisationException("Unknown map entry ["+fieldName+"]");
 			}
 		}
 		
@@ -134,7 +135,7 @@ public class DefaultMapMessageEventSerialiser implements
 	}
 
 	private Payload demapPayload(int payloadOrdinal, MapMessage mapMessage,
-			List<String> payloadFieldNames) throws JMSException {
+			List<String> payloadFieldNames) throws JMSException, EventDeserialisationException {
 		String fullPayloadPrefix = PAYLOAD_PREFIX+payloadOrdinal;
 		
 		String payloadId = null;
@@ -157,7 +158,7 @@ public class DefaultMapMessageEventSerialiser implements
 				payloadAttributes.put(fieldName.substring((fullPayloadPrefix+ATTRIBUTE_PREFIX).length()), mapMessage.getString(fieldName));
 			}
 			else{
-				throw new IllegalArgumentException("Unknown map entry ["+fieldName+"]");
+				throw new EventDeserialisationException("Unknown map entry ["+fieldName+"]");
 			}
 		}
 		
@@ -250,7 +251,7 @@ public class DefaultMapMessageEventSerialiser implements
 		}
 		mapMessage.setString(EVENT_FIELD_ID, event.getId());
 		mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());
-		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp());
+		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp().getTime());
 
 		return mapMessage;
 	}
