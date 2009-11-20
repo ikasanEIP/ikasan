@@ -51,7 +51,7 @@
 
 <span id="flowElementDescription"><c:out value="${flowElement.description}" /></span>
 
-<div class="left">
+
 <h3>Details</h3>
 <table id="flowElementDetails" class="keyValueTable">
 	<tr>
@@ -116,9 +116,9 @@
 </table>
 
 
-</div> <!--end left column -->
 
-<div class="left">
+
+
 
 
 
@@ -255,7 +255,6 @@
 
 </table>
 
-</div> <!-- end right column -->
 
 
 

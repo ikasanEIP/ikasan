@@ -54,6 +54,8 @@ From here you can:
 <ul>
     <li><a href="viewScheduler.htm">Inspect the Scheduler</a></li>
     <li><a href="users/list.htm">Maintain Users</a></li>
+    <li><a href="errors/list.htm">View Error Log</a></li>
+    <li><a href="exclusions/list.htm">View Excluded Events</a></li>
     
 </ul>
 </p>

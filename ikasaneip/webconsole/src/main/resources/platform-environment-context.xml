@@ -55,6 +55,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:/ikasan.properties</value>
+				<value>classpath:/application.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -87,5 +88,9 @@
 	<bean id="distributionList"
 		class="java.lang.String">
 		<constructor-arg value="${monitor.email.distribution}" />
+	</bean>
+	
+	<bean id="baseUrl" class="java.lang.String">
+		<constructor-arg value="${base.server.url}/${webapp.context}"/>
 	</bean>
 </beans>

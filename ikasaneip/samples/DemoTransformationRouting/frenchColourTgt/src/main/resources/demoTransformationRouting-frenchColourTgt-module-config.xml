@@ -62,6 +62,15 @@
         </property>
     </bean>
 
+    <bean id="loggingExceptionHandler" class="org.ikasan.framework.component.LoggingExceptionHandlerImpl">
+            <property name="errorAction">
+                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    <constructor-arg value="ROLLBACK_RETRY" />
+                    <constructor-arg value="10000" />
+                    <constructor-arg value="10" />
+                </bean>
+            </property>
+        </bean>
 
   <!-- =========================================================================== -->
   <!--                   Transformer Flow Initiator                                -->
@@ -73,10 +82,10 @@
        <!-- Using destinationName, and destinationResolver to allow late lookup of jms Destination-->
         <property name="destinationResolver" ref="jmsJndiDestinationResolver"/>
         <property name="destinationName" ref="englishColourTopicName" />
-        <!-- <property name="exceptionHandler" ref="loggingExceptionHandler" />-->
         <property name="transactionManager" ref="transactionManager"/>
         <property name="flow" ref="transformerFlow"/>
         <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
+        <property name="exceptionHandler" ref="loggingExceptionHandler"/>
     </bean>
 
   <!-- =========================================================================== -->
@@ -90,10 +99,10 @@
        <!-- Using destinationName, and destinationResolver to allow late lookup of jms Destination-->
         <property name="destinationResolver" ref="jmsJndiDestinationResolver"/>
         <property name="destinationName" ref="frenchColourTopicName" />
-        <!-- <property name="exceptionHandler" ref="loggingExceptionHandler"/>-->
         <property name="transactionManager" ref="transactionManager"/>
         <property name="flow" ref="channelAdapterFlow"/>
         <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
+        <property name="exceptionHandler" ref="loggingExceptionHandler"/>
     </bean>
 
 </beans>

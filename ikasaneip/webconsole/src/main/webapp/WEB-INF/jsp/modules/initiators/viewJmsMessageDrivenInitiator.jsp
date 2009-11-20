@@ -74,11 +74,6 @@
 
 
 
+<%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>
 
-
-</div>
-
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
 
