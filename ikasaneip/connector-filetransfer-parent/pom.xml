@@ -217,7 +217,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <version>2.5.5</version>
+      <version>2.5.6</version>
       <scope>provided</scope>
     </dependency>
     <!-- TODO - This is provided by the base connector, we should not declare it here? -->
