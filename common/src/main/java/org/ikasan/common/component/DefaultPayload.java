@@ -68,9 +68,10 @@ public class DefaultPayload implements Payload
 	/** Actual content of the payload to be delivered */
     private byte[] content;
     
+    private Long persistenceId;
+    
 
-
-    /**
+	/**
      * No args constructor required for ORM
      */
     @SuppressWarnings("unused")
@@ -191,6 +192,26 @@ public class DefaultPayload implements Payload
 	public void setAttribute(String attributeName, String attributeValue) {
 		attributes.put(attributeName,attributeValue);
 	}
+	
+    /**
+     * Accessor for persistence Id
+     * Note this field should only be used by ORM
+     * 
+     * @return persistenceId
+     */
+    public Long getPersistenceId() {
+		return persistenceId;
+	}
+
+    /**
+     * Mutator for persistence Id
+     * Note this field should only be used by ORM
+     * 
+	 * @param persistenceId
+	 */
+	public void setPersistenceId(Long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
 
     /**
      * Creates a <code>String<code> representation of the <code>Payload</code>
@@ -200,14 +221,24 @@ public class DefaultPayload implements Payload
     public String toString()
     {
         StringBuffer sb = new StringBuffer("DefaultPayload [");
-        sb.append("id = [");
-        sb.append(id);
-        sb.append("], ");
+        sb.append("id = [");sb.append(id);sb.append("], ");
+        sb.append("persistenceId = [");sb.append(persistenceId);sb.append("], ");
         sb.append("content = [");
         sb.append(new String(this.content));
-        sb.append("]");
+        sb.append("], ");
+        sb.append("class = [");sb.append(getClass());sb.append("]");
         sb.append("]");
         return sb.toString();
     }
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.common.Payload#getAttributeMap()
+	 */
+	public Map<String, String> getAttributeMap() {
+		Map<String, String> result = new HashMap<String, String>();
+		result.putAll(attributes);
+		return result;
+	}
 
 }
