@@ -92,7 +92,7 @@
     <url>http://open.jira.com/browse/IKASAN</url>
   </issueManagement>
   
-  <build>
+	<build>
 
 
 		<!-- end project structure customisation -->

@@ -60,8 +60,4 @@
     </form:form>
 
 
-</div>
-
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+<%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>

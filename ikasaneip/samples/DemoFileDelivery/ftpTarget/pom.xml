@@ -94,7 +94,7 @@
     <url>http://open.jira.com/browse/IKASAN</url>
   </issueManagement>
   
-  <build>
+	<build>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
