@@ -45,6 +45,8 @@ import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 
@@ -76,20 +78,20 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param moduleName - name of the module
      * @param name - name of this initiator
      * @param flow - flow to invoke
+     * @param exceptionHandler - handler for Exceptions
      * @param jmsMessageEventSerialiser - The serialiser for the JMS message
      */
-    public EventMessageDrivenInitiator(String moduleName, String name, Flow flow,
+    public EventMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler,
             JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
         this.jmsMessageEventSerialiser = jmsMessageEventSerialiser;
     }
 
     @Override
-    protected Event handleMapMessage(MapMessage message) throws JMSException
+    protected Event handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
     {
-        Event event = jmsMessageEventSerialiser.fromMessage(message, moduleName, name);
-        return event;
+        return jmsMessageEventSerialiser.fromMessage(message, moduleName, name);
     }
     
     @Override

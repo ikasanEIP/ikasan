@@ -40,6 +40,7 @@
  */
 package org.ikasan.framework.initiator;
 
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
 
 /**
@@ -120,4 +121,11 @@ public interface Initiator
      * @return no of attempts made to retry
      */
     public Integer getRetryCount();
+    
+    /**
+     * Accessor for exceptionHandler
+     * 
+     * @return ExceptionHandler if any
+     */
+    public IkasanExceptionHandler getExceptionHandler();
 }

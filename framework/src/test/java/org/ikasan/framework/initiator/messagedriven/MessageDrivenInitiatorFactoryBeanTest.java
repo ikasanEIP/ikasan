@@ -48,6 +48,9 @@ import javax.jms.Topic;
 import junit.framework.Assert;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
+import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.jmock.Mockery;
@@ -65,12 +68,16 @@ public class MessageDrivenInitiatorFactoryBeanTest
     private static final String MODULE_NAME = "moduleName";
     private Mockery mockery = new Mockery();
     private Flow flow = mockery.mock(Flow.class);
+    private IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
     private PayloadFactory payloadFactory = mockery.mock(PayloadFactory.class);
     private ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class);
     private Topic topic = mockery.mock(Topic.class);
     private PlatformTransactionManager transactionManager = mockery.mock(PlatformTransactionManager.class);
     private JmsMessageEventSerialiser jmsMessageEventSerialiser = mockery.mock(JmsMessageEventSerialiser.class);
-
+    private ErrorLoggingService errorLoggingService = mockery.mock(ErrorLoggingService.class);
+    private ExcludedEventService excludedEventService = mockery.mock(ExcludedEventService.class);
+    
+    
     /**
      * Test mandatory field checking for moduleName
      * 
@@ -114,6 +121,22 @@ public class MessageDrivenInitiatorFactoryBeanTest
     }
 
     /**
+     * Test mandatory field checking for exceptionHandler
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetObject_withNullExceptionHandlerWillThrowException() throws Exception
+    {
+        MessageDrivenInitiatorFactoryBean messageDrivenInitiatorFactoryBean = new MessageDrivenInitiatorFactoryBean();
+        messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
+        messageDrivenInitiatorFactoryBean.setBeanName("name");
+        messageDrivenInitiatorFactoryBean.setFlow(flow);
+        String fieldName = "exceptionHandler";
+        testManadatoryFieldCheck(messageDrivenInitiatorFactoryBean, fieldName);
+    }
+    
+    /**
      * Test mandatory field checking for payloadFactory when event serialiser
      * not supplied
      * 
@@ -126,6 +149,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
         messageDrivenInitiatorFactoryBean.setBeanName("name");
         messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         String fieldName = "payloadFactory";
         testManadatoryFieldCheck(messageDrivenInitiatorFactoryBean, fieldName);
         mockery.assertIsSatisfied();
@@ -143,6 +167,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
         messageDrivenInitiatorFactoryBean.setBeanName("name");
         messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
         String fieldName = "connectionFactory";
         testManadatoryFieldCheck(messageDrivenInitiatorFactoryBean, fieldName);
@@ -161,6 +186,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
         messageDrivenInitiatorFactoryBean.setBeanName("name");
         messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
         messageDrivenInitiatorFactoryBean.setConnectionFactory(connectionFactory);
         String fieldName = "destination";
@@ -180,6 +206,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
         messageDrivenInitiatorFactoryBean.setBeanName("name");
         messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
         messageDrivenInitiatorFactoryBean.setConnectionFactory(connectionFactory);
         messageDrivenInitiatorFactoryBean.setDestination(topic);
@@ -200,6 +227,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
         messageDrivenInitiatorFactoryBean.setBeanName("name");
         messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
         messageDrivenInitiatorFactoryBean.setConnectionFactory(connectionFactory);
         messageDrivenInitiatorFactoryBean.setDestination(topic);
@@ -222,11 +250,14 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setModuleName(MODULE_NAME);
         messageDrivenInitiatorFactoryBean.setBeanName("name");
         messageDrivenInitiatorFactoryBean.setFlow(flow);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
         messageDrivenInitiatorFactoryBean.setConnectionFactory(connectionFactory);
         messageDrivenInitiatorFactoryBean.setDestination(topic);
         messageDrivenInitiatorFactoryBean.setTransactionManager(transactionManager);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
+        messageDrivenInitiatorFactoryBean.setExcludedEventService(excludedEventService);
+        messageDrivenInitiatorFactoryBean.setErrorLoggingService(errorLoggingService);
         JmsMessageDrivenInitiator initiator = (JmsMessageDrivenInitiator) messageDrivenInitiatorFactoryBean.getObject();
         Assert.assertTrue("RawMessageDrivenInitiator should be returned if serialiser supplied", (initiator instanceof RawMessageDrivenInitiator));
         
@@ -251,6 +282,7 @@ public class MessageDrivenInitiatorFactoryBeanTest
         messageDrivenInitiatorFactoryBean.setDestination(topic);
         messageDrivenInitiatorFactoryBean.setTransactionManager(transactionManager);
         messageDrivenInitiatorFactoryBean.setPayloadFactory(payloadFactory);
+        messageDrivenInitiatorFactoryBean.setExceptionHandler(exceptionHandler);
         
         //tell the factory bean to respect priority
         messageDrivenInitiatorFactoryBean.setRespectPriority(true);

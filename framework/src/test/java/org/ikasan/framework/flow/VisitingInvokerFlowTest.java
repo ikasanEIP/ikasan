@@ -47,6 +47,7 @@ import java.util.Map;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.invoker.FlowElementInvoker;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -94,6 +95,8 @@ public class VisitingInvokerFlowTest
     
     String moduleName = "moduleName";
     
+    FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
+    
 
     /**
      * Class under test
@@ -116,14 +119,12 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                one(flowElementInvoker).invoke(event, moduleName, flowName, flowElement);
-                will(returnValue(ikasanExceptionAction));
+                one(flowElementInvoker).invoke(flowInvocationContext, event, moduleName, flowName, flowElement);
             }
         });
         
         
-        IkasanExceptionAction exceptionAction = visitingInvokerFlow.invoke(event);
-        Assert.assertEquals("ExceptionAction returned by the flow should be the same one returned internally by the invoker", ikasanExceptionAction, exceptionAction);
+        visitingInvokerFlow.invoke(flowInvocationContext, event);
     }
     /**
      * Creates a sufficiently complex graph of flow elements and tests that the getFlowElements

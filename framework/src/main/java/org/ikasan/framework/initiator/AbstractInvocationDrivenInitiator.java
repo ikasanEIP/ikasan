@@ -40,8 +40,13 @@
  */
 package org.ikasan.framework.initiator;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.event.service.EventProvider;
+import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.monitor.MonitorSubject;
 
@@ -57,10 +62,12 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
     /** Logger */
     private static Logger logger = Logger.getLogger(AbstractInvocationDrivenInitiator.class);
 
+
+    
     /**
-     * TODO - use the exception handler in the flow rather than having specific reference in the initiator
+     * Used for sourcing the Events that will be played
      */
-    private IkasanExceptionHandler exceptionHandler;
+    private EventProvider eventProvider;
 
     
 
@@ -71,24 +78,15 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
      * @param name of the Module
      * @param flow The flow leading off from the initiator
      * @param exceptionHandler The exceptionHandler associated with the initiator
+     * @param eventProvider used for sourcing the Events that will be played
      */
-    public AbstractInvocationDrivenInitiator(String name, String moduleName, Flow flow, IkasanExceptionHandler exceptionHandler)
+    public AbstractInvocationDrivenInitiator(String name, String moduleName, Flow flow, IkasanExceptionHandler exceptionHandler, EventProvider eventProvider)
     {
-        super(moduleName, name, flow);
-        this.exceptionHandler = exceptionHandler;
+        super(moduleName, name, flow, exceptionHandler);
+        this.eventProvider = eventProvider;
         notifyMonitorListeners();
     }
 
-
-    /**
-     * Return the exception handler for this initiator
-     * 
-     * @return exceptionHandler
-     */
-    protected IkasanExceptionHandler getExceptionHandler()
-    {
-        return this.exceptionHandler;
-    }
 
 
     /**
@@ -96,23 +94,28 @@ public abstract class AbstractInvocationDrivenInitiator extends AbstractInitiato
      */
     public void invoke()
     {
+    	logger.info("called");
         if (stopping)
         {
             logger.warn("Attempt to invoke an initiator in a stopped state.");
             return;
         }
         
+        List<Event> events = null;
+        try{
+        	events = eventProvider.getEvents();
+        }catch (Throwable eventSourcingThrowable)
+        {
+        	IkasanExceptionAction action = exceptionHandler.handleThrowable(name, eventSourcingThrowable);
+
+        	//tell the error service
+    		logError(null, eventSourcingThrowable, name,action);
+			handleAction(action,null);
+        }
+        
         // invoke flow all the time we have event activity
-        invokeFlow();
+        invokeFlow(events);
     }
-
-
-
-    /**
-     * Invoke the initiator extending classes flow
-     */
-    protected abstract void invokeFlow();
-
 
 
     
