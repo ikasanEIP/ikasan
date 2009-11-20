@@ -61,10 +61,11 @@ public interface JmsMessageEventSerialiser<T extends Message>
      * @param componentName - name of the component/initiator that is reconstituting the Event - this gets set on the
      *            Event
      * @return reconstituted <code>Event</code>
+     * @throws EventDeserialisationException 
      * 
      * @throws JMSException if we could not deserialise the event
      */
-    public Event fromMessage(T message, String moduleName, String componentName) throws JMSException;
+    public Event fromMessage(T message, String moduleName, String componentName) throws JMSException, EventDeserialisationException;
 
     /**
      * Serialises an <code>Event</code> to a <code>MapMessage</code>
@@ -73,7 +74,7 @@ public interface JmsMessageEventSerialiser<T extends Message>
      * @param session The session
      * @return Message - ready to go!
      * 
-     * @throws JMSException Exception if we could not serialise the event
+     * @throws EventDeserialisationException Exception if we could not serialise the event
      */
     public T toMessage(Event event, Session session) throws JMSException;
 }

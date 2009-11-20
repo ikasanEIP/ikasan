@@ -39,12 +39,15 @@
 
 package org.ikasan.framework.initiator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
-import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * Experimental implementation of <code>Initiator</code> that is invoked directly with content
@@ -53,9 +56,11 @@ import org.springframework.beans.factory.BeanNameAware;
  * @author Ikasan Development Team
  *
  */
-public class SimpleInitiator implements Initiator, BeanNameAware
+public class SimpleInitiator extends AbstractInitiator implements Initiator
 {
     public static final String SIMPLE_INITIATOR_TYPE = "SimpleInitiator";
+    
+    private Logger logger = Logger.getLogger(Logger.class);
 
     /**
      * Is this open to business?
@@ -90,12 +95,10 @@ public class SimpleInitiator implements Initiator, BeanNameAware
      * @param payloadFactory
      * @param flow
      */
-    public SimpleInitiator(String moduleName, PayloadFactory payloadFactory, Flow flow)
+    public SimpleInitiator(String initiatorName, String moduleName, PayloadFactory payloadFactory, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
-        super();
-        this.moduleName = moduleName;
+        super(moduleName, initiatorName, flow, exceptionHandler);
         this.payloadFactory = payloadFactory;
-        this.flow = flow;
     }
     
     public boolean initiate( String originationId, String payloadContent)
@@ -109,14 +112,12 @@ public class SimpleInitiator implements Initiator, BeanNameAware
         
 
 
-        Event event = new Event(moduleName, initiatorName, originationId, singlePayload);
-        IkasanExceptionAction exceptionAction = flow.invoke(event);
-        //TODO better error handling
-        if (exceptionAction!=null){
-            throw new RuntimeException("Could not invoke flow:"+flow.getName());
-        }
+        List<Event>events = new ArrayList<Event>();
+        events.add(new Event(moduleName, name, originationId, singlePayload));
+        invokeFlow(events);
         
-        return (exceptionAction==null);
+        
+        return true;
         
     }
     
@@ -141,14 +142,7 @@ public class SimpleInitiator implements Initiator, BeanNameAware
     }
 
 
-    /**
-     * @param payloadFactory
-     */
-    public SimpleInitiator(PayloadFactory payloadFactory)
-    {
-        super();
-        this.payloadFactory = payloadFactory;
-    }
+
 
 
 
@@ -243,5 +237,42 @@ public class SimpleInitiator implements Initiator, BeanNameAware
 	public Integer getRetryCount() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#stopInitiator()
+	 */
+	@Override
+	protected void stopInitiator() throws InitiatorOperationException {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.initiator.AbstractInitiator#cancelRetryCycle()
+	 */
+	@Override
+	protected void cancelRetryCycle() {
+		
+	}
+
+	@Override
+	protected void completeRetryCycle() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	protected void startInitiator() throws InitiatorOperationException {
+
+		
+	}
+
+	@Override
+	protected void startRetryCycle(Integer maxAttempts, long delay)
+			throws InitiatorOperationException {
+		
 	}
 }

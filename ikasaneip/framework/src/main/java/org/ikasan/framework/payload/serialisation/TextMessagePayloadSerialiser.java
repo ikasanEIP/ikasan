@@ -56,15 +56,15 @@ import org.ikasan.common.factory.PayloadFactory;
 public class TextMessagePayloadSerialiser implements JmsMessagePayloadSerialiser<TextMessage>
 {
     /** Factory for creating Payloads */
-    private PayloadFactory payloadFactory;
+	private PayloadFactory payloadFactory;
 
     /**
-     * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#getSupportedMessageType()
-     */
+	 * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser#getSupportedMessageType()
+	 */
     public Class<? extends Message> getSupportedMessageType()
     {
-        return TextMessage.class;
-    }
+		return TextMessage.class;
+	}
 
     /*
      * (non-Javadoc)
@@ -72,11 +72,11 @@ public class TextMessagePayloadSerialiser implements JmsMessagePayloadSerialiser
      * @see
      * org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser
      * #supports(java.lang.Class)
-     */
+	 */
     public boolean supports(Class<? extends Message> messageClass)
     {
-        return TextMessage.class.isAssignableFrom(messageClass);
-    }
+		return TextMessage.class.isAssignableFrom(messageClass);
+	}
 
     /*
      * (non-Javadoc)
@@ -84,15 +84,15 @@ public class TextMessagePayloadSerialiser implements JmsMessagePayloadSerialiser
      * @see
      * org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser
      * #toMessage(org.ikasan.common.Payload, javax.jms.Session)
-     */
+	 */
     public TextMessage toMessage(Payload payload, Session session) throws JMSException
     {
-        TextMessage textMessage = session.createTextMessage();
+		TextMessage textMessage = session.createTextMessage();
         // TODO, how do we handle the payload encoding??
         textMessage.setText(new String(payload.getContent()));
         // TODO do we need to set any of the QOS properties on the message?
-        return textMessage;
-    }
+		return textMessage;
+	}
 
     /*
      * (non-Javadoc)
@@ -101,20 +101,20 @@ public class TextMessagePayloadSerialiser implements JmsMessagePayloadSerialiser
      * RawMessageDrivenInitiator already handles incoming text messages
      * 
      * @see org.ikasan.framework.payload.serialisation.JmsMessagePayloadSerialiser(javax.jms.Message)#toPayload(javax.jms.Message)
-     */
+	 */
     public Payload toPayload(TextMessage message) throws JMSException
     {
-        return payloadFactory.newPayload(message.getJMSMessageID(), message.getText().getBytes());
-    }
+		return  payloadFactory.newPayload(message.getJMSMessageID(),  message.getText().getBytes());
+	}
 
-    /**
+	/**
      * Allows the payload factory to be set, only necessary if we are
      * deserialising
-     * 
+	 * 
      * @param payloadFactory - The PayloadFactory for deserialising 
-     */
+	 */
     public void setPayloadFactory(PayloadFactory payloadFactory)
     {
-        this.payloadFactory = payloadFactory;
-    }
+		this.payloadFactory = payloadFactory;
+	}
 }

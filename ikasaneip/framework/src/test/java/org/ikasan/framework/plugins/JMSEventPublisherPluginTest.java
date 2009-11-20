@@ -57,7 +57,7 @@ import junit.framework.TestCase;
 import org.ikasan.common.Payload;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
+import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
@@ -159,11 +159,6 @@ public class JMSEventPublisherPluginTest extends TestCase
     final JMSException jmsException = new JMSException(null);
 
     /**
-     * EventSerialisationException
-     */
-    final EventSerialisationException eventSerialisationException = new EventSerialisationException(null);
-
-    /**
      * mocked Destination factory
      */
     final JndiDestinationFactory jndiDestinationFactory = mockery.mock(JndiDestinationFactory.class);
@@ -182,9 +177,9 @@ public class JMSEventPublisherPluginTest extends TestCase
      * 
      * @throws PluginInvocationException
      * @throws JMSException
-     * @throws EventSerialisationException
+     * @throws EventDeserialisationException
      */
-    public void testInvoke_withSecurityPublishesWithSecureConnection() throws PluginInvocationException, JMSException, EventSerialisationException
+    public void testInvoke_withSecurityPublishesWithSecureConnection() throws PluginInvocationException, JMSException, EventDeserialisationException
     {
     	
     	final int eventPriority = 7;
@@ -230,9 +225,9 @@ public class JMSEventPublisherPluginTest extends TestCase
      * 
      * @throws PluginInvocationException
      * @throws JMSException
-     * @throws EventSerialisationException
+     * @throws EventDeserialisationException
      */
-    public void testInvoke_withSecurityWithPrioritySetter() throws PluginInvocationException, JMSException, EventSerialisationException
+    public void testInvoke_withSecurityWithPrioritySetter() throws PluginInvocationException, JMSException, EventDeserialisationException
     {
         classMockery.checking(new Expectations()
         {
@@ -276,9 +271,9 @@ public class JMSEventPublisherPluginTest extends TestCase
      * 
      * @throws PluginInvocationException
      * @throws JMSException
-     * @throws EventSerialisationException
+     * @throws EventDeserialisationException
      */
-    public void testInvoke_withoutSecurityPublishesWithUnsecuredConnection() throws PluginInvocationException, JMSException, EventSerialisationException
+    public void testInvoke_withoutSecurityPublishesWithUnsecuredConnection() throws PluginInvocationException, JMSException, EventDeserialisationException
     {
     	final int eventPriority = 7;
         classMockery.checking(new Expectations()
@@ -379,9 +374,9 @@ public class JMSEventPublisherPluginTest extends TestCase
      * .
      * 
      * @throws JMSException
-     * @throws EventSerialisationException
+     * @throws EventDeserialisationException
      */
-    public void testInvoke_throwsPluginInvocationExceptionWhenClosingConnectionThrowsJMSException() throws JMSException, EventSerialisationException
+    public void testInvoke_throwsPluginInvocationExceptionWhenClosingConnectionThrowsJMSException() throws JMSException, EventDeserialisationException
     {
         mockery.checking(new Expectations()
         {
@@ -416,7 +411,7 @@ public class JMSEventPublisherPluginTest extends TestCase
         }
     }
     
-    public void testInvoke_willUtiliseDestinationFactoryWhenSupplied() throws PluginInvocationException, JMSException, EventSerialisationException, NamingException{
+    public void testInvoke_willUtiliseDestinationFactoryWhenSupplied() throws PluginInvocationException, JMSException, EventDeserialisationException, NamingException{
     	final int eventPriority =7;
         classMockery.checking(new Expectations()
         {

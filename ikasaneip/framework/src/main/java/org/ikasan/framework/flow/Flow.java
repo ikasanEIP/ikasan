@@ -41,7 +41,7 @@
 package org.ikasan.framework.flow;
 
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 
 /**
  * Interface representing a business path for an <code>Event<code>
@@ -57,10 +57,10 @@ public interface Flow
      * Invocation of this method represents the handling of the <code>Event<code>
      * with respect to some business path
      * 
+     * @param flowInvocationContext invocation context
      * @param event The event we're dealing with
-     * @return IkasanExceptionAction in the case of a problem/error
      */
-    public IkasanExceptionAction invoke(Event event);
+    public void invoke(FlowInvocationContext flowInvocationContext, Event event);
 
     /**
      * Returns the name of this flow

@@ -74,10 +74,14 @@ public class Event implements Cloneable
      * TODO, if this really is just a number from 0-9, then this constraint should be modelled somehow
      */
     private int priority =4;    
-
-
     
-    /** Event contained payloads */
+    /**
+     * Unique identifier required when persisting using ORM
+     */
+    private Long persistenceId;
+    
+
+	/** Event contained payloads */
     private List<Payload> payloads = null;
     
     
@@ -157,10 +161,10 @@ public class Event implements Cloneable
      * @param timestamp
      * @param paylaods
      */
-    public Event(String id, int priority, long timestamp,  List<Payload> payloads) {
+    public Event(String id, int priority, Date timestamp,  List<Payload> payloads) {
     	this.id=id;
 		this.priority = priority;
-		this.timestamp = new Date(timestamp);
+		this.timestamp = timestamp;
 		this.payloads = new ArrayList<Payload>(payloads);
 	}
 
@@ -227,10 +231,12 @@ public class Event implements Cloneable
     @Override
     public String toString()
     {
-        return "id=[" + this.id + "] "
-                + "priority=[" + this.priority + "] "
-                + "timestamp=[" + this.timestamp + "] "
-                + "payloads=[" + this.payloads + "] ";
+        return "id=[" + id + "] "
+        		+ "persistenceId=[" + persistenceId + "] "
+                + "priority=[" + priority + "] "
+                + "timestamp=[" + timestamp + "] "
+                + "payloads=[" + payloads + "] "
+        		+ "class=[" + getClass() + "] ";
     }
 
 
@@ -300,8 +306,8 @@ public class Event implements Cloneable
      * 
      * @return timestamp
      */
-    public long getTimestamp(){
-    	return timestamp.getTime();
+    public Date getTimestamp(){
+    	return timestamp;
     }
     
     /**
@@ -309,8 +315,8 @@ public class Event implements Cloneable
      * 
      * @param timestamp
      */
-    private void setTimestamp(long timestamp){
-    	this.timestamp = new Date(timestamp);
+    private void setTimestamp(Date timestamp){
+    	this.timestamp = timestamp;
     }
     
     /**
@@ -369,4 +375,22 @@ public class Event implements Cloneable
     {
         return this.payloads;
     }
+    
+    /**
+     * Accessor for persistenceId
+     * 
+     * @return persistenceId if set
+     */
+    public Long getPersistenceId() {
+		return persistenceId;
+	}
+
+	/**
+	 * Mutator for persistenceId
+	 * 
+	 * @param persistenceId
+	 */
+	private void setPersistenceId(Long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
 }

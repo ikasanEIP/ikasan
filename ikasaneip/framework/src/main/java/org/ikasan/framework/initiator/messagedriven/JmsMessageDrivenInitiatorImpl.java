@@ -50,9 +50,13 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
+import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.framework.exception.RetryAction;
+import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.monitor.MonitorSubject;
 
@@ -78,7 +82,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
     /**
      * Maximum number of times underlying container will attempt to set up (poll) for messages
      */
-    private int maxListenerSetupFailureRetries = IkasanExceptionAction.RETRY_INFINITE;
+    private int maxListenerSetupFailureRetries = RetryAction.RETRY_INFINITE;
 
 
 	public static final String JMS_MESSAGE_DRIVEN_INITIATOR_TYPE = "JmsMessageDrivenInitiator";
@@ -101,10 +105,11 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
+     * @param exceptionHandler handler for Exceptions
      */
-    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
+    public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
     }
     
     public String getType(){
@@ -146,18 +151,30 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
                 event = handleBytesMessage((BytesMessage) message);
             }
         }
-        catch (JMSException jmsException)
-        {
-            stopInError();
-            throw new RuntimeException(jmsException);
+        catch (UnsupportedOperationException unsupportedOperationException){
+        	//tell the error service
+    		logError(null, unsupportedOperationException, name, StopAction.instance());
+        	
+        	stopInError();
+        	throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
         }
-        catch (EventSerialisationException eventSerialisationException)
-        {
-            stopInError();
-            throw new RuntimeException(eventSerialisationException);
+        catch (EventDeserialisationException eventDeserialisationException){
+        	//tell the error service
+    		logError(null, eventDeserialisationException, name, StopAction.instance());
+        	
+        	stopInError();
+        	throw new AbortTransactionException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
         }
-        IkasanExceptionAction action = flow.invoke(event);
-        handleAction(action);
+        catch (Throwable eventSourcingThrowable)
+        {
+
+
+        	IkasanExceptionAction action = exceptionHandler.handleThrowable(name, eventSourcingThrowable);
+        	//tell the error service
+    		logError(null, eventSourcingThrowable, name, action);
+        	handleAction(action,null);
+        }
+        invokeFlow(event);
     }
 
 
@@ -249,6 +266,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @see org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener#notifyListenerSetupFailure(java.lang.Throwable)
      */
     public void notifyListenerSetupFailure(Throwable throwable){
+    	logError(null, throwable, name, new RetryAction(listenerSetupFailureRetryDelay, maxListenerSetupFailureRetries));
         handleRetry(maxListenerSetupFailureRetries, listenerSetupFailureRetryDelay);
     }
 
@@ -260,11 +278,8 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param message The message to handle
      * @return Event The event containing the message
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
-     *             by implementing children
      */
-    @SuppressWarnings("unused")
-    protected Event handleBytesMessage(BytesMessage message) throws JMSException, EventSerialisationException
+    protected Event handleBytesMessage(BytesMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support BytesMessage [" + message.toString()
                 + "]");
@@ -278,7 +293,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param message The message to handle
      * @return Event
      */
-    protected Event handleStreamMessage(StreamMessage message)
+    protected Event handleStreamMessage(StreamMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support StreamMessage [" + message.toString()
                 + "]");
@@ -292,11 +307,8 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param message The message to handle
      * @return Event
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
-     *             by implementing children
      */
-    @SuppressWarnings("unused")
-    protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventSerialisationException
+    protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support ObjectMessage [" + message.toString()
                 + "]");
@@ -310,11 +322,8 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param message The message to handle
      * @return Event
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
-     *             by implementing children
      */
-    @SuppressWarnings("unused")
-    protected Event handleMapMessage(MapMessage message) throws JMSException, EventSerialisationException
+    protected Event handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support MapMessage [" + message.toString()
                 + "]");
@@ -328,11 +337,8 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * @param message The message to handle
      * @return Event
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
-     *             by implementing children
      */
-    @SuppressWarnings("unused")
-    protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
+    protected Event handleTextMessage(TextMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support TextMessage [" + message.toString()
                 + "]");
