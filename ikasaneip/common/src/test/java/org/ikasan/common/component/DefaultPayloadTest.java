@@ -95,9 +95,13 @@ public class DefaultPayloadTest {
 		String someAttributeValue = "someAttributeValue";
 		
 		Assert.assertNull("someAttribute should be null before it has been set", defaultPayload.getAttribute(someAttributeName));
+		Assert.assertTrue("attributeMap should be empty for starters", defaultPayload.getAttributeMap().isEmpty());
+		
 		defaultPayload.setAttribute(someAttributeName, someAttributeValue);
 		Assert.assertEquals("someAttribute should be available after it has been set", someAttributeValue, defaultPayload.getAttribute(someAttributeName));
-		
+		Assert.assertEquals("someAttribute should be availalbe in attributeMap after it has been set", someAttributeValue, defaultPayload.getAttributeMap().get(someAttributeName));
 	}
+	
+	
 
 }
