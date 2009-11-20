@@ -61,14 +61,7 @@
                 </td>
             </tr>
             
-            <tr>
-                <th>
-                    Module Id
-                </th>
-                <td>
-                    <c:out value="${module.id}" />
-                </td>
-            </tr>
+            
         </table>
 
 <h3>Initiators</h3>

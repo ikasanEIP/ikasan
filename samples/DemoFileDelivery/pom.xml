@@ -80,7 +80,7 @@
     <url>http://open.jira.com/browse/IKASAN</url>
   </issueManagement>
   
-      <build>
+    <build>
     <plugins>
     <plugin>
         <groupId>org.apache.maven.plugins</groupId>

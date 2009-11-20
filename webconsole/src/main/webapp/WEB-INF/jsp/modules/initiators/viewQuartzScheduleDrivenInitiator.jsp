@@ -56,7 +56,7 @@
 </c:if>
 
 <h3>Scheduler</h3>
-<p><c:out value="${initiator.scheduler.metaData.summary}" /></p>
+
         <table id="schedulerDetails" class="keyValueTable">
             <tr>
                 <th>
@@ -100,6 +100,14 @@
                 </th>
                 <td>
                     <c:out value="${initiator.scheduler.metaData.threadPoolSize}" />
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Meta Data Summary
+                </th>
+                <td>
+                    <c:out value="${initiator.scheduler.metaData.summary}" />
                 </td>
             </tr>
             
@@ -214,8 +222,4 @@
 
 
 
-</div>
-
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+<%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>

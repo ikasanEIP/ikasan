@@ -80,6 +80,6 @@
 
 </div>
 
-<h2><c:out value="${initiator.name}" /></h2>
+<h2>Initiator :: <c:out value="${initiator.name}" /></h2>
 
 

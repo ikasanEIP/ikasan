@@ -5,8 +5,9 @@
 
 body {
 	background: #F0F0F0;
-	font: .74em "Trebuchet MS" Verdana, Arial, sans-serif;
+	font-family: Arial, sans-serif;
 	line-height: 1.5em;
+	font-size: 12px;
 }
 
 a {
@@ -24,6 +25,7 @@ a:hover {
 input.controlButton {
 	background:#F6F9FB;
     border:1px solid #999999;
+	margin-left:10px;
     padding-left:10px;
     padding-right:10px;
 }
@@ -64,32 +66,15 @@ input.controlButton {
 	padding: 5px;
 }
 
-.middle {
-	padding: 1% 0%;
-	text-align: justify;
-}
 
-.left {
-	float: left;
-	width: 420px;
-	margin-right: 10px;
-}
 
-.right {
-	float: right;
-	width: 420px;
-	margin-left: 10px;
-}
 
-.singleColumn {
-	float: left;
-	width: 860px;
-}
 
 /* Styles for tables that list vertically*/
 .listTable {
 	border: 1px solid #E1E1E1;
 	border-collapse: collapse;
+	width: 100%;
 }
 
 .listTable thead tr {
@@ -98,19 +83,30 @@ input.controlButton {
 }
 
 .listTable thead tr th {
-	padding: 2px 2px;
+	border-bottom: 1px solid #E1E1E1;
+	padding: 0 5px;
 }
 
+.listTable td{
+	padding: 0 5px;
+}
 /* Styles for tables that keys/values horizontally */
 .keyValueTable {
 	border: 1px solid #E1E1E1;
 	border-collapse: collapse;
+	width: 100%;
 }
 
 .keyValueTable tr th {
 	background: #F6F9FB;
-	padding: 2px 2px;
+	border-right : 1px solid #E1E1E1;
+	padding: 2px 5px;
 	width: 200px;
+}
+
+.keyValueTable tr td {
+	padding-left: 2px;
+	padding-right: 5px;
 }
 
 /* syles for data forms */
@@ -168,7 +164,8 @@ form.fancydataform fieldset li {
 }
 
 #initiatorControl {
-    border:7px solid #6695ED;
+	background: #FFFFF0;
+    border:1px solid #E1E1E1;
     float: right;
     margin-left:7px;
     padding: 5px;
@@ -194,34 +191,26 @@ form.fancydataform fieldset li {
 	text-decoration: none;
 }
 
-.right ul {
-	padding: 20px 0 15px 20px;
-	margin: 0;
+
+
+.middle {
+	padding: 0 5px;
+	text-align: justify;
 }
 
-.right li {
-	margin-bottom: 5px;
-	list-style-type: square;
-	color: #3B6EBF;
-}
-
-.middle h2 {
+.middle > h2 {
 	color: #3B6EBF;
 	font-size: 16px;
 	margin-bottom: 10px;
 	margin-top: 10px;
 }
 
-.middle h3 {
+.middle > h3 {
 	margin-top: 10px;
 	margin-bottom: 0px;
 }
 
-.right h2 {
-	color: #3B6EBF;
-	font-size: 14px;
-	margin-top: 15px;
-}
+
 
 
 .initiatorState-running {
@@ -238,6 +227,33 @@ form.fancydataform fieldset li {
 
 .initiatorState-runningInRecovery {
     color: orange;
+}
+.controls{
+	float: right;
+	margin-top: 5px;
+	margin- bottom:5px;
+}
+
+
+
+.event {
+	border: 1px solid #E1E1E1;
+	padding: 10px;
+	background: #FFFFF0;
+}
+
+.unformattable {
+    border: 1px solid #E1E1E1;
+    overflow: auto;
+    padding: 0 5px;
+}
+.data {
+    background: #FFFFF0;
+}
+
+.bordered {
+	border: 1px solid #E1E1E1;
+	padding: 5px;
 }
 /* 
  #######################
@@ -317,7 +333,10 @@ form.fancydataform fieldset li {
 }
 
 
-
+#eventDump{
+	border:1px solid #E1E1E1;
+	padding:10px;
+}
 
 
 /* search results elements */
@@ -326,9 +345,6 @@ form.fancydataform fieldset li {
 	margin-top: 20px;
 }
 
-#searchResultsHeader span#currentlyShowing {
-	float: left;
-}
 
 #searchResultsHeader span#navigationControls {
 	float: right;
@@ -342,57 +358,26 @@ form.fancydataform fieldset li {
 	width: 50%;
 }
 
-#wiretapContent {
-	width: 100%;
+
+
+#excludedEventEvent{
+	background : #FFFFFF;
 }
 
-#wiretapSearchResults {
-	width: 100%;
+
+#payload {
+	background : #FFFFFF;
+	border : 1px solid #E1E1E1;
+	margin-top: 5px;
+	padding: 5px;	
 }
 
-#modulesList {
-	width: 100%;
-}
 
-#initiatorsList {
-	width: 100%;
-}
 
-#flowElementsList {
-	width: 100%;
-}
-
-#flowElementDetails {
-	width: 100%;
-}
-
-#flowElementTransitions {
-	width: 100%;
-}
-
-#beforeFlowElementTriggers {
-	width: 100%;
-}
-
-#afterFlowElementTriggers {
-	width: 100%;
-}
-
-#schedulerDetails {
-	width: 50%;
-}
-
-#schedulerTriggersList {
-	width: 100%;
-}
-
-#flowEventTriggerParameters {
-	width: 100%;
-}
 
 #loginForm {
 	border: 1px solid #6695ED;
-	margin: 0 190px;
+	margin: 30px 190px;
 	padding: 20px;
 	width: 450px;
 }
@@ -417,4 +402,8 @@ form.fancydataform fieldset li {
 #initiatorStateControl {
     font-size: 16px;
     font-weight: bold;
+}
+
+#errorDetail {
+	
 }
