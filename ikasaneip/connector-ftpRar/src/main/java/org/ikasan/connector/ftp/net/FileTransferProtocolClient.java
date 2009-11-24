@@ -130,14 +130,14 @@ public class FileTransferProtocolClient implements FileTransferClient
      */
     private String systemKey;
 
-    /** Timeout in milliseconds to use when opening a socket. Defaults to unlimited (0) */
-    private Integer connectionTimeout = 0;
+    /** Timeout in milliseconds to use when opening a socket. Defaults to 60000 ms (1 min) */
+    private Integer connectionTimeout = 60000;
 
-    /** Timeout in milliseconds to use when reading from the data connection. Defaults to unlimited (0*/
-    private Integer dataTimeout = 0;
+    /** Timeout in milliseconds to use when reading from the data connection. Defaults to 300000 ms (5 min)*/
+    private Integer dataTimeout = 300000;
 
-    /** Timeout in milliseconds of a currently open connection. Defaults to unlimited (0) */
-    private Integer socketTimeout = 0;
+    /** Timeout in milliseconds of a currently open connection. Defaults to 300000 ms (5 min) */
+    private Integer socketTimeout = 300000;
 
     /** Third party library that implements much of FTP for us */
     private FTPClient ftpClient;

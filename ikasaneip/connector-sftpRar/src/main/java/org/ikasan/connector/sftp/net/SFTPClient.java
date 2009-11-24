@@ -129,8 +129,8 @@ public class SFTPClient implements FileTransferClient
     /** Port */
     private int remotePort;
 
-    /** Socket connection timeout in milliseconds. Defaults to unlimited (0)*/
-    private Integer connectionTimeout = 0;
+    /** Socket connection timeout in milliseconds. Defaults to 60000 ms (1 min)*/
+    private Integer connectionTimeout = 60000;
 
     /** The default maximum local port number in Hex*/
     private static final Integer DEFAULT_MAXIMUM_LOCAL_PORT = 0xFFFF;
