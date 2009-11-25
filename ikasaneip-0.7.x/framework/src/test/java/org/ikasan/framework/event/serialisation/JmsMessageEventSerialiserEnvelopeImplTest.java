@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
+import javax.jms.Message;
 import javax.jms.Session;
 
 import junit.framework.Assert;
@@ -110,6 +111,8 @@ public class JmsMessageEventSerialiserEnvelopeImplTest
             {
                 one(envelopeFactory).fromMessage(mapMessage);
                 will(returnValue(envelope));
+                one(mapMessage).getJMSPriority();
+                will(returnValue(Message.DEFAULT_PRIORITY));
                 one(envelope).getPayloads();
                 will(returnValue(payloads));
                 one(payload1).getName();
