@@ -82,6 +82,14 @@ public class JmsMessageEventSerialiserEnvelopeImpl implements JmsMessageEventSer
             List<Payload> payloads = envelope.getPayloads();
             event.setPayloads(payloads);
             event.setEventAttribsFromEnvelope(envelope);
+            /*
+             * This is a hack to get around the issue of which priority to take into account: event vs payload.
+             * Part of the MapMessage data is payload_priority attribute set at publish time that is incosistent 
+             * with event priority. Full long details are in jira IKASAN-303
+             * 
+             * This goes away on 0.8.0 onwards.
+             */
+            event.setPriority(mapMessage.getJMSPriority());
         }
         catch (EnvelopeOperationException e)
         {
