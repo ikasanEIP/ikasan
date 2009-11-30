@@ -93,7 +93,13 @@
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
       <version>0.1.42</version>
-      </dependency>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>2.1_3</version>
+      <scope>provided</scope>
+	</dependency>     
   </dependencies>
   
 

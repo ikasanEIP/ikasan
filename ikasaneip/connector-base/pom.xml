@@ -260,8 +260,8 @@
     <!-- For persisting information about the connector such as chunking large messages -->
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.2.0.ga</version>
+      <artifactId>hibernate-core</artifactId>
+      <version>3.3.2.GA</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

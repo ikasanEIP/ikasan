@@ -224,16 +224,24 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-            <version>3.2.0.ga</version>
-            <scope>provided</scope>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.3.2.GA</version>
             <exclusions>
               <exclusion>
                 <groupId>javax.transaction</groupId>
                 <artifactId>jta</artifactId>
               </exclusion>
+              <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+              </exclusion>              
             </exclusions>
         </dependency>
+        <dependency>
+		  <groupId>cglib</groupId>
+		  <artifactId>cglib-nodep</artifactId>
+		  <version>2.1_3</version>
+		</dependency>        
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -319,7 +327,14 @@
       <version>1.0</version>
       <scope>test</scope>
     </dependency>
-        
+    <!-- This jar is added because jboss startup throwing exception
+      Failed to load class "org.slf4j.impl.StaticLoggerBinder" -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>1.5.8</version>
+		<scope>test</scope>
+	</dependency>        
     </dependencies>
 
     <distributionManagement>
