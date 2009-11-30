@@ -262,8 +262,8 @@
     <!-- For persisting information about the connector such as chunking large messages -->
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.2.0.ga</version>
+      <artifactId>hibernate-core</artifactId>
+      <version>3.3.2.GA</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -272,6 +272,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>2.1_3</version>
+      <scope>provided</scope>
+	</dependency>     
     <!-- Needed for logging -->
     <dependency>
       <groupId>log4j</groupId>

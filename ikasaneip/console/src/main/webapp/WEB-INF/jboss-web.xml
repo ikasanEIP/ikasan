@@ -1,3 +1,9 @@
 <jboss-web>
     <context-root>console</context-root>
+    <class-loading java2ClassLoadingCompliance="false">
+      <loader-repository>
+    	org.ikasan:loader=ikasanclassloader
+        <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+      </loader-repository>
+    </class-loading>    
 </jboss-web>
