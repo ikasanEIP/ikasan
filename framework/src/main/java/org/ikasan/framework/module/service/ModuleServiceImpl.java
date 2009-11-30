@@ -42,6 +42,7 @@ package org.ikasan.framework.module.service;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.framework.flow.initiator.dao.InitiatorCommandDao;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.InitiatorCommand;
@@ -58,6 +59,11 @@ public class ModuleServiceImpl implements ModuleService
 {
     private InitiatorCommandDao initiatorCommandDao;
     
+    /**
+     * Logger instance
+     */
+    private Logger logger = Logger.getLogger(ModuleServiceImpl.class);
+  
     
     /**
      * runtime conatiner for holding modules
@@ -104,6 +110,7 @@ public class ModuleServiceImpl implements ModuleService
      * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void stopInitiator(String moduleName, String initiatorName, String actor){
+    	logger.info("stopInitiator : "+moduleName+"."+initiatorName+" requested by ["+actor+"]");
         Initiator initiator = resolveInitiator(moduleName, initiatorName);
         
         //create and persist an instance of InitiatorCommand
@@ -119,7 +126,8 @@ public class ModuleServiceImpl implements ModuleService
      * @see org.ikasan.framework.module.service.ModuleService#startInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
     public void startInitiator(String moduleName, String initiatorName, String actor){
-        Initiator initiator = resolveInitiator(moduleName, initiatorName);
+    	logger.info("startInitiator : "+moduleName+"."+initiatorName+" requested by ["+actor+"]");
+    	Initiator initiator = resolveInitiator(moduleName, initiatorName);
         
         //create and persist an instance of InitiatorCommand
         InitiatorCommand initiatorCommand = new InitiatorCommand(moduleName, initiatorName, "start",actor);
