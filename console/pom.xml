@@ -284,6 +284,15 @@
             <version>1.4-rc3</version>
             <scope>provided</scope>
         </dependency>
+        <!-- This jar is added because jboss startup throwing exception
+             Failed to load class "org.slf4j.impl.StaticLoggerBinder" -->
+	    <dependency>
+		   <groupId>org.slf4j</groupId>
+		   <artifactId>slf4j-log4j12</artifactId>
+		   <version>1.5.8</version>
+	    </dependency>        
+
+
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -327,14 +336,6 @@
       <version>1.0</version>
       <scope>test</scope>
     </dependency>
-    <!-- This jar is added because jboss startup throwing exception
-      Failed to load class "org.slf4j.impl.StaticLoggerBinder" -->
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.5.8</version>
-		<scope>test</scope>
-	</dependency>        
     </dependencies>
 
     <distributionManagement>
