@@ -35,9 +35,9 @@
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
 
-DROP TABLE IF EXISTS `ikasan01`.`floweventtriggerparameters`;
-DROP TABLE IF EXISTS `ikasan01`.`floweventtrigger`;
-CREATE TABLE  `ikasan01`.`floweventtrigger` (
+DROP TABLE IF EXISTS `Ikasan01`.`FlowEventTriggerParameters`;
+DROP TABLE IF EXISTS `Ikasan01`.`FlowEventTrigger`;
+CREATE TABLE  `Ikasan01`.`FlowEventTrigger` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(128) NOT NULL,
   `FlowName` varchar(128) NOT NULL,
@@ -47,11 +47,11 @@ CREATE TABLE  `ikasan01`.`floweventtrigger` (
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE  `ikasan01`.`floweventtriggerparameters` (
+CREATE TABLE  `Ikasan01`.`FlowEventTriggerParameters` (
   `TriggerId` bigint(20) NOT NULL,
   `ParamValue` varchar(128) DEFAULT NULL,
   `ParamName` varchar(128) NOT NULL,
   PRIMARY KEY (`TriggerId`,`ParamName`),
   KEY `FK71FA5536C7DD805` (`TriggerId`),
-  CONSTRAINT `FK71FA5536C7DD805` FOREIGN KEY (`TriggerId`) REFERENCES `floweventtrigger` (`Id`)
+  CONSTRAINT `FK71FA5536C7DD805` FOREIGN KEY (`TriggerId`) REFERENCES `FlowEventTrigger` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
