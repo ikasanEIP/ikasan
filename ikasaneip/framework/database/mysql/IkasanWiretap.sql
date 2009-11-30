@@ -35,8 +35,8 @@
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
 
-DROP TABLE IF EXISTS `ikasan01`.`ikasanwiretap`;
-CREATE TABLE  `ikasan01`.`ikasanwiretap` (
+DROP TABLE IF EXISTS `Ikasan01`.`IkasanWiretap`;
+CREATE TABLE  `Ikasan01`.`IkasanWiretap` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(128) NOT NULL,
   `FlowName` varchar(128) NOT NULL,
