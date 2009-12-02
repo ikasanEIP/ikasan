@@ -38,26 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.initiator.messagedriven.jca.jboss;
+package org.ikasan.framework.initiator.messagedriven.jca.spring;
 
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener;
+import org.ikasan.framework.initiator.messagedriven.jca.MessageListenerContainer;
 
-import org.springframework.transaction.jta.JtaTransactionManager;
-
-public class JBossTransactionManager extends JtaTransactionManager
+/**
+ * Extension of Spring's JmsMessageEndpointManager to expose listener setup failures to a registered Listener
+ *
+ * @author Ikasan Development Team
+ *
+ */
+public class JmsMessageEndpointManager extends org.springframework.jms.listener.endpoint.JmsMessageEndpointManager 
+    implements MessageListenerContainer
 {
-    @Override
-    public Transaction createTransaction(String name, int timeout) throws NotSupportedException, SystemException
+    /**
+     * Registered connection listener
+     */
+    private ConnectionListener connectionListener;
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.initiator.messagedriven.jca.MessageListenerContainer#setConnectionListener(org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener)
+     */
+    public void setConnectionListener(ConnectionListener connectionListener)
     {
-        if (this.getTransactionManager().getTransaction() != null)
-        {
-            return this.getTransactionManager().getTransaction();
-        }
-        else
-        {
-            return super.createTransaction(name, timeout);
-        }
+        this.connectionListener = connectionListener;
     }
 }

@@ -47,7 +47,8 @@ import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
 /**
- * Utility class for obtaining the JBoss JCA Resource Adapter for use with JCA JMS Endpoint implementations
+ * Utility class for obtaining the JBoss JCA Resource Adapter for use 
+ * with JCA JMS Endpoint implementations
  **/
 public abstract class JBossResourceAdapterUtils
 {
@@ -58,7 +59,8 @@ public abstract class JBossResourceAdapterUtils
 
     /**
      * Obtain the default JBoss Resource Adapter through a JMX invocation
-     * for the JBossWorkManagerMBean.
+     * for the JBossWorkManagerMBean.ResourceAdapter
+     * @return ResourceAdapter
      * @see org.jboss.resource.work.JBossWorkManagerMBean
      */
     public static ResourceAdapter getResourceAdapter()
@@ -74,7 +76,7 @@ public abstract class JBossResourceAdapterUtils
         }
         catch (Exception e)
         {
-            throw new IllegalStateException("Cannot get JBoss Resource Adapter:" + e);
+            throw new IllegalStateException("Cannot get JBoss Resource Adapter:", e);
         }
     }
 

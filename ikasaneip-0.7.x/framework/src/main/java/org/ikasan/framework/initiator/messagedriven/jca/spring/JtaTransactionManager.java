@@ -38,50 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.initiator.messagedriven.jca;
+package org.ikasan.framework.initiator.messagedriven.jca.spring;
 
-import org.apache.log4j.Logger;
-import org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener;
-import org.ikasan.framework.initiator.messagedriven.MessageListenerContainer;
-import org.springframework.jms.listener.endpoint.JmsMessageEndpointManager;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 
 /**
- * Extension of Spring's DefaultMessageListenerContainer to expose listener setup failures to a registered Listener
- *
+ * Work-around to return a transaction manager to Spring if one is already available.
+ * Without this work-around Spring assumes it will always initiate the transaction,
+ * but this is not the case for inbound JCA connectors.
+ * 
  * @author Ikasan Development Team
  *
  */
-public class SpringMessageListenerContainer extends JmsMessageEndpointManager implements MessageListenerContainer
+public class JtaTransactionManager extends org.springframework.transaction.jta.JtaTransactionManager
 {
- private Logger logger = Logger.getLogger(SpringMessageListenerContainer.class);
-
-    /**
-     * Flag indicating last attempt to connect was a failure
-     */
-    private boolean listenerSetupFailure = false;
-
-    /**
-     * Registered failure listener
-     */
-    private ListenerSetupFailureListener listenerSetupExceptionListener;
-
-
     /* (non-Javadoc)
-     * @see org.ikasan.framework.initiator.messagedriven.MessageListenerContainer#setListenerSetupExceptionListener(org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener)
+     * @see org.springframework.transaction.jta.JtaTransactionManager#createTransaction(java.lang.String, int)
      */
-    public void setListenerSetupExceptionListener(ListenerSetupFailureListener listenerSetupExceptionListener)
+    @Override
+    public Transaction createTransaction(String name, int timeout) throws NotSupportedException, SystemException
     {
-        this.listenerSetupExceptionListener = listenerSetupExceptionListener;
-    }
+        if (this.getTransactionManager().getTransaction() != null)
+        {
+            return this.getTransactionManager().getTransaction();
+        }
 
-
-    /**
-     * Accessor for listenerSetupFailure flag
-     *
-     * @return listenerSetupFailure
-     */
-    public boolean isListenerSetupFailure()
-    {
-        return listenerSetupFailure;
+        return super.createTransaction(name, timeout);
     }
 }
