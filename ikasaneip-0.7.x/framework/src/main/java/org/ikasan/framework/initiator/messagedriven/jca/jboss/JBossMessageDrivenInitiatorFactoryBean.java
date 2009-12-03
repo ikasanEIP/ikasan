@@ -113,7 +113,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
      * (Topics). Set to <code>false</code> for Point-to-Point domain (Queues).
      */
     private Boolean pubSubDomain = Boolean.TRUE;
-    
+
     /**
      * Configures the initiator to reuse the priority from the message on the
      * created Event
@@ -436,6 +436,16 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
         this.deliveryActive = deliveryActive;
     }
 
+    public Boolean getPubSubDomain()
+    {
+        return pubSubDomain;
+    }
+
+    public void setPubSubDomain(Boolean pubSubDomain)
+    {
+        this.pubSubDomain = pubSubDomain;
+    }
+
     /**
      * @return the useDLQ
      */
@@ -585,22 +595,21 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
         }
 
         JBossJmsActivationSpecConfig specConfig = new JBossJmsActivationSpecConfig();
-        
+
         // standard JMS
-        
+
         // TODO desintation and destinationResolver
-        
+
         specConfig.setDestinationName(this.destinationName);
+        //TODO determin the pubSubDomain flag based on destination type.
         specConfig.setPubSubDomain(this.pubSubDomain.booleanValue());
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
+        specConfig.setClientId(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
         if(this.subscriptionDurable)
         {
             specConfig.setDurableSubscriptionName(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
         }
-        
-        // TODO - currently fails whilst setting this
-        //specConfig.setClientId(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
-        
+
         specConfig.setMessageSelector(this.messageSelector);
         specConfig.setAcknowledgeMode(this.acknowledgementMode.intValue());
         specConfig.setMaxConcurrency(this.maxMessages.intValue());
