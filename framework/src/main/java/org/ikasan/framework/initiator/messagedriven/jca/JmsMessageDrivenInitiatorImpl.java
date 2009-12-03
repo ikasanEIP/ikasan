@@ -55,6 +55,7 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
+import org.ikasan.framework.initiator.messagedriven.jca.MessageListenerContainer;
 import org.ikasan.framework.monitor.MonitorSubject;
 
 /**
@@ -67,18 +68,17 @@ import org.ikasan.framework.monitor.MonitorSubject;
  */
 public abstract class JmsMessageDrivenInitiatorImpl 
     extends AbstractInitiator 
-    implements JmsMessageDrivenInitiator, MonitorSubject, ConnectionListener
+    implements JmsMessageDrivenInitiator, MonitorSubject, ListenerSetupFailureListener
 {
-// TODO - need to investigate whether these attributes are of use
-//    /**
-//     * Delay between listener setup attempts
-//     */
-//    private int listenerSetupFailureRetryDelay=10000;
-//
-//    /**
-//     * Maximum number of times underlying container will attempt to set up (poll) for messages
-//     */
-//    private int maxListenerSetupFailureRetries = IkasanExceptionAction.RETRY_INFINITE;
+    /**
+     * Delay between listener setup attempts
+     */
+    private int listenerSetupFailureRetryDelay=10000;
+
+    /**
+     * Maximum number of times underlying container will attempt to set up (poll) for messages
+     */
+    private int maxListenerSetupFailureRetries = IkasanExceptionAction.RETRY_INFINITE;
 
     private static final String INITIATOR_STOPPING = "Initiator cannot process message whilst managing a stop request.";
 
@@ -257,7 +257,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
     public void setMessageListenerContainer(MessageListenerContainer messageListenerContainer)
     {
         this.messageListenerContainer = messageListenerContainer;
-        messageListenerContainer.setConnectionListener(this);
+        messageListenerContainer.setListenerSetupExceptionListener(this);
     }
     
     /**
@@ -271,14 +271,11 @@ public abstract class JmsMessageDrivenInitiatorImpl
     }
     
     /* (non-Javadoc)
-     * @see org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener#notify(java.lang.Throwable)
+     * @see org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener#notifyListenerSetupFailure(java.lang.Throwable)
      */
-    public void notify(Throwable throwable)
-    {
-        logger.error("Underlying JMS connection failed", throwable);
-        //        handleRetry(maxListenerSetupFailureRetries, listenerSetupFailureRetryDelay);
+    public void notifyListenerSetupFailure(Throwable throwable){
+        handleRetry(maxListenerSetupFailureRetries, listenerSetupFailureRetryDelay);
     }
-
     /**
      * JMS Message specific type handling for <code>BytesMessage</code>
      * 
@@ -361,23 +358,23 @@ public abstract class JmsMessageDrivenInitiatorImpl
                 + "]");
     }
 
-//    /**
-//     * Setter for overriding the default value (10000)of listenerSetupFailureRetryDelay
-//     * 
-//     * @param listenerSetupFailureRetryDelay in milliseconds
-//     */
-//    public void setListenerSetupFailureRetryDelay(int listenerSetupFailureRetryDelay) {
-//		this.listenerSetupFailureRetryDelay = listenerSetupFailureRetryDelay;
-//	}
+    /**
+     * Setter for overriding the default value (10000)of listenerSetupFailureRetryDelay
+     * 
+     * @param listenerSetupFailureRetryDelay in milliseconds
+     */
+    public void setListenerSetupFailureRetryDelay(int listenerSetupFailureRetryDelay) {
+		this.listenerSetupFailureRetryDelay = listenerSetupFailureRetryDelay;
+	}
 
-//	/**
-//	 * Setter for overriding the default value (Indefinite) of listenerSetupFailureRetryDelay
-//	 * 
-//	 * @param maxListenerSetupFailureRetries
-//	 */
-//	public void setMaxListenerSetupFailureRetries(int maxListenerSetupFailureRetries) {
-//		this.maxListenerSetupFailureRetries = maxListenerSetupFailureRetries;
-//	}
+	/**
+	 * Setter for overriding the default value (Indefinite) of listenerSetupFailureRetryDelay
+	 * 
+	 * @param maxListenerSetupFailureRetries
+	 */
+	public void setMaxListenerSetupFailureRetries(int maxListenerSetupFailureRetries) {
+		this.maxListenerSetupFailureRetries = maxListenerSetupFailureRetries;
+	}
     /**
      * This inner class is responsible for putting the MessageListenerContainer to sleep for a specified period and
      * reawakening.

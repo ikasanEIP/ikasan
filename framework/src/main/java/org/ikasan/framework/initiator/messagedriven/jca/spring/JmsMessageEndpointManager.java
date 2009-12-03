@@ -40,7 +40,7 @@
  */
 package org.ikasan.framework.initiator.messagedriven.jca.spring;
 
-import org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener;
+import org.ikasan.framework.initiator.messagedriven.jca.ListenerSetupFailureListener;
 import org.ikasan.framework.initiator.messagedriven.jca.MessageListenerContainer;
 
 /**
@@ -53,15 +53,32 @@ public class JmsMessageEndpointManager extends org.springframework.jms.listener.
     implements MessageListenerContainer
 {
     /**
-     * Registered connection listener
+     * Flag indicating last attempt to connect was a failure
      */
-    private ConnectionListener connectionListener;
-
+    private boolean listenerSetupFailure = false;
+    
+    /**
+     * Registered failure listener
+     */
+    private ListenerSetupFailureListener listenerSetupExceptionListener;
+    
+    
     /* (non-Javadoc)
-     * @see org.ikasan.framework.initiator.messagedriven.jca.MessageListenerContainer#setConnectionListener(org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener)
+     * @see org.ikasan.framework.initiator.messagedriven.MessageListenerContainer#setListenerSetupExceptionListener(org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener)
      */
-    public void setConnectionListener(ConnectionListener connectionListener)
+    public void setListenerSetupExceptionListener(ListenerSetupFailureListener listenerSetupExceptionListener)
     {
-        this.connectionListener = connectionListener;
+        this.listenerSetupExceptionListener = listenerSetupExceptionListener;
+    }
+
+
+    /**
+     * Accessor for listenerSetupFailure flag
+     * 
+     * @return listenerSetupFailure
+     */
+    public boolean isListenerSetupFailure()
+    {
+        return listenerSetupFailure;
     }
 }

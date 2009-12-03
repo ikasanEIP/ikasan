@@ -46,7 +46,6 @@ import javax.jms.Session;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener;
 import org.ikasan.framework.initiator.messagedriven.jca.EventMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiatorImpl;
@@ -84,9 +83,6 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
      * destination is not directly supplied
      */
     private String destinationName;
-
-    /** connection listener for failed connections */
-    private ConnectionListener connectionListener;
 
     /** The flow */
     private Flow flow;
@@ -571,7 +567,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
             this.initiator = constructInitiator(endpointManager);
             endpointManager.setMessageListener(this.initiator);
             endpointManager.setAutoStartup(this.deliveryActive.booleanValue());
-            endpointManager.setConnectionListener(this.connectionListener);
+//            endpointManager.setConnectionListener(this.connectionListener);
             endpointManager.afterPropertiesSet();
         }
         return this.initiator;
