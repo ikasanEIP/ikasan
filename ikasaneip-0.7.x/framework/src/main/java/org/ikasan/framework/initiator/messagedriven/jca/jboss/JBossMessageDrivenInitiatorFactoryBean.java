@@ -604,7 +604,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
         
         String uniqueName = this.moduleName + '-' + this.flow.getName() + '-' + this.name;
-        specConfig.setClientId(uniqueName);
+//        specConfig.setClientId(uniqueName);
         if(this.subscriptionDurable.booleanValue())
         {
             specConfig.setDurableSubscriptionName(uniqueName);
