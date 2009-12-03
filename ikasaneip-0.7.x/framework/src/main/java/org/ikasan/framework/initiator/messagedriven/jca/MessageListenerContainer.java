@@ -40,6 +40,8 @@
  */
 package org.ikasan.framework.initiator.messagedriven.jca;
 
+import org.ikasan.framework.initiator.messagedriven.jca.ListenerSetupFailureListener;
+
 /**
  * Management interface for MessageListenerContainers that shields clients from underlying technical implementation
  * 
@@ -68,9 +70,9 @@ public interface MessageListenerContainer
     
     
     /**
-     * Allows registration of a listener object that responds to listener on failed connections
+     * Allows registration of a listener object that responds to listener setup failures
      * 
-     * @param connectionListener
+     * @param listenerSetupExceptionListener
      */
-    public void setConnectionListener(ConnectionListener connectionListener);
+    public void setListenerSetupExceptionListener(ListenerSetupFailureListener listenerSetupExceptionListener);
 }
