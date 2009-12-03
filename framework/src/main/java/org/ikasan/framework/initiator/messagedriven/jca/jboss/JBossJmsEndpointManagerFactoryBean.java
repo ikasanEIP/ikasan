@@ -109,6 +109,9 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /** Whether the subscription to JMS destination is durable. Default is true. */
     private Boolean subscriptionDurable = Boolean.TRUE;
 
+    /** only create a single instance of the endpoint manager */
+    JmsMessageEndpointManager endpointManager;
+    
     /**
      * Which JMS domain to use. Default is true for Publish/Subscribe domain
      * (Topics). Set to <code>false</code> for Point-to-Point domain (Queues).
@@ -619,23 +622,25 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
      */
     public Object getObject() throws Exception
     {
-        JBossJmsActivationSpecConfig specConfig = constructActivationSpec();
-        JBossJmsActivationSpecFactory specFactory = new JBossJmsActivationSpecFactory();
-        JtaTransactionManager transactionManager = new JtaTransactionManager();
-        transactionManager.afterPropertiesSet();
-        
-        // create Spring endpointManager
-        JmsMessageEndpointManager endpointManager = new JmsMessageEndpointManager();
-        endpointManager.setActivationSpecFactory(specFactory);
-        endpointManager.setActivationSpecConfig(specConfig);
-        endpointManager.setResourceAdapter(JBossResourceAdapterUtils.getResourceAdapter());
-        endpointManager.setMessageListener(this.initiator);
-        endpointManager.setAutoStartup(this.deliveryActive.booleanValue());
-        endpointManager.setTransactionManager(transactionManager);
-//        endpointManager.setDestinationResolver(destinationResolver);
-//        endpointManager.setListenerSetupExceptionListener((ListenerSetupFailureListener)this.initiator);
-        endpointManager.afterPropertiesSet();
-        
+        if(this.endpointManager == null)
+        {
+            JBossJmsActivationSpecConfig specConfig = constructActivationSpec();
+            JBossJmsActivationSpecFactory specFactory = new JBossJmsActivationSpecFactory();
+            JtaTransactionManager transactionManager = new JtaTransactionManager();
+            transactionManager.afterPropertiesSet();
+            
+            // create Spring endpointManager
+            this.endpointManager = new JmsMessageEndpointManager();
+            endpointManager.setActivationSpecFactory(specFactory);
+            endpointManager.setActivationSpecConfig(specConfig);
+            endpointManager.setResourceAdapter(JBossResourceAdapterUtils.getResourceAdapter());
+            endpointManager.setMessageListener(this.initiator);
+            endpointManager.setAutoStartup(this.deliveryActive.booleanValue());
+            endpointManager.setTransactionManager(transactionManager);
+    //        endpointManager.setDestinationResolver(destinationResolver);
+    //        endpointManager.setListenerSetupExceptionListener((ListenerSetupFailureListener)this.initiator);
+            endpointManager.afterPropertiesSet();
+        }
         return endpointManager;
     }
 
@@ -653,15 +658,14 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
         JBossJmsActivationSpecConfig specConfig = new JBossJmsActivationSpecConfig();
         
         // standard JMS
+//        specConfig.setClientId(this.moduleName);
         specConfig.setDestinationName(this.destinationName);
         specConfig.setPubSubDomain(this.pubSubDomain.booleanValue());
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
 
-        String uniqueName = this.moduleName + '-' + this.flow.getName() + '-' + this.name;
-//        specConfig.setClientId(uniqueName);
         if(this.subscriptionDurable.booleanValue())
         {
-            specConfig.setDurableSubscriptionName(uniqueName);
+            specConfig.setDurableSubscriptionName(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
         }
         
         specConfig.setMessageSelector(this.messageSelector);
