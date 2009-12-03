@@ -57,107 +57,13 @@
   <packaging>jar</packaging>
   <version>0.8.0-SNAPSHOT</version>
   <name>Connector Base</name>
-  <organization>
-    <name>Ikasan</name>
-    <url>http://www.ikasan.org</url>
-  </organization>
-  <url>http://www.ikasan.org</url>
-  <inceptionYear>2007</inceptionYear>
   <description>The common library for the Ikasan Enterprise Integration Platform</description>
-  <developers>
-    <developer>
-      <id>verbma</id>
-      <name>Martijn Verburg</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>support manager</role>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>duncro</id>
-      <name>Ross Duncan</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>mitcje</id>
-      <name>Jeff Mitchell</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>hasasu</id>
-      <name>Summer Hasani</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>suetju</id>
-      <name>Junichi Suetake</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>koukhe</id>
-      <name>Herodotos Koukkides</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-  </developers>
-  <licenses>
-    <license>
-      <name>Modified BSD License</name>
-      <url>http://www.ikasan.org/license.html</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-  <mailingLists>
-    <mailingList>
-      <name>Ikasan Users</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Development</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Announce</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
-    </mailingList>
-  </mailingLists>
-  <issueManagement>
-    <url>http://open.jira.com/browse/IKASAN</url>
-  </issueManagement>
+
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-base</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-base</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-base</url>
+    </scm>
 
   <build>
     <resources>
@@ -231,14 +137,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <!-- Report from the day we became Ikasan -->
-        <configuration>
-          <type>date</type>
-          <dates>
-            <date implementation="java.lang.String">2008-05-21</date>
-          </dates>
-          <dateFormat>yyyy-MM-dd</dateFormat>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -320,22 +218,12 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <repositories>
   <repository>
     <id>jboss</id>
     <url>http://repository.jboss.com/maven2</url>
   </repository>
   </repositories>
-  <distributionManagement>
-      <repository>
-          <id>ikasaneip-releases</id>
-          <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-      </repository>
-      <snapshotRepository>
-          <id>ikasaneip-snapshots</id>
-          <name>Ikasan EIP Snapshot Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
+
 </project>

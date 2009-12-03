@@ -57,108 +57,17 @@
   <packaging>jar</packaging>
   <version>0.8.0-SNAPSHOT</version>
   <name>Connector Base Filetransfer</name>
-  <organization>
-    <name>Ikasan</name>
-    <url>http://www.ikasan.org</url>
-  </organization>
-  <url>http://www.ikasan.org</url>
-  <inceptionYear>2007</inceptionYear>
   <description>The base library to support the file transfer connectors in the Ikasan Enterprise Integration Platform</description>
-  <developers>
-    <developer>
-      <id>verbma</id>
-      <name>Martijn Verburg</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>support manager</role>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>duncro</id>
-      <name>Ross Duncan</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>mitcje</id>
-      <name>Jeff Mitchell</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>hasasu</id>
-      <name>Summer Hasani</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>suetju</id>
-      <name>Junichi Suetake</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>koukhe</id>
-      <name>Herodotos Koukkides</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-  </developers>
-  <licenses>
-    <license>
-      <name>Modified BSD License</name>
-      <url>http://www.ikasan.org/license.html</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-  <mailingLists>
-    <mailingList>
-      <name>Ikasan Users</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Development</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Announce</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
-    </mailingList>
-  </mailingLists>
-  <issueManagement>
-    <url>http://open.jira.com/browse/IKASAN</url>
-  </issueManagement>
-
+    <!-- 
+         Need to specify scm details here because changelog plugin uses the artifact id 
+         to the scm details (e.g. ikasan-framework) as opposed to the svn folder (e.g. 'framework').
+         TODO Change either artifact id or source folder name
+      -->
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-basefiletransfer</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-basefiletransfer</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-basefiletransfer</url>
+    </scm>
   <build>
     <resources>
       <resource>
@@ -227,14 +136,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <!-- Report from the day we became Ikasan -->
-        <configuration>
-          <type>date</type>
-          <dates>
-            <date implementation="java.lang.String">2008-05-24</date>
-          </dates>
-          <dateFormat>yyyy-MM-dd</dateFormat>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -328,16 +229,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <distributionManagement>
-      <repository>
-          <id>ikasaneip-releases</id>
-          <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-      </repository>
-      <snapshotRepository>
-          <id>ikasaneip-snapshots</id>
-          <name>Ikasan EIP Snapshot Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
 </project>
