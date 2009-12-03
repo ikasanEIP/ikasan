@@ -47,8 +47,120 @@
     <artifactId>ikasan-build</artifactId>
     <version>0.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
+    <organization>
+      <name>Ikasan</name>
+      <url>http://www.ikasan.org</url>
+    </organization>
+    <inceptionYear>2007</inceptionYear>
     <name>Ikasan Build Project</name>
+    <!-- List the core committers -->
+    <developers>
+      <developer>
+        <id>verbma</id>
+        <name>Martijn Verburg</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>duncro</id>
+        <name>Ross Duncan</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>mitcje</id>
+        <name>Jeff Mitchell</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>hasasu</id>
+        <name>Summer Hasani</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>suetju</id>
+        <name>Junichi Suetake</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>koukhe</id>
+        <name>Herodotos Koukkides</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+    </developers>
+    <!-- Contributors -->
+    <contributors>
+        <contributor>
+            <name>Chia-Hung Lin</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Ioannis Mavroukakis</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Jaikiran Pai</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Kamlesh Bhatt</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Matthew Potter</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Prasad Saya</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+    </contributors>
+    <!-- Licenses -->
     <licenses>
         <license>
             <name>Modified BSD License</name>
@@ -56,6 +168,7 @@
             <distribution>manual</distribution>
         </license>
     </licenses>
+    <!-- Our mailing lists -->
     <mailingLists>
         <mailingList>
             <name>Ikasan Users</name>
@@ -76,10 +189,10 @@
             <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
         </mailingList>
     </mailingLists>
+    <!-- Our Issue Management -->
     <issueManagement>
         <url>http://open.jira.com/browse/IKASAN</url>
     </issueManagement>
-
     <!-- Repositories required for Ikasan modules -->
     <repositories>
         <!-- Ikasan snapshot repo -->
@@ -115,19 +228,6 @@
             <enabled>false</enabled>
           </snapshots>
         </repository>
-        <!-- Right now we don't have any dependencies on JBoss snapshot repo
-         Uncomment, if required later on
-         <repository>
-          <id>snapshots.jboss.org</id>
-          <url>http://snapshots.jboss.org/maven2</url>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
-        -->
     </repositories>
     <!-- Plugin repositories -->
     <pluginRepositories>
@@ -142,7 +242,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </pluginRepository>
-            <!-- Ikasan release repo for plugins -->
+        <!-- Ikasan release repo for plugins -->
         <pluginRepository>
             <id>ikasaneip-releases</id>
             <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases/</url>
@@ -154,8 +254,13 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
-    <!-- Used during releases -->
+    <!-- SCM details -->
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip</url>
+    </scm>
+    <!-- Distribution for releases -->
     <distributionManagement>
         <repository>
             <id>ikasaneip-releases</id>
@@ -168,7 +273,6 @@
             <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
 </project>
 
