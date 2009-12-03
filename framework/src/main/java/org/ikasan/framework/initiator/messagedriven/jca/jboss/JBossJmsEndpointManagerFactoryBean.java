@@ -390,6 +390,54 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     }
 
     /**
+     * @return the messageSelector
+     */
+    public String getMessageSelector()
+    {
+        return messageSelector;
+    }
+
+    /**
+     * @param messageSelector the messageSelector to set
+     */
+    public void setMessageSelector(String messageSelector)
+    {
+        this.messageSelector = messageSelector;
+    }
+
+    /**
+     * @return the subscriptionDurable
+     */
+    public Boolean getSubscriptionDurable()
+    {
+        return subscriptionDurable;
+    }
+
+    /**
+     * @param subscriptionDurable the subscriptionDurable to set
+     */
+    public void setSubscriptionDurable(Boolean subscriptionDurable)
+    {
+        this.subscriptionDurable = subscriptionDurable;
+    }
+
+    /**
+     * @return the pubSubDomain
+     */
+    public Boolean getPubSubDomain()
+    {
+        return pubSubDomain;
+    }
+
+    /**
+     * @param pubSubDomain the pubSubDomain to set
+     */
+    public void setPubSubDomain(Boolean pubSubDomain)
+    {
+        this.pubSubDomain = pubSubDomain;
+    }
+
+    /**
      * @return the keepAlive
      */
     public Integer getKeepAlive()
@@ -608,13 +656,13 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
         specConfig.setDestinationName(this.destinationName);
         specConfig.setPubSubDomain(this.pubSubDomain.booleanValue());
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
+
+        String uniqueName = this.moduleName + '-' + this.flow.getName() + '-' + this.name;
+        specConfig.setClientId(uniqueName);
         if(this.subscriptionDurable.booleanValue())
         {
-            specConfig.setDurableSubscriptionName(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
+            specConfig.setDurableSubscriptionName(uniqueName);
         }
-        
-        // TODO - currently fails whilst setting this
-        //specConfig.setClientId(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
         
         specConfig.setMessageSelector(this.messageSelector);
         specConfig.setAcknowledgeMode(this.acknowledgementMode.intValue());
