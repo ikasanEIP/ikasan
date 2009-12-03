@@ -60,37 +60,6 @@
 	<name>Connector File Transfer Resource Adapter Parent</name>
 	<url>http://www.ikasan.org</url>
 
-  <licenses>
-    <license>
-      <name>Modified BSD License</name>
-      <url>http://www.ikasan.org/license.html</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-  <mailingLists>
-    <mailingList>
-      <name>Ikasan Users</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Development</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Announce</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
-    </mailingList>
-  </mailingLists>
-  <issueManagement>
-    <url>http://open.jira.com/browse/IKASAN</url>
-  </issueManagement>
-  
 	<build>
 		<plugins>
 			<plugin>
@@ -157,18 +126,12 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
       </plugin>
+      <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
-        <!-- Report from the day we became Ikasan -->
-        <configuration>
-          <type>date</type>
-          <dates>
-            <date implementation="java.lang.String">2008-06-01</date>
-          </dates>
-          <dateFormat>yyyy-MM-dd</dateFormat>
-        </configuration>
       </plugin>
+       -->
     </plugins>
   </reporting>
   <dependencies>
@@ -254,20 +217,7 @@
       <version>1.0</version>
       <scope>test</scope>
     </dependency>
-    
-         
   </dependencies>
-	<distributionManagement>
-		<repository>
-			<id>ikasaneip-releases</id>
-			<name>Ikasan EIP Releases Repository</name>
-			<url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>ikasaneip-snapshots</id>
-			<name>Ikasan EIP Snapshot Repository</name>
-			<url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
+
 </project>
 
