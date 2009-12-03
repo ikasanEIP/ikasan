@@ -598,16 +598,15 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
 
         // standard JMS
 
+//        specConfig.setClientId(this.moduleName);
         specConfig.setDestinationName(this.destinationName);
         //TODO determin the pubSubDomain flag based on destination type.
         specConfig.setPubSubDomain(this.pubSubDomain.booleanValue());
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
         
-        String uniqueName = this.moduleName + '-' + this.flow.getName() + '-' + this.name;
-//        specConfig.setClientId(uniqueName);
         if(this.subscriptionDurable.booleanValue())
         {
-            specConfig.setDurableSubscriptionName(uniqueName);
+            specConfig.setDurableSubscriptionName(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
         }
 
         specConfig.setMessageSelector(this.messageSelector);
