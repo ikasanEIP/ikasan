@@ -46,6 +46,7 @@ import javax.jms.Session;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.initiator.messagedriven.jca.ConnectionListener;
 import org.ikasan.framework.initiator.messagedriven.jca.EventMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiatorImpl;
@@ -56,7 +57,6 @@ import org.ikasan.framework.initiator.messagedriven.jca.jboss.JBossResourceAdapt
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JmsMessageEndpointManager ;
 
 /**
@@ -85,8 +85,8 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
      */
     private String destinationName;
 
-//    /** The transaction manager */
-//    private PlatformTransactionManager transactionManager;
+    /** connection listener for failed connections */
+    private ConnectionListener connectionListener;
 
     /** The flow */
     private Flow flow;
@@ -247,22 +247,6 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
     {
         this.destinationName = destinationName;
     }
-
-//    /**
-//     * @return the transactionManager
-//     */
-//    public PlatformTransactionManager getTransactionManager()
-//    {
-//        return transactionManager;
-//    }
-//
-//    /**
-//     * @param transactionManager the transactionManager to set
-//     */
-//    public void setTransactionManager(PlatformTransactionManager transactionManager)
-//    {
-//        this.transactionManager = transactionManager;
-//    }
 
     /**
      * @return the flow
@@ -587,6 +571,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
             this.initiator = constructInitiator(endpointManager);
             endpointManager.setMessageListener(this.initiator);
             endpointManager.setAutoStartup(this.deliveryActive.booleanValue());
+            endpointManager.setConnectionListener(this.connectionListener);
             endpointManager.afterPropertiesSet();
         }
         return this.initiator;
@@ -612,7 +597,10 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
         specConfig.setDestinationName(this.destinationName);
         specConfig.setPubSubDomain(this.pubSubDomain.booleanValue());
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
-        specConfig.setDurableSubscriptionName(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
+        if(this.subscriptionDurable)
+        {
+            specConfig.setDurableSubscriptionName(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
+        }
         
         // TODO - currently fails whilst setting this
         //specConfig.setClientId(this.moduleName + '-' + this.flow.getName() + '-' + this.name);
@@ -710,4 +698,5 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
             this.name = beanName;
         }
     }
+    
 }
