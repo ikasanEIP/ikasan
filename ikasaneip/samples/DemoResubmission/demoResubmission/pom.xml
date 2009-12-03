@@ -77,23 +77,7 @@
 
       	</plugins>
 	</build>
-  <scm>
-    <connection>scm:svn:https://ikasaneip.svn.sourceforge.net/svnroot/ikasaneip/trunk/samples/DemoResubmission/demoResubmission</connection>
-  </scm>
     
-    
-  <distributionManagement>
-      <repository>
-          <id>ikasaneip-releases</id>
-          <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-      </repository>
-      <snapshotRepository>
-          <id>ikasaneip-snapshots</id>
-          <name>Ikasan EIP Snapshot Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
     
     <dependencies>
     	<dependency>

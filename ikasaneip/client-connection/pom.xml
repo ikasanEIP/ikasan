@@ -58,82 +58,7 @@
   <packaging>jar</packaging>
   <version>0.8.0-SNAPSHOT</version>
   <name>Connector Client</name>
-  <organization>
-    <name>Ikasan</name>
-    <url>http://www.ikasan.org</url>
-  </organization>
-  <url>http://www.ikasan.org</url>
-  <inceptionYear>2008</inceptionYear>
   <description>A client library for a JCA connector that allows safe usage of a Connection, ensuring that it is always closed afterwards.</description>
-  <developers>
-    <developer>
-      <id>verbma</id>
-      <name>Martijn Verburg</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>duncro</id>
-      <name>Ross Duncan</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>mitcje</id>
-      <name>Jeff Mitchell</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>hasasu</id>
-      <name>Summer Hasani</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>suetju</id>
-      <name>Junichi Suetake</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>koukhe</id>
-      <name>Herodotos Koukkides</name>
-      <organization>Ikasan</organization>
-      <organizationUrl>http://www.ikasan.org</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-  </developers>
-  <licenses>
-    <license>
-      <name>Modified BSD License</name>
-      <url>http://www.ikasan.org/license.html</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
 
   <build>
     
@@ -225,17 +150,4 @@
     </dependency>
   </dependencies>
     
-  <distributionManagement>
-      <repository>
-          <id>ikasaneip-releases</id>
-          <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-      </repository>
-      <snapshotRepository>
-          <id>ikasaneip-snapshots</id>
-          <name>Ikasan EIP Snapshot Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
-
 </project>
