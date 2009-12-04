@@ -42,24 +42,20 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/top.jsp"%>
-
-<div class="middle">
-    <h2><fmt:message key="home_heading"/></h2> - <fmt:message key="home_heading2"/>
-    <h2><fmt:message key="home_ikasan_support_title"/></h2>
-    <p>
-        <fmt:message key="home_ikasan_support_text"/>
-    </p>
-    <p>&nbsp;</p>
-    <p>
-        <ul class="homeContent">
-            <li><fmt:message key="home_ikasan_home_page_text"/> <a href="http://www.ikasan.org"><fmt:message key="home_ikasan_home_page_link"/></a></li>
-            <li><fmt:message key="home_ikasan_irc_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/index.php?title=IRC"/><fmt:message key="home_ikasan_irc_link"/></a></li>
-            <li><fmt:message key="home_ikasan_user_mailing_list_text"/> <a href="mailto://ikasaneip-user@lists.sourceforge.net"><fmt:message key="home_ikasan_user_mailing_list_link"/></a> - (<a href="http://lists.sourceforge.net/lists/listinfo/ikasaneip-user"><fmt:message key="home_ikasan_user_mailing_list_subscribe_link"/></a>)</li>        
-            <li><fmt:message key="home_ikasan_wiki_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/"><fmt:message key="home_ikasan_wiki_link"/></a></li>
-            <li><fmt:message key="home_ikasan_jira_text"/> <a href="http://open.jira.com/browse/IKASAN"><fmt:message key="home_ikasan_jira_link"/></a></li>
-        </ul>
-    </p>
-</div>
-
+<%@ include file="/WEB-INF/jsp/top.jsp" %>
+        <div id="content">
+            <h2><fmt:message key="home_heading"/></h2> - <fmt:message key="home_heading2"/>
+            <h2><fmt:message key="home_ikasan_support_title"/></h2>
+            <p>
+                <fmt:message key="home_ikasan_support_text"/>
+            </p>
+            <p>&nbsp;</p>
+            <ul>
+                <li><fmt:message key="home_ikasan_home_page_text"/> <a href="http://www.ikasan.org"><fmt:message key="home_ikasan_home_page_link"/></a></li>
+                <li><fmt:message key="home_ikasan_irc_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/index.php?title=IRC"><fmt:message key="home_ikasan_irc_link"/></a></li>
+                <li><fmt:message key="home_ikasan_user_mailing_list_text"/> <a href="mailto://ikasaneip-user@lists.sourceforge.net"><fmt:message key="home_ikasan_user_mailing_list_link"/></a> - (<a href="http://lists.sourceforge.net/lists/listinfo/ikasaneip-user"><fmt:message key="home_ikasan_user_mailing_list_subscribe_link"/></a>)</li>        
+                <li><fmt:message key="home_ikasan_wiki_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/"><fmt:message key="home_ikasan_wiki_link"/></a></li>
+                <li><fmt:message key="home_ikasan_jira_text"/> <a href="http://open.jira.com/browse/IKASAN"><fmt:message key="home_ikasan_jira_link"/></a></li>
+            </ul>
+        </div>
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

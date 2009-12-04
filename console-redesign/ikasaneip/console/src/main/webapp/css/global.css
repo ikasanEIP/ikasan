@@ -1,0 +1,84 @@
+@charset "utf-8";
+/* CSS Document for Ikasan EIP Console */
+
+/* Make everything have 0 padding and 0 margin by default */
+*
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+body
+{
+    background-color: #CCCCCC;
+}
+
+/* For debug purposes */
+.border
+{
+    border: solid;
+    border-width: 1px;
+}
+
+/* The background colour for the page will default to TODO */
+#container
+{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#content
+{
+    background-color: #FFFFFF;
+    clear: both;
+}
+
+/* The header section TODO Image and Height calculation */
+#header
+{
+    background-color: #FFFFFF; /* TODO Remove later */
+    background-image: url("images/header_background.png");
+    height: 200px;
+    margin-top: 20px;
+}
+
+/* The colour of the h2 heading will be TODO */  
+h2
+{
+    color: red;
+}
+
+/* All images will have their borders removed */
+img
+{
+    border: none;
+}
+
+.menu_item
+{
+    display: inline;
+    list-style-image: url("images/vertical_line.png");
+}
+
+#logo
+{
+    height: 150px;
+    width: 200px;
+}
+
+#mainNavigation
+{
+    float: left;
+}
+
+#minorNavigation
+{
+    float: right;
+}
+
+/* The navigation section background colour matches the default page background colour */
+#navigation
+{
+    background-color: #CCCCCC;
+}
+

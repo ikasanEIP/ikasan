@@ -49,36 +49,48 @@
 <head>
     <title>Ikasan Console</title>
     <meta http-equiv="Content-Language" content="English" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" />
+    <!-- <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" /> -->
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
 </head>
 
 <body>
-<div id="wrap">
-
-    <div id="top"></div>
-    
-    <div id="content">  
-    
-        <div class="header">
-            <h1><a class="white" href="<c:url value='/'/>"><fmt:message key="top_heading"/></a></h1>
-            <h2><fmt:message key="top_heading2"/></h2>
+    <!-- 
+        TODO We may not need a container, but it can be easier to manipulate the 
+        positioning of various div elements inside a parent div as opposed to inside 
+        the body tag 
+     -->
+    <div id="container">
+        <!-- TODO This will need to be altered somewhat -->
+        <div id="header">
+           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <h2><fmt:message key="top_heading2"/></h2>
         </div>
         
-        <div id="subheader">
-        	<ul id="mainNavigation">
-        		<li><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
-        		 | <li><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
-        		<!-- Security around the admin pages -->
-                <security:authorize ifAllGranted="ROLE_ADMIN">
-                   | <li><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
-                </security:authorize>
-        	</ul>
-        	<!-- Logout -->
-            <span id="sessioninfo">
-                <fmt:message key="menu_admin_logged_in_as"/> <security:authentication property="principal.username"/> - <a href="<c:url value="/j_spring_security_logout"/>"><fmt:message key="menu_admin_logout"/></a>
-            </span>
+        <!-- The navigation bar -->
+        <div id="navigation">
+
+            <!-- TODO Main navigation -->
+            <div id="mainNavigation">
+                <ul>
+                    <li class="menu_item"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
+                    <li class="menu_item"><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
+                    <%-- Spring based security around the admin pages --%>
+                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <li class="menu_item"><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
+                    </security:authorize>
+                </ul>
+            </div>
+
+            <!-- TODO Logout and Help -->
+            <div id="minorNavigation">
+                <ul>
+                    <li class="menu_item"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/></a></li>
+                    <li class="menu_item"><fmt:message key="menu_admin_logged_in_as"/> <security:authentication property="principal.username" /></li>
+                    <li class="menu_item"><a href="<c:url value="/j_spring_security_logout"/>"><fmt:message key="menu_admin_logout"/></a></li>
+                </ul>
+            </div>
         </div>
