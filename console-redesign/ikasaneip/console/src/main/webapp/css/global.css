@@ -11,6 +11,7 @@
 body
 {
     background-color: #CCCCCC;
+    font-family: Arial;
 }
 
 /* For debug purposes */
@@ -31,6 +32,19 @@ body
 {
     background-color: #FFFFFF;
     clear: both;
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+h1
+{
+    color: yellow;
+}
+
+/* The colour of the h2 heading will be TODO */  
+h2
+{
+    color: red;
 }
 
 /* The header section TODO Image and Height calculation */
@@ -42,10 +56,12 @@ body
     margin-top: 20px;
 }
 
-/* The colour of the h2 heading will be TODO */  
-h2
+/* The header section TODO Image and Height calculation */
+#homeLinksTable
 {
-    color: red;
+    width: 300px;
+    height: 300px;
+    border: none;
 }
 
 /* All images will have their borders removed */
@@ -82,3 +98,8 @@ img
     background-color: #CCCCCC;
 }
 
+.navigationImage
+{
+    height: 150px;
+    width: 200px;
+}

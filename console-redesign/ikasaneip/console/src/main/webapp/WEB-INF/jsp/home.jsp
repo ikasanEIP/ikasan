@@ -44,18 +44,28 @@
 --%>
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
         <div id="content">
-            <h2><fmt:message key="home_heading"/></h2> - <fmt:message key="home_heading2"/>
-            <h2><fmt:message key="home_ikasan_support_title"/></h2>
-            <p>
-                <fmt:message key="home_ikasan_support_text"/>
-            </p>
-            <p>&nbsp;</p>
-            <ul>
-                <li><fmt:message key="home_ikasan_home_page_text"/> <a href="http://www.ikasan.org"><fmt:message key="home_ikasan_home_page_link"/></a></li>
-                <li><fmt:message key="home_ikasan_irc_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/index.php?title=IRC"><fmt:message key="home_ikasan_irc_link"/></a></li>
-                <li><fmt:message key="home_ikasan_user_mailing_list_text"/> <a href="mailto://ikasaneip-user@lists.sourceforge.net"><fmt:message key="home_ikasan_user_mailing_list_link"/></a> - (<a href="http://lists.sourceforge.net/lists/listinfo/ikasaneip-user"><fmt:message key="home_ikasan_user_mailing_list_subscribe_link"/></a>)</li>        
-                <li><fmt:message key="home_ikasan_wiki_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/"><fmt:message key="home_ikasan_wiki_link"/></a></li>
-                <li><fmt:message key="home_ikasan_jira_text"/> <a href="http://open.jira.com/browse/IKASAN"><fmt:message key="home_ikasan_jira_link"/></a></li>
-            </ul>
+            <h1><fmt:message key="home_heading"/></h1>
+            <fmt:message key="home_heading2"/>
+            <table id="homeLinksTable">
+                <tr>
+                    <td><img class="navigationImage" src="" alt="Arrow"/></a></td>
+                    <td><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="" alt="Events Link"/></a></td>
+                    <td>
+                        <%-- Spring based security around the admin pages --%>
+                        <security:authorize ifAllGranted="ROLE_ADMIN">
+                        <a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="" alt="Admin Link"/></a>
+                        </security:authorize>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><fmt:message key="home_events_description"/></td>
+                    <td>
+                        <security:authorize ifAllGranted="ROLE_ADMIN">
+                        <fmt:message key="home_admin_description"/>
+                        </security:authorize>
+                    </td>
+                </tr>
+            </table>
         </div>
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

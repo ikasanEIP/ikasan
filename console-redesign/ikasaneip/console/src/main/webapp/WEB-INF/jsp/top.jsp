@@ -67,7 +67,7 @@
         <!-- TODO This will need to be altered somewhat -->
         <div id="header">
            <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
-           <h2><fmt:message key="top_heading2"/></h2>
+           <h2><fmt:message key="top_heading"/></h2>
         </div>
         
         <!-- The navigation bar -->
