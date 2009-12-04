@@ -43,34 +43,36 @@
  
 --%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core_rt' %>
-
 <%@ page import="org.springframework.security.ui.AbstractProcessingFilter" %>
 <%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter" %>
 <%@ page import="org.springframework.security.AuthenticationException" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Ikasan Console</title>
     <meta http-equiv="Content-Language" content="English" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" />
+    <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <!-- <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" /> -->
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
+    <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
 </head>
 
 <body>
-
-<div id="wrap">
-
-    <div id="top"></div>
-
-    <div id="content">
-
-        <div class="header">
-            <h1><a class="white" href="./">Ikasan</a></h1>
-            <h2>Enterprise Integration Platform - Console</h2>
+    <!-- 
+        TODO We may not need a container, but it can be easier to manipulate the 
+        positioning of various div elements inside a parent div as opposed to inside 
+        the body tag 
+     -->
+    <div id="container">
+        <!-- TODO This will need to be altered somewhat -->
+        <div id="header">
+           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <h2>Enterprise Integration Platform - Console</h2>
         </div>
-    
-        <div class="middle">
+
+        <div class="content">
             <%-- 
                 This form-login-page form is also used as the
                 form-error-page to ask for a login again.
@@ -78,49 +80,36 @@
             <c:if test="${not empty param.login_error}">
                 <span class="errorMessages">
                     Your login attempt was not successful, try again<br>
-                    <br>
+                    <br />
                     Reason: <%= ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage() %>
                 </span>
             </c:if>
-    
+
             <form id="loginForm" action="<c:url value='j_spring_security_check'/>" method="post" class="dataform fancydataform">
-    
                 <fieldset>
                     <legend>Login</legend>
                     <ol>
                         <li>
-            				<label for="j_username">User</label>
-        				    <input type='text' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
-        			    </li>
+                            <label for="j_username">User</label>
+                            <input type='text' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
+                        </li>
                         <li>
                             <label for="j_password">Password</label>
                             <input type='password' name='j_password'/>
                         </li>
                         <li>
-        				    <label for="_spring_security_remember_me">Save password for 2 weeks</label>
-        				    <input type="checkbox" name="_spring_security_remember_me"/>
-        				</li>	
-                     </ol>   				 
+                            <label for="_spring_security_remember_me">Save password for 2 weeks</label>
+                            <input type="checkbox" name="_spring_security_remember_me"/>
+                        </li>	
+                    </ol>
                 </fieldset>
-    
                 <p>
-        			<input name="submit" type="submit" value="Login" class="controlButton"/>
-            		<input name="reset" type="reset" value="Reset" class="controlButton"/>
+                    <input name="submit" type="submit" value="Login" class="controlButton"/>
+                    <input name="reset" type="reset" value="Reset" class="controlButton"/>
                 </p>
-    
             </form>
         </div>
-    
-        <div id="clear"></div>
-
     </div>
-
-    <div id="bottom"></div>
-
-</div>
-
-<div id="footer">Design by <a href="http://www.minimalistic-design.net">Minimalistic Design</a></div>
-
 </body>
 </html>
 

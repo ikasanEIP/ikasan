@@ -51,7 +51,7 @@ h2
 #header
 {
     background-color: #FFFFFF; /* TODO Remove later */
-    background-image: url("images/header_background.png");
+    background-image: url("../images/header_background.png");
     height: 200px;
     margin-top: 20px;
 }
@@ -73,7 +73,7 @@ img
 .menu_item
 {
     display: inline;
-    list-style-image: url("images/vertical_line.png");
+    list-style-image: url("../images/vertical_line.png");
 }
 
 #logo
