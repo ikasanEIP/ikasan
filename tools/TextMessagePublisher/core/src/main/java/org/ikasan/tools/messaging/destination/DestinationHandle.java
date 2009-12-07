@@ -40,9 +40,12 @@
  */
 package org.ikasan.tools.messaging.destination;
 
+import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
@@ -91,6 +94,30 @@ public class DestinationHandle {
 				
 				public Message createMessage(Session session) throws JMSException {
 					return session.createTextMessage(messageText);
+				}
+			});
+		} catch (JmsException e) {
+			throw new RuntimeException(e);
+		} 
+
+	}
+	
+	public void publishMapMessage(ConnectionFactory connectionFactory,final Map<String, Object> map, int priority) {
+		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
+        
+		// explicit QoS must be set when defined priority, deliveryMode, or timeToLive
+        jmsTemplate.setPriority(priority);
+        jmsTemplate.setExplicitQosEnabled(true);
+		try {
+			jmsTemplate.send(destination, new MessageCreator() {
+				
+				public Message createMessage(Session session) throws JMSException {
+					MapMessage mapMessage = session.createMapMessage();
+					for (String mapKey: map.keySet()){
+						Object mapValue = map.get(mapKey);
+						mapMessage.setObject(mapKey, mapValue);
+					}
+					return mapMessage;
 				}
 			});
 		} catch (JmsException e) {

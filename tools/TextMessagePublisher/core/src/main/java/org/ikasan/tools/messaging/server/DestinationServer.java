@@ -42,12 +42,15 @@ package org.ikasan.tools.messaging.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Message;
 
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
+import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
+import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 
 public class DestinationServer {
 
@@ -55,6 +58,8 @@ public class DestinationServer {
 	private List<DestinationHandle> destinations = new ArrayList<DestinationHandle>();
 	
 	private ConnectionFactory connectionFactory;
+	
+	private MessageXmlSerialiser messageXmlSerialiser = new DefaultMessageXmlSerialiser();
 	
 	
 	public DestinationServer(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
@@ -97,6 +102,33 @@ public class DestinationServer {
 
 	public Message getMessage(String destinationPath, String messageId) {
 		return getDestination(destinationPath).getSimpleSubscriber().getMessage(messageId);
+	}
+
+
+
+	public String getMessageAsXml(String destinationPath, String messageId) {
+		Message message = getMessage(destinationPath, messageId);
+		return messageXmlSerialiser.toXml(message);
+	}
+
+
+
+	public void publishXmlMessage(String destinationPath, String xml,
+			int priority) {
+		
+		Object messageObject = messageXmlSerialiser.getMessageObject(xml);
+		if (messageObject instanceof String){
+			getDestination(destinationPath).publishTextMessage(connectionFactory,  (String)messageObject, priority);
+		} 
+		
+		else if (messageObject instanceof Map){
+			getDestination(destinationPath).publishMapMessage(connectionFactory,  (Map)messageObject, priority);
+		}
+		else{
+			throw new RuntimeException("Unknown message object["+messageObject+"]");
+		}
+
+		
 	}
 	
 	

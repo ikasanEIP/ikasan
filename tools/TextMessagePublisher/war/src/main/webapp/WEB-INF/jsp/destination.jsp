@@ -48,9 +48,7 @@
 <h2><c:out value="${destination.destinationPath}"/></h2>
 
 
-<c:url var="publicationLink" value="publishTextMessage.htm">
-	<c:param name="destinationPath" value="${destination.destinationPath}"/>
-</c:url>
+
 	
 <div id="simpleSubscriber" class="destinationAspect">
 	<h3>Simple Subscriber</h3>
@@ -70,6 +68,7 @@
 					<th>&nbsp;</th>
 					<th>Type</th>
 					<th>Timestamp</th>
+					<th>Export</th>
 				</tr>
 			<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
 				<jsp:useBean id="message" type="javax.jms.Message" />
@@ -94,6 +93,12 @@
 					<td><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></td>
 					<td><c:out value="${messageType}"/></td>
 					<td><c:out value="${messageTimestamp}"/></td>
+					<c:url var="downloadLink" value="export.htm">
+						<c:param name="destinationPath" value="${destination.destinationPath}"/>
+		            	<c:param name="messageId" value="${message.JMSMessageID}"/>
+		            </c:url>
+					<td><a href="${downloadLink}">Download</a></td>
+
 				</tr>
 			</c:forEach>
 	</table>
@@ -114,14 +119,55 @@
 	</c:if>
 </div>
 
+<c:url var="textMessagePublicationLink" value="publishTextMessage.htm">
+	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+</c:url>
+
 <div id="textMessagePublisher" class="destinationAspect">
 	<h3>Text Message Publisher</h3>
-	<form method="post" action="${publicationLink}">
+	<form method="post" action="${textMessagePublicationLink}">
 		<table>
 			
 			<tr>
 				<td>Message Text:</td>
 				<td><textarea rows="20" cols="80" name="messageText"></textarea></td>
+			</tr>
+			<tr>
+				<td>Message Priority:</td>
+				<td>
+					<select name="priority">
+	                	<option value="4">4 - default normal</option>
+						<option value="0">0 - lowest</option>
+	                	<option value="9">9 - highest</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+	                	<option value="3">3</option>
+	                	<option value="5">5</option>
+	                	<option value="6">6</option>
+	                	<option value="7">7</option>
+	                	<option value="8">8</option>
+			    	</select>
+				</td>
+			</tr>		
+			<tr>
+				<td colspan="2"><input type="submit" value="Publish"/></td>
+			</tr>
+		</table>
+	</form>
+</div>	
+
+
+<c:url var="mapMessagePublicationLink" value="publishMapMessage.htm">
+	<c:param name="destinationPath" value="${destination.destinationPath}"/>
+</c:url>
+<div id="mapMessagePublisher" class="destinationAspect">
+	<h3>Map Message Publisher</h3>
+	<form method="post" action="${mapMessagePublicationLink}" enctype="multipart/form-data">
+		<table>
+			
+			<tr>
+				<td>Message File:</td>
+				<td><input type="file"  name="file" /></td>
 			</tr>
 			<tr>
 				<td>Message Priority:</td>

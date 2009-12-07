@@ -1,14 +1,25 @@
 package org.ikasan.tools.messaging.web;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.TextMessage;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.server.DestinationServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +41,22 @@ public class MessagePublicationController {
 	public static final String MESSAGE_ID_PARAMETER_NAME = "messageId";
 
     public static final String MESSAGE_PRIORITY_PARAMETER_NAME = "priority";
+    
+    private Logger logger = Logger.getLogger(MessagePublicationController.class);
+    
+    private ServletFileUpload upload;
 
     @Autowired
 	public MessagePublicationController(
 			DestinationServer destinationServer) {
 		super();
 		this.destinationServer = destinationServer;
+		// Create a factory for disk-based file items
+		FileItemFactory factory = new DiskFileItemFactory();
+
+		// Create a new file upload handler
+		upload = new ServletFileUpload(factory);
+
 	}
 	
 
@@ -125,4 +146,62 @@ public class MessagePublicationController {
     	return "unsupportedMessage";
     	
     }
+    
+    
+    @RequestMapping(value="/export.htm", method = RequestMethod.GET)
+    public String downloadMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(MESSAGE_ID_PARAMETER_NAME) String messageId,
+             ModelMap model, HttpServletResponse response) throws JMSException, IOException
+    {	
+    	Message message = destinationServer.getMessage(destinationPath, messageId);
+    	String filename = message.getJMSMessageID()+".xml";
+    	
+    	String  xmlString = destinationServer.getMessageAsXml(destinationPath, messageId);
+    	//response.setContentType("text/xml");
+    	response.setContentType ("application/download");
+		response.setHeader ("Content-Disposition", "attachment; filename=\""+filename+"\"");
+        response.getOutputStream().write(xmlString.getBytes());
+        
+        return null;
+    }
+    
+    @RequestMapping(value="/publishMapMessage.htm", method = RequestMethod.POST)
+    public String publishMapMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		 //@RequestParam(MESSAGE_PRIORITY_PARAMETER_NAME) int priority,
+    		 ModelMap model, HttpServletRequest request) throws JMSException, IOException, FileUploadException
+    {	
+    	logger.info("called");
+    	
+    	
+    	int priority=4;
+    	
+    	
+    	
+    	
+    	List<FileItem> fileItems = upload.parseRequest(request);
+    	FileItem fileItem = fileItems.get(0);
+    	
+    	byte[] content = fileItem.get();
+    	
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        int read = 0;
+//        while (read>-1){
+//            read = fileItem.getInputStream().read();
+//            if (read!=-1){
+//                byteArrayOutputStream.write(read);
+//            }
+//            logger.info("reading...");
+//        }
+//        logger.info("done reading");
+//        byte[] content = byteArrayOutputStream.toByteArray();
+        
+        String xml = new String(content, "UTF-8");
+        
+
+        
+        destinationServer.publishXmlMessage(destinationPath, xml, priority);
+    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
+    }
+    
+    
 }
