@@ -48,7 +48,7 @@
             <fmt:message key="home_heading2"/>
             <table id="homeLinksTable">
                 <tr>
-                    <td><img class="navigationImage" src="" alt="Arrow"/></a></td>
+                    <td><img class="navigationImage" src="" alt="Arrow"/></td>
                     <td><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="" alt="Events Link"/></a></td>
                     <td>
                         <%-- Spring based security around the admin pages --%>

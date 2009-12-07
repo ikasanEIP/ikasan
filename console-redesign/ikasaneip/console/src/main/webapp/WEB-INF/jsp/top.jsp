@@ -50,7 +50,6 @@
     <meta http-equiv="Content-Language" content="English" />
     <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <!-- <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" /> -->
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
@@ -63,9 +62,8 @@
         the body tag 
      -->
     <div id="container">
-        <!-- TODO This will need to be altered somewhat -->
         <div id="header">
-           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <a href="<c:url value='/'/>"><img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" /></a>
            <h2><fmt:message key="top_heading"/></h2>
         </div>
         
@@ -75,7 +73,7 @@
             <!-- TODO Main navigation -->
             <div id="mainNavigation">
                 <ul>
-                    <li class="menu_item"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
+                    <li id="first_menu_item"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
                     <li class="menu_item"><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
                     <%-- Spring based security around the admin pages --%>
                     <security:authorize ifAllGranted="ROLE_ADMIN">

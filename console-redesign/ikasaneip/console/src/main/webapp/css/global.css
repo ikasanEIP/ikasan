@@ -8,10 +8,19 @@
     padding: 0px;
 }
 
+a:link, a:visited, a:hover
+{
+	text-decoration: none;
+	color: #3E3E3E;
+}
+
+/* Background colour is Ikasan Grey (#EEEEEE) with font colour defaulting to Ikasan dark grey (#E3E3E3) */
 body
 {
-    background-color: #CCCCCC;
-    font-family: Arial;
+    background-color: #EEEEEE;
+    color: #3E3E3E;
+    font-family: "Trebuchet MS";
+    font-size: 13px;
 }
 
 /* For debug purposes */
@@ -21,13 +30,15 @@ body
     border-width: 1px;
 }
 
-/* The background colour for the page will default to TODO */
+/* The overall container div */
 #container
 {
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 25px;
+    margin-right: 25px;
+    width: 974px;
 }
 
+/* The content div */
 #content
 {
     background-color: #FFFFFF;
@@ -36,23 +47,42 @@ body
     padding-top: 20px;
 }
 
+/* The colour of the h1 heading will be #F29400 (Ikasan Orange) */
 h1
 {
-    color: yellow;
+    color: #F29400;
+    font-size: 26px;
+    font-weight: bold;
 }
 
-/* The colour of the h2 heading will be TODO */  
+/* The colour of the h2 heading will be #99141B (Ikasan Maroon) */  
 h2
 {
-    color: red;
+    color: #99141B;
+    font-size: 18px;
+    line-height: 18px;
+    font-weight: bold;
+    margin-top: 18px;
+    padding-left: 20px;    
 }
 
-/* The header section TODO Image and Height calculation */
+/* The colour of the h3 heading will be #99141B (Ikasan Maroon) */  
+h3
+{
+    color: #99141B;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* The header section */
 #header
 {
-    background-color: #FFFFFF; /* TODO Remove later */
-    background-image: url("images/header_background.png");
-    height: 200px;
+	background-repeat: no-repeat;
+	/* TODO - Not sure which one of these works as loading of page in Tomcat is a bit weird */
+    background-image: url(/images/Banner.png);
+    background-image: url(images/Banner.png);
+    height: 140px;
+    width: 974px;
     margin-top: 20px;
 }
 
@@ -70,21 +100,31 @@ img
     border: none;
 }
 
-.menu_item
-{
-    display: inline;
-    list-style-image: url("images/vertical_line.png");
-}
-
 #logo
 {
-    height: 150px;
-    width: 200px;
+    height: 70px;
+	padding-left: 20px;
+	padding-top: 17px;
+    width: 147px;
 }
 
 #mainNavigation
 {
-    float: left;
+	padding-left: 20px;
+	float: left;
+}
+
+#first_menu_item
+{
+    display: inline;
+    padding-right: 10px;
+}
+
+.menu_item
+{
+    display: inline;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #minorNavigation
@@ -95,11 +135,19 @@ img
 /* The navigation section background colour matches the default page background colour */
 #navigation
 {
-    background-color: #CCCCCC;
+    background-color: #EEEEEE;
+    height: 30px;
+    line-height: 30px;
 }
 
 .navigationImage
 {
     height: 150px;
     width: 200px;
+}
+
+ul
+{
+	list-style-image: url(images/VerticalLine_Black.png);
+    list-style-image: url(/images/VerticalLine_Black.png);
 }

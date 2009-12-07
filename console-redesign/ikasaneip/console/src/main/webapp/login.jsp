@@ -47,13 +47,13 @@
 <%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter" %>
 <%@ page import="org.springframework.security.AuthenticationException" %>
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Ikasan Console</title>
     <meta http-equiv="Content-Language" content="English" />
     <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <!-- <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" /> -->
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
@@ -68,7 +68,9 @@
     <div id="container">
         <!-- TODO This will need to be altered somewhat -->
         <div id="header">
-           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <!-- <a href="<c:url value='/'/>"> -->
+           <img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" />
+           <!-- </a> -->
            <h2>Enterprise Integration Platform - Console</h2>
         </div>
 
@@ -91,15 +93,15 @@
                     <ol>
                         <li>
                             <label for="j_username">User</label>
-                            <input type='text' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
+                            <input type='text' id='j_username' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
                         </li>
                         <li>
                             <label for="j_password">Password</label>
-                            <input type='password' name='j_password'/>
+                            <input type='password' id='j_password' name='j_password' />
                         </li>
                         <li>
                             <label for="_spring_security_remember_me">Save password for 2 weeks</label>
-                            <input type="checkbox" name="_spring_security_remember_me"/>
+                            <input type="checkbox" id="_spring_security_remember_me" name="_spring_security_remember_me"/>
                         </li>	
                     </ol>
                 </fieldset>
