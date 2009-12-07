@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.JMSException;
+import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
@@ -104,7 +105,23 @@ public class MessagePublicationController {
     	
     	if (message instanceof TextMessage){
     		return "textMessage";
-    	}
+    	} else if (message instanceof MapMessage){
+    		Map<String, Object> messageContent = new HashMap<String, Object>();
+    		Enumeration mapNames = ((MapMessage)message).getMapNames();
+    		while(mapNames.hasMoreElements()){
+    			String mapName = (String) mapNames.nextElement();
+    			Object mapValue = ((MapMessage)message).getObject(mapName);
+    			String renderableValue=mapValue.toString();
+    			if (mapValue instanceof byte[]){
+    				renderableValue = "byte array comprising ["+new String((byte[])mapValue)+"]";
+    			}
+    			
+				messageContent.put(mapName, renderableValue);
+    		}
+    		model.addAttribute("messageContent", messageContent);
+    		
+			return "mapMessage";
+		}
     	return "unsupportedMessage";
     	
     }
