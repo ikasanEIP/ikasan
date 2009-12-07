@@ -1,5 +1,5 @@
 /*
- * $Id
+ * $Id$
  * $URL$
  * 
  * =============================================================================
@@ -40,49 +40,36 @@
  */
 package org.ikasan.framework.initiator.messagedriven.jca.jboss;
 
-import javax.jms.Destination;
 import javax.jms.Session;
 
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
-import org.ikasan.framework.initiator.messagedriven.jca.ListenerSetupFailureListener;
 import org.ikasan.framework.initiator.messagedriven.jca.jboss.JBossJmsActivationSpecConfig;
 import org.ikasan.framework.initiator.messagedriven.jca.jboss.JBossResourceAdapterUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.jms.support.destination.DestinationResolver;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JmsMessageEndpointManager ;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JtaTransactionManager;
 
 /**
- * This class helps create Message Driven Initiators specifically for the JBoss
- * underlying JMS implementation.
+ * This factory creates JBoss specific JMS endpoint managers.
  * 
  * @author Ikasan Development Team
  */
 public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanNameAware
 {
-//    /** transaction manager */
-//    private JtaTransactionManager transactionManager;
-//    
+    /** only create a single instance of the endpoint manager */
+    JmsMessageEndpointManager endpointManager;
+    
     /** specified name of an initiator */
     private String name;
 
     /** Module name */
     private String moduleName;
 
-    /** Destination */
-    private Destination destination;
-
-    /** DestinationResolver */
-    private DestinationResolver destinationResolver;
-
-    /**
-     * JndiName of the destination for use with the destinationResolver if
-     * destination is not directly supplied
-     */
+    /** Full destination name as referred to in the JNDI */
     private String destinationName;
 
     /** The flow */
@@ -109,23 +96,12 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /** Whether the subscription to JMS destination is durable. Default is true. */
     private Boolean subscriptionDurable = Boolean.TRUE;
 
-    /** only create a single instance of the endpoint manager */
-    JmsMessageEndpointManager endpointManager;
-    
     /**
      * Which JMS domain to use. Default is true for Publish/Subscribe domain
      * (Topics). Set to <code>false</code> for Point-to-Point domain (Queues).
      */
     private Boolean pubSubDomain = Boolean.TRUE;
     
-//    /**
-//     * Configures the initiator to reuse the priority from the message on the
-//     * created Event
-//     * 
-//     * Only applicable to RawMessageDrivenInitiators
-//     */
-//    private Boolean respectPriority = Boolean.FALSE;
-
     /** allow override for provider adapterJNDI */
     private String providerAdapterJNDI = "java:/DefaultJMSProvider";
 
@@ -198,38 +174,6 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     public void setModuleName(String moduleName)
     {
         this.moduleName = moduleName;
-    }
-
-    /**
-     * @return the destination
-     */
-    public Destination getDestination()
-    {
-        return destination;
-    }
-
-    /**
-     * @param destination the destination to set
-     */
-    public void setDestination(Destination destination)
-    {
-        this.destination = destination;
-    }
-
-    /**
-     * @return the destinationResolver
-     */
-    public DestinationResolver getDestinationResolver()
-    {
-        return destinationResolver;
-    }
-
-    /**
-     * @param destinationResolver the destinationResolver to set
-     */
-    public void setDestinationResolver(DestinationResolver destinationResolver)
-    {
-        this.destinationResolver = destinationResolver;
     }
 
     /**
@@ -427,7 +371,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /**
      * @return the pubSubDomain
      */
-    public Boolean getPubSubDomain()
+    public Boolean isPubSubDomain()
     {
         return pubSubDomain;
     }
@@ -475,7 +419,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /**
      * @return the deliveryActive
      */
-    public Boolean getDeliveryActive()
+    public Boolean isDeliveryActive()
     {
         return deliveryActive;
     }
@@ -491,7 +435,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /**
      * @return the useDLQ
      */
-    public Boolean getUseDLQ()
+    public Boolean isUseDLQ()
     {
         return useDLQ;
     }
@@ -571,7 +515,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /**
      * @return the forceTransacted
      */
-    public Boolean getForceTransacted()
+    public Boolean isForceTransacted()
     {
         return forceTransacted;
     }
@@ -584,39 +528,6 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
         this.forceTransacted = forceTransacted;
     }
 
-//
-//    /**
-//     * @return the transactionManager
-//     */
-//    public JtaTransactionManager getTransactionManager()
-//    {
-//        return transactionManager;
-//    }
-//
-//    /**
-//     * @param transactionManager the transactionManager to set
-//     */
-//    public void setTransactionManager(JtaTransactionManager transactionManager)
-//    {
-//        this.transactionManager = transactionManager;
-//    }
-//
-//    /**
-//     * @return the respectPriority
-//     */
-//    public Boolean getRespectPriority()
-//    {
-//        return respectPriority;
-//    }
-//
-//    /**
-//     * @param respectPriority the respectPriority to set
-//     */
-//    public void setRespectPriority(Boolean respectPriority)
-//    {
-//        this.respectPriority = respectPriority;
-//    }
-
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
@@ -624,6 +535,11 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     {
         if(this.endpointManager == null)
         {
+            if (this.initiator == null)
+            {
+                throw new IllegalArgumentException("Initiator is a mandatory attribute for JBossJmsEndpointManager creation");
+            }
+            
             JBossJmsActivationSpecConfig specConfig = constructActivationSpec();
             JBossJmsActivationSpecFactory specFactory = new JBossJmsActivationSpecFactory();
             JtaTransactionManager transactionManager = new JtaTransactionManager();
@@ -637,10 +553,9 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
             endpointManager.setMessageListener(this.initiator);
             endpointManager.setAutoStartup(this.deliveryActive.booleanValue());
             endpointManager.setTransactionManager(transactionManager);
-    //        endpointManager.setDestinationResolver(destinationResolver);
-    //        endpointManager.setListenerSetupExceptionListener((ListenerSetupFailureListener)this.initiator);
             endpointManager.afterPropertiesSet();
         }
+
         return endpointManager;
     }
 
@@ -650,15 +565,21 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
      */
     private JBossJmsActivationSpecConfig constructActivationSpec()
     {
-        if (destinationName == null && destination == null && destinationResolver == null)
+        if (this.destinationName == null)
         {
-            throw new IllegalArgumentException("either destination or destinationResolver is mandatory for JmsMessageDrivenInitiator creation");
+            throw new IllegalArgumentException("DestinationName is a mandatory attribute for JBossJmsActivationSpecConfig within JBossJmsEndpointManager creation");
+        }
+
+        if (this.moduleName == null || this.flow == null || this.name == null)
+        {
+            throw new IllegalArgumentException("ModuleName[" + this.moduleName
+                + "], flow[" + this.flow + "], and name[" + this.name 
+                + "] are all mandatory attributes for JBossJmsActivationSpecConfig within JBossJmsEndpointManager creation");
         }
 
         JBossJmsActivationSpecConfig specConfig = new JBossJmsActivationSpecConfig();
         
         // standard JMS
-//        specConfig.setClientId(this.moduleName);
         specConfig.setDestinationName(this.destinationName);
         specConfig.setPubSubDomain(this.pubSubDomain.booleanValue());
         specConfig.setSubscriptionDurable(this.subscriptionDurable.booleanValue());
@@ -688,45 +609,6 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
 
         return specConfig;
     }
-
-//    /**
-//     * Constructor the JMS message driven initiator
-//     * 
-//     * @return A JMS message driven initiator
-//     */
-//    private JmsMessageDrivenInitiator constructInitiator(MessageListenerContainer messageListenerContainer)
-//    {
-//        if ((this.moduleName == null) || ("".equals(this.moduleName)))
-//        {
-//            throw new IllegalArgumentException("moduleName is mandatory for JmsMessageDrivenInitiator creation");
-//        }
-//        if ((this.name == null) || ("".equals(this.name)))
-//        {
-//            throw new IllegalArgumentException("name is mandatory for JmsMessageDrivenInitiator creation");
-//        }
-//        if (this.flow == null)
-//        {
-//            throw new IllegalArgumentException("flow is mandatory for JmsMessageDrivenInitiator creation");
-//        }
-//        if (this.eventDeserialiser == null)
-//        {
-//            if (this.payloadFactory == null)
-//            {
-//                throw new IllegalArgumentException(
-//                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageEventSerialiser has been set");
-//            }
-//        }
-//        if (this.eventDeserialiser != null)
-//        {
-//            EventMessageDrivenInitiator eventMDI = new EventMessageDrivenInitiator(this.moduleName, this.name, this.flow, this.eventDeserialiser);
-//            eventMDI.setMessageListenerContainer(messageListenerContainer);
-//            return eventMDI;
-//        }
-//        RawMessageDrivenInitiator rawMDI = new RawMessageDrivenInitiator(this.moduleName, this.name, this.flow, this.payloadFactory);
-//        rawMDI.setRespectPriority(this.respectPriority.booleanValue());
-//        rawMDI.setMessageListenerContainer(messageListenerContainer);
-//        return rawMDI;
-//    }
 
     /*
      * (non-Javadoc)
