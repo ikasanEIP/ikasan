@@ -34,7 +34,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-framework</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.7-SNAPSHOT</version>
+	<version>0.7.7</version>
 	<name>Ikasan Framework</name>
 	<organization>
 		<name>Ikasan</name>
@@ -110,7 +110,7 @@
 		<distribution>repo</distribution> </license> </licenses>
 	-->
 	<scm>
-		<connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+		<connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.7</connection>
 	</scm>
 	<build>
 		<plugins>
@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.7-SNAPSHOT</version>
+			<version>0.7.7</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

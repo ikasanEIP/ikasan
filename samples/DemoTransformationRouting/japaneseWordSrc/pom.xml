@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
-	<version>0.7.7-SNAPSHOT</version>
+	<version>0.7.7</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: japaneseWordSrc : jar</name>
 
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.7</connection>
     </scm>
 
 
