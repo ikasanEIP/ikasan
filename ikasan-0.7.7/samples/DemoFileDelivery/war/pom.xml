@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- 
+    <parent>
+		<groupId>org.ikasan.demo</groupId>
+		<artifactId>demoFileDelivery-parent</artifactId>
+		<version>0.7.2-SNAPSHOT</version>
+	</parent>
+     -->
+    <groupId>org.ikasan.demo</groupId>
+	<artifactId>demoFileDelivery-app-war</artifactId>
+    <version>0.7.7</version>    
+	<packaging>war</packaging>
+
+	
+	<name>demoFileDelivery :: demoFileDelivery : war</name>
+
+	<build>
+
+
+		<!-- end project structure customisation -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
+    </plugins>
+		
+	</build>
+
+	<dependencies>
+	    <dependency>
+	      <groupId>org.ikasan</groupId>
+	      <artifactId>ikasan-webconsole-war</artifactId>
+	      <version>0.7.7</version>
+	      <type>war</type>
+	      <scope>runtime</scope>
+	    </dependency>
+
+	</dependencies>
+    
+  <scm>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.7</connection>
+  </scm>
+    
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+    
+    
+</project>
+
