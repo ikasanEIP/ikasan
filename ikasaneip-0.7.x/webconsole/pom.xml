@@ -35,12 +35,12 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-webconsole-war</artifactId>
 	<packaging>war</packaging>
-	<version>0.7.7</version>
+	<version>0.7.8-SNAPSHOT</version>
 
 	<name>ikasan :: webconsole : war</name>
 
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.7</connection>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
     </scm>
 
 	<build>
@@ -93,14 +93,14 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>0.7.7</version>
+			<version>0.7.8-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.7</version>
+			<version>0.7.8-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
