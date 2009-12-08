@@ -246,9 +246,6 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      * 
      * IMPORTANT NOTE: Operations in this commit method should be kept to a 
      * minimum to reduce potential fails on the commit.
-     * 
-     * IMPORTANT NOTE: Operations in this commit method should be kept to a 
-     * minimum to reduce potential fails on the commit.
      */
     @Override
     protected void doCommit() throws ResourceException
@@ -263,7 +260,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         {
             changeDirectory(outputDirectory);
             changeDirectory = true;
-            }
+        }
 
         try
         {
