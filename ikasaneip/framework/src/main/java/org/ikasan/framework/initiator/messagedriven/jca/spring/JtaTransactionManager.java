@@ -38,46 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.initiator.messagedriven.jca.jboss;
+package org.ikasan.framework.initiator.messagedriven.jca.spring;
 
-import java.lang.reflect.Method;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.resource.spi.ResourceAdapter;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 
 /**
- * Utility class for obtaining the JBoss JCA Resource Adapter for use 
- * with JCA JMS Endpoint implementations
- **/
-public abstract class JBossResourceAdapterUtils
+ * Work-around to return a transaction manager to Spring if one is already available.
+ * Without this work-around Spring assumes it will always initiate the transaction,
+ * but this is not the case for inbound JCA connectors.
+ * 
+ * @author Ikasan Development Team
+ *
+ */
+public class JtaTransactionManager extends org.springframework.transaction.jta.JtaTransactionManager
 {
-    private static final String MBEAN_SERVER_LOCATOR_CLASS_NAME = "org.jboss.mx.util.MBeanServerLocator";
-    private static final String MBEAN_SERVER_LOCATOR_METHOD_NAME = "locateJBoss";
-    private static final String RESOURCE_ADAPTER_SERVICE_NAME = "jboss.jca:name='jms-ra.rar',service=RARDeployment";
-    private static final String JBOSS_RESOURCE_ADAPTER_ATTRIBUTE_NAME = "ResourceAdapter";
-
-    /**
-     * Obtain the default JBoss Resource Adapter through a JMX invocation
-     * for the JBossWorkManagerMBean.ResourceAdapter
-     * @return ResourceAdapter
-     * @see org.jboss.resource.work.JBossWorkManagerMBean
+    /* (non-Javadoc)
+     * @see org.springframework.transaction.jta.JtaTransactionManager#createTransaction(java.lang.String, int)
      */
-    public static ResourceAdapter getResourceAdapter()
+    @Override
+    public Transaction createTransaction(String name, int timeout) throws NotSupportedException, SystemException
     {
-        try
+        if (this.getTransactionManager().getTransaction() != null)
         {
-            Method locaJBoss = Class.forName(MBEAN_SERVER_LOCATOR_CLASS_NAME).getMethod(MBEAN_SERVER_LOCATOR_METHOD_NAME, (Class[]) null);
-            //The underlying method is static, so we can pass null for obj parameter
-            MBeanServer server = (MBeanServer)locaJBoss.invoke(null, new Object[0]);
-            ObjectName objName = new ObjectName(RESOURCE_ADAPTER_SERVICE_NAME);
-            Object ra = server.getAttribute(objName, JBOSS_RESOURCE_ADAPTER_ATTRIBUTE_NAME);
-            return (ResourceAdapter)ra;
+            return this.getTransactionManager().getTransaction();
         }
-        catch (Exception e)
-        {
-            throw new IllegalStateException("Cannot get JBoss Resource Adapter:", e);
-        }
-    }
 
+        return super.createTransaction(name, timeout);
+    }
 }

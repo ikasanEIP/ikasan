@@ -38,46 +38,47 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.initiator.messagedriven.jca.jboss;
+package org.ikasan.framework.initiator.messagedriven.jca.spring;
 
-import java.lang.reflect.Method;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.resource.spi.ResourceAdapter;
+import org.ikasan.framework.initiator.messagedriven.jca.ListenerSetupFailureListener;
+import org.ikasan.framework.initiator.messagedriven.jca.MessageListenerContainer;
 
 /**
- * Utility class for obtaining the JBoss JCA Resource Adapter for use 
- * with JCA JMS Endpoint implementations
- **/
-public abstract class JBossResourceAdapterUtils
+ * Extension of Spring's JmsMessageEndpointManager to expose listener setup failures to a registered Listener
+ *
+ * @author Ikasan Development Team
+ *
+ */
+public class JmsMessageEndpointManager extends org.springframework.jms.listener.endpoint.JmsMessageEndpointManager 
+    implements MessageListenerContainer
 {
-    private static final String MBEAN_SERVER_LOCATOR_CLASS_NAME = "org.jboss.mx.util.MBeanServerLocator";
-    private static final String MBEAN_SERVER_LOCATOR_METHOD_NAME = "locateJBoss";
-    private static final String RESOURCE_ADAPTER_SERVICE_NAME = "jboss.jca:name='jms-ra.rar',service=RARDeployment";
-    private static final String JBOSS_RESOURCE_ADAPTER_ATTRIBUTE_NAME = "ResourceAdapter";
-
     /**
-     * Obtain the default JBoss Resource Adapter through a JMX invocation
-     * for the JBossWorkManagerMBean.ResourceAdapter
-     * @return ResourceAdapter
-     * @see org.jboss.resource.work.JBossWorkManagerMBean
+     * Flag indicating last attempt to connect was a failure
      */
-    public static ResourceAdapter getResourceAdapter()
+    private boolean listenerSetupFailure = false;
+    
+    /**
+     * Registered failure listener
+     */
+    private ListenerSetupFailureListener listenerSetupExceptionListener;
+    
+    
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.initiator.messagedriven.MessageListenerContainer#setListenerSetupExceptionListener(org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener)
+     */
+    public void setListenerSetupExceptionListener(ListenerSetupFailureListener listenerSetupExceptionListener)
     {
-        try
-        {
-            Method locaJBoss = Class.forName(MBEAN_SERVER_LOCATOR_CLASS_NAME).getMethod(MBEAN_SERVER_LOCATOR_METHOD_NAME, (Class[]) null);
-            //The underlying method is static, so we can pass null for obj parameter
-            MBeanServer server = (MBeanServer)locaJBoss.invoke(null, new Object[0]);
-            ObjectName objName = new ObjectName(RESOURCE_ADAPTER_SERVICE_NAME);
-            Object ra = server.getAttribute(objName, JBOSS_RESOURCE_ADAPTER_ATTRIBUTE_NAME);
-            return (ResourceAdapter)ra;
-        }
-        catch (Exception e)
-        {
-            throw new IllegalStateException("Cannot get JBoss Resource Adapter:", e);
-        }
+        this.listenerSetupExceptionListener = listenerSetupExceptionListener;
     }
 
+
+    /**
+     * Accessor for listenerSetupFailure flag
+     * 
+     * @return listenerSetupFailure
+     */
+    public boolean isListenerSetupFailure()
+    {
+        return listenerSetupFailure;
+    }
 }

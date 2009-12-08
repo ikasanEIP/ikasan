@@ -60,7 +60,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Ikasan Development Team
  */
-//@Controller
+@Controller
 public class SchedulerController
 {
     /** Logger for this class */
@@ -110,10 +110,10 @@ public class SchedulerController
         myModel.put("triggers", triggers);
         return new ModelAndView("admin/viewScheduler", myModel);
     }
-
+    
     /**
      * Handle the request to put the scheduler on standby
-     *
+     * 
      * @return a redirect to viewScheduler
      * @throws Exception - Catch all
      */
@@ -129,7 +129,7 @@ public class SchedulerController
 
     /**
      * Handle the request to resume the scheduler
-     *
+     * 
      * @return a redirect to viewScheduler
      * @throws Exception - Catch all
      */
@@ -145,7 +145,7 @@ public class SchedulerController
 
     /**
      * Helper wmethod to return a list of triggers fro a started scheduler
-     *
+     * 
      * @return List of Triggers
      */
     private List<Trigger> getTriggers() throws Exception
@@ -167,5 +167,5 @@ public class SchedulerController
         }
         return triggers;
     }
-
+    
 }
