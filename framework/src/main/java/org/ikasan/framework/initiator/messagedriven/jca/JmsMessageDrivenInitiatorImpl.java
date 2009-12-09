@@ -403,7 +403,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         public Anesthetist(long sleepPeriod)
         {
             this.sleepPeriod = sleepPeriod;
-            logger.info("setting anesthetist to sleep the messageListenerConatiner for " + sleepPeriod + "ms");
+            logger.debug("Created anesthetist with a sleep time of " + sleepPeriod + "ms");
         }
 
         /*
@@ -417,6 +417,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
             
             try
             {
+                logger.debug("Anesthetist invoked");
                 putToSleep();
                 sleep(sleepPeriod);
                 reawaken();
@@ -424,6 +425,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
             catch (InterruptedException e)
             {
                 // nevermind
+                logger.debug("Anesthetist sleep interrupted", e);
                 reawaken();
             }
         }
@@ -435,7 +437,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         {
             operating = true;
             messageListenerContainer.stop();
-            
+            logger.info("set anesthetist to sleep the messageListenerConatiner for " + sleepPeriod + "ms");
         }
 
         /**
