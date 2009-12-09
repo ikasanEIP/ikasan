@@ -47,9 +47,15 @@ import javax.jms.TextMessage;
 import junit.framework.Assert;
 
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.serialisation.EventSerialisationException;
+import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import org.ikasan.framework.initiator.AbortTransactionException;
+import org.ikasan.framework.initiator.messagedriven.EventMessageDrivenInitiator;
+import org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener;
+import org.ikasan.framework.initiator.messagedriven.MessageListenerContainer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -78,35 +84,35 @@ public class EventMessageDrivenInitiatorTest {
 	
 	Flow flow = mockery.mock(Flow.class);
 	
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
 	
-	
-	TextMessage textMessage = mockery.mock(TextMessage.class);
-	
-	MapMessage mapMessage = mockery.mock(MapMessage.class);
+	MessageListenerContainer messageListenerContainer = mockery.mock(MessageListenerContainer.class);
 	
 	/**
 	 * Tests that MapMessages are supported
 	 * 
 	 * @throws JMSException
+	 * @throws EventDeserialisationException 
 	 * @throws EventSerialisationException 
 	 */
 	@Test
-	public void testOnMessageHandlesMapMessage() throws JMSException, EventSerialisationException {
+	public void testOnMessageHandlesMapMessage() throws JMSException, EventDeserialisationException {
 		final Event event = mockery.mock(Event.class);
+		final MapMessage mapMessage = mockery.mock(MapMessage.class);
 		
         mockery.checking(new Expectations()
         {
             {
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
             	
-                one(jmsMessageEventSerialiser).fromMapMessage(mapMessage, moduleName, name);
+                one(jmsMessageEventSerialiser).fromMessage(mapMessage, moduleName, name);
                 will(returnValue(event));
-                
-                one(flow).invoke(event);
+                one(event).getId();will(returnValue("eventId"));
+                one(flow).invoke((FlowInvocationContext)(with(a(FlowInvocationContext.class))), (Event) with(equal(event)));
                 will(returnValue(null));
             }
         });
-        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, jmsMessageEventSerialiser);
+        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);
     	
 		eventMessageDrivenInitiator.onMessage(mapMessage);
 	
@@ -118,25 +124,25 @@ public class EventMessageDrivenInitiatorTest {
 	 * 
 	 * @throws JMSException
 	 */
-	@Test
+	@Test(expected = AbortTransactionException.class)
 	public void testOnMessageDoesNotHandleTextMessage() throws JMSException {
 		UnsupportedOperationException exception = null;
+		final TextMessage textMessage = mockery.mock(TextMessage.class);
+		
         mockery.checking(new Expectations()
         {
             {
-            	allowing(textMessage).getJMSMessageID();will(returnValue("messageId"));
+            	one(messageListenerContainer).setListenerSetupExceptionListener((ListenerSetupFailureListener) with(anything()));
+
+            	allowing(textMessage).getJMSMessageID();
+            	will(returnValue("messageId"));
+            	
+            	one(messageListenerContainer).stop();
             }
         });
-        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, jmsMessageEventSerialiser);
-    	
-		try{
-			eventMessageDrivenInitiator.onMessage(textMessage);
-			Assert.fail("should have thrown UnsupportedOperationException");
-		} catch(UnsupportedOperationException unsupportedOperationException){
-				exception = unsupportedOperationException;
-		}
-		
-		Assert.assertNotNull("should have thrown UnsupportedOperationException", exception);
+        EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);
+    	eventMessageDrivenInitiator.setMessageListenerContainer(messageListenerContainer);
+		eventMessageDrivenInitiator.onMessage(textMessage);
 	}
 
 

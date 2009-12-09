@@ -48,12 +48,16 @@ import junit.framework.Assert;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import org.ikasan.framework.initiator.AbortTransactionException;
+import org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener;
+import org.ikasan.framework.initiator.messagedriven.MessageListenerContainer;
+import org.ikasan.framework.initiator.messagedriven.RawMessageDrivenInitiator;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -78,7 +82,10 @@ public class RawMessageDrivenInitiatorTest {
 	
 	Flow flow = mockery.mock(Flow.class);
 		
+	IkasanExceptionHandler exceptionHandler = mockery.mock(IkasanExceptionHandler.class);
 	
+	MessageListenerContainer messageListenerContainer = mockery.mock(MessageListenerContainer.class);
+
 	TextMessage textMessage = mockery.mock(TextMessage.class);
 	
 	MapMessage mapMessage = mockery.mock(MapMessage.class);
@@ -92,9 +99,8 @@ public class RawMessageDrivenInitiatorTest {
 	public void testOnMessageHandlesTextMessage() throws JMSException {
 		createExpectations(false, DEFAULT_PRIORITY);
         
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
 		rawDrivenInitiator.onMessage(textMessage);
-	
 	}
 
 	
@@ -112,7 +118,7 @@ public class RawMessageDrivenInitiatorTest {
 		
         createExpectations(true, messagePriority);
         
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
         rawDrivenInitiator.setRespectPriority(true);
         rawDrivenInitiator.onMessage(textMessage);
 	
@@ -140,21 +146,11 @@ public class RawMessageDrivenInitiatorTest {
 	                one(textMessage).getJMSPriority();
 	                will(returnValue(messagePriority));
                 }
-                
-                one(payloadFactory).newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML, MetaDataInterface.UNDEFINED, textMessageText.getBytes());
+                one(payloadFactory).newPayload("messageId",    textMessageText.getBytes());
                 will(returnValue(payload));
                 
-                //grrrrrr......all these dumb methods on Payload get called during Event.setPayload
-                one(payload).getName();
-                will(returnValue("payloadName"));
-                one(payload).getSpec();
-                will(returnValue(Spec.TEXT_XML.toString()));
-                one(payload).getSrcSystem();
-                will(returnValue("srcSystem"));
                 
-                one(flow).invoke((Event) with(new EventMatcher(messagePriority)));
-                will(returnValue(null));
-            }
+                one(flow).invoke((FlowInvocationContext) (with(a(FlowInvocationContext.class))), (with(new EventMatcher(messagePriority))));            }
         });
 	}
 
@@ -164,27 +160,24 @@ public class RawMessageDrivenInitiatorTest {
 	 * 
 	 * @throws JMSException
 	 */
-	@Test
+	@Test(expected = AbortTransactionException.class)
 	public void testOnMessageDoesNotHandleMapMessage() throws JMSException {
-		UnsupportedOperationException exception = null;
+		AbortTransactionException exception = null;
 		
         mockery.checking(new Expectations()
         {
             {
+            	one(messageListenerContainer).setListenerSetupExceptionListener((ListenerSetupFailureListener) with(anything()));
+            	
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
+            	one(messageListenerContainer).stop();
             }
         });
-        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, payloadFactory);
-		try{
-			rawDrivenInitiator.onMessage(mapMessage);
-			Assert.fail("should have thrown UnsupportedOperationException");
-		} catch(UnsupportedOperationException unsupportedOperationException){
-				exception = unsupportedOperationException;
-		}
-		
-		Assert.assertNotNull("should have thrown UnsupportedOperationException", exception);
+        RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
+		rawDrivenInitiator.setMessageListenerContainer(messageListenerContainer);
+		rawDrivenInitiator.onMessage(mapMessage);
 	}
-	
+		
 	class EventMatcher extends TypeSafeMatcher<Event>{
 
 		private int priority;
