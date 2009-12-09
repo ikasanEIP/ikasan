@@ -44,11 +44,10 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.MetaDataInterface;
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
 
 /**
@@ -62,11 +61,14 @@ import org.ikasan.framework.flow.Flow;
  */
 public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
 {
+    /** Default Message Priority used by the Ikasan Raw Message Driven Initiator */
+    private static final int DEFAULT_MESSAGE_PRIORITY = 4;
+
     /**
      * Logger instance for this class
      */
     private Logger logger = Logger.getLogger(RawMessageDrivenInitiator.class);
-    
+        
     /**
      * Factory for constructing Payloads
      */
@@ -83,11 +85,12 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param moduleName - name of the module
      * @param name - name of this initiator
      * @param flow - flow to invoke
+     * @param exceptionHandler - handlerForExceptions
      * @param payloadFactory - means for creating new <code>Payload</code>s
      */
-    public RawMessageDrivenInitiator(String moduleName, String name, Flow flow, PayloadFactory payloadFactory)
+    public RawMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler, PayloadFactory payloadFactory)
     {
-        super(moduleName, name, flow);
+        super(moduleName, name, flow, exceptionHandler);
         this.payloadFactory = payloadFactory;
     }
 
@@ -95,24 +98,24 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * (non-Javadoc)
      * 
      * @see
-     * org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiatorImpl#handleTextMessage(javax.jms.TextMessage
+     * org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl#handleTextMessage(javax.jms.TextMessage
      * )
      */
     @Override
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
-        // this is what the old code would have done with a TextMessage
-        Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
-            MetaDataInterface.UNDEFINED, message.getText().getBytes());
-
-        Event event = new Event(moduleName, name);
-        
-        //re-use the message's priority if we are configured to respect it
+        Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), message.getText().getBytes());
+        //
+        Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
+        // Reuse the message's priority if we are configured to respect it
         if (respectPriority)
         {
-        	event.setPriority( new Integer(message.getJMSPriority()) );
+            event.setPriority(message.getJMSPriority());
         }
-        event.setPayload(payload);
+        else
+        {
+            event.setPriority(DEFAULT_MESSAGE_PRIORITY);
+        }
         return event;
     }
 

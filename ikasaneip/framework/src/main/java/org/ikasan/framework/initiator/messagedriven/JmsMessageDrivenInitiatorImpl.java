@@ -167,8 +167,6 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
         }
         catch (Throwable eventSourcingThrowable)
         {
-
-
         	IkasanExceptionAction action = exceptionHandler.handleThrowable(name, eventSourcingThrowable);
         	//tell the error service
     		logError(null, eventSourcingThrowable, name, action);

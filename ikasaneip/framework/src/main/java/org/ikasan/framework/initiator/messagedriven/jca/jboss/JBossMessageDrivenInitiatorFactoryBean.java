@@ -44,6 +44,7 @@ import javax.jms.Destination;
 import javax.jms.Session;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.jca.EventMessageDrivenInitiator;
@@ -86,6 +87,9 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
 
     /** The flow */
     private Flow flow;
+
+    /** The Exception Handler */
+    private IkasanExceptionHandler exceptionHandler;
 
     /** The event deserialiser */
     private JmsMessageEventSerialiser eventDeserialiser;
@@ -659,11 +663,13 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
         }
         if (this.eventDeserialiser != null)
         {
-            EventMessageDrivenInitiator eventMDI = new EventMessageDrivenInitiator(this.moduleName, this.name, this.flow, this.eventDeserialiser);
+            EventMessageDrivenInitiator eventMDI = 
+            	new EventMessageDrivenInitiator(this.moduleName, this.name, this.flow, this.exceptionHandler, this.eventDeserialiser);
             eventMDI.setMessageListenerContainer(messageListenerContainer);
             return eventMDI;
         }
-        RawMessageDrivenInitiator rawMDI = new RawMessageDrivenInitiator(this.moduleName, this.name, this.flow, this.payloadFactory);
+        RawMessageDrivenInitiator rawMDI = 
+        	new RawMessageDrivenInitiator(this.moduleName, this.name, this.flow, this.exceptionHandler, this.payloadFactory);
         rawMDI.setRespectPriority(this.respectPriority.booleanValue());
         rawMDI.setMessageListenerContainer(messageListenerContainer);
         return rawMDI;
