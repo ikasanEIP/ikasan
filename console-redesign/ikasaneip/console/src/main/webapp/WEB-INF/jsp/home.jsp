@@ -45,17 +45,17 @@
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
         <div id="content">
             <h1><fmt:message key="home_heading"/></h1>
-            <h4><fmt:message key="home_heading2"/></h4>
+            <p class="text"><fmt:message key="home_heading2"/></p>
             <table id="homeLinksTable">
                 <tr>
-                    <td class="navigationCell"><img class="navigationArrow" src="images/Icon_ArrowHm.png" alt="Arrow"/></td>
-                    <td class="navigationCell"><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="images/Btn_Events.png" alt="Events Link"/></a></td>
+                    <td class="navigationCell"><img class="navigationArrow" src="/console/images/Icon_ArrowHm.png" alt="Arrow"/></td>
+                    <td class="navigationCell"><a href="<c:url value='/console/events/newSearch.htm'/>"><img class="navigationImage" src="/console/images/Btn_Events.png" alt="Events Link"/></a></td>
                     <%-- Spring based security around the admin pages --%>
                     <security:authorize ifAllGranted="ROLE_ADMIN">
-                    <td class="navigationCell"><a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="images/Btn_Admin.png" alt="Admin Link"/></a></td>
+                    <td class="navigationCell"><a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="/console/images/Btn_Admin.png" alt="Admin Link"/></a></td>
                     </security:authorize>
-					<td rowspan="2" class="navigationCell leftBorder">&nbsp;</td>                    
-                    <td class="navigationCell"><a href="<c:url value='/support/support.htm'/>"><img class="navigationImage" src="images/Btn_Support.png" alt="Support Link"/></a></td>
+                    <td rowspan="2" class="navigationCell leftBorder">&nbsp;</td>
+                    <td class="navigationCell"><a href="<c:url value='/support/support.htm'/>"><img class="navigationImage" src="/console/images/Btn_Support.png" alt="Support Link"/></a></td>
                 </tr>
                 <tr>
                     <td class="navigationCell">&nbsp;</td>
@@ -65,7 +65,7 @@
                     <td class="navigationText"><fmt:message key="home_admin_description"/></td>
                     </security:authorize>
                     <!-- Rowspanned cell extends down here -->
-					<td class="navigationText"><fmt:message key="home_support_description"/></td>
+                    <td class="navigationText"><fmt:message key="home_support_description"/></td>
                 </tr>
             </table>
         </div>

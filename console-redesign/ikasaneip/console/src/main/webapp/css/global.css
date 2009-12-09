@@ -8,10 +8,33 @@
     padding: 0px;
 }
 
+/* All links will have their decoration stripped but have a standard Ikasan link color (#3E3E3E) */
 a:link, a:visited, a:hover
 {
-	text-decoration: none;
-	color: #3E3E3E;
+    text-decoration: none;
+    color: #3E3E3E;
+}
+
+/* 
+    TODO Login page related, ideally move this to its own css file, may not be possible with JSP templating
+    we currently have
+*/
+#arrow
+{
+    float: left;
+    padding-right: 20px;
+    position: relative;
+    width: 42px;
+}
+
+/* 
+    TODO Login page related, ideally move this to its own css file, may not be possible with JSP templating
+    we currently have
+*/
+.arrowImage
+{
+    height: 42px;
+    width: 42px;
 }
 
 /* Background colour is Ikasan Grey (#EEEEEE) with font colour defaulting to Ikasan dark grey (#E3E3E3) */
@@ -23,11 +46,23 @@ body
     font-size: 13px;
 }
 
+.button
+{
+    border-width: 1px;
+    border-color: #B3B3B3;
+    background-image: url(images/Btn_BG.png);
+    background-repeat: repeat-x;
+    background-position: top left;
+    height: 20px;
+    width: 100px;
+}
+
 /* The overall container div */
 #container
 {
     padding-left: 25px;
     padding-right: 25px;
+    position: relative;
 }
 
 /* The content div */
@@ -38,9 +73,19 @@ body
     border-top-style: solid;
     border-top-width: 1px;
     clear: both;
+    height: 375px;
+    min-height: 375px;
     padding-bottom: 20px;
     padding-left: 20px;
+    padding-right: 20px;
     padding-top: 20px;
+    position: relative;
+}
+
+.formLabel
+{
+    font-weight: bold;
+    text-align: right;
 }
 
 /* The colour of the h1 heading will be #F29400 (Ikasan Orange) */
@@ -71,28 +116,30 @@ h3
     font-weight: bold;
 }
 
-/* TODO */  
 h4
 {
-	font-weight: normal;
-	margin-bottom: 20px;
+    color: #3E3E3E;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 /* The header section */
 #header
 {
-	background-color: #F9AF56;
+    background-color: #F9AF56;
     background-image: url(images/Banner.png);
-	background-repeat: no-repeat;
+    background-repeat: no-repeat;
     height: 140px;
     margin-top: 20px;
+    position: relative;
 }
 
-/* */  
+/* TODO Home page this won't be correct, different height */
 .helpImage
 {
-	height: 30px;
-	width: 13px;
+    height: 13px;
+    width: 13px;
 }
 
 /* */
@@ -112,31 +159,78 @@ img
     color: #99141B;
 }
 
+.inputText
+{
+    background-color: #FFFFFF;
+    border-style: sold;
+    border-width: 1px;
+    border-color: #F29400;
+    color: #3E3E3E;
+    font-family: "Trebuchet MS";
+    font-size: 13px;
+}
+
 .leftBorder
 {
-	border-color: #B3B3B3;
-	border-left-width: 1px;
-	border-left-style: solid;
+    border-color: #B3B3B3;
+    border-left-width: 1px;
+    border-left-style: solid;
+}
+
+#leftContent
+{
+    float: left;
+    position: relative;
+    width: 440px;
+}
+
+#loginBox
+{
+    float: right;
+    width: 366px;
+    height: 180px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #99141B;
+    padding-left: 15px;
+    padding-right: 15px; 
+    padding-top: 15px;
+    padding-bottom: 15px; 
+}
+
+#loginTable
+{
+    padding-left: 30px;
+}
+
+/* TODO maybe pad in form instead? */
+.loginCell
+{
+    padding-bottom: 15px;
+    padding-right: 15px;
+    padding-left: 0px;
 }
 
 /* The logo image */
 #logo
 {
     height: 70px;
-	padding-left: 20px;
-	padding-top: 17px;
+    padding-left: 20px;
+    padding-top: 17px;
     width: 147px;
 }
 
 #mainNavigation
 {
-	padding-left: 20px;
-	float: left;
+    padding-left: 20px;
+    float: left;
+    position: relative;
 }
 
 #minorNavigation
 {
     float: right;
+    position: relative;
 }
 
 /* The navigation section background colour matches the default page background colour */
@@ -145,6 +239,7 @@ img
     background-color: #EEEEEE;
     height: 30px;
     line-height: 30px;
+    position: relative;
 }
 
 /* The large navigation arrow */
@@ -174,36 +269,55 @@ img
     width: 120px;
 }
 
+#rightContent
+{
+    float: right;
+    position: relative;
+    width: 460px;
+}
+
+
+/* Normal text paragraph */  
+.text
+{
+    margin-bottom: 25px;
+}
+
 ul
 {
-	display: inline;
+    display: inline;
 } 
 
 ul li
 {
-	border-left: 1px solid #999999;
-	display: inline;
-	list-style: none;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 0px;
-	padding-bottom: 0px;
+    border-left: 1px solid #999999;
+    display: inline;
+    list-style: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
-	
+    
 ul li.first
 {
-	border-left: none;
-	display: inline;
-	list-style: none;
-	padding-left: 0px;
-	padding-right: 10px;
+    border-left: none;
+    display: inline;
+    list-style: none;
+    padding-left: 0px;
+    padding-right: 10px;
 }
 
 ul li.last
 {
-	border-left: 1px solid #999999;
-	display: inline;
-	list-style: none;
-	padding-left: 10px;
-	padding-right: 0px;
+    border-left: 1px solid #999999;
+    display: inline;
+    list-style: none;
+    padding-left: 10px;
+    padding-right: 0px;
 }
+
+ol
+{
+    list-style: none;
+} 

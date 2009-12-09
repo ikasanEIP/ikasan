@@ -57,12 +57,14 @@
 
 <body>
     <!-- 
-        We may need a container, as it can be easier to manipulate the positioning of various div elements 
+        We use a container, as it can be easier to manipulate the positioning of various div elements 
         inside a parent div as opposed to inside a body tag. 
      -->
     <div id="container">
+
+        <!-- The header section -->
         <div id="header">
-           <a href="<c:url value='/'/>"><img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" /></a>
+           <a href="<c:url value='/'/>"><img id="logo" src="/console/images/Ikasan_Logo_Transp.png" alt="logo" /></a>
            <h2><fmt:message key="top_heading"/></h2>
         </div>
         
@@ -82,14 +84,14 @@
             </div>
 
             <!-- 
-            	TODO get the image working in with the word Support, unfortunately HTML rears its ugly head 
+            	TODO get the image working in with the word 'Support', unfortunately HTML rears its ugly head 
             	again when trying to get this to work cleanly
            	-->
             <div id="minorNavigation">
                 <ul>
-                    <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpImage" src="images/Icon_Help_sml2.png" alt="?" /> --></a></li>
-                    <li><fmt:message key="menu_admin_logged_in_as"/> <security:authentication property="principal.username" /></li>
-                    <li class="last"><a href="<c:url value="/j_spring_security_logout"/>"><span class="important"><fmt:message key="menu_admin_logout"/></span></a></li>
+                    <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpImage" src="/console/images/Icon_Help_sml2.png" alt="?" /> --></a></li>
+                    <li><fmt:message key="menu_logged_in_as"/> <security:authentication property="principal.username" /></li>
+                    <li class="last"><a href="<c:url value="/j_spring_security_logout"/>"><span class="important"><fmt:message key="menu_logout_link"/></span></a></li>
                 </ul>
             </div>
         </div>

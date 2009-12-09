@@ -61,57 +61,71 @@
 
 <body>
     <!-- 
-        TODO We may not need a container, but it can be easier to manipulate the 
-        positioning of various div elements inside a parent div as opposed to inside 
-        the body tag 
+        We use a container, as it can be easier to manipulate the positioning of various div elements 
+        inside a parent div as opposed to inside a body tag. 
      -->
     <div id="container">
-        <!-- TODO This will need to be altered somewhat -->
+
+        <!-- The header section -->
         <div id="header">
-           <!-- <a href="<c:url value='/'/>"> -->
-           <img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" />
-           <!-- </a> -->
+           <img id="logo" src="/console/images/Ikasan_Logo_Transp.png" alt="logo" />
            <h2>Enterprise Integration Platform - Console</h2>
         </div>
 
-        <div class="content">
-            <%-- 
-                This form-login-page form is also used as the
-                form-error-page to ask for a login again.
-             --%>
-            <c:if test="${not empty param.login_error}">
-                <span class="errorMessages">
-                    Your login attempt was not successful, try again<br>
-                    <br />
-                    Reason: <%= ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage() %>
-                </span>
-            </c:if>
+        <!-- The navigation bar -->
+        <div id="navigation">&nbsp;</div>
 
-            <form id="loginForm" action="<c:url value='j_spring_security_check'/>" method="post" class="dataform fancydataform">
-                <fieldset>
-                    <legend>Login</legend>
-                    <ol>
-                        <li>
-                            <label for="j_username">User</label>
-                            <input type='text' id='j_username' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
-                        </li>
-                        <li>
-                            <label for="j_password">Password</label>
-                            <input type='password' id='j_password' name='j_password' />
-                        </li>
-                        <li>
-                            <label for="_spring_security_remember_me">Save password for 2 weeks</label>
-                            <input type="checkbox" id="_spring_security_remember_me" name="_spring_security_remember_me"/>
-                        </li>	
-                    </ol>
-                </fieldset>
-                <p>
-                    <input name="submit" type="submit" value="Login" class="controlButton"/>
-                    <input name="reset" type="reset" value="Reset" class="controlButton"/>
+        <!--  Main Content -->
+        <div id="content">
+            <div id="leftContent">
+                <h1>Welcome...</h1>
+                <p class="text">
+                    Welcome to the console for Ikasan EIP, your gateway to many Ikasan EIP services.
                 </p>
-            </form>
-        </div>
-    </div>
+                <h4>What does the Ikasan EIP console do?</h4>
+                <p class="text">
+                    This browser based console allows end users and administrators to execute Ikasan EIP services.  
+                    As of version 0.7.7 this includes wiretapped event search and user administration.
+                </p>
+                <h4>What next?</h4>
+                <p class="text">
+                    Please Login or if you are a new user then please follow the instructions in the "I'm a new user ?" link.
+                </p>
+            </div>
+            <div id="rightContent">
+                <div id="arrow"><img class="arrowImage" src="/console/images/Icon_Arrow.png" alt="Arrow"/></div>
+                <div id="loginBox">
+                    <h1>Login</h1>
+                    <form id="loginForm" action="<c:url value='j_spring_security_check'/>" method="post">
+                        <table id="loginTable">
+                            <tr>
+                                <td class="loginCell formLabel">Username</td>
+                                <td class="loginCell"><input class="inputText" type='text' id='j_username' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/></td>
+                            </tr>
+                            <tr>
+                                <td class="loginCell formLabel">Password</td>
+                                <td class="loginCell"><input class="inputText" type='password' id='j_password' name='j_password' /></td>
+                            </tr>
+                            <tr>
+                                <td class="loginCell formLabel"><a href="#">I'm a new user<img class="helpImage" src="/console/images/Icon_Help_sml.png" alt="?" /></a></td>
+                                <td class="loginCell"><input class="button" name="submit" type="submit" value="Login"/></td>
+                            </tr>
+                        </table>
+                    </form>
+                    <%-- 
+                        This form-login-page form is also used as the
+                        form-error-page to ask for a login again.
+                     --%>
+                    <c:if test="${not empty param.login_error}">
+                    <span class="important">
+                        Your login attempt was not successful, try again<br />
+                        <br />
+                        Reason: <%= ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage() %>
+                    </span>
+                    </c:if>
+                </div>
+            </div> <!-- End RHContent -->
+        </div> <!-- End content -->
+    </div> <!-- End container -->
 </body>
 </html>
-
