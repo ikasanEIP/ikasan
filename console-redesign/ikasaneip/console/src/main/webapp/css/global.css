@@ -23,26 +23,22 @@ body
     font-size: 13px;
 }
 
-/* For debug purposes */
-.border
-{
-    border: solid;
-    border-width: 1px;
-}
-
 /* The overall container div */
 #container
 {
-    margin-left: 25px;
-    margin-right: 25px;
-    width: 974px;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 /* The content div */
 #content
 {
     background-color: #FFFFFF;
+    border-color: #B3B3B3;
+    border-top-style: solid;
+    border-top-width: 1px;
     clear: both;
+    padding-bottom: 20px;
     padding-left: 20px;
     padding-top: 20px;
 }
@@ -53,6 +49,7 @@ h1
     color: #F29400;
     font-size: 26px;
     font-weight: bold;
+    margin-bottom: 20px;
 }
 
 /* The colour of the h2 heading will be #99141B (Ikasan Maroon) */  
@@ -60,8 +57,8 @@ h2
 {
     color: #99141B;
     font-size: 18px;
-    line-height: 18px;
     font-weight: bold;
+    line-height: 18px;
     margin-top: 18px;
     padding-left: 20px;    
 }
@@ -74,23 +71,33 @@ h3
     font-weight: bold;
 }
 
+/* TODO */  
+h4
+{
+	font-weight: normal;
+	margin-bottom: 20px;
+}
+
 /* The header section */
 #header
 {
-	background-repeat: no-repeat;
-	/* TODO - Not sure which one of these works as loading of page in Tomcat is a bit weird */
-    background-image: url(/images/Banner.png);
+	background-color: #F9AF56;
     background-image: url(images/Banner.png);
+	background-repeat: no-repeat;
     height: 140px;
-    width: 974px;
     margin-top: 20px;
 }
 
-/* The header section TODO Image and Height calculation */
+/* */  
+.helpImage
+{
+	height: 30px;
+	width: 13px;
+}
+
+/* */
 #homeLinksTable
 {
-    width: 300px;
-    height: 300px;
     border: none;
 }
 
@@ -100,6 +107,19 @@ img
     border: none;
 }
 
+.important
+{
+    color: #99141B;
+}
+
+.leftBorder
+{
+	border-color: #B3B3B3;
+	border-left-width: 1px;
+	border-left-style: solid;
+}
+
+/* The logo image */
 #logo
 {
     height: 70px;
@@ -112,19 +132,6 @@ img
 {
 	padding-left: 20px;
 	float: left;
-}
-
-#first_menu_item
-{
-    display: inline;
-    padding-right: 10px;
-}
-
-.menu_item
-{
-    display: inline;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 
 #minorNavigation
@@ -140,14 +147,63 @@ img
     line-height: 30px;
 }
 
+/* The large navigation arrow */
+.navigationArrow
+{
+    height: 90px;
+    width: 42px;
+}
+
+.navigationCell
+{
+    padding-right: 20px;
+}
+
+/* The large navigation text */
+.navigationText
+{
+    width: 120px;
+    padding-right: 20px;
+    vertical-align: top;
+}
+
+/* The large navigation buttons */
 .navigationImage
 {
-    height: 150px;
-    width: 200px;
+    height: 90px;
+    width: 120px;
 }
 
 ul
 {
-	list-style-image: url(images/VerticalLine_Black.png);
-    list-style-image: url(/images/VerticalLine_Black.png);
+	display: inline;
+} 
+
+ul li
+{
+	border-left: 1px solid #999999;
+	display: inline;
+	list-style: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+	
+ul li.first
+{
+	border-left: none;
+	display: inline;
+	list-style: none;
+	padding-left: 0px;
+	padding-right: 10px;
+}
+
+ul li.last
+{
+	border-left: 1px solid #999999;
+	display: inline;
+	list-style: none;
+	padding-left: 10px;
+	padding-right: 0px;
 }

@@ -57,9 +57,8 @@
 
 <body>
     <!-- 
-        TODO We may not need a container, but it can be easier to manipulate the 
-        positioning of various div elements inside a parent div as opposed to inside 
-        the body tag 
+        We may need a container, as it can be easier to manipulate the positioning of various div elements 
+        inside a parent div as opposed to inside a body tag. 
      -->
     <div id="container">
         <div id="header">
@@ -70,24 +69,27 @@
         <!-- The navigation bar -->
         <div id="navigation">
 
-            <!-- TODO Main navigation -->
+            <!-- Main navigation -->
             <div id="mainNavigation">
                 <ul>
-                    <li id="first_menu_item"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
-                    <li class="menu_item"><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
+                    <li class="first"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
+                    <li><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
                     <%-- Spring based security around the admin pages --%>
                     <security:authorize ifAllGranted="ROLE_ADMIN">
-                    <li class="menu_item"><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
+                    <li class="last"><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
                     </security:authorize>
                 </ul>
             </div>
 
-            <!-- TODO Logout and Help -->
+            <!-- 
+            	TODO get the image working in with the word Support, unfortunately HTML rears its ugly head 
+            	again when trying to get this to work cleanly
+           	-->
             <div id="minorNavigation">
                 <ul>
-                    <li class="menu_item"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/></a></li>
-                    <li class="menu_item"><fmt:message key="menu_admin_logged_in_as"/> <security:authentication property="principal.username" /></li>
-                    <li class="menu_item"><a href="<c:url value="/j_spring_security_logout"/>"><fmt:message key="menu_admin_logout"/></a></li>
+                    <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpImage" src="images/Icon_Help_sml2.png" alt="?" /> --></a></li>
+                    <li><fmt:message key="menu_admin_logged_in_as"/> <security:authentication property="principal.username" /></li>
+                    <li class="last"><a href="<c:url value="/j_spring_security_logout"/>"><span class="important"><fmt:message key="menu_admin_logout"/></span></a></li>
                 </ul>
             </div>
         </div>

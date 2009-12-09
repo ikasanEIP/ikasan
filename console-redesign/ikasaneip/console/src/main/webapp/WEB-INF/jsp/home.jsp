@@ -45,26 +45,27 @@
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
         <div id="content">
             <h1><fmt:message key="home_heading"/></h1>
-            <fmt:message key="home_heading2"/>
+            <h4><fmt:message key="home_heading2"/></h4>
             <table id="homeLinksTable">
                 <tr>
-                    <td><img class="navigationImage" src="" alt="Arrow"/></td>
-                    <td><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="" alt="Events Link"/></a></td>
-                    <td>
-                        <%-- Spring based security around the admin pages --%>
-                        <security:authorize ifAllGranted="ROLE_ADMIN">
-                        <a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="" alt="Admin Link"/></a>
-                        </security:authorize>
-                    </td>
+                    <td class="navigationCell"><img class="navigationArrow" src="images/Icon_ArrowHm.png" alt="Arrow"/></td>
+                    <td class="navigationCell"><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="images/Btn_Events.png" alt="Events Link"/></a></td>
+                    <%-- Spring based security around the admin pages --%>
+                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <td class="navigationCell"><a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="images/Btn_Admin.png" alt="Admin Link"/></a></td>
+                    </security:authorize>
+					<td rowspan="2" class="navigationCell leftBorder">&nbsp;</td>                    
+                    <td class="navigationCell"><a href="<c:url value='/support/support.htm'/>"><img class="navigationImage" src="images/Btn_Support.png" alt="Support Link"/></a></td>
                 </tr>
                 <tr>
-                    <td>&nbsp;</td>
-                    <td><fmt:message key="home_events_description"/></td>
-                    <td>
-                        <security:authorize ifAllGranted="ROLE_ADMIN">
-                        <fmt:message key="home_admin_description"/>
-                        </security:authorize>
-                    </td>
+                    <td class="navigationCell">&nbsp;</td>
+                    <td class="navigationText"><fmt:message key="home_events_description"/></td>
+                    <%-- Spring based security around the admin pages --%>
+                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <td class="navigationText"><fmt:message key="home_admin_description"/></td>
+                    </security:authorize>
+                    <!-- Rowspanned cell extends down here -->
+					<td class="navigationText"><fmt:message key="home_support_description"/></td>
                 </tr>
             </table>
         </div>
