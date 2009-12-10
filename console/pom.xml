@@ -105,7 +105,7 @@
         <url>http://open.jira.com/browse/IKASAN</url>
     </issueManagement>
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasan-0.7.x</connection>
     </scm>
     <build>
         <plugins>
@@ -199,25 +199,26 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
             <version>2.5.6</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>2.5.6</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.7.8-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
             <version>0.7.8-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -230,25 +231,21 @@
             <groupId>aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.5.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <version>2.0.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core-tiger</artifactId>
             <version>2.0.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>2.0.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
