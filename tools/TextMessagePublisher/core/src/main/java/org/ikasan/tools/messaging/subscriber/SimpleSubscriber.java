@@ -10,24 +10,22 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-public class SimpleSubscriber implements MessageListener{
+public class SimpleSubscriber extends BaseSubscriber {
+
+	private Logger logger = Logger.getLogger(SimpleSubscriber.class);
+	
+	public SimpleSubscriber(ConnectionFactory connectionFactory,
+			Destination destination) {
+		super(connectionFactory, destination);
+	}
 
 	private int maximumMessages = 10;
 	
 	private BlockingQueue<Message> receivedMessages = new LinkedBlockingQueue<Message>(maximumMessages);
-	
-	private DefaultMessageListenerContainer container;
-	
-	private Logger logger = Logger.getLogger(SimpleSubscriber.class);
-	
-	private Destination destination;
-	
-	private Date subscribingSince;
+
 	
 	public void onMessage(Message message) {
 		logger.info("onMessage called with ["+message+"]");
@@ -38,23 +36,7 @@ public class SimpleSubscriber implements MessageListener{
 		logger.info("now there are ["+receivedMessages.size()+"] received messages");
 	}
 	
-	public SimpleSubscriber(ConnectionFactory connectionFactory, Destination destination){
-		container = new DefaultMessageListenerContainer();
-		container.setConnectionFactory(connectionFactory);
-		container.setDestination(destination);
-		container.setConcurrentConsumers(1);
-		container.setMessageListener(this);
-		container.initialize();
-		subscribingSince = new Date();
-	}
-	
-	public void shutdown(){
-        try{   
-        	container.shutdown();
-        } catch (java.lang.IllegalStateException e){
-            logger.info("illegal state exception when unsubscribing from destination ["+destination+"]");
-        }
-	}
+
 
 	
 	public List<Message> getMessages(){
@@ -77,9 +59,7 @@ public class SimpleSubscriber implements MessageListener{
 		return null;
 	}
 	
-	public Date getSubscribingSince(){
-		return subscribingSince;
-	}
+
 	
 	public int getMaximumMessages(){
 		return maximumMessages;

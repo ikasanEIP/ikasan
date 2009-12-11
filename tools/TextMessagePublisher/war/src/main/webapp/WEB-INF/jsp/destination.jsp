@@ -52,11 +52,11 @@
 	
 <div id="simpleSubscriber" class="destinationAspect">
 	<h3>Simple Subscriber</h3>
-	<c:url var="stopSubscriptionLink" value="stopSimpleSubscription.htm">
+	<c:url var="stopSimpleSubscriptionLink" value="stopSimpleSubscription.htm">
 		<c:param name="destinationPath" value="${destination.destinationPath}"/>
 	</c:url>
 	
-	<c:url var="startSubscriptionLink" value="startSimpleSubscription.htm">
+	<c:url var="startSimpleSubscriptionLink" value="startSimpleSubscription.htm">
 		<c:param name="destinationPath" value="${destination.destinationPath}"/>
 	</c:url>	
 	<c:if test="${destination.simpleSubscriber!=null}">
@@ -102,8 +102,8 @@
 				</tr>
 			</c:forEach>
 	</table>
-	<form method="post" action="${stopSubscriptionLink}">
-		<input type="submit" value="Stop Simple Subscription"/></td>
+	<form method="post" action="${stopSimpleSubscriptionLink}">
+		<input type="submit" value="Stop Simple Subscription"/>
 	</form>	
 	
 	</c:if>
@@ -113,11 +113,75 @@
 		Simple Subscriber is not active on this destination
 	</p>
 	
-	<form method="post" action="${startSubscriptionLink}">
-		<input type="submit" value="Start Simple Subscription"/></td>
+	<form method="post" action="${startSimpleSubscriptionLink}">
+		<input type="submit" value="Start Simple Subscription"/>
 	</form>
 	</c:if>
 </div>
+
+
+
+<div id="persistingSubscriber" class="destinationAspect">
+	<h3>Persisting Subscriber</h3>
+	<c:url var="stopPersistingSubscriptionLink" value="stopPersistingSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>
+	
+	<c:url var="startPersistingSubscriptionLink" value="startPersistingSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>
+		
+	<c:if test="${destination.persistingSubscriber!=null}">
+	<p class="message">
+		Persisting Subscriber subscribing since <c:out value="${destination.persistingSubscriber.subscribingSince}"/>
+	</p>
+	
+	<form method="post" action="${stopPersistingSubscriptionLink}">
+		<input type="submit" value="Stop Persisting Subscription"/>
+	</form>		
+
+	<table>
+				<tr>
+					<th>&nbsp;</th>
+					<th>Type</th>
+					<th>Timestamp</th>
+					<th>Export</th>
+				</tr>
+			<c:forEach items="${destination.persistingSubscriber.messages}" var="messageId" >
+				
+				<tr>
+					<c:url var="messageLink" value="message.htm">
+						<c:param name="destinationPath" value="${destination.destinationPath}"/>
+		            	<c:param name="messageId" value="${messageId}"/>
+		            </c:url>
+					<td><a href="${messageLink}"><c:out value="${messageId}"/></a></td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<c:url var="downloadLink" value="export.htm">
+						<c:param name="destinationPath" value="${destination.destinationPath}"/>
+		            	<c:param name="messageId" value="${messageId}"/>
+		            </c:url>
+					<td><a href="${downloadLink}">Download</a></td>
+
+				</tr>
+			</c:forEach>
+	</table>
+	</c:if>
+	
+	<c:if test="${destination.persistingSubscriber==null}">
+	<p class="message">
+		Persisting Subscriber is not active on this destination
+	</p>	
+	<form method="post" action="${startPersistingSubscriptionLink}">
+		<input type="text" name="fileSystemPath"/>
+		<input type="submit" value="Start Persisting Subscription"/>
+	</form>
+	</c:if>
+</div>
+
+
+
+
 
 <c:url var="textMessagePublicationLink" value="publishTextMessage.htm">
 	<c:param name="destinationPath" value="${destination.destinationPath}"/>

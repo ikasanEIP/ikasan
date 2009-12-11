@@ -38,13 +38,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.serialisation;
+package org.ikasan.tools.messaging.model;
 
-import org.ikasan.tools.messaging.model.MessageWrapper;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface MessageXmlSerialiser {
+public class MapMessageWrapper extends MessageWrapper{
 
-	public String toXml(MessageWrapper message);
+	private Map<String, Object> map = new HashMap<String, Object>();
 
-	public MessageWrapper getMessageObject(String xml);
+	
+	public MapMessageWrapper(Map<String, Object> map,
+			Map<String, Object> properties) {
+		super(properties);
+		this.map = map;
+	}
+
+	public Map<String, Object> getMap() {
+		return map;
+	}
+
 }

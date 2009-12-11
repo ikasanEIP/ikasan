@@ -38,13 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.serialisation;
+package org.ikasan.tools.messaging.model;
 
-import org.ikasan.tools.messaging.model.MessageWrapper;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface MessageXmlSerialiser {
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.TextMessage;
 
-	public String toXml(MessageWrapper message);
+public class MessageWrapperFactory {
 
-	public MessageWrapper getMessageObject(String xml);
+	public static MessageWrapper wrapMessage(Message message) throws JMSException{
+		MessageWrapper result = null;
+		
+		Map<String, Object> properties = new HashMap<String, Object>();
+		
+		Enumeration propertyNames = message.getPropertyNames();
+		while (propertyNames.hasMoreElements()){
+			String propertyName = (String)propertyNames.nextElement();
+			properties.put(propertyName,message.getObjectProperty(propertyName));
+		}
+		
+		if (message instanceof TextMessage){
+			result =  new TextMessageWrapper(((TextMessage) message).getText(), properties);
+		} else if (message instanceof MapMessage ){
+			MapMessage mapMessage = (MapMessage)message;
+			
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			Enumeration mapNames = mapMessage.getMapNames();
+			while (mapNames.hasMoreElements()){
+				String mapName = (String)mapNames.nextElement();
+				map.put(mapName, mapMessage.getObject(mapName));
+			}
+			
+			result =  new MapMessageWrapper(map, properties);
+		} else{
+			throw new RuntimeException("Unsupported message type:"+message);
+		}
+		result.setMessageId(message.getJMSMessageID());
+		result.setTimestamp(message.getJMSTimestamp());
+		return result;
+	}
 }
