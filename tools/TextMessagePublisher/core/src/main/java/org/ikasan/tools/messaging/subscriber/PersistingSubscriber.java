@@ -38,13 +38,51 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.serialisation;
+package org.ikasan.tools.messaging.subscriber;
 
+import java.util.List;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+
+import org.ikasan.tools.messaging.dao.MessageDao;
 import org.ikasan.tools.messaging.model.MessageWrapper;
+import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 
-public interface MessageXmlSerialiser {
+public class PersistingSubscriber extends BaseSubscriber {
 
-	public String toXml(MessageWrapper message);
+	private MessageDao messageDao;
+	
+	
+	public PersistingSubscriber(
+			ConnectionFactory connectionFactory,
+			Destination destination,
+			MessageDao messageDao
+		) {
+		super(connectionFactory, destination);
+		this.messageDao = messageDao;
+	}
 
-	public MessageWrapper getMessageObject(String xml);
+	public void onMessage(Message message) {
+		
+		MessageWrapper messageWrapper;
+		try {
+			messageWrapper = MessageWrapperFactory.wrapMessage(message);
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+
+		messageDao.save(messageWrapper);
+	}
+	
+	public List<String> getMessages(){
+		return messageDao.getMessages();
+	}
+	
+	public MessageWrapper getMessage(String messageId){
+		return messageDao.getMessage(messageId);
+	}
+
 }

@@ -45,16 +45,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.TextMessage;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.ikasan.tools.messaging.model.MapMessageWrapper;
+import org.ikasan.tools.messaging.model.MessageWrapper;
+import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,76 +73,75 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 	
 	private Logger logger = Logger.getLogger(DefaultMessageXmlSerialiser.class);
 
-	public String toXml(Message message) {
+	public String toXml(MessageWrapper message) {
 		
 		String xml = "";
-		try
+
+
+        // Document (Xerces implementation only).
+        Document xmldoc = new DocumentImpl();
+        Element root = xmldoc.createElement("Message");
+        handleMessageProperties(message, xmldoc, root);
+        if (message instanceof TextMessageWrapper)
         {
-            Element e = null;
-            Node n = null;
-            // Document (Xerces implementation only).
-            Document xmldoc = new DocumentImpl();
-            Element root = xmldoc.createElement("Message");
-            handleMessageProperties(message, xmldoc, root);
-            if (message instanceof TextMessage)
-            {
-                handleTextMessage((TextMessage) message, xmldoc, root);
-            }
-            else if (message instanceof MapMessage)
-            {
-                handleMapMessage((MapMessage) message, xmldoc, root);
-            }
-            xmldoc.appendChild(root);
-            
-            OutputFormat of = new OutputFormat("XML", "UTF-8", true);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            XMLSerializer serializer = new XMLSerializer(byteArrayOutputStream, of);
-            try {
-				serializer.asDOMSerializer();
-				serializer.serialize(xmldoc.getDocumentElement());
-				byteArrayOutputStream.close();
-				xml=new String(byteArrayOutputStream.toByteArray(), "UTF-8");
-			} catch (IOException ioException) {
-				throw new RuntimeException();
-			}
+            handleTextMessage((TextMessageWrapper) message, xmldoc, root);
         }
-        catch (JMSException jmse)
+        else if (message instanceof MapMessageWrapper)
         {
-            jmse.printStackTrace();
+            handleMapMessage((MapMessageWrapper) message, xmldoc, root);
         }
+        xmldoc.appendChild(root);
+        
+        OutputFormat of = new OutputFormat("XML", "UTF-8", true);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        XMLSerializer serializer = new XMLSerializer(byteArrayOutputStream, of);
+        try {
+			serializer.asDOMSerializer();
+			serializer.serialize(xmldoc.getDocumentElement());
+			byteArrayOutputStream.close();
+			xml=new String(byteArrayOutputStream.toByteArray(), "UTF-8");
+		} catch (IOException ioException) {
+			throw new RuntimeException();
+		}
+
 		return xml;
 	}
 	
 	
 	
-	private void handleMessageProperties(Message message, Document xmldoc,
-            Element root) throws JMSException
+	private void handleMessageProperties(MessageWrapper message, Document xmldoc,
+            Element root) 
     {
-        Enumeration propertyNames = message.getPropertyNames();
-        while (propertyNames.hasMoreElements())
+		Element propertiesElement = xmldoc.createElement("Properties");
+		
+		
+		
+        Set<String> propertyNames = message.getProperties().keySet();
+        for (String propertyName : propertyNames)
         {
-            String propertyName = (String) propertyNames.nextElement();
-            Object propertyEntry = message.getObjectProperty(propertyName);
+            Object propertyEntry = message.getProperties().get(propertyName);
             Class propertyClass = propertyEntry.getClass();
             Element entryElement = xmldoc.createElement("Property");
             entryElement.setAttribute("class", propertyClass.getName());
             entryElement.setAttribute("name", propertyName);
             entryElement.appendChild(xmldoc.createTextNode(propertyEntry
                 .toString()));
-            root.appendChild(entryElement);
+            propertiesElement.appendChild(entryElement);
         }
+        
+        root.appendChild(propertiesElement);
     }
 	
-    private void handleMapMessage(MapMessage mapMessage, Document xmldoc,
-            Element root) throws JMSException
+    private void handleMapMessage(MapMessageWrapper mapMessage, Document xmldoc,
+            Element root) 
     {
         root.setAttribute("type", "MapMessage");
         Element mapElement = xmldoc.createElement("Map");
-        Enumeration mapNames = mapMessage.getMapNames();
-        while (mapNames.hasMoreElements())
+        Set<String> mapNames = mapMessage.getMap().keySet();
+        for (String entryName : mapNames)
         {
-            String entryName = (String) mapNames.nextElement();
-            Object mapEntry = mapMessage.getObject(entryName);
+
+            Object mapEntry = mapMessage.getMap().get(entryName);
             Class entryClass = mapEntry.getClass();
             String className = entryClass.getName();
             boolean isByteArray = false;
@@ -167,8 +168,8 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
         root.appendChild(mapElement);
     }
 	
-    private void handleTextMessage(TextMessage textMessage, Document xmldoc,
-            Element root) throws JMSException
+    private void handleTextMessage(TextMessageWrapper textMessage, Document xmldoc,
+            Element root) 
     {
         root.setAttribute("type", "TextMessage");
         Element textElement = xmldoc.createElement("Text");
@@ -178,27 +179,30 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 
 
 
-	public Object getMessageObject(String xml) {
+	public MessageWrapper getMessageObject(String xml) {
 
         DocumentBuilderFactory dFactoryImpl = DocumentBuilderFactory
             .newInstance();
         
-        Object result = null;
+        MessageWrapper result = null;
         try
         {
             Document doc = dFactoryImpl.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
             Element messageElement = doc.getDocumentElement();
             String typeAttribute = messageElement.getAttribute("type");
+            
+            Map<String, Object> messageProperties = handleForMessageProperties(messageElement);
 
             if (typeAttribute.equals("TextMessage"))
             {
                
-                result = handleForTextMessage(messageElement);
+                result = new TextMessageWrapper(handleForTextMessage(messageElement),messageProperties);
             }
             else if (typeAttribute.equals("MapMessage"))
             {
-                result = handleForMapMessage(messageElement);
+                result = new MapMessageWrapper(handleForMapMessage(messageElement),messageProperties);
             }
+            
             else{
             	throw new RuntimeException("Unsupported type [ "+typeAttribute+"]");
             }
@@ -236,15 +240,32 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 		return result;
 	}
 	
+	private Map<String, Object> handleForMessageProperties(Element messageElement){
+		Map<String, Object> result = new HashMap<String, Object>();
+		NodeList elementsByTagName = messageElement.getElementsByTagName("Properties");
+		Element mapNode = (Element) elementsByTagName.item(0);
+		NodeList mapEntries = mapNode.getElementsByTagName("Property");
+		int mapEntryCount = 0;
+		while (mapEntryCount < mapEntries.getLength())
+		{
+		    Node mapEntry = mapEntries.item(mapEntryCount);
+		    handleMapEntry((Element) mapEntry, result);
+		    mapEntryCount++;
+		}
+		return result;
+	}
+	
 	private void handleMapEntry(Element mapEntry, Map<String,Object> map){
 		String clazz = mapEntry.getAttributes().getNamedItem("class")
 				.getNodeValue();
 		String mapEntryName = mapEntry.getAttribute("name");
-		System.out.println(mapEntryName);
 		String value = null;
 
-		if (mapEntry.getFirstChild() != null) {
-			value = mapEntry.getFirstChild().getNodeValue();
+		Node node = mapEntry.getFirstChild();
+		logger.info("node ["+node+"]");
+		logger.info("node class for["+mapEntryName+"]:"+node.getClass());
+		if (node != null) {
+			value = node.getNodeValue();
 		}
 
 		if ("java.lang.String".equals(clazz)) {

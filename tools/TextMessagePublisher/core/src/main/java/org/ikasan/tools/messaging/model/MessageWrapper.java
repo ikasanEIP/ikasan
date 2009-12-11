@@ -38,13 +38,54 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.serialisation;
+ package org.ikasan.tools.messaging.model;
 
-import org.ikasan.tools.messaging.model.MessageWrapper;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface MessageXmlSerialiser {
+import org.apache.log4j.Logger;
 
-	public String toXml(MessageWrapper message);
+public class MessageWrapper {
+	
+	private Logger logger = Logger.getLogger(MessageWrapper.class);
+	
+	private Map<String, Object> properties = new HashMap<String, Object>();
+	
+	private String messageId;
+	
+	private Long timestamp;
 
-	public MessageWrapper getMessageObject(String xml);
+	public String getMessageId() {
+		return messageId;
+	}
+
+
+
+	public void setMessageId(String messageId) {
+		logger.info("called with messageId:"+messageId);
+		this.messageId = messageId;
+	}
+
+
+
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
+
+
+
+	public MessageWrapper(Map<String, Object> properties) {
+		this.properties=properties;
+	}
+
+
+
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public Long getTimestamp(){
+		return timestamp;
+	}
+
 }

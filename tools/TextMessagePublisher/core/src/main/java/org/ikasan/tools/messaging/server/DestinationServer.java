@@ -40,15 +40,19 @@
  */
 package org.ikasan.tools.messaging.server;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
+import org.ikasan.tools.messaging.model.MessageWrapper;
+import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 
@@ -85,6 +89,16 @@ public class DestinationServer {
 	public void destroySimpleSubscription(String destinationPath){
 		getDestination(destinationPath).stopSimpleSubscription();
 	}
+	
+	
+	
+	public void createPersistingSubscription(String destinationPath, File directory){
+		getDestination(destinationPath).startPersistingSubscription(connectionFactory, directory);
+	}
+	
+	public void destroyPersistingSubscription(String destinationPath){
+		getDestination(destinationPath).stopPersistingSubscription();
+	}
 
 
 
@@ -108,7 +122,13 @@ public class DestinationServer {
 
 	public String getMessageAsXml(String destinationPath, String messageId) {
 		Message message = getMessage(destinationPath, messageId);
-		return messageXmlSerialiser.toXml(message);
+		String messageXml = null;
+		try {
+			messageXml =  messageXmlSerialiser.toXml(MessageWrapperFactory.wrapMessage(message));
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+		return messageXml;
 	}
 
 

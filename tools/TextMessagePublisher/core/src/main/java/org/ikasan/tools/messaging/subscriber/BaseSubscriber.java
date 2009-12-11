@@ -38,13 +38,45 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.serialisation;
+package org.ikasan.tools.messaging.subscriber;
 
-import org.ikasan.tools.messaging.model.MessageWrapper;
+import java.util.Date;
 
-public interface MessageXmlSerialiser {
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.MessageListener;
 
-	public String toXml(MessageWrapper message);
+import org.apache.log4j.Logger;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-	public MessageWrapper getMessageObject(String xml);
+public abstract class BaseSubscriber implements MessageListener{
+
+	protected DefaultMessageListenerContainer container;
+	
+	protected Destination destination;
+	
+	protected Date subscribingSince;
+	
+	private static Logger logger = Logger.getLogger(BaseSubscriber.class);
+	
+	public BaseSubscriber(ConnectionFactory connectionFactory, Destination destination){
+		container = new DefaultMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setDestination(destination);
+		container.setConcurrentConsumers(1);
+		container.setMessageListener(this);
+		container.initialize();
+		subscribingSince = new Date();
+	}
+
+	public Date getSubscribingSince(){
+		return subscribingSince;
+	}
+	public void shutdown(){
+        try{   
+        	container.shutdown();
+        } catch (java.lang.IllegalStateException e){
+            logger.info("illegal state exception when unsubscribing from destination ["+destination+"]");
+        }
+	}
 }

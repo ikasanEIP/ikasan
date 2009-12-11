@@ -1,6 +1,6 @@
 package org.ikasan.tools.messaging.web;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,6 +35,8 @@ public class MessagePublicationController {
 	private DestinationServer destinationServer;
 	
 	public static final String DESTINATION_PATH_PARAMETER_NAME = "destinationPath";
+	
+	public static final String FILE_SYSTEM_PATH_PARAMETER_NAME = "fileSystemPath";
 	
 	public static final String MESSAGE_TEXT_PARAMETER_NAME = "messageText";
 	
@@ -102,6 +104,26 @@ public class MessagePublicationController {
     public String stopSimpleSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
     {	
     	destinationServer.destroySimpleSubscription(destinationPath);
+    	
+    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
+    }
+    
+    
+    
+    
+    @RequestMapping(value="/startPersistingSubscription.htm", method = RequestMethod.POST)
+    public String startPersistingSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(FILE_SYSTEM_PATH_PARAMETER_NAME) String fileSystemPath)
+    {	
+    	destinationServer.createPersistingSubscription(destinationPath, new File(fileSystemPath));
+    	
+    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
+    }
+    
+    @RequestMapping(value="/stopPersistingSubscription.htm", method = RequestMethod.POST)
+    public String stopPersistingSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
+    {	
+    	destinationServer.destroyPersistingSubscription(destinationPath);
     	
     	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
     }

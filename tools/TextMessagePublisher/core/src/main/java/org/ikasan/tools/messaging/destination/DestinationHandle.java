@@ -40,6 +40,7 @@
  */
 package org.ikasan.tools.messaging.destination;
 
+import java.io.File;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
@@ -49,6 +50,9 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.ikasan.tools.messaging.dao.FileSystemMessageDao;
+import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
+import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
 import org.ikasan.tools.messaging.subscriber.SimpleSubscriber;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
@@ -61,6 +65,8 @@ public class DestinationHandle {
 	private Destination destination;
 	
 	private SimpleSubscriber simpleSubscriber = null;
+	
+	private PersistingSubscriber persistingSubscriber = null;
 
 	public String getDestinationPath() {
 		return destinationPath;
@@ -76,11 +82,31 @@ public class DestinationHandle {
 		return simpleSubscriber;
 	}
 	
+	public PersistingSubscriber getPersistingSubscriber(){
+		return persistingSubscriber;
+	}
+	
 	public void startSimpleSubscription(ConnectionFactory connectionFactory){
 		if (simpleSubscriber!=null){
 			throw new IllegalStateException("SimpleSubscriber already exists for ["+destinationPath+"]");
 		}
 		simpleSubscriber = new SimpleSubscriber(connectionFactory, destination);
+	}
+	
+	public void startPersistingSubscription(ConnectionFactory connectionFactory, File directory){
+		if (persistingSubscriber!=null){
+			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
+		}
+		FileSystemMessageDao messageDao = new FileSystemMessageDao(directory, new DefaultMessageXmlSerialiser());
+		persistingSubscriber = new PersistingSubscriber(connectionFactory, destination,messageDao);
+	}
+	
+	public void stopPersistingSubscription() {
+		if (persistingSubscriber!=null){
+			persistingSubscriber.shutdown();
+		}
+		this.persistingSubscriber= null;
+		
 	}
 	
 	public void publishTextMessage(ConnectionFactory connectionFactory,final String messageText, int priority) {

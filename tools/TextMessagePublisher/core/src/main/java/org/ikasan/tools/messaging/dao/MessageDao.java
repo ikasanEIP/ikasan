@@ -38,13 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.serialisation;
+package org.ikasan.tools.messaging.dao;
+
+import java.util.List;
 
 import org.ikasan.tools.messaging.model.MessageWrapper;
 
-public interface MessageXmlSerialiser {
+public interface MessageDao {
 
-	public String toXml(MessageWrapper message);
-
-	public MessageWrapper getMessageObject(String xml);
+	public void save(MessageWrapper message);
+	
+	public List<String> getMessages();
+	
+	public MessageWrapper getMessage(String messageId);
 }
