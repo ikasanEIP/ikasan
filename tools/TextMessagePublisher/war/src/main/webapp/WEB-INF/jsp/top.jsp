@@ -52,11 +52,13 @@
 <body>
 
 <c:url var="destinationsLink" value="destinations.htm"/>
+<c:url var="repositoriesLink" value="repositories.htm"/>
 
 <div id="header">	
 	<h1>Destination Tool</h1>
 	<ul>
 		<li><a href="${destinationsLink}">destinations</a></li>
+		<li><a href="${repositoriesLink}">message repositories</a></li>
 	</ul>
 </div>
 

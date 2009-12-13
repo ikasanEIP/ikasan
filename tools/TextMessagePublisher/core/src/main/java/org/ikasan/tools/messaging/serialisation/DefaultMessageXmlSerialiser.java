@@ -81,6 +81,11 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
         // Document (Xerces implementation only).
         Document xmldoc = new DocumentImpl();
         Element root = xmldoc.createElement("Message");
+        
+        root.setAttribute("messageId", message.getMessageId());
+        
+        
+        
         handleMessageProperties(message, xmldoc, root);
         if (message instanceof TextMessageWrapper)
         {
@@ -206,7 +211,8 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
             else{
             	throw new RuntimeException("Unsupported type [ "+typeAttribute+"]");
             }
-                
+            String messageId = messageElement.getAttribute("messageId");
+            result.setMessageId(messageId);
           
         }
         catch (SAXException e)

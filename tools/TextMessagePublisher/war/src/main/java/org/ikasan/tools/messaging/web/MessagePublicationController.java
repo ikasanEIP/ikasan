@@ -2,10 +2,13 @@ package org.ikasan.tools.messaging.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -21,6 +24,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
+import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.server.DestinationServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +47,13 @@ public class MessagePublicationController {
 	public static final String MESSAGE_ID_PARAMETER_NAME = "messageId";
 
     public static final String MESSAGE_PRIORITY_PARAMETER_NAME = "priority";
+    
+    public static final String REPOSITORY_NAME_PARAMETER_NAME = "repositoryName";
+    
+    public static final String SUBSCRIPTION_NAME_PARAMETER_NAME = "subscriptionName";
+    
+    public static final String SIMPLE_SUBSCRIPTION_PARAMETER_NAME = "simpleSubscription";
+    
     
     private Logger logger = Logger.getLogger(MessagePublicationController.class);
     
@@ -88,61 +99,65 @@ public class MessagePublicationController {
     {	
     	DestinationHandle   destination = destinationServer.getDestination(destinationPath);
     	model.addAttribute("destination", destination);
+    	model.addAttribute("repositoryNames", order(destinationServer.getRepositories().keySet()));
+    	model.addAttribute("subscriptionNames", order(destination.getSubscriptions().keySet()));
     	return "destination";
     }
     
     
-    @RequestMapping(value="/startSimpleSubscription.htm", method = RequestMethod.POST)
-    public String startSimpleSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
+    private List<String> order(Set<String> keySet) {
+		List<String> orderedList = new ArrayList<String>(keySet);
+		Collections.sort(orderedList);
+		logger.info(orderedList);
+		return orderedList;
+	}
+
+
+   
+    
+    
+    @RequestMapping(value="/startSubscription.htm", method = RequestMethod.POST)
+    public String startSubscriber(
+    		@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(value=REPOSITORY_NAME_PARAMETER_NAME,required=false) String repositoryName,
+    		@RequestParam(SUBSCRIPTION_NAME_PARAMETER_NAME) String subscriptionName,
+    		@RequestParam(value=SIMPLE_SUBSCRIPTION_PARAMETER_NAME,required=false) Boolean simpleSubscription
+    		)
     {	
-    	destinationServer.createSimpleSubscription(destinationPath);
+
+    	destinationServer.createSubscription(subscriptionName, destinationPath, repositoryName,simpleSubscription!=null?simpleSubscription:false);
     	
     	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
     }
     
-    @RequestMapping(value="/stopSimpleSubscription.htm", method = RequestMethod.POST)
-    public String stopSimpleSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
+    @RequestMapping(value="/stopSubscription.htm", method = RequestMethod.POST)
+    public String stopSubscriber(
+    		@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(SUBSCRIPTION_NAME_PARAMETER_NAME) String subscriptionName
+    		)
     {	
-    	destinationServer.destroySimpleSubscription(destinationPath);
-    	
-    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
-    }
-    
-    
-    
-    
-    @RequestMapping(value="/startPersistingSubscription.htm", method = RequestMethod.POST)
-    public String startPersistingSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
-    		@RequestParam(FILE_SYSTEM_PATH_PARAMETER_NAME) String fileSystemPath)
-    {	
-    	destinationServer.createPersistingSubscription(destinationPath, new File(fileSystemPath));
-    	
-    	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
-    }
-    
-    @RequestMapping(value="/stopPersistingSubscription.htm", method = RequestMethod.POST)
-    public String stopPersistingSubscriber(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath)
-    {	
-    	destinationServer.destroyPersistingSubscription(destinationPath);
+    	destinationServer.destroyPersistingSubscription(destinationPath,subscriptionName);
     	
     	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
     }
     
     @RequestMapping(value="/message.htm", method = RequestMethod.GET)
-    public String viewMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    public String viewMessage(
+    		@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(SUBSCRIPTION_NAME_PARAMETER_NAME) String subscriptionName,
     		@RequestParam(MESSAGE_ID_PARAMETER_NAME) String messageId,
              ModelMap model) throws JMSException
     {	
-    	Message message = destinationServer.getMessage(destinationPath, messageId);
+    	MessageWrapper message = destinationServer.getMessage(destinationPath,subscriptionName, messageId);
     	model.addAttribute("message", message);
     	
     	Map<String, String> messageProperties = new HashMap<String, String>();
-    	Enumeration propertyNames = message.getPropertyNames();
-    	while (propertyNames.hasMoreElements()){
-    		String propertyName = (String)propertyNames.nextElement();
-    		messageProperties.put(propertyName, message.getStringProperty(propertyName));
-    	}
-    	model.addAttribute("messageProperties", messageProperties);
+//    	Enumeration propertyNames = message.getPropertyNames();
+//    	while (propertyNames.hasMoreElements()){
+//    		String propertyName = (String)propertyNames.nextElement();
+//    		messageProperties.put(propertyName, message.getStringProperty(propertyName));
+//    	}
+//    	model.addAttribute("messageProperties", messageProperties);
     	
     	
     	
@@ -171,14 +186,16 @@ public class MessagePublicationController {
     
     
     @RequestMapping(value="/export.htm", method = RequestMethod.GET)
-    public String downloadMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    public String downloadMessage(
+    		@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    		@RequestParam(SUBSCRIPTION_NAME_PARAMETER_NAME) String subscriptionName,
     		@RequestParam(MESSAGE_ID_PARAMETER_NAME) String messageId,
              ModelMap model, HttpServletResponse response) throws JMSException, IOException
     {	
-    	Message message = destinationServer.getMessage(destinationPath, messageId);
-    	String filename = message.getJMSMessageID()+".xml";
+    	MessageWrapper message = destinationServer.getMessage(destinationPath,subscriptionName, messageId);
+    	String filename = message.getMessageId()+".xml";
     	
-    	String  xmlString = destinationServer.getMessageAsXml(destinationPath, messageId);
+    	String  xmlString = destinationServer.getMessageAsXml(destinationPath,subscriptionName, messageId);
     	//response.setContentType("text/xml");
     	response.setContentType ("application/download");
 		response.setHeader ("Content-Disposition", "attachment; filename=\""+filename+"\"");
@@ -204,18 +221,6 @@ public class MessagePublicationController {
     	FileItem fileItem = fileItems.get(0);
     	
     	byte[] content = fileItem.get();
-    	
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        int read = 0;
-//        while (read>-1){
-//            read = fileItem.getInputStream().read();
-//            if (read!=-1){
-//                byteArrayOutputStream.write(read);
-//            }
-//            logger.info("reading...");
-//        }
-//        logger.info("done reading");
-//        byte[] content = byteArrayOutputStream.toByteArray();
         
         String xml = new String(content, "UTF-8");
         
@@ -224,6 +229,23 @@ public class MessagePublicationController {
         destinationServer.publishXmlMessage(destinationPath, xml, priority);
     	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
     }
+   
     
+    @RequestMapping("/repositories.htm")
+    public String showRepositories(ModelMap model) 
+    {	
+
+    	model.addAttribute("repositories", destinationServer.getRepositories());
+    	
+        return "repositories";
+    }
+    
+    @RequestMapping("/createFileSystemRepository.htm")
+    public String createFileSystemRepository(
+    		@RequestParam(REPOSITORY_NAME_PARAMETER_NAME)String name,  @RequestParam(FILE_SYSTEM_PATH_PARAMETER_NAME)String fileSystemPath, ModelMap map){
+    	logger.info("called");
+    	destinationServer.createFileSystemRepository(name, fileSystemPath);
+    	return "redirect:/repositories.htm";
+    }
     
 }

@@ -42,6 +42,7 @@ package org.ikasan.tools.messaging.server;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,14 +50,22 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.apache.log4j.Logger;
+import org.ikasan.tools.messaging.dao.BoundedMemoryMessageDao;
+import org.ikasan.tools.messaging.dao.FileSystemMessageDao;
+import org.ikasan.tools.messaging.dao.MessageDao;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
+import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
+import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
 
 public class DestinationServer {
+	
+	private Logger logger = Logger.getLogger(DestinationServer.class);
 
 	
 	private List<DestinationHandle> destinations = new ArrayList<DestinationHandle>();
@@ -64,6 +73,8 @@ public class DestinationServer {
 	private ConnectionFactory connectionFactory;
 	
 	private MessageXmlSerialiser messageXmlSerialiser = new DefaultMessageXmlSerialiser();
+	
+	private Map<String,MessageDao> repositories = new HashMap<String,MessageDao>();
 	
 	
 	public DestinationServer(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
@@ -82,22 +93,23 @@ public class DestinationServer {
 		getDestination(destinationPath).publishTextMessage(connectionFactory,  messageText, priority);
 	}
 	
-	public void createSimpleSubscription(String destinationPath){
-		getDestination(destinationPath).startSimpleSubscription(connectionFactory);
+
+	
+	
+	
+	
+	public void createSubscription(String subscriptionName, String destinationPath, String repositoryName, boolean simpleSubscription){
+		MessageDao messageDao = repositories.get(repositoryName);
+		if (simpleSubscription){
+			messageDao = new BoundedMemoryMessageDao();
+		}
+		
+		
+		getDestination(destinationPath).createSubscription(subscriptionName, connectionFactory, messageDao);
 	}
 	
-	public void destroySimpleSubscription(String destinationPath){
-		getDestination(destinationPath).stopSimpleSubscription();
-	}
-	
-	
-	
-	public void createPersistingSubscription(String destinationPath, File directory){
-		getDestination(destinationPath).startPersistingSubscription(connectionFactory, directory);
-	}
-	
-	public void destroyPersistingSubscription(String destinationPath){
-		getDestination(destinationPath).stopPersistingSubscription();
+	public void destroyPersistingSubscription(String destinationPath, String subscriptionName){
+		getDestination(destinationPath).destroySubscription(subscriptionName);
 	}
 
 
@@ -114,20 +126,18 @@ public class DestinationServer {
 
 
 
-	public Message getMessage(String destinationPath, String messageId) {
-		return getDestination(destinationPath).getSimpleSubscriber().getMessage(messageId);
+	public MessageWrapper getMessage(String destinationPath,String subscriptionName, String messageId) {
+		BaseSubscriber subscriber = getDestination(destinationPath).getSubscriptions().get(subscriptionName);
+		return ((PersistingSubscriber)subscriber).getMessage(messageId);
 	}
 
 
 
-	public String getMessageAsXml(String destinationPath, String messageId) {
-		Message message = getMessage(destinationPath, messageId);
+	public String getMessageAsXml(String destinationPath,String subscriptionName, String messageId) {
+		MessageWrapper message = getMessage(destinationPath,subscriptionName, messageId);
 		String messageXml = null;
-		try {
-			messageXml =  messageXmlSerialiser.toXml(MessageWrapperFactory.wrapMessage(message));
-		} catch (JMSException e) {
-			throw new RuntimeException(e);
-		}
+		messageXml =  messageXmlSerialiser.toXml(message);
+		
 		return messageXml;
 	}
 
@@ -149,6 +159,18 @@ public class DestinationServer {
 		}
 
 		
+	}
+
+
+
+	public Map<String,MessageDao> getRepositories() {
+		return repositories;
+	}
+
+
+
+	public void createFileSystemRepository(String name, String fileSystemPath) {
+		repositories.put(name,new FileSystemMessageDao(new File(fileSystemPath), messageXmlSerialiser));
 	}
 	
 	

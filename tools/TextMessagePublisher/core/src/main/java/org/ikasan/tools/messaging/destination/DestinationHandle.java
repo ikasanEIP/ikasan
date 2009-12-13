@@ -40,7 +40,8 @@
  */
 package org.ikasan.tools.messaging.destination;
 
-import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
@@ -50,8 +51,8 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.ikasan.tools.messaging.dao.FileSystemMessageDao;
-import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
+import org.ikasan.tools.messaging.dao.MessageDao;
+import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
 import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
 import org.ikasan.tools.messaging.subscriber.SimpleSubscriber;
 import org.springframework.jms.JmsException;
@@ -67,6 +68,12 @@ public class DestinationHandle {
 	private SimpleSubscriber simpleSubscriber = null;
 	
 	private PersistingSubscriber persistingSubscriber = null;
+	
+	private Map<String, BaseSubscriber> subscriptions = new HashMap<String, BaseSubscriber>();
+
+	public Map<String, BaseSubscriber> getSubscriptions() {
+		return subscriptions;
+	}
 
 	public String getDestinationPath() {
 		return destinationPath;
@@ -78,9 +85,7 @@ public class DestinationHandle {
 		this.destination = destination;
 	}
 	
-	public SimpleSubscriber getSimpleSubscriber(){
-		return simpleSubscriber;
-	}
+
 	
 	public PersistingSubscriber getPersistingSubscriber(){
 		return persistingSubscriber;
@@ -93,21 +98,14 @@ public class DestinationHandle {
 		simpleSubscriber = new SimpleSubscriber(connectionFactory, destination);
 	}
 	
-	public void startPersistingSubscription(ConnectionFactory connectionFactory, File directory){
+	public void startPersistingSubscription(ConnectionFactory connectionFactory, MessageDao messageDao){
 		if (persistingSubscriber!=null){
 			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
 		}
-		FileSystemMessageDao messageDao = new FileSystemMessageDao(directory, new DefaultMessageXmlSerialiser());
 		persistingSubscriber = new PersistingSubscriber(connectionFactory, destination,messageDao);
 	}
 	
-	public void stopPersistingSubscription() {
-		if (persistingSubscriber!=null){
-			persistingSubscriber.shutdown();
-		}
-		this.persistingSubscriber= null;
-		
-	}
+
 	
 	public void publishTextMessage(ConnectionFactory connectionFactory,final String messageText, int priority) {
 		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
@@ -160,6 +158,21 @@ public class DestinationHandle {
 		
 	}
 	
+	public void createSubscription(String subscriptionName, ConnectionFactory connectionFactory, MessageDao messageDao){
+		if (subscriptions.get(subscriptionName)!=null){
+			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
+		}
+		subscriptions.put(subscriptionName, new PersistingSubscriber(connectionFactory, destination,messageDao));
+	}
+	
+	public void destroySubscription(String subscriptionName) {
+		BaseSubscriber subscriber = subscriptions.get(subscriptionName);
+		if (subscriber!=null){
+			subscriber.shutdown();
+		}
+		subscriptions.remove(subscriptionName);
+		
+	}
 	
 
 }
