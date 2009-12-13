@@ -45,7 +45,7 @@
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
 
 
-<h2><c:out value="${message.JMSMessageID}"/></h2>
+<h2><c:out value="${message.messageId}"/></h2>
 
 
 <p class="message">

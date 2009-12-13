@@ -49,7 +49,11 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import org.apache.log4j.Logger;
+
 public class MessageWrapperFactory {
+	
+	private static Logger logger = Logger.getLogger(MessageWrapperFactory.class);
 
 	public static MessageWrapper wrapMessage(Message message) throws JMSException{
 		MessageWrapper result = null;
@@ -79,8 +83,18 @@ public class MessageWrapperFactory {
 		} else{
 			throw new RuntimeException("Unsupported message type:"+message);
 		}
-		result.setMessageId(message.getJMSMessageID());
+		
+		String messageId = message.getJMSMessageID();
+		logger.info("got messageId:"+messageId);
+		messageId=cleanupMessageId(messageId);
+		
+		result.setMessageId(messageId);
 		result.setTimestamp(message.getJMSTimestamp());
 		return result;
+	}
+
+	private static String cleanupMessageId(String messageId) {
+		// just for jboss mq
+		return messageId.replaceAll(":", "");
 	}
 }

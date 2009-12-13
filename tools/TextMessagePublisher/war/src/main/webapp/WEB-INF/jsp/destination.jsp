@@ -49,109 +49,28 @@
 
 
 
+<div id="subscribers" class="destinationAspect">
+	<h3>Subscriptions</h3>
 	
-<div id="simpleSubscriber" class="destinationAspect">
-	<h3>Simple Subscriber</h3>
-	<c:url var="stopSimpleSubscriptionLink" value="stopSimpleSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>
-	
-	<c:url var="startSimpleSubscriptionLink" value="startSimpleSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>	
-	<c:if test="${destination.simpleSubscriber!=null}">
-	<p class="message">
-		Simple Subscriber subscribing since <c:out value="${destination.simpleSubscriber.subscribingSince}"/>, will retain the <c:out value="${destination.simpleSubscriber.maximumMessages}"/> most recent messages received
-	</p>
-	<table>
+	<ul>
+	<c:forEach items="${destination.subscriptions}" var="subscriptionEntry" >
+		<c:url var="stopSubscriptionLink" value="stopSubscription.htm">
+		    <c:param name="destinationPath" value="${destination.destinationPath}"/>
+		    <c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
+	    </c:url>
+	    <li>${subscriptionEntry.key}</li>
+	    	<table>
 				<tr>
 					<th>&nbsp;</th>
 					<th>Type</th>
 					<th>Timestamp</th>
 					<th>Export</th>
 				</tr>
-			<c:forEach items="${destination.simpleSubscriber.messages}" var="message" >
-				<jsp:useBean id="message" type="javax.jms.Message" />
-				<% 
-					String messageType="unsupported";
-					if (message instanceof javax.jms.TextMessage){
-						messageType="Text Message";
-					} else if (message instanceof javax.jms.MapMessage){
-						messageType="Map Message";
-					} 
-					pageContext.setAttribute("messageType", messageType);	
-					pageContext.setAttribute("messageTimestamp", new java.util.Date(message.getJMSTimestamp()));
-					
-					
-					
-				%>
+			<c:forEach items="${subscriptionEntry.value.messages}" var="messageId" >	
 				<tr>
 					<c:url var="messageLink" value="message.htm">
 						<c:param name="destinationPath" value="${destination.destinationPath}"/>
-		            	<c:param name="messageId" value="${message.JMSMessageID}"/>
-		            </c:url>
-					<td><a href="${messageLink}"><c:out value="${message.JMSMessageID}"/></a></td>
-					<td><c:out value="${messageType}"/></td>
-					<td><c:out value="${messageTimestamp}"/></td>
-					<c:url var="downloadLink" value="export.htm">
-						<c:param name="destinationPath" value="${destination.destinationPath}"/>
-		            	<c:param name="messageId" value="${message.JMSMessageID}"/>
-		            </c:url>
-					<td><a href="${downloadLink}">Download</a></td>
-
-				</tr>
-			</c:forEach>
-	</table>
-	<form method="post" action="${stopSimpleSubscriptionLink}">
-		<input type="submit" value="Stop Simple Subscription"/>
-	</form>	
-	
-	</c:if>
-	
-	<c:if test="${destination.simpleSubscriber==null}">
-	<p class="message">
-		Simple Subscriber is not active on this destination
-	</p>
-	
-	<form method="post" action="${startSimpleSubscriptionLink}">
-		<input type="submit" value="Start Simple Subscription"/>
-	</form>
-	</c:if>
-</div>
-
-
-
-<div id="persistingSubscriber" class="destinationAspect">
-	<h3>Persisting Subscriber</h3>
-	<c:url var="stopPersistingSubscriptionLink" value="stopPersistingSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>
-	
-	<c:url var="startPersistingSubscriptionLink" value="startPersistingSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>
-		
-	<c:if test="${destination.persistingSubscriber!=null}">
-	<p class="message">
-		Persisting Subscriber subscribing since <c:out value="${destination.persistingSubscriber.subscribingSince}"/>
-	</p>
-	
-	<form method="post" action="${stopPersistingSubscriptionLink}">
-		<input type="submit" value="Stop Persisting Subscription"/>
-	</form>		
-
-	<table>
-				<tr>
-					<th>&nbsp;</th>
-					<th>Type</th>
-					<th>Timestamp</th>
-					<th>Export</th>
-				</tr>
-			<c:forEach items="${destination.persistingSubscriber.messages}" var="messageId" >
-				
-				<tr>
-					<c:url var="messageLink" value="message.htm">
-						<c:param name="destinationPath" value="${destination.destinationPath}"/>
+						<c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
 		            	<c:param name="messageId" value="${messageId}"/>
 		            </c:url>
 					<td><a href="${messageLink}"><c:out value="${messageId}"/></a></td>
@@ -159,25 +78,53 @@
 					<td>&nbsp;</td>
 					<c:url var="downloadLink" value="export.htm">
 						<c:param name="destinationPath" value="${destination.destinationPath}"/>
+						<c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
 		            	<c:param name="messageId" value="${messageId}"/>
 		            </c:url>
 					<td><a href="${downloadLink}">Download</a></td>
 
 				</tr>
 			</c:forEach>
-	</table>
-	</c:if>
-	
-	<c:if test="${destination.persistingSubscriber==null}">
-	<p class="message">
-		Persisting Subscriber is not active on this destination
-	</p>	
-	<form method="post" action="${startPersistingSubscriptionLink}">
-		<input type="text" name="fileSystemPath"/>
-		<input type="submit" value="Start Persisting Subscription"/>
+		</table>
+    <form method="post" action="${stopSubscriptionLink}">
+		<input type="submit" value="Stop Subscription"/>
 	</form>
-	</c:if>
+	    
+	</c:forEach>
+	</ul>
+	
+	
+	
+	<c:url var="startSubscriptionLink" value="startSubscription.htm">
+		<c:param name="destinationPath" value="${destination.destinationPath}"/>
+	</c:url>	
+
+
+	
+	<table>
+	<form method="post" action="${startSubscriptionLink}">
+	    <tr><td>Subscription Name:</td><td><input name="subscriptionName" type="text"/></td></tr>
+		<tr><td>Repository:</td><td> <select name="repositoryName">
+			<c:forEach items="${repositoryNames}" var="repositoryName" >
+				<option value="${repositoryName}">${repositoryName}</option>
+			</c:forEach>
+		</select></td></tr>
+		<tr><td>Simple:</td><td> <input type="checkbox" name="simpleSubscription">
+		<tr><td colspan="2"><input type="submit" value="Start Subscription"/></td></tr>
+	</form>
+	</table>
+	
+	
 </div>
+
+
+
+
+
+
+
+
+
 
 
 

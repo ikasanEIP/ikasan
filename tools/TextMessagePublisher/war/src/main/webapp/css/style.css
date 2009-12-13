@@ -11,6 +11,11 @@ body {
 	margin-left: 5px;
 	margin-right: 5px;
 }
+
+#header ul li{
+	display: inline;
+}
+
 #header ul li a{
 	text-decoration: none;
 }
