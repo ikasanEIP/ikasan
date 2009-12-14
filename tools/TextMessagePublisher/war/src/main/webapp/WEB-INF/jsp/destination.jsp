@@ -52,13 +52,14 @@
 <div id="subscribers" class="destinationAspect">
 	<h3>Subscriptions</h3>
 	
-	<ul>
+	
 	<c:forEach items="${destination.subscriptions}" var="subscriptionEntry" >
+	<div class="destinationAspect subscription">
 		<c:url var="stopSubscriptionLink" value="stopSubscription.htm">
 		    <c:param name="destinationPath" value="${destination.destinationPath}"/>
 		    <c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
 	    </c:url>
-	    <li>${subscriptionEntry.key}</li>
+	    <h3>${subscriptionEntry.key}</h3>
 	    	<table>
 				<tr>
 					<th>&nbsp;</th>
@@ -90,8 +91,9 @@
 		<input type="submit" value="Stop Subscription"/>
 	</form>
 	    
+	</div> <!-- end subscription -->
 	</c:forEach>
-	</ul>
+	
 	
 	
 	

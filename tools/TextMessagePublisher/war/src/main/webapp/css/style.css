@@ -43,6 +43,17 @@ body {
 	text-align: right;
 }
 
+.subscription {
+	margin-left: 10px;
+	margin-bottom: 20px;
+	margin-right: 10px;
+}
+
+.subscription h3{
+	background: teal;
+	text-align:	left;
+}
+
 .message {
 	font-style: italic;
 	padding: 2px;	
