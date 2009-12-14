@@ -56,8 +56,10 @@ import org.ikasan.tools.messaging.dao.FileSystemMessageDao;
 import org.ikasan.tools.messaging.dao.MessageDao;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
+import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapperFactory;
+import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
@@ -147,12 +149,12 @@ public class DestinationServer {
 			int priority) {
 		
 		Object messageObject = messageXmlSerialiser.getMessageObject(xml);
-		if (messageObject instanceof String){
-			getDestination(destinationPath).publishTextMessage(connectionFactory,  (String)messageObject, priority);
+		if (messageObject instanceof TextMessageWrapper){
+			getDestination(destinationPath).publishTextMessage(connectionFactory,  ((TextMessageWrapper)messageObject).getText(), priority);
 		} 
 		
-		else if (messageObject instanceof Map){
-			getDestination(destinationPath).publishMapMessage(connectionFactory,  (Map)messageObject, priority);
+		else if (messageObject instanceof MapMessageWrapper){
+			getDestination(destinationPath).publishMapMessage(connectionFactory,  ((MapMessageWrapper)messageObject).getMap(), priority);
 		}
 		else{
 			throw new RuntimeException("Unknown message object["+messageObject+"]");
