@@ -201,7 +201,9 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
             if (typeAttribute.equals("TextMessage"))
             {
                
-                result = new TextMessageWrapper(handleForTextMessage(messageElement),messageProperties);
+                String text = handleForTextMessage(messageElement);
+                
+				result = new TextMessageWrapper(text,messageProperties);
             }
             else if (typeAttribute.equals("MapMessage"))
             {
@@ -302,10 +304,23 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 
 
 	private String handleForTextMessage(Element messageElement){
-		NodeList elementsByTagName = messageElement.getElementsByTagName("Text");
-		Element textNode = (Element) elementsByTagName.item(0);
-		String nodeValue = textNode.getNodeValue();
-		return nodeValue;
+		Node textNode = null;
+		String text = null;
+		
+		
+		NodeList childNodes = messageElement.getChildNodes();
+		for (int i=0;i<childNodes.getLength();i++){
+			Node item = childNodes.item(i);
+			if (item.getNodeName().equalsIgnoreCase("Text")){
+				textNode = item;
+			}
+		}
+		
+		if (textNode!=null){
+			text = textNode.getTextContent();
+		}
+
+		return text;
 	}
 
 }

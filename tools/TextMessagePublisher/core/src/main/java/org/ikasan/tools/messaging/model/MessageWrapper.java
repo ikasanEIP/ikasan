@@ -46,14 +46,15 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class MessageWrapper {
-	
+
+
 	private Logger logger = Logger.getLogger(MessageWrapper.class);
 	
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	protected Map<String, Object> properties = new HashMap<String, Object>();
 	
-	private String messageId;
+	protected String messageId;
 	
-	private Long timestamp;
+	protected Long timestamp;
 
 	public String getMessageId() {
 		return messageId;
@@ -87,5 +88,55 @@ public class MessageWrapper {
 	public Long getTimestamp(){
 		return timestamp;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((messageId == null) ? 0 : messageId.hashCode());
+		result = prime * result
+				+ ((properties == null) ? 0 : properties.hashCode());
+		result = prime * result
+				+ ((timestamp == null) ? 0 : timestamp.hashCode());
+		return result;
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MessageWrapper other = (MessageWrapper) obj;
+		if (messageId == null) {
+			if (other.messageId != null)
+				return false;
+		} else if (!messageId.equals(other.messageId))
+			return false;
+		if (properties == null) {
+			if (other.properties != null)
+				return false;
+		} else if (!properties.equals(other.properties))
+			return false;
+		if (timestamp == null) {
+			if (other.timestamp != null)
+				return false;
+		} else if (!timestamp.equals(other.timestamp))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MessageWrapper [messageId=" + messageId + ", properties="
+				+ properties + ", timestamp=" + timestamp + "]";
+	}
+
+
 
 }
