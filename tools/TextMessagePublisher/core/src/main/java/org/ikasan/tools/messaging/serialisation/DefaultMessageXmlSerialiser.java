@@ -252,13 +252,15 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 		Map<String, Object> result = new HashMap<String, Object>();
 		NodeList elementsByTagName = messageElement.getElementsByTagName("Properties");
 		Element mapNode = (Element) elementsByTagName.item(0);
-		NodeList mapEntries = mapNode.getElementsByTagName("Property");
-		int mapEntryCount = 0;
-		while (mapEntryCount < mapEntries.getLength())
-		{
-		    Node mapEntry = mapEntries.item(mapEntryCount);
-		    handleMapEntry((Element) mapEntry, result);
-		    mapEntryCount++;
+		if (mapNode!=null){
+			NodeList mapEntries = mapNode.getElementsByTagName("Property");
+			int mapEntryCount = 0;
+			while (mapEntryCount < mapEntries.getLength())
+			{
+			    Node mapEntry = mapEntries.item(mapEntryCount);
+			    handleMapEntry((Element) mapEntry, result);
+			    mapEntryCount++;
+			}
 		}
 		return result;
 	}

@@ -44,6 +44,7 @@ import java.util.Date;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
@@ -57,6 +58,8 @@ public abstract class BaseSubscriber implements MessageListener{
 	
 	protected Date subscribingSince;
 	
+	protected long messageCount;
+
 	private static Logger logger = Logger.getLogger(BaseSubscriber.class);
 	
 	public BaseSubscriber(ConnectionFactory connectionFactory, Destination destination){
@@ -72,6 +75,9 @@ public abstract class BaseSubscriber implements MessageListener{
 	public Date getSubscribingSince(){
 		return subscribingSince;
 	}
+	public long getMessageCount() {
+		return messageCount;
+	}
 	public void shutdown(){
         try{   
         	container.shutdown();
@@ -79,4 +85,11 @@ public abstract class BaseSubscriber implements MessageListener{
             logger.info("illegal state exception when unsubscribing from destination ["+destination+"]");
         }
 	}
+	
+	public void onMessage(Message message) {
+		messageCount++;
+		handleMessage(message);
+	}
+
+	protected abstract void handleMessage(Message message) ;
 }

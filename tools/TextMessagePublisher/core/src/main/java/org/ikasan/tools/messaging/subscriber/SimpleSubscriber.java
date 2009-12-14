@@ -27,7 +27,7 @@ public class SimpleSubscriber extends BaseSubscriber {
 	private BlockingQueue<Message> receivedMessages = new LinkedBlockingQueue<Message>(maximumMessages);
 
 	
-	public void onMessage(Message message) {
+	public void handleMessage(Message message) {
 		logger.info("onMessage called with ["+message+"]");
 		if (receivedMessages.remainingCapacity()==0){
 			receivedMessages.remove();

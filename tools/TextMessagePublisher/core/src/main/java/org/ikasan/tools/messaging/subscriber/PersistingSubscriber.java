@@ -65,7 +65,7 @@ public class PersistingSubscriber extends BaseSubscriber {
 		this.messageDao = messageDao;
 	}
 
-	public void onMessage(Message message) {
+	public void handleMessage(Message message) {
 		
 		MessageWrapper messageWrapper;
 		try {

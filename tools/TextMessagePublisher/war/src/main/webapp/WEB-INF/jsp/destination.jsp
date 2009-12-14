@@ -60,6 +60,8 @@
 		    <c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
 	    </c:url>
 	    <h3>${subscriptionEntry.key}</h3>
+	    
+	    <p class="message">Handled ${subscriptionEntry.value.messageCount} messages since: ${subscriptionEntry.value.subscribingSince}</p>
 	    	<table>
 				<tr>
 					<th>&nbsp;</th>
