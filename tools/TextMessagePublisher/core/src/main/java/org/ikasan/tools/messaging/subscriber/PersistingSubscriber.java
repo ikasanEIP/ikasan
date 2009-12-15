@@ -47,7 +47,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import org.ikasan.tools.messaging.dao.MessageRepository;
+import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 

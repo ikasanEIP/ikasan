@@ -50,7 +50,7 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.ikasan.tools.messaging.dao.MessageRepository;
+import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
 import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
 import org.springframework.jms.JmsException;
