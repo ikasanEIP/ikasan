@@ -60,6 +60,7 @@ public abstract class BaseSubscriber implements MessageListener{
 	
 	protected long messageCount;
 
+
 	private static Logger logger = Logger.getLogger(BaseSubscriber.class);
 	
 	public BaseSubscriber(ConnectionFactory connectionFactory, Destination destination){
@@ -90,6 +91,7 @@ public abstract class BaseSubscriber implements MessageListener{
 		messageCount++;
 		handleMessage(message);
 	}
+	
 
 	protected abstract void handleMessage(Message message) ;
 }

@@ -55,7 +55,7 @@ import java.util.List;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 
-public class FileSystemMessageDao implements MessageDao{
+public class FileSystemMessageRepository implements MessageRepository{
 		
 	private static final String FILE_EXTENSION = ".xml";
 
@@ -63,7 +63,7 @@ public class FileSystemMessageDao implements MessageDao{
 	
 	private MessageXmlSerialiser messageXmlSerialiser;
 
-	public FileSystemMessageDao(File directory, MessageXmlSerialiser messageXmlSerialiser) {
+	public FileSystemMessageRepository(File directory, MessageXmlSerialiser messageXmlSerialiser) {
 		super();
 		this.directory = directory;
 		this.messageXmlSerialiser = messageXmlSerialiser;

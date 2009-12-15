@@ -51,9 +51,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.log4j.Logger;
-import org.ikasan.tools.messaging.dao.BoundedMemoryMessageDao;
-import org.ikasan.tools.messaging.dao.FileSystemMessageDao;
-import org.ikasan.tools.messaging.dao.MessageDao;
+import org.ikasan.tools.messaging.dao.BoundedMemoryMessageRepository;
+import org.ikasan.tools.messaging.dao.FileSystemMessageRepository;
+import org.ikasan.tools.messaging.dao.MessageRepository;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
 import org.ikasan.tools.messaging.model.MapMessageWrapper;
@@ -76,7 +76,7 @@ public class DestinationServer {
 	
 	private MessageXmlSerialiser messageXmlSerialiser = new DefaultMessageXmlSerialiser();
 	
-	private Map<String,MessageDao> repositories = new HashMap<String,MessageDao>();
+	private Map<String,MessageRepository> repositories = new HashMap<String,MessageRepository>();
 	
 	
 	public DestinationServer(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
@@ -101,9 +101,9 @@ public class DestinationServer {
 	
 	
 	public void createSubscription(String subscriptionName, String destinationPath, String repositoryName, boolean simpleSubscription){
-		MessageDao messageDao = repositories.get(repositoryName);
+		MessageRepository messageDao = repositories.get(repositoryName);
 		if (simpleSubscription){
-			messageDao = new BoundedMemoryMessageDao();
+			messageDao = new BoundedMemoryMessageRepository();
 		}
 		
 		
@@ -165,14 +165,14 @@ public class DestinationServer {
 
 
 
-	public Map<String,MessageDao> getRepositories() {
+	public Map<String,MessageRepository> getRepositories() {
 		return repositories;
 	}
 
 
 
 	public void createFileSystemRepository(String name, String fileSystemPath) {
-		repositories.put(name,new FileSystemMessageDao(new File(fileSystemPath), messageXmlSerialiser));
+		repositories.put(name,new FileSystemMessageRepository(new File(fileSystemPath), messageXmlSerialiser));
 	}
 	
 	

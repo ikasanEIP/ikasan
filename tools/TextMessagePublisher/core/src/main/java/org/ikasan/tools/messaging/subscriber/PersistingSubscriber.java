@@ -47,19 +47,19 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import org.ikasan.tools.messaging.dao.MessageDao;
+import org.ikasan.tools.messaging.dao.MessageRepository;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 
 public class PersistingSubscriber extends BaseSubscriber {
 
-	private MessageDao messageDao;
+	private MessageRepository messageDao;
 	
 	
 	public PersistingSubscriber(
 			ConnectionFactory connectionFactory,
 			Destination destination,
-			MessageDao messageDao
+			MessageRepository messageDao
 		) {
 		super(connectionFactory, destination);
 		this.messageDao = messageDao;
