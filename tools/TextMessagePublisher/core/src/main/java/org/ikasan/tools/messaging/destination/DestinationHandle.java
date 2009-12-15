@@ -126,11 +126,13 @@ public class DestinationHandle {
 
 	
 	
-	public void createSubscription(String subscriptionName, ConnectionFactory connectionFactory, MessageRepository messageDao){
+	public BaseSubscriber createSubscription(String subscriptionName, ConnectionFactory connectionFactory, MessageRepository messageDao){
 		if (subscriptions.get(subscriptionName)!=null){
 			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
 		}
-		subscriptions.put(subscriptionName, new PersistingSubscriber(connectionFactory, destination,messageDao));
+		PersistingSubscriber subscription = new PersistingSubscriber(connectionFactory, destination,messageDao);
+		subscriptions.put(subscriptionName, subscription);
+		return subscription;
 	}
 	
 	public void destroySubscription(String subscriptionName) {

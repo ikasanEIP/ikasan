@@ -45,29 +45,29 @@
 <%@ include file="/WEB-INF/jsp/top.jsp" %>
 
 
-<h2><c:out value="${message.JMSMessageID}"/></h2>
+<h2><c:out value="${message.messageId}"/></h2>
 
 <table class="keyValue">
 	<tr>
 		<th>JMS Correlation Id</th>
-		<td><c:out value="${message.JMSCorrelationID}"/></td>
+		<td>${message.messagingProperties.jmsCorrelationId}</td>
 		<th>JMS Delivery Mode</th>
-		<td><c:out value="${message.JMSDeliveryMode}"/></td>
+		<td>${message.messagingProperties.jmsDeliveryMode}</td>
 
 		<th>JMS Expiration</th>
-		<td><c:out value="${message.JMSExpiration}"/></td>
+		<td>${message.messagingProperties.jmsExpiration}</td>
 		<th>JMS Priority</th>
-		<td><c:out value="${message.JMSPriority}"/></td>
+		<td>${message.messagingProperties.jmsPriority}</td>
 	</tr>
 	<tr>
 		<th>JMS Redelivered</th>
-		<td><c:out value="${message.JMSRedelivered}"/></td>
+		<td>${message.messagingProperties.jmsRedelivered}</td>
 		<th>JMS Reply To</th>
-		<td><c:out value="${message.JMSReplyTo}"/></td>
+		<td>${message.messagingProperties.jmsReplyTo}</td>
 		<th>JMS Timestamp</th>
-		<td><c:out value="${message.JMSTimestamp}"/></td>
+		<td>${message.messagingProperties.jmsTimestamp}</td>
 		<th>JMS Type</th>
-		<td><c:out value="${message.JMSType}"/></td>
+		<td>${message.messagingProperties.jmsType}</td>
 	</tr>
 </table>
 

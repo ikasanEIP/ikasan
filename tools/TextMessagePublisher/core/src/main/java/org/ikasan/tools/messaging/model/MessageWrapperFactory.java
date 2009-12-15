@@ -44,6 +44,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
@@ -59,12 +60,14 @@ public class MessageWrapperFactory {
 		MessageWrapper result = null;
 		
 		Map<String, Object> properties = new HashMap<String, Object>();
+
 		
 		Enumeration propertyNames = message.getPropertyNames();
 		while (propertyNames.hasMoreElements()){
 			String propertyName = (String)propertyNames.nextElement();
 			properties.put(propertyName,message.getObjectProperty(propertyName));
 		}
+		
 		
 		if (message instanceof TextMessage){
 			result =  new TextMessageWrapper(((TextMessage) message).getText(), properties);
@@ -85,12 +88,36 @@ public class MessageWrapperFactory {
 		}
 		
 		String messageId = message.getJMSMessageID();
-		logger.info("got messageId:"+messageId);
 		messageId=cleanupMessageId(messageId);
 		
 		result.setMessageId(messageId);
 		result.setTimestamp(message.getJMSTimestamp());
+		
+		
+		
+		
+		Map<String, Object> messagingProperties = new HashMap<String, Object>();
+		handleMessagingProperty(messagingProperties, message.getJMSCorrelationID(), "jmsCorrelationId");
+		handleMessagingProperty(messagingProperties, message.getJMSDeliveryMode(), "jmsDeliveryMode");
+		handleMessagingProperty(messagingProperties, message.getJMSDestination(), "jmsDestination");
+		handleMessagingProperty(messagingProperties, message.getJMSExpiration(), "jmsExpiration");
+		handleMessagingProperty(messagingProperties, message.getJMSMessageID(), "jmsMessageID");
+		handleMessagingProperty(messagingProperties, message.getJMSPriority(), "jmsPriority");
+		handleMessagingProperty(messagingProperties, message.getJMSRedelivered(), "jmsRedelivered");
+		handleMessagingProperty(messagingProperties, message.getJMSReplyTo(), "jmsReplyTo");
+		handleMessagingProperty(messagingProperties, message.getJMSTimestamp(), "jmsTimestamp");
+		handleMessagingProperty(messagingProperties, message.getJMSType(), "jmsType");
+		
+		result.setMessagingProperties(messagingProperties);
 		return result;
+	}
+
+	private static void handleMessagingProperty(
+			Map<String, Object> messagingProperties, Object jmsObject,
+			String jmsObjectName) {
+		if (jmsObject!=null){
+			messagingProperties.put(jmsObjectName, jmsObject.toString());
+		}
 	}
 
 	private static String cleanupMessageId(String messageId) {

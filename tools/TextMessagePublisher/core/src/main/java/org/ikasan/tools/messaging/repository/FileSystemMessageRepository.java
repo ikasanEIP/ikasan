@@ -55,21 +55,32 @@ import java.util.List;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 
-public class FileSystemMessageRepository implements MessageRepository{
+public class FileSystemMessageRepository extends BaseRepository implements MessageRepository{
 		
 	private static final String FILE_EXTENSION = ".xml";
 
 	private File directory;
 	
+	private String directoryPath;
+	
 	private MessageXmlSerialiser messageXmlSerialiser;
 
-	public FileSystemMessageRepository(File directory, MessageXmlSerialiser messageXmlSerialiser) {
-		super();
-		this.directory = directory;
+	public FileSystemMessageRepository(String name, String directoryPath, MessageXmlSerialiser messageXmlSerialiser) {
+		super(name);
+		setDirectoryPath(directoryPath);
 		this.messageXmlSerialiser = messageXmlSerialiser;
 		if (!directory.isDirectory()){
 			throw new IllegalArgumentException(directory+" is not a directory");
 		}
+	}
+
+	public void setDirectoryPath(String directoryPath) {
+		this.directoryPath=directoryPath;
+		this.directory = new File(directoryPath);
+	}
+	
+	public String getDirectoryPath(){
+		return directoryPath;
 	}
 
 	public void save(MessageWrapper message) {

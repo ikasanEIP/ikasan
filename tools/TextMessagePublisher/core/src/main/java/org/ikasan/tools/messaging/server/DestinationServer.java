@@ -100,7 +100,7 @@ public class DestinationServer {
 	public void createSubscription(String subscriptionName, String destinationPath, String repositoryName, boolean simpleSubscription){
 		MessageRepository messageDao = repositories.get(repositoryName);
 		if (simpleSubscription){
-			messageDao = new BoundedMemoryMessageRepository();
+			messageDao = new BoundedMemoryMessageRepository(repositoryName);
 		}
 		
 		
@@ -169,7 +169,7 @@ public class DestinationServer {
 
 
 	public void createFileSystemRepository(String name, String fileSystemPath) {
-		repositories.put(name,new FileSystemMessageRepository(new File(fileSystemPath), messageXmlSerialiser));
+		repositories.put(name,new FileSystemMessageRepository(name, fileSystemPath, messageXmlSerialiser));
 	}
 	
 	

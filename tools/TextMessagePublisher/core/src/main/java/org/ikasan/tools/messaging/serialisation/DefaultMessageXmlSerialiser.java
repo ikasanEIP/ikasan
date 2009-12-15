@@ -86,7 +86,8 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
         
         
         
-        handleMessageProperties(message, xmldoc, root);
+        handleProperties(message, xmldoc, root);
+        handleMessagingProperties(message, xmldoc, root);
         if (message instanceof TextMessageWrapper)
         {
             handleTextMessage((TextMessageWrapper) message, xmldoc, root);
@@ -114,7 +115,7 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 	
 	
 	
-	private void handleMessageProperties(MessageWrapper message, Document xmldoc,
+	private void handleProperties(MessageWrapper message, Document xmldoc,
             Element root) 
     {
 		Element propertiesElement = xmldoc.createElement("Properties");
@@ -125,6 +126,29 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
         for (String propertyName : propertyNames)
         {
             Object propertyEntry = message.getProperties().get(propertyName);
+            Class propertyClass = propertyEntry.getClass();
+            Element entryElement = xmldoc.createElement("Property");
+            entryElement.setAttribute("class", propertyClass.getName());
+            entryElement.setAttribute("name", propertyName);
+            entryElement.appendChild(xmldoc.createTextNode(propertyEntry
+                .toString()));
+            propertiesElement.appendChild(entryElement);
+        }
+        
+        root.appendChild(propertiesElement);
+    }
+	
+	private void handleMessagingProperties(MessageWrapper message, Document xmldoc,
+            Element root) 
+    {
+		Element propertiesElement = xmldoc.createElement("MessagingProperties");
+		
+		
+		
+        Set<String> propertyNames = message.getMessagingProperties().keySet();
+        for (String propertyName : propertyNames)
+        {
+            Object propertyEntry = message.getMessagingProperties().get(propertyName);
             Class propertyClass = propertyEntry.getClass();
             Element entryElement = xmldoc.createElement("Property");
             entryElement.setAttribute("class", propertyClass.getName());
@@ -196,7 +220,8 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
             Element messageElement = doc.getDocumentElement();
             String typeAttribute = messageElement.getAttribute("type");
             
-            Map<String, Object> messageProperties = handleForMessageProperties(messageElement);
+            Map<String, Object> messageProperties = handleForProperties(messageElement);
+            Map<String, Object> messagingProperties = handleForMessagingProperties(messageElement);
 
             if (typeAttribute.equals("TextMessage"))
             {
@@ -215,6 +240,8 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
             }
             String messageId = messageElement.getAttribute("messageId");
             result.setMessageId(messageId);
+            
+            result.setMessagingProperties(messagingProperties);
           
         }
         catch (SAXException e)
@@ -248,9 +275,26 @@ public class DefaultMessageXmlSerialiser implements MessageXmlSerialiser{
 		return result;
 	}
 	
-	private Map<String, Object> handleForMessageProperties(Element messageElement){
+	private Map<String, Object> handleForProperties(Element messageElement){
 		Map<String, Object> result = new HashMap<String, Object>();
 		NodeList elementsByTagName = messageElement.getElementsByTagName("Properties");
+		Element mapNode = (Element) elementsByTagName.item(0);
+		if (mapNode!=null){
+			NodeList mapEntries = mapNode.getElementsByTagName("Property");
+			int mapEntryCount = 0;
+			while (mapEntryCount < mapEntries.getLength())
+			{
+			    Node mapEntry = mapEntries.item(mapEntryCount);
+			    handleMapEntry((Element) mapEntry, result);
+			    mapEntryCount++;
+			}
+		}
+		return result;
+	}
+	
+	private Map<String, Object> handleForMessagingProperties(Element messageElement){
+		Map<String, Object> result = new HashMap<String, Object>();
+		NodeList elementsByTagName = messageElement.getElementsByTagName("MessagingProperties");
 		Element mapNode = (Element) elementsByTagName.item(0);
 		if (mapNode!=null){
 			NodeList mapEntries = mapNode.getElementsByTagName("Property");

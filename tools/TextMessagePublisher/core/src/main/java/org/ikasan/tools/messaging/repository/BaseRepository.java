@@ -38,56 +38,23 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.model;
+package org.ikasan.tools.messaging.repository;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class MapMessageWrapper extends MessageWrapper{
-
-	private Map<String, Object> map = new HashMap<String, Object>();
-
+public class BaseRepository {
 	
-	public MapMessageWrapper(Map<String, Object> map,
-			Map<String, Object> properties) {
-		super(properties);
-		this.map = map;
+	protected String name;
+
+	public String getName() {
+		return name;
 	}
 
-	public Map<String, Object> getMap() {
-		return map;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((map == null) ? 0 : map.hashCode());
-		return result;
+	public BaseRepository(String name) {
+		super();
+		this.name = name;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MapMessageWrapper other = (MapMessageWrapper) obj;
-		if (map == null) {
-			if (other.map != null)
-				return false;
-		} else if (!map.equals(other.map))
-			return false;
-		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return "MapMessageWrapper [map=" + map + ", getMessageId()="
-				+ getMessageId() + ", getProperties()=" + getProperties()+ ", getMessagingProperties()=" + getMessagingProperties()
-				+ ", getTimestamp()=" + getTimestamp() + ", toString()="
-				+ super.toString() + ", getClass()=" + getClass() + "]";
-	}
 }

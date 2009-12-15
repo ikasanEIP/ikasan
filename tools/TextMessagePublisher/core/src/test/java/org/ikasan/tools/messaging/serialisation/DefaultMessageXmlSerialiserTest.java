@@ -74,6 +74,8 @@ public class DefaultMessageXmlSerialiserTest {
 	
 	private Map<String, Object> properties = new HashMap<String, Object>();
 	
+	private Map<String, Object> messagingProperties = new HashMap<String, Object>();
+	
 	
 	
 	private DefaultMessageXmlSerialiser serialiser = new DefaultMessageXmlSerialiser();
@@ -86,12 +88,15 @@ public class DefaultMessageXmlSerialiserTest {
 		properties.put(DOUBLE_PROPERTY_NAME, DOUBLE_PROPERTY_VALUE);
 		properties.put(BYTE_PROPERTY_NAME, BYTE_PROPERTY_VALUE);
 		properties.put(SHORT_PROPERTY_NAME, SHORT_PROPERTY_VALUE);
+		
+		messagingProperties.put("someProperty", "someValue");
 	}
 
 	@Test
 	public void testToFromXml_withTextMessage() {
 		TextMessageWrapper textMessageWrapper = new TextMessageWrapper(MESSAGE_TEXT, properties);
 		textMessageWrapper.setMessageId(MESSAGE_ID);
+		textMessageWrapper.setMessagingProperties(messagingProperties);
 		
 		String xml = serialiser.toXml(textMessageWrapper);
 		
@@ -113,6 +118,7 @@ public class DefaultMessageXmlSerialiserTest {
 		
 		MapMessageWrapper mapMessageWrapper = new MapMessageWrapper(map, properties);
 		mapMessageWrapper.setMessageId(MESSAGE_ID);
+		mapMessageWrapper.setMessagingProperties(messagingProperties);
 		
 		String xml = serialiser.toXml(mapMessageWrapper);
 		
