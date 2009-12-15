@@ -41,6 +41,7 @@
 package org.ikasan.tools.messaging.destination.discovery;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -89,7 +90,7 @@ public class JndiDestinationDiscoverer implements
 	                }
 	                
 	                result.add(new DestinationHandle(fullPath, (Destination)lookup));
-
+	                Collections.sort(result);
 	            }
 			}
 		} catch (NamingException namingException){

@@ -107,14 +107,24 @@
 	
 	<table>
 	<form method="post" action="${startSubscriptionLink}">
-	    <tr><td>Subscription Name:</td><td><input name="subscriptionName" type="text"/></td></tr>
-		<tr><td>Repository:</td><td> <select name="repositoryName">
-			<c:forEach items="${repositoryNames}" var="repositoryName" >
-				<option value="${repositoryName}">${repositoryName}</option>
-			</c:forEach>
-		</select></td></tr>
-		<tr><td>Simple:</td><td> <input type="checkbox" name="simpleSubscription">
-		<tr><td colspan="2"><input type="submit" value="Start Subscription"/></td></tr>
+	    <tr>
+	        <td>Subscription Name:</td>
+	        <td><input name="subscriptionName" type="text"/></td>
+	    </tr>
+		<tr>
+		    <td>Repository:</td>
+		    <td>
+		        <select name="repositoryName">
+		            <option value="">[In Memory]</option>
+				<c:forEach items="${repositoryNames}" var="repositoryName" >
+					<option value="${repositoryName}">${repositoryName}</option>
+				</c:forEach>
+		        </select>
+		    </td>
+		</tr>
+		<tr>
+		    <td colspan="2"><input type="submit" value="Start Subscription"/></td>
+		</tr>
 	</form>
 	</table>
 	

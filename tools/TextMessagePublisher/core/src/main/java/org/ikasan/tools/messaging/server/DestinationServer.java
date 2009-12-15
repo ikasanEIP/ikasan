@@ -97,10 +97,12 @@ public class DestinationServer {
 	
 	
 	
-	public void createSubscription(String subscriptionName, String destinationPath, String repositoryName, boolean simpleSubscription){
-		MessageRepository messageDao = repositories.get(repositoryName);
-		if (simpleSubscription){
+	public void createSubscription(String subscriptionName, String destinationPath, String repositoryName){
+		MessageRepository messageDao = null;
+		if (repositoryName==null || "".equals(repositoryName)){
 			messageDao = new BoundedMemoryMessageRepository(repositoryName);
+		} else{
+			messageDao = repositories.get(repositoryName);
 		}
 		
 		
