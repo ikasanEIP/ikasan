@@ -121,12 +121,11 @@ public class MessagePublicationController {
     public String startSubscriber(
     		@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
     		@RequestParam(value=REPOSITORY_NAME_PARAMETER_NAME,required=false) String repositoryName,
-    		@RequestParam(SUBSCRIPTION_NAME_PARAMETER_NAME) String subscriptionName,
-    		@RequestParam(value=SIMPLE_SUBSCRIPTION_PARAMETER_NAME,required=false) Boolean simpleSubscription
+    		@RequestParam(SUBSCRIPTION_NAME_PARAMETER_NAME) String subscriptionName
     		)
     {	
 
-    	destinationServer.createSubscription(subscriptionName, destinationPath, repositoryName,simpleSubscription!=null?simpleSubscription:false);
+    	destinationServer.createSubscription(subscriptionName, destinationPath, repositoryName);
     	
     	return "redirect:/destination.htm?"+DESTINATION_PATH_PARAMETER_NAME+"="+destinationPath;
     }

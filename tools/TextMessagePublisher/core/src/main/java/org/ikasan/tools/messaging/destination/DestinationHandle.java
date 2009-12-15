@@ -57,7 +57,7 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
-public class DestinationHandle {
+public class DestinationHandle implements Comparable<DestinationHandle> {
 	
 	private String destinationPath;
 	
@@ -142,6 +142,10 @@ public class DestinationHandle {
 		}
 		subscriptions.remove(subscriptionName);
 		
+	}
+
+	public int compareTo(DestinationHandle other) {
+		return this.getDestinationPath().compareTo(other.getDestinationPath());
 	}
 	
 
