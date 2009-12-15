@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.dao;
+package org.ikasan.tools.messaging.repository;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
