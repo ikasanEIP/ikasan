@@ -47,7 +47,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.ikasan.tools.messaging.model.MessageWrapper;
 
-public class BoundedMemoryMessageDao implements MessageDao {
+public class BoundedMemoryMessageRepository implements MessageRepository {
 
 	private int maximumMessages = 10;
 	

@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.tools.messaging.model.MessageWrapper;
 
-public interface MessageDao {
+public interface MessageRepository {
 
 	public void save(MessageWrapper message);
 	

@@ -41,7 +41,6 @@
 package org.ikasan.tools.messaging.destination;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
@@ -51,10 +50,9 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.ikasan.tools.messaging.dao.MessageDao;
+import org.ikasan.tools.messaging.dao.MessageRepository;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
 import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
-import org.ikasan.tools.messaging.subscriber.SimpleSubscriber;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -65,9 +63,6 @@ public class DestinationHandle {
 	
 	private Destination destination;
 	
-	private SimpleSubscriber simpleSubscriber = null;
-	
-	private PersistingSubscriber persistingSubscriber = null;
 	
 	private Map<String, BaseSubscriber> subscriptions = new HashMap<String, BaseSubscriber>();
 
@@ -84,27 +79,6 @@ public class DestinationHandle {
 		this.destinationPath = destinationPath;
 		this.destination = destination;
 	}
-	
-
-	
-	public PersistingSubscriber getPersistingSubscriber(){
-		return persistingSubscriber;
-	}
-	
-	public void startSimpleSubscription(ConnectionFactory connectionFactory){
-		if (simpleSubscriber!=null){
-			throw new IllegalStateException("SimpleSubscriber already exists for ["+destinationPath+"]");
-		}
-		simpleSubscriber = new SimpleSubscriber(connectionFactory, destination);
-	}
-	
-	public void startPersistingSubscription(ConnectionFactory connectionFactory, MessageDao messageDao){
-		if (persistingSubscriber!=null){
-			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
-		}
-		persistingSubscriber = new PersistingSubscriber(connectionFactory, destination,messageDao);
-	}
-	
 
 	
 	public void publishTextMessage(ConnectionFactory connectionFactory,final String messageText, int priority) {
@@ -150,15 +124,9 @@ public class DestinationHandle {
 
 	}
 
-	public void stopSimpleSubscription() {
-		if (simpleSubscriber!=null){
-			simpleSubscriber.shutdown();
-		}
-		this.simpleSubscriber= null;
-		
-	}
 	
-	public void createSubscription(String subscriptionName, ConnectionFactory connectionFactory, MessageDao messageDao){
+	
+	public void createSubscription(String subscriptionName, ConnectionFactory connectionFactory, MessageRepository messageDao){
 		if (subscriptions.get(subscriptionName)!=null){
 			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
 		}
