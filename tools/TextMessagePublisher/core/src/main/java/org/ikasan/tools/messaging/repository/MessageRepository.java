@@ -44,6 +44,10 @@ import java.util.List;
 
 import org.ikasan.tools.messaging.model.MessageWrapper;
 
+/**
+ * @author Ikasan Development Team
+ *
+ */
 public interface MessageRepository {
 
 	public void save(MessageWrapper message);
