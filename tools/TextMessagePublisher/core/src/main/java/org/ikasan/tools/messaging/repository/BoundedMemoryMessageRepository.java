@@ -47,12 +47,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.ikasan.tools.messaging.model.MessageWrapper;
 
-public class BoundedMemoryMessageRepository implements MessageRepository {
+public class BoundedMemoryMessageRepository extends BaseRepository implements MessageRepository {
+
+
 
 	private int maximumMessages = 10;
 	
 	private BlockingQueue<MessageWrapper> receivedMessages = new LinkedBlockingQueue<MessageWrapper>(maximumMessages);
 
+	public BoundedMemoryMessageRepository(String name) {
+		super(name);
+	}
 	
 	public MessageWrapper getMessage(String messageId) {
 		for (MessageWrapper messageWrapper : receivedMessages){

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +23,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
+import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
+import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.ikasan.tools.messaging.server.DestinationServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,7 +75,7 @@ public class MessagePublicationController {
 	
 
     @RequestMapping(value="/publishTextMessage.htm", method = RequestMethod.POST)
-    public String viewFlow(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
+    public String publishTextMessage(@RequestParam(DESTINATION_PATH_PARAMETER_NAME) String destinationPath,
             @RequestParam(MESSAGE_TEXT_PARAMETER_NAME) String messageText, 
             @RequestParam(MESSAGE_PRIORITY_PARAMETER_NAME) int priority, ModelMap model)
     {	
@@ -159,20 +162,20 @@ public class MessagePublicationController {
     	
     	
     	
-    	if (message instanceof TextMessage){
+    	if (message instanceof TextMessageWrapper){
     		return "textMessage";
-    	} else if (message instanceof MapMessage){
+    	} else if (message instanceof MapMessageWrapper){
+    		Map<String, Object> map = ((MapMessageWrapper)message).getMap();
+    		
     		Map<String, Object> messageContent = new HashMap<String, Object>();
-    		Enumeration mapNames = ((MapMessage)message).getMapNames();
-    		while(mapNames.hasMoreElements()){
-    			String mapName = (String) mapNames.nextElement();
-    			Object mapValue = ((MapMessage)message).getObject(mapName);
+    		for (String mapKey : map.keySet()){
+    			Object mapValue = map.get(mapKey);
     			String renderableValue=mapValue.toString();
     			if (mapValue instanceof byte[]){
     				renderableValue = "byte array comprising ["+new String((byte[])mapValue)+"]";
     			}
     			
-				messageContent.put(mapName, renderableValue);
+				messageContent.put(mapKey, renderableValue);
     		}
     		model.addAttribute("messageContent", messageContent);
     		

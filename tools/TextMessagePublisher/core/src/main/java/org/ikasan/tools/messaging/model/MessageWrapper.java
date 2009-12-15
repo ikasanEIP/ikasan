@@ -52,6 +52,8 @@ public class MessageWrapper {
 	
 	protected Map<String, Object> properties = new HashMap<String, Object>();
 	
+	protected Map<String, Object> messagingProperties = new HashMap<String, Object>();
+	
 	protected String messageId;
 	
 	protected Long timestamp;
@@ -71,6 +73,10 @@ public class MessageWrapper {
 
 	public Map<String, Object> getProperties() {
 		return properties;
+	}
+	
+	public Map<String, Object> getMessagingProperties() {
+		return messagingProperties;
 	}
 
 
@@ -98,6 +104,8 @@ public class MessageWrapper {
 		result = prime * result
 				+ ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result
+				+ ((messagingProperties == null) ? 0 : messagingProperties.hashCode());
+		result = prime * result
 				+ ((timestamp == null) ? 0 : timestamp.hashCode());
 		return result;
 	}
@@ -123,6 +131,11 @@ public class MessageWrapper {
 				return false;
 		} else if (!properties.equals(other.properties))
 			return false;
+		if (messagingProperties == null) {
+			if (other.messagingProperties != null)
+				return false;
+		} else if (!messagingProperties.equals(other.messagingProperties))
+			return false;
 		if (timestamp == null) {
 			if (other.timestamp != null)
 				return false;
@@ -134,7 +147,14 @@ public class MessageWrapper {
 	@Override
 	public String toString() {
 		return "MessageWrapper [messageId=" + messageId + ", properties="
-				+ properties + ", timestamp=" + timestamp + "]";
+				+ properties + ", messagingProperties="
+				+ messagingProperties + ", timestamp=" + timestamp + "]";
+	}
+
+
+
+	public void setMessagingProperties(Map<String, Object> messagingProperties) {
+		this.messagingProperties = messagingProperties;
 	}
 
 

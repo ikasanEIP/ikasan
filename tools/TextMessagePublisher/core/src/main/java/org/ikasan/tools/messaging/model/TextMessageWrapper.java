@@ -87,7 +87,7 @@ public class TextMessageWrapper extends MessageWrapper{
 	@Override
 	public String toString() {
 		return "TextMessageWrapper [text=" + text + ", messageId=" + messageId
-				+ ", properties=" + properties + ", timestamp=" + timestamp
+				+ ", properties=" + properties + ", messagingProperties=" + messagingProperties + ", timestamp=" + timestamp
 				+ "]";
 	}
 }
