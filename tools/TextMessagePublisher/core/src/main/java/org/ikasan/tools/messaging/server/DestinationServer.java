@@ -47,19 +47,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
 
 import org.apache.log4j.Logger;
-import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
 import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
-import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.ikasan.tools.messaging.repository.BoundedMemoryMessageRepository;
 import org.ikasan.tools.messaging.repository.FileSystemMessageRepository;
+import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
