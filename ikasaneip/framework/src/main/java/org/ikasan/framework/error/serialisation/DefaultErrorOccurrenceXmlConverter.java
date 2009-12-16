@@ -67,16 +67,15 @@ public class DefaultErrorOccurrenceXmlConverter implements ErrorOccurrenceXmlCon
 
 	private DocumentBuilder documentBuilder;
 	
-	private Transformer transformer;
+	private TransformerFactory transformerFactory;
 	
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
 	
 	public DefaultErrorOccurrenceXmlConverter() throws ParserConfigurationException, TransformerConfigurationException{
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		this.transformerFactory = transformerFactory = TransformerFactory.newInstance();
 		
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		transformer = transformerFactory.newTransformer();
 	}
 
 	
@@ -149,7 +148,7 @@ public class DefaultErrorOccurrenceXmlConverter implements ErrorOccurrenceXmlCon
 		StringWriter stringWriter = new StringWriter();
 		StreamResult streamResult = new StreamResult(stringWriter);
 		
-		transformer.transform(new DOMSource(dom), streamResult);
+		transformerFactory.newTransformer().transform(new DOMSource(dom), streamResult);
 		
        
         return stringWriter.toString();
