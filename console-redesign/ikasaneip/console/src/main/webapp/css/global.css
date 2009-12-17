@@ -50,7 +50,7 @@ body
 {
     border-width: 1px;
     border-color: #B3B3B3;
-    background-image: url(images/Btn_BG.png);
+    background-image: url(../images/Btn_BG.png);
     background-repeat: repeat-x;
     background-position: top left;
     height: 20px;
@@ -128,7 +128,7 @@ h4
 #header
 {
     background-color: #F9AF56;
-    background-image: url(images/Banner.png);
+    background-image: url(../images/Banner.png);
     background-repeat: no-repeat;
     height: 140px;
     margin-top: 20px;
