@@ -134,11 +134,8 @@ public class HousekeeperServiceHttpImpl implements HousekeeperService {
 			}
 			logger.info("housekeepWiretapEvents was called successfully.");
 		}
+		// Covers ClientProtocolException as well
 		catch (IOException e) 
-		{
-			logger.error("Call to housekeep failed.", e);
-		}
-		catch (ClientProtocolException e) 
 		{
 			logger.error("Call to housekeep failed.", e);
 		}
