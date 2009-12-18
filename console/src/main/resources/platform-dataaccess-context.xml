@@ -46,15 +46,32 @@
         <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />    
     </bean>
 
-    <!-- Session Factory for the wiretapDao -->
+    <!-- 
+        Session Factory for the wiretapDao, we use a Local Tx Data Source 
+        as this allows us to deliberately specify READ_UNCOMMITTED in our 
+        Tx advice which is then honoured by the underlying RDMS (if you 
+        use a No Tx Data Source the RDMS uses its default which may not be the 
+        desired READ_UNCOMMITTED)  
+     -->
     <bean id="wiretapHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
+        <!-- <property name="dataSource" ref="ikasanAdminNoTxDataSource" /> -->
+        <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
         <property name="mappingResources">
             <list>
                 <value>WiretapEventImpl.hbm.xml</value>
             </list>
         </property>
+        <!-- Overrides what is defined in hibernate.cfg.xml -->
+        <!-- 
+        <property name="hibernateProperties">
+          <props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.SybaseDialect</prop>
+            <prop key="hibernate.jdbc.use_get_generated_keys">false</prop>            
+            <prop key="hibernate.connection.isolation">1</prop>
+          </props>
+        </property>
+        -->
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
