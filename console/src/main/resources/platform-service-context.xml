@@ -58,57 +58,32 @@
 		<constructor-arg ref="moduleService" />
 	</bean>
 	
-  	<!-- ############################### -->
-  	<!-- Transaction services start here -->
-    <!-- ############################### -->  	
+  	<!-- ###################################### -->
+  	<!-- Common transaction services start here -->
+    <!-- ###################################### -->  	
   	
   	<!-- Transaction advice requiring a new transaction on entry -->
-    <!-- 
     <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRES_NEW"/>
         </tx:attributes>
     </tx:advice>
-    -->
     
     <!-- Transaction advice requiring a transaction on entry -->
-    <!-- 
     <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
-    -->
-
-    <!-- 
-        Create a point cut that invokes a transactional advice when 
-        any methods that belong to a Service class/interface are called
-        is called.
-    -->
-    <!-- 
-    <aop:config>
-        <aop:pointcut id="serviceOperation" expression="execution(* org.ikasan.framework.event.wiretap.service.*Service*.*(..))"/>
-        <aop:advisor pointcut-ref="serviceOperation" advice-ref="readonly-TransactionAdvice"/>
-    </aop:config>
-    -->
-    
-    <!-- Transaction advice requiring a read only transaction on find/list/get style operations -->
-    <!--
-    <tx:advice id="readonly-TransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="findWiretapEvents" propagation="REQUIRES_NEW" read-only="true" isolation="READ_UNCOMMITTED" />
-        </tx:attributes>
-    </tx:advice>
-    -->     
-    
+     
     <!-- Transaction Manager definition for user transactions -->
     <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
        <property name="transactionManagerName" value="java:/TransactionManager"/>
        <property name="userTransactionName" value="UserTransaction"/>
     </bean>
   
-    <!-- ############################# -->
-    <!-- Transaction services end here -->
-    <!-- ############################# -->
+    <!-- #################################### -->
+    <!-- Common transaction services end here -->
+    <!-- #################################### -->
     
 </beans>

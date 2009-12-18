@@ -26,8 +26,6 @@
  */
 package org.ikasan.framework.event.wiretap.dao;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -127,41 +125,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     public PagedWiretapSearchResult findPaging(final Set<String> moduleNames, final String componentName, final String eventId, final String payloadId,
             final Date fromDate, final Date untilDate, final String payloadContent, final int maxResults, final int firstResult) throws DataAccessException
     {
-    	logger.info("findPaging");
         return (PagedWiretapSearchResult) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-            	try
-            	{
-            		int transactionIsolationLevel = session.connection().getTransactionIsolation();
-            		if (transactionIsolationLevel == Connection.TRANSACTION_NONE)
-            		{
-            			logger.info("None");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_READ_COMMITTED)
-            		{
-            			logger.info("Read Committed");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_READ_UNCOMMITTED)
-            		{
-            			logger.info("Read Uncommitted");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_REPEATABLE_READ)
-            		{
-            			logger.info("Read Repeatable");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_SERIALIZABLE)
-            		{
-            			logger.info("Serilizable");	
-            		}
-            	}
-            	catch (SQLException e)
-            	{
-            		logger.warn("Could not read Txn Isolation Level");
-            		// DO Nothing
-            	}
-            	
                 Criteria criteria = session.createCriteria(WiretapEvent.class, "event");
                 criteria.add(Restrictions.in("moduleName", moduleNames));
                 if (restrictionExists(componentName))
@@ -226,41 +193,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             final Set<String> moduleNames, final String componentName, final String eventId, final String payloadId, final Date fromDate, final Date untilDate,
             final String payloadContent)
     {
-    	logger.info("findWiretapEvents");
         return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-            	try
-            	{
-            		int transactionIsolationLevel = session.connection().getTransactionIsolation();
-            		if (transactionIsolationLevel == Connection.TRANSACTION_NONE)
-            		{
-            			logger.info("None");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_READ_COMMITTED)
-            		{
-            			logger.info("Read Committed");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_READ_UNCOMMITTED)
-            		{
-            			logger.info("Read Uncommitted");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_REPEATABLE_READ)
-            		{
-            			logger.info("Read Repeatable");
-            		}
-            		else if (transactionIsolationLevel == Connection.TRANSACTION_SERIALIZABLE)
-            		{
-            			logger.info("Serilizable");	
-            		}
-            	}
-            	catch (SQLException e)
-            	{
-            		logger.warn("Could not read Txn Isolation Level");
-            		// DO Nothing
-            	}
-            	
                 Criteria criteria = session.createCriteria(WiretapEvent.class);
                 criteria.setMaxResults(pageSize);
                 int firstResult = (pageNo * pageSize);
