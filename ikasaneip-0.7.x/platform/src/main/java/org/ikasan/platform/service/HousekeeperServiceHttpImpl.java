@@ -71,6 +71,7 @@ import org.ikasan.platform.service.HousekeeperService;
  * @author Ikasan Development Team
  */
 public class HousekeeperServiceHttpImpl implements HousekeeperService {
+	
 	/** Logger for this class */
 	private static Logger logger = Logger
 			.getLogger(HousekeeperServiceHttpImpl.class);
@@ -84,7 +85,8 @@ public class HousekeeperServiceHttpImpl implements HousekeeperService {
 	 * @param wiretapEventHousekeepingUrl
 	 *            - wiretapEventHousekeepingUrl to set
 	 */
-	public HousekeeperServiceHttpImpl(String wiretapEventHousekeepingUrl) {
+	public HousekeeperServiceHttpImpl(String wiretapEventHousekeepingUrl)
+	{
 		this.wiretapEventHousekeepingUrl = wiretapEventHousekeepingUrl;
 	}
 
@@ -94,18 +96,22 @@ public class HousekeeperServiceHttpImpl implements HousekeeperService {
 	 * TODO Error handling is lazy and captures any exception, this may actually
 	 * be OK but needs review.
 	 */
-	public void housekeepWiretapEvents() {
+	public void housekeepWiretapEvents()
+	{
+
 		// Create the client and set the username and password
 		DefaultHttpClient httpclient = new DefaultHttpClient();
+		
+		// TODO Username and Password are hardcoded
 		Credentials defaultcreds = new UsernamePasswordCredentials(
 				"housekeeper", "housekeeper");
+		
 		// TODO Using AuthScope.ANY is not best practice, we can probably
 		// Get the correct details from the URL passed in
 		httpclient.getCredentialsProvider().setCredentials(AuthScope.ANY,
 				defaultcreds);
 
-		// Generate BASIC scheme object and stick it to the local execution
-		// context
+		// Generate BASIC scheme object and stick it to the local execution context
 		BasicHttpContext localcontext = new BasicHttpContext();
 		BasicScheme basicAuth = new BasicScheme();
 		localcontext.setAttribute("preemptive-auth", basicAuth);
@@ -114,45 +120,56 @@ public class HousekeeperServiceHttpImpl implements HousekeeperService {
 		httpclient.addRequestInterceptor(new PreemptiveAuth(), 0);
 
 		HttpPost httppost = new HttpPost(this.wiretapEventHousekeepingUrl);
-		try {
-			logger.info("Calling [" + this.wiretapEventHousekeepingUrl + "]");
+		try
+		{
 			HttpResponse response = httpclient.execute(httppost, localcontext);
 			int statusCode = response.getStatusLine().getStatusCode();
 			// TODO Investigate why we get a 302 back, probably because of the
-			// authentication moving us
-			if (!(statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == HttpStatus.SC_OK)) {
+			// authentication moving us?
+			if (!(statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == HttpStatus.SC_OK))
+			{
 				logger.error("Call failed, Status Code = [" + statusCode + "]");
-				throw new Exception();
+				throw new HttpException();
 			}
 			logger.info("housekeepWiretapEvents was called successfully.");
-		} catch (Exception e) {
-			logger.error("Call to housekeep failed.");
-		} finally {
-			// When HttpClient instance is no longer needed,
-			// shut down the connection manager to ensure
-			// immediate deallocation of all system resources
+		}
+		catch (IOException e) 
+		{
+			logger.error("Call to housekeep failed.", e);
+		}
+		catch (ClientProtocolException e) 
+		{
+			logger.error("Call to housekeep failed.", e);
+		}
+		catch (HttpException e) 
+		{
+			logger.error("Call to housekeep failed.", e);
+		}
+		finally
+		{
 			httpclient.getConnectionManager().shutdown();
 		}
 	}
 
-	/** Helper class to sort out preemtive auth */
+	/** Helper class to sort out preemptive auth */
 	static class PreemptiveAuth implements HttpRequestInterceptor
 	{
 
 		public void process(final HttpRequest request, final HttpContext context)
-				throws HttpException, IOException
+				throws HttpException, IOException 
 		{
-
 			AuthState authState = (AuthState) context
 					.getAttribute(ClientContext.TARGET_AUTH_STATE);
 
-			// If no auth scheme available yet, try to initialize it preemptively
-			// TODO Trace through this to see if it ever gets called.
+			// If no auth scheme available yet, try to initialize it preemptively.
 			if (authState.getAuthScheme() == null)
 			{
-				AuthScheme authScheme = (AuthScheme) context.getAttribute("preemptive-auth");
-				CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(ClientContext.CREDS_PROVIDER);
-				HttpHost targetHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
+				AuthScheme authScheme = (AuthScheme) context
+						.getAttribute("preemptive-auth");
+				CredentialsProvider credsProvider = (CredentialsProvider) context
+						.getAttribute(ClientContext.CREDS_PROVIDER);
+				HttpHost targetHost = (HttpHost) context
+						.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 				if (authScheme != null)
 				{
 					Credentials creds = credsProvider
