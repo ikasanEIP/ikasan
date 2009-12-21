@@ -7,37 +7,54 @@
          http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
 
 
+	<!-- Reads request input using UTF-8 encoding -->
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>		
+	</filter>
 
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- Enables clean URLs with JSP views e.g. /welcome instead of /tool/welcome -->
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
 
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+		
+	<!-- Handles all requests into the application -->
+	<servlet>
+		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/spring/tool-config.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+		<url-pattern>/tool/*</url-pattern>
+	</servlet-mapping>
+	
 
-
-
-
-  <servlet>
-    <servlet-name>dispatcherServlet</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-
-  <!-- All *.htm requests should be mapped to the console Servlet -->
-  <servlet-mapping>
-    <servlet-name>dispatcherServlet</servlet-name>
-    <url-pattern>*.htm</url-pattern>
-  </servlet-mapping>
-
-  <!-- The welcome file is index.jsp -->
-  <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
-
-  <!-- Some extra JSP config, namely the tag libraries we use -->
-  <jsp-config>
-  
-    <taglib>
-      <taglib-uri>/spring-form</taglib-uri>
-      <taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
-    </taglib>
-
-  </jsp-config>
 
 </web-app>

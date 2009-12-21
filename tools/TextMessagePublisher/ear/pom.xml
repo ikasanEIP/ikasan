@@ -30,7 +30,7 @@
 						<webModule>
 							<groupId>org.ikasan.tools</groupId>
 							<artifactId>TextMessagePublisher-war</artifactId>
-							<contextRoot>/publisher</contextRoot>
+							<contextRoot>/messaging-tool</contextRoot>
 						</webModule>
 
 					</modules>
