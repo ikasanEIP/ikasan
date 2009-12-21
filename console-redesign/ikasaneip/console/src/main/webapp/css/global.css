@@ -276,6 +276,48 @@ img
     width: 460px;
 }
 
+.supportCell
+{
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #B3B3B3;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 42px;
+}
+
+.supportCell2
+{
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #B3B3B3;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 558px;
+}
+
+/* The support buttons */
+.supportImage
+{
+    height: 42px;
+    width: 42px;
+}
+
+/* The support text */
+.supportText
+{
+    font-size: 18px;
+    vertical-align: top;
+}
+
+/* */
+#supportLinksTable
+{
+    border-spacing: 0px 0px;
+    width: 600px;
+}
 
 /* Normal text paragraph */  
 .text

@@ -55,7 +55,7 @@
                     <td class="navigationCell"><a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="/console/images/Btn_Admin.png" alt="Admin Link"/></a></td>
                     </security:authorize>
                     <td rowspan="2" class="navigationCell leftBorder">&nbsp;</td>
-                    <td class="navigationCell"><a href="<c:url value='/support/support.htm'/>"><img class="navigationImage" src="/console/images/Btn_Support.png" alt="Support Link"/></a></td>
+                    <td class="navigationCell"><a href="<c:url value='/support.htm'/>"><img class="navigationImage" src="/console/images/Btn_Support.png" alt="Support Link"/></a></td>
                 </tr>
                 <tr>
                     <td class="navigationCell">&nbsp;</td>
