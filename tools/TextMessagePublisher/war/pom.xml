@@ -77,22 +77,22 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
-			<version>2.5.4</version>
-		</dependency>
+			<version>3.0.0.RELEASE</version>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>2.5.4</version>
+			<version>3.0.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>2.5.4</version>
+			<version>3.0.0.RELEASE</version>
 		</dependency>
 		
 		<dependency>
@@ -106,6 +106,14 @@
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 		</dependency>
+
+		<!--  URL Rewrite -->
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+			<version>3.1.0</version>						
+		</dependency>
+
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -132,9 +140,12 @@
 			<scope>provided</scope>
 		</dependency>
 
-
-
-
+		<dependency>
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 		
 

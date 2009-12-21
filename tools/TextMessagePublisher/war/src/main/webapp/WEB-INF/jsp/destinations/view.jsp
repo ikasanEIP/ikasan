@@ -55,10 +55,8 @@
 	
 	<c:forEach items="${destination.subscriptions}" var="subscriptionEntry" >
 	<div class="destinationAspect subscription">
-		<c:url var="stopSubscriptionLink" value="stopSubscription.htm">
-		    <c:param name="destinationPath" value="${destination.destinationPath}"/>
-		    <c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
-	    </c:url>
+		<c:url var="stopSubscriptionLink" value="subscriptions/${subscriptionEntry.key}/stopSubscription"/>
+
 	    <h3>${subscriptionEntry.key}</h3>
 	    
 	    <p class="message">Handled ${subscriptionEntry.value.messageCount} messages since: ${subscriptionEntry.value.subscribingSince}</p>
@@ -71,19 +69,15 @@
 				</tr>
 			<c:forEach items="${subscriptionEntry.value.messages}" var="messageId" >	
 				<tr>
-					<c:url var="messageLink" value="message.htm">
-						<c:param name="destinationPath" value="${destination.destinationPath}"/>
-						<c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
-		            	<c:param name="messageId" value="${messageId}"/>
-		            </c:url>
+					<c:url var="messageLink" value="../../messages/subscription/${destination.destinationPath}/${subscriptionEntry.key}/${messageId}"/>
+					<c:url var="downloadLink" value="../../messages/subscription/${destination.destinationPath}/${subscriptionEntry.key}/${messageId}">
+						<c:param name="download" value="true"/>
+					</c:url>
+
 					<td><a href="${messageLink}"><c:out value="${messageId}"/></a></td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<c:url var="downloadLink" value="export.htm">
-						<c:param name="destinationPath" value="${destination.destinationPath}"/>
-						<c:param name="subscriptionName" value="${subscriptionEntry.key}"/>
-		            	<c:param name="messageId" value="${messageId}"/>
-		            </c:url>
+					
 					<td><a href="${downloadLink}">Download</a></td>
 
 				</tr>
@@ -99,14 +93,12 @@
 	
 	
 	
-	<c:url var="startSubscriptionLink" value="startSubscription.htm">
-		<c:param name="destinationPath" value="${destination.destinationPath}"/>
-	</c:url>	
+	
 
 
 	
 	<table>
-	<form method="post" action="${startSubscriptionLink}">
+	<form method="post" action="subscriptions/startSubscription">
 	    <tr>
 	        <td>Subscription Name:</td>
 	        <td><input name="subscriptionName" type="text"/></td>
@@ -143,14 +135,9 @@
 
 
 
-
-<c:url var="textMessagePublicationLink" value="publishTextMessage.htm">
-	<c:param name="destinationPath" value="${destination.destinationPath}"/>
-</c:url>
-
 <div id="textMessagePublisher" class="destinationAspect">
 	<h3>Text Message Publisher</h3>
-	<form method="post" action="${textMessagePublicationLink}">
+	<form method="post" action="publishTextMessage">
 		<table>
 			
 			<tr>

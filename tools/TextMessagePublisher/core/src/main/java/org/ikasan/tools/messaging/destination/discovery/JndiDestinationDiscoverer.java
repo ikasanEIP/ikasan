@@ -85,6 +85,10 @@ public class JndiDestinationDiscoverer implements
 	                String fullPath = parentPath+"/"+name;
 	                Object lookup = ctx.lookup(parentPath+"/"+name);
 	                
+	                fullPath = fullPath.replaceAll("/"," ").trim().replaceAll(" ", ".");
+	               
+	                
+	                
 	                if (!(lookup instanceof javax.jms.Destination)){
 	                    throw new RuntimeException("Only expecting to find Destination under ["+parentPath+"]");
 	                }

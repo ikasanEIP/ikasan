@@ -54,7 +54,7 @@
 		</c:forEach>
 </ul>
 
-	<form method="post" action="createFileSystemRepository.htm">
+	<form method="post" action="createFileSystemRepository">
 	    <table>
 	        <tr>
 	            <td>Name:</td>

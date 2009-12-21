@@ -47,10 +47,9 @@
 <h2>Choose your destination</h2>
 <ul>
 		<c:forEach items="${destinations}" var="destination" >
-			<c:url var="destinationLink" value="destination.htm">
-            	<c:param name="destinationPath" value="${destination.destinationPath}"/>
-            </c:url>
-			<li><a href="${destinationLink}"><c:out value="${destination.destinationPath}"/></a></li>
+			<jsp:useBean id="destination" type="org.ikasan.tools.messaging.destination.DestinationHandle" />
+			<% pageContext.setAttribute("encodedDestination", java.net.URLEncoder.encode(destination.getDestinationPath())); %>
+			<li><a href="destinations/${destination.destinationPath}/"/><c:out value="${destination.destinationPath}"/></a></li>
 		</c:forEach>
 </ul>
 
