@@ -44,19 +44,15 @@
 --%>
 <%@ include file="/WEB-INF/jsp/events/eventsTop.jsp"%>
 
-  <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.2.custom.css'/>" rel="stylesheet" />
-  <link type="text/css" href="<c:url value='/css/jquery.hovertip-1.0.css'/>" rel="stylesheet" />
-  <script type="text/javascript" src="<c:url value='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
-  <script type="text/javascript" src="<c:url value='/js/wiretapevents.js'/>"></script>
+        <script type="text/javascript" src="<c:url value='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
+        <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
+        <script type="text/javascript" src="<c:url value='/js/wiretapevents.js'/>"></script>
   
-<div class="middle">
-
-    <form method="get" id="wiretapSearchForm" action="" class="dataform fancydataform">
+        <form method="get" id="wiretapSearchForm" action="" class="dataform fancydataform">
 
         <c:if test="${errors != ''}">
             <c:forEach items="${errors}" var="error">
-                <span class="errorMessages"><c:out value="${error}" /></span><br />
+            <span class="errorMessages"><c:out value="${error}" /></span><br />
             </c:forEach>
         </c:if>
 
@@ -82,7 +78,7 @@
                                 <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
                                     <tr>
                                         <td class="border" valign="top">
-                                            <input id="pointToPointFlowProfileIds" name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /> <span><c:out value="${pointToPointFlowProfile.name}"/></span>
+                                            <input name="pointToPointFlowProfileIds" type="checkbox" value="${pointToPointFlowProfile.id}" <c:forEach items="${searchParams['pointToPointFlowProfileIds']}" var="pointToPointFlowProfileId"><c:if test="${pointToPointFlowProfile.id == pointToPointFlowProfileId}">checked="checked"</c:if></c:forEach> /> <span><c:out value="${pointToPointFlowProfile.name}"/></span>
                                         </td>
                                     </tr>
                                     <tr class="toggle">
@@ -292,7 +288,5 @@
         </table>
 
     </c:if>
-
-</div>
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

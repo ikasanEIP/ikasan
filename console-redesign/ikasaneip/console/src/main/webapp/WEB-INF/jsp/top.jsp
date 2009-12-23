@@ -50,7 +50,9 @@
     <meta http-equiv="Content-Language" content="English" />
     <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
+    <link type="text/css" href="<c:url value='/css/global.css'/>" media="screen" rel="stylesheet" />
+    <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.2.custom.css'/>" rel="stylesheet" />
+    <link type="text/css" href="<c:url value='/css/jquery.hovertip-1.0.css'/>" rel="stylesheet" />
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
 </head>
