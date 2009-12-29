@@ -81,5 +81,38 @@
 </div>
 
 <h2>Initiator :: <c:out value="${initiator.name}" /></h2>
+<p>&nbsp;</p>
 
+<h3>Status</h3>
+
+        <table class="keyValueTable">
+            <tr>
+                <th>
+                    RetryCount
+                </th>
+                <td>
+                    <c:out value="${initiator.retryCount}" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>
+                   Successfully Handled Events
+                </th>
+                <td>
+                    <c:out value="${initiator.handledEventCount}" />
+                </td>
+            </tr>
+            
+            <tr>
+                <th>
+                   Last Successful Event
+                </th>
+                <td>
+                    <c:out value="${initiator.lastEventTime}" />
+                </td>
+            </tr>
+            
+
+        </table>
 
