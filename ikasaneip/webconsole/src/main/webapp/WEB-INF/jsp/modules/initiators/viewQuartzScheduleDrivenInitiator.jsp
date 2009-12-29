@@ -50,10 +50,7 @@
 
 
 
-<p>RetryCount: <c:out value="${initiator.retryCount}" /></p>
 
-<c:if test="${initiator.state.recovering}">
-</c:if>
 
 <h3>Scheduler</h3>
 
