@@ -45,8 +45,8 @@
 <%@ include file="/WEB-INF/jsp/modules/initiators/initiatorTop.jsp"%>
 
 
-<p>RetryCount: <c:out value="${initiator.retryCount}" /></p>
 
+        
 <h3>Container</h3>
 
         <table id="messageListenerContainerDetails" class="keyValueTable">
@@ -68,10 +68,26 @@
                 </td>
             </tr>
             
+            <tr>
+                <th>
+                    Destination Name
+                </th>
+                <td>
+                    <c:out value="${initiator.messageListenerContainer.destinationName}" />
+                </td>
+            </tr>
+            
+            <tr>
+                <th>
+                    Destination
+                </th>
+                <td>
+                    <c:out value="${initiator.messageListenerContainer.destination}" />
+                </td>
+            </tr>
+            
 
         </table>
-
-
 
 
 <%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>
