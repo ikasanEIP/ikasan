@@ -63,8 +63,8 @@
         <constructor-arg ref="flowElementInvoker" />
 
     </bean>
-
-    <bean id="englishToFrenchNumberTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
+    
+   <bean id="englishToFrenchNumberTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
         <constructor-arg value="englishToFrenchNumberStep" />
         <constructor-arg ref="englishToFrenchWordTransformer" />
         <constructor-arg ref="frenchNumberPublishingElement" />
@@ -72,6 +72,14 @@
           <value>Translates English numbers to French numbers</value>
         </property>
     </bean>	
+
+      <bean id="frenchNumberPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="frenchNumberPublishingStep" />
+        <constructor-arg ref="frenchNumberPublishingEndpoint" />
+        <property name="description">
+          <value>Publishes French Numbers to the French Number channel</value>
+        </property>
+    </bean>
 	
     <!-- channel Adapter Flow -->
 
@@ -79,17 +87,18 @@
     <bean id="channelAdapterFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
         <constructor-arg value="channelAdapterFlow" />
         <constructor-arg ref="moduleName" />
-        <constructor-arg ref="frenchNumberPublishingElement" />
+        <constructor-arg ref="frenchNumberLoggingElement" />
         <constructor-arg ref="flowElementInvoker" />
 
     </bean>
 
 
-    <bean id="frenchNumberPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
-        <constructor-arg value="frenchNumberPublishingStep" />
+
+    <bean id="frenchNumberLoggingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="frenchNumberLoggingStep" />
         <constructor-arg ref="eventLoggingEndpoint" />
         <property name="description">
-          <value>Dumps French numbers to the log</value>
+          <value>Logs the receipt of French Numbers</value>
         </property>
     </bean>
         
