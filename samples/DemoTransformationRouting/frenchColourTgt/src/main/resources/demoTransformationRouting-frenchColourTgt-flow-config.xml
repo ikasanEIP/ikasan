@@ -70,6 +70,15 @@
           <value>Translates English colours to French colours</value>
         </property>
     </bean>	
+    
+    
+   <bean id="frenchColourPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="frenchColourPublishingStep" />
+        <constructor-arg ref="frenchColourPublishingEndpoint" />
+        <property name="description">
+          <value>Publishes French Colours to the French Colour channel</value>
+        </property>
+    </bean>
 	
     <!-- channel Adapter Flow -->
 
@@ -77,20 +86,20 @@
     <bean id="channelAdapterFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
         <constructor-arg value="channelAdapterFlow" />
         <constructor-arg ref="moduleName" />
-        <constructor-arg ref="frenchColourPublishingElement" />
+        <constructor-arg ref="frenchColourLoggingElement" />
         <constructor-arg ref="flowElementInvoker" />
 
     </bean>
 
 
-    <bean id="frenchColourPublishingElement" class="org.ikasan.framework.flow.FlowElementImpl">
-        <constructor-arg value="frenchColourPublishingStep" />
+
+    <bean id="frenchColourLoggingElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="frenchColourLoggingStep" />
         <constructor-arg ref="eventLoggingEndpoint" />
         <property name="description">
-          <value>Dumps French colours to the log</value>
+          <value>Logs the receipt of French Colours</value>
         </property>
     </bean>
-        
 
     
 

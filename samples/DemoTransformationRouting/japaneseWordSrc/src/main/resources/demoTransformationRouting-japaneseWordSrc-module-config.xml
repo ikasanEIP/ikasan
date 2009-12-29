@@ -65,15 +65,13 @@
     </bean>
     
  
-     <bean id="loggingExceptionHandler" class="org.ikasan.framework.component.LoggingExceptionHandlerImpl">
-            <property name="errorAction">
-                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
-                    <constructor-arg value="ROLLBACK_RETRY" />
-                    <constructor-arg value="10000" />
-                    <constructor-arg value="10" />
-                </bean>
-            </property>
-        </bean>
+    <bean id="exceptionHandler" class="org.ikasan.framework.exception.matching.MatchingExceptionHandler">
+            <constructor-arg>
+            	<list>
+ 
+            	</list>
+            </constructor-arg>
+    </bean>
         
            
   <!-- =========================================================================== -->
@@ -94,7 +92,7 @@
     <!-- initiator exception handler -->
     <!-- <constructor-arg ref="exceptionHandler" /> -->
     <!-- <constructor-arg><null/></constructor-arg>-->
-    <constructor-arg ref="loggingExceptionHandler"/>
+    <constructor-arg ref="exceptionHandler"/>
      <property name="triggers">
         <list>
            <bean class="org.quartz.CronTrigger">
@@ -104,6 +102,7 @@
         </list>
      </property>
     <property name="scheduler" ref="channelAdapterFlowScheduler"/>
+    <property name="errorLoggingService" ref="errorLoggingService"/>
     </bean>
 
   <bean id="channelAdapterFlowScheduler"
@@ -132,7 +131,8 @@
         <property name="transactionManager" ref="transactionManager"/>
         <property name="flow" ref="transformerFlow"/>
         <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
-        <property name="exceptionHandler" ref="loggingExceptionHandler"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="errorLoggingService" ref="errorLoggingService"/>
     </bean>
 
 

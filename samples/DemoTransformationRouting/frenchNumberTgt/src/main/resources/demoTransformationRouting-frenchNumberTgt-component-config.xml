@@ -85,6 +85,16 @@
 	<bean id="eventLoggingEndpoint"
         class="org.ikasan.framework.component.endpoint.EventLoggingEndpoint"/>
         
-
+	<bean id="frenchNumberPublishingEndpoint"
+        class="org.ikasan.framework.component.endpoint.PluginEndpointAdapter">
+        <constructor-arg>
+            <bean class="org.ikasan.framework.plugins.JMSEventPublisherPlugin">
+                <constructor-arg ref="frenchNumberTopic" />
+                <constructor-arg ref="jmsConnectionFactory" />
+                <constructor-arg ref="jmsMessageEventSerialiser" />
+                <constructor-arg><null/></constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
 
 </beans>
