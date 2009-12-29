@@ -123,6 +123,10 @@ public abstract class AbstractInitiator implements Initiator
      */
     protected Set<String> exclusions = new HashSet<String>();
     
+    private long handledEventCount = 0;
+    
+    private Date lastEventTime = null;
+    
 
 
 	/**
@@ -269,6 +273,8 @@ public abstract class AbstractInitiator implements Initiator
 	        	FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
 				try{
 					flow.invoke(flowInvocationContext, event);
+					handledEventCount = handledEventCount+1;
+					lastEventTime = new Date();
 				}catch (Throwable throwable){
 					String lastComponentName = flowInvocationContext.getLastComponentName();
 					exceptionAction = exceptionHandler.handleThrowable(lastComponentName, throwable);
@@ -593,5 +599,13 @@ public abstract class AbstractInitiator implements Initiator
 	 */
 	public Set<String> getExclusions() {
 		return new HashSet<String>(exclusions);
+	}
+	
+	public long getHandledEventCount(){
+		return handledEventCount;
+	}
+	
+	public Date getLastEventTime(){
+		return lastEventTime;
 	}
 }
