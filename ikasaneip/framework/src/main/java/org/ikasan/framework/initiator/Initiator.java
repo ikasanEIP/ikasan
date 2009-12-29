@@ -40,6 +40,8 @@
  */
 package org.ikasan.framework.initiator;
 
+import java.util.Date;
+
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.flow.Flow;
 
@@ -128,4 +130,8 @@ public interface Initiator
      * @return ExceptionHandler if any
      */
     public IkasanExceptionHandler getExceptionHandler();
+    
+    public long getHandledEventCount();
+    
+    public Date getLastEventTime();
 }
