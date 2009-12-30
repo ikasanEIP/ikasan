@@ -53,9 +53,9 @@ import javax.jms.Session;
 import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.TextMessageWrapper;
-import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
-import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
+import org.ikasan.tools.messaging.subscriber.MessageWrapperListenerSubscriber;
+import org.ikasan.tools.messaging.subscriber.listener.MessageWrapperListener;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -122,13 +122,12 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 	
 
 	
-	public BaseSubscriber createSubscription(String subscriptionName, MessageRepository messageDao){
+	public void createSubscription(String subscriptionName, MessageWrapperListener messageListener){
 		if (subscriptions.get(subscriptionName)!=null){
-			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
+			throw new IllegalStateException("Subscriber already exists for ["+destinationPath+"]");
 		}
-		PersistingSubscriber subscription = new PersistingSubscriber(connectionFactory, destination,messageDao);
+		MessageWrapperListenerSubscriber subscription = new MessageWrapperListenerSubscriber(connectionFactory, destination,messageListener);
 		subscriptions.put(subscriptionName, subscription);
-		return subscription;
 	}
 	
 	public void destroySubscription(String subscriptionName) {

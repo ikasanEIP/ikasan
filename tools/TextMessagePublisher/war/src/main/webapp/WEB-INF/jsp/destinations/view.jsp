@@ -67,7 +67,7 @@
 					<th>Timestamp</th>
 					<th>Export</th>
 				</tr>
-			<c:forEach items="${subscriptionEntry.value.messages}" var="messageId" >	
+			<c:forEach items="${subscriptionEntry.value.messageListener.repository.messages}" var="messageId" >	
 				<tr>
 					<c:url var="messageLink" value="../../messages/subscription/${destination.destinationPath}/${subscriptionEntry.key}/${messageId}"/>
 					<c:url var="downloadLink" value="../../messages/subscription/${destination.destinationPath}/${subscriptionEntry.key}/${messageId}">

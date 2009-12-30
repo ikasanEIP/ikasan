@@ -56,7 +56,8 @@ import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.serialisation.DefaultMessageXmlSerialiser;
 import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
-import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
+import org.ikasan.tools.messaging.subscriber.MessageWrapperListenerSubscriber;
+import org.ikasan.tools.messaging.subscriber.listener.PersistingMessageWrapperListener;
 
 public class DestinationTool {
 	
@@ -101,7 +102,7 @@ public class DestinationTool {
 		}
 		
 		
-		getDestination(destinationPath).createSubscription(subscriptionName, messageDao);
+		getDestination(destinationPath).createSubscription(subscriptionName, new PersistingMessageWrapperListener(messageDao));
 	}
 	
 	public void destroyPersistingSubscription(String destinationPath, String subscriptionName){
@@ -124,7 +125,11 @@ public class DestinationTool {
 
 	public MessageWrapper getMessage(String destinationPath,String subscriptionName, String messageId) {
 		BaseSubscriber subscriber = getDestination(destinationPath).getSubscriptions().get(subscriptionName);
-		return ((PersistingSubscriber)subscriber).getMessage(messageId);
+		MessageWrapperListenerSubscriber messageWrapperListenerSubscriber = (MessageWrapperListenerSubscriber)subscriber;
+		PersistingMessageWrapperListener persistingMessageWrapperListener = (PersistingMessageWrapperListener)messageWrapperListenerSubscriber.getMessageListener();
+		MessageRepository messageDao = persistingMessageWrapperListener.getRepository();
+		
+		return messageDao.getMessage(messageId);
 	}
 
 
