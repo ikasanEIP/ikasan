@@ -63,6 +63,8 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 	
 	private Destination destination;
 	
+	private ConnectionFactory connectionFactory;
+	
 	
 	private Map<String, BaseSubscriber> subscriptions = new HashMap<String, BaseSubscriber>();
 
@@ -74,14 +76,15 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 		return destinationPath;
 	}
 
-	public DestinationHandle(String destinationPath, Destination destination) {
+	public DestinationHandle(String destinationPath, Destination destination, ConnectionFactory connectionFactory) {
 		super();
 		this.destinationPath = destinationPath;
 		this.destination = destination;
+		this.connectionFactory = connectionFactory;
 	}
 
 	
-	public void publishTextMessage(ConnectionFactory connectionFactory,final String messageText, int priority) {
+	public void publishTextMessage(final String messageText, int priority) {
 		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
         
 		// explicit QoS must be set when defined priority, deliveryMode, or timeToLive
@@ -100,7 +103,7 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 
 	}
 	
-	public void publishMapMessage(ConnectionFactory connectionFactory,final Map<String, Object> map, int priority) {
+	public void publishMapMessage(final Map<String, Object> map, int priority) {
 		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
         
 		// explicit QoS must be set when defined priority, deliveryMode, or timeToLive
@@ -126,7 +129,7 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 
 	
 	
-	public BaseSubscriber createSubscription(String subscriptionName, ConnectionFactory connectionFactory, MessageRepository messageDao){
+	public BaseSubscriber createSubscription(String subscriptionName, MessageRepository messageDao){
 		if (subscriptions.get(subscriptionName)!=null){
 			throw new IllegalStateException("PersistingSubscriber already exists for ["+destinationPath+"]");
 		}
