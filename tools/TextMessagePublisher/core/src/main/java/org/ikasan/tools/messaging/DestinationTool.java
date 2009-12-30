@@ -48,7 +48,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
-import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.ikasan.tools.messaging.repository.BoundedMemoryMessageRepository;
@@ -83,7 +82,9 @@ public class DestinationTool {
 
 	
 	public void publishTextMessage(String destinationPath, String messageText, int priority){
-		getDestination(destinationPath).publishTextMessage(messageText, priority);
+		TextMessageWrapper textMessageWrapper = new TextMessageWrapper(messageText, null);
+		
+		getDestination(destinationPath).publishMessage(textMessageWrapper, priority);
 	}
 	
 
@@ -141,19 +142,9 @@ public class DestinationTool {
 	public void publishXmlMessage(String destinationPath, String xml,
 			int priority) {
 		
-		Object messageObject = messageXmlSerialiser.getMessageObject(xml);
-		if (messageObject instanceof TextMessageWrapper){
-			getDestination(destinationPath).publishTextMessage( ((TextMessageWrapper)messageObject).getText(), priority);
-		} 
-		
-		else if (messageObject instanceof MapMessageWrapper){
-			getDestination(destinationPath).publishMapMessage( ((MapMessageWrapper)messageObject).getMap(), priority);
-		}
-		else{
-			throw new RuntimeException("Unknown message object["+messageObject+"]");
-		}
+		MessageWrapper messageWrapper = messageXmlSerialiser.getMessageObject(xml);
 
-		
+			getDestination(destinationPath).publishMessage(messageWrapper, priority);
 	}
 
 
