@@ -107,7 +107,7 @@
                                 <td class="loginCell"><input class="inputText" type='password' id='j_password' name='j_password' /></td>
                             </tr>
                             <tr>
-                                <td class="loginCell formLabel"><a href="#">I'm a new user<img class="helpImage" src="/console/images/Icon_Help_sml.png" alt="?" /></a></td>
+                                <td class="loginCell formLabel"><a href="#">I'm a new user <img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></a></td>
                                 <td class="loginCell"><input class="button" name="submit" type="submit" value="Login"/></td>
                             </tr>
                         </table>

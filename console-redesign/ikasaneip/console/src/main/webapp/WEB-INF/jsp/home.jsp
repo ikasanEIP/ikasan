@@ -49,7 +49,7 @@
             <table id="homeLinksTable">
                 <tr>
                     <td class="navigationCell"><img class="navigationArrow" src="/console/images/Icon_ArrowHm.png" alt="Arrow"/></td>
-                    <td class="navigationCell"><a href="<c:url value='/console/events/newSearch.htm'/>"><img class="navigationImage" src="/console/images/Btn_Events.png" alt="Events Link"/></a></td>
+                    <td class="navigationCell"><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="/console/images/Btn_Events.png" alt="Events Link"/></a></td>
                     <%-- Spring based security around the admin pages --%>
                     <security:authorize ifAllGranted="ROLE_ADMIN">
                     <td class="navigationCell"><a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="/console/images/Btn_Admin.png" alt="Admin Link"/></a></td>

@@ -87,11 +87,11 @@
 
             <!-- 
             	TODO get the image working in with the word 'Support', unfortunately HTML rears its ugly head 
-            	again when trying to get this to work cleanly
+            	again when trying to get this to work cleanly, it pushes the whole nav bar out by 1px forcing it to wrap
            	-->
             <div id="minorNavigation">
                 <ul>
-                    <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpImage" src="/console/images/Icon_Help_sml2.png" alt="?" /> --></a></li>
+                    <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpIcon" src="/console/images/Icon_Help_sml2.png" alt="?" /> --></a></li>
                     <li><fmt:message key="menu_logged_in_as"/> <security:authentication property="principal.username" /></li>
                     <li class="last"><a href="<c:url value="/j_spring_security_logout"/>"><span class="important"><fmt:message key="menu_logout_link"/></span></a></li>
                 </ul>
