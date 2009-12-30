@@ -50,6 +50,9 @@ import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.ikasan.tools.messaging.model.MapMessageWrapper;
+import org.ikasan.tools.messaging.model.MessageWrapper;
+import org.ikasan.tools.messaging.model.TextMessageWrapper;
 import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
 import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
@@ -84,7 +87,8 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 	}
 
 	
-	public void publishTextMessage(final String messageText, int priority) {
+	public void publishMessage(final MessageWrapper messageWrapper, int priority) {
+		
 		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
         
 		// explicit QoS must be set when defined priority, deliveryMode, or timeToLive
@@ -94,31 +98,20 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 			jmsTemplate.send(destination, new MessageCreator() {
 				
 				public Message createMessage(Session session) throws JMSException {
-					return session.createTextMessage(messageText);
-				}
-			});
-		} catch (JmsException e) {
-			throw new RuntimeException(e);
-		} 
-
-	}
-	
-	public void publishMapMessage(final Map<String, Object> map, int priority) {
-		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
-        
-		// explicit QoS must be set when defined priority, deliveryMode, or timeToLive
-        jmsTemplate.setPriority(priority);
-        jmsTemplate.setExplicitQosEnabled(true);
-		try {
-			jmsTemplate.send(destination, new MessageCreator() {
-				
-				public Message createMessage(Session session) throws JMSException {
-					MapMessage mapMessage = session.createMapMessage();
-					for (String mapKey: map.keySet()){
-						Object mapValue = map.get(mapKey);
-						mapMessage.setObject(mapKey, mapValue);
+					Message message = null;
+					if (messageWrapper instanceof TextMessageWrapper){
+						message =  session.createTextMessage(((TextMessageWrapper)messageWrapper).getText());
+					} else if (messageWrapper instanceof MapMessageWrapper){
+						message = session.createMapMessage();
+						Map<String, Object> map = ((MapMessageWrapper) messageWrapper).getMap();
+						for (String mapKey: map.keySet()){
+							Object mapValue = map.get(mapKey);
+							((MapMessage)message).setObject(mapKey, mapValue);
+						}
 					}
-					return mapMessage;
+						
+					
+					return message;
 				}
 			});
 		} catch (JmsException e) {
@@ -126,8 +119,8 @@ public class DestinationHandle implements Comparable<DestinationHandle> {
 		} 
 
 	}
-
 	
+
 	
 	public BaseSubscriber createSubscription(String subscriptionName, MessageRepository messageDao){
 		if (subscriptions.get(subscriptionName)!=null){
