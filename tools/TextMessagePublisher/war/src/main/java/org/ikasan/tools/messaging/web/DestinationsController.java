@@ -16,7 +16,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
-import org.ikasan.tools.messaging.server.DestinationServer;
+import org.ikasan.tools.messaging.DestinationTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/destinations")
 public class DestinationsController {
 
-	private DestinationServer destinationServer;
+	private DestinationTool destinationServer;
 		
 	public static final String MESSAGE_TEXT_PARAMETER_NAME = "messageText";
 
@@ -46,7 +46,7 @@ public class DestinationsController {
 
     @Autowired
 	public DestinationsController(
-			DestinationServer destinationServer) {
+			DestinationTool destinationServer) {
 		super();
 		this.destinationServer = destinationServer;
 		// Create a factory for disk-based file items

@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.model.MapMessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.TextMessageWrapper;
-import org.ikasan.tools.messaging.server.DestinationServer;
+import org.ikasan.tools.messaging.DestinationTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/messages")
 public class MessagesController {
 
-	private DestinationServer destinationServer;
+	private DestinationTool destinationServer;
 	
 	
     
@@ -33,7 +33,7 @@ public class MessagesController {
 
     @Autowired
 	public MessagesController(
-			DestinationServer destinationServer) {
+			DestinationTool destinationServer) {
 		super();
 		this.destinationServer = destinationServer;
 	}

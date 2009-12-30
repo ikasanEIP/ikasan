@@ -38,9 +38,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.server;
+package org.ikasan.tools.messaging;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,10 +61,9 @@ import org.ikasan.tools.messaging.serialisation.MessageXmlSerialiser;
 import org.ikasan.tools.messaging.subscriber.BaseSubscriber;
 import org.ikasan.tools.messaging.subscriber.PersistingSubscriber;
 
-public class DestinationServer {
+public class DestinationTool {
 	
-	private Logger logger = Logger.getLogger(DestinationServer.class);
-
+	private Logger logger = Logger.getLogger(DestinationTool.class);
 	
 	private List<DestinationHandle> destinations = new ArrayList<DestinationHandle>();
 	
@@ -76,7 +74,7 @@ public class DestinationServer {
 	private Map<String,MessageRepository> repositories = new HashMap<String,MessageRepository>();
 	
 	
-	public DestinationServer(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
+	public DestinationTool(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
 		this.destinations = destinationDiscoverer.findDestinations();
 		this.connectionFactory = connectionFactory;
 	}

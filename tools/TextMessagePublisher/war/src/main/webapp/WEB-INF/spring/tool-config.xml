@@ -38,7 +38,7 @@
     
     
     
-    <bean id="destinationServer" class="org.ikasan.tools.messaging.server.DestinationServer">
+    <bean id="destinationTool" class="org.ikasan.tools.messaging.DestinationTool">
     	<constructor-arg ref="destinationDiscoverer"/>
     	<constructor-arg ref="jmsConnectionFactory"/>
     </bean>
