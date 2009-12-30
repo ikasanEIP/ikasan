@@ -38,35 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.subscriber;
 
-import java.util.List;
+package org.ikasan.tools.messaging.subscriber;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import org.ikasan.tools.messaging.repository.MessageRepository;
 import org.ikasan.tools.messaging.model.MessageWrapper;
 import org.ikasan.tools.messaging.model.MessageWrapperFactory;
+import org.ikasan.tools.messaging.subscriber.listener.MessageWrapperListener;
 
-public class PersistingSubscriber extends BaseSubscriber {
+public class MessageWrapperListenerSubscriber extends BaseSubscriber{
 
-	private MessageRepository messageDao;
+	private MessageWrapperListener messageWrapperListener;
 	
-	
-	public PersistingSubscriber(
-			ConnectionFactory connectionFactory,
-			Destination destination,
-			MessageRepository messageDao
-		) {
-		super(connectionFactory, destination);
-		this.messageDao = messageDao;
+	public MessageWrapperListener getMessageListener() {
+		return messageWrapperListener;
 	}
 
-	public void handleMessage(Message message) {
-		
+	public MessageWrapperListenerSubscriber(
+			ConnectionFactory connectionFactory, Destination destination,
+			MessageWrapperListener messageWrapperListener) {
+		super(connectionFactory, destination);
+		this.messageWrapperListener = messageWrapperListener;
+	}
+
+	@Override
+	protected void handleMessage(Message message) {
 		MessageWrapper messageWrapper;
 		try {
 			messageWrapper = MessageWrapperFactory.wrapMessage(message);
@@ -74,15 +74,8 @@ public class PersistingSubscriber extends BaseSubscriber {
 			throw new RuntimeException(e);
 		}
 
-		messageDao.save(messageWrapper);
-	}
-	
-	public List<String> getMessages(){
-		return messageDao.getMessages();
-	}
-	
-	public MessageWrapper getMessage(String messageId){
-		return messageDao.getMessage(messageId);
+		messageWrapperListener.handleMessage(messageWrapper);
+		
 	}
 
 }
