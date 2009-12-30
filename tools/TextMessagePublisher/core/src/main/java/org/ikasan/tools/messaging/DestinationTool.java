@@ -45,8 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.log4j.Logger;
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 import org.ikasan.tools.messaging.destination.discovery.DestinationDiscoverer;
@@ -66,17 +64,15 @@ public class DestinationTool {
 	private Logger logger = Logger.getLogger(DestinationTool.class);
 	
 	private List<DestinationHandle> destinations = new ArrayList<DestinationHandle>();
-	
-	private ConnectionFactory connectionFactory;
+
 	
 	private MessageXmlSerialiser messageXmlSerialiser = new DefaultMessageXmlSerialiser();
 	
 	private Map<String,MessageRepository> repositories = new HashMap<String,MessageRepository>();
 	
 	
-	public DestinationTool(DestinationDiscoverer destinationDiscoverer, ConnectionFactory connectionFactory){
+	public DestinationTool(DestinationDiscoverer destinationDiscoverer){
 		this.destinations = destinationDiscoverer.findDestinations();
-		this.connectionFactory = connectionFactory;
 	}
 	
 	
@@ -87,7 +83,7 @@ public class DestinationTool {
 
 	
 	public void publishTextMessage(String destinationPath, String messageText, int priority){
-		getDestination(destinationPath).publishTextMessage(connectionFactory,  messageText, priority);
+		getDestination(destinationPath).publishTextMessage(messageText, priority);
 	}
 	
 
@@ -104,7 +100,7 @@ public class DestinationTool {
 		}
 		
 		
-		getDestination(destinationPath).createSubscription(subscriptionName, connectionFactory, messageDao);
+		getDestination(destinationPath).createSubscription(subscriptionName, messageDao);
 	}
 	
 	public void destroyPersistingSubscription(String destinationPath, String subscriptionName){
@@ -147,11 +143,11 @@ public class DestinationTool {
 		
 		Object messageObject = messageXmlSerialiser.getMessageObject(xml);
 		if (messageObject instanceof TextMessageWrapper){
-			getDestination(destinationPath).publishTextMessage(connectionFactory,  ((TextMessageWrapper)messageObject).getText(), priority);
+			getDestination(destinationPath).publishTextMessage( ((TextMessageWrapper)messageObject).getText(), priority);
 		} 
 		
 		else if (messageObject instanceof MapMessageWrapper){
-			getDestination(destinationPath).publishMapMessage(connectionFactory,  ((MapMessageWrapper)messageObject).getMap(), priority);
+			getDestination(destinationPath).publishMapMessage( ((MapMessageWrapper)messageObject).getMap(), priority);
 		}
 		else{
 			throw new RuntimeException("Unknown message object["+messageObject+"]");

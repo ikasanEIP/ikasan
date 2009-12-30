@@ -40,7 +40,6 @@
     
     <bean id="destinationTool" class="org.ikasan.tools.messaging.DestinationTool">
     	<constructor-arg ref="destinationDiscoverer"/>
-    	<constructor-arg ref="jmsConnectionFactory"/>
     </bean>
     
     
@@ -53,6 +52,7 @@
     			<value>/queue</value>
     		</list>
     	</constructor-arg>
+    	<constructor-arg ref="jmsConnectionFactory"/>
     </bean>
     
     

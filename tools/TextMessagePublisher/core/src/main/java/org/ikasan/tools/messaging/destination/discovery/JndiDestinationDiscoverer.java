@@ -47,6 +47,7 @@ import java.util.Properties;
 
 import org.ikasan.tools.messaging.destination.DestinationHandle;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -61,14 +62,16 @@ public class JndiDestinationDiscoverer implements
 
 	private Properties jndiEnvironment;
     private List<String> parentPaths;
+    private ConnectionFactory connectionFacotory;
     
     private Logger logger = Logger.getLogger(JndiDestinationDiscoverer.class);
     
 	public JndiDestinationDiscoverer(Properties jndiEnvironment,
-			List<String> parentPaths) {
+			List<String> parentPaths, ConnectionFactory connectionFactory) {
 		super();
 		this.jndiEnvironment = jndiEnvironment;
 		this.parentPaths = parentPaths;
+		this.connectionFacotory = connectionFactory;
 	}
 
 	public List<DestinationHandle> findDestinations() {
@@ -93,7 +96,7 @@ public class JndiDestinationDiscoverer implements
 	                    throw new RuntimeException("Only expecting to find Destination under ["+parentPath+"]");
 	                }
 	                
-	                result.add(new DestinationHandle(fullPath, (Destination)lookup));
+	                result.add(new DestinationHandle(fullPath, (Destination)lookup, connectionFacotory));
 	                Collections.sort(result);
 	            }
 			}
