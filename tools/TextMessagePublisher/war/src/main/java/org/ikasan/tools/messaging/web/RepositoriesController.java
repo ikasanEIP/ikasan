@@ -1,7 +1,7 @@
 package org.ikasan.tools.messaging.web;
 
 import org.apache.log4j.Logger;
-import org.ikasan.tools.messaging.server.DestinationServer;
+import org.ikasan.tools.messaging.DestinationTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,7 +17,7 @@ public class RepositoriesController {
     public static final String REPOSITORY_NAME_PARAMETER_NAME = "repositoryName";
    
     
-	private DestinationServer destinationServer;
+	private DestinationTool destinationServer;
 	
 	
     
@@ -27,7 +27,7 @@ public class RepositoriesController {
 
     @Autowired
 	public RepositoriesController(
-			DestinationServer destinationServer) {
+			DestinationTool destinationServer) {
 		super();
 		this.destinationServer = destinationServer;
 	}
