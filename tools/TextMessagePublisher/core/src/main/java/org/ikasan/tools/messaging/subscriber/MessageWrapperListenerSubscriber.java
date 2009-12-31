@@ -46,8 +46,8 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.ikasan.tools.messaging.jms.MessageWrapperFactory;
 import org.ikasan.tools.messaging.model.MessageWrapper;
-import org.ikasan.tools.messaging.model.MessageWrapperFactory;
 import org.ikasan.tools.messaging.subscriber.listener.MessageWrapperListener;
 
 public class MessageWrapperListenerSubscriber extends BaseSubscriber{
