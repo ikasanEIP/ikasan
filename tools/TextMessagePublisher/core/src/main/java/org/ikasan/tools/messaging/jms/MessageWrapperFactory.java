@@ -38,19 +38,21 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.tools.messaging.model;
+package org.ikasan.tools.messaging.jms;
 
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
+import org.ikasan.tools.messaging.model.MapMessageWrapper;
+import org.ikasan.tools.messaging.model.MessageWrapper;
+import org.ikasan.tools.messaging.model.TextMessageWrapper;
 
 public class MessageWrapperFactory {
 	
