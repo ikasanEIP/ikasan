@@ -54,9 +54,12 @@
     <meta http-equiv="Content-Language" content="English" />
     <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
+    <link type="text/css" href="<c:url value='/css/global.css'/>" media="screen" rel="stylesheet" />
+    <link type="text/css" href="<c:url value='/css/jquery.hovertip-1.0.css'/>" rel="stylesheet" />
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/login.js'/>"></script>
 </head>
 
 <body>
@@ -89,7 +92,7 @@
                 </p>
                 <h4>What next?</h4>
                 <p class="text">
-                    Please Login or if you are a new user then please follow the instructions in the "I'm a new user ?" link.
+                    Please Login or if you are a new user then please follow the instructions by hovering over the help icon next to "I'm a new user" text.
                 </p>
             </div>
             <div id="rightContent">
@@ -107,7 +110,7 @@
                                 <td class="loginCell"><input class="inputText" type='password' id='j_password' name='j_password' /></td>
                             </tr>
                             <tr>
-                                <td class="loginCell formLabel"><a href="#">I'm a new user <img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></a></td>
+                                <td class="loginCell formLabel">I'm a new user <span title="Please contact your System Administrator" id="loginHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span></td>
                                 <td class="loginCell"><input class="button" name="submit" type="submit" value="Login"/></td>
                             </tr>
                         </table>

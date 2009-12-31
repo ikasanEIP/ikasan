@@ -44,60 +44,42 @@
 --%>
 <%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
 
-<div class="middle">
-
-<h2><fmt:message key="users_heading"/></h2>
-
-    <h3><fmt:message key="users_configured_users"/></h3>
-    <table id="users" class="listTable">
-        <thead>
-            <tr>
-                <th><fmt:message key="users_username"/></th>
-                <th><fmt:message key="users_enabled"/></th>
-            </tr>
-        </thead>
-        
-        <tbody>
-            <c:forEach items="${users}" var="user">
-                <c:url var="viewLink" value="view.htm">
-                    <c:param name="username" value="${user.username}"/>
-                </c:url>
-                <tr>
-                    <td><a href="<c:out value="${viewLink}" escapeXml="true" />"><c:out value="${user.username}" /></a></td>
-                    <td><c:out value="${user.enabled}" /></td>
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
-
-
-    <form:form action="createUser.htm" id="changePasswordForm" commandName="user" cssClass="dataform">
-    
-        <form:errors path="*" cssClass="errorMessages"/>
-    
-        <fieldset>
-           <legend><fmt:message key="users_create_user"/></legend>
-            <ol>  
-                 <li>
-                    <label for="username"><fmt:message key="users_username"/></label>
-                    <form:input path="username"/>
-                 </li>
-                 <li>
-                    <label for="password"><fmt:message key="users_password"/></label>
-                    <form:password path="password"/>
-                 </li>
-                 <li>
-                    <label for="enabled"><fmt:message key="users_enabled"/></label>
-                    <form:checkbox path="enabled"/>
-                 </li>
-            </ol>
-        </fieldset>                             
-
-        <p>
-            <input type="submit" value="Create User" class="controlButton"/>
-        </p>
-    </form:form>
-
-</div>
+        <div id="content">
+            <h1><fmt:message key="users_heading"/></h1>
+            <!-- TODO change CSS names -->
+            <div class="searchFormHeading">&nbsp;<fmt:message key="users_current_heading"/></div>
+            <div class="hr"><hr class="searchFormHR" /></div>
+            
+            <div id="usersList">
+                <!-- TODO change CSS name(s) -->
+                <table id="listTable">
+                    <thead>
+                        <tr>
+                            <th class="resultsHeaderCell"><fmt:message key="users_username"/></th>
+                            <th class="resultsHeaderCellLast"><fmt:message key="users_enabled"/></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${users}" var="user">
+                        <c:url var="viewLink" value="view.htm">
+                            <c:param name="username" value="${user.username}"/>
+                        </c:url>
+                        <tr>
+                            <td class="resultsCell"><a href="<c:out value="${viewLink}" escapeXml="true" />"><c:out value="${user.username}" /></a></td>
+                            <td class="listCellLast">
+                                <c:if test="${user.enabled == 'true'}">
+                                <img class="smallIcon" src="/console/images/Enabled.png" alt="Yes" />
+                                </c:if>
+                                <c:if test="${user.enabled != 'true'}">
+                                <img class="smallIcon" src="/console/images/Disabled.png" alt="No" />
+                                </c:if>
+                            </td>
+                        </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+            <div id="createUser"><a href="<c:url value='/admin/users/createUser.htm'/>"><img class="createNewUserImage" src="/console/images/Btn_CreateNewUser.png" alt="Create New User"></a></div>
+        </div>
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

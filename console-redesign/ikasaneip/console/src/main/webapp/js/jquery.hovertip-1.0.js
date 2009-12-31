@@ -49,12 +49,7 @@
             var windowHeight = $window.height() + $window.scrollTop();
             var posX = event.pageX + conf.offset[0];
             var posY = event.pageY + conf.offset[1];
-            /*
-            alert(tooltipWidth + ", " + tooltipHeight);
-            alert(event.pageX + ", " + event.pageY);
-            alert(conf.offset[0] + ", " + conf.offset[1]);
-            alert(posX + ", " + posY);
-            */
+            
             if (posX + tooltipWidth > windowWidth)
             {
                 // Move left

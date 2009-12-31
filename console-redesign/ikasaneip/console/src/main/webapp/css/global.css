@@ -110,6 +110,19 @@ body
     position: relative;
 }
 
+#createUser
+{
+    float: left;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.createNewUserImage
+{
+    height: 55px;
+    width: 160px;
+}
+
 #flowsRadioButton
 {
     padding-right: 18px;
@@ -280,6 +293,20 @@ img
     width: 440px;
 }
 
+#listTable
+{
+    border-color: B3B3B3;
+    border-width: 1px;
+    border-spacing: 0px;
+    border-style: solid;
+}
+
+#listTable a
+{
+    text-decoration: none;
+    color: #99141B;
+}
+
 #loginBox
 {
     float: right;
@@ -431,6 +458,13 @@ img
 {
     padding-left: 5px;
     padding-right: 15px;
+}
+
+.listCellLast
+{
+    padding-left: 5px;
+    padding-right: 15px;
+    text-align: center;
 }
 
 .resultsHeaderCell
@@ -640,6 +674,12 @@ ul li.last
     color: #99141B;
     font-weight: bold;
     text-decoration: none;
+}
+
+#usersList
+{
+    float: left;
+    padding-top: 10px;
 }
 
 /* Apply background stripes to all cells with class .alt, however this is manipulated by javascript */
