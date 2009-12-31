@@ -305,20 +305,34 @@ public class DateUtilsTest extends TestCase
     }
 
     /**
-     * Test adding days 
+     * 
+     * Test to make sure that the {@link DateUtils#addDays(int)} adds the correct
+     * number of days to the date from which the {@link DateUtils} was created.  
      */
     @Test
     public void testAddDays()
     {
-        Calendar calendar = new GregorianCalendar();
+    	// We first create a Calendar (expectedCalendar) and add "X" number of days
+    	// to the current date, using the java.util.Calendar.add(Calendar.DAY_OF_YEAR,X) API.
+    	// We also then create a DateUtils using the current date and add "X" days,
+    	// using the DateUtils.addDays(X) API. After adding the days, we get the 
+    	// calendar using the DateUtils.getTimeInCalendar() API. 
+    	// We then compare the Calendar.DAY_OF_YEAR of both these calendars, to ensure
+    	// that the DateUtils.addDays(X) does the same operation as java.util.Calendar.add(Calendar.DAY_OF_YEAR,X)
+    	
+    	// Create a calendar and add 1 day
         Calendar expectedCalendar = new GregorianCalendar();
         expectedCalendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        // Create another calendar and use the DateUtils to add 1 day
+        Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         du = new DateUtils(date);
         du.addDays(1);
-        // reuse variable
-        expectedCalendar = du.getTimeInCalendar();
-        assertEquals(expectedCalendar.get(Calendar.DAY_OF_YEAR) - 1, calendar.get(Calendar.DAY_OF_YEAR));
+        // get the calendar from the DateUtils
+        calendar = du.getTimeInCalendar();
+        // Now compare the day on both the calendars
+        assertEquals("Incorrect day returned after addition of days", expectedCalendar.get(Calendar.DAY_OF_YEAR), calendar.get(Calendar.DAY_OF_YEAR));
     }
 
     /**
