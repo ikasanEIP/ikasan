@@ -49,6 +49,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
 import junit.framework.TestCase;
 
@@ -94,8 +95,8 @@ public class UsersControllerTest extends TestCase
     {
         UsersController controller = new UsersController(userService);
         ModelMap model = null;
-        String result = controller.listUsers(model);
-        assertEquals("admin/users/users", result);
+        ModelAndView result = controller.listUsers(model);
+        assertEquals("admin/users/users", result.getViewName());
         
         controller = new UsersController(userService);
         model = new ModelMap();
@@ -113,7 +114,7 @@ public class UsersControllerTest extends TestCase
         assertNotNull(model.get("user"));
         List<User> users = (List<User>)model.get("users");
         assertTrue(users.isEmpty());
-        assertEquals("admin/users/users", result);
+        assertEquals("admin/users/users", result.getViewName());
 
         model = new ModelMap();
         // Expectations
@@ -129,7 +130,7 @@ public class UsersControllerTest extends TestCase
         assertNotNull(model.get("user"));
         users = (List<User>)model.get("users");
         assert(users.isEmpty());
-        assertEquals("admin/users/users", result);
+        assertEquals("admin/users/users", result.getViewName());
     }
 
 }

@@ -61,7 +61,7 @@
                     </thead>
                     <tbody>
                         <c:forEach items="${users}" var="user">
-                        <c:url var="viewLink" value="view.htm">
+                        <c:url var="viewLink" value="maintainUser.htm">
                             <c:param name="username" value="${user.username}"/>
                         </c:url>
                         <tr>
@@ -79,7 +79,7 @@
                     </tbody>
                 </table>
             </div>
-            <div id="createUser"><a href="<c:url value='/admin/users/createUser.htm'/>"><img class="createNewUserImage" src="/console/images/Btn_CreateNewUser.png" alt="Create New User"></a></div>
-        </div>
+            <div id="createUserButton"><a href="<c:url value='/admin/users/createUser.htm'/>"><img class="createNewUserImage" src="/console/images/Btn_CreateNewUser.png" alt="Create New User"></a></div>
+        </div> <!-- End Content -->
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

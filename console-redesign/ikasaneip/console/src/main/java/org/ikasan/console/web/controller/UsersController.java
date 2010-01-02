@@ -43,7 +43,13 @@ package org.ikasan.console.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
+import org.ikasan.console.web.command.UserCriteriaValidator;
+import org.ikasan.console.web.command.UserCriteria;
+import org.ikasan.console.web.command.WiretapSearchCriteria;
 import org.ikasan.framework.security.model.Authority;
 import org.ikasan.framework.security.model.User;
 import org.ikasan.framework.security.service.UserService;
@@ -59,6 +65,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * The controller for the various user views
@@ -78,6 +85,9 @@ public class UsersController
 
     /** The user service to use */
     private UserService userService;
+
+    /** The user criteria validator to use */
+    private UserCriteriaValidator validator = new UserCriteriaValidator();
 
     /** Logger for this class */
     private Logger logger = Logger.getLogger(UsersController.class);
@@ -105,7 +115,7 @@ public class UsersController
      * @return "modules/modules"
      */
     @RequestMapping("list.htm")
-    public String listUsers(ModelMap model)
+    public ModelAndView listUsers(ModelMap model)
     {
         if (model != null)
         {
@@ -115,7 +125,20 @@ public class UsersController
             }
             model.addAttribute("users", this.userService.getUsers());
         }
-        return "admin/users/users";
+        return new ModelAndView("admin/users/users");
+    }
+
+    /**
+     * Navigate to the create user page
+     * 
+     * @param request - Standard HTTP Request
+     * @param response - Standard HTTP Response
+     * @return - Model and View for createUser
+     */
+    @RequestMapping(value = "createUser.htm", method = RequestMethod.GET)
+    public ModelAndView createUser(ModelMap model, @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+    {
+        return new ModelAndView("admin/users/createUser");
     }
 
     /**
@@ -126,39 +149,48 @@ public class UsersController
      * @param result - The result
      * @return view the user
      */
-    @RequestMapping(value = "createUser.htm", method = RequestMethod.POST)
-    public String createUser(ModelMap model, @ModelAttribute("user") User user, BindingResult result)
+    @RequestMapping(value = "saveUser.htm", method = RequestMethod.POST)
+    public ModelAndView saveUser(ModelMap model, @RequestParam(required = false) String username, @RequestParam(required = false) String password,  @RequestParam(required = false) Boolean enabled)
     {
-        // check that user doesn't already exist, and the password has been supplied
-        ValidationUtils.rejectIfEmpty(result, "username", "field.required", "Username cannot be empty");
-        ValidationUtils.rejectIfEmpty(result, "password", "field.required", "Password cannot be empty");
-        if (this.userService.userExists(user.getUsername()))
+        List<String> errors = new ArrayList<String>();
+        boolean noErrors = true;
+        UserCriteria userCriteria = new UserCriteria(username, password);
+        this.validator.validate(userCriteria, errors);
+        
+        if (errors.isEmpty() && this.userService.userExists(username))
         {
-            result.addError(new FieldError("user", "username", "User with this username already exists"));
+            errors.add("User with this username already exists");
         }
-        if (result.hasErrors())
+
+        if (!errors.isEmpty())
         {
-            return listUsers(model);
+        	model.addAttribute("errors", errors);
+            return createUser(model, null, null);
         }
+
+        User user = new User(username, password, MasterDetailControllerUtil.defaultFalse(enabled));
         this.userService.createUser(user);
         this.logger.info("Created new user, with id:" + user.getId());
-        return viewUser(user.getUsername(), model);
+        return maintainUser(user.getUsername(), model);
     }
 
     /**
-     * List the users known to the system
+     * Maintain a user known to the system
      * 
      * @param username - The name of the user we're trying to view
      * @param model - The model (map)
      * @return path to user view
      */
-    @RequestMapping(value = "view.htm", method = RequestMethod.GET)
-    public String viewUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
+    @RequestMapping(value = "maintainUser.htm", method = RequestMethod.GET)
+    public ModelAndView maintainUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
         User user = this.userService.loadUserByUsername(username);
         model.addAttribute("user", user);
-        model.addAttribute("nonGrantedAuthorities", getNonGrantedAuthrities(user.getAuthorities()));
-        return "admin/users/viewUser";
+        model.addAttribute("allAuthorities", this.userService.getAuthorities());
+        model.addAttribute("nonGrantedAuthorities", getNonGrantedAuthorities(user.getAuthorities()));
+        User user2 = (User)model.get("user");
+        logger.info("Size: " + user2.getAuthorities().length);
+        return new ModelAndView("admin/users/maintainUser");
     }
 
     /**
@@ -169,10 +201,10 @@ public class UsersController
      * @return view the user
      */
     @RequestMapping(value = "changePassword.htm", method = RequestMethod.POST)
-    public String changePassword(@ModelAttribute("user") User user, ModelMap model)
+    public ModelAndView changePassword(@ModelAttribute("user") User user, ModelMap model)
     {
         this.userService.changeUsersPassword(user.getUsername(), user.getPassword());
-        return viewUser(user.getUsername(), model);
+        return maintainUser(user.getUsername(), model);
     }
 
     /**
@@ -184,11 +216,11 @@ public class UsersController
      * @return to the view users
      */
     @RequestMapping(value="grantAuthority.htm", method = RequestMethod.POST)
-    public String grantAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
+    public ModelAndView grantAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
             @RequestParam(AUTHORITY_PARAMETER_NAME) String authority, ModelMap model)
     {
         this.userService.grantAuthority(username, authority);
-        return viewUser(username, model);
+        return maintainUser(username, model);
     }
 
     /**
@@ -200,11 +232,11 @@ public class UsersController
      * @return to the view users
      */
     @RequestMapping(value="revokeAuthority.htm", method = RequestMethod.POST)
-    public String revokeAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
+    public ModelAndView revokeAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
             @RequestParam(AUTHORITY_PARAMETER_NAME) String authority, ModelMap model)
     {
         this.userService.revokeAuthority(username, authority);
-        return viewUser(username, model);
+        return maintainUser(username, model);
     }
 
     /**
@@ -215,7 +247,7 @@ public class UsersController
      * @return to the view users
      */
     @RequestMapping(value="delete.htm", method = RequestMethod.POST)
-    public String deleteUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
+    public ModelAndView deleteUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
         this.userService.deleteUser(username);
         return listUsers(model);
@@ -229,10 +261,10 @@ public class UsersController
      * @return to the view users
      */
     @RequestMapping(value="disable.htm", method = RequestMethod.POST)
-    public String disableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
+    public ModelAndView disableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
         this.userService.disableUser(username);
-        return viewUser(username, model);
+        return maintainUser(username, model);
     }
 
     /**
@@ -243,10 +275,10 @@ public class UsersController
      * @return to the view users
      */
     @RequestMapping(value="enable.htm", method = RequestMethod.POST)
-    public String enableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
+    public ModelAndView enableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
         this.userService.enableUser(username);
-        return viewUser(username, model);
+        return maintainUser(username, model);
     }
 
     /**
@@ -255,10 +287,11 @@ public class UsersController
      * @param authorities - Full list of authorities
      * @return list of non granted authorities
      */
-    private List<Authority> getNonGrantedAuthrities(GrantedAuthority[] authorities)
+    private List<Authority> getNonGrantedAuthorities(GrantedAuthority[] authorities)
     {
         // start with a list of all the authorities
         List<Authority> nonGrantedAuthorities = new ArrayList<Authority>(this.userService.getAuthorities());
+        
         // remove all that are granted
         for (GrantedAuthority authority : authorities)
         {

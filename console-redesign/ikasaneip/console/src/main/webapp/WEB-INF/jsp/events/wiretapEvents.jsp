@@ -57,7 +57,7 @@
                 <%-- TODO Where to put this section --%>
                 <c:if test="${errors != ''}">
                 <c:forEach items="${errors}" var="error">
-                <span class="errorMessages"><c:out value="${error}" /></span><br />
+                <span class="important"><c:out value="${error}" /></span><br />
                 </c:forEach>
                 </c:if>
                 

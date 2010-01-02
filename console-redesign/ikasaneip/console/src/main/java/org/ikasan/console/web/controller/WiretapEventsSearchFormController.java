@@ -269,6 +269,7 @@ public class WiretapEventsSearchFormController
             Set<String> moduleNames = this.moduleService.getModuleNames(moduleIdsToSearchOn);
             pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, moduleFlow, componentName, eventId,
                 payloadId, fromDate, untilDate, payloadContent);
+            logger.info("ResultSize = [" + pagedResult.getResultSize() + "]");
         }
         // Store the search parameters used
         Map<String, Object> searchParams = new HashMap<String, Object>();

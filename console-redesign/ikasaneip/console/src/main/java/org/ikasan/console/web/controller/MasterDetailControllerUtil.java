@@ -41,6 +41,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.springframework.ui.ModelMap;
 
@@ -52,6 +53,8 @@ import org.springframework.ui.ModelMap;
  */
 public class MasterDetailControllerUtil
 {
+	
+	private static Logger logger = Logger.getLogger(MasterDetailControllerUtil.class);
     /**
      * Adds a parameter to the searchParams map, only if it has a value
      * 
@@ -111,6 +114,7 @@ public class MasterDetailControllerUtil
         // pagedResult can be null if we're returning errors to the user
         if (pagedResult != null)
         {
+        	logger.info("resultSize = [" + pagedResult.getResultSize() + "]");
             model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
             // Calculate the last page (divide total results by page size, round
             // up but take off 1 as indexes are 0 based)
