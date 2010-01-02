@@ -101,9 +101,11 @@
         <beans:property name="hibernateProperties" ref="platformHibernateProperties"/>
     </beans:bean>
 
-	<!-- Automatically receives AuthenticationEvent messages -->
+	<!-- Automatically receives AuthenticationEvent messages 
+	 IKASAN-240 Disabled LoggerListener because it logs everything at WARN and the log messages
+	 aren't useful either
 	<beans:bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" />
-
+	-->
     <!-- The access decision manager -->
 	<global-method-security access-decision-manager-ref="accessDecisionManager">
 
