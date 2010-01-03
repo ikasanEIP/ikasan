@@ -114,7 +114,6 @@ public class MasterDetailControllerUtil
         // pagedResult can be null if we're returning errors to the user
         if (pagedResult != null)
         {
-        	logger.info("resultSize = [" + pagedResult.getResultSize() + "]");
             model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
             // Calculate the last page (divide total results by page size, round
             // up but take off 1 as indexes are 0 based)

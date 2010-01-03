@@ -215,8 +215,6 @@ public class MasterDetailControllerUtilTest extends TestCase
                 will(returnValue(new StringBuffer("http://www.ikasan.org")));
                 one(request2).getQueryString();
                 will(returnValue("?key=value"));
-                one(pagedResult2).getResultSize();
-                will(returnValue(1));
                 one(pagedResult2).getFirstResultIndex();
                 will(returnValue(2));
                 one(pagedResult2).getResultSize();

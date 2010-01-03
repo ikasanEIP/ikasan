@@ -188,8 +188,6 @@ public class UsersController
         model.addAttribute("user", user);
         model.addAttribute("allAuthorities", this.userService.getAuthorities());
         model.addAttribute("nonGrantedAuthorities", getNonGrantedAuthorities(user.getAuthorities()));
-        User user2 = (User)model.get("user");
-        logger.info("Size: " + user2.getAuthorities().length);
         return new ModelAndView("admin/users/maintainUser");
     }
 

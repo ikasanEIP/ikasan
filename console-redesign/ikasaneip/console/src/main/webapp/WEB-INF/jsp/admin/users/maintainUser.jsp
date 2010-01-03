@@ -167,7 +167,7 @@
                         <tr>
                             <th class="resultsHeaderCell"><fmt:message key="maintain_user_authority_name" /></th>
                             <th class="resultsHeaderCell"><fmt:message key="maintain_user_authority_description" /></th>
-                            <th class="resultsHeaderCellLast"><fmt:message key="maintain_user_enabled" /></th>
+                            <th class="resultsHeaderCell"><fmt:message key="maintain_user_enabled" /></th>
                             <th class="">&nbsp;</th>
                         </tr>
                      </thead>

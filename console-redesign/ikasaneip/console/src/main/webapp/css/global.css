@@ -141,6 +141,12 @@ body
     width: 160px;
 }
 
+#downloadButton
+{
+    height: 20px;
+    width: 100px;
+}
+
 #flowsRadioButton
 {
     padding-right: 18px;
@@ -459,6 +465,15 @@ img
     color: #99141B;
 }
 
+#payloadContent
+{
+    width: 600px;
+	height: 120px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #B3B3B3;
+}
+
 .radioButton
 {
     vertical-align: middle;
@@ -697,6 +712,17 @@ ul li.last
 {
     color: #99141B;
     font-weight: bold;
+    text-decoration: none;
+}
+
+#wiretapNavigation
+{
+    float: right;
+}
+
+#wiretapNavigation a
+{
+    color: #99141B;
     text-decoration: none;
 }
 

@@ -269,7 +269,6 @@ public class WiretapEventsSearchFormController
             Set<String> moduleNames = this.moduleService.getModuleNames(moduleIdsToSearchOn);
             pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, moduleFlow, componentName, eventId,
                 payloadId, fromDate, untilDate, payloadContent);
-            logger.info("ResultSize = [" + pagedResult.getResultSize() + "]");
         }
         // Store the search parameters used
         Map<String, Object> searchParams = new HashMap<String, Object>();
@@ -312,16 +311,16 @@ public class WiretapEventsSearchFormController
     /**
      * View a specified WiretapEvent
      * 
-     * @param eventId The id of the event to get
+     * @param wiretapEventId The id of the wiretapped event to get
      * @param searchResultsUrl The Search Results Page we came from
      * @param modelMap The model
      * @return The model and view representing the wiretap event
      */
     @RequestMapping("viewEvent.htm")
-    public ModelAndView viewEvent(@RequestParam("eventId") long eventId, @RequestParam(required = false) String searchResultsUrl, ModelMap modelMap)
+    public ModelAndView viewEvent(@RequestParam("wiretapEventId") long wiretapEventId, @RequestParam(required = false) String searchResultsUrl, ModelMap modelMap)
     {
-        this.logger.debug("inside viewEvent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
+        this.logger.debug("inside viewEvent, wiretapEventId=[" + wiretapEventId + "]");
+        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(wiretapEventId));
         String payloadContent = wiretapEvent.getPayloadContent();
         String prettyXMLContent = "";
         if (payloadContentIsXML(payloadContent))
@@ -329,12 +328,12 @@ public class WiretapEventsSearchFormController
             // Escape the HTML
             prettyXMLContent = StringEscapeUtils.escapeHtml(payloadContent);
             // Then add <br> instead of newline
-            prettyXMLContent = prettyXMLContent.replaceAll(System.getProperty("line.separator"), "<br>");
+            prettyXMLContent = prettyXMLContent.replaceAll(System.getProperty("line.separator"), "<br />");
             // Then add &nbsp; instead of ' '
             prettyXMLContent = prettyXMLContent.replaceAll(" ", "&nbsp;");
             payloadContent = prettyXMLContent;
         }
-        modelMap.addAttribute("wiretapEvent", this.wiretapService.getWiretapEvent(new Long(eventId)));
+        modelMap.addAttribute("wiretapEvent", this.wiretapService.getWiretapEvent(new Long(wiretapEventId)));
         modelMap.addAttribute("payloadContent", payloadContent);
         modelMap.addAttribute("searchResultsUrl", searchResultsUrl);
         return new ModelAndView("events/viewWiretapEvent", modelMap);
@@ -358,15 +357,15 @@ public class WiretapEventsSearchFormController
     /**
      * View a specific payload content in a best guess native format
      * 
-     * @param eventId The id of the event to get
+     * @param wiretapEventId The id of the wiretap event to get
      * @param response - Standard response stream
      * @return null
      */
     @RequestMapping("viewPrettyPayloadContent.htm")
-    public ModelAndView viewPrettyPayloadContent(@RequestParam("eventId") long eventId, HttpServletResponse response)
+    public ModelAndView viewPrettyPayloadContent(@RequestParam("wiretapEventId") long wiretapEventId, HttpServletResponse response)
     {
-        this.logger.debug("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
+        this.logger.debug("inside viewPrettyPayloadContent, wiretapEventId=[" + wiretapEventId + "]");
+        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(wiretapEventId));
         response.setContentType("text/xml");
         try
         {
@@ -416,15 +415,15 @@ public class WiretapEventsSearchFormController
      * 
      * TODO Improve Error handling?
      * 
-     * @param eventId - The Event id of the wiretapped event to download
+     * @param wiretapEventId - The Event id of the wiretapped event to download
      * @param response - The HttpServletResponse object, content is streamed to
      *            this
      */
     @RequestMapping("downloadPayloadContent.htm")
-    public void outputFile(@RequestParam("eventId") long eventId, final HttpServletResponse response)
+    public void outputFile(@RequestParam("wiretapEventId") long wiretapEventId, final HttpServletResponse response)
     {
-        this.logger.debug("inside downloadPayloadContent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
+        this.logger.debug("inside downloadPayloadContent, wiretapEventId=[" + wiretapEventId + "]");
+        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(wiretapEventId));
         String outgoingFileName = wiretapEvent.getEventId();
         response.setContentType("application/download");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + outgoingFileName + "\"");
@@ -436,7 +435,7 @@ public class WiretapEventsSearchFormController
         }
         catch (IOException e)
         {
-            this.logger.error("Could not download payload.", e);
+            this.logger.error("Could not download payload content.", e);
         }
     }
 

@@ -145,7 +145,7 @@
                     <tbody>
                     <tr>
                         <td class="searchCell formLabel">
-                            <fmt:message key="wiretap_events_module_flow"/>
+                            <fmt:message key="wiretap_events_module_flow_name"/>
                         </td>
                         <td class="searchCell">
                             <input class="inputText" id="moduleFlow" type="text" name="moduleFlow" value="${searchParams['moduleFlow']}"/> <span title="<fmt:message key="wiretap_events_search_module_flow_help"/>" id="moduleFlowHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
@@ -153,7 +153,7 @@
                     </tr>
                     <tr>
                         <td class="searchCell formLabel">
-                            <fmt:message key="wiretap_events_component"/>
+                            <fmt:message key="wiretap_events_component_name"/>
                         </td>
                         <td class="searchCell">
                             <input class="inputText" id="componentName" type="text" name="componentName" value="${searchParams['componentName']}"/> <span title="<fmt:message key="wiretap_events_search_component_name_help"/>" id="componentNameHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
@@ -309,17 +309,17 @@
                 <table id="wiretapSearchResults">
                     <thead>
                         <tr>
-                            <th class="resultsHeaderCell"><a href="<c:out value="${idLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_id"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
-                            <th class="resultsHeaderCell"><a href="<c:out value="${moduleLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_module"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
-                            <th class="resultsHeaderCell"><a href="<c:out value="${flowLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_module_flow"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
-                            <th class="resultsHeaderCell"><a href="<c:out value="${componentLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_component"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
+                            <th class="resultsHeaderCell"><a href="<c:out value="${idLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_wiretap_id"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
+                            <th class="resultsHeaderCell"><a href="<c:out value="${moduleLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_module_name"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
+                            <th class="resultsHeaderCell"><a href="<c:out value="${flowLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_module_flow_name"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
+                            <th class="resultsHeaderCell"><a href="<c:out value="${componentLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_component_name"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
                             <th class="resultsHeaderCellLast"><a href="<c:out value="${createdDateTimeLink}#results" escapeXml="true" />"><fmt:message key="wiretap_events_search_results_created_date_time"/> <img class="smallIcon" src="/console/images/Sort.png" alt="Sort" /></a></th>
                         </tr>
                      </thead>
                      <tbody>
                          <c:forEach items="${results}" var="event">
                          <c:url var="viewEventLink" value="viewEvent.htm">
-                         <c:param name="eventId" value="${event.id}"/>
+                         <c:param name="wiretapEventId" value="${event.id}"/>
                          <c:param name="searchResultsUrl" value="${searchResultsUrl}"/>
                          </c:url>
                          <tr>

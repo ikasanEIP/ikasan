@@ -44,106 +44,173 @@
 --%>
 <%@ include file="/WEB-INF/jsp/events/eventsTop.jsp"%>
 
-<div class="middle">
+        <script type="text/javascript" src="<c:url value='/js/wiretapevent.js'/>"></script>
 
-<h2><fmt:message key="wiretap_event_heading"/> :: <c:out value="${wiretapEvent.id}" /></h2>
+        <div id="content">
+            <h1><fmt:message key="wiretap_heading"/></h1>
+            
+            <!-- Navigation section -->
+            <div id="wiretapNavigation">
+                <c:choose>
+                <c:when test="${wiretapEvent.previousByPayload != null}">
+                <a class="active" href="viewEvent.htm?wiretapEventId=<c:out value="${wiretapEvent.previousByPayload}" />"><img class="smallIcon" src="/console/images/Previous_On.png" alt="&lt;" /><fmt:message key="wiretap_event_previous"/></a>
+                </c:when>
+                <c:otherwise>
+                <img class="smallIcon" src="/console/images/Previous.png" alt="&lt;" /><fmt:message key="wiretap_event_previous"/>
+                </c:otherwise>
+                </c:choose>
+                &nbsp;
+                <c:choose>
+                <c:when test="${wiretapEvent.nextByPayload != null}">
+                <a class="active" href="viewEvent.htm?wiretapEventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/><img class="smallIcon" src="/console/images/Next_On.png" alt="&gt;" /></a>
+                </c:when>
+                <c:otherwise>
+                <fmt:message key="wiretap_event_next"/><img class="smallIcon" src="/console/images/Next.png" alt="&gt;" />
+                </c:otherwise>
+                </c:choose>
+                <span title="<fmt:message key="wiretap_navigation_help"/>" id="wiretapNavigationHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
+            </div>
 
-<table id="wiretapDetails" class="keyValueTable">
-	<tr>
-		<th><fmt:message key="wiretap_event_module_name"/></th>
-		<td><c:out value="${wiretapEvent.moduleName}" /></td>
-	</tr>
-	
-	<tr>
-		<th><fmt:message key="wiretap_event_flow_name"/></th>
-		<td><c:out value="${wiretapEvent.flowName}" /></td>
-	</tr>
-	
-	<tr>
-		<th><fmt:message key="wiretap_event_component_name"/></th>
-		<td><c:out value="${wiretapEvent.componentName}" /></td>
-	</tr>
+            <div><p>&nbsp;</p></div>
 
-	<tr>
-		<th><fmt:message key="wiretap_event_created_date"/></th>
-		<td><fmt:formatDate value="${wiretapEvent.created}" pattern="dd/MM/yyyy h:mma"/></td>
-	</tr>
+            <!-- Wiretap Details section TODO change CSS names -->
+            <div class="createUserBox" style="clear: both">
+                <div class="searchFormHeading">
+                    &nbsp;<fmt:message key="wiretap_details"/>
+                </div>
+                <div class="hr"><hr /></div>
 
-	<tr>
-		<th><fmt:message key="wiretap_event_expiry"/></th>
-		<td><fmt:formatDate value="${wiretapEvent.expiry}" pattern="dd/MM/yyyy h:mma"/></td>
-	</tr>
-</table>
+                <!-- Wiretap Detail fields -->
+                <table id="searchFields">
+                    <tr>
+                        <td class="searchCell formLabel">
+                             <fmt:message key="wiretap_id" />
+                        </td>
+                        <td class="searchCell">
+                             <c:out value="${wiretapEvent.id}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_module_name" />
+                        </td>
+                        <td class="searchCell">
+                            <c:out value="${wiretapEvent.moduleName}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_module_flow_name" />
+                        </td>
+                        <td class="searchCell">
+                            <c:out value="${wiretapEvent.flowName}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_component_name" />
+                        </td>
+                        <td class="searchCell">
+                            <c:out value="${wiretapEvent.componentName}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_created_date_time" />
+                        </td>
+                        <td class="searchCell">
+                            <fmt:formatDate value="${wiretapEvent.created}" pattern="dd/MM/yyyy h:mma" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_expiry_date_time" />
+                        </td>
+                        <td class="searchCell">
+                            <fmt:formatDate value="${wiretapEvent.expiry}" pattern="dd/MM/yyyy h:mma" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-<h2><fmt:message key="wiretap_event_event_id"/> :: <c:out value="${wiretapEvent.eventId}" /></h2>
+            <div><p>&nbsp;</p></div>
 
-<table id="wiretapContent" class="keyValueTable">
-	<tr>
-		<th><fmt:message key="wiretap_event_event_id"/></th>
-		<td colspan="2"><c:out value="${wiretapEvent.eventId}" /></td>
-	</tr>	
-	
-	<tr>
-		<th><fmt:message key="wiretap_event_payload_id"/></th>
-		<td colspan="2">
-		  <c:out value="${wiretapEvent.payloadId}" />
-		  &nbsp;
-          <c:choose>
-              <c:when test="${wiretapEvent.previousByPayload != null}">
-                  <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />"><fmt:message key="wiretap_event_previous"/></a>
-              </c:when>
-              <c:otherwise>
-                  <span style="color : #A9A9A9;">(<fmt:message key="wiretap_event_previous"/>)</span>             
-              </c:otherwise>
-          </c:choose>
-          &nbsp;
-          <c:choose>
-              <c:when test="${wiretapEvent.nextByPayload != null}">
-                  <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/></a>
-              </c:when>
-              <c:otherwise>
-                  <span style="color : #A9A9A9;">(<fmt:message key="wiretap_event_next"/>)</span>             
-              </c:otherwise>
-          </c:choose>                 
-		</td>
-	</tr>
+            <!-- Wiretap Event Details section TODO change CSS names -->
+            <div class="createUserBox">
+                <div class="searchFormHeading">
+                    &nbsp;<fmt:message key="wiretap_event_details"/>
+                </div>
+                <div class="hr"><hr /></div>
 
-    <tr>
-        <th><fmt:message key="wiretap_event_payload_content_xml"/></th>
-        <c:choose>
-            <c:when test='${fn:startsWith(wiretapEvent.payloadContent, "<?xml")}'>
-                <td colspan="2">
-                    <!-- This link will open in a new window, see /js/ikasan.js for details -->
-                    <a href="viewPrettyPayloadContent.htm?eventId=<c:out value="${wiretapEvent.id}" />" class="new-window">
-                        <fmt:message key="wiretap_event_formatted_content_xml"/>
-                    </a>
-                </td>
-            </c:when>
-            <c:otherwise>
-                <td colspan="2">
-                    <fmt:message key="wiretap_event_payload_content_not_xml"/>
-                </td>
-            </c:otherwise>
-        </c:choose>
-    </tr>
-
-    <tr>
-        <th><fmt:message key="wiretap_event_download_payload"/></th>
-        <td colspan="2">
-            <!-- This link will download the payload content -->
-            <a href="downloadPayloadContent.htm?eventId=<c:out value="${wiretapEvent.id}" />">
-                <fmt:message key="wiretap_event_download_payload"/>
-            </a>
-        </td>
-    </tr>
-
-	<tr>
-		<th class="top"><fmt:message key="wiretap_event_payload_content"/></th>
-		<td class="payloadContent" colspan="2"><c:out value="${payloadContent}" escapeXml="false" /></td>
-	</tr>	
-
-</table>
-
-</div>
+                <!-- Wiretap Event Detail fields -->
+                <table id="searchFields">
+                    <tr>
+                        <td class="searchCell formLabel">
+                             <fmt:message key="wiretap_event_event_id" />
+                        </td>
+                        <td class="searchCell">
+                             <c:out value="${wiretapEvent.eventId}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_event_payload_id" />
+                        </td>
+                        <td class="searchCell">
+                            <c:out value="${wiretapEvent.payloadId}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_event_payload_content_native" />
+                            <span title="<fmt:message key="wiretap_event_native_format_help"/>" id="wiretapEventNativeFormatHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
+                        </td>
+                        <td class="searchCell">
+                        <!-- TODO:  To be enhanced with not just a XML check -->
+                        <c:choose>
+                        <c:when test='${fn:startsWith(wiretapEvent.payloadContent, "<?xml")}'>
+                            <a href="viewPrettyPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.id}" />" class="new-window">
+                                <fmt:message key="wiretap_event_formatted_content_native"/>
+                            </a>
+                            </c:when>
+                            <c:otherwise>
+                            <fmt:message key="wiretap_event_payload_content_not_native"/>
+                            </c:otherwise>
+                        </c:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_event_download" />
+                            <span title="<fmt:message key="wiretap_event_download_help"/>" id="wiretapEventDownloadHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
+                        </td>
+                        <td class="searchCell">
+                            <a href="downloadPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.id}" />">
+                                <img src="/console/images/Btn_Download.png" alt="download" id="downloadButton" />
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
+                            <fmt:message key="wiretap_event_payload_content" />
+                        </td>
+                        <td class="searchCell">
+                            <textarea id="payloadContent" readonly="readonly"><c:out value="${wiretapEvent.payloadContent}" /></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div id="backToSearch">
+                <c:choose>
+                <c:when test="${searchResultsUrl != null}">
+                    <a href="<c:out value="${searchResultsUrl}" />"><fmt:message key="wiretap_back_to_search_results" /></a>
+                </c:when>
+                <c:otherwise>
+                    <a href="<c:url value="newSearch.htm"/>"><fmt:message key="wiretap_new_search" /></a>
+                </c:otherwise>
+                </c:choose>
+            </div>
+        </div> <!-- End Content -->
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
