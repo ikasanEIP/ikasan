@@ -90,10 +90,7 @@
     <!-- Session Factory for the pointToPointFlowProfileDao -->
     <bean id="pointToPointFlowProfileHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <!-- TODO Temporary fix to needing an XA datasource that isn't actually used
-             see IKASAN-317 -->
-        <!-- <property name="dataSource" ref="ikasanAdminNoTxDataSource" /> -->
-        <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
+        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
         <property name="mappingResources">
             <list>
                 <value>PointToPointFlowProfile.hbm.xml</value>
@@ -119,7 +116,11 @@
     <!-- Session Factory for the initiatorCommandDao -->
     <bean id="initiatorCommandHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+
+        <!-- TODO Temporary fix to needing an XA datasource that isn't actually used
+             see IKASAN-317 -->
+        <!-- <property name="dataSource" ref="ikasanAdminXaDataSource" /> -->
+        <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
         <property name="mappingResources">
             <list>
                 <value>InitiatorCommand.hbm.xml</value>
