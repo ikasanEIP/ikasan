@@ -53,9 +53,21 @@
     <link type="text/css" href="<c:url value='/css/global.css'/>" media="screen" rel="stylesheet" />
     <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.2.custom.css'/>" rel="stylesheet" />
     <link type="text/css" href="<c:url value='/css/jquery.hovertip-1.0.css'/>" rel="stylesheet" />
-    <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
+    
+    <!-- This is to fix transparent PNG files in IE6 -->
+    <!--[if IE 6]>
+    <script src="/console/js/DD_belatedPNG.js"></script>
+    <script>
+      /* EXAMPLE */
+      DD_belatedPNG.fix('img');
+      /* string argument can be any CSS selector */
+      /* change it to what suits you! */
+    </script>
+    <![endif]-->
+    
 </head>
 
 <body>
