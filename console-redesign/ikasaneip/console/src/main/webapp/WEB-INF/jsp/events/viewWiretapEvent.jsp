@@ -195,7 +195,7 @@
                             <fmt:message key="wiretap_event_payload_content" />
                         </td>
                         <td class="searchCell">
-                            <textarea id="payloadContent" readonly="readonly"><c:out value="${wiretapEvent.payloadContent}" /></textarea>
+                            <textarea id="payloadContentTextArea" readonly="readonly"><c:out value="${wiretapEvent.payloadContent}" /></textarea>
                         </td>
                     </tr>
                 </table>

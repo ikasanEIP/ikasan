@@ -67,24 +67,24 @@ $(document).ready(
 			 * Can't simply use jquery toggle() between the two because the show/hide 
 			 * searchFields functionality sets the visibility on both rows.
 			 */
-			$("input[name='searchMode']").change(function(){
+			$("input[name='searchMode']").mousedown(function(){
 				if ($('#pointToPointFlowProfileSearch').val() == "true")
-				{
-					$('#moduleCheckboxes').show();
-					$('#flowCheckboxes').hide();
+			    {
+			    	$('#flowCheckboxes').hide();
+			    	$('#moduleCheckboxes').show();
 					$('#pointToPointFlowProfileSearch').val("false");
-				}
+			    }
+
 				else
 				{
 					$('#moduleCheckboxes').hide();
 					$('#flowCheckboxes').show();
 					$('#pointToPointFlowProfileSearch').val("true");
-				}
 
-				// Do not follow the link
-				return false;
+			    }
+			    return false;
 			});
-
+			
 			/*
 			 * choose text for the show/hide link - can contain HTML (e.g. an
 			 * image)
@@ -159,3 +159,4 @@ function checkUncheckAll(theElement) {
 		}
 	}
 }
+
