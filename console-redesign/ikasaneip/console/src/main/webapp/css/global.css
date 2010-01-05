@@ -95,8 +95,12 @@ body
 /* The overall container div */
 #container
 {
+    clear: both;
     padding-left: 25px;
     padding-right: 25px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    overflow: auto;
     position: relative;
 }
 
@@ -111,6 +115,8 @@ body
     border-right-width: 0px;
     border-top-width: 1px;
     clear: both;
+    display: block;
+    height: 100%;
     min-height: 375px;
     overflow: auto;
     padding-bottom: 20px;
@@ -203,7 +209,7 @@ h4
     background-image: url(../images/Banner.png);
     background-repeat: no-repeat;
     height: 140px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     position: relative;
 }
 
