@@ -770,3 +770,8 @@ ul li.last
     color: #99141B;
     text-decoration: none;
 }
+
+table{
+    
+    border-collapse:collapse;
+}
