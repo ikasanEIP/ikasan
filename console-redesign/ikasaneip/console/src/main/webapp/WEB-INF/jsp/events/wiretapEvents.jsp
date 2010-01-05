@@ -87,7 +87,7 @@
                     <tr>
                         <td class="searchCell">&nbsp;</td>
                         <td class="searchCell">
-                            <table>
+                            <table id="checkBoxes">
                                 <c:forEach items="${pointToPointFlowProfiles}" var="pointToPointFlowProfile">
                                 <tr>
                                     <td>

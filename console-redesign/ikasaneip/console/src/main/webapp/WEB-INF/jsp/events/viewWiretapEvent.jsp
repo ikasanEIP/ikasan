@@ -169,7 +169,8 @@
                         <!-- TODO:  To be enhanced with not just a XML check -->
                         <c:choose>
                         <c:when test='${fn:startsWith(wiretapEvent.payloadContent, "<?xml")}'>
-                            <a href="viewPrettyPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.id}" />" class="new-window">
+                            <!-- TODO The color won't take hold in a class, investigate -->
+                            <a style="color: #99141B" href="viewPrettyPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.id}" />" class="new-window">
                                 <fmt:message key="wiretap_event_formatted_content_native"/>
                             </a>
                             </c:when>

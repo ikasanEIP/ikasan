@@ -92,6 +92,12 @@ body
     vertical-align: middle;
 }
 
+#checkBoxes table tr td
+{
+    padding: 20px;
+}
+
+
 /* The overall container div */
 #container
 {
@@ -575,8 +581,8 @@ ol
 
 #searchFields
 {
-    padding-top: 10px;
-    padding-left: 33px;
+    margin-top: 15px;
+    margin-left: 25px;
 }
 
 .searchFormHeading
