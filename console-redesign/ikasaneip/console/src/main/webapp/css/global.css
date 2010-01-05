@@ -318,6 +318,13 @@ img
     width: 440px;
 }
 
+.listCellLast
+{
+    padding-left: 5px;
+    padding-right: 15px;
+    text-align: center;
+}
+
 #listTable
 {
     border-color: B3B3B3;
@@ -375,6 +382,12 @@ img
     position: relative;
 }
 
+#mainNavigation a
+{
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
 .miniForm
 {
     float: left;
@@ -384,6 +397,12 @@ img
 {
     float: right;
     position: relative;
+}
+
+#minorNavigation a
+{
+    text-decoration: none;
+    color: #FFFFFF;
 }
 
 .moduleDescription
@@ -410,7 +429,8 @@ img
 /* The navigation section background colour matches the default page background colour */
 #navigation
 {
-    background-color: #EBEBEB;
+    /* background-color: #EBEBEB; */
+    background-color: #3E3E3E;
     height: 30px;
     line-height: 30px;
     position: relative;
@@ -443,6 +463,11 @@ img
     width: 120px;
 }
 
+ol
+{
+    list-style: none;
+} 
+
 #pagedSearchResults
 {
     padding-bottom: 10px;
@@ -469,10 +494,10 @@ img
 #payloadContent
 {
     width: 600px;
-	height: 120px;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #B3B3B3;
+    height: 120px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #B3B3B3;
 }
 
 .radioButton
@@ -497,13 +522,6 @@ img
 {
     padding-left: 5px;
     padding-right: 15px;
-}
-
-.listCellLast
-{
-    padding-left: 5px;
-    padding-right: 15px;
-    text-align: center;
 }
 
 .resultsHeaderCell
@@ -667,6 +685,12 @@ img
     margin-bottom: 25px;
 }
 
+/* Apply background stripes to all cells with class .alt, however this is manipulated by javascript */
+tr.alt td
+{
+    background-color: #EBEBEB;
+}
+
 ul
 {
     display: inline;
@@ -674,7 +698,8 @@ ul
 
 ul li
 {
-    border-left: 1px solid #999999;
+    /* border-left: 1px solid #999999; */
+    border-left: 1px solid #FFFFFF;
     display: inline;
     list-style: none;
     padding-left: 10px;
@@ -694,11 +719,24 @@ ul li.first
 
 ul li.last
 {
-    border-left: 1px solid #999999;
+    /* border-left: 1px solid #999999; */
+    border-left: 1px solid #FFFFFF;
     display: inline;
     list-style: none;
     padding-left: 10px;
-    padding-right: 0px;
+    padding-right: 10px;
+}
+
+.username
+{
+    color: #FFFFFF;
+}
+
+#usersList
+{
+    clear: both;
+    float: left;
+    padding-top: 10px;
 }
 
 #wiretapSearchResults
@@ -726,21 +764,3 @@ ul li.last
     color: #99141B;
     text-decoration: none;
 }
-
-#usersList
-{
-    clear: both;
-    float: left;
-    padding-top: 10px;
-}
-
-/* Apply background stripes to all cells with class .alt, however this is manipulated by javascript */
-tr.alt td
-{
-    background-color: #EBEBEB;
-}
-
-ol
-{
-    list-style: none;
-} 
