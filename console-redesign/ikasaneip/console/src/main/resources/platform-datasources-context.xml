@@ -65,10 +65,12 @@
         <property name="jndiName" value="java:/ikasan/admin/localds" />
     </bean>
 
-    <!-- The Ikasan console XA Tx datasource (referenced by in reality unused by the console) -->
+    <!-- The Ikasan console XA Tx datasource -->
+    <!-- 
     <bean id="ikasanAdminXaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:/ikasan/admin/xads" />
     </bean>
+    -->
 
     <!-- The hibernate properties to use for this platform -->
     <bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
