@@ -35,11 +35,11 @@
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
 --
-DROP TABLE IF EXISTS `eai`.`filechunk`;
-DROP TABLE IF EXISTS `eai`.`filechunkheader`;
+DROP TABLE IF EXISTS `EAI`.`FileChunk`;
+DROP TABLE IF EXISTS `EAI`.`FileChunkHeader`;
 
 
-CREATE TABLE  `eai`.`filechunkheader` (
+CREATE TABLE  `EAI`.`FileChunkHeader` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `SequenceLength` bigint(20) NOT NULL,
   `InternalMd5Hash` varchar(255) DEFAULT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE  `eai`.`filechunkheader` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE  `eai`.`filechunk` (
+CREATE TABLE  `EAI`.`FileChunk` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Content` tinyblob NOT NULL,
   `Ordinal` bigint(20) NOT NULL,
@@ -59,5 +59,5 @@ CREATE TABLE  `eai`.`filechunk` (
   `FileChunkHeader_Id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK276D6A31B5789524` (`FileChunkHeader_Id`),
-  CONSTRAINT `FK276D6A31B5789524` FOREIGN KEY (`FileChunkHeader_Id`) REFERENCES `filechunkheader` (`Id`)
+  CONSTRAINT `FK276D6A31B5789524` FOREIGN KEY (`FileChunkHeader_Id`) REFERENCES `FileChunkHeader` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
