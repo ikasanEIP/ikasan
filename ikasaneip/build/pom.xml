@@ -146,6 +146,13 @@
             <timezone>5.3</timezone>
         </contributor>
         <contributor>
+            <name>Kerry Kenneally</name>
+            <roles>
+                <role>grpahic designer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
             <name>Matthew Potter</name>
             <roles>
                 <role>developer</role>
@@ -154,6 +161,13 @@
         </contributor>
         <contributor>
             <name>Prasad Saya</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Vijitha Kumara</name>
             <roles>
                 <role>developer</role>
             </roles>
