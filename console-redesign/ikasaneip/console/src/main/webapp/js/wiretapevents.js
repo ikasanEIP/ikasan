@@ -119,6 +119,7 @@ $(document).ready(
 
 			});
 
+			/*
 			$('#searchModeHelp').hovertip();
 			$('#pointToPointFlowProfileIdsHelp').hovertip();
 			$('#moduleIdsHelp').hovertip();
@@ -131,6 +132,7 @@ $(document).ready(
 			$('#payloadContentHelp').hovertip();
 			$('#orderByHelp').hovertip();
 			$('#orderAscHelp').hovertip();
+			*/
 			
 			$('#wiretapSearchResults tr:even').addClass('alt');
 		});
