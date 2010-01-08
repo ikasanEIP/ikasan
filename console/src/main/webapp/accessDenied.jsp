@@ -43,44 +43,36 @@
  
 --%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core_rt' %>
-
 <%@ page import="org.springframework.security.ui.AbstractProcessingFilter" %>
 <%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter" %>
 <%@ page import="org.springframework.security.AuthenticationException" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Ikasan Console</title>
     <meta http-equiv="Content-Language" content="English" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" />
+    <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <!-- <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" /> -->
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/global.css'/>" media="screen" />    
+    <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
 </head>
 
 <body>
-<div id="wrap">
-
-    <div id="top"></div>
-
-    <div id="content">
-
-        <div class="header">
-            <h1><a class="white" href="./">Ikasan</a></h1>
-            <h2>Enterprise Integration Platform - Console</h2>
+    <!-- 
+        TODO We may not need a container, but it can be easier to manipulate the 
+        positioning of various div elements inside a parent div as opposed to inside 
+        the body tag 
+     -->
+    <div id="container">
+        <!-- TODO This will need to be altered somewhat -->
+        <div id="header">
+           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <h2>Enterprise Integration Platform - Console</h2>
         </div>
-
-        <div class="middle">Oops, you don't have authorisation to view this.</div>
-
-        <div id="clear"></div>
-
+        <div id="content">Oops, you don't have authorisation to view this.</div>
     </div>
-
-    <div id="bottom"></div>
-
-</div>
-
-<div id="footer">Design by <a href="http://www.minimalistic-design.net">Minimalistic Design</a></div>
-
 </body>
 </html>
 

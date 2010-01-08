@@ -42,15 +42,6 @@
  Author:  Ikasan Development Team
  
 --%>
-        <div id="clear"></div>
-
-    </div>
-
-    <div id="bottom"></div>
-
-</div>
-
-<div id="footer">Design by <a href="http://www.minimalistic-design.net">Minimalistic Design</a></div>
-
+    </div> <!-- Close off the container -->
 </body>
 </html>
