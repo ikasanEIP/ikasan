@@ -4,12 +4,18 @@
  * Isn't enabled unless the document is 'ready' (e.g. the DOM is fully loaded)
  */
 $(document).ready(
-		function() {
-			if ($('#pointToPointFlowProfileSearch').val() == "true") {
-				$('#pointToPointFlowProfileCheckboxes').show(100);
+		function()
+		{
+			if ($('#pointToPointFlowProfileSearch').val() == "true")
+			{
+				// $('#pointToPointFlowProfileCheckboxes').show(100);
+				$('#flowCheckboxes').show(100);
 				$('#moduleCheckboxes').hide();
-			} else {
-				$('#pointToPointFlowProfileCheckboxes').hide(100);
+			}
+			else
+			{
+				// $('#pointToPointFlowProfileCheckboxes').hide(100);
+				$('#flowCheckboxes').hide(100);
 				$('#moduleCheckboxes').show();
 			}
 
@@ -17,7 +23,7 @@ $(document).ready(
 			$("#fromDateString").datepicker( {
 				dateFormat : 'dd/mm/yy'
 			});
-      $("#untilDateString").datepicker( {
+			$("#untilDateString").datepicker( {
 				dateFormat : 'dd/mm/yy'
 			});
 
@@ -43,37 +49,42 @@ $(document).ready(
 			 */
 			$('a#showHideSearchForm').click( function() {
 				$('#searchFields').toggle(100);
-				if ($('a#showHideSearchForm').text() == "[+]") {
+				if ($('a#showHideSearchForm').text() == "[+]")
+				{
 					$('a#showHideSearchForm').text("[-]");
-				} else {
+				}
+				else
+				{
 					$('a#showHideSearchForm').text("[+]");
 				}
 				return false;
 			});
 
 			/*
-			 * Shows/hides the eventSearchPointToPointFlowProfileCheckboxes and
-			 * moduleFields divs on clicking the link with an ID of
-			 * "toggleSearchMode", can't simply use jquery toggle() between the
-			 * two because the show/hide searchFields sets the visibility on
-			 * both checkbox sections.
+			 * Shows/hides the flowCheckboxes or moduleCheckboxes row on clicking one of the 
+			 * radio buttons with the name 'searchMode'.
+			 * 
+			 * Can't simply use jquery toggle() between the two because the show/hide 
+			 * searchFields functionality sets the visibility on both rows.
 			 */
-			$('a#toggleSearchMode').click( function() {
-				// Swap to the other search
-					if ($('#pointToPointFlowProfileSearch').val() == "true") {
-						$('#moduleCheckboxes').show(100);
-						$('#pointToPointFlowProfileCheckboxes').hide(100);
-						$('#pointToPointFlowProfileSearch').val("false");
-					} else {
-						$('#moduleCheckboxes').hide(100);
-						$('#pointToPointFlowProfileCheckboxes').show(100);
-						$('#pointToPointFlowProfileSearch').val("true");
-					}
+			$("input[name='searchMode']").mousedown(function(){
+				if ($('#pointToPointFlowProfileSearch').val() == "true")
+			    {
+			    	$('#flowCheckboxes').hide();
+			    	$('#moduleCheckboxes').show();
+					$('#pointToPointFlowProfileSearch').val("false");
+			    }
 
-					// Do not follow the link
-					return false;
-				});
+				else
+				{
+					$('#moduleCheckboxes').hide();
+					$('#flowCheckboxes').show();
+					$('#pointToPointFlowProfileSearch').val("true");
 
+			    }
+			    return false;
+			});
+			
 			/*
 			 * choose text for the show/hide link - can contain HTML (e.g. an
 			 * image)
@@ -85,8 +96,8 @@ $(document).ready(
 			 * append show/hide links to the element directly preceding the
 			 * element with a class of "toggle"
 			 */
-      /* $('.toggle').prev().append(
-          '<a href="#" class="toggleLink">' + showText + '</a>'); */
+			/* $('.toggle').prev().append(
+			'<a href="#" class="toggleLink">' + showText + '</a>'); */
 			$('.toggle').prev().children().children("span").prepend(
 					'<a href="#" class="toggleLink">' + showText + '</a>&nbsp;');
 
@@ -108,20 +119,22 @@ $(document).ready(
 
 			});
 
-			$('#searchFormHelp').hovertip();
-			$('#toggleSearchModeHelp').hovertip();
+			/*
+			$('#searchModeHelp').hovertip();
 			$('#pointToPointFlowProfileIdsHelp').hovertip();
 			$('#moduleIdsHelp').hovertip();
 			$('#moduleFlowHelp').hovertip();
 			$('#componentNameHelp').hovertip();
-      $('#eventIdHelp').hovertip();
-      $('#payloadIdHelp').hovertip();
+			$('#eventIdHelp').hovertip();
+			$('#payloadIdHelp').hovertip();
 			$('#fromDateStringHelp').hovertip();
 			$('#toDateStringHelp').hovertip();
 			$('#payloadContentHelp').hovertip();
-      $('#orderByHelp').hovertip();
-      $('#orderAscHelp').hovertip();      
-
+			$('#orderByHelp').hovertip();
+			$('#orderAscHelp').hovertip();
+			*/
+			
+			$('#wiretapSearchResults tr:even').addClass('alt');
 		});
 
 /*
@@ -131,16 +144,21 @@ $(document).ready(
 function checkUncheckAll(theElement) {
 	var theForm = theElement.form
 	var z = 0;
-	for (z = 0; z < theForm.length; z++) {
-		if (theForm[z].type == 'checkbox') {
+	for (z = 0; z < theForm.length; z++)
+	{
+		if (theForm[z].type == 'checkbox')
+		{
 			if (theElement.name == 'pointToPointFlowProfileSelectAll'
-					&& theForm[z].name == 'pointToPointFlowProfileIds') {
+					&& theForm[z].name == 'pointToPointFlowProfileIds')
+			{
 				theForm[z].checked = theElement.checked;
 			}
 			if (theElement.name == 'moduleSelectAll'
-					&& theForm[z].name == 'moduleIds') {
+					&& theForm[z].name == 'moduleIds')
+			{
 				theForm[z].checked = theElement.checked;
 			}
 		}
 	}
 }
+

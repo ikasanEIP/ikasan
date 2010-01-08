@@ -42,24 +42,31 @@
  Author:  Ikasan Development Team
  
 --%>
-<%@ include file="/WEB-INF/jsp/top.jsp"%>
-
-<div class="middle">
-    <h2><fmt:message key="home_heading"/></h2> - <fmt:message key="home_heading2"/>
-    <h2><fmt:message key="home_ikasan_support_title"/></h2>
-    <p>
-        <fmt:message key="home_ikasan_support_text"/>
-    </p>
-    <p>&nbsp;</p>
-    <p>
-        <ul class="homeContent">
-            <li><fmt:message key="home_ikasan_home_page_text"/> <a href="http://www.ikasan.org"><fmt:message key="home_ikasan_home_page_link"/></a></li>
-            <li><fmt:message key="home_ikasan_irc_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/index.php?title=IRC"/><fmt:message key="home_ikasan_irc_link"/></a></li>
-            <li><fmt:message key="home_ikasan_user_mailing_list_text"/> <a href="mailto://ikasaneip-user@lists.sourceforge.net"><fmt:message key="home_ikasan_user_mailing_list_link"/></a> - (<a href="http://lists.sourceforge.net/lists/listinfo/ikasaneip-user"><fmt:message key="home_ikasan_user_mailing_list_subscribe_link"/></a>)</li>        
-            <li><fmt:message key="home_ikasan_wiki_text"/> <a href="http://sourceforge.net/apps/mediawiki/ikasaneip/"><fmt:message key="home_ikasan_wiki_link"/></a></li>
-            <li><fmt:message key="home_ikasan_jira_text"/> <a href="http://open.jira.com/browse/IKASAN"><fmt:message key="home_ikasan_jira_link"/></a></li>
-        </ul>
-    </p>
-</div>
-
+<%@ include file="/WEB-INF/jsp/top.jsp" %>
+        <div id="content">
+            <h1><fmt:message key="home_heading"/></h1>
+            <p class="text"><fmt:message key="home_heading2"/></p>
+            <table id="homeLinksTable">
+                <tr>
+                    <td class="navigationCell"><img class="navigationArrow" src="/console/images/Icon_ArrowHm.png" alt="Arrow"/></td>
+                    <td class="navigationCell"><a href="<c:url value='/events/newSearch.htm'/>"><img class="navigationImage" src="/console/images/Btn_Events.png" alt="Events Link"/></a></td>
+                    <%-- Spring based security around the admin pages --%>
+                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <td class="navigationCell"><a href="<c:url value='/admin/admin.htm'/>"><img class="navigationImage" src="/console/images/Btn_Admin.png" alt="Admin Link"/></a></td>
+                    </security:authorize>
+                    <td rowspan="2" class="navigationCell leftBorder">&nbsp;</td>
+                    <td class="navigationCell"><a href="<c:url value='/support.htm'/>"><img class="navigationImage" src="/console/images/Btn_Support.png" alt="Support Link"/></a></td>
+                </tr>
+                <tr>
+                    <td class="navigationCell">&nbsp;</td>
+                    <td class="navigationText"><fmt:message key="home_events_description"/></td>
+                    <%-- Spring based security around the admin pages --%>
+                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <td class="navigationText"><fmt:message key="home_admin_description"/></td>
+                    </security:authorize>
+                    <!-- Rowspanned cell extends down here -->
+                    <td class="navigationText"><fmt:message key="home_support_description"/></td>
+                </tr>
+            </table>
+        </div>
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

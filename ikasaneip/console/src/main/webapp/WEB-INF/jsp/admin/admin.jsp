@@ -44,17 +44,18 @@
 --%>
 <%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
 
-<div class="middle">
-
-<h2><fmt:message key="admin_heading"/></h2>
-
-<p>
-<fmt:message key="admin_from_here"/>:
-<ul>
-    <li><a href="users/list.htm"><fmt:message key="admin_maintain_users"/></a></li>
-</ul>
-</p>
-
-</div>
+        <div id="content">
+            <h1><fmt:message key="admin_heading"/></h1>
+            <p class="text"><fmt:message key="admin_heading2"/></p>
+            <!-- TODO change CSS name(s) -->
+            <table id="supportLinksTable">
+                <tr>
+                    <td class="supportCell"><a href="<c:url value='/admin/users/list.htm'/>"><img class="supportImage" src="/console/images/Icon_MaintainUsers.png" alt="Maintain Users"/></a></td>
+                    <td class="supportCell2">
+                        <a class="supportText" href="<c:url value='/admin/users/list.htm'/>"><fmt:message key="admin_maintain_users_description"/></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>

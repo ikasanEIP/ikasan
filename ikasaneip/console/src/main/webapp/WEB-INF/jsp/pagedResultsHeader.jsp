@@ -43,8 +43,6 @@
  
 --%>
 
-<div id="searchResultsHeader">
-
     <c:url var="firstPageLink" value="list.htm">
         <c:forEach var="entry" items="${searchParams}">
             <c:forEach var="entryValue" items="${entry.value}">
@@ -54,9 +52,9 @@
         <c:param name="page" value="0"/>
         <c:param name="orderBy" value="${orderBy}"/>
         <c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
-        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
     
@@ -69,9 +67,9 @@
     	<c:param name="page" value="${page+1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
     	<c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>    	
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
-        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
     
@@ -84,7 +82,7 @@
     	<c:param name="page" value="${page-1}"/>
     	<c:param name="orderBy" value="${orderBy}"/>
     	<c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>    	
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
         <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
         <c:param name="pageSize" value="${pageSize}"/>
@@ -99,9 +97,9 @@
         <c:param name="page" value="${lastPage}"/>
         <c:param name="orderBy" value="${orderBy}"/>
         <c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
-        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
@@ -114,9 +112,9 @@
         <c:param name="page" value="${page}"/>
         <c:param name="orderBy" value="${orderBy}"/>
         <c:param name="orderAsc" value="${orderAsc}"/>
-        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>        
+        <c:param name="pointToPointFlowProfileSearch" value="${pointToPointFlowProfileSearch}"/>
         <c:param name="pointToPointFlowProfileSelectAll" value="${pointToPointFlowProfileSelectAll}"/>
-        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>        
+        <c:param name="moduleSelectAll" value="${moduleSelectAll}"/>
         <c:param name="pageSize" value="${pageSize}"/>
     </c:url>
 
@@ -136,38 +134,44 @@
 
   </script>
 
-    <c:choose>
-    	<c:when test="${resultSize==0}">
-    		<p><fmt:message key="paged_results_header_no_results"/></p>
-		</c:when>
-		<c:otherwise>
-    		<span id="currentlyShowing"><fmt:message key="paged_results_header_showing"/> <c:out value="${firstResultIndex+1}"/> <fmt:message key="paged_results_header_to"/> <c:out value="${firstResultIndex + size}"/> <fmt:message key="paged_results_header_of"/> <c:out value="${resultSize}"/> <fmt:message key="paged_results_header_results"/>&nbsp;&nbsp;<a href="#top"><fmt:message key="paged_results_header_back_to_top"/></a></span>
-    		<span id="navigationControls">
-    		    <a name="results"></a>
-		 		<c:choose>
-					<c:when test="${page gt 0}">
-				        <a href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_previous"/></a>&nbsp;
-					</c:when>
-					<c:otherwise>
-				        <span style="color : #A9A9A9;"><fmt:message key="paged_results_header_first"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_previous"/></span>
-					</c:otherwise>
-				</c:choose>
-		 		<c:choose>
-					<c:when test="${!isLastPage}">
-				        <a href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/></a>&nbsp;&nbsp;<a href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/></a>
-					</c:when>
-					<c:otherwise>
-						<span style="color : #A9A9A9;"><fmt:message key="paged_results_header_next"/>&nbsp;&nbsp;<fmt:message key="paged_results_header_last"/></a>
-					</c:otherwise>
-				</c:choose>
-                <select id="pageSize" name="pageSize" onchange="javascript:executeSearch()">
-                    <option value="10" <c:if test="${pageSize=='10'}">selected="selected"</c:if>>10</option>
-                    <option value="25" <c:if test="${pageSize=='25'}">selected="selected"</c:if>>25</option>
-                    <option value="50" <c:if test="${pageSize=='50'}">selected="selected"</c:if>>50</option>
-                    <option value="100" <c:if test="${pageSize=='100'}">selected="selected"</c:if>>100</option>
-                </select>
-    		</span>
-    	</c:otherwise>
-    </c:choose>
-
-</div> <!--end searchResultsHeader -->
+                <div id="pagedSearchResultsHeader">
+                    <c:choose>
+                    <c:when test="${resultSize==0}">
+                    <p><fmt:message key="paged_results_header_no_results"/></p>
+                    </c:when>
+                    <c:otherwise>
+                    <div class="searchFormHeading">&nbsp;<fmt:message key="paged_results_header_heading"/></div>
+                    <div class="hr"><hr class="searchFormHR" /></div>
+                    
+                    <div id="pagedSearchResults">
+                        <span><fmt:message key="paged_results_header_showing"/></span> <span class="strong"><c:out value="${firstResultIndex+1}"/></span> <span><fmt:message key="paged_results_header_to"/></span> <span class="strong"><c:out value="${firstResultIndex + size}"/></span> <span><fmt:message key="paged_results_header_of"/> <span class="strong"><c:out value="${resultSize}"/></span> <span><fmt:message key="paged_results_header_results"/></span>
+                        <span id="pagedSearchResultsNavigation">
+                            <a name="results"></a>
+                        <c:choose>
+                        <c:when test="${page gt 0}">
+                            <a class="active" href="<c:out value="${firstPageLink}#results" escapeXml="true" />"><img class="smallIcon" src="/console/images/First_On.png" alt="&lt;&lt;" /> <fmt:message key="paged_results_header_first"/></a>&nbsp;&nbsp;<a class="active" href="<c:out value="${previousPageLink}#results" escapeXml="true" />"><img class="smallIcon" src="/console/images/Previous_On.png" alt="&lt;" /><fmt:message key="paged_results_header_previous"/></a>&nbsp;&nbsp;
+                        </c:when>
+                        <c:otherwise>
+                            <span><img class="smallIcon" src="/console/images/First.png" alt="&lt;&lt;" /> <fmt:message key="paged_results_header_first"/>&nbsp;&nbsp;<img class="smallIcon" src="/console/images/Previous.png" alt="&lt;" /><fmt:message key="paged_results_header_previous"/></span>&nbsp;&nbsp;
+                        </c:otherwise>
+                        </c:choose>
+                        <c:choose>
+                        <c:when test="${!isLastPage}">
+                            <a class="active" href="<c:out value="${nextPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_next"/><img class="smallIcon" src="/console/images/Next_On.png" alt="&gt;" /></a>&nbsp;&nbsp;<a class="active" href="<c:out value="${lastPageLink}#results" escapeXml="true" />"><fmt:message key="paged_results_header_last"/> <img class="smallIcon" src="/console/images/Last_On.png" alt="&gt;&gt;" /></a>
+                        </c:when>
+                        <c:otherwise>
+                            <span><fmt:message key="paged_results_header_next"/><img class="smallIcon" src="/console/images/Next.png" alt="&gt;" />&nbsp;&nbsp;<fmt:message key="paged_results_header_last"/> <img class="smallIcon" src="/console/images/Last.png" alt="&gt;&gt;" /></a>
+                        </c:otherwise>
+                        </c:choose>
+                            &nbsp;&nbsp;
+                            <select id="pageSize" name="pageSize" onchange="javascript:executeSearch()">
+                                <option value="10" <c:if test="${pageSize=='10'}">selected="selected"</c:if>>10</option>
+                                <option value="25" <c:if test="${pageSize=='25'}">selected="selected"</c:if>>25</option>
+                                <option value="50" <c:if test="${pageSize=='50'}">selected="selected"</c:if>>50</option>
+                                <option value="100" <c:if test="${pageSize=='100'}">selected="selected"</c:if>>100</option>
+                            </select>
+                        </span>
+                        </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div> <!--end searchResultsHeader -->
