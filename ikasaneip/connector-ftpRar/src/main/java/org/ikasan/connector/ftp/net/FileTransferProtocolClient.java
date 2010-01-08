@@ -525,7 +525,6 @@ public class FileTransferProtocolClient implements FileTransferClient
             throw new ClientCommandCdException("Failed to call directory [" + targetPath //$NON-NLS-1$
                     + "] from [" + currentDirectory + "]", e); //$NON-NLS-1$//$NON-NLS-2$
         }
-        return;
     }
 
     public void deleteRemoteDirectory(String directoryPath, boolean recurse) throws ClientException, ClientCommandLsException
