@@ -7,7 +7,9 @@ $(document).ready(
 	function()
 	{
 		// TODO These aren't executing, not sure why
+		/*
 		$('#wiretapNavigationHelp').hovertip();
 		$('#wiretapEventDownloadHelp').hovertip();
 		$('#wiretapEventNativeFormatHelp').hovertip();
+		*/
 	});
