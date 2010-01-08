@@ -43,42 +43,70 @@
  
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Ikasan Console</title>
     <meta http-equiv="Content-Language" content="English" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" />
+    <link type="text/css" href="<c:url value='/css/global.css'/>" media="screen" rel="stylesheet" />
+    <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.2.custom.css'/>" rel="stylesheet" />
+    <link type="text/css" href="<c:url value='/css/jquery.hovertip-1.0.css'/>" rel="stylesheet" />
     <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
+    
+    <!-- This is to fix transparent PNG files in IE6 -->
+    <!--[if IE 6]>
+    <script src="/console/js/DD_belatedPNG.js"></script>
+    <script>
+      /* EXAMPLE */
+      DD_belatedPNG.fix('img');
+      /* string argument can be any CSS selector */
+      /* change it to what suits you! */
+    </script>
+    <![endif]-->
+    
 </head>
 
 <body>
-<div id="wrap">
+    <!-- 
+        We use a container, as it can be easier to manipulate the positioning of various div elements 
+        inside a parent div as opposed to inside a body tag. 
+     -->
+    <div id="container">
 
-    <div id="top"></div>
-    
-    <div id="content">  
-    
-        <div class="header">
-            <h1><a class="white" href="<c:url value='/'/>"><fmt:message key="top_heading"/></a></h1>
-            <h2><fmt:message key="top_heading2"/></h2>
+        <!-- The header section -->
+        <div id="header">
+           <a href="<c:url value='/'/>"><img id="logo" src="/console/images/Ikasan_Logo_Transp.png" alt="logo" /></a>
+           <h2><fmt:message key="top_heading"/></h2>
         </div>
         
-        <div id="subheader">
-        	<ul id="mainNavigation">
-        		<li><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
-        		 | <li><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
-        		<!-- Security around the admin pages -->
-                <security:authorize ifAllGranted="ROLE_ADMIN">
-                   | <li><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
-                </security:authorize>
-        	</ul>
-        	<!-- Logout -->
-            <span id="sessioninfo">
-                <fmt:message key="menu_admin_logged_in_as"/> <security:authentication property="principal.username"/> - <a href="<c:url value="/j_spring_security_logout"/>"><fmt:message key="menu_admin_logout"/></a>
-            </span>
+        <!-- The navigation bar -->
+        <div id="navigation">
+
+            <!-- Main navigation -->
+            <div id="mainNavigation">
+                <ul>
+                    <li class="first"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
+                    <li><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
+                    <%-- Spring based security around the admin pages --%>
+                    <security:authorize ifAllGranted="ROLE_ADMIN">
+                    <li class="last"><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
+                    </security:authorize>
+                </ul>
+            </div>
+
+            <!-- 
+            	TODO get the image working in with the word 'Support', unfortunately HTML rears its ugly head 
+            	again when trying to get this to work cleanly, it pushes the whole nav bar out by 1px forcing it to wrap
+           	-->
+            <div id="minorNavigation">
+                <ul>
+                    <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpIcon" src="/console/images/Icon_Help_sml2.png" alt="?" /> --></a></li>
+                    <li class="username"><fmt:message key="menu_logged_in_as"/> <security:authentication property="principal.username" /></li>
+                    <li class="last"><a href="<c:url value="/j_spring_security_logout"/>"><fmt:message key="menu_logout_link"/></a></li>
+                </ul>
+            </div>
         </div>

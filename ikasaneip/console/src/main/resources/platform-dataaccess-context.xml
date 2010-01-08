@@ -57,7 +57,7 @@
 
     <!-- The wiretapDao definition for the Ikasan console -->
     <bean id="wiretapDao" class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
-        <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />    
+        <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
     </bean>
 
     <!-- The pointToPointFlowProfileDao definition for the Ikasan console -->
@@ -67,14 +67,13 @@
 
     <!-- The moduleDao definition for the Ikasan console -->
     <bean id="moduleDao" class="org.ikasan.console.module.dao.HibernateModuleDao">
-        <property name="sessionFactory" ref="moduleHibernateSessionFactory" />    
+        <property name="sessionFactory" ref="moduleHibernateSessionFactory" />
     </bean>
 
     <!-- The initiatorCommandDao definition for the Ikasan framework -->
     <bean id="initiatorCommandDao" class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorCommandDao">
         <property name="sessionFactory" ref="initiatorCommandHibernateSessionFactory" />
     </bean>
-
 
     <!-- Session Factory for the wiretapDao -->
     <bean id="wiretapHibernateSessionFactory"
@@ -96,7 +95,7 @@
             <list>
                 <value>PointToPointFlowProfile.hbm.xml</value>
                 <value>PointToPointFlow.hbm.xml</value>
-                <value>Module.hbm.xml</value>                
+                <value>Module.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -108,7 +107,7 @@
         <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
         <property name="mappingResources">
             <list>
-                <value>Module.hbm.xml</value>                
+                <value>Module.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -117,7 +116,11 @@
     <!-- Session Factory for the initiatorCommandDao -->
     <bean id="initiatorCommandHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+
+        <!-- TODO Temporary fix to needing an XA datasource that isn't actually used
+             see IKASAN-317 -->
+        <!-- <property name="dataSource" ref="ikasanAdminXaDataSource" /> -->
+        <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
         <property name="mappingResources">
             <list>
                 <value>InitiatorCommand.hbm.xml</value>

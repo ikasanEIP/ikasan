@@ -56,6 +56,7 @@
     	<intercept-url pattern="/login.jsp*" filters="none" />
     	<intercept-url pattern='/css/*' filters='none' />
     	<intercept-url pattern='/images/*' filters='none' />
+        <intercept-url pattern='/js/*' filters='none' />
         <!-- You need ROLE_ADMIN for admin pages -->
     	<intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
         <!-- You need ROLE_USER for all pages -->

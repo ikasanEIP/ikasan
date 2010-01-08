@@ -23,7 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 ;(function($) {
-    function Hovertip(elem, conf) {
+    function Hovertip(elem, conf)
+    {
         // Create tooltip
         var tooltip = $('<div></div>')
             .addClass(conf.className)
@@ -34,11 +35,13 @@
         // Remove the browser tooltip
         elem.removeAttr('title');
 
-        function setPosition(posX, posY) {
+        function setPosition(posX, posY)
+        {
             tooltip.css({ left: posX, top: posY });
         }
 
-        function updatePosition(event) {
+        function updatePosition(event)
+        {
             var tooltipWidth = tooltip.outerWidth();
             var tooltipHeight = tooltip.outerHeight();
             var $window = $(window);
@@ -46,11 +49,14 @@
             var windowHeight = $window.height() + $window.scrollTop();
             var posX = event.pageX + conf.offset[0];
             var posY = event.pageY + conf.offset[1];
-            if (posX + tooltipWidth > windowWidth) {
+            
+            if (posX + tooltipWidth > windowWidth)
+            {
                 // Move left
                 posX = windowWidth - tooltipWidth;
             }
-            if (posY + tooltipHeight > windowHeight) {
+            if (posY + tooltipHeight > windowHeight)
+            {
                 // Move tooltip to above cursor
                 posY = event.pageY - conf.offset[1] - tooltipHeight;
             }
@@ -59,12 +65,14 @@
 
         elem.hover(
             // Show
-            function(event) {
+            function(event)
+            {
                 updatePosition(event);
                 conf.show(tooltip);
             },
             // Hide
-            function() {
+            function()
+            {
                 conf.hide(tooltip);
             }
         );
@@ -72,7 +80,8 @@
 
     $.fn.hovertip = function(conf) {
         var defaultConf = {
-            offset: [10, 10],
+            // offset: [10, 10],
+            offset: [10, -200],
             className: 'hovertip',
             show: function(tooltip) {
                 tooltip.fadeIn(150);

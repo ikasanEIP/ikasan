@@ -41,16 +41,19 @@
 
  Author:  Ikasan Development Team
  
---%>              
+--%>
+<%-- Hold no state!  We're RESTFul thanks :) --%>
 <%@ page session="false"%>
-
 <%-- Core tag library, used for displaying bean values etc --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%-- Formatting library, used for formatting display --%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%-- Functions library, used for string manipulation etc --%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%-- Form library, used for search forms, we supply this tag library locally --%>
+<%-- 
+    Form library, used for spring based search forms, we supply this tag library locally
+    TODO:  This is only used in User pages and may be a technology we're moving away from. 
+--%>
 <%@ taglib prefix="form" uri="/spring-form" %>
-<%-- Security Library --%>
+<%-- Security Library, used in top.jsp but could be used elsewhere --%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
