@@ -12,4 +12,12 @@ $(document).ready(
 		$('#wiretapEventDownloadHelp').hovertip();
 		$('#wiretapEventNativeFormatHelp').hovertip();
 		*/
+
+		/* 
+		 * We focus on the text area before we execute the auto expanding 
+		 * text box so that the auto expanding works in IE6
+		 */ 
+		$('#payloadContentTextArea').focus();
+		$('#payloadContentTextArea').simpleautogrow();
+		
 	});
