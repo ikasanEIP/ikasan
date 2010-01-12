@@ -67,45 +67,20 @@ $(document).ready(
 			 * Can't simply use jquery toggle() between the two because the show/hide 
 			 * searchFields functionality sets the visibility on both rows.
 			 */
-			/*
-			$("input[name='searchMode']").mousedown(function(){
-				if ($('#modules').attr('checked'))
-			    {
-					if ($('#pointToPointFlowProfileSearch').val() == "true")
-				    {
-				    	$('#flowCheckboxes').hide();
-				    	$('#moduleCheckboxes').show();
-						$('#pointToPointFlowProfileSearch').val("false");
-				    }
-			    }
-				if ($('#flows').attr('checked'))
-			    {
-					$('#moduleCheckboxes').hide();
-					$('#flowCheckboxes').show();
-					$('#pointToPointFlowProfileSearch').val("true");
-			    }
-
-				
-			    return false;
-			});
-			*/
-			
 			$("#modules").mousedown(function(){
-		    	$('#flowCheckboxes').hide();
-		    	$('#moduleCheckboxes').show();
+				$('#flowCheckboxes').hide();
+				$('#moduleCheckboxes').show();
 				$('#pointToPointFlowProfileSearch').val("false");
-			    return false;
+				return false;
 			});
 				
 			$("#flows").mousedown(function(){
-		    	$('#moduleCheckboxes').hide();
-		    	$('#flowCheckboxes').show();
+				$('#moduleCheckboxes').hide();
+				$('#flowCheckboxes').show();
 				$('#pointToPointFlowProfileSearch').val("true");
-			    return false;
+				return false;
 			});
 
-			
-			
 			/*
 			 * choose text for the show/hide link - can contain HTML (e.g. an
 			 * image)
@@ -117,8 +92,6 @@ $(document).ready(
 			 * append show/hide links to the element directly preceding the
 			 * element with a class of "toggle"
 			 */
-			/* $('.toggle').prev().append(
-			'<a href="#" class="toggleLink">' + showText + '</a>'); */
 			$('.toggle').prev().children().children("span").prepend(
 					'<a href="#" class="toggleLink">' + showText + '</a>&nbsp;');
 
@@ -132,7 +105,6 @@ $(document).ready(
 				$(this).html($(this).html() == hideText ? showText : hideText);
 
 				/* toggle the display */
-				/* $(this).parent().next('.toggle').toggle(); */
 				$(this).parent().parent().parent().next('.toggle').toggle();
 
 				/* return false so any link destination is not followed */
