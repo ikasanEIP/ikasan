@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Ikasan Framework Properties</comment>
+    <entry key="contextImpl.class">org.ikasan.framework.context.DefaultContext</entry>
+    <entry key="persistenceImpl.class">org.ikasan.framework.persistence.HibernatePersistence</entry>
+    <entry key="xmlParserImpl.class">org.ikasan.framework.xml.parser.DefaultXMLParser</entry>
+    <entry key="xmlTransformerImpl.class">org.ikasan.framework.xml.transform.DefaultDOMSerializer</entry>
+    <entry key="stringTransformerImpl.class">org.ikasan.framework.transform.DefaultStringTransformer</entry>
+    <entry key="xslTransformerImpl.class">org.ikasan.framework.xml.transform.DefaultXSLTransformer</entry>
+    <entry key="environmentImpl.class">org.ikasan.framework.util.Env</entry>
+    <entry key="payloadImpl.class">org.ikasan.common.component.DefaultPayload</entry>
+    <entry key="envelopeImpl.class">org.ikasan.common.component.DefaultEnvelope</entry>
+    <entry key="flowImpl.class">org.ikasan.framework.component.DefaultFlow</entry>
+
+    <!-- Ikasan common Appln server Datasources and factories -->
+    <entry key="transaction.manager">java:/TransactionManager</entry>
+    <entry key="user.transaction">UserTransaction</entry>
+    <entry key="jms.xa.connectionFactory">java:/JmsXA</entry>
+    <entry key="jms.provider">java:/DefaultJMSProvider</entry>
+    <entry key="ds.session.factory">java:/ikasan/framework/default/hibernate/SessionFactory</entry>
+    <entry key="localds.session.factory">java:/ikasan/framework/defaultLocal/hibernate/SessionFactory</entry>
+    <entry key="xads.session.factory">java:/ikasan/framework/defaultXA/hibernate/SessionFactory</entry>
+
+    <!--  Ikasan framework component properties. -->
+    <entry key="component.env">java:comp/env</entry>
+    <entry key="component.group.name">java:comp/env/componentGroupName</entry>
+    <entry key="component.status.url">java:comp/env/componentStatusURL</entry>
+    <entry key="component.name">java:comp/env/componentName</entry>
+    <entry key="component.exception.resolver">java:comp/env/exceptionResolver</entry>
+    <entry key="component.security.conf.resource">java:comp/env/securityConf</entry>
+
+    <!--  Ikasan framework flow properties. -->
+    <entry key="flow.name">java:comp/env/flowClassName</entry>
+    <entry key="flow.method">java:comp/env/flowMethodName</entry>
+    <entry key="flow.exception.name">-exceptionHandler</entry>
+    <entry key="flow.exception.method">onException</entry>
+    <entry key="flow.destination.name">java:comp/env/flowDestination</entry>
+
+    <!-- Ikasan framework submission router - deprecated. -->
+    <entry key="submit.handler.router">submitRouter</entry>
+
+    <!-- Ikasan framework constants. -->
+    <entry key="undefined.value">undefined</entry>
+
+</properties>
