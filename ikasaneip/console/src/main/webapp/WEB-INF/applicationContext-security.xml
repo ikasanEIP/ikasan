@@ -120,9 +120,6 @@
             expression="execution(* org.ikasan.framework.security.service.UserService.changeUsersPassword(..))"
             access="ROLE_ADMIN" />
         <protect-pointcut
-            expression="execution(* org.ikasan.framework.security.service.UserService.changeUsersUsername(..))"
-            access="ROLE_ADMIN" />
-        <protect-pointcut
             expression="execution(* org.ikasan.framework.security.service.UserService.grantAuthority(..))"
             access="ROLE_ADMIN" />
         <protect-pointcut
