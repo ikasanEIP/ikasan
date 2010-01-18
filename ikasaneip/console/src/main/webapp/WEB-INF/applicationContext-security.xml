@@ -58,7 +58,9 @@
     	<intercept-url pattern='/images/*' filters='none' />
         <intercept-url pattern='/js/*' filters='none' />
         <!-- You need ROLE_ADMIN for admin pages -->
-    	<intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
+        <intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
+        <!-- You need ROLE_ADMIN for admin/users pages -->
+    	<intercept-url pattern="/admin/users/*" access="ROLE_ADMIN" />
         <!-- You need ROLE_USER for all pages -->
     	<intercept-url pattern="/**" access="ROLE_USER" />
         <!-- If you fail login then redirect to the login.jsp page but with the extra parameter indicating failure -->
@@ -116,6 +118,9 @@
 		-->
         <protect-pointcut
             expression="execution(* org.ikasan.framework.security.service.UserService.changeUsersPassword(..))"
+            access="ROLE_ADMIN" />
+        <protect-pointcut
+            expression="execution(* org.ikasan.framework.security.service.UserService.changeUsersUsername(..))"
             access="ROLE_ADMIN" />
         <protect-pointcut
             expression="execution(* org.ikasan.framework.security.service.UserService.grantAuthority(..))"
