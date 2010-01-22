@@ -1,0 +1,183 @@
+﻿<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
+	xml:id="ArchitectureConcepts">
+
+	<title>Concepts</title>
+	<para>
+		This chapter explains the architectural integration concepts
+		underpinning the Ikasan Enterprise Integration Platform approach and how these translate directly to Ikasan design concepts.
+	</para>
+
+	<section>
+		<title>Integration Concepts</title>
+		<para>
+			True integration is about encompassing applications into wider scoped business flows as participants 
+            operating within their area of expertise.
+			Referring back to the separation of concerns in the Architecture Strategies chapter 
+			we can see there are clearly defined integration layers each of which need to be addressed to achieve any desired solution.
+		</para>
+		<para>
+		    This section demonstrates these conceptual layers through the example of two applications exchanging data in a business flow.
+            In fig.1, below, vendor X has trade confirmations (X's area of expertise) which need to go to vendor Y for reporting and matching (Y's area of expertise). Getting these applications 
+            to connect and exchange data directly is a possible solution, but not a very good. Direct (point to point) integration like this results in brittle solutions 
+            - a change in either vendor 
+            will have a direct impact on the other; and provides no opportunity to re-use should another application be introduced into the flow.  
+            <mediaobject>
+                <info>
+                    <othercredit>
+                        <orgname>Ikasan Ltd</orgname>
+                    </othercredit>
+                </info>
+                <alt>IkasanConceptsFig1</alt>
+                <imageobject>
+                    <imagedata align="left" width="6in" format="PNG"
+                        fileref="images/ikasanConceptsFig1.png" />
+                </imageobject>
+            </mediaobject>
+		</para>
+		<para>
+			If we take this same example and start introducing the integration layers we start to see a very different picture.
+			</para>
+		<section>
+			<title>System Integration</title>
+			<para>
+			System integration is about addressing the protocol requirements for accessing the data.
+			In many cases this is about implementing a vendor specific API or 
+			accessing data through a more public protocol such as FTP or RDBMS (for database access).
+				<mediaobject>
+					<info>
+						<othercredit>
+							<orgname>Ikasan Ltd</orgname>
+						</othercredit>
+					</info>
+					<alt>Example 1</alt>
+					<imageobject>
+						<imagedata align="left" width="6in" format="PNG"
+							fileref="images/ikasanConceptsFig2.png" />
+					</imageobject>
+				</mediaobject>
+			</para>
+		</section>
+        <section>
+            <title>Data Integration</title>
+            <para>
+            Data integration focuses on the data constructs provided from or presented to the application via the System Integration layer
+            Whatever form these data constructs take this layer is about resolving the data construct syntax (format of the data) and semantics (meaning of the data).
+                <mediaobject>
+                    <info>
+                        <othercredit>
+                            <orgname>Ikasan Ltd</orgname>
+                        </othercredit>
+                    </info>
+                    <alt>Example 1</alt>
+                    <imageobject>
+                        <imagedata align="left" width="6in" format="PNG"
+                            fileref="images/ikasanConceptsFig3.png" />
+                    </imageobject>
+                </mediaobject>
+            </para>
+        </section>
+        <section>
+            <title>Event Integration</title>
+            <para>
+            Event integration focuses on higher level data manipulation as cleaned business events. At this level these data events 
+            are manipulated to implement basic business rules on known events. This can include routing, filtering, aggregation, splitting,
+            etc.
+                <mediaobject>
+                    <info>
+                        <othercredit>
+                            <orgname>Ikasan Ltd</orgname>
+                        </othercredit>
+                    </info>
+                    <alt>Example 1</alt>
+                    <imageobject>
+                        <imagedata align="left" width="6in" format="PNG"
+                            fileref="images/ikasanConceptsFig4.png" />
+                    </imageobject>
+                </mediaobject>
+            </para>
+        </section>
+
+        <section>
+            <title>Event/Service Presentation</title>
+            <para>
+            This layer is about presenting the polished business event through a well defined known service end point with which other systems can interact to receive and send business events.
+                <mediaobject>
+                    <info>
+                        <othercredit>
+                            <orgname>Ikasan Ltd</orgname>
+                        </othercredit>
+                    </info>
+                    <alt>Example 1</alt>
+                    <imageobject>
+                        <imagedata align="left" width="6in" format="PNG"
+                            fileref="images/ikasanConceptsFig5.png" />
+                    </imageobject>
+                </mediaobject>
+            </para>
+        </section>
+
+	    <section>
+	        <title>Integration Layer View</title>
+	        <para>
+	        Each of these four layers can be more clearly seen in fig.6 which presents these in a side view.
+	            <mediaobject>
+	                <info>
+	                    <othercredit>
+	                        <orgname>Ikasan Ltd</orgname>
+	                    </othercredit>
+	                </info>
+	                <alt>Example 1</alt>
+	                <imageobject>
+	                    <imagedata align="left" width="6in" format="PNG"
+	                        fileref="images/ikasanConceptsFig6.png" />
+	                </imageobject>
+	            </mediaobject>
+	        </para>
+	    </section>
+
+    </section>
+
+    <section>
+        <title>TODO - Ikasan Design</title>
+        <para>
+        This section shows how these Integration Concepts have been translated into the design of the Ikasan platform.
+        </para>
+    <section>
+        <title>Ikasan Design Overview</title>
+        <para>
+        Diagram of all conceptual layers as Ikasan constructs.
+        </para>
+    </section>
+    <section>
+        <title>Ikasan System Integration</title>
+        <para>
+        Source: Application -> Data -> Payload -> Initiator Event
+        Target: Endpoint Event -> Payload -> Data -> Application
+        </para>
+    </section>
+        
+    <section>
+        <title>Ikasan Data Integration</title>
+        <para>
+        Source: Initiator Event -> Syntax Transformer -> Semantic Transformer -> Event
+        Target: Event -> Semantic Transformer -> syntax Transformer -> endpoint
+        </para>
+    </section>
+
+    <section>
+        <title>Ikasan Event Integration</title>
+        <para>
+        Source/Target: Event -> Aggregator/Router/Splitter -> Event
+        </para>
+    </section>
+    <section>
+        <title>Ikasan Event Presentation</title>
+        <para>
+        Source/Target: Event -> Endpoint
+        </para>
+    </section>
+    </section>
+
+</chapter>
