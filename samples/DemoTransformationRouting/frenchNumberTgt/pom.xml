@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
-	<version>0.7.8-SNAPSHOT</version>
+	<version>0.7.8-cp1</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: frenchNumberTgt : jar</name>
 
