@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-  <version>0.7.8-cp1</version>
+  <version>0.7.8-cp2</version>
   <packaging>jar</packaging>
   <name>demoTransformationRouting :: englishWordRouter : jar</name>
 
