@@ -215,6 +215,9 @@ public abstract class TransactionalCommandConnection extends EISXALRCOManagedCon
         }
         catch (ResourceException re)
         {
+            // remove this connection from the pool
+            this.sendErrorEvent(re);
+            
             methodCalls.add("exception in executeCommand stored xid =[" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             logger.error("Exception caught when executing command: [" + command + "]", //$NON-NLS-1$ //$NON-NLS-2$
                 re);

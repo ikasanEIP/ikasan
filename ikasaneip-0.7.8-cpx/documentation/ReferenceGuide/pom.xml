@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>reference-guide</artifactId>
-    <version>0.7.8-cp1</version>
+    <version>0.7.8-cp2</version>
     <packaging>jdocbook</packaging>
     <name>Ikasan Enterprise Integration Reference Guide</name>
     <pluginRepositories>
