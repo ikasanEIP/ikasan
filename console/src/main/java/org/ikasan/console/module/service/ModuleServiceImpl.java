@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.ikasan.framework.initiator.InitiatorStartupControl;
+import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.SimpleModule;
 import org.ikasan.framework.module.service.ModuleService;
@@ -123,5 +125,18 @@ public class ModuleServiceImpl implements ModuleService
     {
         this.modulesList = modulesList;
     }
+
+	public void updateInitiatorStartupType(String moduleName,
+			String initiatorName, StartupType startupType, String comment,
+			String actor) {
+		// Do Nothing
+		
+	}
+
+	public InitiatorStartupControl getInitiatorStartupControl(
+			String moduleName, String initiatorName) {
+		//Do Nothing
+		return null;
+	}
     
 }

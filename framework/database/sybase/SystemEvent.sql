@@ -1,4 +1,4 @@
---
+-- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
 -- Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -20,13 +20,33 @@
 -- Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
-DROP TABLE IF EXISTS `ikasan01`.`initiatorcommand`;
-CREATE TABLE  `ikasan01`.`initiatorcommand` (
-  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ModuleName` varchar(255) NOT NULL,
-  `InitiatorName` varchar(255) NOT NULL,
-  `Action` varchar(255) NOT NULL,
-  `Actor` varchar(255) NOT NULL,
-  `SubmittedTime` datetime NOT NULL,
-  PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+IF OBJECT_ID('SystemEvent') IS NOT NULL
+BEGIN
+    DROP TABLE SystemEvent
+    IF OBJECT_ID('SystemEvent') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE SystemEvent >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE SystemEvent >>>'
+END
+GO
+CREATE TABLE SystemEvent
+(
+    Id                  NUMERIC IDENTITY NOT NULL,
+    Subject             VARCHAR(128)  NOT NULL,
+    Action              VARCHAR(512)   NOT NULL,
+    Actor               VARCHAR(64)   NULL,
+    Timestamp           DATETIME      NOT NULL,
+    Expiry           DATETIME      NULL
+)
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
+
+CREATE UNIQUE INDEX SystemEvent01u ON SystemEvent(Id)
+
+IF OBJECT_ID('SystemEvent') IS NOT NULL
+    PRINT '<<< CREATED TABLE SystemEvent >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE SystemEvent >>>'
+    
+

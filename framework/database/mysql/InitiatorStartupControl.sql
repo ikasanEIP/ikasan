@@ -1,4 +1,4 @@
--- 
+--
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
 -- Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -20,33 +20,12 @@
 -- Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
 -- or see the FSF site: http://www.fsfeurope.org/.
 -- ====================================================================
-
-IF OBJECT_ID('InitiatorCommand') IS NOT NULL
-BEGIN
-    DROP TABLE InitiatorCommand
-    IF OBJECT_ID('InitiatorCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE InitiatorCommand >>>'
-    ELSE
-        PRINT '<<< DROPPED TABLE InitiatorCommand >>>'
-END
-
-CREATE TABLE InitiatorCommand
-(
-    Id                  NUMERIC IDENTITY NOT NULL,
-    ModuleName          VARCHAR(128)  NOT NULL,
-    InitiatorName       VARCHAR(128)  NOT NULL,
-    Action              VARCHAR(64)   NOT NULL,
-    Actor               VARCHAR(64)   NOT NULL,
-    SubmittedTime       DATETIME      DEFAULT getDate() NOT NULL
-)
-LOCK DATAROWS
-WITH IDENTITY_GAP=1
-
-CREATE UNIQUE INDEX InitiatorCommand01u ON InitiatorCommand(Id)
-
-IF OBJECT_ID('InitiatorCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE InitiatorCommand >>>'
-ELSE
-    PRINT '<<< FAILED CREATING TABLE InitiatorCommand >>>'
-    
-
+DROP TABLE IF EXISTS `ikasan01`.`initiatorstartupcontrol`;
+CREATE TABLE  `ikasan01`.`initiatorstartupcontrol` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ModuleName` varchar(255) NOT NULL,
+  `InitiatorName` varchar(255) NOT NULL,
+  `StartupType` varchar(16) NOT NULL,
+  `Comment` varchar(255)  NULL
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

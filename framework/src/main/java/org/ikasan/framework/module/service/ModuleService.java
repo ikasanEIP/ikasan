@@ -28,6 +28,8 @@ package org.ikasan.framework.module.service;
 
 import java.util.List;
 
+import org.ikasan.framework.initiator.InitiatorStartupControl;
+import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.module.Module;
 
 /**
@@ -38,7 +40,7 @@ import org.ikasan.framework.module.Module;
  */
 public interface ModuleService
 {
-
+	
     /**
      * Returns all available <code>Module</code>s
      * 
@@ -72,5 +74,25 @@ public interface ModuleService
      * @param actor
      */
     public void startInitiator(String moduleName, String initiatorName, String actor);
+        
+    /**
+     * Updates the startup type for the <code>Initiator</code>
+     * 
+     * @param moduleName
+     * @param initiatorName
+     * @param startupType
+     * @param comment
+     * @param actor
+     */
+    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
+
+	/**
+	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+	 * 
+	 * @param moduleName
+	 * @param initiatorName
+	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+	 */
+	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
 
 }
