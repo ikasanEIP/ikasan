@@ -418,3 +418,7 @@ form.fancydataform fieldset li {
     font-size: 16px;
     font-weight: bold;
 }
+
+#systemEventSearchResults {
+	width: 100%;
+}
