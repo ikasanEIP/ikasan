@@ -34,7 +34,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-framework</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.8-SNAPSHOT</version>
+	<version>0.7.8</version>
 	<name>Ikasan Framework</name>
 	<organization>
 		<name>Ikasan</name>
@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.8-SNAPSHOT</version>
+			<version>0.7.8</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
