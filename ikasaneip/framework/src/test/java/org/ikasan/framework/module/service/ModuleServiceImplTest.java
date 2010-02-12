@@ -43,17 +43,18 @@ package org.ikasan.framework.module.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hamcrest.Description;
-import org.ikasan.framework.flow.initiator.dao.InitiatorCommandDao;
+import org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao;
 import org.ikasan.framework.initiator.Initiator;
-import org.ikasan.framework.initiator.InitiatorCommand;
+import org.ikasan.framework.initiator.InitiatorStartupControl;
+import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.container.ModuleContainer;
+import org.ikasan.framework.systemevent.service.SystemEventService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.matchers.TypeSafeMatcher;
 
 /**
  * 
@@ -62,17 +63,24 @@ import org.junit.matchers.TypeSafeMatcher;
  */
 public class ModuleServiceImplTest
 {
-    private Mockery mockery = new Mockery();
+    private Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
     
     ModuleContainer moduleContainer = mockery.mock(ModuleContainer.class);
     
-    InitiatorCommandDao initiatorCommandDao = mockery.mock(InitiatorCommandDao.class);
+    InitiatorStartupControlDao initiatorStartupControlDao = mockery.mock(InitiatorStartupControlDao.class);
+    
+    SystemEventService systemEventService = mockery.mock(SystemEventService.class);
 
     
     /**
      * Class under test
      */
-    private ModuleServiceImpl moduleServiceImpl = new ModuleServiceImpl(moduleContainer,initiatorCommandDao);
+    private ModuleServiceImpl moduleServiceImpl = new ModuleServiceImpl(moduleContainer,initiatorStartupControlDao,systemEventService);
     
     
     /**
@@ -188,7 +196,8 @@ public class ModuleServiceImplTest
                 will(returnValue(module));
                 one(module).getInitiator(initiatorName);
                 will(returnValue(initiator));
-                one(initiatorCommandDao).save(with(new InitiatorCommandMatcher(moduleName, initiatorName, "stop", actor)),with(equal(false)));
+                
+                one(systemEventService).logSystemEvent(moduleName+"."+initiatorName, ModuleServiceImpl.INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION, actor);
                 one(initiator).stop();
             }
         });
@@ -200,13 +209,15 @@ public class ModuleServiceImplTest
     }
     
     @Test
-    public void testStartInitiator_willPersistAppropriateInitiatorCommandAndCallStartOnInitiator(){
+    public void testStartInitiator_willLogSystemEventAndStartInitiator(){
         final String moduleName = "moduleName";
         final String initiatorName = "initiatorName";
         final String actor = "actor";
         
         final Module module = mockery.mock(Module.class);
         final Initiator initiator = mockery.mock(Initiator.class);
+        
+        final InitiatorStartupControl initiatorStartupControl = mockery.mock(InitiatorStartupControl.class);
         
         mockery.checking(new Expectations()
         {
@@ -215,7 +226,9 @@ public class ModuleServiceImplTest
                 will(returnValue(module));
                 one(module).getInitiator(initiatorName);
                 will(returnValue(initiator));
-                one(initiatorCommandDao).save(with(new InitiatorCommandMatcher(moduleName, initiatorName, "start", actor)),with(equal(false)));
+                one(initiatorStartupControlDao).getInitiatorStartupControl(moduleName, initiatorName);will(returnValue(initiatorStartupControl));
+                one(initiatorStartupControl).isDisabled();will(returnValue(false));
+                one(systemEventService).logSystemEvent(moduleName+"."+initiatorName, ModuleServiceImpl.INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION, actor);
                 one(initiator).start();
             }
         });
@@ -226,48 +239,69 @@ public class ModuleServiceImplTest
         mockery.assertIsSatisfied(); 
     }
     
-    public class InitiatorCommandMatcher extends TypeSafeMatcher<InitiatorCommand> {
+    
+    @Test(expected=IllegalStateException.class)
+    public void testStartInitiator_willThrowIllegalStateException(){
+        final String moduleName = "moduleName";
+        final String initiatorName = "initiatorName";
+        final String actor = "actor";
         
-        private String moduleName;
+        final Module module = mockery.mock(Module.class);
+        final Initiator initiator = mockery.mock(Initiator.class);
         
-        public InitiatorCommandMatcher(String moduleName, String initiatorName, String action, String actor)
+        final InitiatorStartupControl initiatorStartupControl = mockery.mock(InitiatorStartupControl.class);
+        
+        mockery.checking(new Expectations()
         {
-            super();
-            this.moduleName = moduleName;
-            this.initiatorName = initiatorName;
-            this.action = action;
-            this.actor = actor;
-        }
+            {
+                one(moduleContainer).getModule(moduleName);
+                will(returnValue(module));
+                one(module).getInitiator(initiatorName);
+                will(returnValue(initiator));
+                one(initiatorStartupControlDao).getInitiatorStartupControl(moduleName, initiatorName);will(returnValue(initiatorStartupControl));
+                one(initiatorStartupControl).isDisabled();will(returnValue(true));
 
-        private String initiatorName;
-        
-        private String action;
-
-        private String actor;
-        @Override
-        public boolean matchesSafely(InitiatorCommand initiatorCommand)
-        {
-            if (!this.moduleName.equals(initiatorCommand.getModuleName())){
-                return false;
             }
-            if (!this.initiatorName.equals(initiatorCommand.getInitiatorName())){
-                return false;
-            }            
-            if (!this.action.equals(initiatorCommand.getAction())){
-                return false;
-            }   
-            if (!this.actor.equals(initiatorCommand.getActor())){
-                return false;
-            }   
-            return true;
-        }
-
-        public void describeTo(Description arg0)
-        {
-            
-        }
+        });
         
+        moduleServiceImpl.startInitiator(moduleName, initiatorName, actor);
+
+        
+        mockery.assertIsSatisfied(); 
     }
+    
+    
+    
+    @Test 
+    public void testUpdateInitiatorStartupType(){
+        final String moduleName = "moduleName";
+        final String initiatorName = "initiatorName";
+        final String actor = "actor";
+
+        
+        final StartupType startupType = StartupType.DISABLED;
+        final String comment = "comment";
+        final InitiatorStartupControl initiatorStartupControl = mockery.mock(InitiatorStartupControl.class);
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(systemEventService).logSystemEvent(moduleName+"."+initiatorName, ModuleServiceImpl.INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION+startupType.toString(), actor);
+                one(initiatorStartupControlDao).getInitiatorStartupControl(moduleName, initiatorName);will(returnValue(initiatorStartupControl));
+                
+                one(initiatorStartupControl).setStartupType(startupType);
+                one(initiatorStartupControl).setComment(comment);
+                one(initiatorStartupControlDao).save(initiatorStartupControl);
+            }
+        });
+        
+        moduleServiceImpl.updateInitiatorStartupType(moduleName, initiatorName, startupType, comment, actor);
+        mockery.assertIsSatisfied();
+    }
+    
+    
+    
+    
     
     
 }

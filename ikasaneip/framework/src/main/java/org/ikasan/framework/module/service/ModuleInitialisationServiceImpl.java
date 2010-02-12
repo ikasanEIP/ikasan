@@ -44,9 +44,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.flow.initiator.dao.InitiatorCommandDao;
+import org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao;
 import org.ikasan.framework.initiator.Initiator;
-import org.ikasan.framework.initiator.InitiatorCommand;
+import org.ikasan.framework.initiator.InitiatorStartupControl;
+import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.container.ModuleContainer;
 import org.ikasan.framework.security.model.Authority;
@@ -74,7 +75,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     /**
      * Data Access object for retrieving any existing stop/start information
      */
-    private InitiatorCommandDao initiatorCommandDao;
+    private InitiatorStartupControlDao initiatorStartupControlDao;
 
     /**
      * platform level application context to be used to parent each of the module's contexts
@@ -89,14 +90,14 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * 
      * @param moduleContainer - The pre built module container
      * @param userService - The user service
-     * @param initiatorCommandDao - DAO for supplying InitiatorCommands
+     * @param initiatorStartupControlDao - DAO for supplying InitiatorStartupControl instances
      */
-    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, UserService userService, InitiatorCommandDao initiatorCommandDao)
+    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, UserService userService, InitiatorStartupControlDao initiatorStartupControlDao)
     {
         super();
         this.moduleContainer = moduleContainer;
         this.userService = userService;
-        this.initiatorCommandDao = initiatorCommandDao;
+        this.initiatorStartupControlDao = initiatorStartupControlDao;
     }
 
     /*
@@ -146,8 +147,8 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             
             //start the module's initiators if configured to
             for (Initiator initiator : module.getInitiators()){
-                InitiatorCommand latestInitiatorCommand = initiatorCommandDao.getLatestInitiatorCommand(module.getName(), initiator.getName());
-                if ((latestInitiatorCommand!=null) && "start".equalsIgnoreCase(latestInitiatorCommand.getAction())){
+                InitiatorStartupControl initiatorStartupControl = initiatorStartupControlDao.getInitiatorStartupControl(module.getName(), initiator.getName());
+                if (StartupType.AUTOMATIC.equals(initiatorStartupControl.getStartupType())){
                     initiator.start();
                 }
             }

@@ -64,6 +64,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
@@ -313,7 +314,8 @@ public class FileTransferProtocolClient implements FileTransferClient
                      * UNIX <-> Windows character substitutions made.
                      */
                     ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                    logger.debug("Successfully logged into ftp server."); //$NON-NLS-1$
+                    logger.info("Successfully logged in to [" 
+                	    + remoteHostname + "] with user [" + username + "]");
                 }
                 else
                 {
@@ -339,23 +341,10 @@ public class FileTransferProtocolClient implements FileTransferClient
     private void doConnect() throws ClientConnectionException
     {
         this.ftpClient = new FTPClient();
-        String msg = new String("Attempting connection to [" + remoteHostname + "] using ["); //$NON-NLS-1$ //$NON-NLS-2$
-        if(active)
-        {
-            msg = msg + "active";
-        }
-        else
-        {
-            msg = msg + "passive";
-        }
-        msg = msg + "] mode.";
+        String msg = new String("Attempting connection to [" + remoteHostname + "]."); //$NON-NLS-1$ //$NON-NLS-2$
         logger.debug(msg);
         try
         {
-            if(!active)
-            {
-                ftpClient.enterLocalPassiveMode();
-            }
             /*
              * Summer (Nov 26th 2008): Rather than relying on the FTP client to
              * figure out the system it is connecting to (and hence what parsers
@@ -377,27 +366,41 @@ public class FileTransferProtocolClient implements FileTransferClient
                     logger.debug("Connecting to remote host [" + this.remoteHostname + ":" + this.remotePort + "] from local host [" + this.localHostname + ":"
                             + localPort + "].");
                     ftpClient.connect(InetAddress.getByName(this.remoteHostname), this.remotePort, InetAddress.getByName(this.localHostname), localPort);
+
+                    int reply = ftpClient.getReplyCode();
+                    if(!FTPReply.isPositiveCompletion(reply))
+                    {
+                	throw new SocketException("Connection attempt failed with replyCode [" 
+                		+ reply + "]");
+                    }
+                    if(active)
+                    {
+                	this.ftpClient.enterLocalActiveMode();
+                    }
+                    else
+                    {
+                	this.ftpClient.enterLocalPassiveMode();
+                    }
+
                     this.ftpClient.setSoTimeout(this.socketTimeout);
                     this.ftpClient.setDataTimeout(this.dataTimeout);
                     break;
                 }
                 catch (BindException be)
                 {
-                    logger.info("Address is already in use.. will try again. Exception [" + be.getMessage() + "]");
+                    logger.info("Address is already in use.. will try again.", be);
                 }
             }
         }
         catch (SocketException se)
         {
             msg = new String(msg + " [Failed]"); //$NON-NLS-1$
-            logger.info(msg);
+            logger.info(msg, se);
             // Clean up after ourselves just in case
             try
             {
-                logger.info("something bad happened trying to disconnect....");
                 if(this.ftpClient != null && this.ftpClient.isConnected())
                 {
-                    logger.info("DISCONNECTING");
                     this.ftpClient.disconnect();
                 }
             }
@@ -410,7 +413,7 @@ public class FileTransferProtocolClient implements FileTransferClient
         catch (IOException ie)
         {
             msg = new String(msg + " [Failed]"); //$NON-NLS-1$
-            logger.info(msg);
+            logger.info(msg, ie);
             // Clean up after ourselves
             try
             {
@@ -421,11 +424,13 @@ public class FileTransferProtocolClient implements FileTransferClient
             }
             catch (IOException disconnectException)
             {
-                logger.warn("Could not cleanup after a failed connect, this may leave behind open sockets.");
+                logger.warn("Could not cleanup after a failed connect, this may leave behind open sockets.", disconnectException);
             }
             throw new ClientConnectionException(msg, ie);
         }
-        logger.debug("Connected!"); //$NON-NLS-1$
+        
+        logger.info("Connected to host [" + remoteHostname + "]. "
+    	    + "Mode [" + (active ? "active":"passive") + "].");
     }
 
     /**
@@ -451,6 +456,15 @@ public class FileTransferProtocolClient implements FileTransferClient
         logger.debug("Disconnecting..."); //$NON-NLS-1$
         try
         {
+            if(this.ftpClient.logout())
+            {
+        	logger.debug("logout... [OK]");	
+            }
+            else
+            {
+        	logger.info("logout... [FAILED], continuing with disconnect...");
+            }
+        	
             this.ftpClient.disconnect();
             logger.debug("Disconnected... [OK]"); //$NON-NLS-1$
         }
