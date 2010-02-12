@@ -83,6 +83,45 @@
 <h2>Initiator :: <c:out value="${initiator.name}" /></h2>
 <p>&nbsp;</p>
 
+
+
+
+
+
+<p>
+
+ <security:authorize ifAllGranted="ROLE_ADMIN">
+ <c:url var="initiatorLink" value="initiator.htm">
+                <c:param name="moduleName" value="${moduleName}"/>
+                <c:param name="initiatorName" value="${initiator.name}"/>
+              </c:url>
+<form action="${initiatorLink}" method="post">
+	Startup Type : <select name="startupType">
+		<option value="MANUAL" <c:if test="${startupControl.manual}">selected="selected" </c:if>  >Manual</option>
+		<option value="AUTOMATIC" <c:if test="${startupControl.automatic}">selected="selected" </c:if>  >Automatic</option>
+		<option value="DISABLED" <c:if test="${startupControl.disabled}">selected="selected" </c:if>  >Disabled</option>
+	</select>
+
+	Comment : <input name="startupComment" value="${startupControl.comment}" type="text">
+
+	<input type="submit" value="Update" class="controlButton"/>
+</security:authorize>
+
+<security:authorize ifNotGranted="ROLE_ADMIN">
+Startup Type : ${startupControl.startupType}
+</security:authorize>
+
+</p>
+</form>
+
+
+
+
+
+
+
+
+
 <h3>Status</h3>
 
         <table class="keyValueTable">

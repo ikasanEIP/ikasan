@@ -1,8 +1,10 @@
-<%-- 
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
 
  $Id$
- $URL$ 
-
+ $URL$
+ 
  ====================================================================
  Ikasan Enterprise Integration Platform
  
@@ -41,27 +43,41 @@
 
  Author:  Ikasan Development Team
  
---%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-
-<div class="middle">
-
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="viewScheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="systemEvents/search.htm">Inspect the System Event log</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
-    <li><a href="exclusions/list.htm">View Excluded Events</a></li>
+    <bean id="systemEventService" class="org.ikasan.framework.systemevent.service.SystemEventServiceImpl">
+        <constructor-arg ref="systemEventDao" />
+        <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
+    </bean>
     
-</ul>
-</p>
-
-</div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+    <bean id="systemEventDao"
+        class="org.ikasan.framework.systemevent.dao.HibernateSystemEventDao">
+        <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
+        
+        <constructor-arg value="true"/>
+        <constructor-arg value="100"/>
+        
+    </bean>
+    
+    <bean id="systemEventHibernateSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasanAdminXaDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
+	
+</beans>

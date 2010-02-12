@@ -56,6 +56,7 @@
 			/WEB-INF/classes/platform-environment-context.xml
             /WEB-INF/classes/platform-datasource-context.xml
 			/WEB-INF/classes/platform-service-context.xml
+			/WEB-INF/classes/systemevent-service-context.xml
 			/WEB-INF/classes/errorlogging-service-context.xml
 			/WEB-INF/classes/excludedevent-service-context.xml
 			/WEB-INF/classes/module-service-context.xml

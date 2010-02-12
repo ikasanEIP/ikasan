@@ -38,75 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.module.service;
+package org.ikasan.framework.flow.initiator.dao;
 
 import java.util.List;
 
 import org.ikasan.framework.initiator.InitiatorStartupControl;
-import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
-import org.ikasan.framework.module.Module;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * Hibernate implementation of <code>InitiatorStartupControlDao</code>
+ * 
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ModuleService
+public class HibernateInitiatorStartupControlDao extends HibernateDaoSupport implements InitiatorStartupControlDao
 {
-	
     /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
+     * General query for finding existing InitiatorCommands for a given Initiator
      */
-    public List<Module> getModules();
+    private static final String initiatorStartupControlQuery = "from InitiatorStartupControl i where i.moduleName = ? and i.initiatorName = ?";
 
-    /**
-     * Resolves a specified <code>Module</code> by name
-     * 
-     * @param moduleName
-     * 
-     * @return <code>Module</code> named by moduleName
-     */
-    public Module getModule(String moduleName);   
-    
-    /**
-     * Attempts to stop an <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
-     */
-    public void stopInitiator(String moduleName, String initiatorName, String actor);
-    
-    /**
-     * Attempts to start an <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
-     */
-    public void startInitiator(String moduleName, String initiatorName, String actor);
-        
-    /**
-     * Updates the startup type for the <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param startupType
-     * @param comment
-     * @param actor
-     */
-    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
-
-	/**
-	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 * 
-	 * @param moduleName
-	 * @param initiatorName
-	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao#getInitiatorStartupControl(java.lang.String, java.lang.String)
 	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
+	public InitiatorStartupControl getInitiatorStartupControl(String moduleName,
+			String initiatorName) {
+		List results = getHibernateTemplate().find(initiatorStartupControlQuery, new Object[]{moduleName,initiatorName});
+		if (!results.isEmpty()){
+			return (InitiatorStartupControl)results.get(0);
+		}
+		return new InitiatorStartupControl(moduleName, initiatorName);
+	}
 
+	/* (non-Javadoc)
+	 * @see org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao#save(org.ikasan.framework.initiator.InitiatorStartupControl)
+	 */
+	public void save(InitiatorStartupControl initiatorStartupControl) {
+		getHibernateTemplate().saveOrUpdate(initiatorStartupControl);
+		
+	}
+   
+    
 }

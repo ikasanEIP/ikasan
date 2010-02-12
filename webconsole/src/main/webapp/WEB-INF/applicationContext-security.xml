@@ -126,6 +126,10 @@
             expression="execution(* org.ikasan.framework.security.service.UserService.revokeAuthority(..))"
             access="ROLE_ADMIN" />
 
+        <protect-pointcut
+            expression="execution(* org.ikasan.framework.module.service.ModuleService.updateInitiatorStartupType(..))"
+            access="ROLE_ADMIN" />
+            
 	    <!-- Gaining access to a Module requires security check -->
 		<protect-pointcut 
             expression="execution(* org.ikasan.framework.module.service.ModuleService.getModule(..))"

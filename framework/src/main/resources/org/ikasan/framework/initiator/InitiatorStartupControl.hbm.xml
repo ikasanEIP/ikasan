@@ -1,8 +1,13 @@
-<%-- 
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- 
+
 
  $Id$
- $URL$ 
-
+ $URL$
+ 
  ====================================================================
  Ikasan Enterprise Integration Platform
  
@@ -41,27 +46,27 @@
 
  Author:  Ikasan Development Team
  
---%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+-->
+<!--  
+    This is the hibernate mapping configuration for the InitiatorStartupControl Class -> Table
+ -->
+<hibernate-mapping>
+     
+    <class
+        name="org.ikasan.framework.initiator.InitiatorStartupControl"
+        table="InitiatorStartupControl">
 
-
-<div class="middle">
-
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="viewScheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="systemEvents/search.htm">Inspect the System Event log</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
-    <li><a href="exclusions/list.htm">View Excluded Events</a></li>
+        <id name="id" type="java.lang.Long" column="Id">
+            <generator class="identity" />
+        </id>
+        <property name="moduleName"        type="java.lang.String" 
+                  column="ModuleName"      not-null="true" />
+        <property name="initiatorName"     type="java.lang.String" 
+                  column="InitiatorName"   not-null="true" />
+        <property name="startupTypeString" type="java.lang.String" 
+                  column="StartupType"     not-null="true" />
+    	<property name="comment"        type="java.lang.String" 
+                  column="Comment"      not-null="false" />
+    </class>
     
-</ul>
-</p>
-
-</div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+</hibernate-mapping>
