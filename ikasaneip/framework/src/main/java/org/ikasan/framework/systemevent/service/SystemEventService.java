@@ -38,75 +38,53 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.module.service;
+package org.ikasan.framework.systemevent.service;
 
-import java.util.List;
+import java.util.Date;
 
-import org.ikasan.framework.initiator.InitiatorStartupControl;
-import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
-import org.ikasan.framework.module.Module;
+import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.framework.systemevent.model.SystemEvent;
+
 
 /**
- * Service Tier interface for providing user access to modules 
+ * SystemEvent service interface
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ModuleService
+public interface SystemEventService 
 {
-	
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public List<Module> getModules();
+	/**
+	 * Logs some system level happening
+	 * 
+	 * @param subject - system level entity that has been affected
+	 * @param action - what has happened
+	 * @param actor - who/what was driving the happening
+	 */
+	public void logSystemEvent(String subject, String action, String actor);
 
-    /**
-     * Resolves a specified <code>Module</code> by name
-     * 
-     * @param moduleName
-     * 
-     * @return <code>Module</code> named by moduleName
-     */
-    public Module getModule(String moduleName);   
-    
-    /**
-     * Attempts to stop an <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
-     */
-    public void stopInitiator(String moduleName, String initiatorName, String actor);
-    
-    /**
-     * Attempts to start an <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
-     */
-    public void startInitiator(String moduleName, String initiatorName, String actor);
-        
-    /**
-     * Updates the startup type for the <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param startupType
-     * @param comment
-     * @param actor
-     */
-    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
 
 	/**
-	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+	 * Performs a paged search for <code>SystemEvent</code>s restricting by criteria fields as supplied
 	 * 
-	 * @param moduleName
-	 * @param initiatorName
-	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+	 * @param pageNo - page control field - page no of results to return
+	 * @param pageSize - page control field - size of page
+	 * @param orderBy - page control - field to order by
+	 * @param orderAscending - page control field - true/false results in ascending order with respect to orderBy field
+	 * @param subject - criteria field - filter for exact match on subject
+	 * @param action - criteria field - filter for exact match on action
+	 * @param timestampFrom - criteria field - filter for events with timestamp greater than this value
+	 * @param timestampTo - criteria field - filter for events with timestamp less than this value
+	 * @param actor - criteria field - filter for exact match on actor
+	 * 
+	 * @return PagedSearchResult<SystemEvent> - page friendly search result subset
 	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
+	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
+
+	
+	/**
+	 * Cleanup all expired system events
+	 */
+	public void housekeep();
 
 }

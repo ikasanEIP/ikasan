@@ -38,75 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.module.service;
-
-import java.util.List;
+package org.ikasan.framework.flow.initiator.dao;
 
 import org.ikasan.framework.initiator.InitiatorStartupControl;
-import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
-import org.ikasan.framework.module.Module;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * Data Access interface for the persistence of <code>InitiatorStartupControl</code>s
  * 
  * @author Ikasan Development Team
  *
  */
-public interface ModuleService
+public interface InitiatorStartupControlDao
 {
-	
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public List<Module> getModules();
-
-    /**
-     * Resolves a specified <code>Module</code> by name
-     * 
-     * @param moduleName
-     * 
-     * @return <code>Module</code> named by moduleName
-     */
-    public Module getModule(String moduleName);   
     
     /**
-     * Attempts to stop an <code>Initiator</code>
+     * Retrieves the <code>InitiatorStartupControl</code> for the specified <code>Initiator</code>
      * 
      * @param moduleName
      * @param initiatorName
-     * @param actor
+     * 
+     * @return the <code>InitiatorStartupControl</code> for the specified <code>Initiator</code>
      */
-    public void stopInitiator(String moduleName, String initiatorName, String actor);
+    public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
     
     /**
-     * Attempts to start an <code>Initiator</code>
+     * Persists the <code>InitiatorStartupControl</code>
      * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
+     * @param initiatorStartupControl to persist
      */
-    public void startInitiator(String moduleName, String initiatorName, String actor);
-        
-    /**
-     * Updates the startup type for the <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param startupType
-     * @param comment
-     * @param actor
-     */
-    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
-
-	/**
-	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 * 
-	 * @param moduleName
-	 * @param initiatorName
-	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
-
+    public void save(InitiatorStartupControl initiatorStartupControl);
 }

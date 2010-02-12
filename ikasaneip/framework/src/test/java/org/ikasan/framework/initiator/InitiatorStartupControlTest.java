@@ -38,75 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.module.service;
+package org.ikasan.framework.initiator;
 
-import java.util.List;
+import junit.framework.Assert;
 
-import org.ikasan.framework.initiator.InitiatorStartupControl;
 import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
-import org.ikasan.framework.module.Module;
+import org.junit.Test;
 
-/**
- * Service Tier interface for providing user access to modules 
- * 
- * @author Ikasan Development Team
- *
- */
-public interface ModuleService
-{
-	
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public List<Module> getModules();
+public class InitiatorStartupControlTest {
 
-    /**
-     * Resolves a specified <code>Module</code> by name
-     * 
-     * @param moduleName
-     * 
-     * @return <code>Module</code> named by moduleName
-     */
-    public Module getModule(String moduleName);   
-    
-    /**
-     * Attempts to stop an <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
-     */
-    public void stopInitiator(String moduleName, String initiatorName, String actor);
-    
-    /**
-     * Attempts to start an <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
-     */
-    public void startInitiator(String moduleName, String initiatorName, String actor);
-        
-    /**
-     * Updates the startup type for the <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param startupType
-     * @param comment
-     * @param actor
-     */
-    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
+	@Test
+	public void testIsAutomatic() {
+		InitiatorStartupControl initiatorStartupControl = new InitiatorStartupControl("moduleName","initiatorName");
+		Assert.assertFalse(initiatorStartupControl.isAutomatic());
+		initiatorStartupControl.setStartupType(StartupType.AUTOMATIC);
+		Assert.assertTrue(initiatorStartupControl.isAutomatic());
+	}
 
-	/**
-	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 * 
-	 * @param moduleName
-	 * @param initiatorName
-	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
+	@Test
+	public void testIsManual() {
+		InitiatorStartupControl initiatorStartupControl = new InitiatorStartupControl("moduleName","initiatorName");
+		Assert.assertTrue(initiatorStartupControl.isManual());
+		initiatorStartupControl.setStartupType(StartupType.MANUAL);
+		Assert.assertTrue(initiatorStartupControl.isManual());
+		initiatorStartupControl.setStartupType(StartupType.AUTOMATIC);
+		Assert.assertFalse(initiatorStartupControl.isManual());
+	}
+
+	@Test
+	public void testIsDisabled() {
+		InitiatorStartupControl initiatorStartupControl = new InitiatorStartupControl("moduleName","initiatorName");
+		Assert.assertFalse(initiatorStartupControl.isDisabled());
+		initiatorStartupControl.setStartupType(StartupType.DISABLED);
+		Assert.assertTrue(initiatorStartupControl.isDisabled());
+	}
 
 }

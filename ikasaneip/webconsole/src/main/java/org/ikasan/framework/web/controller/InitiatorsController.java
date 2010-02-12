@@ -45,8 +45,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.ikasan.common.component.Spec;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.SimpleInitiator;
+import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl;
 import org.ikasan.framework.initiator.scheduled.quartz.QuartzSchedulerInitiator;
 import org.ikasan.framework.initiator.scheduled.quartz.QuartzStatefulScheduledDrivenInitiator;
@@ -84,8 +87,16 @@ public class InitiatorsController
     /** The initiator action parameter name */
     private static final String INITIATOR_ACTION_PARAMETER_NAME = "initiatorAction";
 
+    /** The initiator startupType parameter name */
+    private static final String STARTUP_TYPE_PARAMETER_NAME = "startupType";
+    
+    /** The initiator comment parameter name */
+    private static final String STARTUP_COMMENT_PARAMETER_NAME = "startupComment";
+
     /** Service facade for module functions */
     private ModuleService moduleService;
+    
+    private Logger logger = Logger.getLogger(InitiatorsController.class);
 
     /**
      * Constructor
@@ -115,6 +126,8 @@ public class InitiatorsController
         Initiator initiator = resolveInitiator(moduleName, initiatorName);
         model.addAttribute("initiator", initiator);
         model.addAttribute("moduleName", moduleName);
+        
+        model.addAttribute("startupControl", moduleService.getInitiatorStartupControl(moduleName, initiatorName));
         String view = null;
         if (initiator.getType().equals(SimpleInitiator.SIMPLE_INITIATOR_TYPE))
         {
@@ -269,25 +282,50 @@ public class InitiatorsController
      * @throws Exception - Exception if we cannot control the initiator
      */
     @RequestMapping(value = "/modules/initiator.htm", method = RequestMethod.POST)
-    public String controlInitiator(@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
+    public String controlInitiator(
+    		@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
             @RequestParam(INITIATOR_NAME_PARAMETER_NAME) String initiatorName,
-            @RequestParam(INITIATOR_ACTION_PARAMETER_NAME) String initiatorAction) throws Exception
+            @RequestParam(value=INITIATOR_ACTION_PARAMETER_NAME, required=false) String initiatorAction,
+            @RequestParam(value=STARTUP_TYPE_PARAMETER_NAME,required=false) String startupType,
+            @RequestParam(value=STARTUP_COMMENT_PARAMETER_NAME, required=false) String startupComment)
     {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (initiatorAction.equalsIgnoreCase("start"))
-        {
-            moduleService.startInitiator(moduleName, initiatorName, currentUser);
-        }
-        else if (initiatorAction.equalsIgnoreCase("stop"))
-        {
-            moduleService.stopInitiator(moduleName, initiatorName, currentUser);
-        }
-        else
-        {
-            throw new RuntimeException("Unknown initiator action:" + initiatorAction);
+        if (initiatorAction!=null){
+	        if (initiatorAction.equalsIgnoreCase("start"))
+	        {
+	            moduleService.startInitiator(moduleName, initiatorName, currentUser);
+	        }
+	        else if (initiatorAction.equalsIgnoreCase("stop"))
+	        {
+	            moduleService.stopInitiator(moduleName, initiatorName, currentUser);
+	        }else
+	        {
+	            throw new RuntimeException("Unknown initiator action:" + initiatorAction);
+	        }
+        } else if (startupType!=null){
+            if (startupType.equalsIgnoreCase("manual")||startupType.equalsIgnoreCase("automatic")||startupType.equalsIgnoreCase("disabled"))
+            {       	
+            	//crude check to ensure comment is supplied when disabling
+            	if (startupType.equalsIgnoreCase("disabled")){
+            		logger.info("about to disable initiator, comment is["+startupComment+"]");
+            		if (startupComment==null ||"".equals(startupComment.trim())){
+            			throw new IllegalArgumentException("must supply comment when disabling Initiator");
+            		}
+            	}
+                moduleService.updateInitiatorStartupType(moduleName, initiatorName, StartupType.valueOf(startupType), startupComment, currentUser);
+            }
+            else
+            {
+                throw new RuntimeException("Unknown startupType:" + startupType);
+            }       	
+        }else{
+        	throw new RuntimeException("Either initiatorAction, or startupType must be specified");
         }
         return redirectViewInitiator(moduleName, initiatorName);
     }
+    
+    
+    
 
     /**
      * Helper method to perform a redirect to an initiator view

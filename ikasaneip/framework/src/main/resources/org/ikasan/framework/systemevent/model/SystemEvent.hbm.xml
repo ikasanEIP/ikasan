@@ -1,8 +1,13 @@
-<%-- 
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- 
+
 
  $Id$
- $URL$ 
-
+ $URL$
+ 
  ====================================================================
  Ikasan Enterprise Integration Platform
  
@@ -41,27 +46,30 @@
 
  Author:  Ikasan Development Team
  
---%>
-<%@ include file="/WEB-INF/jsp/admin/adminTop.jsp"%>
+-->
+<!--  
+    This is the hibernate mapping configuration for the SystemEvent Class -> Table
+ -->
+<hibernate-mapping>
+     
+    <class
+        name="org.ikasan.framework.systemevent.model.SystemEvent"
+        table="SystemEvent">
 
+        <id name="id" type="java.lang.Long" column="Id">
+            <generator class="identity" />
+        </id>
+        <property name="subject"        type="java.lang.String" 
+                  column="Subject"      not-null="true" />
+        <property name="action"     type="java.lang.String" 
+                  column="Action"   not-null="true" />
+        <property name="actor"            type="java.lang.String" 
+                  column="Actor"          not-null="false" />
+        <property name="timestamp"     type="java.util.Date" 
+                  column="Timestamp"   not-null="true" />
+        <property name="expiry"     type="java.util.Date" 
+                  column="Expiry"   not-null="false" />
 
-<div class="middle">
-
-<h2>This is the admin home</h2>
-
-<p>
-From here you can:
-<ul>
-    <li><a href="viewScheduler.htm">Inspect the Scheduler</a></li>
-    <li><a href="systemEvents/search.htm">Inspect the System Event log</a></li>
-    <li><a href="users/list.htm">Maintain Users</a></li>
-    <li><a href="errors/list.htm">View Error Log</a></li>
-    <li><a href="exclusions/list.htm">View Excluded Events</a></li>
+    </class>
     
-</ul>
-</p>
-
-</div>
-
-
-<%@ include file="/WEB-INF/jsp/bottom.jsp"%>
+</hibernate-mapping>
