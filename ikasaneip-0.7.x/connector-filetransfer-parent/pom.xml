@@ -166,13 +166,6 @@
       <version>1.2.14</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Used for bean factory configuration -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>2.5.5</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- TODO - This is provided by the base connector, we should not declare it here? -->
     <!-- TODO remove dependency on JBoss/Arjuna? Used for txns -->
     <dependency>

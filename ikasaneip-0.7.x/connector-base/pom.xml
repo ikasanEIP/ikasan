@@ -252,13 +252,6 @@
       <version>1.2.14</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Used for hierarchy of connector configuration -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>2.5.5</version>
-      <scope>provided</scope>
-    </dependency>
     
     <!-- TODO Investigate wrapping this one day, used to interact with LastResourceCommit -->
     <dependency>

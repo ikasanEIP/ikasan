@@ -254,13 +254,6 @@
       <version>1.2.14</version>
       <scope>provided</scope>
     </dependency>
-    <!-- -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>2.5.5</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- Used for ToStringBuilder and more -->
     <dependency>
       <groupId>commons-lang</groupId>
