@@ -31,11 +31,10 @@ import java.io.InputStream;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
-import org.ikasan.connector.base.outbound.EISConnectionImpl;
-
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
+import org.ikasan.connector.base.outbound.EISConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand;
 import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzipNotSupportedException;
@@ -47,6 +46,7 @@ import org.ikasan.connector.basefiletransfer.outbound.command.util.UnzippingFile
  */
 public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
 {
+
     /**
      * Constructor which takes ManagedConnection as a parameter
      * 
@@ -109,4 +109,6 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
      */
     protected abstract ExecutionOutput executeCommand(TransactionalResourceCommand deliveryCommand,
             ExecutionContext executionContext) throws ResourceException;
+    
+
 }

@@ -87,7 +87,7 @@ public class CleanupChunksCommand extends AbstractBaseFileTransferTransactionalR
     protected void doCommit() throws ResourceException
     {
         logger.info("commit called on this command:" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$);
-        FileChunkDao fileChunkDao = (FileChunkDao) getBeanFactory().getBean("fileChunkDao");
+        FileChunkDao fileChunkDao = (FileChunkDao) getBeanFactory().get("fileChunkDao");
 
         if (fileChunkHeader == null)
         {

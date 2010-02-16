@@ -44,8 +44,6 @@ import org.ikasan.common.component.Format;
 import org.ikasan.common.component.Spec;
 import org.ikasan.common.util.checksum.ChecksumSupplier;
 import org.ikasan.common.util.checksum.Md5ChecksumSupplier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import org.ikasan.connector.ConnectorException;
 import org.ikasan.connector.ResourceLoader;
@@ -53,6 +51,7 @@ import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
+import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnection;
@@ -96,9 +95,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
     /** The logger instance. */
     private static Logger logger = Logger.getLogger(SFTPConnectionImpl.class);
     
-    /** The application context */
-    private static Map<String, ApplicationContext> contextMap = new HashMap<String, ApplicationContext>();
-
+ 
     /**
      * Id for Client of this connector
      */
@@ -230,7 +227,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         logger.debug("Source = [" + sourceDir+ "] moveOnSuccess = [" + moveOnSuccess + "] and archive dir = [" + moveOnSuccessNewPath + "].");
         executionContext.put(ExecutionContext.CLIENT_ID, clientId);
 
-        BaseFileTransferDao baseFileTransferDao = (BaseFileTransferDao) getContext().getBean("baseFileTransferDao");
+        BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
 
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern,
             baseFileTransferDao, minAge, filterDuplicates, filterOnFilename, filterOnLastModifiedDate);
@@ -292,7 +289,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
             {
                 throw new ConnectorException("Could not get pk from deserialized payload content"); //$NON-NLS-1$
             }
-            FileChunkDao fileChunkDao = (FileChunkDao) getContext().getBean("fileChunkDao");
+            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
 
             FileChunkHeader fileChunkHeader;
             try
@@ -349,8 +346,12 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
             {
                 logger.debug("about to cleanup file chunks"); //$NON-NLS-1$
                 executionContext.put(ExecutionContext.FILE_CHUNK_HEADER, reconstitutedFileChunkHeader);
+                
+                Map<String, Object> beanFactory = new HashMap<String, Object>();
+                beanFactory.put("fileChunkDao", fileChunkDao);
+                
                 CleanupChunksCommand cleanupChunksCommand = new CleanupChunksCommand();
-                cleanupChunksCommand.setBeanFactory(getContext());
+                cleanupChunksCommand.setBeanFactory(beanFactory);
 
                 executeCommand(cleanupChunksCommand, executionContext);
                 // executeForResult(executionContext, "cleanupChunksCommand");
@@ -410,7 +411,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
     {
         try
         {
-            BaseFileTransferDao baseFileTransferDao = (BaseFileTransferDao) getContext().getBean("baseFileTransferDao"); 
+            BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
             baseFileTransferDao.housekeep(clientId, ageOfFiles, maxRows);
         }
         catch (Exception e)
@@ -508,7 +509,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
         if (chunking && shouldChunk(entry))
         {
-            FileChunkDao fileChunkDao = (FileChunkDao) getContext().getBean("fileChunkDao");
+            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
 
             // chunking specific
             logger.debug("About to call ChunkingRetrieveFileCommand"); //$NON-NLS-1$
@@ -606,19 +607,5 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
         return (this.getManagedConnection().executeCommand(command));
     }
 
-    /**
-     * Returns a singleton Spring ApplicationContext per clientId
-     * 
-     * @return ApplicationContext
-     */
-    private ApplicationContext getContext()
-    {
-        if (contextMap.get(clientId) == null)
-        {
-            ApplicationContext applicationContext = new ClassPathXmlApplicationContext("base-config.xml");
-            logger.debug("config parsed."); //$NON-NLS-1$
-            contextMap.put(clientId, applicationContext);
-        }
-        return contextMap.get(clientId);
-    }
+
 }

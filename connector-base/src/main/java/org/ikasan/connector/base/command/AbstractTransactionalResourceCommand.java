@@ -28,13 +28,13 @@ package org.ikasan.connector.base.command;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.BeanFactory;
-
 import org.ikasan.connector.base.command.state.State;
 import org.ikasan.connector.base.command.state.StateManager;
 import org.ikasan.connector.base.command.state.Transition;
@@ -58,7 +58,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      * resources To be able to resolve resources, this must be set following
      * explicit creation, and reloading from Hibernate
      */
-    private BeanFactory beanFactory;
+    private Map<String, Object> beanFactory = new HashMap<String,Object>();
 
     /**
      * Reference to the underlying resource or system of which we are providing
@@ -351,7 +351,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      * 
      * @param beanFactory
      */
-    public void setBeanFactory(BeanFactory beanFactory)
+    public void setBeanFactory(Map<String,Object> beanFactory)
     {
         this.beanFactory = beanFactory;
     }
@@ -361,7 +361,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      * 
      * @return beanFactory
      */
-    protected BeanFactory getBeanFactory()
+    protected Map<String, Object> getBeanFactory()
     {
         return beanFactory;
     }

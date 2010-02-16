@@ -26,10 +26,10 @@
  */
 package org.ikasan.connector.base.command;
 
+import java.util.Map;
+
 import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
-
-import org.springframework.beans.factory.BeanFactory;
 
 import org.ikasan.connector.base.journal.TransactionJournal;
 
@@ -90,7 +90,7 @@ public interface TransactionalResourceCommand
     /**
      * @param beanFactory
      */
-    public void setBeanFactory(BeanFactory beanFactory);
+    public void setBeanFactory(Map<String, Object> beanFactory);
 
     /**
      * Allows the allows TransactionalResource to be set 
