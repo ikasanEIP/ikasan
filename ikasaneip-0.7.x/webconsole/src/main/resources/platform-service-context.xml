@@ -106,6 +106,9 @@
 	<bean id="wiretapDao"
 		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
 		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+		
+		<constructor-arg value="true"/>
+        <constructor-arg value="100"/>
 	</bean>
 
 	<bean id="triggerDao"
