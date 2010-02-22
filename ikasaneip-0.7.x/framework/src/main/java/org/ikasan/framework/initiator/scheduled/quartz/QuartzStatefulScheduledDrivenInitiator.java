@@ -37,26 +37,28 @@ import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
+import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorOperationException;
+import org.ikasan.framework.monitor.MonitorSubject;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Quartz implementation of an Ikasan Schedule Driven Initiator.
  * 
  * @author Ikasan Development Team
  */
-public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDrivenInitiator implements QuartzSchedulerInitiator
+public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator implements QuartzDrivenInitiator, MonitorSubject
 {
     private static final String INITIATOR_JOB_NAME = "initiatorJob";
 
     public static final String QUARTZ_SCHEDULE_DRIVEN_INITIATOR_TYPE = "QuartzScheduleDrivenInitiator";
 
+    public static final String REINVOKE_IMMEDIATELY_FLAG = "invokeAgainImmediately";
     /** Logger */
     private static Logger logger = Logger.getLogger(QuartzStatefulScheduledDrivenInitiator.class);
 
@@ -72,11 +74,14 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     private List<Trigger> triggers;
     
     private JobDetail jobDetail;
+
+	private IkasanExceptionHandler exceptionHandler;
+	
+	/** Allow Reinvoke Immediately flag to be set, when 1 or more Events is encountered, without error	 */
+	private boolean allowImmediateReinvocationOnEvent = false;
     
 
-
-
-    /**
+	/**
      * Constructor.
      * 
      * @param initiatorName The name of the initiator
@@ -88,8 +93,10 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     public QuartzStatefulScheduledDrivenInitiator(String initiatorName, String moduleName, EventProvider eventProvider, Flow flow,
             IkasanExceptionHandler exceptionHandler)
     {
-        super(initiatorName, moduleName, flow, exceptionHandler);
+        super(moduleName, initiatorName, flow);
         this.eventProvider = eventProvider;
+        this.exceptionHandler = exceptionHandler;
+        notifyMonitorListeners();
         
         
     }
@@ -106,50 +113,33 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         
     }
 
-    /**
-     * Internal method for getting payloads, creating the event and invoking the flow.
-     */
-    @Override
-    protected void invokeFlow()
-    {
-        // invoke flow
-        try
-        {
-            List<Event> events = this.eventProvider.getEvents();
-            if (events == null || events.size() == 0)
-            {
-                this.handleAction(null);
-                return;
-            }
-            // Within the event handling we need to accommodate for a
-            // single event outcome action; and for batched events outcome
-            // action.
-            // The batched events have multiple potential outcome actions,
-            // therefore, we need to use the highest precedent outcome action.
-            IkasanExceptionAction precedentAction = null;
-            for (Event event : events)
-            {
-                IkasanExceptionAction action = this.getFlow().invoke(event);
-                if (action != null)
-                {
-                    if (precedentAction == null || action.getType().isHigherPrecedence(precedentAction.getType()))
-                    {
-                        precedentAction = action;
-                        if (precedentAction.getType().isRollback())
-                        {
-                            // if rollback then we may as well get out now
-                            break;
-                        }
-                    }
-                }
-            }
-            this.handleAction(precedentAction);
-        }
-        catch (ResourceException e)
-        {
-            this.handleAction(this.getExceptionHandler().invoke(this.getName(), e));
-        }
-    }
+
+
+	private void invokeFlow(List<Event> events) {
+		// Within the event handling we need to accommodate for a
+		// single event outcome action; and for batched events outcome
+		// action.
+		// The batched events have multiple potential outcome actions,
+		// therefore, we need to use the highest precedent outcome action.
+		IkasanExceptionAction precedentAction = null;
+		for (Event event : events)
+		{
+		    IkasanExceptionAction action = this.getFlow().invoke(event);
+		    if (action != null)
+		    {
+		        if (precedentAction == null || action.getType().isHigherPrecedence(precedentAction.getType()))
+		        {
+		            precedentAction = action;
+		            if (precedentAction.getType().isRollback())
+		            {
+		                // if rollback then we may as well get out now
+		                break;
+		            }
+		        }
+		    }
+		}
+		this.handleAction(precedentAction);
+	}
 
     @Override
     protected void startRetryCycle(Integer maxAttempts, long delay) throws InitiatorOperationException
@@ -445,5 +435,66 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     {
         this.triggers = triggers;
     }
+    
+    /**
+     * Standard invocation of an initiator.
+     * @param mergedJobDataMap 
+     */
+    public void invoke(JobDataMap mergedJobDataMap)
+    {
+    	mergedJobDataMap.put(REINVOKE_IMMEDIATELY_FLAG, Boolean.FALSE);
+        if (stopping)
+        {
+            logger.warn("Attempt to invoke an initiator in a stopped state.");
+            return;
+        }
+        
+        // invoke flow all the time we have event activity
+        // invoke flow
+        try
+        {
+            List<Event> events = this.eventProvider.getEvents();
+            if (events == null || events.size() == 0)
+            {
+                this.handleAction(null);
+                return;
+            }
+            invokeFlow(events);
+            if (allowImmediateReinvocationOnEvent){
+            	mergedJobDataMap.put(REINVOKE_IMMEDIATELY_FLAG, Boolean.TRUE);
+            }
+        }
+        catch (ResourceException e)
+        {
+            this.handleAction(this.getExceptionHandler().invoke(this.getName(), e));
+        }
+    }
+    
+    /**
+     * Return the exception handler for this initiator
+     * 
+     * @return exceptionHandler
+     */
+    protected IkasanExceptionHandler getExceptionHandler()
+    {
+        return this.exceptionHandler;
+    }
+    
+    /**
+     * Accessor for allowImmediateReinvocationOnEvent
+     * @return allowImmediateReinvocationOnEvent
+     */
+    public boolean isAllowImmediateReinvocationOnEvent() {
+		return allowImmediateReinvocationOnEvent;
+	}
+
+	/**
+	 * Setter for allowImmediateReinvocationOnEventS
+	 * @param allowImmediateReinvocationOnEvent
+	 */
+	public void setAllowImmediateReinvocationOnEvent(
+			boolean allowImmediateReinvocationOnEvent) {
+		this.allowImmediateReinvocationOnEvent = allowImmediateReinvocationOnEvent;
+	}
 
 }
