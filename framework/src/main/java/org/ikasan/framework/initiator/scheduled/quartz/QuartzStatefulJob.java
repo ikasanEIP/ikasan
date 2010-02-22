@@ -26,11 +26,12 @@
  */
 package org.ikasan.framework.initiator.scheduled.quartz;
 
+import org.apache.log4j.Logger;
 import org.ikasan.framework.initiator.AbortTransactionException;
-import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
-import org.ikasan.framework.initiator.InvocationDrivenInitiator;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.StatefulJob;
+
 
 /**
  * Quartz stateful job implementation. This is implemented as a 'Stateful' Quartz job to ensure only single
@@ -41,14 +42,16 @@ import org.quartz.StatefulJob;
 public class QuartzStatefulJob implements StatefulJob
 {
     /** Must have a handle on to the initiator we will invoke */
-    private InvocationDrivenInitiator initiator;
+    private QuartzDrivenInitiator initiator;
+    
+    private static Logger logger = Logger.getLogger(QuartzStatefulJob.class); 
 
     /**
      * Constructor
      * 
      * @param initiator The initiator
      */
-    public QuartzStatefulJob(InvocationDrivenInitiator initiator)
+    public QuartzStatefulJob(QuartzDrivenInitiator initiator)
     {
         this.initiator = initiator;
     }
@@ -61,14 +64,34 @@ public class QuartzStatefulJob implements StatefulJob
     public void execute(JobExecutionContext ctx)
     {
         // Invoke the initiator
-        try
+    	JobDataMap mergedJobDataMap = ctx.getMergedJobDataMap();
+    	
+    	boolean problemsEncountered = false;
+    	
+    	
+    	//initial invocation
+    	problemsEncountered = invokeInitiator(mergedJobDataMap);
+        
+        while(!problemsEncountered && Boolean.TRUE.equals(mergedJobDataMap.get(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG))){
+        	//repeat invocations
+        	logger.info("reinvoking initiator immediately");
+        	problemsEncountered = invokeInitiator(mergedJobDataMap);
+        }
+        
+    }
+
+	private boolean invokeInitiator(JobDataMap mergedJobDataMap) {
+		boolean transactionAborted = false;
+		try
         {
-            this.initiator.invoke();
+            this.initiator.invoke(mergedJobDataMap);
         }
         catch (AbortTransactionException e)
         {
             // These exceptions can be ignored as they have already
             // been dealt with by the Transaction Manager proxy class
+        	transactionAborted = true;
         }
-    }
+        return transactionAborted;
+	}
 }

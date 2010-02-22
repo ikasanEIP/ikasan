@@ -85,6 +85,7 @@
 	    </list>
      </property>
     <property name="scheduler" ref="channelAdapterFlowScheduler"/>
+    <property name="allowImmediateReinvocationOnEvent" value="true"/>
     </bean>
 
   <bean id="channelAdapterFlowScheduler"
@@ -98,10 +99,10 @@
      <constructor-arg ref="channelAdapterFlowInitiator"/>
   </bean>
   
-    <!-- transaction configuration for InvocationDrivenInitiators -->
+    <!-- transaction configuration for QuartzDrivenInitiators -->
     <aop:config>
-        <aop:pointcut id="initiatorInvocation" expression="execution(* org.ikasan.framework.initiator.InvocationDrivenInitiator.invoke(..))" />
-        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="initiatorInvocation" />
+        <aop:pointcut id="quartzInitiatorInvocation" expression="execution(* org.ikasan.framework.initiator.scheduled.quartz.QuartzDrivenInitiator.invoke(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="quartzInitiatorInvocation" />
     </aop:config>
 
 </beans>
