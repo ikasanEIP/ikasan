@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
-    <version>0.7.9-SNAPSHOT</version>
+    <version>0.7.9-cp1</version>
     <packaging>pom</packaging>
 
     <name>Ikasan Projects Parent Project</name>
