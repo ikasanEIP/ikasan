@@ -1,0 +1,2 @@
+hibernate.dialect=org.hibernate.dialect.SybaseDialect
+hibernate.jdbc.use_get_generated_keys=false
