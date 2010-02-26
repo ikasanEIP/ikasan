@@ -37,7 +37,7 @@
     -->
     <groupId>org.ikasan.demo</groupId>
 	<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
-	<version>0.7.9-SNAPSHOT</version>
+	<version>0.7.9-cp2</version>
     <packaging>jar</packaging>
 	
 

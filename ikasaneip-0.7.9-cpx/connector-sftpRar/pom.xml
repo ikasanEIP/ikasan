@@ -32,10 +32,10 @@
   	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-connector-filetransfer-parent</artifactId>
-		<version>0.7.9-SNAPSHOT</version>
+		<version>0.7.9-cp2</version>
 	</parent>
   <artifactId>ikasan-connector-sftpRar</artifactId>
-  <version>0.7.9-SNAPSHOT</version>  
+  <version>0.7.9-cp2</version>  
   <packaging>rar</packaging>
 
   <name>Connector SFTP Resource Adapter</name>

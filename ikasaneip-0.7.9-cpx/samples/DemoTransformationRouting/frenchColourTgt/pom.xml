@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-frenchColourTgt-jar</artifactId>
-	<version>0.7.9-SNAPSHOT</version>
+	<version>0.7.9-cp2</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: frenchColourTgt : jar</name>
 

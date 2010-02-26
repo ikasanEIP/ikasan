@@ -3,7 +3,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>console</artifactId>
     <packaging>war</packaging>
-    <version>0.7.9-SNAPSHOT</version>
+    <version>0.7.9-cp2</version>
     <name>Ikasan Console</name>
     <organization>
         <name>Ikasan</name>
@@ -208,12 +208,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.7.9-SNAPSHOT</version>
+            <version>0.7.9-cp2</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.7.9-SNAPSHOT</version>
+            <version>0.7.9-cp2</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
