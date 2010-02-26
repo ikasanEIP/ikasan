@@ -119,6 +119,9 @@ public class IkasanExceptionHandlerImpl implements IkasanExceptionHandler
      */
     public IkasanExceptionAction invoke(final String componentName, Event event, Throwable thrown)
     {
+        // always log the stack trace so we can see the full cause of the exception
+        logger.info("Handling exception ", thrown);
+        
         IkasanExceptionResolution frameworkResolution = null;
         try
         {
