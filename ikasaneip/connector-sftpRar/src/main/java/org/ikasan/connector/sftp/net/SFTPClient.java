@@ -468,6 +468,9 @@ public class SFTPClient implements FileTransferClient
     /**
      * Method that handles the <code>channel</code> and <code>session</code>
      * disconnection.
+     * 
+     * channelSftp.exit() and channelSftp.quit() call channelSftp.disconnect()
+     * so we're OK there.
      */
     public void disconnect()
     {
