@@ -6,6 +6,5 @@
 $(document).ready(
 		function()
 		{
-			
 			$('#authorities tr:even').addClass('alt');
 		});

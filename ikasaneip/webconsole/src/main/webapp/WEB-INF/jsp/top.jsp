@@ -52,7 +52,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>" media="screen" />
-<script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/js/jquery-1.4.2.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
 </head>
 <body>
