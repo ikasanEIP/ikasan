@@ -53,7 +53,7 @@
     <link type="text/css" href="<c:url value='/css/global.css'/>" media="screen" rel="stylesheet" />
     <link type="text/css" href="<c:url value='/css/jquery/redmond/jquery-ui-1.7.2.custom.css'/>" rel="stylesheet" />
     <link type="text/css" href="<c:url value='/css/jquery.hovertip-1.0.css'/>" rel="stylesheet" />
-    <script type="text/javascript" src="<c:url value='/js/jquery-1.3.2.min.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/js/jquery-1.4.2.min.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/jquery.hovertip-1.0.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/jquery.simpleautogrow.js'/>"></script>
     <script type="text/javascript" src="<c:url value='/js/ikasan.js'/>"></script>
