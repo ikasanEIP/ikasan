@@ -41,7 +41,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.springframework.ui.ModelMap;
 
@@ -54,7 +53,6 @@ import org.springframework.ui.ModelMap;
 public class MasterDetailControllerUtil
 {
 	
-	private static Logger logger = Logger.getLogger(MasterDetailControllerUtil.class);
     /**
      * Adds a parameter to the searchParams map, only if it has a value
      * 

@@ -76,6 +76,7 @@ CREATE TABLE Users(
     Id       NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     Username VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(50) NOT NULL,
+    Email    VARCHAR(255),
     Enabled  BIT NOT NULL
 )
 GO

@@ -48,12 +48,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.security.userdetails.UserDetailsManager;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 
-
 /**
  * User and Authority service interface
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
 public interface UserService extends UserDetailsManager
 {
@@ -71,8 +70,9 @@ public interface UserService extends UserDetailsManager
      */
     public List<Authority> getAuthorities();
 
-    
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
      */
     public User loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException;
@@ -85,7 +85,7 @@ public interface UserService extends UserDetailsManager
      * @throws IllegalArgumentException - if the user already has the authority
      */
     public void grantAuthority(String username, String authority);
- 
+
     /**
      * Attempts to revoke an authority from a user
      * 
@@ -94,11 +94,9 @@ public interface UserService extends UserDetailsManager
      * @throws IllegalArgumentException - if the user does not hold the authority
      */
     public void revokeAuthority(String username, String authority);
-    
-    
-    
+
     /**
-     * Allows a specified user's password. 
+     * Allows a specified user's password.
      * 
      * Note that this should be an administrator function
      * 
@@ -106,8 +104,7 @@ public interface UserService extends UserDetailsManager
      * @param newPassword as plain text
      */
     public void changeUsersPassword(String username, String newPassword);
-    
-    
+
     /**
      * Disables the specified user
      * 
@@ -115,7 +112,7 @@ public interface UserService extends UserDetailsManager
      * @throws IllegalArgumentException - if the specified user does not exist
      */
     public void disableUser(String username);
-    
+
     /**
      * Enables the specified user
      * 
@@ -123,7 +120,7 @@ public interface UserService extends UserDetailsManager
      * @throws IllegalArgumentException - if the specified user does not exist
      */
     public void enableUser(String username);
-    
+
     /**
      * Creates a new Authority on the system
      * 

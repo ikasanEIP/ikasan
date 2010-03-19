@@ -84,6 +84,14 @@
                         </tr>
                         <tr>
                             <td class="searchCell formLabel">
+                                <fmt:message key="create_user_email" />
+                            </td>
+                            <td class="searchCell">
+                                <input class="inputText" id="email" type="text" name="email" value="" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="searchCell formLabel">
                                 <fmt:message key="create_user_enabled" />
                             </td>
                             <td class="searchCell">

@@ -43,8 +43,6 @@ package org.ikasan.framework.security.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.ikasan.framework.security.dao.AuthorityDao;
 import org.ikasan.framework.security.dao.UserDao;
 import org.ikasan.framework.security.model.Authority;
@@ -57,9 +55,10 @@ import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.security.userdetails.UserDetails;
 
 /**
+ * Unit Test class for testing the org.ikasan.framework.security.service.UserServiceImpl
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
 public class UserServiceImplTest
 {
@@ -73,14 +72,21 @@ public class UserServiceImplTest
         }
     };
 
+    /** Mock User Dao to test with */
     UserDao userDao = mockery.mock(UserDao.class);
 
+    /** Mock Authority Dao to test with */
     AuthorityDao authorityDao = mockery.mock(AuthorityDao.class);
 
+    /** Mock Password Encoder to test with */
     PasswordEncoder passwordEncoder = mockery.mock(PasswordEncoder.class);
 
+    /** User Service Impl that we are testing */
     private UserServiceImpl userServiceImpl = new UserServiceImpl(userDao, authorityDao, passwordEncoder);
 
+    /**
+     * Test that granting an authority to a User works
+     */
     @Test
     public void testGrantAuthority()
     {
@@ -103,6 +109,9 @@ public class UserServiceImplTest
         mockery.assertIsSatisfied();
     }
 
+    /**
+     * Test that revoking an authority from a User works
+     */
     @Test
     public void testRevokeAuthority()
     {
@@ -125,6 +134,9 @@ public class UserServiceImplTest
         mockery.assertIsSatisfied();
     }
 
+    /**
+     * Test that changing a User's password works
+     */
     @Test
     public void testChangePassword()
     {
@@ -147,151 +159,164 @@ public class UserServiceImplTest
         mockery.assertIsSatisfied();
     }
 
+    /**
+     * Test that when providing valid credentials a valid user is created
+     */
     @Test
     public void createUser_withValidCredentialsWillCreateUser()
     {
         final String username = "username";
         final String password = "password";
+        final String email = "email";
         final String encodedPassword = "encodedPassword";
         final boolean enabled = true;
         final User existingUser = null;
-        final UserDetails userDetails = mockery.mock(UserDetails.class);
-        expectCreateUserWillExtractCredentials(username, password, enabled, userDetails);
+        final UserDetails userDetails = mockery.mock(User.class);
+        expectCreateUserWillExtractCredentials(username, password, email, enabled, userDetails);
         expectsDaoGetUser(username, existingUser);
-        expectCreateUserWillCreateUser(username, password, encodedPassword, enabled);
+        expectCreateUserWillCreateUser(username, password, encodedPassword, email, enabled);
+        userServiceImpl.createUser(userDetails);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test that when given a null user name, createUser throws an IllegalArgumentException
+     * exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void createUser_withNullUsernameWillThrowException()
+    {
+        String password = "password";
+        String email = "email";
+        boolean enabled = true;
+        UserDetails userDetails = mockery.mock(User.class);
+        expectCreateUserWillExtractCredentials(null, password, email, enabled, userDetails);
+        userServiceImpl.createUser(userDetails);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test that when given an empty user name, createUser throws an IllegalArgumentException
+     * exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void createUser_withEmpyUsernameWillThrowException()
+    {
+        String password = "password";
+        String email = "email";
+        boolean enabled = true;
+        UserDetails userDetails = mockery.mock(User.class);
+        expectCreateUserWillExtractCredentials("", password, email, enabled, userDetails);
         userServiceImpl.createUser(userDetails);
         mockery.assertIsSatisfied();
     }
     
-    
-    @Test
-    public void createUser_withNullOrEmptyUsernameWillThrowException()
+    /**
+     * Test that when given a null password, createUser throws an IllegalArgumentException
+     * exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void createUser_withNullPasswordWillThrowException()
     {
+        String username = "username";
+        String email = "email";
+        boolean enabled = true;
+        UserDetails userDetails = mockery.mock(User.class);
+        expectCreateUserWillExtractCredentials(username, null, email, enabled, userDetails);
+        userServiceImpl.createUser(userDetails);
+        mockery.assertIsSatisfied();
+    }
 
+    /**
+     * Test that when given an empty password, createUser throws an IllegalArgumentException
+     * exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void createUser_withEmptyPasswordWillThrowException()
+    {
+        String username = "username";
+        String email = "email";
+        boolean enabled = true;
+        UserDetails userDetails = mockery.mock(User.class);
+        expectCreateUserWillExtractCredentials(username, "", email, enabled, userDetails);
+        userServiceImpl.createUser(userDetails);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test that when given a null email address, createUser throws an IllegalArgumentException
+     * exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void createUser_withNullEmailWillThrowException()
+    {
+        String username = "username";
         String password = "password";
         boolean enabled = true;
-
-        UserDetails userDetails = mockery.mock(UserDetails.class);
-        
-        
-        //check null username throws exception
-        expectCreateUserWillExtractCredentials(null, password, enabled, userDetails);
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.createUser(userDetails);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for null username",illegalArgumentException);
+        UserDetails userDetails = mockery.mock(User.class);
+        // check null password throws exception
+        expectCreateUserWillExtractCredentials(username, password, null, enabled, userDetails);
+        userServiceImpl.createUser(userDetails);
         mockery.assertIsSatisfied();
-        
-        //check empty username throws exception
-        expectCreateUserWillExtractCredentials("", password, enabled, userDetails);
-        illegalArgumentException = null;
-        try{
-            userServiceImpl.createUser(userDetails);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for empty username",illegalArgumentException);
-        mockery.assertIsSatisfied();        
-        
+    }
+
+    /**
+     * Test that when given an empty email address, createUser throws an IllegalArgumentException
+     * exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void createUser_withEmptyEmailWillThrowException()
+    {
+        String username = "username";
+        String password = "password";
+        boolean enabled = true;
+        UserDetails userDetails = mockery.mock(User.class);
+        expectCreateUserWillExtractCredentials(username, password, "", enabled, userDetails);
+        userServiceImpl.createUser(userDetails);
+        mockery.assertIsSatisfied();
     }
     
-    @Test
-    public void createUser_withNullOrEmptyPasswordWillThrowException()
-    {
-
-        String username = "username";
-        boolean enabled = true;
-
-        UserDetails userDetails = mockery.mock(UserDetails.class);
-        
-        
-        //check null password throws exception
-        expectCreateUserWillExtractCredentials(username, null, enabled, userDetails);
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.createUser(userDetails);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for null password",illegalArgumentException);
-        mockery.assertIsSatisfied();
-        
-        //check empty password throws exception
-        expectCreateUserWillExtractCredentials(username, "", enabled, userDetails);
-        illegalArgumentException = null;
-        try{
-            userServiceImpl.createUser(userDetails);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for empty password",illegalArgumentException);
-        mockery.assertIsSatisfied();        
-        
-    }
-
-    @Test
+    /**
+     * Test that trying to create a user with a username that already exists
+     * throws an IllegalArgumentException
+     */
+    @Test(expected=IllegalArgumentException.class)
     public void createUser_withExistingUsernameWillThrowException()
     {
-
         String password = "password";
         String username = "username";
+        String email = "email";
         boolean enabled = true;
-
-        UserDetails userDetails = mockery.mock(UserDetails.class);
-        
-        
-        //check existing username throws exception
+        UserDetails userDetails = mockery.mock(User.class);
+        // check existing username throws exception
         final User existingUser = mockery.mock(User.class);
-        expectCreateUserWillExtractCredentials(username, password, enabled, userDetails);
+        expectCreateUserWillExtractCredentials(username, password, email, enabled, userDetails);
         expectsDaoGetUser(username, existingUser);
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.createUser(userDetails);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for existing username",illegalArgumentException);
+        userServiceImpl.createUser(userDetails);
         mockery.assertIsSatisfied();
-        
-        
-        
     }
-    
-    @Test
+
+    /**
+     * Test that when deleting an unknown user an IllegalArgumentException 
+     * is thrown 
+     */
+    @Test(expected=IllegalArgumentException.class)
     public void deleteUser_withUnknownUsernameWillThrowException()
     {
-
         String username = "username";
         expectsDaoGetUser(username, null);
-        
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.deleteUser(username);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for unknown username",illegalArgumentException);
-        mockery.assertIsSatisfied();        
-        
+        userServiceImpl.deleteUser(username);
+        mockery.assertIsSatisfied();
     }
-    
+
+    /**
+     * Test that disabling a user works
+     */
     @Test
     public void disableUser()
     {
-
         String username = "username";
-        
         final User existingUser = mockery.mock(User.class);
-        
         expectsDaoGetUser(username, existingUser);
         mockery.checking(new Expectations()
         {
@@ -300,43 +325,31 @@ public class UserServiceImplTest
                 one(userDao).save(existingUser);
             }
         });
-        
-
         userServiceImpl.disableUser(username);
-
-        mockery.assertIsSatisfied();        
-        
+        mockery.assertIsSatisfied();
     }
-    
 
-    @Test
+    /**
+     * Test that when trying to disable an unknown user an
+     * IllegalArgumentException is thrown 
+     */
+    @Test(expected=IllegalArgumentException.class)
     public void disableUser_withUnknownUsernameWillThrowException()
     {
-
         String username = "username";
         expectsDaoGetUser(username, null);
-        
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.disableUser(username);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for unknown username",illegalArgumentException);
-        mockery.assertIsSatisfied();        
-        
+        userServiceImpl.disableUser(username);
+        mockery.assertIsSatisfied();
     }
-    
-    
+
+    /**
+     * Test that enableUser works 
+     */
     @Test
     public void enableUser()
     {
-
         String username = "username";
-        
         final User existingUser = mockery.mock(User.class);
-        
         expectsDaoGetUser(username, existingUser);
         mockery.checking(new Expectations()
         {
@@ -345,45 +358,31 @@ public class UserServiceImplTest
                 one(userDao).save(existingUser);
             }
         });
-        
-
         userServiceImpl.enableUser(username);
-
-        mockery.assertIsSatisfied();        
-        
+        mockery.assertIsSatisfied();
     }
-    
 
-    @Test
+    /**
+     * Test that calling enableUser with an unknown username throws an 
+     * IllegalArgumentException
+     */
+    @Test(expected=IllegalArgumentException.class)
     public void enableUser_withUnknownUsernameWillThrowException()
     {
-
         String username = "username";
         expectsDaoGetUser(username, null);
-        
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.enableUser(username);
-            Assert.fail("Exception should have been thrown");
-        } catch(IllegalArgumentException caughtException){
-            illegalArgumentException = caughtException;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown for unknown username",illegalArgumentException);
-        mockery.assertIsSatisfied();        
-        
+        userServiceImpl.enableUser(username);
+        mockery.assertIsSatisfied();
     }
-    
-    
-    
-    
+
+    /**
+     * Test that deleteUser() works as expected
+     */
     @Test
     public void deleteUser()
     {
-
         String username = "username";
-        
         final User existingUser = mockery.mock(User.class);
-        
         expectsDaoGetUser(username, existingUser);
         mockery.checking(new Expectations()
         {
@@ -391,67 +390,60 @@ public class UserServiceImplTest
                 one(userDao).delete(existingUser);
             }
         });
-        
-
         userServiceImpl.deleteUser(username);
-
-        mockery.assertIsSatisfied();        
-        
+        mockery.assertIsSatisfied();
     }
-    
+
+    /**
+     * Test that createAuthority() works as expected
+     */
     @Test
     public void createAuthority()
     {
         final Authority newAuthority = new Authority("authority");
         final List<Authority> existingAuthorities = new ArrayList<Authority>();
-        
         mockery.checking(new Expectations()
         {
             {
-                one(authorityDao).getAuthorities();will(returnValue(existingAuthorities));
+                one(authorityDao).getAuthorities();
+                will(returnValue(existingAuthorities));
                 one(authorityDao).save(newAuthority);
             }
         });
-        
         userServiceImpl.createAuthority(newAuthority);
-
-        mockery.assertIsSatisfied();    
+        mockery.assertIsSatisfied();
     }
-    
-    @Test
+
+    /**
+     * Test that trying to create an already existing authority throws
+     * an IllegalArgumentException exception 
+     */
+    @Test(expected=IllegalArgumentException.class)
     public void createAuthority_withExistingAuthorityWillThrowException()
     {
         final Authority existingAuthority = new Authority("authority");
         final List<Authority> existingAuthorities = new ArrayList<Authority>();
         existingAuthorities.add(existingAuthority);
-        
         mockery.checking(new Expectations()
         {
             {
-                one(authorityDao).getAuthorities();will(returnValue(existingAuthorities));
+                one(authorityDao).getAuthorities();
+                will(returnValue(existingAuthorities));
             }
         });
-        
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            userServiceImpl.createAuthority(existingAuthority);
-            Assert.fail("Exception should have been thrown");
-        } catch (IllegalArgumentException iae){
-            illegalArgumentException = iae;
-        }
-        Assert.assertNotNull("IllegalArgumentException should have been thrown if tried to create an existing authority", illegalArgumentException);
-
-        mockery.assertIsSatisfied();    
+        userServiceImpl.createAuthority(existingAuthority);
+        mockery.assertIsSatisfied();
     }
 
-    private void expectCreateUserWillCreateUser(final String username, final String password, final String encodedPassword, final boolean enabled)
+    private void expectCreateUserWillCreateUser(final String username, final String password,
+            final String encodedPassword, final String email, final boolean enabled)
     {
         mockery.checking(new Expectations()
         {
             {
                 one(passwordEncoder).encodePassword(password, null);
                 will(returnValue(encodedPassword));
-                one(userDao).save(with(equal(new User(username, encodedPassword, enabled))));
+                one(userDao).save(with(equal(new User(username, encodedPassword, email, enabled))));
             }
         });
     }
@@ -467,7 +459,8 @@ public class UserServiceImplTest
         });
     }
 
-    private void expectCreateUserWillExtractCredentials(final String username, final String password, final boolean enabled, final UserDetails userDetails)
+    private void expectCreateUserWillExtractCredentials(final String username, final String password,
+            final String email, final boolean enabled, final UserDetails userDetails)
     {
         mockery.checking(new Expectations()
         {
@@ -476,6 +469,8 @@ public class UserServiceImplTest
                 will(returnValue(username));
                 one(userDetails).getPassword();
                 will(returnValue(password));
+                one((User) userDetails).getEmail();
+                will(returnValue(email));
                 one(userDetails).isEnabled();
                 will(returnValue(enabled));
             }
