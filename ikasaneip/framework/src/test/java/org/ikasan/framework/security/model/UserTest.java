@@ -44,73 +44,101 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-
 /**
+ * This is a class for Unit testing the org.ikasan.framework.security.model.User object
  * 
  * @author Ikasan Development Team
- *
  */
 public class UserTest
 {
+    /** An Authority object to test with */
     private Authority anAuthority = new Authority("anAuthority");
+
+    /** Another Authority object to test with */
     private Authority anotherAuthority = new Authority("anotherAuthority");
-    
-    
+
+    /**
+     * Test that the granting an authority to a user works
+     */
     @Test
     public void testGrantAuthority()
     {
-        //create a new user without any granted authorities
-        User user = new User("username", "password", true);
-        Assert.assertEquals("User should have no grantedAuthorities when created",0,user.getAuthorities().length);
-        
-        //grant an authority that the user does not already have
-        user.grantAuthority(anAuthority);
-        Assert.assertEquals("User should have exactly 1 grantedAuthorities",1,user.getAuthorities().length);        
-        Assert.assertEquals("granted authority should be that set", anAuthority, user.getAuthorities()[0]);
-        
-        //test that granting the same authority again throws an exception
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            user.grantAuthority(anAuthority);
-            Assert.fail("Exception should have been thrown for granting an authority to a user that they already hold");
-        } catch(IllegalArgumentException illegalArgumentException2){
-            illegalArgumentException = illegalArgumentException2;
-        }
-        Assert.assertNotNull("Thrown exception should have been IllegalArgumentException", illegalArgumentException);
- 
-        //grant another authority that the user does not already have
-        user.grantAuthority(anotherAuthority);
-        Assert.assertEquals("User should have exactly 2 grantedAuthorities",2,user.getAuthorities().length);        
-        Assert.assertEquals("granted authority should be that set", anotherAuthority, user.getAuthorities()[1]);
+        // Create a new user without any granted authorities
+        User user = new User("username", "password", "email", true);
+        Assert.assertEquals("User should have no grantedAuthorities when created", 0, user.getAuthorities().length);
 
+        // Grant an authority that the user does not already have
+        user.grantAuthority(anAuthority);
+        Assert.assertEquals("User should have exactly 1 grantedAuthorities", 1, user.getAuthorities().length);
+        Assert.assertEquals("granted authority should be that set", anAuthority, user.getAuthorities()[0]);
     }
 
+    /**
+     * Test that the granting more than one authority to a user works
+     */
+    @Test
+    public void testGrantAuthorities()
+    {
+        // Create a new user without any granted authorities
+        User user = new User("username", "password", "email", true);
+        Assert.assertEquals("User should have no grantedAuthorities when created", 0, user.getAuthorities().length);
+
+        // Grant an authority that the user does not already have
+        user.grantAuthority(anAuthority);
+        Assert.assertEquals("User should have exactly 1 grantedAuthorities", 1, user.getAuthorities().length);
+        Assert.assertEquals("granted authority should be that set", anAuthority, user.getAuthorities()[0]);
+
+        // Grant another authority that the user does not already have
+        user.grantAuthority(anotherAuthority);
+        Assert.assertEquals("User should have exactly 2 grantedAuthorities", 2, user.getAuthorities().length);
+        Assert.assertEquals("granted authority should be that set", anotherAuthority, user.getAuthorities()[1]);
+    }
+    
+    /**
+     * Test that the granting of the same authority to a user more than once 
+     * throws an IllegalArgumentException
+     */
+    @Test(expected=IllegalArgumentException.class) 
+    public void testGrantingSameAuthorityMoreThanOnce()
+    {
+        User user = new User("username", "password", "email", true);
+        user.grantAuthority(anAuthority);
+        user.grantAuthority(anAuthority);
+    }
+    
+    /**
+     * Test that revoking an authority from a user works
+     */
+    @Test
     public void testRevokeAuthority()
     {
-        //create a new user without any granted authorities
-        User user = new User("username", "password", true);
-        Assert.assertEquals("User should have no grantedAuthorities when created",0,user.getAuthorities().length);
-        
-        //test that revoking an authority which the user doesnt hold throws an exception
-        IllegalArgumentException illegalArgumentException = null;
-        try{
-            user.revokeAuthority(anAuthority);
-            Assert.fail("Exception should have been thrown for revoking an authority a user doesnt hold");
-        } catch(IllegalArgumentException illegalArgumentException2){
-            illegalArgumentException = illegalArgumentException2;
-        }
-        Assert.assertNotNull("Thrown exception should have been IllegalArgumentException", illegalArgumentException);
+        // Create a new user without any granted authorities
+        User user = new User("username", "password", "email", true);
+        Assert.assertEquals("User should have no grantedAuthorities when created", 0, user.getAuthorities().length);
 
-        //grant two different authorities to the user
+        // Grant two different authorities to the user
         user.grantAuthority(anAuthority);
         user.grantAuthority(anotherAuthority);
         
-        //test that revoking an authority removes it from the users grantedAuthorities
+        // Test that revoking an authority removes it from the users
+        // grantedAuthorities
         user.revokeAuthority(anAuthority);
-        Assert.assertEquals("User should have exactly 1 grantedAuthorities",1,user.getAuthorities().length);        
-        Assert.assertEquals("only remaining granted authority should be the other one", anotherAuthority, user.getAuthorities()[0]);
-       
-
-        
+        Assert.assertEquals("User should have exactly 1 grantedAuthorities", 1, user.getAuthorities().length);
+        Assert.assertEquals("only remaining granted authority should be the other one", anotherAuthority, user
+            .getAuthorities()[0]);
     }
+    
+    /**
+     * Test that revoking an authority from a user that the user doesn't have throws an 
+     * IllegalArgumentException
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void testRevokeUnownedAuthority()
+    {
+        // Create a new user without any granted authorities
+        User user = new User("username", "password", "email", true);
+        Assert.assertEquals("User should have no grantedAuthorities when created", 0, user.getAuthorities().length);
+        user.revokeAuthority(anAuthority);
+    }
+    
 }

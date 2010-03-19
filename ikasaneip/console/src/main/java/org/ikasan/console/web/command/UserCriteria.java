@@ -41,16 +41,7 @@
 package org.ikasan.console.web.command;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
 import org.ikasan.console.web.controller.MasterDetailControllerUtil;
-import org.ikasan.framework.security.model.User;
 
 /**
  * Command class capturing the User criteria fields
@@ -62,20 +53,27 @@ public class UserCriteria implements Serializable
     /** serialVersionUID */
     private static final long serialVersionUID = 3595514737829632181L;
 
-    /** The logger */
-    private Logger logger = Logger.getLogger(UserCriteria.class);
-
     /** Username */
     private String username;
 
     /** Password */
     private String password;
 
-    /** Constructor */
-    public UserCriteria(String username, String password)
+    /** Email */
+    private String email;
+
+    /** 
+     * Constructor
+     * 
+     * @param username - The username to check
+     * @param password - The password to check
+     * @param email - The email to check
+     */
+    public UserCriteria(String username, String password, String email)
     {
         this.username = MasterDetailControllerUtil.nullForEmpty(username);
         this.password = MasterDetailControllerUtil.nullForEmpty(password);
+        this.email = MasterDetailControllerUtil.nullForEmpty(email);
     }
 
     /**
@@ -108,4 +106,15 @@ public class UserCriteria implements Serializable
         return this.password;
     }
 
+    /**
+     * Get the email
+     * 
+     * @return email
+     */
+    public String getEmail()
+    {
+        return this.email;
+    }
+    
+    
 }

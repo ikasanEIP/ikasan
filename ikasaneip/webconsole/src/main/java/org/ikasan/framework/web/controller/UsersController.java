@@ -105,7 +105,7 @@ public class UsersController
     {
         if (model.get("user") == null)
         {
-            model.addAttribute("user", new User(null, null, true));
+            model.addAttribute("user", new User(null, null, null, true));
         }
         model.addAttribute("users", userService.getUsers());
         return "admin/users/users";
@@ -125,6 +125,8 @@ public class UsersController
         // check that user doesn't already exist, and the password has been supplied
         ValidationUtils.rejectIfEmpty(result, "username", "field.required", "Username cannot be empty");
         ValidationUtils.rejectIfEmpty(result, "password", "field.required", "Password cannot be empty");
+        // TODO Uncomment the line below if we're going to make email mandatory
+        //ValidationUtils.rejectIfEmpty(result, "email", "field.required", "Email Address cannot be empty");
         if (userService.userExists(user.getUsername()))
         {
             result.addError(new FieldError("user", "username", "User with this username already exists"));

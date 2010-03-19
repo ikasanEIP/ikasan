@@ -55,26 +55,24 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
  * Default implementation of the <code>UserService</code>
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
 public class UserServiceImpl implements UserService
 {
-    
     /**
      * Data access object for <code>User</code>
      */
     private UserDao userDao;
-    
+
     /**
      * Data access object for <code>Authority</code>s
      */
     private AuthorityDao authorityDao;
-    
+
     /**
      * <code>PasswordEncoder</code> for encoding user passwords
      */
     private PasswordEncoder passwordEncoder;
-    
 
     /**
      * Constructor
@@ -83,7 +81,7 @@ public class UserServiceImpl implements UserService
      * @param authorityDao
      * @param passwordEncoder
      */
-    public UserServiceImpl(UserDao userDao,AuthorityDao authorityDao,PasswordEncoder passwordEncoder)
+    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao, PasswordEncoder passwordEncoder)
     {
         super();
         this.userDao = userDao;
@@ -91,7 +89,9 @@ public class UserServiceImpl implements UserService
         this.passwordEncoder = passwordEncoder;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#getUsers()
      */
     public List<User> getUsers()
@@ -99,192 +99,206 @@ public class UserServiceImpl implements UserService
         return userDao.getUsers();
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.security.userdetails.UserDetailsManager#changePassword(java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.security.userdetails.UserDetailsManager#changePassword(java.lang.String,
+     * java.lang.String)
      */
     public void changePassword(String oldPassword, String newPassword)
     {
         throw new UnsupportedOperationException();
-        
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.security.userdetails.UserDetailsManager#createUser(org.springframework.security.userdetails.UserDetails)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.security.userdetails.UserDetailsManager#createUser(org.springframework.security.userdetails
+     * .UserDetails)
      */
     public void createUser(UserDetails userDetails)
     {
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
+        String email = "";
+        if (userDetails instanceof User)
+        {
+            User tempUser = (User)userDetails;
+            email = tempUser.getEmail();
+        }
         boolean enabled = userDetails.isEnabled();
-        
-        
-        if (username ==null || "".equals(username)){
+        if (username == null || "".equals(username))
+        {
             throw new IllegalArgumentException("userDetails must contain a non empty username");
         }
-
-        if (password ==null || "".equals(password)){
+        if (password == null || "".equals(password))
+        {
             throw new IllegalArgumentException("userDetails must contain a non empty password");
         }
-        
-        if (userExists(username)){
+        if (email == null || "".equals(email))
+        {
+            throw new IllegalArgumentException("user must contain a non empty email address");
+        }
+        if (userExists(username))
+        {
             throw new IllegalArgumentException("userDetails must contain a unique username");
         }
-        
         String encodedPassword = passwordEncoder.encodePassword(password, null);
-        
-        
-        
-        User userToCreate = new User(username, encodedPassword, enabled);
-        
+        User userToCreate = new User(username, encodedPassword, email, enabled);
         userDao.save(userToCreate);
-
-        
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetailsManager#deleteUser(java.lang.String)
      */
     public void deleteUser(String username)
     {
-        userDao.delete(getUserForOperation(username));       
+        userDao.delete(getUserForOperation(username));
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#disableUser(java.lang.String)
      */
     public void disableUser(String username)
     {
         User user = getUserForOperation(username);
-        
         user.setEnabled(false);
-        
         userDao.save(user);
-        
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#enableUser(java.lang.String)
      */
     public void enableUser(String username)
     {
         User user = getUserForOperation(username);
-        
         user.setEnabled(true);
-        
         userDao.save(user);
-        
     }
 
     /**
-     * Looks up a user, but throws an exception if it doesnt exist
+     * Looks up a user, but throws an exception if it doesn't exist
      * 
      * @param username
      * @return User if exists
+     * @throws IllegalArgumentException if user is not found
      */
-    private User getUserForOperation(String username)
+    private User getUserForOperation(String username) throws IllegalArgumentException 
     {
         User user = userDao.getUser(username);
-        if (user==null){
-            throw new IllegalArgumentException("user does not exist with username ["+username+"]");
+        if (user == null)
+        {
+            throw new IllegalArgumentException("user does not exist with username [" + username + "]");
         }
         return user;
     }
 
-
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.userdetails.UserDetailsManager#updateUser(org.springframework.security.userdetails.UserDetails)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.security.userdetails.UserDetailsManager#updateUser(org.springframework.security.userdetails
+     * .UserDetails)
      */
     public void updateUser(UserDetails userDetails)
     {
-        userDao.save((User)userDetails);  
+        userDao.save((User) userDetails);
     }
-    
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetailsManager#userExists(java.lang.String)
      */
     public boolean userExists(String username)
     {
-        return (userDao.getUser(username)!=null);
+        return (userDao.getUser(username) != null);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#loadUserByUsername(java.lang.String)
      */
     public User loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException
     {
         User user = userDao.getUser(username);
-        
-        if (user == null){
-            throw new UsernameNotFoundException("Unknown username : "+username);
+        if (user == null)
+        {
+            throw new UsernameNotFoundException("Unknown username : " + username);
         }
         return user;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#getAuthorities()
      */
     public List<Authority> getAuthorities()
     {
         return authorityDao.getAuthorities();
     }
-    
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#grantAuthority(java.lang.String, java.lang.String)
      */
     public void grantAuthority(String username, String authority)
     {
         User user = loadUserByUsername(username);
         Authority nongrantedAuthority = authorityDao.getAuthority(authority);
-        
         user.grantAuthority(nongrantedAuthority);
-        
         userDao.save(user);
-        
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#revokeAuthority(java.lang.String, java.lang.String)
      */
     public void revokeAuthority(String username, String authority)
     {
         User user = loadUserByUsername(username);
         Authority grantedAuthority = authorityDao.getAuthority(authority);
-        
         user.revokeAuthority(grantedAuthority);
-        
         userDao.save(user);
-        
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.security.service.UserService#changeUsersPassword(java.lang.String, java.lang.String)
      */
     public void changeUsersPassword(String username, String newPassword)
     {
         String encodedPassword = passwordEncoder.encodePassword(newPassword, null);
         User user = loadUserByUsername(username);
-        
         user.setPassword(encodedPassword);
-        
         userDao.save(user);
-        
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.security.service.UserService#createAuthority(org.ikasan.framework.security.model.Authority)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.security.service.UserService#createAuthority(org.ikasan.framework.security.model.Authority)
      */
     public void createAuthority(Authority newAuthority)
     {
-        if (authorityDao.getAuthorities().contains(newAuthority)){
-            throw new IllegalArgumentException("Cannot create new authority ["+newAuthority+"] as it already exists!");
+        if (authorityDao.getAuthorities().contains(newAuthority))
+        {
+            throw new IllegalArgumentException("Cannot create new authority [" + newAuthority
+                    + "] as it already exists!");
         }
-        
         authorityDao.save(newAuthority);
-        
     }
-
-
 }

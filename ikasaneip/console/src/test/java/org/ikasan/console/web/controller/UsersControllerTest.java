@@ -125,7 +125,7 @@ public class UsersControllerTest extends TestCase
                 will(returnValue(new ArrayList<User>()));
             }
         });
-        model.addAttribute("user", new User(null, null, false));
+        model.addAttribute("user", new User(null, null, null, false));
         result = controller.listUsers(model);
         assertNotNull(model.get("user"));
         users = (List<User>)model.get("users");
