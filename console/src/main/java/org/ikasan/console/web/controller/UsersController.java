@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.ikasan.console.web.command.UserCriteriaValidator;
 import org.ikasan.console.web.command.UserCriteria;
-import org.ikasan.console.web.command.WiretapSearchCriteria;
 import org.ikasan.framework.security.model.Authority;
 import org.ikasan.framework.security.model.User;
 import org.ikasan.framework.security.service.UserService;
@@ -57,9 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -121,7 +117,7 @@ public class UsersController
         {
             if (model.get("user") == null)
             {
-                model.addAttribute("user", new User(null, null, true));
+                model.addAttribute("user", new User(null, null, null, true));
             }
             model.addAttribute("users", this.userService.getUsers());
         }
@@ -136,7 +132,7 @@ public class UsersController
      * @return - Model and View for createUser
      */
     @RequestMapping(value = "createUser.htm", method = RequestMethod.GET)
-    public ModelAndView createUser(ModelMap model, @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+    public ModelAndView createUser(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
     {
         return new ModelAndView("admin/users/createUser");
     }
@@ -145,16 +141,18 @@ public class UsersController
      * Accepts submission of the createUser form
      * 
      * @param model - The model (map)
-     * @param user - The user we're trying to create
-     * @param result - The result
+     * @param username - The name of the user we're trying to create
+     * @param password - The password of the user we're trying to create
+     * @param email - The email address of the user we're trying to create
+     * @param enabled - Whether or not the user starts off as enabled in the system
      * @return view the user
      */
     @RequestMapping(value = "saveUser.htm", method = RequestMethod.POST)
-    public ModelAndView saveUser(ModelMap model, @RequestParam(required = false) String username, @RequestParam(required = false) String password,  @RequestParam(required = false) Boolean enabled)
+    public ModelAndView saveUser(ModelMap model, @RequestParam(required = false) String username, @RequestParam(required = false) String password, @RequestParam(required = false) String email, @RequestParam(required = false) Boolean enabled)
     {
         List<String> errors = new ArrayList<String>();
-        boolean noErrors = true;
-        UserCriteria userCriteria = new UserCriteria(username, password);
+        
+        UserCriteria userCriteria = new UserCriteria(username, password, email);
         this.validator.validate(userCriteria, errors);
         
         if (errors.isEmpty() && this.userService.userExists(username))
@@ -165,10 +163,10 @@ public class UsersController
         if (!errors.isEmpty())
         {
         	model.addAttribute("errors", errors);
-            return createUser(model, null, null);
+            return createUser(null, null);
         }
 
-        User user = new User(username, password, MasterDetailControllerUtil.defaultFalse(enabled));
+        User user = new User(username, password, email, MasterDetailControllerUtil.defaultFalse(enabled));
         this.userService.createUser(user);
         this.logger.info("Created new user, with id:" + user.getId());
         return maintainUser(user.getUsername(), model);

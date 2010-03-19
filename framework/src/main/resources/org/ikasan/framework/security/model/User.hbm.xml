@@ -61,6 +61,7 @@
     </id>
     <property name="username" type="java.lang.String" column="Username" unique="true"/>
     <property name="password" column="Password" type="java.lang.String" not-null="true"/>
+    <property name="email" column="Email" type="java.lang.String" not-null="false"/>
     <property name="enabled" column="Enabled" type="boolean" not-null="true"/>
     <set name="grantedAuthorities" lazy="false" table="UsersAuthorities">
         <key column="UserId"/>

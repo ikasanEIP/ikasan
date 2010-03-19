@@ -50,65 +50,55 @@ import org.springframework.security.userdetails.UserDetails;
  * Implementation of <code>UserDetails</code> suitable for ORM
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
 public class User implements UserDetails
 {
-
-    /**
-     * serialVersionUID
-     */
+    /** serialVersionUID */
     private static final long serialVersionUID = 8975017088981341914L;
 
-    /**
-     * Id field utilised by ORM
-     */
+    /** Id field utilised by ORM */
     private Long id;
 
-    /**
-     * Users username for the system
-     */
+    /** Users username for the system */
     private String username;
-    
-    
-    /**
-     * Users password for the system
-     */
+
+    /** Users password for the system */
     private String password;
-    
-    
-    /**
-     * Activation status for the user in the system
-     */
+
+    /** Users email address for the system */
+    private String email;
+
+    /** Activation status for the user in the system */
     private boolean enabled;
-    
-    /**
-     * All <code>GrantedAuthrities</code> held by the user for the system
-     */
+
+    /** All <code>GrantedAuthrities</code> held by the user for the system */
     private Set<Authority> grantedAuthorities = new HashSet<Authority>();
-    
-    
+
     /**
      * Constructor
      * 
      * @param username
      * @param password
+     * @param email
      * @param enabled
      */
-    public User(String username, String password, boolean enabled)
+    public User(String username, String password, String email, boolean enabled)
     {
         this.username = username;
         this.password = password;
+        this.email = email;
         this.enabled = enabled;
     }
-    
+
     /**
      * Default constructor required by ORM
      */
     @SuppressWarnings("unused")
-    private User(){}
-
-
+    private User()
+    {
+        // Do Nothing - Default constructor required by ORM
+    }
 
     /**
      * Accessor method for grantedAuthrities, used by ORM
@@ -121,8 +111,6 @@ public class User implements UserDetails
         return grantedAuthorities;
     }
 
-
-
     /**
      * Setter method for GrantedAuthorities
      * 
@@ -133,9 +121,9 @@ public class User implements UserDetails
         this.grantedAuthorities = grantedAuthorities;
     }
 
-
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetails#getAuthorities()
      */
     public GrantedAuthority[] getAuthorities()
@@ -143,17 +131,19 @@ public class User implements UserDetails
         return grantedAuthorities.toArray(new GrantedAuthority[0]);
     }
 
-
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.userdetails.UserDetails#isAccountNonExpired()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.security.userdetails.UserDetails#isAccountNonExpired ()
      */
     public boolean isAccountNonExpired()
     {
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetails#isAccountNonLocked()
      */
     public boolean isAccountNonLocked()
@@ -161,30 +151,35 @@ public class User implements UserDetails
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.security.userdetails.UserDetails#isCredentialsNonExpired()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.security.userdetails.UserDetails#isCredentialsNonExpired ()
      */
     public boolean isCredentialsNonExpired()
     {
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetails#isEnabled()
      */
     public boolean isEnabled()
     {
         return enabled;
     }
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetails#getUsername()
      */
     public String getUsername()
     {
         return username;
     }
-
-
 
     /**
      * Setter method for username
@@ -196,17 +191,15 @@ public class User implements UserDetails
         this.username = username;
     }
 
-
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.springframework.security.userdetails.UserDetails#getPassword()
      */
     public String getPassword()
     {
         return password;
     }
-
-
 
     /**
      * Setter method for password
@@ -217,45 +210,71 @@ public class User implements UserDetails
     {
         this.password = password;
     }
+
+    /**
+     * Accessor method for email
+     * 
+     * @return email
+     */
+    public String getEmail()
+    {
+        return email;
+    }
+
+    /**
+     * Setter method for email address
+     * 
+     * @param email
+     */
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
     
     /**
      * Setter method for enabled
      * 
      * @param enabled
      */
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled)
+    {
         this.enabled = enabled;
     }
-    
+
     /**
      * Allows an Authority to be granted to a User
      * 
      * @param authority
      */
-    public void grantAuthority(Authority authority){
-        if (grantedAuthorities.contains(authority)){
-            throw new IllegalArgumentException("Authority ["+authority+"] is already granted to user ["+this+"]");
+    public void grantAuthority(Authority authority)
+    {
+        if (grantedAuthorities.contains(authority))
+        {
+            throw new IllegalArgumentException("Authority [" + authority + "] is already granted to user [" + this
+                    + "]");
         }
         grantedAuthorities.add(authority);
     }
-    
+
     /**
      * Removes an Authority from a user's granted authorities
      * 
      * @param authority
      */
-    public void revokeAuthority(Authority authority){
-        if (!grantedAuthorities.contains(authority)){
-            throw new IllegalArgumentException("Authority ["+authority+"] has not been granted to user ["+this+"]");
+    public void revokeAuthority(Authority authority)
+    {
+        if (!grantedAuthorities.contains(authority))
+        {
+            throw new IllegalArgumentException("Authority [" + authority + "] has not been granted to user [" + this
+                    + "]");
         }
         grantedAuthorities.remove(authority);
     }
- 
+
     /**
      * Accessor for id
      * 
      * @return id or null if non persisted
-     * 
      */
     public Long getId()
     {
@@ -272,15 +291,23 @@ public class User implements UserDetails
     {
         this.id = id;
     }
+
     @Override
-    public String toString(){
+    public String toString()
+    {
         StringBuffer sb = new StringBuffer("User [");
-        sb.append("username=");sb.append(username);sb.append(", ");
-        sb.append("enabled=");sb.append(enabled);
+        sb.append("username=");
+        sb.append(username);
+        sb.append(", ");
+        sb.append("email=");
+        sb.append(email);
+        sb.append(", ");
+        sb.append("enabled=");
+        sb.append(enabled);
         sb.append("]");
         return sb.toString();
     }
-    
+
     @Override
     public int hashCode()
     {
@@ -290,35 +317,75 @@ public class User implements UserDetails
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
         User other = (User) obj;
-        if (enabled != other.enabled) return false;
+        if (enabled != other.enabled)
+        {
+            return false;
+        }
         if (id == null)
         {
-            if (other.id != null) return false;
+            if (other.id != null)
+            {
+                return false;
+            }
         }
-        else if (!id.equals(other.id)) return false;
+        else if (!id.equals(other.id))
+        {
+            return false;
+        }
         if (password == null)
         {
-            if (other.password != null) return false;
+            if (other.password != null)
+            {
+                return false;
+            }
         }
-        else if (!password.equals(other.password)) return false;
+        else if (!password.equals(other.password))
+        {
+            return false;
+        }
         if (username == null)
         {
-            if (other.username != null) return false;
+            if (other.username != null)
+            {
+                return false;
+            }
         }
-        else if (!username.equals(other.username)) return false;
+        else if (!username.equals(other.username))
+        {
+            return false;
+        }
+        if (email == null)
+        {
+            if (other.email != null)
+            {
+                return false;
+            }
+        }
+        else if (!email.equals(other.email))
+        {
+            return false;
+        }
+
         return true;
     }
-
-
-    
 }

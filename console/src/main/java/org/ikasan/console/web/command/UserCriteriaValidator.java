@@ -40,13 +40,8 @@
  */
 package org.ikasan.console.web.command;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -57,9 +52,6 @@ import org.springframework.validation.Validator;
  */
 public class UserCriteriaValidator implements Validator
 {
-
-    /** The logger */
-    private Logger logger = Logger.getLogger(UserCriteriaValidator.class);
 
     /** Constructor */
     public UserCriteriaValidator()
@@ -99,6 +91,15 @@ public class UserCriteriaValidator implements Validator
         {
             errors.add("Password cannot be empty.");
         }
+
+        // TODO Uncomment section below if we make email address compulsory
+        /*
+        if (userCriteria.getEmail() == null)
+        {
+            errors.add("Email Address cannot be empty.");
+        }
+        */
+
     }
 
     /**

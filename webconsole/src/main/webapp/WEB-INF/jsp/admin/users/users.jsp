@@ -95,6 +95,10 @@
                 <form:password path="password"/>
              </li>
              <li>
+                <label for="email">Email Address</label>
+                <form:password path="email"/>
+             </li>
+             <li>
              <label for="enabled">Enabled</label>
                 <form:checkbox path="enabled"/>
              </li>

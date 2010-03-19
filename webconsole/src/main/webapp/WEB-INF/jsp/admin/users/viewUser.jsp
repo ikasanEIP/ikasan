@@ -59,7 +59,14 @@
                     <c:out value="${user.username}" />
                 </td>
             </tr>
-            
+            <tr>
+                <th>
+                    Email Address
+                </th>
+                <td>
+                    <c:out value="${user.email}" />
+                </td>
+            </tr>
             <tr>
                 <th>
                     Enabled

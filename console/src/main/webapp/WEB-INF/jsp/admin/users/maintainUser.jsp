@@ -68,6 +68,14 @@
                     </tr>
                     <tr>
                         <td class="searchCell formLabel">
+                             <fmt:message key="maintain_user_email" />
+                        </td>
+                        <td class="searchCell">
+                             <c:out value="${user.email}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="searchCell formLabel">
                             <fmt:message key="maintain_user_enabled" />
                         </td>
                         <td class="searchCell">

@@ -63,7 +63,9 @@
     <!-- The framework specific Module Service -->
     <bean id="frameworkModuleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
         <constructor-arg ref="moduleContainer" />
-        <constructor-arg ref="initiatorCommandDao" />
+        <!-- <constructor-arg ref="initiatorCommandDao" /> -->
+        <constructor-arg ref="initiatorStartupControlDao" />
+        <constructor-arg ref="systemEventService" />
     </bean>
 
     <!-- The module container for the framework module service -->
