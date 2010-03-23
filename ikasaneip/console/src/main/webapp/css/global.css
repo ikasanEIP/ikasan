@@ -290,6 +290,18 @@ img
     width: 85px;
 }
 
+.inputTextLong
+{
+    background-color: #FFFFFF;
+    border-style: sold;
+    border-width: 1px;
+    border-color: #F29400;
+    color: #3E3E3E;
+    font-family: "Trebuchet MS";
+    font-size: 13px;
+    width: 265px;
+}
+
 .inputTextTime
 {
     background-color: #FFFFFF;

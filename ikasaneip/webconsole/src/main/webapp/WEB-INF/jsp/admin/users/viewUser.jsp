@@ -184,6 +184,10 @@
                 <label for="password">New Password</label>
                 <form:password path="password"/>
              </li>
+             <li>
+                <label for="confirm_password">Confirm New Password</label>
+                <form:password path="confirm_password"/>
+             </li>
         </ol>
 
     </fieldset>                             

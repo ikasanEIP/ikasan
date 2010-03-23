@@ -102,8 +102,10 @@ public interface UserService extends UserDetailsManager
      * 
      * @param username
      * @param newPassword as plain text
+     * @param confirmNewPassword as plain text
+     * @throws IllegalArgumentException If the passwords don't match
      */
-    public void changeUsersPassword(String username, String newPassword);
+    public void changeUsersPassword(String username, String newPassword, String confirmNewPassword) throws IllegalArgumentException;
 
     /**
      * Disables the specified user

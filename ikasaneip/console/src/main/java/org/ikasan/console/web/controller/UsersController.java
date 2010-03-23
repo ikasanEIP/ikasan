@@ -136,7 +136,7 @@ public class UsersController
     {
         return new ModelAndView("admin/users/createUser");
     }
-
+    
     /**
      * Accepts submission of the createUser form
      * 
@@ -193,13 +193,26 @@ public class UsersController
      * Accepts submission of the changePassword form
      * 
      * @param user - The user we're changing the password for
+     * @param confirmNewPassword - The password again, for confirmation 
      * @param model - The model (map)
      * @return view the user
      */
     @RequestMapping(value = "changePassword.htm", method = RequestMethod.POST)
-    public ModelAndView changePassword(@ModelAttribute("user") User user, ModelMap model)
+    public ModelAndView changePassword(@ModelAttribute("user") User user, @RequestParam("confim_password") String confirmNewPassword, ModelMap model)
     {
-        this.userService.changeUsersPassword(user.getUsername(), user.getPassword());
+        List<String> errors = new ArrayList<String>();
+        try 
+        {
+            this.userService.changeUsersPassword(user.getUsername(), user.getPassword(), confirmNewPassword);
+        }
+        catch (IllegalArgumentException e)
+        {
+            errors.add(e.getMessage());
+        }
+        if (!errors.isEmpty())
+        {
+            model.addAttribute("errors", errors);
+        }
         return maintainUser(user.getUsername(), model);
     }
 
