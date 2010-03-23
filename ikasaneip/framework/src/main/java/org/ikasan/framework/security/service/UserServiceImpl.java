@@ -107,9 +107,9 @@ public class UserServiceImpl implements UserService
      */
     public void changePassword(String oldPassword, String newPassword)
     {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("As administrators can change passwords for other users we have our own userChangePasssword method.");
     }
-
+    
     /*
      * (non-Javadoc)
      * 

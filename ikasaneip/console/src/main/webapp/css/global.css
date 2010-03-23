@@ -367,7 +367,7 @@ img
 {
     float: right;
     width: 366px;
-    height: 180px;
+    height: 240px;
     border-width: 1px;
     border-style: solid;
     border-color: #99141B;
@@ -377,9 +377,10 @@ img
     padding-bottom: 15px; 
 }
 
-#loginTable
+.loginTable
 {
     padding-left: 30px;
+    width: 366px;
 }
 
 /* TODO maybe pad in form instead? */

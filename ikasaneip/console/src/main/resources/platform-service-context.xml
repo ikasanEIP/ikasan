@@ -55,9 +55,23 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+    <bean name="pphConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/ikasan.properties</value>
+            </list>
+        </property>
+    </bean>
+
     <!-- The console specific Module Service -->
     <bean id="moduleService" class="org.ikasan.console.module.service.ConsoleModuleService" >
         <constructor-arg ref="moduleDao" />
+    </bean> 
+
+    <!-- The console Service -->
+    <bean id="consoleService" class="org.ikasan.console.service.ConsoleServiceImpl" >
+        <constructor-arg ref="consoleEmailNotifier" />
     </bean> 
 
     <!-- The framework specific Module Service -->
@@ -82,7 +96,38 @@
 		<constructor-arg ref="wiretapDao" />
 		<constructor-arg ref="frameworkModuleService" />
 	</bean>
-	
+
+    <!-- The email notifier for the Send New Password functionality -->
+    <bean id="consoleEmailNotifier" class="org.ikasan.console.service.ConsoleEmailNotifier">
+        <constructor-arg index="0">
+            <bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
+                <property name="host" ref="mailHost"/>
+            </bean>
+        </constructor-arg>
+        <!-- distributionList/To field not supplied at this point -->
+        <constructor-arg index="1"><null/></constructor-arg>
+        <!-- distributionList/To field not supplied at this point -->
+        <constructor-arg index="2" ref="mailFrom"/>
+        <constructor-arg index="3" ref="environment"/>
+    </bean>
+
+    <!-- The from address -->
+    <bean id="mailFrom" class="java.lang.String">
+        <!-- monitor.email.from usually supplied via ikasan.properties file -->
+        <constructor-arg value="${monitor.email.from}" />
+    </bean>
+
+    <!-- The mailHost -->
+    <bean id="mailHost" class="java.lang.String">
+        <!-- monitor.email.host usually supplied via ikasan.properties file -->
+        <constructor-arg value="${monitor.email.host}" />
+    </bean>
+
+    <bean id="environment" class="java.lang.String">
+        <!-- monitor.email.env usually supplied via ikasan.properties file -->    
+        <constructor-arg value="${monitor.email.env}" />
+    </bean>
+
   	<!-- ###################################### -->
   	<!-- Common transaction services start here -->
     <!-- ###################################### -->  	

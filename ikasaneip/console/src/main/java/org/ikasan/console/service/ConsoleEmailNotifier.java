@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.monitor;
+package org.ikasan.console.service;
 
 import javax.mail.internet.MimeMessage;
 
@@ -47,14 +47,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 /**
- * Monitor listener implementation which notifies the JNDI of state changes.
+ * Console Email Notifier implementation
  * 
  * @author Ikasan Development Team
  */
-public class MonitorEmailNotifier extends AbstractMonitorListener
+public class ConsoleEmailNotifier
 {
     /** The logger instance */
-    private static final Logger logger = Logger.getLogger(MonitorEmailNotifier.class);
+    private static final Logger logger = Logger.getLogger(ConsoleEmailNotifier.class);
 
     /** Mail sender */
     private JavaMailSender mailSender;
@@ -64,6 +64,9 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
 
     /** Mail sender address */
     private String from;
+
+    /** Mail subject */
+    private String subject;
 
     /** Mail body */
     private String body;
@@ -77,16 +80,18 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
     /**
      * Constructor non optional parameters
      * 
-     * @param name Monitor name
+     * TODO:  Enforce mandatory fields here
+     * 
      * @param mailSender Mail sender
      * @param to email recipient
+     * @param from email sender
      * @param environment The runtime environment
      */
-    public MonitorEmailNotifier(String name, final JavaMailSender mailSender, String to, String environment)
+    public ConsoleEmailNotifier(final JavaMailSender mailSender, String to, String from, String environment)
     {
-        super(name);
         this.mailSender = mailSender;
         this.to = to;
+        this.from = from;
         this.environment = environment;
     }
 
@@ -100,6 +105,17 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
         this.to = to;
     }
 
+    /**
+     * Setter for subject
+     * 
+     * @param subject email message subject
+     */
+    public void setSubject(String subject)
+    {
+        this.subject = subject;
+    }
+    
+    
     /**
      * Setter for mail body text.
      * 
@@ -132,46 +148,31 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
         this.multipart = multipart;
     }
 
-    @Override
-    public void notify(String state)
+    /**
+     * Send the mail
+     *   
+     * @throws Exception 
+     */
+    public void sendMail() throws Exception 
     {
         try
         {
             MimeMessage email = this.mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(email, this.multipart);
-            if (this.from != null)
-            {
-                helper.setFrom(this.from);
-            }
             helper.setTo(this.to);
-            helper.setSubject("[" + this.environment + "] Initiator Email Notifier");
-            if (state != null)
+            helper.setFrom(this.from);
+            helper.setSubject("[" + this.environment + "] " + this.subject);
+            if (this.body != null)
             {
-                if (state.equals("stoppedInError"))
-                {
-                    if (this.body != null)
-                    {
-                        helper.setText(this.body);
-                    }
-                    else
-                    {
-                        helper.setText(this.getName() + " is reporting status [" + state
-                                + "] and requires manual intervention.");
-                    }
-                    this.mailSender.send(email);
-                }
-                // otherwise don't bother
-            }
-            else
-            {
-                helper.setText(this.getName() + " reporting unknown status. There might be a problem.");
+                helper.setText(this.body);
                 this.mailSender.send(email);
             }
         }
         catch (Throwable t)
         {
-            // Don't want to disrupt the flow so just log the exception at this point.
-            logger.warn("Monitor failed to create email notification.");
+            // TODO improve error handling here
+            logger.warn("Failed to send the email." + t.getMessage());
+            throw new Exception("Failed to send the email, please contact the System Administrator.", t);
         }
     }
 }

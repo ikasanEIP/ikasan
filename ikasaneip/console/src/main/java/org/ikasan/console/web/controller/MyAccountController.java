@@ -47,10 +47,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.ikasan.console.service.ConsoleService;
 import org.ikasan.framework.security.model.User;
 import org.ikasan.framework.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -59,6 +61,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * The controller for the various my account views
@@ -73,6 +76,9 @@ public class MyAccountController
     /** The user service to use */
     private UserService userService;
 
+    /** The console service to use */
+    private ConsoleService consoleService;
+    
     /** Logger for this class */
     private Logger logger = Logger.getLogger(MyAccountController.class);
     
@@ -80,9 +86,10 @@ public class MyAccountController
      * Constructor
      * 
      * @param userService - The user service to use
+     * @param consoleService - The console service to use
      */
     @Autowired
-    public MyAccountController(UserService userService)
+    public MyAccountController(UserService userService, ConsoleService consoleService)
     {
         super();
         if (userService == null)
@@ -90,6 +97,11 @@ public class MyAccountController
             throw new IllegalArgumentException("UserService cannot be NULL");
         }
         this.userService = userService;
+        if (consoleService == null)
+        {
+            throw new IllegalArgumentException("ConsoleService cannot be NULL");
+        }
+        this.consoleService = consoleService;
     }
 
     /**
@@ -153,4 +165,67 @@ public class MyAccountController
         return new ModelAndView("users/myAccount");
     }
 
+    /**
+     * Takes the user to the forgotPassword screen
+     * 
+     * @return forgotPassword screen
+     */
+    @RequestMapping(value = "forgotPassword.htm", method = RequestMethod.GET)
+    public ModelAndView forgotPassword()
+    {
+        return new ModelAndView("users/forgotPassword");
+    }
+    
+    /**
+     * Send the new Password to the user
+     * 
+     * @param username - User to send the new password to 
+     * @param model - The model to hold errors
+     * 
+     * @return - On success, return the user to the login screen, else return back to the forgot password screen
+     */
+    @RequestMapping(value = "sendPassword.htm", method = RequestMethod.POST)
+    public ModelAndView sendPassword(@RequestParam(required = false) String username, ModelMap model)
+    {
+        List<String> errors = new ArrayList<String>();
+        
+        // Load the user
+        User user = null;
+        try
+        {
+            user = userService.loadUserByUsername(username);
+        }
+        catch (UsernameNotFoundException e)
+        {
+            errors.add(e.getMessage());
+            // Lets return immediately
+            model.addAttribute("errors", errors);
+            return new ModelAndView("users/forgotPassword", model);
+        }
+        
+        // Change the password
+        if (user != null)
+        {
+            try
+            {
+                // TODO Have a proper password generator
+                // TODO Need to wrap this in a user txn
+                userService.changeUsersPassword(user.getUsername(), "password", "password");
+                consoleService.sendNewPassword(user);
+            }
+            catch (IllegalArgumentException e)
+            {
+                errors.add(e.getMessage());
+            }
+        }
+        
+        if (!errors.isEmpty())
+        {
+            model.addAttribute("errors", errors);
+            return new ModelAndView("users/forgotPassword", model);
+        }
+        // TODO Return nice success message then redirect them
+        return new ModelAndView(new RedirectView("/console/login.jsp"));
+    }
+    
 }

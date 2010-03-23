@@ -8,5 +8,6 @@ $(document).ready(
 	{
 		// TODO hovertip is miles to the right
 		// $('#loginHelp').hovertip();
+		// $('#forgotPasswordHelp').hovertip();
 	});
 
