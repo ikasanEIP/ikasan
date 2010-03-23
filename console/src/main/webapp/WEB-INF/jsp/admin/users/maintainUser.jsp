@@ -151,6 +151,14 @@
                             </td>
                         </tr>
                         <tr>
+                            <td class="searchCell formLabel">
+                                 <fmt:message key="maintain_user_confirm_new_password" />
+                            </td>
+                            <td class="searchCell">
+                                 <input class="inputText" id="confirm_password" type="password" name="confirm_password" value="" />
+                            </td>
+                        </tr>
+                        <tr>
                             <td>&nbsp;</td>
                             <td>
                                 <input type="submit" value="<fmt:message key="maintain_user_change_password_button" />" class="largeButton" />

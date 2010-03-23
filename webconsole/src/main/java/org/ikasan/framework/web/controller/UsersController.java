@@ -125,8 +125,7 @@ public class UsersController
         // check that user doesn't already exist, and the password has been supplied
         ValidationUtils.rejectIfEmpty(result, "username", "field.required", "Username cannot be empty");
         ValidationUtils.rejectIfEmpty(result, "password", "field.required", "Password cannot be empty");
-        // TODO Uncomment the line below if we're going to make email mandatory
-        //ValidationUtils.rejectIfEmpty(result, "email", "field.required", "Email Address cannot be empty");
+        ValidationUtils.rejectIfEmpty(result, "email", "field.required", "Email Address cannot be empty");
         if (userService.userExists(user.getUsername()))
         {
             result.addError(new FieldError("user", "username", "User with this username already exists"));
@@ -160,13 +159,22 @@ public class UsersController
      * Accepts submission of the changePassword form
      * 
      * @param user - The user we're changing the password for
+     * @param confirmNewPassword - The password again, for confirmation
      * @param model - The model (map)
+     * @param result - The binding result 
      * @return view the user
      */
     @RequestMapping(value = "changePassword.htm", method = RequestMethod.POST)
-    public String changePassword(@ModelAttribute("user") User user, ModelMap model)
+    public String changePassword(@ModelAttribute("user") User user, @RequestParam("confim_password") String confirmNewPassword, ModelMap model, BindingResult result)
     {
-        userService.changeUsersPassword(user.getUsername(), user.getPassword());
+        try 
+        {
+            this.userService.changeUsersPassword(user.getUsername(), user.getPassword(), confirmNewPassword);
+        }
+        catch (IllegalArgumentException e)
+        {
+            result.addError(new FieldError("password", "password", e.getMessage()));
+        }
         return viewUser(user.getUsername(), model);
     }
 

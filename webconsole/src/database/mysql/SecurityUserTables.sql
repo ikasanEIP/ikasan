@@ -44,7 +44,7 @@ CREATE TABLE  `Ikasan01`.`Users` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Username` varchar(50) DEFAULT NULL,
   `Password` varchar(50) NOT NULL,
-  `Email` varchar(255),
+  `Email` varchar(255) NULL,
   `Enabled` bit(1) NOT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Username` (`Username`)

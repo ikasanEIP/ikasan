@@ -142,6 +142,7 @@ public class UserServiceImplTest
     {
         final String username = "username";
         final String newPassword = "newPassword";
+        final String confirmNewPassword = "newPassword";
         final String encodedPassword = "encodedPassword";
         final User user = mockery.mock(User.class);
         mockery.checking(new Expectations()
@@ -155,7 +156,7 @@ public class UserServiceImplTest
                 one(userDao).save(user);
             }
         });
-        userServiceImpl.changeUsersPassword(username, newPassword);
+        userServiceImpl.changeUsersPassword(username, newPassword, confirmNewPassword);
         mockery.assertIsSatisfied();
     }
 

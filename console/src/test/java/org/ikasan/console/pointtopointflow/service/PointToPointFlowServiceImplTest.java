@@ -155,8 +155,8 @@ public class PointToPointFlowServiceImplTest
     }
 
     /**
-     * Test that calling getAllPointToPointFlowProfiles returns a Set of PointToPointFlowProfiles that 
-     * have their PointToPointFlows in the correct order TODO
+     * TODO Test that calling getAllPointToPointFlowProfiles returns a Set of PointToPointFlowProfiles that 
+     * have their PointToPointFlows in the correct order
      */
     @Test
     public void testGetAllPointToPointFlowProfilesWithOrder()
