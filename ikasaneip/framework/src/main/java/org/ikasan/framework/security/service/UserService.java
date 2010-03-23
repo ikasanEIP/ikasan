@@ -98,7 +98,7 @@ public interface UserService extends UserDetailsManager
     /**
      * Allows a specified user's password.
      * 
-     * Note that this should be an administrator function
+     * Note that this should be an administrator function or a function of that particular user
      * 
      * @param username
      * @param newPassword as plain text

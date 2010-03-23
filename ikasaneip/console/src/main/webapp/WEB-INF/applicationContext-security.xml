@@ -52,8 +52,10 @@
         if they try to go elsewhere first.
      -->
     <http access-denied-page="/accessDenied.jsp" auto-config='true'>
-        <!-- For login.jsp, css and images we don't apply security -->
+        <!-- For login.jsp, changePassword.jsp, sendPassword.htm, css and images we don't apply security -->
     	<intercept-url pattern="/login.jsp*" filters="none" />
+        <intercept-url pattern="/users/forgotPassword.htm" filters="none" />
+        <intercept-url pattern="/users/sendPassword.htm" filters="none" />
     	<intercept-url pattern='/css/*' filters='none' />
     	<intercept-url pattern='/images/*' filters='none' />
         <intercept-url pattern='/js/*' filters='none' />
@@ -114,8 +116,14 @@
 			AspectJ pointcut expressions that locates our "post" method and
 			applies security to that call.
 		-->
+        <!-- TODO: Temporarily unblock the service and block the admin controller instead -->
+        <!--
         <protect-pointcut
             expression="execution(* org.ikasan.framework.security.service.UserService.changeUsersPassword(..))"
+            access="ROLE_ADMIN" />
+        -->
+        <protect-pointcut
+            expression="execution(* org.ikasan.console.web.controller.UsersController.changePassword(..))"
             access="ROLE_ADMIN" />
         <protect-pointcut
             expression="execution(* org.ikasan.framework.security.service.UserService.grantAuthority(..))"

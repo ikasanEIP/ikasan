@@ -94,65 +94,36 @@
         <!--  Main Content -->
         <div id="content">
             <div id="leftContent">
-                <h1>Welcome...</h1>
+                <h1>I forgot my password!</h1>
                 <p class="text">
-                    Welcome to the console for Ikasan EIP, your gateway to many Ikasan EIP services.
-                </p>
-                <h4>What does the Ikasan EIP console do?</h4>
-                <p class="text">
-                    This browser based console allows end users and administrators to execute Ikasan EIP services.  
-                    As of version 0.7.7 this includes wiretapped event search and user administration.
-                </p>
-                <h4>What next?</h4>
-                <p class="text">
-                    Please Login or if you are a new user then please follow the instructions by hovering over the help icon next to "I'm a new user" text.
+                    Not to worry, these things happen!  Simply enter your Username and click on the "Send New Password" button and the 
+                    System will send you a new password to login with.
                 </p>
             </div>
             <div id="rightContent">
                 <div id="arrow"><img class="arrowImage" src="/console/images/Icon_Arrow.png" alt="Arrow"/></div>
                 <div id="loginBox">
-                    <h1>Login</h1>
-                    <form id="loginForm" action="<c:url value='j_spring_security_check'/>" method="post">
-                        <!-- TODO Better class name -->
-                        <table class="loginTable">
+                    <h1>Send New Password</h1>
+
+                    <%-- TODO Can also JSP template this? --%>
+                    <c:if test="${errors != ''}">
+                    <c:forEach items="${errors}" var="error">
+                    <span class="important"><c:out value="${error}" /></span><br />
+                    </c:forEach>
+                    </c:if>
+                    
+                    <form id="sendPasswordForm" action="/console/users/sendPassword.htm" method="post">
+                        <table id="loginTable">
                             <tr>
                                 <td class="loginCell formLabel">Username</td>
-                                <td class="loginCell"><input class="inputText" type='text' id='j_username' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/></td>
-                            </tr>
-                            <tr>
-                                <td class="loginCell formLabel">Password</td>
-                                <td class="loginCell"><input class="inputText" type='password' id='j_password' name='j_password' /></td>
+                                <td class="loginCell"><input class="inputText" type='text' id='username' name='username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/></td>
                             </tr>
                             <tr>
                                 <td class="loginCell formLabel">&nbsp;</td>
-                                <td class="loginCell"><input class="button" name="submit" type="submit" value="Login"/></td>
-                            </tr>
-                            <tr>
-                                <td class="loginCell formLabel">I'm a new user <span title="Please contact your System Administrator" id="loginHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span></td>
-                                <td class="loginCell">&nbsp;</td>
+                                <td class="loginCell"><input class="largeButton" name="submit" type="submit" value="Send New Password"/></td>
                             </tr>
                         </table>
                     </form>
-                    <form id="forgotPasswordForm" action="<c:url value='/users/forgotPassword.htm'/>" method="get">
-                        <table class="loginTable">
-                            <tr>
-                                <td class="loginCell formLabel">Forgot Password<!-- <span title="In the next page a new password will be sent to the email address associated with the Username" id="forgotPasswordHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span> --></td>
-                                <td class="loginCell"><input class="largeButton" name="submit" type="submit" value="Forgot Password"/></td>
-                            </tr>
-                        </table>
-                    </form>
-
-                    <%-- 
-                        This form-login-page form is also used as the
-                        form-error-page to ask for a login again.
-                     --%>
-                    <c:if test="${not empty param.login_error}">
-                    <span class="important">
-                        Your login attempt was not successful, try again<br />
-                        <br />
-                        Reason: <%= ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage() %>
-                    </span>
-                    </c:if>
                 </div>
             </div> <!-- End RHContent -->
         </div> <!-- End content -->
