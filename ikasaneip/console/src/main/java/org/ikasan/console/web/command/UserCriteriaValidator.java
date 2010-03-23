@@ -92,13 +92,10 @@ public class UserCriteriaValidator implements Validator
             errors.add("Password cannot be empty.");
         }
 
-        // TODO Uncomment section below if we make email address compulsory
-        /*
         if (userCriteria.getEmail() == null)
         {
             errors.add("Email Address cannot be empty.");
         }
-        */
 
     }
 

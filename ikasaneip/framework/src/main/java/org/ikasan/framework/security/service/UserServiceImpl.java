@@ -278,8 +278,12 @@ public class UserServiceImpl implements UserService
      * 
      * @see org.ikasan.framework.security.service.UserService#changeUsersPassword(java.lang.String, java.lang.String)
      */
-    public void changeUsersPassword(String username, String newPassword)
+    public void changeUsersPassword(String username, String newPassword, String confirmNewPassword) throws IllegalArgumentException
     {
+        if (!newPassword.equals(confirmNewPassword))
+        {
+            throw new IllegalArgumentException("Passwords do not match, please try again.");
+        }
         String encodedPassword = passwordEncoder.encodePassword(newPassword, null);
         User user = loadUserByUsername(username);
         user.setPassword(encodedPassword);

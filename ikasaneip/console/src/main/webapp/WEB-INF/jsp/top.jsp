@@ -92,6 +92,7 @@
                 <ul>
                     <li class="first"><a href="<c:url value='/home.htm'/>"><fmt:message key="menu_home_link"/></a></li>
                     <li><a href="<c:url value='/events/newSearch.htm'/>"><fmt:message key="menu_events_link"/></a></li>
+                    <li><a href="<c:url value='/users/myAccount.htm'/>"><fmt:message key="menu_account_link"/></a></li>
                     <%-- Spring based security around the admin pages --%>
                     <security:authorize ifAllGranted="ROLE_ADMIN">
                     <li class="last"><a href="<c:url value='/admin/admin.htm'/>"><fmt:message key="menu_admin_link"/></a></li>
