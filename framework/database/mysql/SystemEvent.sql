@@ -27,6 +27,6 @@ CREATE TABLE  `ikasan01`.`systemevent` (
   `Action` varchar(512) NOT NULL,
   `Actor` varchar(64) DEFAULT NULL,
   `Timestamp` datetime NOT NULL,
-  `Expiry` datetime DEFAULT NULL
+  `Expiry` datetime DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
