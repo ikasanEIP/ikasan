@@ -92,8 +92,8 @@
          -->
         <module>build</module>
         <!-- ikasan core -->
-        <module>platform</module>
         <module>common</module>
+        <module>platform</module>
         <module>framework</module>
 
         <!-- consoles -->
