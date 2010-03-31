@@ -94,9 +94,11 @@ public abstract class JmsMessageDrivenInitiatorImpl
     /** The message listener container */
     protected MessageListenerContainer messageListenerContainer;
     
-    /** The Anesthetist for stopping/starting the message listener container */
+    /** The Anesthetist for stopping/starting the message listener container in a retry cycle*/
     protected Anesthetist anesthetist = null;
 
+    /** The Halt for activating/deactivating the jms endpoint */
+    protected Halt halt = null;
 
     /**
      * Constructor
@@ -210,7 +212,27 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     public boolean isRunning()
     {
-        return (messageListenerContainer.isRunning() || anesthetistOperating());
+        //if there is halt object means we are stopping!
+        if (this.halt != null)
+        {
+            return false;
+        }
+        //if there is an anesthetist means we are stopping/retrying
+        else if (this.anesthetistOperating())
+        {
+            return false;
+        }
+        //we have to check for happy state
+        else if (this.messageListenerContainer.isRunning())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        //return ( this.halt == null && (this.messageListenerContainer.isRunning() || this.anesthetistOperating()));
+        //return ((this.messageListenerContainer.isRunning() || this.anesthetistOperating()) && this.halt == null);
     }
 
     /**
@@ -222,9 +244,11 @@ public abstract class JmsMessageDrivenInitiatorImpl
     {
         return (anesthetist != null) && (anesthetist.isOperating());
     }
-    
+
     @Override
-    protected void startInitiator(){
+    protected void startInitiator()
+    {
+        this.halt = null;
         messageListenerContainer.start();
     }
     
@@ -240,15 +264,14 @@ public abstract class JmsMessageDrivenInitiatorImpl
     protected void stopInError()
     {
         error = true;
-        stopping=true;
+        stopping = true;
         if (isRecovering())
         {
             cancelRetryCycle();
         }
+        this.halt = new Halt();
+        this.halt.start();
         notifyMonitorListeners();
-
-        Halt halt = new Halt();
-        halt.start();
     }
 
     /**
@@ -497,7 +520,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         {
             logger.info("stopping messageListenerContainer...");
             messageListenerContainer.stop();
-            logger.info("stopped messageListenerContainer");
+            logger.info("stopped messageListenerContainer successfully.");
         }
     }
 }
