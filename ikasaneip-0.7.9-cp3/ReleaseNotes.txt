@@ -1,24 +1,4 @@
-
-Release Notes - Ikasan - Version 0.7.8
-
+Release Notes - Ikasan - Version 0.7.9-cp3
 
 ** Bug
-    * [IKASAN-299] - Ikasan platform doesn't start due to missing libs
-    * [IKASAN-307] - JMS (JCA) based initiator hung on a rollback/retry
-    * [IKASAN-308] - Platform not passing through housekeeper credentials to housekeeper service
-    * [IKASAN-342] - FileTrransferProtocolClient doesn't logout before disconnecting
-    * [IKASAN-346] - FTP connector not logging out before disconnection
-    * [IKASAN-347] - FTP connector not defaulting to PASSIVE mode
-    * [IKASAN-348] - FTP connector not checking replyCode after connection
-
-
-
-
-
-
-
-** Task
-    * [IKASAN-349] - Merge branch back to trunk
-    * [IKASAN-353] - Merge customer patch 0.7.8-cp2 branch into 0.7.x
-    * [IKASAN-354] - Remove individual Ikasan project Release Notes and replace with Jira created project wide release notes 
-
+    * [IKASAN-360] - JCA based initiators still reports running state when Halt thread kicks in
