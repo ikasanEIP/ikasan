@@ -35,11 +35,11 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-platform</artifactId>
   <packaging>war</packaging>
-  <version>0.7.9-SNAPSHOT</version>
+  <version>0.7.9-cp3</version>
   <name>ikasan :: platform</name>
 
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasan-0.7.x</connection>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9-cp3</connection>
   </scm>
 
   <build>
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.7.9-SNAPSHOT</version>
+            <version>0.7.9-cp3</version>
         </dependency>
 
 
