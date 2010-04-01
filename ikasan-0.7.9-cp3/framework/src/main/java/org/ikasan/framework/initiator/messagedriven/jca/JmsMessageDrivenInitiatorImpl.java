@@ -1,40 +1,40 @@
 /*
  * $Id
  * $URL$
- * 
+ *
  * =============================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
@@ -60,14 +60,14 @@ import org.ikasan.framework.monitor.MonitorSubject;
 
 /**
  * Abstract base class for JMS Message Driven Initiators
- * 
+ *
  * Subclasses will provide an implementation for handling of one or more of the specific JMS Message types into an
  * <code>Event</code>
- * 
+ *
  * @author Ikasan Development Team
  */
-public abstract class JmsMessageDrivenInitiatorImpl 
-    extends AbstractInitiator 
+public abstract class JmsMessageDrivenInitiatorImpl
+    extends AbstractInitiator
     implements JmsMessageDrivenInitiator, MonitorSubject, ListenerSetupFailureListener
 {
     /**
@@ -93,7 +93,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /** The message listener container */
     protected MessageListenerContainer messageListenerContainer;
-    
+
     /** The Anesthetist for stopping/starting the message listener container in a retry cycle*/
     protected Anesthetist anesthetist = null;
 
@@ -102,7 +102,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * Constructor
-     * 
+     *
      * @param moduleName The name of the module
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
@@ -111,14 +111,14 @@ public abstract class JmsMessageDrivenInitiatorImpl
     {
         super(moduleName, name, flow);
     }
-    
+
     public String getType(){
         return JMS_MESSAGE_DRIVEN_INITIATOR_TYPE;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
      */
     public void onMessage(Message message)
@@ -131,14 +131,14 @@ public abstract class JmsMessageDrivenInitiatorImpl
         {
             throw new AbortTransactionException(INITIATOR_ANESTHETIST_OPERATING);
         }
-        
+
         Event event = null;
         try
         {
         	if (logger.isDebugEnabled()){
         		logger.debug("received message with id [" + message.getJMSMessageID() + "]");
         	}
-        	
+
             if (message instanceof MapMessage)
             {
                 event = handleMapMessage((MapMessage) message);
@@ -187,7 +187,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         anesthetist = new Anesthetist(delay);
         anesthetist.start();
     }
-    
+
     protected void continueRetryCycle(long delay)
     {
         anesthetist = new Anesthetist(delay);
@@ -220,7 +220,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         //if there is an anesthetist means we are stopping/retrying
         else if (this.anesthetistOperating())
         {
-            return false;
+            return true;
         }
         //we have to check for happy state
         else if (this.messageListenerContainer.isRunning())
@@ -237,7 +237,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * Return true if the anesthetist is operating
-     * 
+     *
      * @return true if the anesthetist is operating
      */
     protected boolean anesthetistOperating()
@@ -251,7 +251,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         this.halt = null;
         messageListenerContainer.start();
     }
-    
+
     @Override
     protected void stopInitiator(){
         messageListenerContainer.stop();
@@ -282,17 +282,17 @@ public abstract class JmsMessageDrivenInitiatorImpl
         this.messageListenerContainer = messageListenerContainer;
         messageListenerContainer.setListenerSetupExceptionListener(this);
     }
-    
+
     /**
      * Accessor for messageListenerContainer
-     * 
+     *
      * @return
      */
     public MessageListenerContainer getMessageListenerContainer()
     {
         return messageListenerContainer;
     }
-    
+
     /* (non-Javadoc)
      * @see org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener#notifyListenerSetupFailure(java.lang.Throwable)
      */
@@ -301,9 +301,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
     }
     /**
      * JMS Message specific type handling for <code>BytesMessage</code>
-     * 
+     *
      * Subclasses that wish to support this <code>Message</code> type will override this
-     * 
+     *
      * @param message The message to handle
      * @return Event The event containing the message
      * @throws JMSException Exception if there is a problem with JMS
@@ -318,9 +318,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * JMS Message specific type handling for <code>StreamMessage</code>
-     * 
+     *
      * Subclasses that wish to support this <code>Message</code> type will override this
-     * 
+     *
      * @param message The message to handle
      * @return Event
      */
@@ -332,9 +332,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * JMS Message specific type handling for <code>ObjectMessage</code>
-     * 
+     *
      * Subclasses that wish to support this <code>Message</code> type will override this
-     * 
+     *
      * @param message The message to handle
      * @return Event
      * @throws JMSException Exception if there is a problem with JMS
@@ -349,9 +349,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * JMS Message specific type handling for <code>MapMessage</code>
-     * 
+     *
      * Subclasses that wish to support this <code>Message</code> type will override this
-     * 
+     *
      * @param message The message to handle
      * @return Event
      * @throws JMSException Exception if there is a problem with JMS
@@ -366,9 +366,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * JMS Message specific type handling for <code>TextMessage</code>
-     * 
+     *
      * Subclasses that wish to support this <code>Message</code> type will override this
-     * 
+     *
      * @param message The message to handle
      * @return Event
      * @throws JMSException Exception if there is a problem with JMS
@@ -383,7 +383,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * Setter for overriding the default value (10000)of listenerSetupFailureRetryDelay
-     * 
+     *
      * @param listenerSetupFailureRetryDelay in milliseconds
      */
     public void setListenerSetupFailureRetryDelay(int listenerSetupFailureRetryDelay) {
@@ -392,7 +392,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
 	/**
 	 * Setter for overriding the default value (Indefinite) of listenerSetupFailureRetryDelay
-	 * 
+	 *
 	 * @param maxListenerSetupFailureRetries
 	 */
 	public void setMaxListenerSetupFailureRetries(int maxListenerSetupFailureRetries) {
@@ -401,11 +401,11 @@ public abstract class JmsMessageDrivenInitiatorImpl
     /**
      * This inner class is responsible for putting the MessageListenerContainer to sleep for a specified period and
      * reawakening.
-     * 
+     *
      * This needs to happen in a separate thread.
-     * 
+     *
      * @author Ikasan Development Team
-     * 
+     *
      */
     private class Anesthetist extends Thread
     {
@@ -420,7 +420,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
         /**
          * Constructor
-         * 
+         *
          * @param sleepPeriod The amount of time to put the initiator to sleep in milliseconds
          */
         public Anesthetist(long sleepPeriod)
@@ -431,13 +431,13 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Thread#run()
          */
         @Override
         public void run()
         {
-            
+
             try
             {
                 logger.info("Anesthetist invoked");
@@ -482,7 +482,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
         /**
          * True if we're currently operating
-         * 
+         *
          * @return true if we're currently operating
          */
         public boolean isOperating()
@@ -502,17 +502,17 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     /**
      * This inner class is responsible for stopping the MessageListenerContainer.
-     * 
+     *
      * This needs to happen in a separate thread.
-     * 
+     *
      * @author Ikasan Development Team
-     * 
+     *
      */
     private class Halt extends Thread
     {
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Thread#run()
          */
         @Override
