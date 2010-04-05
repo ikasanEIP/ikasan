@@ -4,7 +4,7 @@
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-war</artifactId>
 	<packaging>war</packaging>
-	<version>0.7.9</version>
+	<version>0.7.10-SNAPSHOT</version>
 	
 	<name>demoTransformationRouting :: demoTransformationRouting : war</name>
 
@@ -88,8 +88,8 @@
 
 
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
-        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/IKASAN/trunk/branches/ikasaneip-0.7.x</url>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/branches/ikasaneip-0.7.x</url>
     </scm>
 
     <build>
@@ -119,7 +119,7 @@
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-webconsole-war</artifactId>
-	      <version>0.7.9</version>
+	      <version>0.7.10-SNAPSHOT</version>
 	      <type>war</type>
 	      <scope>runtime</scope>
 	    </dependency>
