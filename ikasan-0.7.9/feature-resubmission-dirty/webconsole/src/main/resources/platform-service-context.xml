@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+    <bean id="moduleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="initiatorCommandDao" />
+    </bean>
+    
+    <bean id="moduleInitialisationService" class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="userDetailsService"/>
+        <constructor-arg ref="initiatorCommandDao" />
+    </bean>
+
+    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+
+
+	<bean id="flowEventListener"
+		class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
+		<constructor-arg ref="jobsMap"/>
+		<constructor-arg ref="triggerDao"/>
+	</bean>
+
+	<bean id="jobsMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="loggingJob" value-ref="loggingJob" />
+				<entry key="wiretapJob" value-ref="wiretapJob" />
+			</map>
+		</constructor-arg>
+		</bean>
+
+	<bean id="loggingJob" class="org.ikasan.framework.flow.event.service.LoggingEventJob" />
+
+	<bean id="wiretapJob" class="org.ikasan.framework.flow.event.service.WiretapEventJob">
+		<constructor-arg ref="wiretapService" />
+	</bean>
+
+	<bean id="wiretapService"
+		class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
+		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="moduleService" />
+	</bean>
+	
+	<bean id="errorLoggingService" class="org.ikasan.framework.error.service.DefaultErrorLoggingServiceImpl">
+		<constructor-arg ref="errorOccurrenceDao" />
+	</bean>
+	
+	<!-- transaction configuration for errorLoggingService -->
+    <aop:config>
+        <aop:pointcut id="errorLoggingInvocation" expression="execution(* org.ikasan.framework.error.service.ErrorLoggingService.logError(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorLoggingInvocation" />
+    </aop:config>
+	
+	<bean id="excludedEventService" class="org.ikasan.framework.event.exclusion.service.ExcludedEventServiceImpl">
+		<constructor-arg ref="excludedEventDao" />
+		<constructor-arg>
+			<list>
+				<!-- listeners will go here... -->
+			</list>
+		</constructor-arg>
+		<constructor-arg ref="moduleService" />
+		<property name="transactionManager" ref="rawTransactionManager" />
+	</bean>
+	
+	<!-- transaction configuration for excludedEventService -->
+    <aop:config>
+        <aop:pointcut id="initiatorInvocation" expression="execution(* org.ikasan.framework.event.exclusion.service.ExcludedEventService.resubmit(..))" />
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="initiatorInvocation" />
+    </aop:config>
+
+
+    
+	<bean id="platformScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="schedulerName" value="platformScheduler"/>
+		<property name="triggers">
+			<list>
+				<ref bean="wiretapEventHousekeepingTrigger" />
+				<ref bean="loggedErrorHousekeepingTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="wiretapService" />
+				<property name="targetMethod" value="housekeep" />
+				<property name="concurrent" value="false" />
+				<property name="name" value="WiretapEvent Housekeeping" />
+			</bean>
+		</property>
+		<property name="name" value="WiretapEvent Housekeeping Trigger" />
+		<!-- run every morning at 6 AM -->
+		<!-- <property name="cronExpression" value="0 0 6 * * ?" />-->
+		<property name="cronExpression" value="0 0/2 * * * ?" />
+		<!--
+			every 2 mins
+		-->
+	</bean>
+	
+		<bean id="loggedErrorHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="errorLoggingService" />
+				<property name="targetMethod" value="housekeep" />
+				<property name="concurrent" value="false" />
+				<property name="name" value="Error Log Housekeeping" />
+			</bean>
+		</property>
+		<property name="name" value="Error Log Housekeeping Trigger" />
+		<property name="cronExpression" value="0 0/2 * * * ?" />
+		<!--
+			every 2 mins
+		-->
+	</bean>
+
+	<!-- default non validating document builder factory -->
+	<bean id="documentBuilderFactory" lazy-init="true"
+		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="namespaceAware" value="true" />
+	</bean>
+
+	<!-- dtd validating document builder factory -->
+	<bean id="dtdValidatingDocumentFactory" lazy-init="true"
+		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="validating" value="true"/>
+		<property name="namespaceAware" value="true" />
+	</bean>
+
+	<!-- xsd validating document builder factory -->
+	<bean id="xsdValidatingDocumentFactory" lazy-init="true"
+		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="validating" value="true"/>
+		<property name="namespaceAware" value="true" />
+	</bean>
+
+	<!-- configure the document builder factory to use xsd -->
+  	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+     	<property name="targetObject" ref="xsdValidatingDocumentFactory"/>
+     	<property name="targetMethod" value="setAttribute"/>
+     	<property name="arguments">
+			<list>
+				<util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.JAXP_SCHEMA_LANGUAGE" />
+				<util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.W3C_XML_SCHEMA" />
+			</list>
+     	</property>
+  	</bean>
+  	
+  	
+  	
+  	<!-- default payloadFactory -->
+  	<bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl">
+        <constructor-arg value="org.ikasan.common.component.DefaultPayload" />
+        <constructor-arg ref="documentBuilderFactory" />
+    </bean>
+  	
+  	
+     	
+  	<bean id="jmsMessageEventSerialiser" 
+      class="org.ikasan.framework.event.serialisation.JmsMessageEventSerialiserEnvelopeImpl">
+        <constructor-arg ref="envelopeFactory"/>
+        <constructor-arg ref="jmsMessageFactory"/>
+    </bean>
+
+    <bean id="envelopeFactory" class="org.ikasan.common.factory.EnvelopeFactoryImpl">
+        <constructor-arg value="org.ikasan.common.component.DefaultEnvelope" />
+        <constructor-arg ref="jmsMessageFactory" />
+    </bean>
+
+    <bean id="jmsMessageFactory" class="org.ikasan.common.factory.JMSMessageFactoryImpl">
+      <constructor-arg ref="payloadFactory"/>
+    </bean>
+  	<!-- ###################################### -->
+  	<!-- common transaction services start here -->
+    <!-- ###################################### -->  	
+  	
+  	
+  	<!-- transaction advice requiring a new transaction on entry -->
+    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    
+
+
+    
+  <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+    <property name="transactionManagerName" value="java:/TransactionManager"/>
+    <property name="userTransactionName" value="UserTransaction"/>
+  </bean>
+  
+  <bean id="rawTransactionManager" class="org.springframework.jndi.JndiObjectFactoryBean">
+  	<property name="jndiName" value="java:/TransactionManager"/>
+  </bean>
+
+    <!-- ###################################### -->
+    <!-- common transaction services end here   -->
+    <!-- ###################################### -->
+    
+	
+</beans>

@@ -1,0 +1,20 @@
+IKASAN ENTERPRISE INTEGRATION PLATFORM COPYRIGHT NOTICE
+-------------------------------------------------------
+
+Organisation
+------------
+Copyright (c) 2003-2008 Mizuho International plc.
+
+
+Project Administrators
+----------------------
+Jeff Mitchell
+Junichi Suetake
+Martijn Verburg
+Ross Duncan
+Summer Hasani
+
+Project Contributors
+--------------------
+Matthew Potter
+Ioannis Mavroukakis

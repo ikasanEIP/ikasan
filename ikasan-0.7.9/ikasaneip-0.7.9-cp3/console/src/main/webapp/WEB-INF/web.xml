@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
+
+  <!-- The Spring context configurations listed here -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      /WEB-INF/classes/platform-datasources-context.xml
+      /WEB-INF/classes/platform-dataaccess-context.xml
+      /WEB-INF/classes/platform-service-context.xml
+      /WEB-INF/applicationContext-security.xml
+    </param-value>
+  </context-param>
+
+  <!-- Spring security filter -->
+  <filter>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+
+  <!-- Spring security filter mapping (e.g. Apply security to all calls) -->
+  <filter-mapping>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- 
+      Load the Servlet named context on startup (to load Spring driven platform services 
+      data access and security)
+  -->
+  <servlet>
+    <servlet-name>context</servlet-name>
+    <servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!-- Load the Servlet named console on startup (after the platform Spring contexts are loaded) -->
+  <servlet>
+    <servlet-name>console</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <!-- All *.htm requests should be mapped to the console Servlet -->
+  <servlet-mapping>
+    <servlet-name>console</servlet-name>
+    <url-pattern>*.htm</url-pattern>
+  </servlet-mapping>
+
+  <!-- The welcome file is index.jsp -->
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!-- Some extra JSP config, namely the tag libraries we use -->
+  <jsp-config>
+  
+    <taglib>
+      <taglib-uri>/spring-form</taglib-uri>
+      <taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
+    </taglib>
+
+  </jsp-config>
+
+</web-app>

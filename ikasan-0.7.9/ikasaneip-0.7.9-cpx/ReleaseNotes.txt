@@ -1,0 +1,23 @@
+
+Release Notes - Ikasan - Version 0.7.9-cp2
+
+** Sub-task
+    * [IKASAN-331] - Sybase ASE runs out of locks on large Wiretap housekeeps
+
+** Bug
+    * [IKASAN-355] - Allow FTP Active/Passive to be configured on demoFileDelivery sample application
+
+** Improvement
+    * [IKASAN-47] - Rename base-config.xml in connectors to a more sensible name
+    * [IKASAN-147] - Remove internal Spring usage from file transfer connectors
+    * [IKASAN-357] - Quartz based initiator to be configurable to allow exhaustive consumption of data on a single scheduled invocation
+    * [IKASAN-359] - Ikasan ExceptionHandler needs to log the full stacktrace of the thrown exception 
+
+
+
+
+
+
+** Task
+    * [IKASAN-358] - Create and add release notes
+
