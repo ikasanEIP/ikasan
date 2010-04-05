@@ -37,11 +37,89 @@
   <artifactId>ikasan-connector-sftpRar</artifactId>
   <version>0.7.9-SNAPSHOT</version>  
   <packaging>rar</packaging>
-
   <name>Connector SFTP Resource Adapter</name>
+
+  <organization>
+    <name>Ikasan</name>
+    <url>http://www.ikasan.org</url>
+  </organization>
+  <url>http://www.ikasan.org</url>
+  <inceptionYear>2007</inceptionYear>
+  <description>The SFTP library for the Ikasan Enterprise Integration Platform</description>
+  <developers>
+    <developer>
+      <id>karianna</id>
+      <name>Martijn Verburg</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>magicduncan</id>
+      <name>Ross Duncan</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>mitcje</id>
+      <name>Jeff Mitchell</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>hasasu</id>
+      <name>Summer Hasani</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>suetju</id>
+      <name>Junichi Suetake</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>koukhe</id>
+      <name>Herodotos Koukkides</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+
+    <licenses>
+        <license>
+            <name>The Lesser GNU Public License, Version 3.0</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
 
     <scm>
        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+       <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/branches/ikasaneip-0.7.x</url>
     </scm>
 
   

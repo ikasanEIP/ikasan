@@ -107,7 +107,6 @@
       <timezone>0</timezone>
     </developer>
   </developers>
-  <!--
   <licenses>
     <license>
       <name>The Lesser GNU Public License, Version 3.0</name>
@@ -115,7 +114,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  -->
   <!--
   <mailingLists>
     <mailingList>
@@ -133,6 +131,7 @@
   -->
   <scm>
     <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+    <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/branches/ikasaneip-0.7.x</url>
   </scm>
   <build>
     <resources>
@@ -170,6 +169,19 @@
             <descriptor>src/main/assembly/distribution.xml</descriptor>
           </descriptors>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -294,7 +306,8 @@
       <repository>
           <id>ikasaneip-releases</id>
           <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+          <!-- <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url> -->
+          <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
       </repository>
       <snapshotRepository>
           <id>ikasaneip-snapshots</id>
