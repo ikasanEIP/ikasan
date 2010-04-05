@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-client-filetransfer</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.9</version>
+  <version>0.7.10-SNAPSHOT</version>
   <name>Client Filetransfer</name>
   <organization>
     <name>Ikasan</name>
@@ -130,8 +130,8 @@
   </issueManagement>
   -->
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/branches/ikasaneip-0.7.x</connection>
-    <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/branches/ikasaneip-0.7.x</url>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+    <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/branches/ikasaneip-0.7.x</url>
   </scm>
   <build>
     <plugins>
@@ -211,34 +211,34 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.7.9</version>
+      <version>0.7.10-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Common functionality for Ikasan Connector Clients-->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-client-connection</artifactId>
-      <version>0.7.9</version>
+      <version>0.7.10-SNAPSHOT</version>
     </dependency>
     <!-- base connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-base</artifactId>
-      <version>0.7.9</version>
+      <version>0.7.10-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Filetransfer connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>0.7.9</version>
+      <version>0.7.10-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- Framework -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.7.9</version>
+      <version>0.7.10-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- j2ee -->
