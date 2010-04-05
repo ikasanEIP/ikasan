@@ -1,6 +1,21 @@
+** Sub-task
+    * [IKASAN-331] - Sybase ASE runs out of locks on large Wiretap housekeeps
+
+** Bug
+    * [IKASAN-355] - Allow FTP Active/Passive to be configured on demoFileDelivery sample application
+    * [IKASAN-360] - JCA based initiators still reports running state when Halt thread kicks in
+
+** Improvement
+    * [IKASAN-47] - Rename base-config.xml in connectors to a more sensible name
+    * [IKASAN-147] - Remove internal Spring usage from file transfer connectors
+    * [IKASAN-357] - Quartz based initiator to be configurable to allow exhaustive consumption of data on a single scheduled invocation
+    * [IKASAN-359] - Ikasan ExceptionHandler needs to log the full stacktrace of the thrown exception
+    * [IKASAN-377] - Enhance pom.xml files for all projects to enable Nexus repo upload (0.7.x branch)
+
+** Task
+    * [IKASAN-358] - Perform 0.7.9 Release (Create and add release notes)
 
 Release Notes - Ikasan - Version 0.7.8
-
 
 ** Bug
     * [IKASAN-299] - Ikasan platform doesn't start due to missing libs
@@ -10,12 +25,6 @@ Release Notes - Ikasan - Version 0.7.8
     * [IKASAN-346] - FTP connector not logging out before disconnection
     * [IKASAN-347] - FTP connector not defaulting to PASSIVE mode
     * [IKASAN-348] - FTP connector not checking replyCode after connection
-
-
-
-
-
-
 
 ** Task
     * [IKASAN-349] - Merge branch back to trunk
