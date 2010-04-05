@@ -117,6 +117,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <useAgent>true</useAgent>
+        </configuration>
       </plugin>
       </plugins>
 
