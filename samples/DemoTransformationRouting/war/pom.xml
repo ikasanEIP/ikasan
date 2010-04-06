@@ -92,29 +92,6 @@
         <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
     </scm>
 
-    <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <useAgent>true</useAgent>
-        </configuration>
-      </plugin>
-      
-      </plugins>
-</build>
-
-
 	<dependencies>
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
@@ -139,6 +116,37 @@
       </snapshotRepository>
   </distributionManagement>
 	
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <useAgent>true</useAgent>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 	
 </project>
 
