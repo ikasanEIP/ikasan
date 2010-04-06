@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-  <version>0.7.9-SNAPSHOT</version>
+  <version>0.7.9</version>
   <packaging>jar</packaging>
   <name>demoTransformationRouting :: englishWordRouter : jar</name>
 
@@ -121,8 +121,8 @@
   </build>
 
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
-        <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/svn/IKASAN/branches/ikasaneip-0.7.x</url>
     </scm>
 
 
