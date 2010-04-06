@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ *
+ *
+ * $Id$
+ * $URL$
+ * 
+ * =============================================================================
+ * Ikasan Enterprise Integration Platform
+ * 
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing 
+ * of individual contributors are as shown in the packaged copyright.txt 
+ * file. 
+ * 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice, 
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation 
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without 
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * =============================================================================
+ *
+ * Purpose: This file defines the required configuration for the common package.
+ *
+ * Author:  Ikasan Development Team
+ * 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">Schema defining the Common Envelope structure.</xsd:documentation>
+  </xsd:annotation>
+
+  <!-- ************************** -->
+  <!-- Include required schemas   -->
+  <!-- ************************** -->
+  <xsd:include schemaLocation="./payload_1_0.xsd"/>
+
+  <!-- ========================== -->
+  <!-- MAIN part                  -->
+  <!-- ========================== -->
+  <xsd:element name="envelope">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Envelope is used to wrap all business data exposed over public interfaces from Ikasan.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="header"   type="Header"/>
+        <xsd:element name="payloads" type="Payloads"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="Header">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Envelope meta-data used by the framework for routing and tracking of enclosed business payloads. This header info must not be used by other systems - it is internal to the Ikasan framework.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="id"                  type="NonEmptyString"/>
+      <xsd:element name="timestamp"           type="xsd:long"/>
+      <xsd:element name="timestampFormat"     type="NonEmptyString"/>
+      <xsd:element name="timezone"            type="NonEmptyString"/>
+      <xsd:element name="priority"            type="xsd:integer"/>
+      <xsd:element name="name"                type="NonEmptyString"/>
+      <xsd:element name="spec"                type="PayloadSpec"/>
+      <xsd:element name="format"              type="PayloadFormat"  minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="encoding"            type="PayloadEncoding"/>
+      <xsd:element name="charset"             type="PayloadCharset" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="size"                type="xsd:long" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="checksum"            type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="checksumAlg"         type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="processIds"          type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="srcSystem"           type="NonEmptyString"/>
+      <xsd:element name="targetSystems"       type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="resubmissionInfo"    type="NonEmptyString" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Payloads">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Envelope contains one or more payloads reflecting devliered business data.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="payload" type="NonEmptyString" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+</xsd:schema>
