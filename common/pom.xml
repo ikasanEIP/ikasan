@@ -1,9 +1,9 @@
-<!-- 
+<!--
 # //
 # //
 # // $Id$
 # // $URL$
-# // 
+# //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
 # // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -21,13 +21,13 @@
 # // Lesser General Public License for more details.
 # //
 # // You should have received a copy of the GNU Lesser General Public
-# // License along with this software; if not, write to the 
-# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // License along with this software; if not, write to the
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
 # // or see the FSF site: http://www.fsfeurope.org/.
 # // ====================================================================
 # //
 # // Author:  Ikasan Development Team
-# // 
+# //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -154,6 +154,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
@@ -170,6 +171,7 @@
           <useAgent>true</useAgent>
         </configuration>
       </plugin>
+      -->
     </plugins>
   </build>
   <reporting>
@@ -257,12 +259,12 @@
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
-	<dependency>
-    	<groupId>geronimo-spec</groupId>
-    	<artifactId>geronimo-spec-j2ee</artifactId>
-    	<version>1.4-rc3</version>
-		<scope>provided</scope>
-	</dependency> 
+  <dependency>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-j2ee</artifactId>
+      <version>1.4-rc3</version>
+    <scope>provided</scope>
+  </dependency>
     <!-- Needed for XML to Object serialisiation -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
@@ -340,4 +342,35 @@
           <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
       </snapshotRepository>
   </distributionManagement>
+<profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+        <configuration>
+            <useAgent>true</useAgent>
+        </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
