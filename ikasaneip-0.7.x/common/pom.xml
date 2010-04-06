@@ -154,24 +154,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <useAgent>true</useAgent>
-        </configuration>
-      </plugin>
-      -->
     </plugins>
   </build>
   <reporting>
@@ -342,7 +324,7 @@
           <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
       </snapshotRepository>
   </distributionManagement>
-<profiles>
+  <profiles>
     <profile>
       <id>release-sign-artifacts</id>
       <activation>
@@ -365,9 +347,9 @@
                 </goals>
               </execution>
             </executions>
-        <configuration>
-            <useAgent>true</useAgent>
-        </configuration>
+            <configuration>
+              <useAgent>true</useAgent>
+            </configuration>
           </plugin>
         </plugins>
       </build>
