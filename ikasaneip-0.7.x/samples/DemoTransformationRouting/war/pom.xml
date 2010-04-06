@@ -89,7 +89,7 @@
 
     <scm>
         <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
-        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/IKASAN/trunk/branches/ikasaneip-0.7.x</url>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9/svn/IKASAN/branches/ikasaneip-0.7.x</url>
     </scm>
 
     <build>
