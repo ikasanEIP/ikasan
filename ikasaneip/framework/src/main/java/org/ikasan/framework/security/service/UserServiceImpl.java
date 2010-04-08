@@ -293,6 +293,30 @@ public class UserServiceImpl implements UserService
     /*
      * (non-Javadoc)
      * 
+     * @see org.ikasan.framework.security.service.UserService#changeUsersEmail(java.lang.String, java.lang.String)
+     */
+    public void changeUsersEmail(String username, String newEmail) throws IllegalArgumentException
+    {
+        User user = null;
+        try
+        {
+            user = loadUserByUsername(username);
+        }
+        catch (UsernameNotFoundException e)
+        {
+            throw new IllegalArgumentException("Username could not be found", e);
+        }
+        catch (DataAccessException e)
+        {
+            throw new IllegalArgumentException("Username could not be found due to a DataAccessException", e);
+        }
+        user.setEmail(newEmail);
+        userDao.save(user);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see
      * org.ikasan.framework.security.service.UserService#createAuthority(org.ikasan.framework.security.model.Authority)
      */
