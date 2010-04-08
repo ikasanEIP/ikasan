@@ -77,11 +77,6 @@ public class ConsoleServiceImpl implements ConsoleService
      */
     public void sendNewPassword(User user) throws IllegalArgumentException
     {
-        if (user.getEmail() == null || user.getEmail() == "")
-        {
-            throw new IllegalArgumentException("User's email was empty, cannot send the password.");
-        }
-        
         consoleEmailNotifier.setTo(user.getEmail());
         consoleEmailNotifier.setSubject("Ikasan EIP - New Password");
         consoleEmailNotifier.setBody("Hi " + user.getUsername() + ",\n" +
