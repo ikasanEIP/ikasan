@@ -125,6 +125,43 @@
 
             <div><p>&nbsp;</p></div>
 
+            <!-- Change Email section TODO change CSS names -->
+            <div class="createUserBox">
+                <div class="searchFormHeading">
+                    &nbsp;<fmt:message key="maintain_user_change_email"/>
+                </div>
+                <div class="hr"><hr /></div>
+
+                <%-- TODO Can also JSP template this? --%>
+                <c:if test="${errors != ''}">
+                <c:forEach items="${errors}" var="error">
+                <span class="important"><c:out value="${error}" /></span><br />
+                </c:forEach>
+                </c:if>
+
+                <!-- Change Password fields -->
+                <form action="changeEmail.htm" method="post">
+                    <table id="searchFields">
+                        <tr>
+                            <td class="searchCell formLabel">
+                                 <fmt:message key="maintain_user_new_email" />
+                            </td>
+                            <td class="searchCell">
+                                 <input class="inputTextLong" id="email" type="text" name="email" value="" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <input type="submit" value="<fmt:message key="maintain_user_change_email_button" />" class="largeButton" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+            <div><p>&nbsp;</p></div>
+
             <!-- Change Password section TODO change CSS names -->
             <div class="createUserBox">
                 <div class="searchFormHeading">
