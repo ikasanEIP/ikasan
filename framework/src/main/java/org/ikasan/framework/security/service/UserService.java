@@ -108,6 +108,17 @@ public interface UserService extends UserDetailsManager
     public void changeUsersPassword(String username, String newPassword, String confirmNewPassword) throws IllegalArgumentException;
 
     /**
+     * Allows a specified user's email address.
+     * 
+     * Note that this should be an administrator function or a function of that particular user
+     * 
+     * @param username
+     * @param newEmail as plain text
+     * @throws IllegalArgumentException If the user is not valid
+     */
+    public void changeUsersEmail(String username, String newEmail) throws IllegalArgumentException;
+    
+    /**
      * Disables the specified user
      * 
      * @param username
