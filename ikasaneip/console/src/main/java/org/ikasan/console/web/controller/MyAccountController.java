@@ -78,10 +78,10 @@ public class MyAccountController
 
     /** The console service to use */
     private ConsoleService consoleService;
-    
+
     /** Logger for this class */
     private Logger logger = Logger.getLogger(MyAccountController.class);
-    
+
     /**
      * Constructor
      * 
@@ -112,7 +112,8 @@ public class MyAccountController
      * @return - Model and View for changePassword
      */
     @RequestMapping(value = "changePassword.htm", method = RequestMethod.GET)
-    public ModelAndView changePassword(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+    public ModelAndView changePassword(@SuppressWarnings("unused") HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response)
     {
         return new ModelAndView("users/changePassword");
     }
@@ -126,7 +127,8 @@ public class MyAccountController
      * @return - Model and View for myAccount
      */
     @RequestMapping(value = "myAccount.htm", method = RequestMethod.GET)
-    public ModelAndView myAccount(@SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response, ModelMap model)
+    public ModelAndView myAccount(@SuppressWarnings("unused") HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response, ModelMap model)
     {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = this.userService.loadUserByUsername(currentUser);
@@ -139,14 +141,15 @@ public class MyAccountController
      * 
      * @param user - The user we're changing the password for
      * @param confirmNewPassword - The password again, for confirmation
-     * @param model  - The model to add any errors too if required
+     * @param model - The model to add any errors too if required
      * @return Back to the changePassword screen in case of error, else back to the myAccount screen
      */
     @RequestMapping(value = "userChangePassword.htm", method = RequestMethod.POST)
-    public ModelAndView userChangePassword(@ModelAttribute("user") User user, @RequestParam(required = false) String confirmNewPassword, ModelMap model)
+    public ModelAndView userChangePassword(@ModelAttribute("user") User user,
+            @RequestParam(required = false) String confirmNewPassword, ModelMap model)
     {
         List<String> errors = new ArrayList<String>();
-        try 
+        try
         {
             this.userService.changeUsersPassword(user.getUsername(), user.getPassword(), confirmNewPassword);
         }
@@ -154,13 +157,11 @@ public class MyAccountController
         {
             errors.add(e.getMessage());
         }
-        
         if (!errors.isEmpty())
         {
             model.addAttribute("errors", errors);
             return new ModelAndView("users/changePassword");
         }
-        
         logger.info("User [" + user.getUsername() + "] has successfully changed their password");
         return new ModelAndView("users/myAccount");
     }
@@ -175,11 +176,13 @@ public class MyAccountController
     {
         return new ModelAndView("users/forgotPassword");
     }
-    
+
     /**
      * Send the new Password to the user
      * 
-     * @param username - User to send the new password to 
+     * TODO Split tasks into individual methods
+     * 
+     * @param username - User to send the new password to
      * @param model - The model to hold errors
      * 
      * @return - On success, return the user to the login screen, else return back to the forgot password screen
@@ -188,7 +191,6 @@ public class MyAccountController
     public ModelAndView sendPassword(@RequestParam(required = false) String username, ModelMap model)
     {
         List<String> errors = new ArrayList<String>();
-        
         // Load the user
         User user = null;
         try
@@ -198,14 +200,20 @@ public class MyAccountController
         catch (UsernameNotFoundException e)
         {
             errors.add(e.getMessage());
-            // Lets return immediately
             model.addAttribute("errors", errors);
             return new ModelAndView("users/forgotPassword", model);
         }
-        
-        // Change the password
+
+        // Check the Email Address, TODO Could be an RFC based check here
         if (user != null)
         {
+            if (user.getEmail() == null || user.getEmail() == "")
+            {
+                errors.add("User's email was empty, cannot send the password.");
+                model.addAttribute("errors", errors);
+                return new ModelAndView("users/forgotPassword", model);
+            }
+
             try
             {
                 // TODO Have a proper password generator
@@ -216,16 +224,13 @@ public class MyAccountController
             catch (IllegalArgumentException e)
             {
                 errors.add(e.getMessage());
+                model.addAttribute("errors", errors);
+                return new ModelAndView("users/forgotPassword", model);
             }
         }
-        
-        if (!errors.isEmpty())
-        {
-            model.addAttribute("errors", errors);
-            return new ModelAndView("users/forgotPassword", model);
-        }
+        // Else case is unreachable
+
         // TODO Return nice success message then redirect them
         return new ModelAndView(new RedirectView("/console/login.jsp"));
     }
-    
 }

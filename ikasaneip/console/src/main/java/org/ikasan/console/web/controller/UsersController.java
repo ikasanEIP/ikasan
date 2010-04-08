@@ -217,6 +217,33 @@ public class UsersController
     }
 
     /**
+     * Accepts submission of the changeEmail form
+     * 
+     * @param user - The user we're changing the email for
+     * @param model - The model (map)
+     * @return view the user
+     */
+    @RequestMapping(value = "changeEmail.htm", method = RequestMethod.POST)
+    public ModelAndView changeEmail(@ModelAttribute("user") User user, ModelMap model)
+    {
+        List<String> errors = new ArrayList<String>();
+        try 
+        {
+            this.userService.changeUsersEmail(user.getUsername(), user.getEmail());
+        }
+        catch (IllegalArgumentException e)
+        {
+            errors.add(e.getMessage());
+        }
+        if (!errors.isEmpty())
+        {
+            model.addAttribute("errors", errors);
+        }
+        return maintainUser(user.getUsername(), model);
+    }
+    
+    
+    /**
      * Grant a new authority to an existing user
      * 
      * @param username - The name of the user we're granting authority to 
