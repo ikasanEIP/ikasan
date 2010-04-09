@@ -94,6 +94,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         LdapAuthenticationToken ldapAuth = new LdapAuthenticationToken(auth, DUMMY_ROLE);
         
         // Get the user from the Ikasan internal data store & add their authorities to the token
+        // TODO  I think the UsernameNotFound exception thrown from here is a subset of AuthenticationException
+        // (in the case of the DataException, it's a RuntimeException so that's fine), but best to check
         User user = this.userService.loadUserByUsername(auth.getPrincipal().toString());
         ldapAuth.addAuthorities(Arrays.asList(user.getAuthorities()));
         InitialLdapContext ldapContext = (InitialLdapContext) authAdapter.getObjectAttribute("ldapContext");
