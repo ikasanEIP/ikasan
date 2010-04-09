@@ -34,7 +34,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-connector-base</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.9</version>
+  <version>0.7.10-SNAPSHOT</version>
   <name>Connector Base</name>
   <organization>
     <name>Ikasan</name>
@@ -130,8 +130,8 @@
   </issueManagement>
   -->
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9</connection>
-    <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.9</url>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+    <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
   </scm>
   <build>
     <resources>
@@ -221,7 +221,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.7.9</version>
+      <version>0.7.10-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- J2EE -->
