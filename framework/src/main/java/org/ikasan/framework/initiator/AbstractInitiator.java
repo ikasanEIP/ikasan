@@ -236,7 +236,6 @@ public abstract class AbstractInitiator implements Initiator
      */
     public void stop() throws InitiatorOperationException
     {
-  
             stopping=true;
             if (isRecovering()){
                 cancelRetryCycle();

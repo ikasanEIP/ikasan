@@ -54,11 +54,13 @@ import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.util.checksum.ChecksumSupplier;
 import org.ikasan.common.util.checksum.Md5ChecksumSupplier;
+
 import org.ikasan.connector.ConnectorException;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
+import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
@@ -104,9 +106,6 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
 {
     /** The logger instance. */
     private static Logger logger = Logger.getLogger(FTPConnection.class);
-
-    /** The application context */
-    private static Map<String, ApplicationContext> contextMap = new HashMap<String, ApplicationContext>();
 
     /** Id for Client of this connector */
     private String clientId;
@@ -231,7 +230,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         // Pass through the client Id
         logger.debug("Got clientId [" + this.clientId + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         executionContext.put(ExecutionContext.CLIENT_ID, this.clientId);
-        BaseFileTransferDao baseFileTransferDao = (BaseFileTransferDao) getContext().getBean("baseFileTransferDao");
+        BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
         FileDiscoveryCommand fileDiscoveryCommand = new FileDiscoveryCommand(sourceDir, filenamePattern, baseFileTransferDao, minAge, filterDuplicates,
             filterOnFilename, filterOnLastModifiedDate);
         // Discover any new files
@@ -301,7 +300,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             {
                 throw new ConnectorException("Could not get pk from deserialized payload content"); //$NON-NLS-1$
             }
-            FileChunkDao fileChunkDao = (FileChunkDao) getContext().getBean("fileChunkDao");
+            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             FileChunkHeader fileChunkHeader;
             try
             {
@@ -349,7 +348,11 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
                 logger.debug("about to cleanup file chunks"); //$NON-NLS-1$
                 executionContext.put(ExecutionContext.FILE_CHUNK_HEADER, reconstitutedFileChunkHeader);
                 CleanupChunksCommand cleanupChunksCommand = new CleanupChunksCommand();
-                cleanupChunksCommand.setBeanFactory(getContext());
+                
+                Map<String, Object> beanFactory = new HashMap<String,Object>();
+                beanFactory.put("fileChunkDao", DataAccessUtil.getFileChunkDao());
+                
+                cleanupChunksCommand.setBeanFactory(beanFactory);
                 executeCommand(cleanupChunksCommand, executionContext);
                 logger.debug("back from file chunk cleanup"); //$NON-NLS-1$
             }
@@ -461,7 +464,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
         if(chunking && shouldChunk(entry))
         {
-            FileChunkDao fileChunkDao = (FileChunkDao) getContext().getBean("fileChunkDao");
+            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             // chunking specific
             logger.debug("About to call ChunkingRetrieveFileCommand"); //$NON-NLS-1$
             ChunkingRetrieveFileCommand chunkingRetrieveFileCommand = new ChunkingRetrieveFileCommand(baseFileTransferDao, clientID, renameOnSuccess,
@@ -516,7 +519,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
     {
         try
         {
-            BaseFileTransferDao baseFileTransferDao = (BaseFileTransferDao) getContext().getBean("baseFileTransferDao");
+            BaseFileTransferDao baseFileTransferDao = DataAccessUtil.getBaseFileTransferDao();
             baseFileTransferDao.housekeep(clientId, ageOfFiles, maxRows);
         }
         catch (Exception e)
@@ -555,19 +558,4 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
         return (this.getManagedConnection().executeCommand(command));
     }
 
-    /**
-     * Returns a singleton Spring ApplicationContext per clientId
-     * 
-     * @return ApplicationContext
-     */
-    private ApplicationContext getContext()
-    {
-        if(contextMap.get(clientId) == null)
-        {
-            ApplicationContext applicationContext = new ClassPathXmlApplicationContext("base-config.xml");
-            logger.debug("config parsed."); //$NON-NLS-1$
-            contextMap.put(clientId, applicationContext);
-        }
-        return contextMap.get(clientId);
-    }
 }

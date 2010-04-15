@@ -43,7 +43,6 @@ package org.ikasan.framework.initiator.scheduled.quartz;
 import java.lang.reflect.Constructor;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.initiator.InvocationDrivenInitiator;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
@@ -62,14 +61,14 @@ public class IkasanJobFactory implements JobFactory
     private static Logger logger = Logger.getLogger(IkasanJobFactory.class);
 
     /** Scheduled initiator instance passed on creation of the scheduled job */
-    private InvocationDrivenInitiator initiator;
+    private QuartzDrivenInitiator initiator;
 
     /**
      * Constructor
      * 
      * @param initiator The initiator for this job factory
      */
-    public IkasanJobFactory(final InvocationDrivenInitiator initiator)
+    public IkasanJobFactory(final QuartzDrivenInitiator initiator)
     {
         this.initiator = initiator;
     }
@@ -90,7 +89,7 @@ public class IkasanJobFactory implements JobFactory
         }
         try
         {
-            Class<?>[] paramTypes = { InvocationDrivenInitiator.class };
+            Class<?>[] paramTypes = { QuartzDrivenInitiator.class };
             Object[] paramArgs = { this.initiator };
             Constructor<Job> con = jobClass.getConstructor(paramTypes);
             return con.newInstance(paramArgs);

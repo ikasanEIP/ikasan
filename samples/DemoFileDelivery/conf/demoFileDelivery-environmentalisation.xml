@@ -84,6 +84,12 @@
     <bean id="jmsPassword" class="java.lang.String">
         <constructor-arg value="unused" />
     </bean>  
+    
+    
+    <!-- set this to false if you want ftpPassive -->
+    <bean id="ftpActive" class="java.lang.Boolean">
+        <constructor-arg value="true"/>
+    </bean>
   
     <!-- 
     <bean id="jmsUsername" class="java.lang.String">

@@ -57,7 +57,7 @@
             <list>
             	<ref bean="channelAdapterFlowInitiator"/>
             	<ref bean="transformerFlowInitiator"/>
-            	<ref bean="transformerFlowSimpleInitiator"/>
+            	<!-- <ref bean="transformerFlowSimpleInitiator"/> -->
             </list>
         </constructor-arg>
         <property name="description">

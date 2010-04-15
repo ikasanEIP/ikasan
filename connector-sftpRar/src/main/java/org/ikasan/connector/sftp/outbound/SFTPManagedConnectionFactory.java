@@ -40,7 +40,9 @@
  */
 package org.ikasan.connector.sftp.outbound;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.resource.ResourceException;
@@ -50,15 +52,17 @@ import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.ikasan.common.CommonEnvironment;
-import org.ikasan.connector.base.command.HibernateTransactionalResourceCommandDAO;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalImpl;
 import org.ikasan.connector.base.outbound.EISManagedConnectionFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.ikasan.connector.basefiletransfer.DataAccessUtil;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
+
+import org.ikasan.connector.basefiletransfer.DataAccessUtil;
+import org.ikasan.connector.basefiletransfer.DataAccessUtil;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 
 /**
  * This class is the factory class for obtaining physical connections to the
@@ -127,12 +131,6 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /** Journal for logging activity of this connector */
     private TransactionJournal transactionJournal = null;
-
-    /** Spring context for resolving beans */
-    private ApplicationContext context = new ClassPathXmlApplicationContext("base-config.xml");
-
-    /** Key for the Hibernate session factory supplied by Spring */
-    private static final String NO_TX_BASE_FILE_TRANSFER_HIBERNATE_SESSION_FACTORY = "noTx-BaseFileTransferHibernateSessionFactory";
 
     /**
      * Create the connection factory with no connection manager, e.g. This is
@@ -327,11 +325,14 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
         if (transactionJournal == null)
         {
-            SessionFactory sessionFactroy = (SessionFactory) context
-                .getBean(NO_TX_BASE_FILE_TRANSFER_HIBERNATE_SESSION_FACTORY);
 
-            TransactionalResourceCommandDAO dao = new HibernateTransactionalResourceCommandDAO(sessionFactroy);
-            transactionJournal = new TransactionJournalImpl(dao, clientID, context);
+
+            TransactionalResourceCommandDAO dao = DataAccessUtil.getTransactionalResourceCommandDAO();
+            FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
+            Map<String, Object> beanFactory = new HashMap<String, Object>();
+            beanFactory.put("fileChunkDao", fileChunkDao);
+            
+            transactionJournal = new TransactionJournalImpl(dao, clientID, beanFactory);
 
         }
         return transactionJournal;
@@ -377,7 +378,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setLocalHostname(String rtLocalHost)
     {
-        CommonEnvironment env = (CommonEnvironment)this.context.getBean("env");
+        CommonEnvironment env = new org.ikasan.common.util.Env();
         String localHost = env.expandEnvVar(rtLocalHost);
         logger.debug("Setting localhost to [" + localHost + "].");
         if (localHost != null && localHost.length() > 0)

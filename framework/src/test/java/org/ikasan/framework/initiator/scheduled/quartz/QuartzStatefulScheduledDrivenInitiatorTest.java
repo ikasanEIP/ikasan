@@ -52,6 +52,7 @@ import junit.framework.Assert;
 
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.RetryAction;
@@ -62,9 +63,11 @@ import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Test;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -109,9 +112,54 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     final String initiatorName = "initiatorName";
     final String moduleName = "moduleName";
 
+    final JobDataMap jobDataMap = classMockery.mock(JobDataMap.class);   
 
+	/**
+	 * Tests the unhappy path of the EventProvider failing (throwing some Throwable). This should be logged, and the throwable dealt with as a result of the
+	 * ExceptionHandler's action
+	 * @throws ResourceException 
+	 */
+	@Test(expected=AbortTransactionException.class)
+	public void testInvoke_willLogErrorCallExceptionHandlerAndHandleAction_whenEventProviderThrows() throws ResourceException{
+		final String initiatorName = "initiatorName";
+		final String moduleName = "moduleName";
+		
+		QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();                
 
-
+		final ErrorLoggingService errorLoggingService = classMockery.mock(ErrorLoggingService.class);
+		sdi.setErrorLoggingService(errorLoggingService);
+		
+		final Throwable throwable = new NullPointerException();
+		final IkasanExceptionAction exceptionAction = classMockery.mock(StopAction.class);
+        
+		final Sequence sequence = classMockery.sequence("invocationSequence");
+		classMockery.checking(new Expectations()
+        {
+            {
+            	//eventProvider fails
+                one(eventProvider).getEvents();
+                inSequence(sequence);
+                will(throwException(throwable));
+                
+                //exceptionHandlerCalled
+                one(exceptionHandler).handleThrowable(initiatorName, throwable);
+                inSequence(sequence);
+                will(returnValue(exceptionAction));
+                
+                //errorService notified
+                one(errorLoggingService).logError(with(equal(throwable)), with(equal(moduleName)), with(equal((initiatorName))), (String)with(a(String.class)));
+                inSequence(sequence);
+            }
+        });
+        
+		setExpectationsForHandleStopAction(false);
+		
+        setExpectationsForReinvokeImmediately(false);		
+        sdi.invoke(jobDataMap);
+        
+        classMockery.assertIsSatisfied();
+	} 
+    
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * failure due to initiator being in a 'STOPPED' state.
@@ -142,7 +190,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         assertTrue(sdi.getState().isStopped());
 
         // invoke initiator
-        sdi.invoke();
+        sdi.invoke(jobDataMap);
+        
     }
 
 
@@ -172,8 +221,11 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         //expectations for handleNullAction
         setExpectationsForResume(sdi, false);
 
+        // As there is no event we do not want to be called back straight away
+        setExpectationsForReinvokeImmediately(false);
+        
         // invoke initiator
-        sdi.invoke();
+        sdi.invoke(jobDataMap);
     }
 
 
@@ -205,11 +257,49 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         //for a successful execution we will be handling a null action
         setExpectationsForResume(sdi, false);
 
+        // As there is no event we do not want to be called back straight away
+        setExpectationsForReinvokeImmediately(true);
+        
         // invoke initiator
-        sdi.invoke();
+        sdi.invoke(jobDataMap);
     }
 
+	/**
+     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
+     * successful initiator execute callback with returned event, but disallowing
+     * immediate reinvocation
+     * 
+     * @throws ResourceException
+     */
+    @Test
+    public void test_successful_ExecuteWithEventDisallowingImmediateReinvocation() 
+        throws ResourceException
+    {
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        sdi.setAllowImmediateReinvocationOnEvent(false);
+        
+        // set expectations
+        classMockery.checking(new Expectations()
+        {
+            {
+                // return 'null' ikasanExceptionAction from the flow invocation
+                one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
+                will(returnValue(null));
+            }
+        });
 
+        // set common expectations
+        this.setEventExpectations();
+        
+        //for a successful execution we will be handling a null action
+        setExpectationsForResume(sdi, false);
+        
+        //expect repeat immediately
+        setExpectationsForReinvokeImmediately(false);
+
+        // invoke initiator
+        sdi.invoke(jobDataMap);
+    }
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
@@ -243,10 +333,13 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         //for a successful execution we will be handling a null action
         setExpectationsForResume(sdi, false);
 
-        // invoke initiator
-        sdi.invoke();
-    }
+        //expect repeat immediately
+        setExpectationsForReinvokeImmediately(true);
 
+        // invoke initiator
+        sdi.invoke(jobDataMap);
+    }
+    
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator handling a 'STOP_ROLLBACK' action.
      *
@@ -277,13 +370,14 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setEventExpectations();
 
+        setExpectationsForReinvokeImmediately(false);
+
         setExpectationsForHandleStopAction(false);
 
         // invoke initiator
-
         AbortTransactionException abortTransactionException = null;
         try{
-        	sdi.invoke();
+            sdi.invoke(jobDataMap);
         	fail("AbortTransactionException should have been thrown for rollback scenario");
         } catch(AbortTransactionException exception){
         	abortTransactionException = exception;
@@ -333,13 +427,15 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setEventExpectations();
 
+        //dont repeat immediately
+        setExpectationsForReinvokeImmediately(false);
 
         setExpectationsForHandleRetryAction(sdi, false);
 
         // invoke initiator
         AbortTransactionException abortTransactionException = null;
         try{
-        	sdi.invoke();
+        	sdi.invoke(jobDataMap);
         	fail("AbortTransactionException should have been thrown for rollback scenario");
         } catch(AbortTransactionException exception){
         	abortTransactionException = exception;
@@ -383,7 +479,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
-
+        setExpectationsForReinvokeImmediately(false);
 
 
         Assert.assertNull("Retry count should be null initially", scheduledDrivenInitiator.getRetryCount());
@@ -412,7 +508,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleRetryAction(scheduledDrivenInitiator, true);
-
+        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator on retry (recovering)
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
@@ -451,7 +547,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
-
+        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
@@ -473,7 +569,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleStopAction(true);
-
+        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator second time
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
@@ -795,7 +891,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         AbortTransactionException abortTransactionException = null;
         try
         {
-            scheduledDrivenInitiator.invoke();
+            scheduledDrivenInitiator.invoke(jobDataMap);
             fail("exception should have been thrown");
         }
         catch(AbortTransactionException e)
@@ -817,6 +913,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // add a monitor
         sdi.addListener(monitorListener);
 
+        // allow immediate reinvocation by default
+        sdi.setAllowImmediateReinvocationOnEvent(true);        
+        
         return sdi;
     }
 
@@ -890,4 +989,20 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             throw new RuntimeException(e);
         }
     }
+
+    private void setExpectationsForReinvokeImmediately(final boolean reinvokeImmediately) {
+        classMockery.checking(new Expectations()
+        {
+            {
+                // get events from event provider
+                one(jobDataMap).put(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG, Boolean.FALSE);
+                if (reinvokeImmediately){
+                	one(jobDataMap).put(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG, Boolean.TRUE);
+                }
+            }
+        });
+		
+	}
+
+
 }

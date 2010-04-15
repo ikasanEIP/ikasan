@@ -181,7 +181,7 @@ public class ModuleServiceImplTest
     }
     
     @Test
-    public void testStopInitiator_willPersistAppropriateInitiatorCommandAndCallStopOnInitiator(){
+    public void testStopInitiator_willLogSystemEventAndStopOnInitiator(){
         final String moduleName = "moduleName";
         final String initiatorName = "initiatorName";
         final String actor = "actor";

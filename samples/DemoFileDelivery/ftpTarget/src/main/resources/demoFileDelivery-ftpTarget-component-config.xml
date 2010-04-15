@@ -75,6 +75,7 @@
 				        <property name="username" ref="targetFtpUserName" />
 				        <property name="password" ref="targetFtpPassword" />
 				        <property name="cleanupJournalOnComplete" value="true" />
+				        <property name="active" ref="ftpActive" />
 				    </bean>
 				</constructor-arg>
 			</bean>

@@ -107,7 +107,7 @@
             <div id="minorNavigation">
                 <ul>
                     <li class="first"><a href="<c:url value='/support.htm'/>"><fmt:message key="menu_support_link"/><!--TODO <img class="helpIcon" src="/console/images/Icon_Help_sml2.png" alt="?" /> --></a></li>
-                    <li class="username"><fmt:message key="menu_logged_in_as"/> <security:authentication property="principal.username" /></li>
+                    <li class="username"><fmt:message key="menu_logged_in_as"/> <security:authentication property="principal.username" /> </li>
                     <li class="last"><a href="<c:url value="/j_spring_security_logout"/>"><fmt:message key="menu_logout_link"/></a></li>
                 </ul>
             </div>
