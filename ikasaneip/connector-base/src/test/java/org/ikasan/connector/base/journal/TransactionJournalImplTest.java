@@ -42,6 +42,7 @@ package org.ikasan.connector.base.journal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.xa.Xid;
 
@@ -54,7 +55,6 @@ import org.ikasan.connector.base.command.XidImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanFactory;
 
 /**
  * Test class for the basic TrasactionJournal
@@ -75,7 +75,7 @@ public class TransactionJournalImplTest extends TestCase
         final TransactionalResourceCommandDAO dao = interfaceMockery.mock(TransactionalResourceCommandDAO.class);
         final TransactionalResourceCommand command = interfaceMockery.mock(TransactionalResourceCommand.class);
         
-        final BeanFactory beanFactory = interfaceMockery.mock(BeanFactory.class);
+        final Map<String,Object> beanFactory = interfaceMockery.mock(Map.class);
         
         interfaceMockery.checking(new Expectations()
         {

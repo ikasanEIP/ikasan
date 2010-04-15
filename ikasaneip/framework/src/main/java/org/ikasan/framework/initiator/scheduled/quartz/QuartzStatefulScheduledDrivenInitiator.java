@@ -44,11 +44,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
+import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.initiator.AbstractInvocationDrivenInitiator;
+import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorOperationException;
+import org.ikasan.framework.monitor.MonitorSubject;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -60,11 +64,13 @@ import org.quartz.TriggerUtils;
  * 
  * @author Ikasan Development Team
  */
-public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDrivenInitiator implements QuartzSchedulerInitiator
+public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator implements QuartzDrivenInitiator, MonitorSubject
 {
     private static final String INITIATOR_JOB_NAME = "initiatorJob";
 
     public static final String QUARTZ_SCHEDULE_DRIVEN_INITIATOR_TYPE = "QuartzScheduleDrivenInitiator";
+
+    public static final String REINVOKE_IMMEDIATELY_FLAG = "invokeAgainImmediately";
 
     /** Logger */
     private static Logger logger = Logger.getLogger(QuartzStatefulScheduledDrivenInitiator.class);
@@ -72,16 +78,19 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     /** name for the retry trigger when it exists */
     private static final String RETRY_TRIGGER_NAME = "retry_trigger";
 
-
+    protected EventProvider eventProvider = null;
+    
     /** Quartz scheduler */
     protected Scheduler scheduler;
     
     private List<Trigger> triggers;
     
     private JobDetail jobDetail;
+
+	private IkasanExceptionHandler exceptionHandler;
     
-
-
+	/** Allow Reinvoke Immediately flag to be set, when 1 or more Events is encountered, without error */
+	private boolean allowImmediateReinvocationOnEvent = false;
 
     /**
      * Constructor.
@@ -95,7 +104,11 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     public QuartzStatefulScheduledDrivenInitiator(String initiatorName, String moduleName, EventProvider eventProvider, Flow flow,
             IkasanExceptionHandler exceptionHandler)
     {
-        super(initiatorName, moduleName, flow, exceptionHandler, eventProvider);
+        super(moduleName, initiatorName, flow, exceptionHandler);
+        
+        this.eventProvider = eventProvider;
+        this.exceptionHandler = exceptionHandler;
+        notifyMonitorListeners();
         
         
     }
@@ -112,6 +125,33 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
         
     }
 
+
+
+//	private void invokeFlow(List<Event> events) {
+//		// Within the event handling we need to accommodate for a
+//		// single event outcome action; and for batched events outcome
+//		// action.
+//		// The batched events have multiple potential outcome actions,
+//		// therefore, we need to use the highest precedent outcome action.
+//		IkasanExceptionAction precedentAction = null;
+//		for (Event event : events)
+//		{
+//		    IkasanExceptionAction action = this.getFlow().invoke(event);
+//		    if (action != null)
+//		    {
+//		        if (precedentAction == null || action.getType().isHigherPrecedence(precedentAction.getType()))
+//		        {
+//		            precedentAction = action;
+//		            if (precedentAction.getType().isRollback())
+//		            {
+//		                // if rollback then we may as well get out now
+//		                break;
+//		            }
+//		        }
+//		    }
+//		}
+//		this.handleAction(precedentAction);
+//	}
 
 
     @Override
@@ -408,6 +448,65 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
     {
         this.triggers = triggers;
     }
+    
+    /**
+     * Standard invocation of an initiator.
+     * @param mergedJobDataMap 
+     */
+    public void invoke(JobDataMap mergedJobDataMap)
+    {
+    	mergedJobDataMap.put(REINVOKE_IMMEDIATELY_FLAG, Boolean.FALSE);
+        if (stopping)
+        {
+            logger.warn("Attempt to invoke an initiator in a stopped state.");
+            return;
+        }
+        
+        // invoke flow all the time we have event activity
+        // invoke flow
+        List<Event> events = null;
+        try
+        {
+            events = this.eventProvider.getEvents();
+            // If we get no events then we simply resume (see Javadoc of resume method)
+            if (events == null || events.size() == 0)
+            {
+                this.resume();
+                return;
+            }
+        }
+        catch (Throwable eventSourcingThrowable)
+        {
+            IkasanExceptionAction action = exceptionHandler.handleThrowable(name, eventSourcingThrowable);
+
+            //tell the error service
+            logError(null, eventSourcingThrowable, name,action);
+            handleAction(action,null);
+        }
+        invokeFlow(events);
+        if (allowImmediateReinvocationOnEvent)
+        {
+         	mergedJobDataMap.put(REINVOKE_IMMEDIATELY_FLAG, Boolean.TRUE);
+        }
+    }
+    
+    /**
+     * Accessor for allowImmediateReinvocationOnEvent
+     * @return allowImmediateReinvocationOnEvent
+     */
+    public boolean isAllowImmediateReinvocationOnEvent() {
+		return allowImmediateReinvocationOnEvent;
+	}
+
+	/**
+	 * Setter for allowImmediateReinvocationOnEventS
+	 * @param allowImmediateReinvocationOnEvent
+	 */
+	public void setAllowImmediateReinvocationOnEvent(
+			boolean allowImmediateReinvocationOnEvent) {
+		this.allowImmediateReinvocationOnEvent = allowImmediateReinvocationOnEvent;
+	}
+	
 
     /**
      * Returns the Quartz job name of this initiator
@@ -415,6 +514,6 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInvocationDr
      */
     public String getInitiatorJobName()
     {
-        return this.INITIATOR_JOB_NAME;
+        return INITIATOR_JOB_NAME;
     }
 }
