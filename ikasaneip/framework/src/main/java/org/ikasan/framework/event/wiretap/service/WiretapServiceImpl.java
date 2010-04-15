@@ -203,6 +203,10 @@ public class WiretapServiceImpl implements WiretapService
      */
     public void housekeep()
     {
+    	logger.info("wiretap housekeep called");
+    	long startTime = System.currentTimeMillis();
         wiretapDao.deleteAllExpired();
+        long endTime = System.currentTimeMillis();
+        logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
     }
 }

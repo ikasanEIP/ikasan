@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * 
- * ====================================================================
+ * =============================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,20 +36,28 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ * =============================================================================
  */
-package org.ikasan.framework.initiator;
+package org.ikasan.framework.initiator.scheduled.quartz;
 
-/**
- * Public interface for externally invoked initiators.
- * 
- * @author Ikasan Development Team
- */
-public interface InvocationDrivenInitiator extends Initiator
-{
-    /**
-     * Invocation of the initiator entry point.
-     * 
-     */
-    public void invoke();
+import org.ikasan.framework.initiator.Initiator;
+import org.quartz.JobDataMap;
+import org.quartz.Scheduler;
+
+public interface QuartzDrivenInitiator extends Initiator{
+	
+	/**
+	 * Invokes the Initiator with relevent job information
+	 * 
+	 * @param mergedJobDataMap
+	 */
+	public void invoke(JobDataMap mergedJobDataMap);
+	
+	/**
+	 * Accessor for internal Quartz Scheduler
+	 * 
+	 * @return <code>Scheduler</code> instance 
+	 */
+	public Scheduler getScheduler();
+
 }

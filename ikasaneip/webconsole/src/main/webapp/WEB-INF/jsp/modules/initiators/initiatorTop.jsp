@@ -47,7 +47,18 @@
 
 <div class="middle">
 
+
+<h2><c:out value="${initiator.name}" /></h2>
+
+
+<div id="initiatorControlBar">
+
+
+
+
+
 <div id="initiatorControl">
+
 
 <p>Current status is:</p>
 <span id="initiatorStateControl" class="initiatorState-<c:out value="${initiator.state.name}" />"><c:out value="${initiator.state.name}" /></span>
@@ -80,8 +91,7 @@
 
 </div>
 
-<h2>Initiator :: <c:out value="${initiator.name}" /></h2>
-<p>&nbsp;</p>
+
 
 
 
@@ -113,45 +123,11 @@ Startup Type : ${startupControl.startupType}
 
 </p>
 </form>
+    
+
+
+</div> 
 
 
 
-
-
-
-
-
-
-<h3>Status</h3>
-
-        <table class="keyValueTable">
-            <tr>
-                <th>
-                    RetryCount
-                </th>
-                <td>
-                    <c:out value="${initiator.retryCount}" />
-                </td>
-            </tr>
-
-            <tr>
-                <th>
-                   Successfully Handled Events
-                </th>
-                <td>
-                    <c:out value="${initiator.handledEventCount}" />
-                </td>
-            </tr>
-            
-            <tr>
-                <th>
-                   Last Successful Event
-                </th>
-                <td>
-                    <c:out value="${initiator.lastEventTime}" />
-                </td>
-            </tr>
-            
-
-        </table>
 

@@ -41,7 +41,9 @@
 package org.ikasan.connector.base.journal;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.xa.Xid;
 
@@ -67,7 +69,7 @@ public class TransactionJournalImpl implements TransactionJournal
     /**
      * Bean factory that commands use for resource lookup
      */
-    private BeanFactory beanFactory;
+    private Map<String, Object> beanFactory = new HashMap<String, Object>();
 
     /** The id of the client registering this transaction */
     private String clientId;
@@ -79,10 +81,10 @@ public class TransactionJournalImpl implements TransactionJournal
      * @param clientId
      * @param beanFactory
      */
-    public TransactionJournalImpl(TransactionalResourceCommandDAO dao, String clientId, BeanFactory beanFactory)
+    public TransactionJournalImpl(TransactionalResourceCommandDAO dao, String clientId, Map<String, Object> beanFactory)
     {
         this.dao = dao;
-        this.beanFactory = beanFactory;
+        this.beanFactory=beanFactory;
         this.clientId = clientId;
     }
 
