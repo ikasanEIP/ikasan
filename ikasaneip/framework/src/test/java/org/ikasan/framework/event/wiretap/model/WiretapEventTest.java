@@ -40,6 +40,7 @@
  */
 package org.ikasan.framework.event.wiretap.model;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -108,6 +109,7 @@ public class WiretapEventTest
 
         // TODO - not sure how else to test dynamic date.time creation
         assertNotNull(wiretapEvent.getCreated());
+        assertNotNull(wiretapEvent.getUpdated());
     }
     
     /**
