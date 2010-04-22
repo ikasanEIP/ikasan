@@ -19,6 +19,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
@@ -27,6 +28,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.3</version>
             </plugin>
             <!--
             <plugin>
@@ -132,11 +134,6 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
             <version>0.8.0-SNAPSHOT</version>
         </dependency>
@@ -154,11 +151,6 @@
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.1_3</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
