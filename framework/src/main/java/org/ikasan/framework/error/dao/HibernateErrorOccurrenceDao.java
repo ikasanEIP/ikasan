@@ -116,8 +116,8 @@ public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements 
 				}
                 List<ErrorOccurrence> wiretapResults = criteria.list();
                 criteria.setProjection(Projections.rowCount());
-                Integer rowCount = 0;
-                List<Integer> rowCountList = criteria.list();
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
                 if (!rowCountList.isEmpty())
                 {
                     rowCount = rowCountList.get(0);

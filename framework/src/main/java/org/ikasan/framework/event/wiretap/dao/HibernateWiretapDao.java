@@ -78,7 +78,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     /** Query for finding all wiretap events with the same payloadId */
     private static final String WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID = "select w.id from WiretapEvent w where w.payloadId = ?";
 
-    
     /** Batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete WiretapEvent s where s.id in (:event_ids)";
     
@@ -107,7 +106,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 		this.batchHousekeepDelete = batchHousekeepDelete;
 		this.housekeepingBatchSize = housekeepingBatchSize;
 	}
-	
 	
 	/**
      * Save the wiretapEvent
@@ -213,8 +211,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 criteria.addOrder(Order.desc("id"));
                 List<WiretapEventHeader> wiretapResults = criteria.list();
                 criteria.setProjection(Projections.rowCount());
-                Integer rowCount = 0;
-                List<Integer> rowCountList = criteria.list();
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
                 if (!rowCountList.isEmpty())
                 {
                     rowCount = rowCountList.get(0);
@@ -300,8 +298,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 List<WiretapEvent> wiretapResults = criteria.list();
                 criteria.setProjection(Projections.rowCount());
-                Integer rowCount = 0;
-                List<Integer> rowCountList = criteria.list();
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
                 if (!rowCountList.isEmpty())
                 {
                     rowCount = rowCountList.get(0);
@@ -359,8 +357,6 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	                Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
 	                query.setParameterList("event_ids", housekeepableBatch);
 	            	query.executeUpdate();
-
-	                
 	                return null;
 	            }
 	        });
@@ -409,8 +405,8 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             Criteria criteria = session.createCriteria(WiretapEvent.class);
             criteria.add(Restrictions.lt("expiry", new Date()));
             criteria.setProjection(Projections.rowCount());
-            Integer rowCount = 0;
-            List<Integer> rowCountList = criteria.list();
+            Long rowCount = new Long(0);
+            List<Long> rowCountList = criteria.list();
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);

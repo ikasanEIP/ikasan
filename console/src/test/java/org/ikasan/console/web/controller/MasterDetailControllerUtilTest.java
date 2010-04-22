@@ -164,7 +164,6 @@ public class MasterDetailControllerUtilTest extends TestCase
      */
     public void testAddPagedModelAttributes()
     {
-        // The context that the tests run in, allows for mocking actual concrete classes
         Mockery context = new Mockery()
         {
             {
@@ -190,10 +189,8 @@ public class MasterDetailControllerUtilTest extends TestCase
         }
         catch (IllegalArgumentException e)
         {
-            // Do Nothing, this is expected
         }
 
-        // Test the cases where request is null and the pagedResults is null
         model = new ModelMap();
         MasterDetailControllerUtil.addPagedModelAttributes(orderBy, orderAsc, pointToPointFlowProfileSearch, pointToPointFlowProfileSelectAll, moduleSelectAll, model, pageNo, pageSize, pagedResult, request, searchParams);
         assertNull(model.get("firstResultIndex"));
@@ -203,11 +200,9 @@ public class MasterDetailControllerUtilTest extends TestCase
         assertEquals(0, model.get("resultSize"));
         assertEquals("", model.get("searchResultsUrl"));
 
-        // Test the case where the request and pagedResult aren't null
         final HttpServletRequest request2 = context.mock(HttpServletRequest.class);
         final PagedSearchResult<?> pagedResult2 = context.mock(PagedSearchResult.class);
 
-        // Expectations
         context.checking(new Expectations()
         {
             {
@@ -218,26 +213,24 @@ public class MasterDetailControllerUtilTest extends TestCase
                 one(pagedResult2).getFirstResultIndex();
                 will(returnValue(2));
                 one(pagedResult2).getResultSize();
-                will(returnValue(1));
+                will(returnValue(new Long(1)));
                 one(pagedResult2).isLastPage();
                 will(returnValue(true));
                 one(pagedResult2).getResultSize();
-                will(returnValue(1));
+                will(returnValue(new Long(1)));
                 one(pagedResult2).size();
                 will(returnValue(1));
             }
         });
 
-        // Test
         MasterDetailControllerUtil.addPagedModelAttributes(orderBy, orderAsc, pointToPointFlowProfileSearch, pointToPointFlowProfileSelectAll, moduleSelectAll, model, pageNo, pageSize, pagedResult2, request2, searchParams);
         assertEquals(2, model.get("firstResultIndex"));
         assertTrue((Boolean)model.get("isLastPage"));
         assertEquals(0, model.get("lastPage"));
-        assertEquals(1, model.get("resultSize"));
+        assertEquals(new Long(1), model.get("resultSize"));
         assertEquals(1, model.get("size"));
         assertEquals("http://www.ikasan.org??key=value#results", model.get("searchResultsUrl"));
         
-        // The rest
         assertEquals("id", model.get("orderBy"));
         assertTrue((Boolean)model.get("orderAsc"));
         assertEquals("1", model.get("pointToPointFlowProfileSearch"));

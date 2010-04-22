@@ -76,5 +76,5 @@ public interface PagedSearchResult<T> extends List<T> {
 	 * 
 	 * @return size of the larger super result set
 	 */
-	public int getResultSize();
+	public long getResultSize();
 }
