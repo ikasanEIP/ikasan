@@ -18,103 +18,11 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.3</version>
-            </plugin>
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jspc-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>jspc</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <source>1.5</source>
-                            <target>1.5</target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webXml>${basedir}/target/jspweb.xml</webXml>
-                </configuration>
+                <version>2.1-beta-1</version>
             </plugin>
-            -->
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jdepend-maven-plugin</artifactId>
-            </plugin>
-            <!-- 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changelog-plugin</artifactId>
-            </plugin>
-             -->
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <configuration>
-                    <sourceEncoding>utf-8</sourceEncoding>
-                    <targetJdk>1.5</targetJdk>
-                </configuration>
-            </plugin>
-            <!--
-                <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>findbugs-maven-plugin</artifactId> <configuration> <xmlOutput>true|false</xmlOutput>
-                <xmlOutputDirectory>directory location of findbugs xdoc xml report</xmlOutputDirectory> <threshold>High|Normal|Low|Exp|Ignore</threshold>
-                <effort>Min|Default|Max</effort> <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
-                <includeFilterFile>findbugs-include.xml</includeFilterFile> <visitors>FindDeadLocalStores,UnreadFields</visitors>
-                <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors> <onlyAnalyze>org.codehaus.mojo.findbugs.*</onlyAnalyze>
-                <pluginList>/libs/fb-contrib/fb-contrib-2.8.0.jar</pluginList> <debug>true|false</debug> <relaxed>true|false</relaxed>
-                <findbugsXmlOutput>true|false</findbugsXmlOutput> <findbugsXmlOutputDirectory>directory location of findbugs legact xml format
-                report</findbugsXmlOutputDirectory> </configuration> </plugin>
-            -->
-            <!-- Dashboard, MUST be the last plugin -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dashboard-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <dependencies>
         <dependency>
@@ -140,7 +48,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.3.2.GA</version>
+            <version>3.5.1-Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -155,7 +63,7 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -164,9 +72,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>aspectj</groupId>
+            <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -197,7 +105,6 @@
         </dependency>
         -->
         <!-- We'll try the 1.2.1.RELEASE as that is what was released alongside spring-security-2.0.5.RELEASE -->
-         
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap</artifactId>
@@ -208,15 +115,17 @@
             <artifactId>spring-ldap-tiger</artifactId>
             <version>1.2.1</version>
         </dependency>
-        
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
             <version>1.4-rc3</version>
             <scope>provided</scope>
         </dependency>
-        <!-- This jar is added because jboss startup throwing exception
-             Failed to load class "org.slf4j.impl.StaticLoggerBinder" -->
+        <!-- 
+            This jar is added because jboss startup throwing exception
+            Failed to load class "org.slf4j.impl.StaticLoggerBinder"
+            TODO: UPDATE to 1.5.11 When Jboss can handle it? 
+         -->
         <dependency>
            <groupId>org.slf4j</groupId>
            <artifactId>slf4j-log4j12</artifactId>
@@ -229,26 +138,21 @@
             <version>2.5.6</version>
             <scope>test</scope>
         </dependency>
+        <!-- Update to 4.8.2 at some stage -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>4.8.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.8.3</version>
-            <scope>test</scope>
-        </dependency>
-        -->
+        <!-- TODO: Swap to Mockito one day -->
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
             <version>2.2.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- Update to 1.2 at some stage -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
@@ -258,13 +162,13 @@
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
-            <version>2.1_3</version>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>1.0</version>
+            <version>1.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

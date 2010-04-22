@@ -50,47 +50,18 @@
     <artifactId>ikasan-project</artifactId>
     <version>0.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
     <name>Ikasan Projects Parent Project</name>
-  <licenses>
-    <license>
-      <name>Modified BSD License</name>
-      <url>http://www.ikasan.org/license.html</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-  <mailingLists>
-    <mailingList>
-      <name>Ikasan Users</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Development</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
-    </mailingList>
-    <mailingList>
-      <name>Ikasan Announce</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
-    </mailingList>
-  </mailingLists>
-  <issueManagement>
-    <url>http://open.jira.com/browse/IKASAN</url>
-  </issueManagement>
 
     <modules>
         <!--
             Gotta keep the order correct here, dependent projects first, not alphabetical!
         -->
-        <!-- The build module acts the parent of the rest of the modules,
+        <!-- 
+             The build module acts the parent of the rest of the modules,
              controlling the repos, dependencies etc.
          -->
         <module>build</module>
+
         <!-- ikasan core -->
         <module>common</module>
         <module>platform</module>
@@ -117,24 +88,13 @@
         <module>samples/DemoResubmission</module>
         <module>samples/DemoErrorPublication</module>
 
-       <!-- documentation  -->
-       <!-- <module>documentation/ArchitectureGuide</module> -->
-       <!-- <module>documentation/ReferenceGuide</module> -->
+        <!-- documentation TODO Get the jdocbook plugin playing nicely again -->
+        <!--
+        <module>documentation/ArchitectureGuide</module>
+        <module>documentation/ReferenceGuide</module>
+        -->
 
     </modules>
-
-  <distributionManagement>
-      <repository>
-          <id>ikasaneip-releases</id>
-          <name>Ikasan EIP Releases Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
-      </repository>
-      <snapshotRepository>
-          <id>ikasaneip-snapshots</id>
-          <name>Ikasan EIP Snapshot Repository</name>
-          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
 
 </project>
 

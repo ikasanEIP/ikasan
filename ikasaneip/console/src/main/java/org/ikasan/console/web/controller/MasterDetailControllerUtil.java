@@ -115,7 +115,8 @@ public class MasterDetailControllerUtil
             model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
             // Calculate the last page (divide total results by page size, round
             // up but take off 1 as indexes are 0 based)
-            int lastPage = (int) Math.ceil(((double) pagedResult.getResultSize() / (double) pageSize)) - 1;
+            double numberOfResults = (double) pagedResult.getResultSize();
+            int lastPage = (int) Math.ceil((numberOfResults / (double) pageSize)) - 1;
             model.addAttribute("isLastPage", pagedResult.isLastPage());
             model.addAttribute("lastPage", lastPage);
             model.addAttribute("resultSize", pagedResult.getResultSize());

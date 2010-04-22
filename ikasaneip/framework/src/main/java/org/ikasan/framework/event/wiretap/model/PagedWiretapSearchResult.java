@@ -66,9 +66,9 @@ public class PagedWiretapSearchResult implements Serializable
     
     private int firstResult;
     
-    private int resultSize;
+    private long resultSize;
 
-    public PagedWiretapSearchResult(List<WiretapEventHeader> wiretapEventHeaders, int resultSize, int firstResult)
+    public PagedWiretapSearchResult(List<WiretapEventHeader> wiretapEventHeaders, long resultSize, int firstResult)
     {
         super();
         this.wiretapEventHeaders = wiretapEventHeaders;
@@ -81,7 +81,7 @@ public class PagedWiretapSearchResult implements Serializable
         return firstResult;
     }
 
-    public int getResultSize()
+    public long getResultSize()
     {
         return resultSize;
     }

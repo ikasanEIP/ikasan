@@ -151,8 +151,8 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
                 List<SystemEvent> systemEventResults = criteria.list();
                 
                 criteria.setProjection(Projections.rowCount());
-                Integer rowCount = 0;
-                List<Integer> rowCountList = criteria.list();
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
                 if (!rowCountList.isEmpty())
                 {
                     rowCount = rowCountList.get(0);
@@ -263,8 +263,8 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             Criteria criteria = session.createCriteria(SystemEvent.class);
             criteria.add(Restrictions.lt("expiry", new Date()));
             criteria.setProjection(Projections.rowCount());
-            Integer rowCount = 0;
-            List<Integer> rowCountList = criteria.list();
+            Long rowCount = new Long(0);
+            List<Long> rowCountList = criteria.list();
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);
