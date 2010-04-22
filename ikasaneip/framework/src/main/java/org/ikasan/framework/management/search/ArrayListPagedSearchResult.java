@@ -74,7 +74,7 @@ public class ArrayListPagedSearchResult<T> extends ArrayList<T> implements Paged
 	/**
 	 * size of the larger super set of results
 	 */
-	private int resultSize;
+	private long resultSize;
 	
 	/**
 	 * Constructor
@@ -84,7 +84,7 @@ public class ArrayListPagedSearchResult<T> extends ArrayList<T> implements Paged
 	 * @param resultSize - size of the larger super set of results
 	 */
 	public ArrayListPagedSearchResult(List<T> pagedResults, int firstResultIndex,
-			int resultSize) {
+			long resultSize) {
 		super(pagedResults);
 		this.firstResultIndex = firstResultIndex;
 		this.resultSize = resultSize;
@@ -105,7 +105,7 @@ public class ArrayListPagedSearchResult<T> extends ArrayList<T> implements Paged
 	 * 
 	 * @return size of the larger super result set
 	 */
-	public int getResultSize() {
+	public long getResultSize() {
 		return resultSize;
 	}
 

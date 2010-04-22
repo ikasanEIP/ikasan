@@ -113,8 +113,8 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 				
                 List<ExcludedEvent> results = criteria.list();
                 criteria.setProjection(Projections.rowCount());
-                Integer rowCount = 0;
-                List<Integer> rowCountList = criteria.list();
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
                 if (!rowCountList.isEmpty())
                 {
                     rowCount = rowCountList.get(0);
@@ -138,7 +138,7 @@ public class HibernateExcludedEventDao extends HibernateDaoSupport implements Ex
 
 	public ExcludedEvent getExcludedEvent(String eventId, boolean mutable) {
 		ExcludedEvent result = null;
-		List excludedEvents = getHibernateTemplate().find("from ExcludedEvent e where e.event.id = ?", eventId);
+		List<?> excludedEvents = getHibernateTemplate().find("from ExcludedEvent e where e.event.id = ?", eventId);
 		
 		if (excludedEvents.size()>0){
 			result = (ExcludedEvent) excludedEvents.get(0);
