@@ -109,21 +109,6 @@
       <version>2.5.6</version>
       <scope>provided</scope>
     </dependency>
-
-    <!-- Needed to run the Unit Tests TODO Upgrade to 4.8.2 when it is released -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Needed for mock objects when testing TODO Upgrade to 2.5.1 -->
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <version>2.2.0</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+</dependencies>
 
 </project>
