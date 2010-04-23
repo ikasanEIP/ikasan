@@ -81,7 +81,7 @@
         <version>2.2-beta-5</version>
         <configuration>
           <descriptors>
-            <descriptor>src/main/assembly/distribution.xml</descriptor>
+            <descriptor>src/main/assemble/distribution.xml</descriptor>
           </descriptors>
           <filters>
             <filter>src/main/assemble/filter.properties</filter>
