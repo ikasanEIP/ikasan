@@ -81,34 +81,6 @@
         	<version>1.1</version>
         	<scope>provided</scope>
         </dependency>	
-
-		<!-- Test Dependencies -->
-        <!-- Update to 4.8.2 at some stage -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-        <!-- Update to 2.5.1 at some stage -->
-		<dependency>
-			<groupId>org.jmock</groupId>
-			<artifactId>jmock</artifactId>
-			<version>2.2.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>2.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.objenesis</groupId>
-			<artifactId>objenesis</artifactId>
-			<version>1.2</version>
-			<scope>test</scope>
-		</dependency>
   	</dependencies>
     
 </project>
