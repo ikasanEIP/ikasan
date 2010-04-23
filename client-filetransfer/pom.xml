@@ -52,181 +52,112 @@
         <relativePath>../build/pom.xml</relativePath>
     </parent>
     
-  <groupId>org.ikasan</groupId>
-  <artifactId>ikasan-client-filetransfer</artifactId>
-  <packaging>jar</packaging>
-  <version>0.8.0-SNAPSHOT</version>
-  <name>Client Filetransfer</name>
-  <description>A default client for developers to use with File transfer based connectors in the Ikasan Enterprise Integration Platform</description>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-client-filetransfer</artifactId>
+    <packaging>jar</packaging>
+    <version>0.8.0-SNAPSHOT</version>
+    <name>Client Filetransfer</name>
+    <description>A default client for developers to use with File transfer based connectors in the Ikasan Enterprise Integration Platform</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.0</version>
-      </plugin>
-    </plugins>
-  </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-      </plugin>
-     <!-- <plugin>-->
-        <!-- <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changelog-plugin</artifactId>-->
-        <!-- Report from the day we became Ikasan -->
-        <!-- <configuration>
-          <type>date</type>
-          <dates>
-            <date implementation="java.lang.String">2008-06-03</date>
-          </dates>
-          <dateFormat>yyyy-MM-dd</dateFormat>
-        </configuration>-->
-     <!--  </plugin>-->
-    </plugins>
-  </reporting>
-  <dependencies>
-    <!-- Common functionality for Ikasan -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Common functionality for Ikasan Connector Clients-->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-client-connection</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-    </dependency>
-    <!-- base connector functionality for the ikasan platform -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-connector-base</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Filetransfer connector functionality for the ikasan platform -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Framework -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-framework</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- j2ee -->
-  <dependency>
-      <groupId>geronimo-spec</groupId>
-      <artifactId>geronimo-spec-j2ee</artifactId>
-      <version>1.4-rc3</version>
-    <scope>provided</scope>
-  </dependency>
-    <!-- TODO We're not explicitly dependent on this, because Spring transitively pulls it in -->
-    <!-- Tests fail if not included -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- TODO remove dependency on JBoss/Arjuna? Used for txns -->
-    <!-- <dependency>
-      <groupId>jboss.jbossts</groupId>
-      <artifactId>jbossjta</artifactId>
-      <version>4.3.0.GA</version>
-      <scope>provided</scope>
-    </dependency>-->
-    <!-- Used for creating test objects -->
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <version>2.2.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Used for Unit testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Objenesis, used for testing -->
-    <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.transaction</groupId>
-      <artifactId>jboss-jta</artifactId>
-      <version>4.2.3.SP7</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- For persisting information, testing only -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>3.3.2.GA</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>2.1_3</version>
-      <scope>test</scope>
-	</dependency>     
-  </dependencies>
-  <repositories>
-    <repository>
-      <id>jboss</id>
-      <url>http://repository.jboss.com/maven2</url>
-    </repository>
-  </repositories>
-
+    <dependencies>
+        <!-- Common functionality for Ikasan -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Common functionality for Ikasan Connector Clients-->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-client-connection</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- base connector functionality for the ikasan platform -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-connector-base</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Filetransfer connector functionality for the ikasan platform -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-connector-basefiletransfer</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Framework -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-framework</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- j2ee -->
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- TODO We're not explicitly dependent on this, because Spring transitively pulls it in -->
+        <!-- But tests fail if not included -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- TODO:  Update to 2.5.1, Used for creating test objects -->
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <version>2.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- TODO:  Update to 4.8.2 Used for Unit testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Objenesis, used for testing -->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- TODO One day remove dependency on JBoss/Arjuna. But for now it's used for LRCO txns -->
+        <dependency>
+            <groupId>org.jboss.transaction</groupId>
+            <artifactId>jboss-jta</artifactId>
+            <version>4.2.3.SP7</version>
+            <scope>test</scope>
+        </dependency>
+    
+        <!-- For persisting information, testing only -->
+        <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-core</artifactId>
+          <version>3.5.1-Final</version>
+          <scope>test</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>javax.transaction</groupId>
+              <artifactId>jta</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
