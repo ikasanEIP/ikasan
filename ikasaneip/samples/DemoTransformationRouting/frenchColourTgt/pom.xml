@@ -59,12 +59,9 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-
 		<filters>
 			<filter>module.properties</filter>
 		</filters>
-
-		
 	</build>
 </project>
 

@@ -41,42 +41,29 @@
 # //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>0.8.0-SNAPSHOT</version>
         <relativePath>../../../build/pom.xml</relativePath>
     </parent>
-    <!--
-	<parent>
-		<groupId>org.ikasan.demo</groupId>
-		<artifactId>demoFileDelivery-parent</artifactId>
-		<version>0.8.0-SNAPSHOT-SNAPSHOT</version>
-	</parent>
-     -->
     <groupId>org.ikasan.demo</groupId>
 	<artifactId>demoFileDelivery-app</artifactId>
     <version>0.8.0-SNAPSHOT</version>
 	<packaging>ear</packaging>
 
 	<name>demoFileDelivery :: demoFileDelivery : ear</name>
-    
-      
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.4.1</version>
 				<configuration>
 					<filtering>true</filtering>
-                    <!-- <filters>
-                        <filter>${basedir}/../../project.properties</filter>
-                        <filter>${basedir}/../module.properties</filter>
-                    </filters>-->
-
-
 
 			          <jboss>
 			            <version>4.2</version>
@@ -98,56 +85,56 @@
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-connector-ftpRar</artifactId>
 						</rarModule>
-						<javaModule>
+						<jarModule>
 							<groupId>junit</groupId>  <!-- this is a dummy to force the reference of the cf-ds in generated application.xml -->
 							<artifactId>junit</artifactId>
 							<bundleDir>/</bundleDir>
 							<bundleFileName>demoFileDelivery-ftp-cf-ds.xml</bundleFileName>
 							<includeInApplicationXml>true</includeInApplicationXml>
-						</javaModule>
+						</jarModule>
 
 						<!--jars required by the web app -->
-						<javaModule>
+						<jarModule>
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-framework</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.springframework</groupId>
 							<artifactId>spring</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.springframework</groupId>
 							<artifactId>spring-web</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.springframework</groupId>
 							<artifactId>spring-webmvc</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.springframework.security</groupId>
 							<artifactId>spring-security-core</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.springframework.security</groupId>
 							<artifactId>spring-security-core-tiger</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.springframework.security</groupId>
 							<artifactId>spring-security-taglibs</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
+						</jarModule>
 
-						<javaModule>
+						<jarModule>
 							<groupId>com.thoughtworks.xstream</groupId>
 							<artifactId>xstream</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
+						</jarModule>
 						<jarModule>
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-common</artifactId>
@@ -174,7 +161,7 @@
 							<bundleDir>lib</bundleDir>
 						</jarModule>
                         <jarModule>
-                            <groupId>aspectj</groupId>
+                            <groupId>org.aspectj</groupId>
                             <artifactId>aspectjweaver</artifactId>
                             <bundleDir>lib</bundleDir>
                         </jarModule>
@@ -182,55 +169,48 @@
 							module config files must be in the lib dir for the web app to do
 							anything
 						-->
-						<javaModule>
+						<jarModule>
 							<groupId>org.ikasan.demo</groupId>
 							<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
-						<javaModule>
+						</jarModule>
+						<jarModule>
 							<groupId>org.ikasan.demo</groupId>
 							<artifactId>demoFileDelivery-ftpTarget-jar</artifactId>
 							<bundleDir>lib</bundleDir>
-						</javaModule>
+						</jarModule>
 
 						<!-- additional jars required by the module -->
-
 						<jarModule>
-							<groupId>quartz</groupId>
+							<groupId>org.quartz-scheduler</groupId>
 							<artifactId>quartz</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
-
 						<jarModule>
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-client-filetransfer</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
-
 						<jarModule>
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-connector-base</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
-
 						<jarModule>
 							<groupId>org.ikasan</groupId>
 							<artifactId>ikasan-client-connection</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
-
 						<jarModule>
 							<groupId>org.ikasan</groupId>
-					      <artifactId>ikasan-connector-basefiletransfer</artifactId>
+					        <artifactId>ikasan-connector-basefiletransfer</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
-
 			            <jarModule>
 			      		  <groupId>commons-net</groupId>
 			      		  <artifactId>commons-net</artifactId>
 			              <bundleDir>lib</bundleDir>
 			            </jarModule>
-
 			      		<jarModule>
 			      		  <groupId>commons-lang</groupId>
 			      		  <artifactId>commons-lang</artifactId>
@@ -239,7 +219,6 @@
 					</modules>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 	<dependencies>
@@ -280,26 +259,26 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.5.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core-tiger</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.5.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.5.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.2.2</version>
+			<version>1.3.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -329,16 +308,16 @@
 		<dependency>
 			<groupId>ognl</groupId>
 			<artifactId>ognl</artifactId>
-			<version>2.6.9</version>
+			<version>2.7.2</version>
 			<scope>provided</scope>
 		</dependency>
         <dependency>
-            <groupId>aspectj</groupId>
+            <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.4</version>
             <scope>provided</scope>
         </dependency>
-		<!-- module files 	-->
+		<!-- module files -->
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoFileDelivery-ftpSource-jar</artifactId>
@@ -356,9 +335,9 @@
 
 		<!-- dependencies of the module -->
 		<dependency>
-			<groupId>quartz</groupId>
+			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -381,7 +360,6 @@
 	      <version>0.8.0-SNAPSHOT</version>
 	      <scope>provided</scope>
 	    </dependency>
-
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 		  <artifactId>ikasan-client-connection</artifactId>
@@ -391,7 +369,7 @@
 	    <dependency>
       	  <groupId>commons-lang</groupId>
           <artifactId>commons-lang</artifactId>
-      	  <version>2.2</version>
+      	  <version>2.5</version>
       	  <scope>provided</scope>
     	</dependency>
 	    <dependency>
@@ -407,22 +385,14 @@
 			<scope>provided</scope>
 			<type>rar</type>
 		</dependency>
-		<dependency> <!-- this is a dummy to force the reference of the cf-ds in generated application.xml -->
+        <!-- TODO this is a dummy to force the reference of the cf-ds in generated application.xml -->
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.8.1</version>
 			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>
-		<repositories>
-			<repository>
-			<!--  this is only required for quartz 1.6.0 -->
-			<id>jboss</id>
-			<name>JBoss Inc. Repository</name>
-			<url>http://repository.jboss.com/maven2/</url>
-		</repository>
-	</repositories>
-
 
 </project>

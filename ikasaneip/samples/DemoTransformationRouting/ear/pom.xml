@@ -57,6 +57,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
+        <version>2.4.1</version>
         <configuration>
 
           <jboss>
@@ -75,47 +76,46 @@
             </webModule>
 
             <!--jars required by the web app -->
-            <javaModule>
+            <jarModule>
               <groupId>org.ikasan</groupId>
               <artifactId>ikasan-framework</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.springframework</groupId>
               <artifactId>spring</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.springframework</groupId>
               <artifactId>spring-web</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.springframework</groupId>
               <artifactId>spring-webmvc</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.springframework.security</groupId>
               <artifactId>spring-security-core</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.springframework.security</groupId>
               <artifactId>spring-security-core-tiger</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.springframework.security</groupId>
               <artifactId>spring-security-taglibs</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>com.thoughtworks.xstream</groupId>
               <artifactId>xstream</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
+            </jarModule>
             <jarModule>
               <groupId>org.ikasan</groupId>
               <artifactId>ikasan-common</artifactId>
@@ -141,51 +141,51 @@
               <artifactId>ognl</artifactId>
               <bundleDir>lib</bundleDir>
             </jarModule>
-                        <jarModule>
-                            <groupId>aspectj</groupId>
-                            <artifactId>aspectjweaver</artifactId>
-                            <bundleDir>lib</bundleDir>
-                        </jarModule>
-                        <jarModule>
-              <groupId>quartz</groupId>
-              <artifactId>quartz</artifactId>
-              <bundleDir>lib</bundleDir>
+            <jarModule>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <bundleDir>lib</bundleDir>
             </jarModule>
             <jarModule>
-                  <groupId>commons-lang</groupId>
-                  <artifactId>commons-lang</artifactId>
-                    <bundleDir>lib</bundleDir>
-                  </jarModule>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <bundleDir>lib</bundleDir>
+            </jarModule>
+            <jarModule>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <bundleDir>lib</bundleDir>
+            </jarModule>
 
             <!--
               module config files must be in the lib dir for the web app to do
               anything
             -->
-            <javaModule>
+            <jarModule>
               <groupId>org.ikasan.demo</groupId>
               <artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-            <javaModule>
+            </jarModule>
+            <jarModule>
               <groupId>org.ikasan.demo</groupId>
               <artifactId>demoTransformationRouting-germanWordSrc-jar</artifactId>
               <bundleDir>lib</bundleDir>
-            </javaModule>
-                        <javaModule>
+            </jarModule>
+                        <jarModule>
                             <groupId>org.ikasan.demo</groupId>
                             <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
                             <bundleDir>lib</bundleDir>
-                        </javaModule>
-                        <javaModule>
+                        </jarModule>
+                        <jarModule>
                             <groupId>org.ikasan.demo</groupId>
                             <artifactId>demoTransformationRouting-frenchColourTgt-jar</artifactId>
                             <bundleDir>lib</bundleDir>
-                        </javaModule>
-                        <javaModule>
+                        </jarModule>
+                        <jarModule>
                             <groupId>org.ikasan.demo</groupId>
                             <artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
                             <bundleDir>lib</bundleDir>
-                        </javaModule>
+                        </jarModule>
             <!-- additional jars required by the module -->
 
 
@@ -200,141 +200,133 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <!-- the war itself -->
-    <dependency>
-      <groupId>org.ikasan.demo</groupId>
-      <artifactId>demoTransformationRouting-war</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <type>war</type>
-      <scope>provided</scope>
-    </dependency>
 
-    <!--direct dependencies of the war -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-framework</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core-tiger</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-taglibs</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-      <version>1.2.2</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.webflow</artifactId>
-      <version>2.0.5.RELEASE</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.binding</artifactId>
-      <version>2.0.5.RELEASE</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.js</artifactId>
-      <version>2.0.5.RELEASE</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>ognl</groupId>
-      <artifactId>ognl</artifactId>
-      <version>2.6.9</version>
-      <scope>provided</scope>
-    </dependency>
-
+    <dependencies>
         <dependency>
-            <groupId>aspectj</groupId>
+          <groupId>org.ikasan.demo</groupId>
+          <artifactId>demoTransformationRouting-war</artifactId>
+          <version>0.8.0-SNAPSHOT</version>
+          <type>war</type>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-framework</artifactId>
+          <version>0.8.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring</artifactId>
+          <version>2.5.6</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+          <version>2.5.6</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-webmvc</artifactId>
+          <version>2.5.6</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-core</artifactId>
+          <version>2.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-core-tiger</artifactId>
+          <version>2.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-taglibs</artifactId>
+          <version>2.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.thoughtworks.xstream</groupId>
+          <artifactId>xstream</artifactId>
+          <version>1.3.1</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-common</artifactId>
+          <version>0.8.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.webflow</groupId>
+          <artifactId>org.springframework.webflow</artifactId>
+          <version>2.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.webflow</groupId>
+          <artifactId>org.springframework.binding</artifactId>
+          <version>2.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.webflow</groupId>
+          <artifactId>org.springframework.js</artifactId>
+          <version>2.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>ognl</groupId>
+          <artifactId>ognl</artifactId>
+          <version>2.7.2</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.4</version>
             <scope>provided</scope>
         </dependency>
-
-      <dependency>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-          <version>2.2</version>
-          <scope>provided</scope>
-      </dependency>
-    <dependency>
-      <groupId>quartz</groupId>
-      <artifactId>quartz</artifactId>
-      <version>1.6.0</version>
-      <scope>provided</scope>
-    </dependency>
-
-
-    <!-- module files   -->
-    <dependency>
-      <groupId>org.ikasan.demo</groupId>
-      <artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <type>jar</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ikasan.demo</groupId>
-      <artifactId>demoTransformationRouting-germanWordSrc-jar</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <type>jar</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>1.7.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- module files -->
+        <dependency>
+            <groupId>org.ikasan.demo</groupId>
+            <artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan.demo</groupId>
+            <artifactId>demoTransformationRouting-germanWordSrc-jar</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
             <version>0.8.0-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchColourTgt-jar</artifactId>
@@ -342,7 +334,6 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
@@ -350,17 +341,14 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-    <!-- dependencies of the module -->
-
-    <dependency>
-      <groupId>org.ikasan.demo</groupId>
-      <artifactId>demoTransformationRouting-components</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <type>jar</type>
-      <scope>provided</scope>
-    </dependency>
-
-  </dependencies>
-
+        <!-- dependencies of the module -->
+        <dependency>
+            <groupId>org.ikasan.demo</groupId>
+            <artifactId>demoTransformationRouting-components</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>

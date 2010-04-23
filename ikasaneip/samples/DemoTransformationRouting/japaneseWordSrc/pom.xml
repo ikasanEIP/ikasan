@@ -52,7 +52,6 @@
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: japaneseWordSrc : jar</name>
 
-  
 	<build>
 		<resources>
 			<resource>
@@ -60,14 +59,10 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-
 		<filters>
 			<filter>module.properties</filter>
 		</filters>
-
-		
 	</build>
-
 
 </project>
 

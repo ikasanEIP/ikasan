@@ -42,30 +42,18 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-build</artifactId>
+        <version>0.8.0-SNAPSHOT</version>
+        <relativePath>../../../build/pom.xml</relativePath>
+    </parent>
     <groupId>org.ikasan</groupId>
     <version>0.8.0-SNAPSHOT</version>
     <artifactId>ikasan-errorpub</artifactId>    
 	<packaging>jar</packaging>
 
-
 	<name>ikasan :: error publication : jar</name>
-
-	<build>
-
-
-    	<plugins>
-      		<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-compiler-plugin</artifactId>
-        		<configuration>
-          			<source>1.5</source>
-          			<target>1.5</target>
-        		</configuration>
-      		</plugin>
-
-      	</plugins>
-	</build>
 
   	<dependencies>
   		<dependency>
@@ -86,6 +74,7 @@
 			<version>2.5.6</version>
 			<scope>provided</scope>
 		</dependency>
+        <!-- Update to 1.2 at some stage -->
         <dependency>
         	<groupId>org.hamcrest</groupId>
         	<artifactId>hamcrest-all</artifactId>
@@ -94,12 +83,14 @@
         </dependency>	
 
 		<!-- Test Dependencies -->
+        <!-- Update to 4.8.2 at some stage -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
+        <!-- Update to 2.5.1 at some stage -->
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock</artifactId>
@@ -115,9 +106,9 @@
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
-			<version>1.0</version>
+			<version>1.2</version>
 			<scope>test</scope>
-		</dependency>		        	  	
+		</dependency>
   	</dependencies>
     
 </project>
