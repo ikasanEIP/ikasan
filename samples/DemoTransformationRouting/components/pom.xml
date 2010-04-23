@@ -52,20 +52,6 @@
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: components : jar</name>
 
-	<build>
-
-		<!-- Std plugins -->
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.ikasan</groupId>
@@ -91,7 +77,6 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 
 </project>
 
