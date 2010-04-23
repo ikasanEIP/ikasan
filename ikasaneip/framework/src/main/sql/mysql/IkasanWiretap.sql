@@ -47,5 +47,6 @@ CREATE TABLE  `Ikasan01`.`IkasanWiretap` (
   `CreatedDateTime` datetime NOT NULL,
   `UpdatedDateTime` datetime NOT NULL,
   `Expiry` datetime NOT NULL,
-  PRIMARY KEY (`Id`)
+  PRIMARY KEY (`Id`),
+  INDEX PayloadId_Index USING BTREE (PayloadId)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
