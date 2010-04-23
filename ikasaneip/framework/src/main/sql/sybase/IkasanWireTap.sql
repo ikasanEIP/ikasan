@@ -64,6 +64,7 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
 CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)
+CREATE NONCLUSTERED INDEX IkasanWiretap02i ON IkasanWiretap(PayloadId)
 
 IF OBJECT_ID('IkasanWiretap') IS NOT NULL
     PRINT '<<< CREATED TABLE IkasanWiretap >>>'
