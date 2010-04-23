@@ -52,22 +52,13 @@
         <relativePath>../build/pom.xml</relativePath>
     </parent>
     
-  <groupId>org.ikasan</groupId>
-  <artifactId>ikasan-connector-basefiletransfer</artifactId>
-  <packaging>jar</packaging>
-  <version>0.8.0-SNAPSHOT</version>
-  <name>Connector Base Filetransfer</name>
-  <description>The base library to support the file transfer connectors in the Ikasan Enterprise Integration Platform</description>
-    <!-- 
-         Need to specify scm details here because changelog plugin uses the artifact id 
-         to the scm details (e.g. ikasan-framework) as opposed to the svn folder (e.g. 'framework').
-         TODO Change either artifact id or source folder name
-      -->
-    <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-basefiletransfer</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-basefiletransfer</developerConnection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip/connector-basefiletransfer</url>
-    </scm>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-connector-basefiletransfer</artifactId>
+    <packaging>jar</packaging>
+    <version>0.8.0-SNAPSHOT</version>
+    <name>Connector Base Filetransfer</name>
+    <description>The base library to support the file transfer connectors in the Ikasan Enterprise Integration Platform</description>
+
   <build>
     <resources>
       <resource>
@@ -80,7 +71,7 @@
       </resource>
     </resources>
     <plugins>
-      <!-- For sample assembly only, users should assemble their own wrapped connector seperately -->
+      <!-- For sample assembly only, users should assemble their own wrapped connector separately -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2-beta-5</version>
@@ -96,28 +87,28 @@
     </plugins>
   </build>
   <dependencies>
-    <!-- Used for the common functionality for the ikasan platform, e.g. Ikasan Exceptions -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Used for the common connector functionality for the ikasan platform -->
-    <!-- TODO Should this be provided? -->
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-connector-base</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-    </dependency>
-    <!-- J2EE -->
-	<dependency>
-    	<groupId>geronimo-spec</groupId>
-    	<artifactId>geronimo-spec-j2ee</artifactId>
-    	<version>1.4-rc3</version>
-		<scope>provided</scope>
-	</dependency> 
-    <!-- For persisting information about the connector such as chunking large messages -->
+        <!-- Used for the common functionality for the ikasan platform, e.g. Ikasan Exceptions -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Used for the common connector functionality for the ikasan platform -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-connector-base</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- J2EE -->
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+            <scope>provided</scope>
+        </dependency> 
+        <!-- For persisting information about the connector such as chunking large messages -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -130,60 +121,60 @@
                 </exclusion>
             </exclusions>
         </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>2.2</version>
-      <scope>provided</scope>
-	</dependency>     
-    <!-- Needed for logging -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Used for ToStringBuilder and more -->
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Used for creating test objects -->
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <version>2.2.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Objenesis, used for testing -->
-    <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
-      <version>1.2</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Used for Unit testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- XML serialisation/deserialisation, used for testing -->
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-      <version>1.3.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+          <groupId>cglib</groupId>
+          <artifactId>cglib-nodep</artifactId>
+          <version>2.2</version>
+          <scope>provided</scope>
+        </dependency>
+        <!-- Needed for logging -->
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.14</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.5.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Used for ToStringBuilder and more -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- TODO: Update to 2.5.1 Used for creating test objects -->
+        <dependency>
+          <groupId>org.jmock</groupId>
+          <artifactId>jmock</artifactId>
+          <version>2.2.0</version>
+          <scope>test</scope>
+        </dependency>
+        <!-- Objenesis, used for testing -->
+        <dependency>
+          <groupId>org.objenesis</groupId>
+          <artifactId>objenesis</artifactId>
+          <version>1.2</version>
+          <scope>test</scope>
+        </dependency>
+        <!-- TODO Update to 4.8.2 Used for Unit testing -->
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.8.1</version>
+          <scope>test</scope>
+        </dependency>
+        <!-- XML serialisation/deserialisation, used for testing -->
+        <dependency>
+          <groupId>com.thoughtworks.xstream</groupId>
+          <artifactId>xstream</artifactId>
+          <version>1.3.1</version>
+          <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
