@@ -148,27 +148,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- TODO: Update to 2.5.1 Used for creating test objects -->
-        <dependency>
-          <groupId>org.jmock</groupId>
-          <artifactId>jmock</artifactId>
-          <version>2.2.0</version>
-          <scope>test</scope>
-        </dependency>
-        <!-- Objenesis, used for testing -->
-        <dependency>
-          <groupId>org.objenesis</groupId>
-          <artifactId>objenesis</artifactId>
-          <version>1.2</version>
-          <scope>test</scope>
-        </dependency>
-        <!-- TODO Update to 4.8.2 Used for Unit testing -->
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.8.1</version>
-          <scope>test</scope>
-        </dependency>
         <!-- XML serialisation/deserialisation, used for testing -->
         <dependency>
           <groupId>com.thoughtworks.xstream</groupId>
