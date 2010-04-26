@@ -61,6 +61,7 @@ public class ConnectionTemplateTest extends TestCase
      * Mockery for interfaces
      */
     private Mockery mockery = new Mockery();
+
     /**
      * Mockery for mocking concrete classes
      */
@@ -70,14 +71,17 @@ public class ConnectionTemplateTest extends TestCase
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
+
     /**
      * Mocked <code>Connection</code>
      */
     Connection connection = mockery.mock(Connection.class);
+
     /**
      * Mocked <code>ConnectionSpec</code>
      */
     ConnectionSpec connectionSpec = mockery.mock(ConnectionSpec.class);
+
     /**
      * Mocked <code>Connection</code>
      */
@@ -88,6 +92,7 @@ public class ConnectionTemplateTest extends TestCase
      */
     ResourceException resourceException = classMockery
         .mock(ResourceException.class);
+
     /**
      * Mocked <code>Throwable</code>
      */
@@ -98,10 +103,6 @@ public class ConnectionTemplateTest extends TestCase
      */
     ConnectionCallback connectionCallback = mockery.mock(ConnectionCallback.class);
 
-    
-    
-    
-    
     /**
      * Test method for
      * {@link org.ikasan.client.ConnectionTemplate#ConnectionTemplate(javax.resource.cci.ConnectionFactory, javax.resource.cci.ConnectionSpec)}.
@@ -111,7 +112,6 @@ public class ConnectionTemplateTest extends TestCase
         new ConnectionTemplate(connectionFactory, connectionSpec);
     }
     
-
     /**
      * Test method for
      * {@link org.ikasan.client.ConnectionTemplate#ConnectionTemplate(javax.resource.cci.ConnectionFactory, javax.resource.cci.ConnectionSpec)}.
@@ -268,7 +268,7 @@ public class ConnectionTemplateTest extends TestCase
         classMockery.checking(new Expectations()
         {
             {
-                one(resourceException).fillInStackTrace();
+                allowing(resourceException).fillInStackTrace();
             }
         });
         mockery.checking(new Expectations()
