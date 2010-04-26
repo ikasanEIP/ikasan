@@ -268,7 +268,8 @@ public class ConnectionTemplateTest extends TestCase
         classMockery.checking(new Expectations()
         {
             {
-                allowing(resourceException).fillInStackTrace();
+            	allowing(resourceException).printStackTrace();
+                one(resourceException).fillInStackTrace();
             }
         });
         mockery.checking(new Expectations()
