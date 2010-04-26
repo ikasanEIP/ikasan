@@ -55,8 +55,13 @@
 				<artifactId>maven-ear-plugin</artifactId>
                 <version>2.4.1</version>
 				<configuration>
+				
+					<jboss>
+            			<version>4.2</version>
+            			<loader-repository>org.ikasan:archive=demoResubmission-app-0.8.0-SNAPSHOT.ear</loader-repository>
+            			<loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+          			</jboss>
 					<modules>
-
 						<!-- web module so that the web application is started -->
 						<webModule>
 							<groupId>org.ikasan.demo</groupId>
