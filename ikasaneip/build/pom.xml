@@ -297,6 +297,9 @@
             <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <build>
         <plugins>
             <plugin>
