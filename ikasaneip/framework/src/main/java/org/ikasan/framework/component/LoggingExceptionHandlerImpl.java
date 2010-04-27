@@ -38,7 +38,6 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-
 package org.ikasan.framework.component;
 
 import org.apache.log4j.Logger;
@@ -46,39 +45,39 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.StopAction;
 
 /**
- * Simple implementation of <code>IkasanExceptionHandler</code>, that simply logs the
- * exception and returns a predefined <code>IkasanExceptionAction</code>
+ * Simple implementation of <code>IkasanExceptionHandler</code>, that simply logs the exception and returns a predefined
+ * <code>IkasanExceptionAction</code>
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
 public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
 {
+    /** Logger for this class */
     private Logger logger = Logger.getLogger(LoggingExceptionHandlerImpl.class);
-    
-    /**
-     * Default error action
-     */
+
+    /** Default error action */
     private IkasanExceptionAction rollbackAndStopAction = StopAction.instance();
 
     /**
      * The action to return, note that this defaults to the rollbackAndStopAction
      */
     private IkasanExceptionAction errorAction = rollbackAndStopAction;
-    
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.component.IkasanExceptionHandler#invoke(java.lang.String, org.ikasan.framework.component.Event, java.lang.Throwable)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.component.IkasanExceptionHandler#invoke(java.lang.String,
+     * org.ikasan.framework.component.Event, java.lang.Throwable)
      */
     public IkasanExceptionAction invoke(String componentName, Event event, Throwable throwable)
     {
-        logger.error("Throwable caught, componentName ["+componentName+"], event ["+event+"], throwable message["+throwable.getMessage()+"], stacktrace follows:");
+        logger.error("Throwable caught, componentName [" + componentName + "], event [" + event
+                + "], throwable message[" + throwable.getMessage() + "], stacktrace follows:");
         logErrorThrowable(throwable);
-        
-        logger.info(this+" about to return errorAction:"+errorAction);
+        logger.info(this + " about to return errorAction:" + errorAction);
         return errorAction;
     }
-
 
     /**
      * Log this exception at error level
@@ -88,28 +87,34 @@ public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
     private void logErrorThrowable(Throwable throwable)
     {
         Throwable thisThrowable = throwable;
-        while (thisThrowable!=null){
+        while (thisThrowable != null)
+        {
             logger.error(throwable.getMessage());
-            for (StackTraceElement stackTraceElement : thisThrowable.getStackTrace()){
+            for (StackTraceElement stackTraceElement : thisThrowable.getStackTrace())
+            {
                 logger.error(stackTraceElement);
             }
-            thisThrowable=thisThrowable.getCause();
-            if(thisThrowable!=null){
+            thisThrowable = thisThrowable.getCause();
+            if (thisThrowable != null)
+            {
                 logger.error("...caused by...");
             }
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.component.IkasanExceptionHandler#invoke(java.lang.String, java.lang.Throwable)
      */
     public IkasanExceptionAction handleThrowable(String componentName, Throwable throwable)
     {
-        logger.error("Throwable caught, componentName ["+componentName+"], throwable message["+throwable.getMessage()+"], stacktrace follows:");
+        logger.error("Throwable caught, componentName [" + componentName + "], throwable message["
+                + throwable.getMessage() + "], stacktrace follows:");
         logErrorThrowable(throwable);
         return errorAction;
     }
-    
+
     /**
      * Setter for errorAction, overrides the default
      * 
@@ -119,6 +124,4 @@ public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
     {
         this.errorAction = errorAction;
     }
-    
-
 }
