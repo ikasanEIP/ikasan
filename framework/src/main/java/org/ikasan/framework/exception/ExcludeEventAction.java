@@ -44,32 +44,38 @@ package org.ikasan.framework.exception;
  * Exception action indicating the Initiator should be Excluded
  * 
  * @author Ikasan Development Team
- *
  */
-public class ExcludeEventAction implements IkasanExceptionAction {
+public class ExcludeEventAction implements IkasanExceptionAction
+{
+    /** Exclude Event Action */
+    public static final String EXCLUDE_EVENT = "Exclude Event";
 
-	/**
-	 * Static instance, probably all that is needed, as one ExcludeEventAction is the same as another
-	 */
-	private static ExcludeEventAction instance = new ExcludeEventAction();
-	
-	/**
-	 * Private constructor prevents construction other than static instance
-	 */
-	private ExcludeEventAction(){}
-	
-	/**
+    /**
+     * Static instance, probably all that is needed, as one ExcludeEventAction is the same as another
+     */
+    private static ExcludeEventAction instance = new ExcludeEventAction();
+
+    /**
+     * Private constructor prevents construction other than static instance
+     */
+    private ExcludeEventAction()
+    {
+        // Do Nothing
+    }
+
+    /**
      * Accessor for static instance
      * 
-	 * @return static instance
-	 */
-	public static ExcludeEventAction instance(){
-		return instance;
-	}
-	
-	@Override
-	public String toString(){
-		return "Exclude Event";
-	}
+     * @return static instance
+     */
+    public static ExcludeEventAction instance()
+    {
+        return instance;
+    }
 
+    @Override
+    public String toString()
+    {
+        return EXCLUDE_EVENT;
+    }
 }

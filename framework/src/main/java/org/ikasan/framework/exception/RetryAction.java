@@ -44,74 +44,78 @@ package org.ikasan.framework.exception;
  * Exception Action indicating the operation should be retried
  * 
  * @author Ikasan Development Team
- *
  */
-public class RetryAction implements IkasanExceptionAction{
+public class RetryAction implements IkasanExceptionAction
+{
+    /**
+     * indicator for an infinite retry
+     */
+    public static final Integer RETRY_INFINITE = -1;
 
-	/**
-	 * indicator for an infinite retry
-	 */
-	public static final Integer RETRY_INFINITE =  -1;
-	
-	/**
-	 * Length of time in milliseconds between retries
-	 */
-	private long delay = 5000l;
-	
-	/**
-	 * Maximum no of times to retry
-	 */
-	private int maxRetries = RETRY_INFINITE;
+    /**
+     * Length of time in milliseconds between retries
+     */
+    private long delay = 5000l;
 
-	/**
-	 * Default Constructor
-	 */
-	public RetryAction() {
-	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param delay
-	 * @param maxRetries
-	 */
-	public RetryAction(long delay, int maxRetries) {
-		super();
-		this.delay = delay;
-		this.maxRetries = maxRetries;
-	}
+    /**
+     * Maximum no of times to retry
+     */
+    private int maxRetries = RETRY_INFINITE;
 
+    /**
+     * Default Constructor
+     */
+    public RetryAction()
+    {
+        // Do Nothing
+    }
 
+    /**
+     * Constructor
+     * 
+     * @param delay - The delay in milliseconds before retrying
+     * @param maxRetries - The maximum number of retries to attempt
+     */
+    public RetryAction(long delay, int maxRetries)
+    {
+        super();
+        this.delay = delay;
+        this.maxRetries = maxRetries;
+    }
 
-	/**
-	 * Accessor for delay
-	 * 
-	 * @return delay
-	 */
-	public long getDelay() {
-		return delay;
-	}
+    /**
+     * Accessor for delay
+     * 
+     * @return delay
+     */
+    public long getDelay()
+    {
+        return delay;
+    }
 
-	/**
-	 * Mutator for delay
-	 * 
-	 * @param delay
-	 */
-	public void setDelay(long delay){
-		this.delay=delay;
-	}
-	/**
-	 * Accessor for maxRetries
-	 * 
-	 * @return maxRetries
-	 */
-	public int getMaxRetries() {
-		return maxRetries;
-	}
-	
-	@Override
-	public String toString(){
-		return "Retry (delay="+delay+", maxRetries="+maxRetries+")";
-	}
-    
+    /**
+     * Mutator for delay
+     * 
+     * @param delay
+     */
+    public void setDelay(long delay)
+    {
+        this.delay = delay;
+    }
+
+    /**
+     * Accessor for maxRetries
+     * 
+     * @return maxRetries
+     */
+    public int getMaxRetries()
+    {
+        return maxRetries;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Retry (delay=" + delay + ", maxRetries=" + maxRetries + ")";
+    }
 }
