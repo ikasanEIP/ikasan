@@ -75,15 +75,6 @@
             
             <tr>
                 <th>
-                    Paused
-                </th>
-                <td>
-                    <c:out value="${initiator.scheduler.paused}" />
-                </td>
-            </tr>
-            
-            <tr>
-                <th>
                     In Standby mode
                 </th>
                 <td>
