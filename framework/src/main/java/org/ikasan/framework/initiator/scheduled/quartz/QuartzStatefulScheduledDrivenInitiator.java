@@ -453,13 +453,12 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
      * Standard invocation of an initiator.
      * @param mergedJobDataMap 
      */
-    public void invoke(JobDataMap mergedJobDataMap)
+    public boolean invoke()
     {
-    	mergedJobDataMap.put(REINVOKE_IMMEDIATELY_FLAG, Boolean.FALSE);
         if (stopping)
         {
             logger.warn("Attempt to invoke an initiator in a stopped state.");
-            return;
+            return false;
         }
         
         // invoke flow all the time we have event activity
@@ -472,7 +471,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
             if (events == null || events.size() == 0)
             {
                 this.resume();
-                return;
+                return false;
             }
         }
         catch (Throwable eventSourcingThrowable)
@@ -484,10 +483,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
             handleAction(action,null);
         }
         invokeFlow(events);
-        if (allowImmediateReinvocationOnEvent)
-        {
-         	mergedJobDataMap.put(REINVOKE_IMMEDIATELY_FLAG, Boolean.TRUE);
-        }
+        return allowImmediateReinvocationOnEvent;
     }
     
     /**
