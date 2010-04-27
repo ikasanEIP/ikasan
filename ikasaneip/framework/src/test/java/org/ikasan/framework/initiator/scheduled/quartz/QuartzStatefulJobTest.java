@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
@@ -82,7 +83,6 @@ public class QuartzStatefulJobTest
     final QuartzStatefulScheduledDrivenInitiator initiator = mockery.mock(QuartzStatefulScheduledDrivenInitiator.class);
     final JobExecutionContext jec = mockery.mock(JobExecutionContext.class);
     final JobDetail jobDetail = mockery.mock(JobDetail.class);
-    final JobDataMap jobDataMap = mockery.mock(JobDataMap.class);
 
     /**
      * Setup runs before each test
@@ -104,13 +104,8 @@ public class QuartzStatefulJobTest
         mockery.checking(new Expectations()
         {
             {
-            	//initial invocation
-            	one(jec).getMergedJobDataMap();will(returnValue(jobDataMap));
-                exactly(1).of(initiator).invoke(jobDataMap);
-                
-                //no more invocations
-                one(jobDataMap).get(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG);will(returnValue(Boolean.FALSE));
-
+            	//initial invocation, no more invocations
+                one(initiator).invoke();will(returnValue(false));
             }
         });
 
@@ -127,25 +122,24 @@ public class QuartzStatefulJobTest
     @Test
     public void test_successfulRepeatedExecute()
     {
-        // 
         // set expectations
+    	
+    	final Sequence sequence = mockery.sequence("invocation sequence");
         mockery.checking(new Expectations()
         {
             {
             	//initial invocation
-            	one(jec).getMergedJobDataMap();will(returnValue(jobDataMap));
-                exactly(1).of(initiator).invoke(jobDataMap);
+                one(initiator).invoke();inSequence(sequence);will(returnValue(true));
                 
                 //immediate reinvoke
-                one(jobDataMap).get(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG);will(returnValue(Boolean.TRUE));
-                exactly(1).of(initiator).invoke(jobDataMap);
+                one(initiator).invoke();inSequence(sequence);will(returnValue(true));
                 
                 //immediate reinvoke
-                one(jobDataMap).get(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG);will(returnValue(Boolean.TRUE));
-                exactly(1).of(initiator).invoke(jobDataMap);
+                one(initiator).invoke();inSequence(sequence);will(returnValue(true));
+
                 
                 //no more invocations
-                one(jobDataMap).get(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG);will(returnValue(Boolean.FALSE));
+                one(initiator).invoke();inSequence(sequence);will(returnValue(false));
             }
         });
 
@@ -170,8 +164,7 @@ public class QuartzStatefulJobTest
         mockery.checking(new Expectations()
         {
             {
-            	one(jec).getMergedJobDataMap();will(returnValue(jobDataMap));
-                exactly(1).of(initiator).invoke(jobDataMap);
+                one(initiator).invoke();
                 will(throwException(new AbortTransactionException()));
             }
         });
