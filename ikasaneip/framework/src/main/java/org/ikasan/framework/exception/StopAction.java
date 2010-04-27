@@ -44,31 +44,38 @@ package org.ikasan.framework.exception;
  * Exception action indicating the Initiator should be stopped
  * 
  * @author Ikasan Development Team
- *
  */
-public class StopAction implements IkasanExceptionAction{
-	
-	/**
-	 * Static instance, probably all that is needed, as one StopAction is the same as another
-	 */
-	private static StopAction instance = new StopAction();
-	
-	/**
-	 * Private constructor prevents construction other than static instance
-	 */
-	private StopAction(){}
+public class StopAction implements IkasanExceptionAction
+{
+    /** Stop Action */
+    public static final String STOP = "Stop"; 
+    
+    /**
+     * Static instance, probably all that is needed, as one StopAction is the same as another
+     */
+    private static StopAction instance = new StopAction();
 
-	/**
+    /**
+     * Private constructor prevents construction other than static instance
+     */
+    private StopAction()
+    {
+        // Do Nothing
+    }
+
+    /**
      * Accessor for static instance
      * 
-	 * @return static instance
-	 */
-	public static StopAction instance() {
-		return instance;
-	}
+     * @return static instance
+     */
+    public static StopAction instance()
+    {
+        return instance;
+    }
 
-	@Override
-	public String toString(){
-		return "Stop";
-	}
+    @Override
+    public String toString()
+    {
+        return STOP;
+    }
 }

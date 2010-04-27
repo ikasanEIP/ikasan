@@ -47,5 +47,5 @@ package org.ikasan.framework.exception;
  */
 public interface IkasanExceptionAction
 {
-
+    // No common methods
 }
