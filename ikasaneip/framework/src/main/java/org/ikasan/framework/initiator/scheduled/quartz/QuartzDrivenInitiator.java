@@ -41,17 +41,16 @@
 package org.ikasan.framework.initiator.scheduled.quartz;
 
 import org.ikasan.framework.initiator.Initiator;
-import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
 
 public interface QuartzDrivenInitiator extends Initiator{
 	
 	/**
-	 * Invokes the Initiator with relevent job information
+	 * Invokes the Initiator
 	 * 
-	 * @param mergedJobDataMap
+	 * @return true if its ok to reinvoke again immediately
 	 */
-	public void invoke(JobDataMap mergedJobDataMap);
+	public boolean invoke();
 	
 	/**
 	 * Accessor for internal Quartz Scheduler

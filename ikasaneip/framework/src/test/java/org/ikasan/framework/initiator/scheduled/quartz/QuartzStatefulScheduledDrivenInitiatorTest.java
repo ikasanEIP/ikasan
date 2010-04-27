@@ -67,7 +67,6 @@ import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Test;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -112,7 +111,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     final String initiatorName = "initiatorName";
     final String moduleName = "moduleName";
 
-    final JobDataMap jobDataMap = classMockery.mock(JobDataMap.class);   
 
 	/**
 	 * Tests the unhappy path of the EventProvider failing (throwing some Throwable). This should be logged, and the throwable dealt with as a result of the
@@ -124,7 +122,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 		final String initiatorName = "initiatorName";
 		final String moduleName = "moduleName";
 		
-		QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();                
+		QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(true);                
 
 		final ErrorLoggingService errorLoggingService = classMockery.mock(ErrorLoggingService.class);
 		sdi.setErrorLoggingService(errorLoggingService);
@@ -154,8 +152,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         
 		setExpectationsForHandleStopAction(false);
 		
-        setExpectationsForReinvokeImmediately(false);		
-        sdi.invoke(jobDataMap);
+        sdi.invoke();
         
         classMockery.assertIsSatisfied();
 	} 
@@ -190,7 +187,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         assertTrue(sdi.getState().isStopped());
 
         // invoke initiator
-        sdi.invoke(jobDataMap);
+        sdi.invoke();
         
     }
 
@@ -206,7 +203,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_ExecuteWithNoEvent()
         throws ResourceException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(true);
 
         // set expectations
         classMockery.checking(new Expectations()
@@ -220,12 +217,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         //expectations for handleNullAction
         setExpectationsForResume(sdi, false);
-
-        // As there is no event we do not want to be called back straight away
-        setExpectationsForReinvokeImmediately(false);
         
         // invoke initiator
-        sdi.invoke(jobDataMap);
+        Assert.assertFalse("initiator failing to source an event should return false", sdi.invoke());
     }
 
 
@@ -239,7 +233,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_ExecuteWithEvent()
         throws ResourceException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(true);
 
         // set expectations
         classMockery.checking(new Expectations()
@@ -256,12 +250,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         //for a successful execution we will be handling a null action
         setExpectationsForResume(sdi, false);
-
-        // As there is no event we do not want to be called back straight away
-        setExpectationsForReinvokeImmediately(true);
         
         // invoke initiator
-        sdi.invoke(jobDataMap);
+        Assert.assertTrue("If invoke sourced an event, should return true if reinvokeImmediately configured", sdi.invoke());
     }
 
 	/**
@@ -275,7 +266,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_ExecuteWithEventDisallowingImmediateReinvocation() 
         throws ResourceException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(false);
         sdi.setAllowImmediateReinvocationOnEvent(false);
         
         // set expectations
@@ -293,12 +284,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         
         //for a successful execution we will be handling a null action
         setExpectationsForResume(sdi, false);
-        
-        //expect repeat immediately
-        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator
-        sdi.invoke(jobDataMap);
+        Assert.assertFalse("If invoke sourced an event, but reinvokeImmediately disallowed, should return false", sdi.invoke());
     }
 
     /**
@@ -311,7 +299,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_ExecuteWithMultipleEvents()
         throws ResourceException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(true);
 
         final int numOfEvents = 3;
 
@@ -333,11 +321,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         //for a successful execution we will be handling a null action
         setExpectationsForResume(sdi, false);
 
-        //expect repeat immediately
-        setExpectationsForReinvokeImmediately(true);
-
         // invoke initiator
-        sdi.invoke(jobDataMap);
+        Assert.assertTrue("If invoke sourced an event, should return true if reinvokeImmediately configured", sdi.invoke());
     }
     
     /**
@@ -350,7 +335,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_ExecuteWithReturnedStopRollbackAction()
         throws ResourceException, SchedulerException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(true);
 
         final Throwable throwable = new RuntimeException();
 
@@ -370,14 +355,12 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setEventExpectations();
 
-        setExpectationsForReinvokeImmediately(false);
-
         setExpectationsForHandleStopAction(false);
 
         // invoke initiator
         AbortTransactionException abortTransactionException = null;
         try{
-            sdi.invoke(jobDataMap);
+            sdi.invoke();
         	fail("AbortTransactionException should have been thrown for rollback scenario");
         } catch(AbortTransactionException exception){
         	abortTransactionException = exception;
@@ -396,7 +379,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
     /**
      * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
-     * Test execution of the QuartzStatefulScheduledDrivenInitiator based on a
      * flow invocation returning a 'ROLLBACK_RETRY' action.
      *
      * @throws ResourceException
@@ -408,7 +390,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_ExecuteWithReturnedRollbackRetryAction()
         throws ResourceException, SchedulerException
     {
-        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator sdi = setupInitiator(true);
 
         final Throwable throwable = new RuntimeException();
         // set expectations
@@ -427,15 +409,12 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // set common expectations
         this.setEventExpectations();
 
-        //dont repeat immediately
-        setExpectationsForReinvokeImmediately(false);
-
         setExpectationsForHandleRetryAction(sdi, false);
 
         // invoke initiator
         AbortTransactionException abortTransactionException = null;
         try{
-        	sdi.invoke(jobDataMap);
+        	sdi.invoke();
         	fail("AbortTransactionException should have been thrown for rollback scenario");
         } catch(AbortTransactionException exception){
         	abortTransactionException = exception;
@@ -460,7 +439,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_RollbackRetryActionFollowedByRollbackRetryAction()
         throws ResourceException, SchedulerException
     {
-        QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator(true);
 
         final Throwable throwable = new RuntimeException();
         // first pass
@@ -479,7 +458,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
-        setExpectationsForReinvokeImmediately(false);
 
 
         Assert.assertNull("Retry count should be null initially", scheduledDrivenInitiator.getRetryCount());
@@ -508,7 +486,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleRetryAction(scheduledDrivenInitiator, true);
-        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator on retry (recovering)
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
@@ -530,7 +507,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     public void test_successful_RollbackRetryActionFollowedByAnyStopAction()
         throws ResourceException, SchedulerException
     {
-        QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator();
+        QuartzStatefulScheduledDrivenInitiator scheduledDrivenInitiator = setupInitiator(true);
 
         final Throwable throwable = new RuntimeException();
         // first pass
@@ -547,7 +524,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleRetryAction(scheduledDrivenInitiator, false);
-        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
@@ -569,7 +545,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         });
         setEventExpectations();
         setExpectationsForHandleStopAction(true);
-        setExpectationsForReinvokeImmediately(false);
 
         // invoke initiator second time
         invokeInitiatorExpectingRollback(scheduledDrivenInitiator);
@@ -891,7 +866,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         AbortTransactionException abortTransactionException = null;
         try
         {
-            scheduledDrivenInitiator.invoke(jobDataMap);
+            scheduledDrivenInitiator.invoke();
             fail("exception should have been thrown");
         }
         catch(AbortTransactionException e)
@@ -901,7 +876,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         Assert.assertNotNull("exception should have been thrown",abortTransactionException);
     }
 
-    private QuartzStatefulScheduledDrivenInitiator setupInitiator()
+    private QuartzStatefulScheduledDrivenInitiator setupInitiator(boolean allowReinvokeImmediately)
     {
         QuartzStatefulScheduledDrivenInitiator sdi = new QuartzStatefulScheduledDrivenInitiator(
                 initiatorName,moduleName, eventProvider, flow,
@@ -914,7 +889,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         sdi.addListener(monitorListener);
 
         // allow immediate reinvocation by default
-        sdi.setAllowImmediateReinvocationOnEvent(true);        
+        sdi.setAllowImmediateReinvocationOnEvent(allowReinvokeImmediately);        
         
         return sdi;
     }
@@ -990,19 +965,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         }
     }
 
-    private void setExpectationsForReinvokeImmediately(final boolean reinvokeImmediately) {
-        classMockery.checking(new Expectations()
-        {
-            {
-                // get events from event provider
-                one(jobDataMap).put(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG, Boolean.FALSE);
-                if (reinvokeImmediately){
-                	one(jobDataMap).put(QuartzStatefulScheduledDrivenInitiator.REINVOKE_IMMEDIATELY_FLAG, Boolean.TRUE);
-                }
-            }
-        });
-		
-	}
+
 
 
 }
