@@ -176,7 +176,11 @@
         					<artifactId>hamcrest-core</artifactId>
 			                <bundleDir>lib</bundleDir>            
 						</jarModule> 
-
+			            <jarModule>
+			                <groupId>org.quartz-scheduler</groupId>
+			                <artifactId>quartz</artifactId>
+			                <bundleDir>lib</bundleDir>
+			            </jarModule>
 						<!--
 							module config files must be in the lib dir for the web app to do
 							anything
@@ -342,7 +346,12 @@
         	<version>1.1</version>
         	<scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>1.7.3</version>
+            <scope>provided</scope>
+        </dependency>
 		<!-- module files -->
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
