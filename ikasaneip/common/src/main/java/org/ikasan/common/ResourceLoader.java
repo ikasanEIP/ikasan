@@ -62,7 +62,7 @@ import org.springframework.jndi.JndiTemplate;
  * 
  * @author Ikasan Development Team
  */
-public class ResourceLoader implements ServiceLocator
+public class ResourceLoader 
 {
     /** The logger instance. */
     private static Logger logger = Logger.getLogger(ResourceLoader.class);
