@@ -101,7 +101,7 @@ public class EventDrivenInitiatorImplTest
     /** Ikasan rollback and stop action */
     private IkasanExceptionAction rollbackStopAction = new IkasanExceptionActionImpl(IkasanExceptionActionType.ROLLBACK_STOP);
 
-    private long retryDelay = 5l;
+    private long retryDelay = 1000l;
 
     private int maxRetryAttempts = 3;
 
@@ -278,30 +278,82 @@ public class EventDrivenInitiatorImplTest
         mockery.assertIsSatisfied();
     }
 
+    /**
+     * Test that the initiator suspends the underlying endpoint for the
+     * configured delay period for a retry action
+     * @throws InterruptedException 
+     * 
+     */
+    @Test
+    public void testOnEvent_suspendsTheEndpointForARetryAction() throws InterruptedException
+    {
+        final Sequence sequence = mockery.sequence("invocationSequence");
+
+        mockery.checking(new Expectations()
+        {
+            {
+                // invoke results in retry which firstly stops the endpoint
+                one(flow).invoke(event);
+                will(returnValue(retryAction));
+                inSequence(sequence);
+                one(messageEndpointManager).stop();
+                inSequence(sequence);
+                one(monitorListener).notify(with(equal("runningInRecovery")));
+                inSequence(sequence);
+
+                // then restarts the endpoint
+                one(messageEndpointManager).start();
+                inSequence(sequence);
+                allowing(messageEndpointManager).isRunning();
+                will(returnValue(true));
+                inSequence(sequence);
+            }
+        });
+
+        RuntimeException thrownException = null;
+        try
+        {
+            eventDrivenInitiator.onEvent(event);
+            fail("Exception should have been thrown to force the rollback");
+        }
+        catch (RuntimeException runtimeException)
+        {
+            thrownException = runtimeException;
+        }
+        if (thrownException != null)
+        {
+            Assert.assertEquals(JmsMessageDrivenInitiatorImpl.EXCEPTION_ACTION_IMPLIED_ROLLBACK, thrownException.getMessage());
+        }
+        else
+        {
+            fail("thrownException was null.");
+        }
+        
+        //Thread.sleep(5);
+        mockery.assertIsSatisfied(); 
+    }
+
 //    /**
-//     * Test that the initiator suspends the underlying container for the
-//     * configured delay period for a retry action
+//     * Test that the initiator rollback and stops after exceeding max attempts for a retry action
 //     * @throws InterruptedException 
 //     * 
 //     */
 //    @Test
-//    public void testOnEvent_suspendsTheContainerForARetryAction() throws InterruptedException
+//    public void testOnEvent_stopsTheEndpointAfterMaxAttemptsExceeded() throws InterruptedException
 //    {
 //        final Sequence sequence = mockery.sequence("invocationSequence");
-//        // expectations for the suspension
+//
 //        mockery.checking(new Expectations()
 //        {
 //            {
+//                // invoke results in retry which firstly stops the endpoint
 //                one(flow).invoke(event);
+//                will(returnValue(retryZeroAction));
 //                inSequence(sequence);
-//                will(returnValue(retryAction));
-//
 //                one(messageEndpointManager).stop();
-//
-//                one(messageEndpointManager).isRunning();
-//                will(returnValue(false));
-//
-//                one(monitorListener).notify(with(equal("runningInRecovery")));
+//                inSequence(sequence);
+//                one(monitorListener).notify(with(equal("stoppedInError")));
+//                inSequence(sequence);
 //            }
 //        });
 //
@@ -324,106 +376,7 @@ public class EventDrivenInitiatorImplTest
 //            fail("thrownException was null.");
 //        }
 //        
-//        Thread.sleep(2000); // allow recovery thread to suspend endpoint
 //        mockery.assertIsSatisfied(); 
-//        
-//        // Assert.assertTrue("we should now be in recovering mode",
-//        
-//        // expectations for the resumption
-//        
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                // reawakens
-//                one(messageEndpointManager).start();
-//                inSequence(sequence);
-//                allowing(messageEndpointManager).isRunning();
-//                will(returnValue(true));
-//            }
-//        });
-//        
-//        /*
-//         * go to sleep for a while, then come back hopefully after the container
-//         * has been woken
-//         * 
-//         * Note that this sleep period needs to be substantially longer than the
-//         * retryDelay to ensure that there is time to reawaken the container.
-//         * However it should never be so long that it starts to drag on the
-//         * performance of this test running
-//         * 
-//         * Note though, that if you see intermittent failures of this test, it
-//         * could be a timing issue
-//         */
-//        try
-//        {
-//            Thread.sleep(10 * retryDelay);
-//        }
-//        catch (InterruptedException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        mockery.assertIsSatisfied(); // see note above
-//
-//        // now lets retry the message, but successfully this time
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                one(flow).invoke(event);
-//                inSequence(sequence);
-//                will(returnValue(null));
-//                one(monitorListener).notify(with(equal("running")));
-//            }
-//        });
-//        eventDrivenInitiator.onEvent(event);
-//        mockery.assertIsSatisfied();
-//        Assert.assertFalse("we should no longer be in recovering mode", eventDrivenInitiator.getState().isRecovering());
-//
-//    }
-
-//    /**
-//     * Test that the initiator rollsback and stops in error if the maxAttempts
-//     * value is exceeded for a given retryAction
-//     */
-//    @Test
-//    public void testOnMessage_rollsbackAndStopsInErrorWhenExceedingMaxAttemptsOnRetry()
-//    {
-//        final Sequence sequence = mockery.sequence("invocationSequence");
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                one(flow).invoke(eventFromTextMessage);
-//                inSequence(sequence);
-//                will(returnValue(retryZeroAction));
-//                // stops
-//                one(messageListenerContainer).stop();
-//                inSequence(sequence);
-//                monitorExpectsStoppedInError();
-//            }
-//        });
-//
-//        
-//        
-//        RuntimeException thrownException = null;
-//        try
-//        {
-//            stubJmsMessageDrivenInitiatorImpl.onMessage(textMessage);
-//            fail("Exception should have been thrown to force the rollback");
-//        }
-//        catch (RuntimeException runtimeException)
-//        {
-//            thrownException = runtimeException;
-//        }
-//        if (thrownException != null)
-//        {
-//            
-//            Assert.assertEquals(AbstractInitiator.EXCEPTION_ACTION_IMPLIED_ROLLBACK, thrownException.getMessage());
-//        }
-//        else
-//        {
-//            fail("thrownException was null.");
-//        }
-//
-//        mockery.assertIsSatisfied();
 //    }
 
 }
