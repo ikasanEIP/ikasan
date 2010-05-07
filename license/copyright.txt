@@ -19,9 +19,9 @@ Project Contributors
 Chia-Hung Lin
 Ioannis Mavroukakis
 Jaikiran Pai
+Janos Lele
 Kamlesh Bhatt
 Kerry Kenneally
 Matthew Potter
 Prasad Saya
 Vijitha Kumara
-
