@@ -139,16 +139,23 @@
             <timezone>5.3</timezone>
         </contributor>
         <contributor>
-            <name>Kamlesh Bhatt</name>
+            <name>Jaikiran Pai</name>
             <roles>
                 <role>developer</role>
             </roles>
             <timezone>5.3</timezone>
         </contributor>
         <contributor>
+            <name>Janos Lele</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
             <name>Kerry Kenneally</name>
             <roles>
-                <role>grpahic designer</role>
+                <role>graphic designer</role>
             </roles>
             <timezone>0</timezone>
         </contributor>
