@@ -126,6 +126,10 @@
         <module>client-connection</module>
         <module>client-filetransfer</module>
 
+		<!-- filter -->
+		<module>filter/core</module>
+		<module>filter/framework-integration</module>
+
         <!-- samples -->
         <module>samples/DemoFileDelivery</module>
         <module>samples/DemoTransformationRouting</module>
