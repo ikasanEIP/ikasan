@@ -35,7 +35,7 @@ import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
  * @author Summer
  *
  */
-public interface DuplicatesFilterService
+public interface DuplicateFilterService
 {
     /**
      * Message is new, persist it.

@@ -33,8 +33,9 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.ikasan.filter.duplicate.dao.HibernateMessagePersistenceDaoImpl;
-import org.ikasan.filter.duplicate.dao.MessagePersistenceDao;
+import org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl;
+import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
+import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -45,12 +46,12 @@ import org.junit.Test;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 /**
- * Test class for {@link HibernateMessagePersistenceDaoImpl}
+ * Test class for {@link HibernateFilteredMessageDaoImpl}
  * 
  * @author Summer
  *
  */
-public class HibernateMessagePersistenceDaoImplTest
+public class HibernateFilteredMessageDaoImplTest
 {
     /** A {@link Mockery} for mocking classes and interfaces */
     private Mockery mockery = new Mockery()
@@ -60,23 +61,21 @@ public class HibernateMessagePersistenceDaoImplTest
         }
     };
 
-
-
     /** A mocked {@link HibernateTemplate}*/
     private final HibernateTemplate template = this.mockery.mock(HibernateTemplate.class, "mockHibernateTemplate");
 
     /** A mocked {@link FilterEntry} */
     private final FilterEntry message = this.mockery.mock(FilterEntry.class, "mockMessage");
 
-    /** The {@link MessagePersistenceDao} implementation to be tested.*/
-    private HibernateMessagePersistenceDaoImpl dao;
+    /** The {@link FilteredMessageDao} implementation to be tested.*/
+    private HibernateFilteredMessageDaoImpl dao;
 
     /**
      * Setup test object prior to each test case
      */
     @Before public void setup()
     {
-        this.dao  = new HibernateMessagePersistenceDaoImpl();
+        this.dao  = new HibernateFilteredMessageDaoImpl();
         this.dao.setHibernateTemplate(this.template);
     }
 
@@ -88,14 +87,15 @@ public class HibernateMessagePersistenceDaoImplTest
     {
         final Integer id = 1;
         final String clientId = "clientId";
+        final FilterEntry entry = new DefaultFilterEntry(id, clientId, 1);
         this.mockery.checking(new Expectations()
         {
             {
-                one(template).findByCriteria(with(any(DetachedCriteria.class)));will(returnValue(null));
+                one(template).findByExample(entry);will(returnValue(null));
             }
         });
         //run test case
-        FilterEntry result = this.dao.findMessageById(clientId, id);
+        FilterEntry result = this.dao.findMessage(entry);
         Assert.assertNull(result);
         this.mockery.assertIsSatisfied();
     }
@@ -108,15 +108,16 @@ public class HibernateMessagePersistenceDaoImplTest
     {
         final Integer id = 1;
         final String clientId = "clientId";
+        final FilterEntry entry = new DefaultFilterEntry(id, clientId, 1);
         final List<FilterEntry> resultList = new ArrayList<FilterEntry>();
         this.mockery.checking(new Expectations()
         {
             {
-                one(template).findByCriteria(with(any(DetachedCriteria.class)));will(returnValue(resultList));
+                one(template).findByExample(entry);will(returnValue(resultList));
             }
         });
         //run test case
-        FilterEntry result = this.dao.findMessageById(clientId, id);
+        FilterEntry result = this.dao.findMessage(entry);
         Assert.assertNull(result);
         this.mockery.assertIsSatisfied();
     }
@@ -128,16 +129,17 @@ public class HibernateMessagePersistenceDaoImplTest
     {
         final Integer id = 1;
         final String clientId = "clientId";
+        final FilterEntry entry = new DefaultFilterEntry(id, clientId, 1);
         final List<FilterEntry> resultList = new ArrayList<FilterEntry>();
-        resultList.add(message);
+        resultList.add(entry);
         this.mockery.checking(new Expectations()
         {
             {
-                one(template).findByCriteria(with(any(DetachedCriteria.class)));will(returnValue(resultList));
+                one(template).findByExample(entry);will(returnValue(resultList));
             }
         });
         //run test case
-        FilterEntry result = this.dao.findMessageById(clientId, id);
+        FilterEntry result = this.dao.findMessage(entry);
         Assert.assertNotNull(result);
         this.mockery.assertIsSatisfied();
     }

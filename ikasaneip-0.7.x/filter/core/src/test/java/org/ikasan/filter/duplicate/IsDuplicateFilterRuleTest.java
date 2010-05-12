@@ -2,7 +2,7 @@ package org.ikasan.filter.duplicate;
 
 import org.ikasan.filter.FilterRule;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
-import org.ikasan.filter.duplicate.service.DuplicatesFilterService;
+import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
@@ -11,7 +11,7 @@ import org.junit.Test;
 public class IsDuplicateFilterRuleTest
 {
     private Mockery mockery = new Mockery();
-    private final DuplicatesFilterService service = this.mockery.mock(DuplicatesFilterService.class, "service");
+    private final DuplicateFilterService service = this.mockery.mock(DuplicateFilterService.class, "service");
     private FilterRule filterRuleToTest = new IsDuplicateFilterRule(this.service);
 
     private final String message = "somemessage";

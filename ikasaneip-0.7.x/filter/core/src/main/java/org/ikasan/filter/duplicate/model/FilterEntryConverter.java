@@ -24,47 +24,21 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-
-package org.ikasan.filter.duplicate;
-
-import org.ikasan.filter.FilterRule;
-import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+package org.ikasan.filter.duplicate.model;
 
 /**
- * A {@link FilterRule} determining if a message has been "seen" before, or not.
+ * Base interface for converting any message to a {@link FilterEntry}
  * 
  * @author Summer
  *
+ * @param <T> Type of message to convert
  */
-public class IsDuplicateFilterRule implements FilterRule
+public interface FilterEntryConverter<T>
 {
-    /** Service to access previous encountered messages*/
-    private final DuplicateFilterService filterService;
-
     /**
-     * Constructor 
-     * @param filterService
+     * Convert any object to a {@link FilterEntry} instance
+     * @param object The instance to convert
+     * @return A {@link FilterEntry} representation of an object
      */
-    public IsDuplicateFilterRule(final DuplicateFilterService filterService)
-    {
-        this.filterService = filterService;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.ikasan.filter.FilterRule#accept(java.lang.String)
-     */
-    public boolean accept(String message)
-    {
-        boolean messageFound = this.filterService.isDuplicate(message);
-        if (!messageFound)
-        {
-            this.filterService.persistMessage(message);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    public FilterEntry convert(T message);
 }

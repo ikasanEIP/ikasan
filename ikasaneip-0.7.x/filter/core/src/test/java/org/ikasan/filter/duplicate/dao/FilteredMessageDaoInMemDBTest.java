@@ -43,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Test class for {@link HibernateMessagePersistenceDaoImpl} using an in memory
+ * Test class for {@link HibernateFilteredMessageDaoImpl} using an in memory
  * database rather than mocking the hibernate template.
  * 
  * @author Summer
@@ -56,17 +56,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 
 @ContextConfiguration
-public class MessagePersistenceDaoInMemDBTest
+public class FilteredMessageDaoInMemDBTest
 {
     @Autowired
-    private HibernateMessagePersistenceDaoImpl daoToTest;
+    private HibernateFilteredMessageDaoImpl daoToTest;
 
     /**
      * Test case: DAO must return null since filter entry was not found in database
      */
     @Test public void filter_entry_not_found_returns_null()
     {
-        FilterEntry result = this.daoToTest.findMessageById("find_test", "test".hashCode());
+        FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
+        this.daoToTest.save(aMessage);
+        FilterEntry messageToBeFound = new DefaultFilterEntry( "test".hashCode(), "find_test", 1);
+        FilterEntry result = this.daoToTest.findMessage(messageToBeFound);
         Assert.assertNull(result);
     }
 
@@ -82,7 +85,7 @@ public class MessagePersistenceDaoInMemDBTest
         this.daoToTest.save(newEntry);
 
         //Now lets find it..
-        FilterEntry newEntryReloaded = this.daoToTest.findMessageById("test", "save_test".hashCode());
+        FilterEntry newEntryReloaded = this.daoToTest.findMessage(newEntry);
 
         Assert.assertNotNull(newEntryReloaded);
         Assert.assertEquals("test", newEntryReloaded.getClientId());
