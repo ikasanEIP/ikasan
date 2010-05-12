@@ -36,24 +36,21 @@ import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Hibernate implementation of {@link MessagePersistenceDao}
+ * Hibernate implementation of {@link FilteredMessageDao}
  * 
  * @author Summer
  *
  */
-public class HibernateMessagePersistenceDaoImpl extends HibernateDaoSupport implements MessagePersistenceDao
+public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
 {
     /*
      * (non-Javadoc)
      * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.model.FilterEntry)
      */
     @SuppressWarnings("unchecked")
-    public FilterEntry findMessageById(String clientId, Integer criteria)
+    public FilterEntry findMessage(FilterEntry message)
     {
-        DetachedCriteria detachedCriteria = DetachedCriteria.forClass(FilterEntry.class);
-        detachedCriteria.add(Restrictions.eq("criteria", criteria));
-        detachedCriteria.add(Restrictions.eq("clientId", clientId));
-        List<FilterEntry> foundMessages = this.getHibernateTemplate().findByCriteria(detachedCriteria);
+        List<FilterEntry> foundMessages = this.getHibernateTemplate().findByExample(message);
         if (foundMessages == null || foundMessages.isEmpty())
         {
             return null;

@@ -6,7 +6,7 @@
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     <bean id="duplicateFilterDao"
-        class="org.ikasan.filter.duplicate.dao.HibernateMessagePersistenceDaoImpl">
+        class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 

@@ -37,7 +37,7 @@ import org.ikasan.filter.duplicate.model.FilterEntry;
  * @author Summer
  *
  */
-public interface MessagePersistenceDao
+public interface FilteredMessageDao
 {
     /**
      * Save new message.
@@ -49,13 +49,12 @@ public interface MessagePersistenceDao
      * Try to find {@link FilterEntry} by its id: clientId and
      * criteria.
      * 
-     * @param clientId 
-     * @param criteria
+     * @param message {@link FilterEntry} to be found
      * 
      * @return The found {@link FilterEntry} or null if nothing
      *         found in persistence.
      */
-    public FilterEntry findMessageById(String clientId, Integer criteria);
+    public FilterEntry findMessage(FilterEntry message);
 
     /**
      * Find entries past their expiry date.
