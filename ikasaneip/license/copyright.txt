@@ -17,6 +17,7 @@ Summer Hasani
 Project Contributors
 --------------------
 Chia-Hung Lin
+Giridhar Teklur
 Ioannis Mavroukakis
 Jaikiran Pai
 Janos Lele
