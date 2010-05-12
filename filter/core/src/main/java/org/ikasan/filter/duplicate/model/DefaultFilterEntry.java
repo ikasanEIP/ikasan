@@ -162,7 +162,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         if (obj instanceof DefaultFilterEntry)
         {
             DefaultFilterEntry entry = (DefaultFilterEntry) obj;
-            if (this.criteria == entry.getCriteria() && 
+            if (this.criteria.equals(entry.getCriteria()) && 
                 this.clientId.equals(entry.getClientId()))
             {
                 return true;
@@ -178,6 +178,9 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     @Override
     public int hashCode()
     {
-        return this.criteria.hashCode() + this.clientId.hashCode();
+        int hash = 1;
+        hash = 31 * hash + this.criteria.hashCode();
+        hash = 31 * hash + this.clientId.hashCode();
+        return hash;
     }
 }
