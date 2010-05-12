@@ -64,6 +64,7 @@ import org.junit.Test;
  * 
  * @author Ikasan Development Team
  * 
+ * TODO: Get rid of Thread.sleep(x) and test thead spawning properly!
  */
 public class EventDrivenInitiatorImplTest
 {
@@ -234,6 +235,7 @@ public class EventDrivenInitiatorImplTest
             }
         });
         eventDrivenInitiator.onEvent(event);
+
         Thread.sleep(1000); // allow halt thread to complete
         mockery.assertIsSatisfied();
     }
@@ -328,55 +330,59 @@ public class EventDrivenInitiatorImplTest
         {
             fail("thrownException was null.");
         }
-        
         //Thread.sleep(5);
         mockery.assertIsSatisfied(); 
     }
 
-//    /**
-//     * Test that the initiator rollback and stops after exceeding max attempts for a retry action
-//     * @throws InterruptedException 
-//     * 
-//     */
-//    @Test
-//    public void testOnEvent_stopsTheEndpointAfterMaxAttemptsExceeded() throws InterruptedException
-//    {
-//        final Sequence sequence = mockery.sequence("invocationSequence");
-//
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                // invoke results in retry which firstly stops the endpoint
-//                one(flow).invoke(event);
-//                will(returnValue(retryZeroAction));
-//                inSequence(sequence);
-//                one(messageEndpointManager).stop();
-//                inSequence(sequence);
-//                one(monitorListener).notify(with(equal("stoppedInError")));
-//                inSequence(sequence);
-//            }
-//        });
-//
-//        RuntimeException thrownException = null;
-//        try
-//        {
-//            eventDrivenInitiator.onEvent(event);
-//            fail("Exception should have been thrown to force the rollback");
-//        }
-//        catch (RuntimeException runtimeException)
-//        {
-//            thrownException = runtimeException;
-//        }
-//        if (thrownException != null)
-//        {
-//            Assert.assertEquals(JmsMessageDrivenInitiatorImpl.EXCEPTION_ACTION_IMPLIED_ROLLBACK, thrownException.getMessage());
-//        }
-//        else
-//        {
-//            fail("thrownException was null.");
-//        }
-//        
-//        mockery.assertIsSatisfied(); 
-//    }
+    /**
+     * Test that the initiator rollback and stops after exceeding max attempts for a retry action
+     * @throws InterruptedException 
+     * 
+     */
+    @Test
+    public void testOnEvent_stopsTheEndpointAfterMaxAttemptsExceeded() throws InterruptedException
+    {
+        final Sequence sequence = mockery.sequence("invocationSequence");
+
+        mockery.checking(new Expectations()
+        {
+            {
+                // invoke results in retry which firstly stops the endpoint
+                //expectations of main execution thread
+                one(flow).invoke(event);
+                will(returnValue(retryZeroAction));
+                inSequence(sequence);
+
+                one(monitorListener).notify(with(equal("stoppedInError")));
+                inSequence(sequence);
+
+                //expectations of halt thread
+                one(messageEndpointManager).stop();
+                inSequence(sequence);
+
+            }
+        });
+
+        RuntimeException thrownException = null;
+        try
+        {
+            eventDrivenInitiator.onEvent(event);
+            fail("Exception should have been thrown to force the rollback");
+        }
+        catch (RuntimeException runtimeException)
+        {
+            thrownException = runtimeException;
+        }
+        if (thrownException != null)
+        {
+            Assert.assertEquals(JmsMessageDrivenInitiatorImpl.EXCEPTION_ACTION_IMPLIED_ROLLBACK, thrownException.getMessage());
+        }
+        else
+        {
+            fail("thrownException was null.");
+        }
+        Thread.sleep(1000); // allow halt thread to complete
+        mockery.assertIsSatisfied(); 
+    }
 
 }
