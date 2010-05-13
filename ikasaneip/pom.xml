@@ -54,9 +54,9 @@
 
     <modules>
         <!--
-            Gotta keep the order correct here, dependent projects first, not alphabetical!
+            You have to keep the order correct here, dependent projects first, not alphabetical!
         -->
-        <!-- 
+        <!--
              The build module acts the parent of the rest of the modules,
              controlling the repos, dependencies etc.
          -->
@@ -88,11 +88,8 @@
         <module>samples/DemoResubmission</module>
         <module>samples/DemoErrorPublication</module>
 
-        <!-- documentation TODO Get the jdocbook plugin playing nicely again -->
-        <!--
-        <module>documentation/ArchitectureGuide</module>
-        <module>documentation/ReferenceGuide</module>
-        -->
+        <!-- documentation -->
+        <module>documentation</module>
 
     </modules>
 
