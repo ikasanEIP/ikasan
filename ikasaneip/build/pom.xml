@@ -255,7 +255,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <!-- We also rely on JBoss Maven repo for released artifacts -->
+        <!-- TODO Check this We also rely on JBoss Maven repo for released artifacts -->
         <repository>
           <id>repository.jboss.org</id>
           <url>http://repository.jboss.org/maven2</url>
@@ -284,6 +284,16 @@
         <pluginRepository>
             <id>ikasaneip-releases</id>
             <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>repository.jboss.org</id>
+            <url>http://repository.jboss.org/maven2</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
