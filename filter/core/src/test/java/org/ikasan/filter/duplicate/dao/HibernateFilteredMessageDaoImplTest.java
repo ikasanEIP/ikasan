@@ -35,7 +35,6 @@ import junit.framework.Assert;
 import org.hibernate.criterion.DetachedCriteria;
 import org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
-import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -87,15 +86,16 @@ public class HibernateFilteredMessageDaoImplTest
     {
         final Integer id = 1;
         final String clientId = "clientId";
-        final FilterEntry entry = new DefaultFilterEntry(id, clientId, 1);
         this.mockery.checking(new Expectations()
         {
             {
-                one(template).findByExample(entry);will(returnValue(null));
+                one(message).getClientId();will(returnValue(clientId));
+                one(message).getCriteria();will(returnValue(id));
+                one(template).findByCriteria(with(any(DetachedCriteria.class)));will(returnValue(null));
             }
         });
         //run test case
-        FilterEntry result = this.dao.findMessage(entry);
+        FilterEntry result = this.dao.findMessage(this.message);
         Assert.assertNull(result);
         this.mockery.assertIsSatisfied();
     }
@@ -108,16 +108,17 @@ public class HibernateFilteredMessageDaoImplTest
     {
         final Integer id = 1;
         final String clientId = "clientId";
-        final FilterEntry entry = new DefaultFilterEntry(id, clientId, 1);
         final List<FilterEntry> resultList = new ArrayList<FilterEntry>();
         this.mockery.checking(new Expectations()
         {
             {
-                one(template).findByExample(entry);will(returnValue(resultList));
+                one(message).getCriteria();will(returnValue(id));
+                one(message).getClientId();will(returnValue(clientId));
+                one(template).findByCriteria(with(any(DetachedCriteria.class)));will(returnValue(resultList));
             }
         });
         //run test case
-        FilterEntry result = this.dao.findMessage(entry);
+        FilterEntry result = this.dao.findMessage(this.message);
         Assert.assertNull(result);
         this.mockery.assertIsSatisfied();
     }
@@ -129,17 +130,18 @@ public class HibernateFilteredMessageDaoImplTest
     {
         final Integer id = 1;
         final String clientId = "clientId";
-        final FilterEntry entry = new DefaultFilterEntry(id, clientId, 1);
         final List<FilterEntry> resultList = new ArrayList<FilterEntry>();
-        resultList.add(entry);
+        resultList.add(this.message);
         this.mockery.checking(new Expectations()
         {
             {
-                one(template).findByExample(entry);will(returnValue(resultList));
+                one(message).getCriteria();will(returnValue(id));
+                one(message).getClientId();will(returnValue(clientId));
+                one(template).findByCriteria(with(any(DetachedCriteria.class)));will(returnValue(resultList));
             }
         });
         //run test case
-        FilterEntry result = this.dao.findMessage(entry);
+        FilterEntry result = this.dao.findMessage(this.message);
         Assert.assertNotNull(result);
         this.mockery.assertIsSatisfied();
     }
