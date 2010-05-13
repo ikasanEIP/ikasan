@@ -119,6 +119,13 @@
     <!-- Contributors -->
     <contributors>
         <contributor>
+            <name>Cae Fernandes</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-3</timezone>
+        </contributor>
+        <contributor>
             <name>Chia-Hung Lin</name>
             <roles>
                 <role>developer</role>
@@ -129,7 +136,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>5.3</timezone>
+            <timezone>-4</timezone>
         </contributor>
         <contributor>
             <name>Ioannis Mavroukakis</name>
