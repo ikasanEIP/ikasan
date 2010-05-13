@@ -50,7 +50,10 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
     {
-        List<FilterEntry> foundMessages = this.getHibernateTemplate().findByExample(message);
+        DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
+        criteria.add(Restrictions.eq(FilterEntry.CRITERIA_PROP_KEY, message.getCriteria()));
+        criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, message.getClientId()));
+        List<FilterEntry> foundMessages = this.getHibernateTemplate().findByCriteria(criteria);
         if (foundMessages == null || foundMessages.isEmpty())
         {
             return null;

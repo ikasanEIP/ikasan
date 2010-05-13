@@ -37,6 +37,18 @@ import java.util.Date;
  */
 public interface FilterEntry
 {
+    /**
+     * Constant property name for clientId field in any {@link FilterEntry}
+     * implementors
+     */
+    public final static String CLIENT_ID_PROP_KEY = "clientId";
+
+    /**
+     * Constant property name for criteria field in any {@link FilterEntry}
+     * implementors
+     */
+    public final static String CRITERIA_PROP_KEY = "criteria";
+
     /** 
      * Getter for a clientId variable. Together with the criteria,
      * it identifies a persisted {@link FilterEntry}
