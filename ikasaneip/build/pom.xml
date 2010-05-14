@@ -56,7 +56,7 @@
     <!-- List the core committers -->
     <developers>
       <developer>
-        <id>verbma</id>
+        <id>karianna</id>
         <name>Martijn Verburg</name>
         <organization>Ikasan</organization>
         <organizationUrl>http://www.ikasan.org</organizationUrl>
@@ -66,7 +66,7 @@
         <timezone>0</timezone>
       </developer>
       <developer>
-        <id>duncro</id>
+        <id>magicduncan</id>
         <name>Ross Duncan</name>
         <organization>Ikasan</organization>
         <organizationUrl>http://www.ikasan.org</organizationUrl>
@@ -483,6 +483,13 @@
     </profiles>
 
     <dependencies>
+        <!-- TODO: Update to 1.2.15 if jboss ever sorts its clashes out -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- TODO: Update to 4.8.2, Used for Unit testing -->
         <dependency>
             <groupId>junit</groupId>

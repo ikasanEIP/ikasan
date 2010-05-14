@@ -6,14 +6,14 @@
         <version>0.8.0-SNAPSHOT</version>
         <relativePath>../build/pom.xml</relativePath>
     </parent>
-    
+
     <groupId>org.ikasan</groupId>
     <artifactId>console</artifactId>
     <packaging>war</packaging>
     <version>0.8.0-SNAPSHOT</version>
     <name>Ikasan Console</name>
     <description>The web console for end users of the Ikasan Enterprise Integration Platform</description>
-  
+
     <build>
         <plugins>
             <plugin>
@@ -66,12 +66,6 @@
             <version>2.5</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.5.4</version>
@@ -92,7 +86,7 @@
             <version>2.0.5.RELEASE</version>
         </dependency>
         <!-- The latest and greatest version of LDAP libs -->
-        <!-- 
+        <!--
         <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
@@ -121,10 +115,10 @@
             <version>1.4-rc3</version>
             <scope>provided</scope>
         </dependency>
-        <!-- 
+        <!--
             This jar is added because jboss startup throwing exception
             Failed to load class "org.slf4j.impl.StaticLoggerBinder"
-            TODO: UPDATE to 1.5.11 When Jboss can handle it? 
+            TODO: UPDATE to 1.5.11 When Jboss can handle it?
          -->
         <dependency>
            <groupId>org.slf4j</groupId>

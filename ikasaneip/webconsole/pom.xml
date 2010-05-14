@@ -107,24 +107,18 @@
       <version>0.8.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-        <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-j2ee</artifactId>
-            <version>1.4-rc3</version>
-            <scope>provided</scope>
-        </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-j2ee</artifactId>
+      <version>1.4-rc3</version>
       <scope>provided</scope>
     </dependency>
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>1.7.3</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>1.7.3</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>org.springframework.webflow</artifactId>
