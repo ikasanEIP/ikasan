@@ -27,8 +27,6 @@
 
 package org.ikasan.filter.duplicate.dao;
 
-import java.util.List;
-
 import org.ikasan.filter.duplicate.model.FilterEntry;
 
 /**
@@ -57,15 +55,7 @@ public interface FilteredMessageDao
     public FilterEntry findMessage(FilterEntry message);
 
     /**
-     * Find entries past their expiry date.
-     * 
-     * @return A list of expired Filter Entries
+     * Delete expired Filter Entries from persistence 
      */
-    public List<FilterEntry> findExpiredMessages();
-
-    /**
-     * Given a list of Filter Entries, delete them from persistance 
-     * @param messages A list of Filter Entries to remove
-     */
-    public void deleteAll(List<FilterEntry> messages);
+    public void deleteAllExpired();
 }

@@ -28,6 +28,7 @@
 package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
+import org.ikasan.filter.duplicate.model.FilterEntry;
 
 /**
  * Service interface for accessing persisted message. Implementors are responsible
@@ -41,17 +42,17 @@ public interface DuplicateFilterService
      * Message is new, persist it.
      * @param message
      */
-    public void persistMessage(String message);
+    public void persistMessage(FilterEntry message);
 
     /**
      * Search for a message.
      * @param message the message to be found
      * @return true of message is found, false otherwise
      */
-    public boolean isDuplicate(String message);
+    public boolean isDuplicate(FilterEntry message);
 
     /**
-     * Find expired messages and remove them.
+     * Housekeep expired message filter entries
      */
-    public void housekeepExpiredMessages();
+    public void housekeep();
 }

@@ -33,10 +33,10 @@ package org.ikasan.filter;
  * @author Summer
  *
  */
-public class DefaultMessageFilter implements MessageFilter
+public class DefaultMessageFilter<T> implements MessageFilter<T>
 {
     /** The {@link FilterRule} evaluating the incoming message */
-    private final FilterRule filterRule;
+    private final FilterRule<T> filterRule;
 
     /*
      * optimistic place holder for future time where we can
@@ -49,7 +49,7 @@ public class DefaultMessageFilter implements MessageFilter
      * Constructor
      * @param filterRule The {@link FilterRule} instance evaluating incoming message.
      */
-    public DefaultMessageFilter(final FilterRule filterRule)
+    public DefaultMessageFilter(final FilterRule<T> filterRule)
     {
         this.filterRule = filterRule;
     }
@@ -58,7 +58,7 @@ public class DefaultMessageFilter implements MessageFilter
      * (non-Javadoc)
      * @see org.ikasan.filter.MessageFilter#filter(java.lang.String)
      */
-    public String filter(String message)
+    public T filter(T message)
     {
         if (this.filterRule.accept(message))
         {

@@ -28,7 +28,6 @@ package org.ikasan.filter.duplicate.dao;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import junit.framework.Assert;
 
@@ -101,24 +100,60 @@ public class FilteredMessageDaoInMemDBTest
     }
 
     /**
-     * Test case: find an expired entry
-     * Test case: delete the expired entry
+     * Test case: bulk delete only expired messages found in persistence. Searching for
+     * housekept entries will return null.
      */
-    @Test public void find_expired_entry_delete_expired_entry()
+    @Test public void bulk_delete_expired_entries()
     {
-        //Save an entry that expires now for the purpose of this test
-        int timeToLive = 0;
-        FilterEntry newEntry = new DefaultFilterEntry("expiry_test".hashCode(), "test", timeToLive);
-        this.daoToTest.save(newEntry);
+        FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
+        this.daoToTest.save(one);
 
-        List<FilterEntry> expiredMessages = this.daoToTest.findExpiredMessages();
-        Assert.assertNotNull(expiredMessages);
+        FilterEntry two = new DefaultFilterEntry("two".hashCode(), "bulk_delete_test", 0);
+        this.daoToTest.save(two);
 
-        this.daoToTest.deleteAll(expiredMessages);
-        expiredMessages = this.daoToTest.findExpiredMessages();
-        Assert.assertNull(expiredMessages);
+        FilterEntry three = new DefaultFilterEntry("three".hashCode(), "bulk_delete_test", 1);
+        this.daoToTest.save(three);
+
+        this.daoToTest.deleteAllExpired();
+
+        FilterEntry found = this.daoToTest.findMessage(one);
+        Assert.assertNull(found);
+
+        found = this.daoToTest.findMessage(two);
+        Assert.assertNull(found);
+
+        found = this.daoToTest.findMessage(three);
+        Assert.assertNotNull(found);
     }
 
+    /**
+     * Test case: delete expired entries in batches of pre-set size. Searching for
+     * housekept entries will return null.
+     */
+    @Test public void batch_delete_expired_entries()
+    {
+        this.daoToTest.setBatchedHousekeep(true);
+        this.daoToTest.setBatchSize(1);
+        FilterEntry one = new DefaultFilterEntry("one".hashCode(), "batch_delete_test", 0);
+        this.daoToTest.save(one);
+
+        FilterEntry two = new DefaultFilterEntry("two".hashCode(), "batch_delete_test", 0);
+        this.daoToTest.save(two);
+
+        FilterEntry three = new DefaultFilterEntry("three".hashCode(), "batch_delete_test", 1);
+        this.daoToTest.save(three);
+
+        this.daoToTest.deleteAllExpired();
+
+        FilterEntry found = this.daoToTest.findMessage(one);
+        Assert.assertNull(found);
+
+        found = this.daoToTest.findMessage(two);
+        Assert.assertNull(found);
+
+        found = this.daoToTest.findMessage(three);
+        Assert.assertNotNull(found);
+    }
     /**
      * Test case: try to save an already existing filter entry
      */

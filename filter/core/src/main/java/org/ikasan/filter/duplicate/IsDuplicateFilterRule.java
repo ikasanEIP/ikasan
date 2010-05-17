@@ -28,6 +28,8 @@
 package org.ikasan.filter.duplicate;
 
 import org.ikasan.filter.FilterRule;
+import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 
 /**
@@ -36,30 +38,34 @@ import org.ikasan.filter.duplicate.service.DuplicateFilterService;
  * @author Summer
  *
  */
-public class IsDuplicateFilterRule implements FilterRule
+public class IsDuplicateFilterRule<T> implements FilterRule<T>
 {
     /** Service to access previous encountered messages*/
     private final DuplicateFilterService filterService;
+    private final FilterEntryConverter<T> converter;
 
     /**
      * Constructor 
      * @param filterService
      */
-    public IsDuplicateFilterRule(final DuplicateFilterService filterService)
+    public IsDuplicateFilterRule(final DuplicateFilterService filterService,
+            final FilterEntryConverter<T> converter)
     {
         this.filterService = filterService;
+        this.converter = converter;
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.filter.FilterRule#accept(java.lang.String)
      */
-    public boolean accept(String message)
+    public boolean accept(T message)
     {
-        boolean messageFound = this.filterService.isDuplicate(message);
+        FilterEntry messageToFilter = this.converter.convert(message);
+        boolean messageFound = this.filterService.isDuplicate(messageToFilter);
         if (!messageFound)
         {
-            this.filterService.persistMessage(message);
+            this.filterService.persistMessage(messageToFilter);
             return true;
         }
         else

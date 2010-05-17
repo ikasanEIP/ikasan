@@ -27,12 +27,10 @@
 
 package org.ikasan.framework.component.routing;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.ikasan.common.Payload;
 import org.ikasan.filter.FilterRule;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.routing.Router;
@@ -49,6 +47,7 @@ import org.junit.Test;
  * @author Summer
  *
  */
+@SuppressWarnings("unchecked") //mocks and generics don't play nice with each other
 public class FilteringRouterTest
 {
     /** A {@link Mockery} for mocking classes and interfaces*/
@@ -62,14 +61,8 @@ public class FilteringRouterTest
     /** A mocked {@link Event}*/
     final private Event event = this.mockery.mock(Event.class, "mockEvent");
 
-    /** The {@link #event}'s list of payloads */
-    final private List<Payload> payloads = new ArrayList<Payload>();
-
-    /** A mocked {@link Payload}*/
-    final private Payload payload = this.mockery.mock(Payload.class, "mockPayload");
-
     /** A mocked {@link FilterRule} */
-    final private FilterRule filterRule = this.mockery.mock(FilterRule.class, "mockRule");
+    final private FilterRule<Event> filterRule = this.mockery.mock(FilterRule.class, "mockRule");
 
     /** The {@link Router} implementation to be tested */
     private Router routerToTest = new FilteringRouter(this.filterRule);
@@ -81,14 +74,10 @@ public class FilteringRouterTest
      */
     @Test public void route_event_to_trash() throws RouterException
     {
-        this.payloads.add(payload);
-        final String data = "somemessage";
         this.mockery.checking(new Expectations()
         {
             {
-                one(event).getPayloads();will(returnValue(payloads));
-                one(payload).getContent();will(returnValue(data.getBytes()));
-                one(filterRule).accept(data);will(returnValue(false));
+                one(filterRule).accept(event);will(returnValue(false));
             }
         });
         List<String> result = this.routerToTest.onEvent(event);
@@ -104,14 +93,10 @@ public class FilteringRouterTest
      */
     @Test public void route_event_to_next_element() throws RouterException
     {
-        this.payloads.add(payload);
-        final String data = "somemessage";
         this.mockery.checking(new Expectations()
         {
             {
-                one(event).getPayloads();will(returnValue(payloads));
-                one(payload).getContent();will(returnValue(data.getBytes()));
-                one(filterRule).accept(data);will(returnValue(true));
+                one(filterRule).accept(event);will(returnValue(true));
             }
         });
         List<String> result = this.routerToTest.onEvent(event);
