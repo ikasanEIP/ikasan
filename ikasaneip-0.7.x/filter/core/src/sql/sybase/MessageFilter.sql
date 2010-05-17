@@ -33,6 +33,7 @@ BEGIN
     ELSE
         PRINT '<<< DROPPED TABLE MessageFilter >>>'
 END
+go
 
 -- Create new table
 CREATE TABLE dbo.MessageFilter
@@ -40,7 +41,7 @@ CREATE TABLE dbo.MessageFilter
     Criteria        numeric(18,0) NOT NULL,
     ClientId        varchar(255)  NOT NULL,
     CreatedDateTime datetime      NOT NULL,
-    Expiry          datetime      NOT NULL
+    Expiry          datetime      NOT NULL,
     PRIMARY KEY     (Criteria, ClientId)
 )
 LOCK DATAROWS
@@ -49,3 +50,21 @@ IF OBJECT_ID('dbo.MessageFilter') IS NOT NULL
 ELSE
     PRINT '<<< FAILED CREATING TABLE dbo.MessageFilter >>>'
 GO
+
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('dbo.MessageFilter') AND name='MessageFilter01i')
+BEGIN
+    DROP INDEX MessageFilter.MessageFilter01i
+    IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('dbo.MessageFilter') AND name='MessageFilter01i')
+        PRINT '<<< FAILED DROPPING INDEX dbo.MessageFilter.MessageFilter01i >>>'
+    ELSE
+        PRINT '<<< DROPPED INDEX dbo.MessageFilter.MessageFilter01i >>>'
+END
+go
+CREATE NONCLUSTERED INDEX MessageFilter01i
+    ON MessageFilter(Expiry)
+go
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('dbo.MessageFilter') AND name='MessageFilter01i')
+    PRINT '<<< CREATED INDEX dbo.MessageFilter.MessageFilter01i >>>'
+ELSE
+    PRINT '<<< FAILED CREATING INDEX dbo.MessageFilter.MessageFilter01i >>>'
+go

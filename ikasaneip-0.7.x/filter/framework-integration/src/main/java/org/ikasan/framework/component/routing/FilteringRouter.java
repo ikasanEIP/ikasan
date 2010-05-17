@@ -27,14 +27,11 @@
 
 package org.ikasan.framework.component.routing;
 
-import org.ikasan.common.Payload;
+import org.ikasan.filter.DefaultMessageFilter;
 import org.ikasan.filter.FilterRule;
 import org.ikasan.filter.MessageFilter;
-import org.ikasan.filter.DefaultMessageFilter;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.endpoint.Endpoint;
-import org.ikasan.framework.component.routing.SingleResultRouter;
-import org.ikasan.framework.flow.FlowElement;
+
 
 /**
  * A {@link Router} implementation that delegates to a {@link MessageFilter}. If the
@@ -55,15 +52,15 @@ public class FilteringRouter extends SingleResultRouter
     protected static final String PASS_MESSAGE_THRU = "pass_message_through";
 
     /** The MessageFilter */
-    private final MessageFilter  filter;
+    private final MessageFilter<Event>  filter;
 
     /**
      * Constructor
      * @param filterRule {@link FilterRule} for filter
      */
-    public FilteringRouter(final FilterRule filterRule)
+    public FilteringRouter(final FilterRule<Event> filterRule)
     {
-        this.filter = new DefaultMessageFilter(filterRule);
+        this.filter = new DefaultMessageFilter<Event>(filterRule);
     }
 
     /*
@@ -73,9 +70,7 @@ public class FilteringRouter extends SingleResultRouter
     @Override
     protected String evaluate(Event event)
     {
-        Payload payload = event.getPayloads().get(0);
-        String message = new String(payload.getContent());
-        String filteredMessage = this.filter.filter(message);
+        Event filteredMessage = this.filter.filter(event);
         if (filteredMessage != null)
         {
             return PASS_MESSAGE_THRU;

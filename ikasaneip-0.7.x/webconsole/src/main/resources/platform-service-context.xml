@@ -52,7 +52,7 @@
         <constructor-arg ref="systemEventDao" />
         <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
     </bean>
-    
+
     <bean id="moduleInitialisationService" class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="userDetailsService"/>
@@ -61,35 +61,55 @@
 
     <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
 
+    <bean id="flowEventListener"
+        class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
+        <constructor-arg ref="jobsMap"/>
+        <constructor-arg ref="triggerDao"/>
+    </bean>
 
-	<bean id="flowEventListener"
-		class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
-		<constructor-arg ref="jobsMap"/>
-		<constructor-arg ref="triggerDao"/>
-	</bean>
+    <bean id="jobsMap" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="loggingJob" value-ref="loggingJob" />
+                <entry key="wiretapJob" value-ref="wiretapJob" />
+            </map>
+        </constructor-arg>
+        </bean>
 
-	<bean id="jobsMap" class="java.util.HashMap">
-		<constructor-arg>
-			<map>
-				<entry key="loggingJob" value-ref="loggingJob" />
-				<entry key="wiretapJob" value-ref="wiretapJob" />
-			</map>
-		</constructor-arg>
-		</bean>
+    <bean id="loggingJob" class="org.ikasan.framework.flow.event.service.LoggingEventJob" />
 
-	<bean id="loggingJob" class="org.ikasan.framework.flow.event.service.LoggingEventJob" />
+    <bean id="wiretapJob" class="org.ikasan.framework.flow.event.service.WiretapEventJob">
+        <constructor-arg ref="wiretapService" />
+    </bean>
 
-	<bean id="wiretapJob" class="org.ikasan.framework.flow.event.service.WiretapEventJob">
-		<constructor-arg ref="wiretapService" />
-	</bean>
+    <bean id="wiretapService"
+        class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
+        <constructor-arg ref="wiretapDao" />
+        <constructor-arg ref="moduleService" />
+    </bean>
 
-	<bean id="wiretapService"
-		class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="wiretapDao" />
-		<constructor-arg ref="moduleService" />
-	</bean>
-	
-	<bean id="initiatorStartupControlDao"
+    <bean id="messageFilterService" lazy-init="true"
+       class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+       <constructor-arg ref="messageFilterDao" />
+    </bean>
+
+    <bean id="messageFilterDao" lazy-init="true"
+        class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
+        <property name="sessionFactory" ref="messageFilterHibernateSessionFactory" />
+    </bean>
+
+    <bean id="messageFilterHibernateSessionFactory" lazy-init="true"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="initiatorStartupControlDao"
         class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
         <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
     </bean>
@@ -103,52 +123,48 @@
         
     </bean>
 
-	<bean id="wiretapDao"
-		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
-		
-		<constructor-arg value="true"/>
+    <bean id="wiretapDao"
+        class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
+        <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+        
+        <constructor-arg value="true"/>
         <constructor-arg value="100"/>
-	</bean>
+    </bean>
 
-	<bean id="triggerDao"
-		class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
-	</bean>
+    <bean id="triggerDao"
+        class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
+        <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+    </bean>
 
-	
+    <bean id="systemEventHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 
+    <bean id="wiretapHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>WiretapEventImpl.hbm.xml</value>
+                <value>Trigger.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 
-	<bean id="systemEventHibernateSessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasanAdminXaDataSource" />
-		<property name="mappingResources">
-			<list>
-				<value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties"/>
-	</bean>
+    <bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="location" value="classpath:ikasan-hibernate.properties"/>
+    </bean>
 
-
-	<bean id="wiretapHibernateSessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasanAdminXaDataSource" />
-		<property name="mappingResources">
-			<list>
-				<value>WiretapEventImpl.hbm.xml</value>
-				<value>Trigger.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties"/>
-	</bean>
-	
-	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="ignoreResourceNotFound" value="true"/>
-		<property name="location" value="classpath:ikasan-hibernate.properties"/>
-	</bean>
-	
-	<bean id="initiatorStartupControlHibernateSessionFactory"
+    <bean id="initiatorStartupControlHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasanAdminXaDataSource" />
         <property name="mappingResources">
@@ -158,79 +174,77 @@
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-    
-	<bean id="platformScheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+
+    <bean id="platformScheduler"
+        class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="schedulerName" value="platformScheduler"/>
-		<!-- 
+        <!-- 
         <property name="triggers">
-			<list>
-				<ref bean="wiretapEventHousekeepingTrigger" />
-			</list>
-		</property>
+            <list>
+                <ref bean="wiretapEventHousekeepingTrigger" />
+            </list>
+        </property>
         -->
         <property name="autoStartup" value="false" />
-	</bean>
+    </bean>
 
     <!--
-	<bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<bean
-				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-				<property name="targetObject" ref="wiretapService" />
-				<property name="targetMethod" value="housekeep" />
-				<property name="concurrent" value="false" />
-				<property name="name" value="WiretapEvent Housekeeping" />
-			</bean>
-		</property>
-		<property name="name" value="WiretapEvent Housekeeping Trigger" />
+    <bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <bean
+                class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetObject" ref="wiretapService" />
+                <property name="targetMethod" value="housekeep" />
+                <property name="concurrent" value="false" />
+                <property name="name" value="WiretapEvent Housekeeping" />
+            </bean>
+        </property>
+        <property name="name" value="WiretapEvent Housekeeping Trigger" />
         <property name="cronExpression" value="0 0/2 * * * ?" />
-	</bean>
+    </bean>
     -->
 
-	<!-- default non validating document builder factory -->
-	<bean id="documentBuilderFactory" lazy-init="true"
-		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
-		<property name="namespaceAware" value="true" />
-	</bean>
+    <!-- default non validating document builder factory -->
+    <bean id="documentBuilderFactory" lazy-init="true"
+        class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+        <property name="namespaceAware" value="true" />
+    </bean>
 
-	<!-- dtd validating document builder factory -->
-	<bean id="dtdValidatingDocumentFactory" lazy-init="true"
-		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
-		<property name="validating" value="true"/>
-		<property name="namespaceAware" value="true" />
-	</bean>
+    <!-- dtd validating document builder factory -->
+    <bean id="dtdValidatingDocumentFactory" lazy-init="true"
+        class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+        <property name="validating" value="true"/>
+        <property name="namespaceAware" value="true" />
+    </bean>
 
-	<!-- xsd validating document builder factory -->
-	<bean id="xsdValidatingDocumentFactory" lazy-init="true"
-		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
-		<property name="validating" value="true"/>
-		<property name="namespaceAware" value="true" />
-	</bean>
+    <!-- xsd validating document builder factory -->
+    <bean id="xsdValidatingDocumentFactory" lazy-init="true"
+        class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+        <property name="validating" value="true"/>
+        <property name="namespaceAware" value="true" />
+    </bean>
 
-	<!-- configure the document builder factory to use xsd -->
-  	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-     	<property name="targetObject" ref="xsdValidatingDocumentFactory"/>
-     	<property name="targetMethod" value="setAttribute"/>
-     	<property name="arguments">
-			<list>
-				<util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.JAXP_SCHEMA_LANGUAGE" />
-				<util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.W3C_XML_SCHEMA" />
-			</list>
-     	</property>
-  	</bean>
-  	
-  	
-  	
-  	<!-- default payloadFactory -->
-  	<bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl">
+    <!-- configure the document builder factory to use xsd -->
+      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+         <property name="targetObject" ref="xsdValidatingDocumentFactory"/>
+         <property name="targetMethod" value="setAttribute"/>
+         <property name="arguments">
+            <list>
+                <util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.JAXP_SCHEMA_LANGUAGE" />
+                <util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.W3C_XML_SCHEMA" />
+            </list>
+         </property>
+      </bean>
+
+      <!-- default payloadFactory -->
+      <bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl">
         <constructor-arg value="org.ikasan.common.component.DefaultPayload" />
         <constructor-arg ref="documentBuilderFactory" />
     </bean>
-  	
-  	
-     	
-  	<bean id="jmsMessageEventSerialiser" 
+      
+      
+         
+      <bean id="jmsMessageEventSerialiser" 
       class="org.ikasan.framework.event.serialisation.JmsMessageEventSerialiserEnvelopeImpl">
         <constructor-arg ref="envelopeFactory"/>
         <constructor-arg ref="jmsMessageFactory"/>
@@ -244,12 +258,12 @@
     <bean id="jmsMessageFactory" class="org.ikasan.common.factory.JMSMessageFactoryImpl">
       <constructor-arg ref="payloadFactory"/>
     </bean>
-  	<!-- ###################################### -->
-  	<!-- common transaction services start here -->
-    <!-- ###################################### -->  	
-  	
-  	
-  	<!-- transaction advice requiring a new transaction on entry -->
+      <!-- ###################################### -->
+      <!-- common transaction services start here -->
+    <!-- ###################################### -->      
+      
+      
+      <!-- transaction advice requiring a new transaction on entry -->
     <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRES_NEW"/>
@@ -275,5 +289,5 @@
     <!-- common transaction services end here   -->
     <!-- ###################################### -->
     
-	
+    
 </beans>

@@ -26,11 +26,8 @@
  */
 package org.ikasan.filter.duplicate.service;
 
-import java.util.List;
-
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 
 /**
@@ -44,28 +41,23 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService
     /** {@link FilteredMessageDao} for accessing encountered messages*/
     private final FilteredMessageDao dao;
 
-    /** {@link FilterEntryConverter} for translating any message to {@link FilterEntry} instance */
-    private final FilterEntryConverter<String> converter;
-
     /**
      * Constructor
      * @param dao
      * @param converter
      */
-    public DefaultDuplicateFilterService(final FilteredMessageDao dao,
-            final FilterEntryConverter<String> converter)
+    public DefaultDuplicateFilterService(final FilteredMessageDao dao)
     {
         this.dao = dao;
-        this.converter = converter;
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#isDuplicate(java.lang.String)
      */
-    public boolean isDuplicate(String message)
+    public boolean isDuplicate(FilterEntry message)
     {
-        FilterEntry messageEntryFound = this.dao.findMessage(this.converter.convert(message));
+        FilterEntry messageEntryFound = this.dao.findMessage(message);
         if (messageEntryFound == null)
         {
             return false;
@@ -80,21 +72,17 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService
      * (non-Javadoc)
      * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#persistMessage(java.lang.String)
      */
-    public void persistMessage(String message)
+    public void persistMessage(FilterEntry message)
     {
-        this.dao.save(this.converter.convert(message));
+        this.dao.save(message);
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.filter.duplicate.service.DuplicateFilterService#housekeepExpiredMessages()
      */
-    public void housekeepExpiredMessages()
+    public void housekeep()
     {
-        List<FilterEntry> expiredMessages = this.dao.findExpiredMessages();
-        if (expiredMessages != null && !expiredMessages.isEmpty())
-        {
-            this.dao.deleteAll(expiredMessages);
-        }
+        this.dao.deleteAllExpired();
     }
 }

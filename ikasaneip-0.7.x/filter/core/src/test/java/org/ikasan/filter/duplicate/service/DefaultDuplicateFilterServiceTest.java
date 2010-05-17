@@ -26,12 +26,8 @@
  */
 package org.ikasan.filter.duplicate.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -44,7 +40,6 @@ import org.junit.Test;
  * @author Summer
  *
  */
-@SuppressWarnings("unchecked")
 public class DefaultDuplicateFilterServiceTest
 {
     /** {@link Mockery} for mocking interfaces */
@@ -53,17 +48,11 @@ public class DefaultDuplicateFilterServiceTest
     /** Mocked {@link FilteredMessageDao} */
     private final FilteredMessageDao dao = this.mockery.mock(FilteredMessageDao.class, "mockDao");
 
-    /** Mocked  {@link FilterEntryConverter} for messages of type {@link String}*/
-    private final FilterEntryConverter<String> converter = (FilterEntryConverter<String>)this.mockery.mock(FilterEntryConverter.class, "mockConverter");
-
     /** Mocked {@link FilterEntry} returned by {@link #converter} */
     private final FilterEntry entry = this.mockery.mock(FilterEntry.class, "filterEntry");
 
-    /** Dummy message content*/
-    private final String message ="somemessage";
-
     /** Implementation of {@link DuplicateFilterService} to be tested*/
-    private DuplicateFilterService serviceToTest = new DefaultDuplicateFilterService(this.dao, this.converter);
+    private DuplicateFilterService serviceToTest = new DefaultDuplicateFilterService(this.dao);
 
     /**
      * Test case: persist message
@@ -73,11 +62,10 @@ public class DefaultDuplicateFilterServiceTest
         this.mockery.checking(new Expectations()
         {
             {
-                one(converter).convert(message);will(returnValue(entry));
                 one(dao).save(entry);
             }
         });
-        this.serviceToTest.persistMessage(this.message);
+        this.serviceToTest.persistMessage(this.entry);
         this.mockery.assertIsSatisfied();
     }
 
@@ -89,11 +77,10 @@ public class DefaultDuplicateFilterServiceTest
         this.mockery.checking(new Expectations()
         {
             {
-                one(converter).convert(message);will(returnValue(entry));
                 one(dao).findMessage(entry);will(returnValue(null));
             }
         });
-        boolean result = this.serviceToTest.isDuplicate(this.message);
+        boolean result = this.serviceToTest.isDuplicate(this.entry);
         Assert.assertFalse(result);
         this.mockery.assertIsSatisfied();
     }
@@ -103,15 +90,13 @@ public class DefaultDuplicateFilterServiceTest
      */
     @Test public void return_true_when_message_not_found()
     {
-        final FilterEntry entry = this.mockery.mock(FilterEntry.class, "mockMessage");
         this.mockery.checking(new Expectations()
         {
             {
-                one(converter).convert(message);will(returnValue(entry));
                 one(dao).findMessage(entry);will(returnValue(entry));
             }
         });
-        boolean result = this.serviceToTest.isDuplicate(this.message);
+        boolean result = this.serviceToTest.isDuplicate(this.entry);
         Assert.assertTrue(result);
         this.mockery.assertIsSatisfied();
     }
@@ -121,48 +106,13 @@ public class DefaultDuplicateFilterServiceTest
      */
     @Test public void delete_expired_messages()
     {
-        final FilterEntry entry = this.mockery.mock(FilterEntry.class, "mockMessage");
-        final List<FilterEntry> expiredMessages = new ArrayList<FilterEntry>();
-        expiredMessages.add(entry);
         this.mockery.checking(new Expectations()
         {
             {
-                one(dao).findExpiredMessages();will(returnValue(expiredMessages));
-                one(dao).deleteAll(expiredMessages);
+                one(dao).deleteAllExpired();
             }
         });
-        this.serviceToTest.housekeepExpiredMessages();
-        this.mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test case: there are no messages to housekeep
-     */
-    @Test public void no_messages_to_housekeep_case_1()
-    {
-        final List<FilterEntry> expiredMessages = new ArrayList<FilterEntry>();
-        this.mockery.checking(new Expectations()
-        {
-            {
-                one(dao).findExpiredMessages();will(returnValue(expiredMessages));
-            }
-        });
-        this.serviceToTest.housekeepExpiredMessages();
-        this.mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test case: there are no messages to housekeep
-     */
-    @Test public void no_messages_to_housekeep_case_2()
-    {
-        this.mockery.checking(new Expectations()
-        {
-            {
-                one(dao).findExpiredMessages();will(returnValue(null));
-            }
-        });
-        this.serviceToTest.housekeepExpiredMessages();
+        this.serviceToTest.housekeep();
         this.mockery.assertIsSatisfied();
     }
 }

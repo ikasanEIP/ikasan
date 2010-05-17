@@ -33,7 +33,7 @@ package org.ikasan.filter;
  * @author Summer
  *
  */
-public interface MessageFilter
+public interface MessageFilter<T>
 {
     /**
      * If the message matches the criteria specified by the MessageFilter implementation,
@@ -44,5 +44,5 @@ public interface MessageFilter
      * @param message
      * @return Message or null.
      */
-    public String filter(String message);
+    public T filter(T message);
 }

@@ -33,7 +33,7 @@ package org.ikasan.filter;
  * @author Summer
  *
  */
-public interface FilterRule
+public interface FilterRule<T>
 {
     /**
      * Evaluate message based on defined rule.
@@ -41,5 +41,5 @@ public interface FilterRule
      * @param message incoming message to be evaluated
      * @return true (message accepted) or false (message rejected)
      */
-    public boolean accept(String message);
+    public boolean accept(T message);
 }

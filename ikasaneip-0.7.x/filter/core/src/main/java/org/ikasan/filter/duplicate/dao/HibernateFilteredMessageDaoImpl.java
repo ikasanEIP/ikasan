@@ -27,12 +27,17 @@
 
 package org.ikasan.filter.duplicate.dao;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
@@ -43,6 +48,35 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  */
 public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
 {
+    /** Query used for housekeeping expired filtered messages */
+    private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= ?";
+
+    /** Flag for batch housekeeping option. Defaults to false */
+    private boolean batchedHousekeep = false;
+
+    /** The batch size used when {@link #batchedHousekeep} option is set. Default to 100*/
+    //TODO investigate an optimum value for batch size
+    private int batchSize = 100;
+
+    /**
+     * Setter for {@link #batchedHousekeep} flag for overriding default
+     * value
+     * @param batchedHousekeep
+     */
+    public void setBatchedHousekeep(boolean batchedHousekeep)
+    {
+        this.batchedHousekeep = batchedHousekeep;
+    }
+
+    /**
+     * Setter for {@link #batchSize} for overriding default value
+     * @param batchSize
+     */
+    public void setBatchSize(int batchSize)
+    {
+        this.batchSize = batchSize;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.model.FilterEntry)
@@ -73,21 +107,54 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         this.getHibernateTemplate().save(message);
     }
 
-    public void deleteAll(List<FilterEntry> messages)
-    {
-        this.getHibernateTemplate().deleteAll(messages);
-    }
-
     /*
      * (non-Javadoc)
-     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findExpiredMessages()
+     * @see org.ikasan.filter.duplicate.dao.FilteredMessageDao#deleteAllExpired()
+     */
+    public void deleteAllExpired()
+    {
+        if (!this.batchedHousekeep)
+        {
+            this.getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
+        }
+        else
+        {
+            this.batchDeleteAllExpired();
+        }
+    }
+
+    /**
+     * Delete expired messages 100 at a time until non is left
+     */
+    private void batchDeleteAllExpired()
+    {
+        List<FilterEntry> expired = this.findExpiredMessages();
+        while(expired != null)
+        {
+            this.getHibernateTemplate().deleteAll(expired);
+            expired = this.findExpiredMessages();
+        }
+    }
+
+    /**
+     * Find expired entries
+     * @return List of max 100 expired filter entries 
      */
     @SuppressWarnings("unchecked")
-    public List<FilterEntry> findExpiredMessages()
+    private List<FilterEntry> findExpiredMessages()
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
-        criteria.add(Restrictions.lt("expiry", new Date()));
-        List<FilterEntry> foundMessages = this.getHibernateTemplate().findByCriteria(criteria);
+        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().execute( new HibernateCallback()
+        {
+            
+            public Object doInHibernate(Session session) throws HibernateException, SQLException
+            {
+                Criteria criteria = session.createCriteria(FilterEntry.class);
+                criteria.add(Restrictions.lt(FilterEntry.EXPRIY_PROP_KEY, new Date()));
+                criteria.setMaxResults(batchSize);
+                return criteria.list();
+            }
+        });
+
         if (foundMessages == null || foundMessages.isEmpty())
         {
             return null;

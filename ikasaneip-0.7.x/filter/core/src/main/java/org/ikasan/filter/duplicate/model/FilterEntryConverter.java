@@ -27,7 +27,8 @@
 package org.ikasan.filter.duplicate.model;
 
 /**
- * Base interface for converting any message to a {@link FilterEntry}
+ * Base interface for converting any message to a {@link FilterEntry}. It defines
+ * the contract for evaluating the Criteria of a message.
  * 
  * @author Summer
  *
