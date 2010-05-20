@@ -298,6 +298,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+        <!-- We also rely on JBoss Maven repo for jdocbook -->
         <pluginRepository>
             <id>repository.jboss.org</id>
             <url>http://repository.jboss.org/maven2</url>
