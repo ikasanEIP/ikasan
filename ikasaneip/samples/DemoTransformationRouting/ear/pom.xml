@@ -57,7 +57,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
         <configuration>
 
           <jboss>
@@ -85,12 +85,12 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <bundleDir>lib</bundleDir>
-            </jarModule>            
+            </jarModule>
             <jarModule>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <bundleDir>lib</bundleDir>
-            </jarModule>            
+            </jarModule>
             <jarModule>
               <groupId>org.ikasan</groupId>
               <artifactId>ikasan-framework</artifactId>
