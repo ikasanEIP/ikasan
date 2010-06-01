@@ -412,6 +412,14 @@
     </build>
     <reporting>
         <plugins>
+            <!-- TODO Enable change log reporting once we figure out the SCM referencing issue -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>

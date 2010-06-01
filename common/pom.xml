@@ -63,10 +63,10 @@
   <dependencies>
     <!-- J2EE -->
     <dependency>
-        <groupId>geronimo-spec</groupId>
-        <artifactId>geronimo-spec-j2ee</artifactId>
-        <version>1.4-rc3</version>
-        <scope>provided</scope>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-j2ee</artifactId>
+      <version>1.4-rc3</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Needed for XML to Object serialisiation -->
     <dependency>
@@ -103,6 +103,6 @@
       <version>2.5.6</version>
       <scope>provided</scope>
     </dependency>
-</dependencies>
+  </dependencies>
 
 </project>
