@@ -80,16 +80,17 @@ public abstract class JmsMessageDrivenInitiatorImpl
      */
     private int maxListenerSetupFailureRetries = IkasanExceptionAction.RETRY_INFINITE;
 
+    // Message for the Initiator stopping
     private static final String INITIATOR_STOPPING = "Initiator cannot process message whilst managing a stop request.";
 
+    // Message for the Initiator's Anesthetist operating
     private static final String INITIATOR_ANESTHETIST_OPERATING = "Initiator cannot process message until anesthetist has completed.";
 
+    // Constant describing this type of initiator, TODO: Could this not be driven off class name or instanceof?
     private static final String JMS_MESSAGE_DRIVEN_INITIATOR_TYPE = "JmsMessageDrivenInitiator";
-
 
     /** Logger for this class */
     static Logger logger = Logger.getLogger(JmsMessageDrivenInitiatorImpl.class);
-
 
     /** The message listener container */
     protected MessageListenerContainer messageListenerContainer;
@@ -97,22 +98,24 @@ public abstract class JmsMessageDrivenInitiatorImpl
     /** The Anesthetist for stopping/starting the message listener container in a retry cycle*/
     protected Anesthetist anesthetist = null;
 
-    /** The Halt for activating/deactivating the jms endpoint */
+    /** The Halt for activating/deactivating the JMS endpoint */
     protected Halt halt = null;
 
     /**
      * Constructor
      *
-     * @param moduleName The name of the module
+     * @param moduleName The name of the module that contains this initiator
      * @param name The name of this initiator
-     * @param flow The name of the flow it starts
+     * @param flow The name of the flow that this initiator starts
      */
     public JmsMessageDrivenInitiatorImpl(String moduleName, String name, Flow flow)
     {
         super(moduleName, name, flow);
     }
 
-    public String getType(){
+    // TODO This could just be a call to class name or instance of?
+    public String getType()
+    {
         return JMS_MESSAGE_DRIVEN_INITIATOR_TYPE;
     }
 
@@ -135,7 +138,8 @@ public abstract class JmsMessageDrivenInitiatorImpl
         Event event = null;
         try
         {
-        	if (logger.isDebugEnabled()){
+        	if (logger.isDebugEnabled())
+        	{
         		logger.debug("received message with id [" + message.getJMSMessageID() + "]");
         	}
 
@@ -369,10 +373,10 @@ public abstract class JmsMessageDrivenInitiatorImpl
      *
      * Subclasses that wish to support this <code>Message</code> type will override this
      *
-     * @param message The message to handle
-     * @return Event
+     * @param message The Text Message to handle
+     * @return Event The Ikasan Event created by the handling of this Text Message
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
+     * @throws EventSerialisationException TODO SuppressWarnings Exceptions aren't thrown by this parent class but should be
      *             by implementing children
      */
     protected Event handleTextMessage(TextMessage message) throws JMSException, EventSerialisationException
