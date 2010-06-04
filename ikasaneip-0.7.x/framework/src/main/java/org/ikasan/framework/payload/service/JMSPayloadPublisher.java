@@ -45,6 +45,7 @@ import org.ikasan.common.factory.JMSMessageFactory;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.JMSEventPublisherPlugin;
+import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
  * Publishes a <code>Payload</code> to a JMS {@link Destination} either as a
@@ -82,20 +83,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
     /** Flag for publishing {@link TextMessage} */
     private boolean textMessage = false;
 
-    /** The character encoding to use for this publisher*/
-    private String characterEncoding = null;
-
     /**
-     * Set the character encoding
-     * 
-     * @param characterEncoding
-     */
-    public void setCharacterEncoding(String characterEncoding)
-    {
-		this.characterEncoding = characterEncoding;
-	}
-
-	/**
      * Set the time to live
      * 
      * @param timeToLive the timeToLive to set
@@ -166,14 +154,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
         Destination thisDestination;
         try
         {
-        	if (destination != null)
-        	{
-        		thisDestination = destination;
-        	}
-        	else
-        	{
-        		thisDestination = jndiDestinationFactory.getDestination(true);	
-        	}
+            thisDestination = destination!=null?destination:jndiDestinationFactory.getDestination(true);
         }
         catch (NamingException e1)
         {
@@ -188,7 +169,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
             Message message;
             if (this.textMessage)
             {
-                message = this.jmsMessageFactory.payloadToTextMessage(payload, session, characterEncoding);
+                message = this.jmsMessageFactory.payloadToTextMessage(payload, session);
             }
             else
             {

@@ -57,9 +57,6 @@ public interface MetaDataInterface
     
     /** Meta-data spec for selector use */
     public static final String SPEC = "spec"; //$NON-NLS-1$
-
-    /** Meta-data character encoding for selector use */
-    public static final String CHARACTER_ENCODING = "characterEncoding"; //$NON-NLS-1$
     
     /** MapMessage table prefix for Envelopes */
     public static final String ENVELOPE_PREFIX = "envelope_"; //$NON-NLS-1$

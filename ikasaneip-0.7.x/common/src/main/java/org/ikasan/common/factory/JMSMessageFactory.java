@@ -97,20 +97,17 @@ public interface JMSMessageFactory
      * 
      * @param payload The payload to convert to a Text Message
      * @param session The session
-     * @param characterEncoding The characterEncoding to use
      * @return TextMessage - containing only the content of the incoming payload
      * @throws PayloadOperationException Exception if we could not convert
      */
-    public TextMessage payloadToTextMessage(Payload payload, Session session, String characterEncoding) throws PayloadOperationException;
+    public TextMessage payloadToTextMessage(Payload payload, Session session) throws PayloadOperationException;
 
     /**
      * Helper method for creating a JMS TextMessage with the content of the specified payload index
      * 
      * @param payload The payload to convert to a Text Message
      * @param session The session
-     * @param customMessageSelector - map of JMS properties and values to set, 
-     * 								this is where you would set characterEncoding if you 
-     * 								were using this method directly
+     * @param customMessageSelector - map of JMS properties and values to set
      * @return TextMessage - containing only the content of the incoming payload
      * @throws PayloadOperationException - Exception if we could not convert
      */

@@ -365,17 +365,16 @@ public class TPublisher extends AbstractJMSHandler
         Message message = null;
         if (JMSToolsUtils.getJmsMsgType().equals(JMSConstants.JMS_TEXT_MESSAGE_TYPE))
         {
-        	// TODO UTF-8 should be replaced by a constant, but this whole class is going away anyhow.
             if (object instanceof Payload) // single payload
             {
                 Payload payload = (Payload) object;
-                message = jmsMessageFactory.payloadToTextMessage(payload, session, "UTF-8");
+                message = jmsMessageFactory.payloadToTextMessage(payload, session);
             }
             else if (object instanceof List) // multiple payloads
             {
                 logger.warn("Cannot publish multiple payloads in a JMS TEXT msg. Only first payload will be publised!");
                 List<Payload> payloads = (List<Payload>) object;
-                message = jmsMessageFactory.payloadToTextMessage(payloads.get(0), session, "UTF-8");
+                message = jmsMessageFactory.payloadToTextMessage(payloads.get(0), session);
             }
             else if (object instanceof Envelope) // envelope
             {
