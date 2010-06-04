@@ -29,6 +29,7 @@ package org.ikasan.common.factory;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -60,7 +61,10 @@ import org.ikasan.common.component.UnknownMessageContentException;
  */
 public class JMSMessageFactoryImpl implements JMSMessageFactory
 {
-    /** Logger */
+	// UTF-8
+    private static final String UTF8 = "UTF-8";
+
+	/** Logger */
     private static Logger logger = Logger.getLogger(JMSMessageFactoryImpl.class);
 
     /** Payload Factory */
@@ -96,16 +100,21 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
      * 
      * @param payload The payload to convert to a Text Message
      * @param session The session
+     * @param characterEncoding The character encoding to use
      * @return TextMessage - containing only the content of the incoming payload
      * @throws PayloadOperationException Exception if we could not convert
      */
-    public TextMessage payloadToTextMessage(Payload payload, Session session) throws PayloadOperationException
+    public TextMessage payloadToTextMessage(Payload payload, Session session, String characterEncoding) throws PayloadOperationException
     {
-        return payloadToTextMessage(payload, session, null);
+    	Map<String, Object> customMessageSelector = new HashMap<String, Object>();
+    	customMessageSelector.put(MetaDataInterface.CHARACTER_ENCODING, characterEncoding);
+    	return payloadToTextMessage(payload, session, customMessageSelector);
     }
 
     /**
      * Helper method for creating a JMS TextMessage with the content of the specified payload index
+     * 
+     * NOTE:  Takes character encoding as a item in the customMessageSelector Map 
      * 
      * @param payload The payload to convert to a Text Message
      * @param session The session
@@ -120,7 +129,24 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
         {
             logger.debug("Creating JMS TextMessage from incoming payload..."); //$NON-NLS-1$
             TextMessage textMessage = session.createTextMessage();
-            textMessage.setText(new String(payload.getContent()));
+            // If we are given a character encoding, lets use it
+            String characterEncoding = (String)customMessageSelector.get(MetaDataInterface.CHARACTER_ENCODING);
+            if (characterEncoding != null)
+            {
+            	try
+            	{
+            		textMessage.setText(new String(payload.getContent(), characterEncoding));
+            	}
+            	catch (UnsupportedEncodingException e)
+            	{
+                    throw new PayloadOperationException("Failed to convert Payload to TextMessage", e); //$NON-NLS-1$            		
+            	}
+            }
+            // Else we default to the platform encoding
+            else
+            {
+            	textMessage.setText(new String(payload.getContent()));
+            }
             // Set required selector properties
             textMessage = (TextMessage) setMessageSelectorProperties(textMessage, payload, defaultMessageSelector,
                 customMessageSelector);
@@ -592,7 +618,12 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
                 throw new PayloadOperationException("JMS TextMessage with more than 1 payload, " + //$NON-NLS-1$
                         "is not supported, you will need to use another JMS Message construct, e.g. MapMessage"); //$NON-NLS-1$
             }
-            TextMessage textMessage = payloadToTextMessage(payloads.get(0), session);
+            String characterEncoding = (String)customMessageSelector.get(MetaDataInterface.CHARACTER_ENCODING);
+            if (characterEncoding == null)
+            {
+            	characterEncoding = UTF8;
+            }
+            TextMessage textMessage = payloadToTextMessage(payloads.get(0), session, characterEncoding);
             // Get a map of the attributes as native types
             Map<String, Object> envelopeMap = EnvelopeHelper.getEnvelopeMap(envelope, false);
             Iterator<String> it = envelopeMap.keySet().iterator();
