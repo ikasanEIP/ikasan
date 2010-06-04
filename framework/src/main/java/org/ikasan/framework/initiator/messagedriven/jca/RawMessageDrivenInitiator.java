@@ -40,8 +40,6 @@
  */
 package org.ikasan.framework.initiator.messagedriven.jca;
 
-import java.io.UnsupportedEncodingException;
-
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
@@ -103,24 +101,10 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     @Override
     protected Event handleTextMessage(TextMessage message) throws JMSException
     {
-		// TODO This will be corrected in the 0.8.0+ code base, do not merge this change in!
-    	byte[] characterEncodedContent;
-    	try
-    	{
-    		// Forcing UTF-8 encoding as we don't currently detect the encoding
-    		characterEncodedContent = message.getText().getBytes("UTF-8");
-    	}
-    	catch (UnsupportedEncodingException e)
-    	{
-    		// Hardly ideal to throw a JMSException at this point, but it matches the method signature
-    		// Fix if we remain with the 0.7.x code base (unlikely)
-    		throw new JMSException("UnsupportedEncoding");
-    	}
+        // this is what the old code would have done with a TextMessage
+        Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
+            MetaDataInterface.UNDEFINED, message.getText().getBytes());
 
-        // From this point forward, this is roughly what the 'old' code would have done with a TextMessage
-    	Payload payload = payloadFactory.newPayload(MetaDataInterface.UNDEFINED, Spec.TEXT_XML,
-                MetaDataInterface.UNDEFINED, characterEncodedContent);
-        
         Event event = new Event(moduleName, name);
         
         //re-use the message's priority if we are configured to respect it
