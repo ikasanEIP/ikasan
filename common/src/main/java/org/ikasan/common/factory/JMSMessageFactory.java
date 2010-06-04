@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -43,14 +43,14 @@ import org.ikasan.common.component.UnknownMessageContentException;
 
 /**
  * Creates JMS Messages based on the Session and various arguments
- * 
+ *
  * @author Ikasan Development Team
  */
 public interface JMSMessageFactory
 {
     /**
      * Helper method to create a JMS MapMessage from an incoming payload instance
-     * 
+     *
      * @param payload The payload to convert to a Map Message
      * @param session The session
      * @return MapMessage
@@ -60,7 +60,7 @@ public interface JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload ArrayList<Payload> instance
-     * 
+     *
      * @param payloadList The list of payloads to convert to a Map Message
      * @param session The session
      * @return MapMessage
@@ -70,7 +70,7 @@ public interface JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload ArrayList<Payload> instance
-     * 
+     *
      * @param payloadList The list of payloads to convert to a Map Message
      * @param session The session
      * @param customMessageSelector - map of JMS properties and values to set
@@ -82,7 +82,7 @@ public interface JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload instance
-     * 
+     *
      * @param payload The payload to convert to a Map Message
      * @param session The session
      * @param customMessageSelector - map of JMS properties and values to set
@@ -94,20 +94,23 @@ public interface JMSMessageFactory
 
     /**
      * Helper method for creating a JMS TextMessage with the content of the specified payload index
-     * 
+     *
      * @param payload The payload to convert to a Text Message
      * @param session The session
+     * @param characterEncoding The characterEncoding to use
      * @return TextMessage - containing only the content of the incoming payload
      * @throws PayloadOperationException Exception if we could not convert
      */
-    public TextMessage payloadToTextMessage(Payload payload, Session session) throws PayloadOperationException;
+	public TextMessage payloadToTextMessage(Payload payload, Session session, String characterEncoding) throws PayloadOperationException;
 
     /**
      * Helper method for creating a JMS TextMessage with the content of the specified payload index
-     * 
+     *
      * @param payload The payload to convert to a Text Message
      * @param session The session
-     * @param customMessageSelector - map of JMS properties and values to set
+     * @param customMessageSelector - map of JMS properties and values to set,
+     *                                 this is where you would set characterEncoding if you
+     *                                 were using this method directly
      * @return TextMessage - containing only the content of the incoming payload
      * @throws PayloadOperationException - Exception if we could not convert
      */
@@ -116,9 +119,9 @@ public interface JMSMessageFactory
 
     /**
      * Converts an Envelope to a TextMessage
-     * 
+     *
      * NOTE: At this stage we only support converting converting an envelope with one Payload
-     * 
+     *
      * @param envelope The envelope to convert
      * @param session The session
      * @param customMessageSelector The custom message selector to use
@@ -131,7 +134,7 @@ public interface JMSMessageFactory
 
     /**
      * Converts an Envelope to a MapMessage
-     * 
+     *
      * @param envelope The envelope to convert
      * @param session The session
      * @param customMessageSelector The custom message selector to use
@@ -144,7 +147,7 @@ public interface JMSMessageFactory
 
     /**
      * Converts an Envelope to a MapMessage
-     * 
+     *
      * @param envelope The envelope to convert
      * @param session The session
      * @return MapMessage
@@ -156,7 +159,7 @@ public interface JMSMessageFactory
 
     /**
      * Extract a List of Payloads from a JMS Message
-     * 
+     *
      * @param message The message to get the payloads from
      * @return List<Payload>
      * @throws PayloadOperationException Exception if there was a Payload based problem
