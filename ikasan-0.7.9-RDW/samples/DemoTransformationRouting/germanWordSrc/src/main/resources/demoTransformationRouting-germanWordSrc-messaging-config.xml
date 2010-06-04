@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+  <!-- 'private' topics -->   
+  <bean id="germanWordTopicName" class="java.lang.String">
+        <constructor-arg value="/topic/demo.germanWords"/>
+  </bean>
+  <bean id="germanWordTopic" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
+    <constructor-arg ref="germanWordTopicName"/>
+    <constructor-arg ref="jmsJndiEnvironment"/>
+    <constructor-arg value="true"/>
+  </bean>
+ 
+ <!-- 'public' topics -->
+  <bean id="englishWordTopicName" class="java.lang.String">
+      <constructor-arg value="/topic/demo.englishWords"/>
+  </bean> 
+  <bean id="englishWordTopic" class="org.ikasan.framework.messaging.jms.DefaultJndiDestinationFactory">
+    <constructor-arg ref="englishWordTopicName"/>
+    <constructor-arg ref="jmsJndiEnvironment"/>
+  </bean>
+
+
+
+
+   <!-- Connection Factories -->
+  <bean id="jmsConnectionFactory"
+      class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="jndiName" value="java:/JmsXA" />
+      <property name="lookupOnStartup" value="false" />
+      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+  </bean>
+  
+
+
+</beans>
