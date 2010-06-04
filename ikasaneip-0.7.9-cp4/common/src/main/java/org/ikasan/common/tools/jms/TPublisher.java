@@ -380,7 +380,7 @@ public class TPublisher extends AbstractJMSHandler
             else if (object instanceof Envelope) // envelope
             {
                 Envelope envelope = (Envelope) object;
-                message = jmsMessageFactory.envelopeToTextMessage(envelope, session, "UTF-8");
+                message = jmsMessageFactory.envelopeToTextMessage(envelope, session, null);
             }
         }
         else
