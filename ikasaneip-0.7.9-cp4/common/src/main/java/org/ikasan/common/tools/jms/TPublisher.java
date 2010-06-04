@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 
 /**
  * This is a standalone client for publishing to JMS Topics
- * 
+ *
  * Ensure the classpath for jboss-eap-4.3 is as follows
  * CLASSPATH=$JBOSS_HOME/client/javassist.jar
  * CLASSPATH=$JBOSS_HOME/client/jbossall-client.jar
@@ -61,7 +61,7 @@ import org.apache.log4j.Logger;
  * CLASSPATH=$CLASSPATH:$JBOSS_HOME/server/commons-logging.jar
  * CLASSPATH=$CLASSPATH:$JBOSS_HOME/server/log4j-1.2.14.jar NOTE: log4j.jar is
  * version dependent use above or later
- * 
+ *
  * @author Ikasan Development Team
  */
 public class TPublisher extends AbstractJMSHandler
@@ -73,7 +73,7 @@ public class TPublisher extends AbstractJMSHandler
      * Main entry point for invocation of TPublisher. This calls 'invoke' which
      * creates a payload based on this instance, subsequently creates an
      * envelope and publishes the envelope.
-     * 
+     *
      * @param args - The arguments passed into TPublisher
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
@@ -88,7 +88,7 @@ public class TPublisher extends AbstractJMSHandler
     /**
      * Default invocation of TPublisher which creates a payload based on this
      * instance, subsequently creates an envelope and publishes the envelope.
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
      * @throws CommonException - An Ikasan Common exception
@@ -102,7 +102,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Default constructor
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      */
     public TPublisher() throws NamingException
@@ -112,7 +112,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Default constructor that takes command line args passed in from main
-     * 
+     *
      * @param args - The arguments passed into TPublisher
      * @throws NamingException - A JNDI lookup related exception
      */
@@ -123,9 +123,9 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Default constructor for properties args
-     * 
+     *
      * @param properties - properties
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      */
     public TPublisher(Properties properties) throws NamingException
@@ -135,7 +135,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Create a message for publication
-     * 
+     *
      * @return Payload
      */
     private Payload createPayload()
@@ -191,7 +191,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Create a default envelope for the incoming payload
-     * 
+     *
      * @param payload Payload to wrap an envelope around
      * @return Default envelope
      */
@@ -204,9 +204,9 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Publish envelope
-     * 
+     *
      * @param envelope Envelope to publish
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
      * @throws CommonException - An Ikasan Common exception
@@ -218,9 +218,9 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Publish payload
-     * 
+     *
      * @param payload - Payload to publish
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
      * @throws CommonException - An Ikasan Common exception
@@ -232,9 +232,9 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Publish object
-     * 
+     *
      * @param payloads - List of payloads to publish
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
      * @throws CommonException - An Ikasan Common exception
@@ -246,9 +246,9 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Publish object
-     * 
+     *
      * @param object - Object to publish
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
      * @throws CommonException - An Ikasan Common exception
@@ -261,7 +261,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Read in a file and return it as a byte array
-     * 
+     *
      * @param filename - File to read
      * @return file contents as byte array
      * @throws IOException - Exception if we cannot read from file
@@ -273,11 +273,11 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Publish msg to topic or queue
-     * 
+     *
      * @param context - Context
      * @param object - Object to publish
      * @param isQueue - boolean flag for it it's a queue we're publishing to
-     * 
+     *
      * @throws NamingException - A JNDI lookup related exception
      * @throws JMSException - A JMS Exception
      * @throws CommonException - An Ikasan Common exception
@@ -351,7 +351,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Creates the message
-     * 
+     *
      * @param object - Object to convert into a message
      * @param session - Message session
      * @return Message - The new message
@@ -365,21 +365,22 @@ public class TPublisher extends AbstractJMSHandler
         Message message = null;
         if (JMSToolsUtils.getJmsMsgType().equals(JMSConstants.JMS_TEXT_MESSAGE_TYPE))
         {
+            // TODO UTF-8 should be replaced by a constant, but this whole class is going away anyhow.
             if (object instanceof Payload) // single payload
             {
                 Payload payload = (Payload) object;
-                message = jmsMessageFactory.payloadToTextMessage(payload, session);
+                message = jmsMessageFactory.payloadToTextMessage(payload, session, "UTF-8");
             }
             else if (object instanceof List) // multiple payloads
             {
                 logger.warn("Cannot publish multiple payloads in a JMS TEXT msg. Only first payload will be publised!");
                 List<Payload> payloads = (List<Payload>) object;
-                message = jmsMessageFactory.payloadToTextMessage(payloads.get(0), session);
+                message = jmsMessageFactory.payloadToTextMessage(payloads.get(0), session, "UTF-8");
             }
             else if (object instanceof Envelope) // envelope
             {
                 Envelope envelope = (Envelope) object;
-                message = jmsMessageFactory.envelopeToTextMessage(envelope, session, null);
+                message = jmsMessageFactory.envelopeToTextMessage(envelope, session, "UTF-8");
             }
         }
         else
@@ -406,7 +407,7 @@ public class TPublisher extends AbstractJMSHandler
 
     /**
      * Log the message id
-     * 
+     *
      * @param message - Message to get Id from
      */
     private void logMessageId(Message message)

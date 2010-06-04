@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2007-2008 Ikasan Ltd and individual contributors as indicated
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -45,14 +45,13 @@ import org.ikasan.common.factory.JMSMessageFactory;
 import org.ikasan.common.security.IkasanSecurityConf;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.JMSEventPublisherPlugin;
-import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
  * Publishes a <code>Payload</code> to a JMS {@link Destination} either as a
  * {@link MapMessage} or {@link TextMessage}.
- * 
+ *
  * @author Ikasan Development Team
- * 
+ *
  */
 public class JMSPayloadPublisher implements PayloadPublisher
 {
@@ -70,7 +69,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /** Converter to a <code>javax.jms.Message</code> */
     private JMSMessageFactory jmsMessageFactory;
-    
+
     /** JMS destination factory to use if destination not directly supplied */
     private JndiDestinationFactory jndiDestinationFactory;
 
@@ -83,9 +82,22 @@ public class JMSPayloadPublisher implements PayloadPublisher
     /** Flag for publishing {@link TextMessage} */
     private boolean textMessage = false;
 
+    /** The character encoding to use for this publisher*/
+    private String characterEncoding = null;
+
+    /**
+     * Set the character encoding
+     *
+     * @param characterEncoding
+     */
+    public void setCharacterEncoding(String characterEncoding)
+    {
+       this.characterEncoding = characterEncoding;
+    }
+
     /**
      * Set the time to live
-     * 
+     *
      * @param timeToLive the timeToLive to set
      */
     public void setTimeToLive(Long timeToLive)
@@ -95,7 +107,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /**
      * Set the message priority
-     * 
+     *
      * @param priority the message priority to set
      */
     public void setPriority(Integer priority)
@@ -105,7 +117,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /**
      * Set whether to publish a {@link TextMessage} or a {@link MapMessage}.
-     * 
+     *
      * @param textMessage the boolean flag to set.
      */
     public void setTextMessage(boolean textMessage)
@@ -115,7 +127,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /**
      * Constructor
-     * 
+     *
      * @param destination The destination for the message
      * @param connectionFactory The connection factory
      * @param jmsMessageFactory The JMS message serializer
@@ -133,7 +145,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /**
      * Constructor
-     * 
+     *
      * @param jndiDestinationFactory used for looking up the destination on demand
      * @param connectionFactory The connection factory
      * @param jmsMessageFactory The JMS message serializer
@@ -148,19 +160,26 @@ public class JMSPayloadPublisher implements PayloadPublisher
         this.jmsMessageFactory = jmsMessageFactory;
         this.ikasanSecurityConf = ikasanSecurityConf;
     }
-    
+
     public void publish(Payload payload) throws ResourceException
     {
         Destination thisDestination;
         try
         {
-            thisDestination = destination!=null?destination:jndiDestinationFactory.getDestination(true);
+           if (destination != null)
+           {
+               thisDestination = destination;
+           }
+           else
+           {
+               thisDestination = jndiDestinationFactory.getDestination(true);
+           }
         }
         catch (NamingException e1)
         {
             throw new ResourceException("NamingException caught whilst attempting to find destination with jndiName["+jndiDestinationFactory.getJndiName()+"], environment["+jndiDestinationFactory.getEnvironment()+"]", e1);
         }
-        
+
         Connection connection = null;
         try
         {
@@ -169,7 +188,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
             Message message;
             if (this.textMessage)
             {
-                message = this.jmsMessageFactory.payloadToTextMessage(payload, session);
+                message = this.jmsMessageFactory.payloadToTextMessage(payload, session, characterEncoding);
             }
             else
             {
@@ -213,7 +232,7 @@ public class JMSPayloadPublisher implements PayloadPublisher
 
     /**
      * Creates a connection, security enabled if configured
-     * 
+     *
      * @return Connection
      * @throws JMSException Exception if we could not connect
      */

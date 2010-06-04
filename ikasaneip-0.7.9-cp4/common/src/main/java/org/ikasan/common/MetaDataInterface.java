@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -29,7 +29,7 @@ package org.ikasan.common;
 /**
  * Default meta-data required operations across all transport containers
  * such as Payload and Envelope.
- * 
+ *
  * @author Ikasan Development Team
  */
 public interface MetaDataInterface
@@ -39,7 +39,7 @@ public interface MetaDataInterface
 
     /** The default date/time pattern */
     public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyyMMddHHmmssSSS"; //$NON-NLS-1$
-    
+
     /** The default timezone */
     public static final String DEFAULT_TIMEZONE = "UTC"; //$NON-NLS-1$
 
@@ -48,22 +48,25 @@ public interface MetaDataInterface
 
     /** Meta-data identifier constant for selector use */
     public static final String ID = "id"; //$NON-NLS-1$
-    
+
     /** Meta-data name constant for selector use */
     public static final String NAME = "name"; //$NON-NLS-1$
-    
+
     /** Meta-data source system constant for selector use */
     public static final String SRC_SYSTEM = "srcSystem"; //$NON-NLS-1$
-    
+
     /** Meta-data spec for selector use */
     public static final String SPEC = "spec"; //$NON-NLS-1$
-    
+
+    /** Meta-data character encoding for selector use */
+    public static final String CHARACTER_ENCODING = "characterEncoding"; //$NON-NLS-1$
+
     /** MapMessage table prefix for Envelopes */
     public static final String ENVELOPE_PREFIX = "envelope_"; //$NON-NLS-1$
-    
+
     /** MapMessage table prefix for Payloads */
     public static final String PAYLOAD_PREFIX = "payload_"; //$NON-NLS-1$
-   
+
     /**
      * Sets the W3C XML Schema instance namespace URI.
      *
@@ -94,28 +97,28 @@ public interface MetaDataInterface
 
     /**
      * Setter for id
-     * 
+     *
      * @param id
      */
     public void setId(final String id);
 
     /**
      * Getter for id
-     * 
+     *
      * @return id
      */
     public String getId();
 
     /**
      * Setter for timestamp
-     * 
+     *
      * @param timestamp
      */
     public void setTimestamp(final Long timestamp);
 
     /**
      * Getter for timestamp
-     * 
+     *
      * @return timestamp
      */
     public Long getTimestamp();
@@ -132,35 +135,35 @@ public interface MetaDataInterface
 
     /**
      * Setter for timezone
-     * 
+     *
      * @param timezone
      */
     public void setTimezone(final String timezone);
 
     /**
      * Getter for timezone
-     * 
+     *
      * @return timezone
      */
     public String getTimezone();
 
     /**
      * Setter for priority
-     * 
+     *
      * @param priority
      */
     public void setPriority(final Integer priority);
 
     /**
      * Getter for priority
-     * 
+     *
      * @return Priority
      */
     public Integer getPriority();
 
     /**
      * Setter for name attribute
-     * @param name 
+     * @param name
      */
     public void setName(final String name);
 
@@ -172,7 +175,7 @@ public interface MetaDataInterface
 
     /**
      * Setter for spec attribute
-     * @param spec 
+     * @param spec
      */
     public void setSpec(final String spec);
 
@@ -184,40 +187,40 @@ public interface MetaDataInterface
 
     /**
      * Setter for encoding
-     * @param encoding 
+     * @param encoding
      */
     public void setEncoding(final String encoding);
 
     /**
      * Getter for encoding
-     * 
+     *
      * @return Encoding
      */
     public String getEncoding();
 
     /**
      * Setter for format
-     * @param format 
+     * @param format
      */
     public void setFormat(final String format);
 
     /**
      * Getter for format
-     * 
+     *
      * @return Format
      */
     public String getFormat();
 
     /**
      * Setter for character set
-     * 
+     *
      * @param charset
      */
     public void setCharset(final String charset);
 
     /**
      * Getter for character set
-     * 
+     *
      * @return Charset
      */
     public String getCharset();
@@ -225,20 +228,20 @@ public interface MetaDataInterface
     /**
      * Setter for size attribute. This can be used to set the size attribute to
      * an explicit value.
-     * @param size 
+     * @param size
      */
     public void setSize(final Long size);
 
     /**
      * Utility setter for <code>size</code>. When this setter is used, the
      * size is automatically set to the size of the contained business data.
-     * 
+     *
      */
     public void setSize();
 
     /**
      * Getter for size
-     * 
+     *
      * @return Long
      */
     public Long getSize();
@@ -246,8 +249,8 @@ public interface MetaDataInterface
     /**
      * Setter for <code>checksum</code>. This can be used to set checksum to
      * an explicit value as provided by the <code>checksum</code> parameter.
-     * 
-     * @param checksum 
+     *
+     * @param checksum
      */
     public void setChecksum(final String checksum);
 
@@ -265,10 +268,10 @@ public interface MetaDataInterface
     public String getChecksum();
 
     /**
-     * Utility setter for checksumAlg. When this setter is used, the checksum 
+     * Utility setter for checksumAlg. When this setter is used, the checksum
      * algorithm is set. The checksumAlg default is <code>MD5</code> algorithm.
-     * 
-     * @param checksumAlg 
+     *
+     * @param checksumAlg
      */
     public void setChecksumAlg(final String checksumAlg);
 
@@ -335,23 +338,23 @@ public interface MetaDataInterface
      * @return formatted timestamp
      */
     public String getFormattedTimestamp();
-    
+
     /**
      * This method does not do anything - it is required to be implemenyted
-     * to satisfy the need of the instrospection implementation supporting the 
+     * to satisfy the need of the instrospection implementation supporting the
      * brokering payloads/envelopes to and from JMS messages.
-     * 
+     *
      * It will not set the formattedTimestamp!
-     * 
-     * @param formattedTimestamp 
+     *
+     * @param formattedTimestamp
      */
     public void setFormattedTimestamp(String formattedTimestamp);
-    
+
     /**
      * String representation of the id(s)
-     * 
+     *
      * @return String formatted representation of the id
      */
     public String idToString();
-    
+
 }

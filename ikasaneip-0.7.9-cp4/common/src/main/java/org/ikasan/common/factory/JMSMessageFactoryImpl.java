@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -29,6 +29,7 @@ package org.ikasan.common.factory;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,11 +56,15 @@ import org.ikasan.common.component.UnknownMessageContentException;
 
 /**
  * A Factory for providing JMS Messages
- * 
+ *
  * @author Ikasan Development Team
  */
 public class JMSMessageFactoryImpl implements JMSMessageFactory
 {
+
+    /** UTF-8 */
+    private static final String UTF8 = "UTF-8";
+
     /** Logger */
     private static Logger logger = Logger.getLogger(JMSMessageFactoryImpl.class);
 
@@ -83,7 +88,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Constructor
-     * 
+     *
      * @param payloadFactory The payload factory to use
      */
     public JMSMessageFactoryImpl(PayloadFactory payloadFactory)
@@ -93,20 +98,25 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Helper method for creating a JMS TextMessage with the content of the specified payload index
-     * 
+     *
      * @param payload The payload to convert to a Text Message
      * @param session The session
+     * @param characterEncoding The character encoding to use
      * @return TextMessage - containing only the content of the incoming payload
      * @throws PayloadOperationException Exception if we could not convert
      */
-    public TextMessage payloadToTextMessage(Payload payload, Session session) throws PayloadOperationException
+    public TextMessage payloadToTextMessage(Payload payload, Session session, String characterEncoding) throws PayloadOperationException
     {
-        return payloadToTextMessage(payload, session, null);
+       Map<String, Object> customMessageSelector = new HashMap<String, Object>();
+       customMessageSelector.put(MetaDataInterface.CHARACTER_ENCODING, characterEncoding);
+       return payloadToTextMessage(payload, session, customMessageSelector);
     }
 
     /**
      * Helper method for creating a JMS TextMessage with the content of the specified payload index
-     * 
+     *
+     * NOTE:  Takes character encoding as a item in the customMessageSelector Map
+     *
      * @param payload The payload to convert to a Text Message
      * @param session The session
      * @param customMessageSelector - map of JMS properties and values to set
@@ -120,7 +130,24 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
         {
             logger.debug("Creating JMS TextMessage from incoming payload..."); //$NON-NLS-1$
             TextMessage textMessage = session.createTextMessage();
-            textMessage.setText(new String(payload.getContent()));
+            // If we are given a character encoding, lets use it
+            String characterEncoding = (String)customMessageSelector.get(MetaDataInterface.CHARACTER_ENCODING);
+            if (characterEncoding != null)
+            {
+               try
+               {
+                   textMessage.setText(new String(payload.getContent(), characterEncoding));
+               }
+               catch (UnsupportedEncodingException e)
+               {
+                    throw new PayloadOperationException("Failed to convert Payload to TextMessage", e); //$NON-NLS-1$
+               }
+            }
+            // Else we default to the platform encoding
+            else
+            {
+               textMessage.setText(new String(payload.getContent()));
+            }
             // Set required selector properties
             textMessage = (TextMessage) setMessageSelectorProperties(textMessage, payload, defaultMessageSelector,
                 customMessageSelector);
@@ -138,7 +165,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload instance
-     * 
+     *
      * @param payload The payload to convert to a Map Message
      * @param session The session
      * @return MapMessage
@@ -151,7 +178,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload instance
-     * 
+     *
      * @param payload The payload to convert to a Map Message
      * @param session The session
      * @param customMessageSelector - map of JMS properties and values to set
@@ -168,7 +195,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload ArrayList<Payload> instance
-     * 
+     *
      * @param payloadList The list of payloads to convert to a Map Message
      * @param session The session
      * @return MapMessage
@@ -181,7 +208,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Helper method to create a JMS MapMessage from an incoming payload ArrayList<Payload> instance
-     * 
+     *
      * @param payloadList The list of payloads to convert to a Map Message
      * @param session The session
      * @param customMessageSelector - map of JMS properties and values to set
@@ -289,7 +316,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
     /**
      * Set selector properties on the message based on the names specified in the valid selector map and the payload
      * instances.
-     * 
+     *
      * @param message The message to set the selector properties on
      * @param payloads The list of payloads
      * @param defaultSelector The default selector
@@ -306,7 +333,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
     /**
      * Set selector properties on the message based on the names specified in the valid selector map and the payload
      * instances.
-     * 
+     *
      * @param message The message to set the selector properties on
      * @param payload The payload
      * @param defaultSelector The default selector
@@ -341,7 +368,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Set the selector properties on the Message
-     * 
+     *
      * @param message The message to set the selector properties on
      * @param payload The payload
      * @param selector The selector to use
@@ -458,7 +485,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Converts an Envelope to a MapMessage
-     * 
+     *
      * @param envelope The envelope to convert
      * @param session The session
      * @return MapMessage
@@ -473,7 +500,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Converts an Envelope to a MapMessage
-     * 
+     *
      * @param envelope The envelope to convert
      * @param session The session
      * @param customMessageSelector The custom message selector to use
@@ -568,9 +595,9 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Converts an Envelope to a TextMessage
-     * 
+     *
      * NOTE: At this stage we only support converting converting an envelope with one Payload
-     * 
+     *
      * @param envelope The envelope to convert
      * @param session The session
      * @param customMessageSelector The custom message selector to use
@@ -592,7 +619,12 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
                 throw new PayloadOperationException("JMS TextMessage with more than 1 payload, " + //$NON-NLS-1$
                         "is not supported, you will need to use another JMS Message construct, e.g. MapMessage"); //$NON-NLS-1$
             }
-            TextMessage textMessage = payloadToTextMessage(payloads.get(0), session);
+            String characterEncoding = (String)customMessageSelector.get(MetaDataInterface.CHARACTER_ENCODING);
+            if (characterEncoding == null)
+            {
+               characterEncoding = UTF8;
+            }
+            TextMessage textMessage = payloadToTextMessage(payloads.get(0), session, characterEncoding);
             // Get a map of the attributes as native types
             Map<String, Object> envelopeMap = EnvelopeHelper.getEnvelopeMap(envelope, false);
             Iterator<String> it = envelopeMap.keySet().iterator();
@@ -667,7 +699,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Set the selector properties on the message
-     * 
+     *
      * @param envelope The envelope to convert
      * @param message The message to set the properties on
      * @param selector The selector to use
@@ -786,7 +818,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Helper method to create a PayloadList from JMS Message.
-     * 
+     *
      * @param message The message to get the payloads from
      * @return List<Payload>
      * @throws PayloadOperationException Exception if there was a Payload based problem
@@ -922,7 +954,7 @@ public class JMSMessageFactoryImpl implements JMSMessageFactory
 
     /**
      * Check content of the incoming Message to see if it contains a Payload.
-     * 
+     *
      * @param message The message to check
      * @return true if the message contains a payload, else false
      * @throws JMSException Exception if we could not check the message
