@@ -40,7 +40,7 @@ import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.UserExceptionHandler;
 import org.ikasan.framework.exception.ExceptionContext;
-import org.ikasan.framework.plugins.JMSEventPublisherPlugin;
+import org.ikasan.framework.plugins.EventInvocable;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
@@ -63,7 +63,7 @@ public class UserExceptionHandlerImpl implements UserExceptionHandler, UserExcep
     private ExceptionTransformer exceptionTransformer;
 
     /** JMS Publisher */
-    private JMSEventPublisherPlugin jmsEventPublisher;
+    private EventInvocable jmsEventPublisher;
 
     /** Cache for managing duplicate exceptions */
     private ExceptionCache exceptionCache;
@@ -83,7 +83,7 @@ public class UserExceptionHandlerImpl implements UserExceptionHandler, UserExcep
      */
     public UserExceptionHandlerImpl(Map<String, UserExceptionDefinition> userExceptionDefs,
             Map<String, ExternalExceptionDefinition> externalExceptionDefs, ExceptionTransformer exceptionTransformer,
-            ExceptionCache exceptionCache, JMSEventPublisherPlugin jmsEventPublisher, PayloadFactory payloadFactory)
+            ExceptionCache exceptionCache, EventInvocable jmsEventPublisher, PayloadFactory payloadFactory)
     {
         this.userExceptionDefs = userExceptionDefs;
         this.externalExceptionDefs = externalExceptionDefs;
