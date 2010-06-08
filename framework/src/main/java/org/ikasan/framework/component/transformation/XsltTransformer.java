@@ -29,7 +29,6 @@ package org.ikasan.framework.component.transformation;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,10 +73,8 @@ import org.xml.sax.XMLReader;
  * designed to propagate the exceptions thrown for parse time errors and warnings
  * 
  * @author Ikasan Development Team
- * @deprecated - Use XslTransformer which supports the stylesheet being specified 
- * through an InputStream rather than a URI.
  */
-public class ExtendedXsltTransformer implements Transformer
+public class XsltTransformer implements Transformer
 {
     /** Reader class used to consume incoming content */
     private XMLReader xmlReader;
@@ -85,8 +82,8 @@ public class ExtendedXsltTransformer implements Transformer
     /** XSLTC templates, if we are using translets */
     private Templates templates;
 
-    /** StylesheetUri for the transformation */
-    private URI styleSheetUri;
+    /** Input steam for the stylesheet transformation */
+    private InputStream styleSheetInputStream;
 
     /** <code>TransformerFactory</code> instance */
     private TransformerFactory transformerFactory;
@@ -116,7 +113,7 @@ public class ExtendedXsltTransformer implements Transformer
      * Constructor
      * 
      * @param transformerFactory - Transformer Factory to use
-     * @param styleSheetUri - URI for stylesheet for transformation
+     * @param styleSheetInputStream - Input stream for stylesheet for transformation
      * @param useTranslets - flag controlling whether or not we should compile the stylesheet up front
      * @param externalDataBeans - map of named beans that are made available to the SLT
      * @param transformationParameters - any parameters used by the stylesheet that do not change on a per invocation
@@ -125,22 +122,25 @@ public class ExtendedXsltTransformer implements Transformer
      * 
      * @throws TransformerConfigurationException - Exception if the transformation fails badly
      */
-    public ExtendedXsltTransformer(TransformerFactory transformerFactory, URI styleSheetUri, boolean useTranslets,
+    public XsltTransformer(TransformerFactory transformerFactory, InputStream styleSheetInputStream, boolean useTranslets,
             Map<String, Object> externalDataBeans, Map<String, String> transformationParameters, XMLReader xmlReader)
             throws TransformerConfigurationException
     {
         // Make sure that any errors in the style sheet result in an exception
         transformerFactory.setErrorListener(this.exceptionThrowingErrorListener);
         this.xmlReader = xmlReader;
-        this.styleSheetUri = styleSheetUri;
+        this.styleSheetInputStream = styleSheetInputStream;
+        if(this.styleSheetInputStream == null)
+        {
+            throw new IllegalArgumentException("stylesheetInputStream cannot be 'null'");
+        }
         this.transformerFactory = transformerFactory;
         this.externalDataBeans = externalDataBeans;
         this.transformationParameters = transformationParameters;
-        logger.info("styleSheetUri=[" + styleSheetUri + "]");
         if (useTranslets)
         {
             logger.debug("using translets!");
-            StreamSource streamSource = new StreamSource(styleSheetUri.toString());
+            StreamSource streamSource = new StreamSource(styleSheetInputStream);
             this.templates = transformerFactory.newTemplates(streamSource);
         }
     }
@@ -149,7 +149,7 @@ public class ExtendedXsltTransformer implements Transformer
      * Constructor
      * 
      * @param transformerFactory - Transformer Factory to use
-     * @param styleSheetUri - URI for stylesheet for transformation
+     * @param styleSheetInputStream - Input stream for stylesheet for transformation
      * @param useTranslets - flag controlling whether or not we should compile the stylesheet upfront
      * @param externalDataBeans - map of named beans that are made available to the xslt
      * @param transformationParameters - any parameters used by the stylesheet that do not change on a per invocation
@@ -157,11 +157,11 @@ public class ExtendedXsltTransformer implements Transformer
      * 
      * @throws TransformerConfigurationException - Exception if the transformation fails badly
      */
-    public ExtendedXsltTransformer(TransformerFactory transformerFactory, URI styleSheetUri, boolean useTranslets,
+    public XsltTransformer(TransformerFactory transformerFactory, InputStream styleSheetInputStream, boolean useTranslets,
             Map<String, Object> externalDataBeans, Map<String, String> transformationParameters)
             throws TransformerConfigurationException
     {
-        this(transformerFactory, styleSheetUri, useTranslets, externalDataBeans, transformationParameters, null);
+        this(transformerFactory, styleSheetInputStream, useTranslets, externalDataBeans, transformationParameters, null);
     }
 
     /*
@@ -208,7 +208,7 @@ public class ExtendedXsltTransformer implements Transformer
         }
         else
         {
-            StreamSource streamSource = new StreamSource(this.styleSheetUri.toString());
+            StreamSource streamSource = new StreamSource(styleSheetInputStream);
             transformer = this.transformerFactory.newTransformer(streamSource);
         }
         // Set our custom error listener to ensure errors aren't ignored
