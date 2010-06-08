@@ -57,7 +57,6 @@ CREATE TABLE IkasanWiretap
     PayloadId           VARCHAR(64)   NOT NULL,
     PayloadContent      TEXT          NOT NULL,
     CreatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
-    UpdatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
     Expiry              DATETIME      NOT NULL
 )
 LOCK DATAROWS
