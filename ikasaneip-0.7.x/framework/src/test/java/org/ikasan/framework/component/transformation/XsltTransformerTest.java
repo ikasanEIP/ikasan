@@ -26,7 +26,8 @@
  */
 package org.ikasan.framework.component.transformation;
 
-import java.net.URI;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,30 +53,25 @@ import org.junit.Test;
 import org.xml.sax.XMLReader;
 
 /**
- * Test class for FlatFileTransformer
+ * Test class for XsltTransformer
  * 
  * @author Ikasan Development Team
- * @deprecated - Use XslTransformer which supports the stylesheet being specified 
- * through an InputStream rather than a URI.
+ * 
  */
-public class ExtendedXsltTransformerTest
+public class XsltTransformerTest
 {
     /**
      * Constructor
      * @throws URISyntaxException 
      */
-    public ExtendedXsltTransformerTest() throws URISyntaxException
+    public XsltTransformerTest() throws URISyntaxException
     {
         super();
-        this.xslUri = new URI("blah");
+        this.xslInputStream = new ByteArrayInputStream("blah".getBytes());
     }
 
     /** Payload time stamp */
     final Long PAYLOAD_TIMESTAMP = 1218726802809l;
-//    /** default XSL */
-//    final String xsl = "<?xml version=" + '"' + "1.0" + '"' + " encoding=" + '"' + "UTF-8" + '"' + "?>\n" + "<xsl:stylesheet version=" + '"' + "1.0" + '"'
-//            + " xmlns:xsl=" + '"' + "http://www.w3.org/1999/XSL/Transform" + '"' + " xmlns:fo=" + '"' + "http://www.w3.org/1999/XSL/Format" + '"' + ">"
-//            + "</xsl:stylesheet>";
     /** Mockery for interfaces */
     Mockery mockery = new Mockery();
     /** Mockery for classes */
@@ -92,12 +88,8 @@ public class ExtendedXsltTransformerTest
     /** Event */
     final Event event = classMockery.mock(Event.class);
     
-    /** The XSL URI */
-    final URI xslUri; 
-//    /** InputStream */
-//    final InputStream inputStream = new ByteArrayInputStream(xsl.getBytes());
-//    /** Stream Source */
-//    final StreamSource streamSource = new StreamSource(inputStream);
+    /** The XSL Input Stream */
+    final InputStream xslInputStream; 
     /** Transformer factory */
     final TransformerFactory transformerFactory = classMockery.mock(TransformerFactory.class);
     /** Templates */
@@ -109,13 +101,13 @@ public class ExtendedXsltTransformerTest
 
     /**
      * Test the invocation of the transform method with InputStream and
-     * OutputStream args
+     * OutputStream args based on the stylesheet referenced via an InputStream.
      * 
      * @throws TransformerException
      * @throws TransformationException
      */
     @Test
-    public void testTransformInputStreamOutputStream() throws TransformerException, TransformationException
+    public void testTransformInputStreamOutputStream_xslViaInputStream() throws TransformerException, TransformationException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
@@ -142,7 +134,8 @@ public class ExtendedXsltTransformerTest
                 one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
-        ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null, xmlReader);
+
+        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null, xmlReader);
         flatFileTransformer.onEvent(event);
         mockery.assertIsSatisfied();
         classMockery.assertIsSatisfied();
@@ -150,13 +143,13 @@ public class ExtendedXsltTransformerTest
 
     /**
      * Test the invocation of the transform method with InputStream and
-     * OutputStream args
+     * OutputStream args based on the stylesheet referenced via an input stream.
      * 
      * @throws TransformerException
      */
     @SuppressWarnings({"unqualified-field-access"})
     @Test
-    public void testTransformInputStreamOutputStream_throwsTransformationExcetpionForTransformerException() throws TransformerException
+    public void testTransformInputStreamOutputStream_xslViaInputStream_throwsTransformationExcetpionForTransformerException() throws TransformerException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(this.payload);
@@ -182,7 +175,8 @@ public class ExtendedXsltTransformerTest
                 will(returnValue("content".getBytes()));
             }
         });
-        ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null, xmlReader);
+
+        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null, xmlReader);
         TransformationException transformationException = null;
         try
         {
@@ -202,12 +196,13 @@ public class ExtendedXsltTransformerTest
     /**
      * Test the invocation of the transform method with InputStream and
      * OutputStream args, constructing without specifying an XMLReader
+     * based on the stylesheet referenced via an input stream.
      * 
      * @throws TransformerException
      * @throws TransformationException
      */
     @Test
-    public void testTransformInputStreamOutputStreamWithDefaultXmlReader() throws TransformerException, TransformationException
+    public void testTransformInputStreamOutputStream_xslViaInputStream_withDefaultXmlReader() throws TransformerException, TransformationException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
@@ -234,9 +229,11 @@ public class ExtendedXsltTransformerTest
                 one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
-        ExtendedXsltTransformer flatFileTransformer = new ExtendedXsltTransformer(transformerFactory, xslUri, true, null, null);
+
+        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null);
         flatFileTransformer.onEvent(event);
         mockery.assertIsSatisfied();
         classMockery.assertIsSatisfied();
     }
+    
 }
