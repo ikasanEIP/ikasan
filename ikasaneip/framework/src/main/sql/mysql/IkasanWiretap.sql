@@ -45,7 +45,6 @@ CREATE TABLE  `Ikasan01`.`IkasanWiretap` (
   `PayloadId` varchar(64) NOT NULL,
   `PayloadContent` longtext NOT NULL,
   `CreatedDateTime` datetime NOT NULL,
-  `UpdatedDateTime` datetime NOT NULL,
   `Expiry` datetime NOT NULL,
   PRIMARY KEY (`Id`),
   INDEX PayloadId_Index USING BTREE (PayloadId)

@@ -73,9 +73,6 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /** Created date/time */
     protected Date created;
 
-    /** Last updated date/time */
-    protected Date updated;
-
     /** Time after which this WiretapEvent should be cleaned up */
     protected Date expiry;
 
@@ -106,7 +103,6 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
         this.expiry = expiry;
         Date now = new Date();
         this.created = now;
-        this.updated = now;
     }
 
     /** Constructor */
@@ -183,16 +179,6 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     public String getPayloadId()
     {
         return payloadId;
-    }
-
-    /**
-     * Getter for date/time updated
-     * 
-     * @return date/time updated
-     */
-    public Date getUpdated()
-    {
-        return updated;
     }
 
     /**
@@ -273,16 +259,6 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     protected void setPayloadId(String payloadId)
     {
         this.payloadId = payloadId;
-    }
-
-    /**
-     * Setter for date/time updated
-     * 
-     * @param updated - The last updated date to set
-     */
-    protected void setUpdated(Date updated)
-    {
-        this.updated = updated;
     }
 
     /**
