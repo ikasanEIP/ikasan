@@ -95,6 +95,16 @@ public class ComparatorServiceImplTest
     }
     
     /**
+     * Test failure to find any comparator.
+     */
+    @Test(expected = RuntimeException.class)
+    public void test_failureToFindAComparator() 
+    {
+        ComparatorService<Class<?>> comparatorService = new ComparatorServiceImpl();
+        comparatorService.getComparator(String.class);
+    }
+    
+    /**
      * Provide a simple test comparator for testing the lookup of user defined comparators.
      * @author Ikasan Development Team
      *
