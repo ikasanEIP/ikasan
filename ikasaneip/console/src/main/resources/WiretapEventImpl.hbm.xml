@@ -75,8 +75,6 @@
                   column="PayloadContent"  not-null="true" />
         <property name="created"           type="java.util.Date" 
                   column="CreatedDateTime" not-null="true" />
-        <property name="updated"           type="java.util.Date" 
-                  column="UpdatedDateTime" not-null="true" />
         <property name="expiry"           type="java.util.Date" 
                   column="Expiry" 		  not-null="true" />
 
