@@ -47,7 +47,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.AuthState;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
@@ -79,16 +78,40 @@ public class HousekeeperServiceHttpImpl implements HousekeeperService {
 
 	/** The URL to execute the Wiretap Event Housekeeping */
 	private String wiretapEventHousekeepingUrl;
+	
+	/** User name for login */
+	private String wiretapEventHousekeepingUserName;
+	
+    /** Password required for log in */	
+	private String wiretapEventHousekeepingPassword;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param wiretapEventHousekeepingUrl
 	 *            - wiretapEventHousekeepingUrl to set
+	 * @param wiretapEventHousekeepingUserName - userName
+	 * @param wiretapEventHousekeepingPassword - password
 	 */
-	public HousekeeperServiceHttpImpl(String wiretapEventHousekeepingUrl)
-	{
+	public HousekeeperServiceHttpImpl(String wiretapEventHousekeepingUrl, String wiretapEventHousekeepingUserName,String wiretapEventHousekeepingPassword)
+	{	
+		if (wiretapEventHousekeepingUrl == null)
+		{
+			throw new IllegalArgumentException("wiretapEventHouseKeeping Url is null");
+		}
+		
+		if (wiretapEventHousekeepingUserName == null)
+		{
+			throw new IllegalArgumentException("wiretapEventHouseKeeping User name is null");
+		}
+		
+		if (wiretapEventHousekeepingPassword == null)
+		{
+			throw new IllegalArgumentException("wiretapEventHouseKeeping Password is null");
+		}
 		this.wiretapEventHousekeepingUrl = wiretapEventHousekeepingUrl;
+		this.wiretapEventHousekeepingUserName = wiretapEventHousekeepingUserName;
+		this.wiretapEventHousekeepingPassword = wiretapEventHousekeepingPassword;
 	}
 
 	/**
@@ -103,9 +126,8 @@ public class HousekeeperServiceHttpImpl implements HousekeeperService {
 		// Create the client and set the username and password
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		
-		// TODO Username and Password are hardcoded
-		Credentials defaultcreds = new UsernamePasswordCredentials(
-				"housekeeper", "housekeeper");
+		//User name and password now passed in through constructors 
+		Credentials defaultcreds = new UsernamePasswordCredentials(this.wiretapEventHousekeepingUserName, this.wiretapEventHousekeepingPassword);
 		
 		// TODO Using AuthScope.ANY is not best practice, we can probably
 		// Get the correct details from the URL passed in
