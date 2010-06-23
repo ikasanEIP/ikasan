@@ -52,6 +52,8 @@
 
   <bean id="housekeepingService" class="org.ikasan.platform.service.HousekeeperServiceHttpImpl">
     <constructor-arg value="${wiretap.event.housekeeping.url}" />
+    <constructor-arg value="${wiretap.event.housekeeping.username}"/>
+    <constructor-arg value="${wiretap.event.housekeeping.password}"/>
   </bean>
 
   <bean id="platformScheduler"
@@ -76,7 +78,7 @@
     </property>
     <property name="name" value="WiretapEvent Housekeeping Trigger" />
     <!-- run at midnight -->
-    <property name="cronExpression" value="0 0 0 * * ?" />
+    <property name="cronExpression" value="0 0/10 * * * ?" />
   </bean>
 
   <!-- ###################################### -->
