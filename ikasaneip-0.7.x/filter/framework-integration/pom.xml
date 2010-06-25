@@ -35,7 +35,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter-framework-integration</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.10-SNAPSHOT</version>
+  <version>0.7.10</version>
   <name>ikasan :: filter</name>
   
   <organization>
@@ -117,8 +117,8 @@
     </licenses>
 
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasan-0.7.x</connection>
-    <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</connection>
+    <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</url>
   </scm>
 
     <build>
@@ -149,19 +149,19 @@
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-filter</artifactId>
-          <version>0.7.10-SNAPSHOT</version>
+          <version>0.7.10</version>
         </dependency>
 
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-common</artifactId>
-          <version>0.7.10-SNAPSHOT</version>
+          <version>0.7.10</version>
         </dependency>
 
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-framework</artifactId>
-          <version>0.7.10-SNAPSHOT</version>
+          <version>0.7.10</version>
         </dependency>
 
         <!-- Test dependencies -->
