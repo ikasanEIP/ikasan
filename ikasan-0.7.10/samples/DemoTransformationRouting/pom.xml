@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# //
+# // 
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ikasan.demo</groupId>
+  <artifactId>demoTransformationRouting-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>0.7.10</version>
+
+	<name>demoTransformationRouting :: Parent Project</name>
+  <organization>
+    <name>Ikasan</name>
+    <url>http://www.ikasan.org</url>
+  </organization>
+  <url>http://www.ikasan.org</url>
+  <inceptionYear>2007</inceptionYear>
+  <description>The demo Transformation parent library for the Ikasan Enterprise Integration Platform</description>
+  <developers>
+    <developer>
+      <id>karianna</id>
+      <name>Martijn Verburg</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>magicduncan</id>
+      <name>Ross Duncan</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>mitcje</id>
+      <name>Jeff Mitchell</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>hasasu</id>
+      <name>Summer Hasani</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>suetju</id>
+      <name>Junichi Suetake</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+    <developer>
+      <id>koukhe</id>
+      <name>Herodotos Koukkides</name>
+      <organization>Ikasan Development Team</organization>
+      <organizationUrl>http://www.ikasan.org</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+
+
+    <licenses>
+        <license>
+            <name>The Lesser GNU Public License, Version 3.0</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+     <modules>
+       <module>components</module>
+       <module>japaneseWordSrc</module>
+       <module>germanWordSrc</module>
+       <module>englishWordRouter</module>
+       <module>frenchNumberTgt</module>
+       <module>frenchColourTgt</module>
+       <module>war</module>
+       <module>ear</module>
+     </modules>
+
+    <scm>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</connection>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</url>
+    </scm>
+
+  <distributionManagement>
+      <repository>
+          <id>sonatype-nexus-staging</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <!-- <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url> -->
+          <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+      <snapshotRepository>
+          <id>sonatype-nexus-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <useAgent>true</useAgent>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
