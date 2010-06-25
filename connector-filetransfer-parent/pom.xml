@@ -35,7 +35,7 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-connector-filetransfer-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.7.10-SNAPSHOT</version>
+	<version>0.7.10</version>
 	<name>Connector File Transfer Resource Adapter Parent</name>
 
   <organization>
@@ -117,8 +117,8 @@
     </licenses>
 
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
-    <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</connection>
+    <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</url>
   </scm>
 	<build>
 		<plugins>
@@ -205,14 +205,14 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.7.10-SNAPSHOT</version>
+      <version>0.7.10</version>
       <scope>provided</scope>
     </dependency>
     <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-connector-basefiletransfer</artifactId>
-      <version>0.7.10-SNAPSHOT</version>
+      <version>0.7.10</version>
      <!--  <scope>provided</scope> -->
     </dependency>
     <!-- J2EE -->
