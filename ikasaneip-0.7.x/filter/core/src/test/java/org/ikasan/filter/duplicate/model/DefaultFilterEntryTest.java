@@ -33,7 +33,7 @@ import org.junit.Test;
  * Test class for {@link DefaultFilterEntry} focusing on 
  * testing eqauls-hashCode contract
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class DefaultFilterEntryTest

@@ -43,7 +43,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 /**
  * Hibernate implementation of {@link FilteredMessageDao}
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao

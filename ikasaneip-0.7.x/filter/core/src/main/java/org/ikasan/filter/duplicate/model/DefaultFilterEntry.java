@@ -37,7 +37,7 @@ import java.util.Date;
  * filtering function to solve requirements it wasn't intended for (like audit trail
  * for example!!)
  *
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class DefaultFilterEntry implements FilterEntry, Serializable

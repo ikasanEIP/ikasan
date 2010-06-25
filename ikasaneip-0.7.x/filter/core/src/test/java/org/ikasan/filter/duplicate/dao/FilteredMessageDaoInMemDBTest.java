@@ -45,7 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Test class for {@link HibernateFilteredMessageDaoImpl} using an in memory
  * database rather than mocking the hibernate template.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

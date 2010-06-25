@@ -31,6 +31,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.ikasan.filter.FilterException;
 import org.ikasan.filter.FilterRule;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.routing.Router;
@@ -44,7 +45,7 @@ import org.junit.Test;
 /**
  * Test class for {@link FilteringRouter}
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 @SuppressWarnings("unchecked") //mocks and generics don't play nice with each other
@@ -71,8 +72,9 @@ public class FilteringRouterTest
      * Test case: filter rule rejects message, filter returns null. Router returns result:
      * {@link FilteringRouter#DISCARD_MESSAGE}
      * @throws RouterException
+     * @throws FilterException 
      */
-    @Test public void route_event_to_trash() throws RouterException
+    @Test public void route_event_to_trash() throws RouterException, FilterException
     {
         this.mockery.checking(new Expectations()
         {
@@ -90,8 +92,9 @@ public class FilteringRouterTest
      * Test case: filter rule accepts message, filter returns message. Router resturns result:
      * {@link FilteringRouter#PASS_MESSAGE_THRU}
      * @throws RouterException
+     * @throws FilterException 
      */
-    @Test public void route_event_to_next_element() throws RouterException
+    @Test public void route_event_to_next_element() throws RouterException, FilterException
     {
         this.mockery.checking(new Expectations()
         {
@@ -102,6 +105,27 @@ public class FilteringRouterTest
         List<String> result = this.routerToTest.onEvent(event);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(FilteringRouter.PASS_MESSAGE_THRU, result.get(0));
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test case: failure of the filter component resulting in a
+     * {@link FilterException} subsequently wrapped in a {@link RouterException}
+     * as part of the Ikasan standard Router component interface contract.
+     * @throws RouterException
+     * @throws FilterException 
+     */
+    @Test(expected = RouterException.class) 
+    public void failed_route_event_due_to_filterException() 
+        throws RouterException, FilterException
+    {
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(filterRule).accept(event);will(throwException(new FilterException("test exception")));
+            }
+        });
+        this.routerToTest.onEvent(event);
         this.mockery.assertIsSatisfied();
     }
 }

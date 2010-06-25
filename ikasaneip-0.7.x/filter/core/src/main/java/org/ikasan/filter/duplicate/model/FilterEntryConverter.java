@@ -30,7 +30,7 @@ package org.ikasan.filter.duplicate.model;
  * Base interface for converting any message to a {@link FilterEntry}. It defines
  * the contract for evaluating the Criteria of a message.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  * @param <T> Type of message to convert
  */
@@ -40,6 +40,8 @@ public interface FilterEntryConverter<T>
      * Convert any object to a {@link FilterEntry} instance
      * @param object The instance to convert
      * @return A {@link FilterEntry} representation of an object
+     * @throws FilterEntryConverterException allow configuration of the flow to 
+     * skip filter entry issues caused by data
      */
-    public FilterEntry convert(T message);
+    public FilterEntry convert(T message) throws FilterEntryConverterException;
 }

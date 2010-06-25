@@ -30,7 +30,7 @@ package org.ikasan.filter;
  * Default implementation of {@link MessageFilter} that delegates to a
  * {@link FilterRule} to evaluate the incoming message.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class DefaultMessageFilter<T> implements MessageFilter<T>
@@ -58,7 +58,7 @@ public class DefaultMessageFilter<T> implements MessageFilter<T>
      * (non-Javadoc)
      * @see org.ikasan.filter.MessageFilter#filter(java.lang.String)
      */
-    public T filter(T message)
+    public T filter(T message) throws FilterException
     {
         if (this.filterRule.accept(message))
         {

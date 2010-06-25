@@ -30,7 +30,7 @@ package org.ikasan.filter;
 /**
  * Base interface for filtering messages.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public interface MessageFilter<T>
@@ -43,6 +43,7 @@ public interface MessageFilter<T>
      * 
      * @param message
      * @return Message or null.
+     * @throws FilterException
      */
-    public T filter(T message);
+    public T filter(T message) throws FilterException;
 }
