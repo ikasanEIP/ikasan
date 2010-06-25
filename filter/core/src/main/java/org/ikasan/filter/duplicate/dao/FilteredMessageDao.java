@@ -32,7 +32,7 @@ import org.ikasan.filter.duplicate.model.FilterEntry;
 /**
  * DAO interface for interacting with filtered messages.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public interface FilteredMessageDao

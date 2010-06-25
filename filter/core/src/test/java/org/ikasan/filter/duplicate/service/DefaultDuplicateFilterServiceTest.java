@@ -37,7 +37,7 @@ import org.junit.Test;
 /**
  * Test class for {@link DefaultDuplicateFilterService}
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class DefaultDuplicateFilterServiceTest

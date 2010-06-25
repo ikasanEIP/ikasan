@@ -27,6 +27,7 @@
 
 package org.ikasan.filter.duplicate;
 
+import org.ikasan.filter.FilterException;
 import org.ikasan.filter.FilterRule;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
@@ -35,7 +36,7 @@ import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 /**
  * A {@link FilterRule} determining if a message has been "seen" before, or not.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class IsDuplicateFilterRule<T> implements FilterRule<T>
@@ -59,7 +60,7 @@ public class IsDuplicateFilterRule<T> implements FilterRule<T>
      * (non-Javadoc)
      * @see org.ikasan.filter.FilterRule#accept(java.lang.String)
      */
-    public boolean accept(T message)
+    public boolean accept(T message) throws FilterException
     {
         FilterEntry messageToFilter = this.converter.convert(message);
         boolean messageFound = this.filterService.isDuplicate(messageToFilter);

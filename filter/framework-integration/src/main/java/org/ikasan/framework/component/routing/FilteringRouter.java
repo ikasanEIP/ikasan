@@ -28,6 +28,7 @@
 package org.ikasan.framework.component.routing;
 
 import org.ikasan.filter.DefaultMessageFilter;
+import org.ikasan.filter.FilterException;
 import org.ikasan.filter.FilterRule;
 import org.ikasan.filter.MessageFilter;
 import org.ikasan.framework.component.Event;
@@ -38,7 +39,7 @@ import org.ikasan.framework.component.Event;
  * filter returns null, the event <b>must</b> be removed from flow: routed to an {@link Endpoint} component.
  * Otherwise, the event <b>must</b> be passed through the flow: routed next {@link FlowElement} in the flow.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class FilteringRouter extends SingleResultRouter
@@ -68,16 +69,23 @@ public class FilteringRouter extends SingleResultRouter
      * @see org.ikasan.framework.component.routing.SingleResultRouter#evaluate(org.ikasan.framework.component.Event)
      */
     @Override
-    protected String evaluate(Event event)
+    protected String evaluate(Event event) throws RouterException
     {
-        Event filteredMessage = this.filter.filter(event);
-        if (filteredMessage != null)
+        try
         {
-            return PASS_MESSAGE_THRU;
+            Event filteredMessage = this.filter.filter(event);
+            if (filteredMessage != null)
+            {
+                return PASS_MESSAGE_THRU;
+            }
+            else
+            {
+                return DISCARD_MESSAGE;
+            }
         }
-        else
+        catch(FilterException e)
         {
-            return DISCARD_MESSAGE;
+            throw new RouterException(e);
         }
     }
 

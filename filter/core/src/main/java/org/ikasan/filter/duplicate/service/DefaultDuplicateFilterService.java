@@ -33,7 +33,7 @@ import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 /**
  * The default implementation for {@link DuplicateFilterService}
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public class DefaultDuplicateFilterService implements DuplicateFilterService

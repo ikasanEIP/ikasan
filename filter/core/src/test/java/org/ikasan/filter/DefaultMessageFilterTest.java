@@ -37,7 +37,7 @@ import org.junit.Test;
 /**
  * Test class for {@link DefaultMessageFilter}
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 @SuppressWarnings("unchecked") //Mocking doesn't play nice with generics. Warning can be safely ignored
@@ -55,8 +55,9 @@ public class DefaultMessageFilterTest
     /**
      * Test case: if filtering rule returns false (message was not accepted), filter
      * must return null.
+     * @throws FilterException 
      */
-    @Test public void filter_discards_message()
+    @Test public void filter_discards_message() throws FilterException
     {
         final String messageToFilter = "somemessage";
         this.mockery.checking(new Expectations()
@@ -73,8 +74,9 @@ public class DefaultMessageFilterTest
     /**
      * Test case: if filtering rule returns true (message was accepted), filter
      * must return the message. 
+     * @throws FilterException 
      */
-    @Test public void filter_pass_message_thru()
+    @Test public void filter_pass_message_thru() throws FilterException
     {
         final String messageToFilter = "somemessage";
         this.mockery.checking(new Expectations()
@@ -85,6 +87,24 @@ public class DefaultMessageFilterTest
         });
         String filteredMessage = this.filterToTest.filter(messageToFilter);
         Assert.assertNotNull(filteredMessage);
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test case: filtering rule failure due to a thrown FilterException. 
+     * @throws FilterException 
+     */
+    @Test(expected = FilterException.class)
+    public void failed_filter_due_to_filterException() throws FilterException
+    {
+        final String messageToFilter = "somemessage";
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(filterRule).accept(messageToFilter);will(throwException(new FilterException("test exception")));
+            }
+        });
+        this.filterToTest.filter(messageToFilter);
         this.mockery.assertIsSatisfied();
     }
 }

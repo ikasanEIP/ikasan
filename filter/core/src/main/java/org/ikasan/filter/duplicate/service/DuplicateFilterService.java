@@ -33,7 +33,7 @@ import org.ikasan.filter.duplicate.model.FilterEntry;
 /**
  * Service interface for accessing persisted message. Implementors are responsible
  * for translating any message to the {@link DefaultFilterEntry}
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public interface DuplicateFilterService

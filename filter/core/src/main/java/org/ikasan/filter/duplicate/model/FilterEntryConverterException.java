@@ -24,23 +24,35 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
+package org.ikasan.filter.duplicate.model;
 
-package org.ikasan.filter;
+import org.ikasan.filter.FilterException;
 
 /**
- * Filtering rule (algorithm) interface.
+ * FilterEntryConvertorException defines the exception on the 
+ * FilterEntryConverter contract.
  * 
  * @author Ikasan Development Team
  *
  */
-public interface FilterRule<T>
+@SuppressWarnings("serial")
+public class FilterEntryConverterException extends FilterException 
 {
     /**
-     * Evaluate message based on defined rule.
-     * 
-     * @param message incoming message to be evaluated
-     * @return true (message accepted) or false (message rejected)
-     * @throws FilterRuleException - failure of rule accept
+     * Constructor
+     * @param cause
      */
-    public boolean accept(T message) throws FilterException;
+    public FilterEntryConverterException(Throwable cause)
+    {
+       super(cause);
+    }
+
+    /**
+     * Constructor
+     * @param message
+     */
+    public FilterEntryConverterException(String message) 
+    {
+        super(message);
+    }
 }

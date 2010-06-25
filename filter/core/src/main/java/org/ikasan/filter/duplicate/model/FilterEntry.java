@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  * Interface defining what a persisted message should look like.
  * 
- * @author Summer
+ * @author Ikasan Development Team
  *
  */
 public interface FilterEntry

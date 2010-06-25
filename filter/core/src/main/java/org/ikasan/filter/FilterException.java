@@ -24,23 +24,33 @@
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
-
 package org.ikasan.filter;
 
 /**
- * Filtering rule (algorithm) interface.
+ * FilterException defines the exception on the 
+ * Filter contract.
  * 
  * @author Ikasan Development Team
  *
  */
-public interface FilterRule<T>
+@SuppressWarnings("serial")
+public class FilterException extends Exception 
 {
     /**
-     * Evaluate message based on defined rule.
-     * 
-     * @param message incoming message to be evaluated
-     * @return true (message accepted) or false (message rejected)
-     * @throws FilterRuleException - failure of rule accept
+     * Constructor
+     * @param cause
      */
-    public boolean accept(T message) throws FilterException;
+    public FilterException(Throwable cause)
+    {
+       super(cause);
+    }
+
+    /**
+     * Constructor
+     * @param message
+     */
+    public FilterException(String message) 
+    {
+        super(message);
+    }
 }
