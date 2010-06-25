@@ -1,3 +1,22 @@
+Release Notes - Ikasan - Version 0.7.10
+
+** Bug
+    * [IKASAN-427] - UserExceptionHandlerImpl constructor specifies an implementation of the jmsEventPublisher rather than the interface EventInvocable
+    * [IKASAN-436] - Incorrect exception message from DefaultFilterEntry.equals(Object)
+
+** Improvement
+    * [IKASAN-384] - Provide support for generic inbound message adapters
+    * [IKASAN-426] - Provide XSLT transformer component more flexibility in loading the stylesheet resource.
+    * [IKASAN-429] - Ikasan Filter module does not currently provision for checked FilterEntryConverter exceptions
+** New Feature
+    * [IKASAN-408] - Implementing MessageFilter pattern
+    * [IKASAN-409] - New router implementation: FilteringRouter
+    * [IKASAN-410] - Adding duplicate messages filtering support to Ikasan
+** Task
+    * [IKASAN-438] - Release 0.7.10
+
+Release Notes - Ikasan - Version 0.7.9
+
 ** Sub-task
     * [IKASAN-331] - Sybase ASE runs out of locks on large Wiretap housekeeps
 
