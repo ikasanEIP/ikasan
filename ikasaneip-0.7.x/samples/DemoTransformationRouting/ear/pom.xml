@@ -4,7 +4,7 @@
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-app</artifactId>
 	<packaging>ear</packaging>
-	<version>0.7.10</version>
+	<version>0.7.11-SNAPSHOT</version>
 	<name>demoTransformationRouting :: demoTransformationRouting : ear</name>
 
   <organization>
@@ -86,8 +86,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</connection>
-        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.10</url>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
     </scm>
 
 	<build>
@@ -236,7 +236,7 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-war</artifactId>
-			<version>0.7.10</version>
+			<version>0.7.11-SNAPSHOT</version>
 			<type>war</type>
 			<scope>provided</scope>
 		</dependency>
@@ -245,7 +245,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>0.7.10</version>
+			<version>0.7.11-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -294,7 +294,7 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.10</version>
+			<version>0.7.11-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -347,21 +347,21 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-japaneseWordSrc-jar</artifactId>
-			<version>0.7.10</version>
+			<version>0.7.11-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-germanWordSrc-jar</artifactId>
-			<version>0.7.10</version>
+			<version>0.7.11-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-            <version>0.7.10</version>
+            <version>0.7.11-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -369,7 +369,7 @@
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchColourTgt-jar</artifactId>
-            <version>0.7.10</version>
+            <version>0.7.11-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -377,7 +377,7 @@
         <dependency>
             <groupId>org.ikasan.demo</groupId>
             <artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
-            <version>0.7.10</version>
+            <version>0.7.11-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>        
@@ -386,7 +386,7 @@
 		<dependency>
 			<groupId>org.ikasan.demo</groupId>
 			<artifactId>demoTransformationRouting-components</artifactId>
-			<version>0.7.10</version>
+			<version>0.7.11-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
