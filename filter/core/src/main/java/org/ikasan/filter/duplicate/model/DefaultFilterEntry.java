@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * Copyright (c) 2003-2010 Mizuho International plc. and individual contributors as indicated
@@ -19,8 +19,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the 
- * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+ * License along with this software; if not, write to the
+ * Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany
  * or see the FSF site: http://www.fsfeurope.org/.
  * ====================================================================
  */
@@ -36,7 +36,7 @@ import java.util.Date;
  * reason to provide an alternative implementation; don't abuse
  * filtering function to solve requirements it wasn't intended for (like audit trail
  * for example!!)
- * 
+ *
  * @author Summer
  *
  */
@@ -80,7 +80,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
         this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000));
-        
+
     }
 
     /**
@@ -151,7 +151,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         return this.createdDateTime;
     }
 
-    
+
     /**
      * For a {@link DefaultFilterEntry} object to be equal to another, both should have
      * the same {@link #clientId} and {@link #criteria}
@@ -162,7 +162,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         if (obj instanceof DefaultFilterEntry)
         {
             DefaultFilterEntry entry = (DefaultFilterEntry) obj;
-            if (this.criteria.equals(entry.getCriteria()) && 
+            if (this.criteria.equals(entry.getCriteria()) &&
                 this.clientId.equals(entry.getClientId()))
             {
                 return true;
@@ -172,7 +172,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
                 return false;
             }
         }
-        throw new ClassCastException("Object is not instance of TradewebMessage.");
+        throw new ClassCastException("Object is not instance of DefaultFilterEntry.");
     }
 
     @Override
