@@ -87,14 +87,21 @@ public class EventComparator
 
         for(int plCount = 0; plCount < actualTotalPayloads; plCount++)
         {
-          Payload actualPayload = actualEvent.getPayloads().get(plCount);
-          Payload expectedPayload = expected.getPayloads().get(plCount);
-          
-          Assert.assertTrue("Payload [" + plCount + "] content differs. Expected[" 
-                  + new String(expectedPayload.getContent()) 
-                  + " actual[" + actualPayload.getContent() + "]", 
-                  Arrays.equals(actualPayload.getContent(), expectedPayload.getContent()));
+            this.compare(expected.getPayloads().get(plCount), actualEvent.getPayloads().get(plCount));
         }
     }
 
+    /**
+     * Payload content comparator
+     * @param expected
+     * @param actual
+     */
+    protected void compare(Payload expected, Payload actual)
+    {
+        Assert.assertTrue("Payload content differs. Expected[" 
+                + new String(expected.getContent()) 
+                + " actual[" + actual.getContent() + "]", 
+                Arrays.equals(actual.getContent(), expected.getContent()));
+        
+    }
 }

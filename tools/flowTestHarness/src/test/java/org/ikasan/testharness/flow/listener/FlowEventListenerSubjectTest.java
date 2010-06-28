@@ -124,9 +124,10 @@ public class FlowEventListenerSubjectTest
     /**
      * Sanity test the invocation of the after flow element to notify flow 
      * observers of an event.
+     * @throws CloneNotSupportedException 
      */
     @Test
-    public void test_afterFlowElement() 
+    public void test_afterFlowElement() throws CloneNotSupportedException 
     {
         // expectations
         mockery.checking(new Expectations()
@@ -134,6 +135,10 @@ public class FlowEventListenerSubjectTest
             {
                 // check each capture satisfies a flow expectation
                 exactly(1).of(flowObserver).notify(event);
+
+                // ensure we havce an independent copy of that event
+                exactly(1).of(event).spawn();
+                will(returnValue(event));
             }
         });
         
