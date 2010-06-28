@@ -43,14 +43,14 @@ package org.ikasan.testharness.flow.expectation.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
+import org.ikasan.testharness.flow.comparator.model.IgnoreComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
 import org.ikasan.testharness.flow.comparator.service.ComparatorServiceImpl;
-import org.ikasan.testharness.flow.expectation.model.DefaultExpectation;
 import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
 import org.junit.Assert;
-
 
 /**
  * Implementation of a FlowExpecation based on applying the expectations in 
@@ -62,6 +62,9 @@ import org.junit.Assert;
 public class OrderedExpectation 
     implements FlowExpectation
 {
+    /** Logger instance */
+    private static Logger logger = Logger.getLogger(OrderedExpectation.class);
+
     // list provides ordered expectations
     @SuppressWarnings("unchecked")
     private List<DefaultExpectation> expectations = new ArrayList<DefaultExpectation>();
@@ -106,8 +109,20 @@ public class OrderedExpectation
     @SuppressWarnings("unchecked")
     public <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator)
     {
-        comparatorService.addUserComparator(expectation.getClass(), expectationComparator);
-        this.expectation(expectation);
+        addExpectation( new DefaultExpectation(expectation, expectationComparator), null );
+    }
+
+    /**
+     * Add an Expectation and specific user defined comparator to the ordered expectations
+     * and provide a specific description to help identity this expectation at runtime.
+     * @param expectation
+     * @param comparator     
+     * @param description
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator, String description)
+    {
+        addExpectation( new DefaultExpectation(expectation, expectationComparator), description );
     }
 
     /**
@@ -117,7 +132,21 @@ public class OrderedExpectation
     @SuppressWarnings("unchecked")
     public <T> void expectation(T expectation)
     {
-        this.expectations.add(new DefaultExpectation(expectation));
+        ExpectationComparator expectationComparator = comparatorService.getComparator(expectation.getClass());
+        addExpectation( new DefaultExpectation(expectation, expectationComparator), null );
+    }
+
+    /**
+     * Add an Expectation to the ordered expectations and provide a description
+     * to help identify this expectation at runtime.
+     * @param expectation
+     * @param description
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void expectation(T expectation, String description)
+    {
+        ExpectationComparator expectationComparator = comparatorService.getComparator(expectation.getClass());
+        addExpectation( new DefaultExpectation(expectation, expectationComparator), description );
     }
 
     /**
@@ -127,9 +156,33 @@ public class OrderedExpectation
     @SuppressWarnings("unchecked")
     public <T> void ignore(T expectation)
     {
-        this.expectations.add(new DefaultExpectation(new IgnoreExpectation(expectation)));
+        addExpectation( new DefaultExpectation(new IgnoreExpectation(expectation), new IgnoreComparator()), null );
     }
 
+    /**
+     * Add an ignore operation to the expectations order and provide
+     * a description to help identify this expectation at runtime.
+     * @param expectation
+     * @param description
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void ignore(T expectation, String description)
+    {
+        addExpectation( new DefaultExpectation(new IgnoreExpectation(expectation), new IgnoreComparator()), description );
+    }
+
+    /**
+     * Append the expectation to the already defined expectations
+     * @param defaultExpectation
+     * @param description
+     */
+    protected void addExpectation(DefaultExpectation<?> defaultExpectation, String description)
+    {
+        defaultExpectation.setDescription("Expectation[" + this.expectations.size() + 1 
+                + "] " + ((description == null) ? "":description) );
+        this.expectations.add(defaultExpectation);
+    }
+    
     /**
      * Is this actual operation satisfied with a corresponding expectation
      * @param capture
@@ -141,10 +194,11 @@ public class OrderedExpectation
                 expectations.isEmpty());
 
         DefaultExpectation expectation = expectations.remove(0);
-        ExpectationComparator expectationComparator = comparatorService.getComparator(expectation.getExpectation().getClass());
+        ExpectationComparator expectationComparator = expectation.getExpectationComparator();
 
         try
         {
+            logger.info("Running " + expectation.getDescription());
             expectationComparator.compare(expectation.getExpectation(), actual.getActual());
         }
         catch(ClassCastException e)
@@ -152,7 +206,8 @@ public class OrderedExpectation
             String comparatorClassName = expectationComparator.getClass().getName();
             String expectationClassName = expectation.getExpectation().getClass().getName();
             String actualClassName = actual.getActual().getClass().getName();
-            throw new RuntimeException("Failed to invoke Comparator.compare method[" 
+            throw new RuntimeException("Failed " + expectation.getDescription() 
+                    + " when invoking Comparator.compare method[" 
                     + comparatorClassName 
                     + "]. Could be comparator method parameters are of the wrong type for this expectation class[" +
                     expectationClassName + "] or actual class[" + actualClassName + "].",e);
@@ -167,4 +222,68 @@ public class OrderedExpectation
         Assert.assertTrue("Not all expectations were completed", expectations.isEmpty());
     }
     
+    
+    /**
+     * Default expectation allows for anything to be provided as an expectation.
+     * 
+     * @author Ikasan Development Team
+     * 
+     */
+    protected class DefaultExpectation<T>
+    {
+        /** expectation description */
+        private String description;
+
+        /** generic type of expectation */
+        private T expectation;
+
+        /** expectation comparator */
+        private ExpectationComparator<?,?> expectationComparator;
+
+        /** 
+         * Constructor
+         * @param expectation
+         */
+        protected DefaultExpectation(T expectation, ExpectationComparator<?,?> expectationComparator)
+        {
+            this.expectation = expectation;
+            this.expectationComparator = expectationComparator;
+        }
+
+        /**
+         * Setter for exception description
+         * @param String
+         */
+        protected void setDescription(String description)
+        {
+            this.description = description;
+        }
+        
+        /**
+         * Getter for exception description
+         * @param String
+         */
+        protected String getDescription()
+        {
+            return this.description;
+        }
+        
+        /**
+         * Getter for generic expectation type
+         * @return
+         */
+        protected T getExpectation()
+        {
+            return expectation;
+        }
+        
+        /**
+         * Getter for expectation comparator
+         * @return
+         */
+        protected ExpectationComparator<?,?> getExpectationComparator()
+        {
+            return this.expectationComparator;
+        }
+    }
 }

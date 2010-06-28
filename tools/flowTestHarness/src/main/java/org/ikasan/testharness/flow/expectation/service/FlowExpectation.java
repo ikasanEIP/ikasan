@@ -51,14 +51,56 @@ import org.ikasan.testharness.flow.comparator.ExpectationComparator;
  */
 public interface FlowExpectation
 {
-    /** specify an expectation with a user defined comparator */
+    /**
+     * Set an expectation with a specific comparator to measure the expecation.
+     * @param <T>
+     * @param expectation
+     * @param expectationComparator
+     */
     public <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator);
 
-    /** specify an expectation */
+    /**
+     * Set an expectation with a specific comparator to measure the expecation
+     * and a description of the expectation test which can help identify this 
+     * expectation at runtime.
+     * @param <T>
+     * @param expectation
+     * @param expectationComparator
+     * @param description
+     */
+    public <T> void expectation(T expectation, ExpectationComparator<?,?> expectationComparator, String description);
+
+    /**
+     * Set an expectation.
+     * @param <T>
+     * @param expectation
+     */
     public <T> void expectation(T expectation);
 
-    /** ignore an expectation */
+    /**
+     * Set an expectation and provide a description for this expecation test
+     * which can help identify this expectation at runtime.
+     * @param <T>
+     * @param expectation
+     * @param description
+     */
+    public <T> void expectation(T expectation, String description);
+
+    /**
+     * ignore an expectation
+     * @param <T>
+     * @param expectation
+     */
     public <T> void ignore(T expectation);
+
+    /**
+     * ignore an expectation and provide a description which can help
+     * identify this expectation at runtime.
+     * @param <T>
+     * @param expectation
+     * @param description
+     */
+    public <T> void ignore(T expectation, String description);
 
     /** does an expectation satisfy the captured actual behaiour */
     public void isSatisfied(Capture<?> actual);

@@ -50,11 +50,6 @@ import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 public interface ComparatorService<K>
 {
     /**
-     * Add a new user defined comparator.
-     */
-    public void addUserComparator(K comparatorKey, ExpectationComparator<?,?>  comparator);
-
-    /**
      * Retrieve a comparator for this specific expectation.
      */
     public ExpectationComparator<?,?> getComparator(K comparatorKey);
