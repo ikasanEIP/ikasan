@@ -137,7 +137,16 @@ public class FlowEventListenerSubject
         // notification of the resulting event from the invoked component
         for(FlowObserver flowObserver:this.flowObservers)
         {
-            flowObserver.notify(event);
+            try
+            {
+                Event eventSnapshot = event.spawn();
+                flowObserver.notify(eventSnapshot);
+            }
+            catch (CloneNotSupportedException e)
+            {
+                flowObserver.notify("Failed to capture event at runtime due to [" 
+                        + e.getMessage() + "]");
+            }
         }
     }
 

@@ -80,19 +80,6 @@ public class ComparatorServiceImpl
         put(Event.class, new EventComparator());
     }};
 
-    // user defined comparators
-    private Map<Class<?>,ExpectationComparator<?,?>> userComparators = new HashMap<Class<?>,ExpectationComparator<?,?>>();
-
-    /**
-     * Addition comparators specified from within the tests.
-     * @param cls
-     * @param comparator
-     */
-    public void addUserComparator(Class<?> cls, ExpectationComparator<?,?> comparator)
-    {
-        this.userComparators.put(cls, comparator);
-    }
-
     /**
      * Utility method for finding the comparator for an expectation class.
      * @param cls
@@ -100,15 +87,11 @@ public class ComparatorServiceImpl
      */
     public ExpectationComparator<?,?> getComparator(Class<?> cls)
     {
-        ExpectationComparator<?,?> expectationComparator = this.userComparators.get(cls);
+        ExpectationComparator<?,?> expectationComparator = this.defaultComparators.get(cls);
         if(expectationComparator == null)
         {
-            expectationComparator = this.defaultComparators.get(cls);
-            if(expectationComparator == null)
-            {
-                throw new RuntimeException("No ExpectationComparators were found for expectation class["
-                        + cls.getName() + "]");
-            }
+            throw new RuntimeException("No ExpectationComparators were found for expectation class["
+                    + cls.getName() + "]");
         }
         
         return expectationComparator;

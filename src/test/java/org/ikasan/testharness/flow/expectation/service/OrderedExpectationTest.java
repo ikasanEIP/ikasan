@@ -90,10 +90,10 @@ public class OrderedExpectationTest
     
     /**
      * Sanity test of a default OrderedExpectation instance with a single 
-     * expectation to be matched.
+     * expectation to be matched using the default description.
      */
     @Test
-    public void test_successfulDefaultOrderedExpectationWithSingleExpectation() 
+    public void test_successfulDefaultOrderedExpectationWithSingleExpectationDefaultDescription() 
     {
         // expectations
         mockery.checking(new Expectations()
@@ -127,10 +127,47 @@ public class OrderedExpectationTest
 
     /**
      * Sanity test of a default OrderedExpectation instance with a single 
-     * expectation to be ignored.
+     * expectation to be matched with a user defined description.
      */
     @Test
-    public void test_successfulDefaultOrderedExpectationWithSingleIgnoreExpectation() 
+    public void test_successfulDefaultOrderedExpectationWithSingleExpectationUserDescription() 
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the mocked actual flow element
+                exactly(1).of(capture).getActual();
+                will(returnValue(flowElement));
+                
+                // expected name
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("one"));
+
+                // expected implementation class
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(new TestTransformer()));
+            }
+        });
+        
+        FlowExpectation flowExpectation = new OrderedExpectation();
+        flowExpectation.expectation(new TransformerComponent("one"), "my test expectation description");
+        
+        // match expectation invocations to actual occurrences
+        flowExpectation.isSatisfied(capture);
+        
+        // ensure no more expectations
+        flowExpectation.allSatisfied();
+        
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Sanity test of a default OrderedExpectation instance with a single 
+     * expectation to be ignored with default description.
+     */
+    @Test
+    public void test_successfulDefaultOrderedExpectationWithSingleIgnoreExpectationDefaultDescription() 
     {
         // expectations
         mockery.checking(new Expectations()
@@ -156,11 +193,40 @@ public class OrderedExpectationTest
 
     /**
      * Sanity test of a default OrderedExpectation instance with a single 
-     * expectation and a user specified comparator passed explicitly for that
-     * expectation.
+     * expectation to be ignored with user description.
      */
     @Test
-    public void test_successfulDefaultOrderedExpectationWithSingleExpectationAndUserComparator() 
+    public void test_successfulDefaultOrderedExpectationWithSingleIgnoreExpectationUserDescription() 
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the mocked actual flow element
+                exactly(1).of(capture).getActual();
+                will(returnValue(flowElement));
+            }
+        });
+        
+        FlowExpectation flowExpectation = new OrderedExpectation();
+        flowExpectation.ignore(new TransformerComponent("one"), "another description");
+        
+        // match expectation invocations to actual occurrences
+        flowExpectation.isSatisfied(capture);
+        
+        // ensure no more expectations
+        flowExpectation.allSatisfied();
+        
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Sanity test of a default OrderedExpectation instance with a single 
+     * expectation and a user specified comparator passed explicitly for that
+     * expectation. Use default expectation description.
+     */
+    @Test
+    public void test_successfulDefaultOrderedExpectationWithSingleExpectationAndUserComparatorDefaultDescription() 
     {
         // expectations
         mockery.checking(new Expectations()
@@ -174,6 +240,36 @@ public class OrderedExpectationTest
         
         FlowExpectation flowExpectation = new OrderedExpectation();
         flowExpectation.expectation(new String("one"), new TestComparator());
+        
+        // match expectation invocations to actual occurrences
+        flowExpectation.isSatisfied(capture);
+        
+        // ensure no more expectations
+        flowExpectation.allSatisfied();
+        
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Sanity test of a default OrderedExpectation instance with a single 
+     * expectation and a user specified comparator passed explicitly for that
+     * expectation. Use User description.
+     */
+    @Test
+    public void test_successfulDefaultOrderedExpectationWithSingleExpectationAndUserComparatorUserDescription() 
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the mocked actual flow element
+                exactly(1).of(capture).getActual();
+                will(returnValue("one"));
+            }
+        });
+        
+        FlowExpectation flowExpectation = new OrderedExpectation();
+        flowExpectation.expectation(new String("one"), new TestComparator(), "another expectation description");
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
