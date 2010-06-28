@@ -149,6 +149,34 @@ public class FlowEventListenerSubjectTest
     }
 
     /**
+     * Sanity test the failure of the after flow element to notify flow 
+     * observers of an event due to errors cloning the event.
+     * @throws CloneNotSupportedException 
+     */
+    @Test
+    public void test_failed_afterFlowElement_CloneNotSupportedException() throws CloneNotSupportedException 
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // fail on the event copy
+                exactly(1).of(event).spawn();
+                will(throwException(new CloneNotSupportedException("test Clone failure")));
+                
+                // report this via notification to the listener as a text String
+                exactly(1).of(flowObserver).notify(with(any(String.class)));
+                
+            }
+        });
+        
+        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject();
+        flowEventListenerSubject.addObserver(flowObserver);
+        flowEventListenerSubject.afterFlowElement("moduleName", "flowName", flowElement, event);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
      * Sanity test the observer registration.
      */
     @Test
