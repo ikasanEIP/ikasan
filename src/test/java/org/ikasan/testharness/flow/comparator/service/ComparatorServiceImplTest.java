@@ -40,7 +40,6 @@
  */
 package org.ikasan.testharness.flow.comparator.service;
 
-import org.ikasan.framework.component.Event;
 import org.ikasan.testharness.flow.expectation.model.EndpointComponent;
 import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
 import org.ikasan.testharness.flow.expectation.model.RouterComponent;
@@ -75,24 +74,8 @@ public class ComparatorServiceImplTest
                 comparatorService.getComparator(SequencerComponent.class) );
         Assert.assertNotNull("EndpointComponent comparator retrieval failed", 
                 comparatorService.getComparator(EndpointComponent.class) );
-        Assert.assertNotNull("Event comparator retrieval failed", 
-                comparatorService.getComparator(Event.class) );
     }
     
-//    /**
-//     * Test addition (override) and retrieval of a user defined Comparator.
-//     */
-//    @Test
-//    public void test_successfulUserDefinedComparatorSetAndRetrieval() 
-//    {
-//        ComparatorService<Class<?>> comparatorService = new ComparatorServiceImpl();
-//        comparatorService.addUserComparator(Event.class, new TestExpectationComparator());
-//        ExpectationComparator<?,?> expectedComparator = comparatorService.getComparator(Event.class);
-//        Assert.assertNotNull("User defined Event comparator retrieval failed", expectedComparator);
-//        Assert.assertTrue("User defined Event comparator not user defined class TestExpectationComparator", 
-//                expectedComparator instanceof TestExpectationComparator);
-//    }
-//    
     /**
      * Test failure to find any comparator.
      */
@@ -103,19 +86,5 @@ public class ComparatorServiceImplTest
         comparatorService.getComparator(String.class);
     }
     
-//    /**
-//     * Provide a simple test comparator for testing the lookup of user defined comparators.
-//     * @author Ikasan Development Team
-//     *
-//     */
-//    private class TestExpectationComparator implements ExpectationComparator<String,String>
-//    {
-//
-//        public void compare(String expected, String actual)
-//        {
-//            // do nothing
-//        }
-//        
-//    }
 }    
 
