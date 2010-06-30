@@ -43,9 +43,7 @@ package org.ikasan.testharness.flow.comparator.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ikasan.framework.component.Event;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
-import org.ikasan.testharness.flow.comparator.model.EventComparator;
 import org.ikasan.testharness.flow.comparator.model.FlowElementComparator;
 import org.ikasan.testharness.flow.comparator.model.IgnoreComparator;
 import org.ikasan.testharness.flow.expectation.model.EndpointComponent;
@@ -77,7 +75,6 @@ public class ComparatorServiceImpl
         put(RouterComponent.class, new FlowElementComparator());
         put(SequencerComponent.class, new FlowElementComparator());
         put(EndpointComponent.class, new FlowElementComparator());
-        put(Event.class, new EventComparator());
     }};
 
     /**
