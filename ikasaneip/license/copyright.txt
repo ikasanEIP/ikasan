@@ -3,7 +3,7 @@ IKASAN ENTERPRISE INTEGRATION PLATFORM COPYRIGHT NOTICE
 
 Organisation
 ------------
-Copyright (c) 2003-2009 Mizuho International plc.
+Copyright (c) 2003-2010 Mizuho International plc.
 
 
 Project Administrators
@@ -16,6 +16,9 @@ Summer Hasani
 
 Project Contributors
 --------------------
+Alex Oppong
+Arun Rajaraman
+Balaji Ramanujam
 Cae Fernandes
 Chia-Hung Lin
 Giridhar Teklur
@@ -24,6 +27,7 @@ Jaikiran Pai
 Janos Lele
 Kamlesh Bhatt
 Kerry Kenneally
+Marc Andreu Fernandez
 Matthew Potter
 Prasad Saya
 Vijitha Kumara
