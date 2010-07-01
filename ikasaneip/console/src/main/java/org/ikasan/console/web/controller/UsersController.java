@@ -198,7 +198,7 @@ public class UsersController
      * @return view the user
      */
     @RequestMapping(value = "changePassword.htm", method = RequestMethod.POST)
-    public ModelAndView changePassword(@ModelAttribute("user") User user, @RequestParam("confim_password") String confirmNewPassword, ModelMap model)
+    public ModelAndView changePassword(@ModelAttribute("user") User user, @RequestParam("confirm_password") String confirmNewPassword, ModelMap model)
     {
         List<String> errors = new ArrayList<String>();
         try 
