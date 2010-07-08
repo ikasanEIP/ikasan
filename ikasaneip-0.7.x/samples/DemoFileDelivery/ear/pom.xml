@@ -210,6 +210,16 @@
 							<artifactId>ikasan-common</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
+                        <jarModule>
+                          <groupId>org.ikasan</groupId>
+                            <artifactId>ikasan-filter</artifactId>
+                          <bundleDir>lib</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                          <groupId>org.ikasan</groupId>
+                            <artifactId>ikasan-filter-framework-integration</artifactId>
+                          <bundleDir>lib</bundleDir>
+                        </jarModule>
 						<jarModule>
 							<groupId>org.springframework.webflow</groupId>
 							<artifactId>org.springframework.webflow</artifactId>
@@ -364,6 +374,18 @@
 			<version>0.7.11-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-filter</artifactId>
+          <version>0.7.11-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-filter-framework-integration</artifactId>
+          <version>0.7.11-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.webflow</groupId>
 			<artifactId>org.springframework.webflow</artifactId>
