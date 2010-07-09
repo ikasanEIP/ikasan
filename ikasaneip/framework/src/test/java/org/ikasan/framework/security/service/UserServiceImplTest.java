@@ -43,6 +43,8 @@ package org.ikasan.framework.security.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.ikasan.framework.security.dao.AuthorityDao;
 import org.ikasan.framework.security.dao.UserDao;
 import org.ikasan.framework.security.model.Authority;
@@ -133,7 +135,38 @@ public class UserServiceImplTest
         userServiceImpl.revokeAuthority(username, authority);
         mockery.assertIsSatisfied();
     }
-
+    
+    /**
+     * Test to make sure the list of users is retrieved and presented in alphabetical order.
+     */
+    @Test
+    public void testListUsersAlphabetically()
+    {         
+        final List<User> users = new ArrayList<User>();
+        final User bob = new User("Bob", "password", "email", true);
+        final User alice = new User("Alice", "password", "email", true);
+        final User mallory = new User("Mallory", "password", "email", true);
+        
+        users.add(bob);
+        users.add(alice);
+        users.add(mallory);
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(userDao).getUsers();
+                will(returnValue(users));
+            }
+        });
+        
+        userServiceImpl.getUsers();
+        
+        Assert.assertTrue(users.get(0).equals(alice));
+        Assert.assertTrue(users.get(2).equals(mallory));
+        
+        mockery.assertIsSatisfied();
+    }
+    
     /**
      * Test that changing a User's password works
      */
