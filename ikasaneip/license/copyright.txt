@@ -21,6 +21,7 @@ Arun Rajaraman
 Balaji Ramanujam
 Cae Fernandes
 Chia-Hung Lin
+Edward Bowles
 Giridhar Teklur
 Ioannis Mavroukakis
 Jaikiran Pai
