@@ -741,6 +741,25 @@ public class DateUtils
 
     /**
      * Parses the specified date using the given custom format then
+     * instantiates and returns the associated Date object.
+     *
+     * @param dateTime     is the current date and time as long.
+     * @param currFormat   is the current format.
+     * @return the newly created Date object.
+     * @throws ParseException 
+     */
+    public static Date anyToDate(final long dateTime, final String currFormat)
+        throws ParseException
+    {
+        // Parse the current date and time using the current format
+        SimpleDateFormat dateFormat = new SimpleDateFormat(currFormat);
+        Date date = new Date(dateTime);
+        String formattedDateString = dateFormat.format(date);
+        return dateFormat.parse(formattedDateString);
+    }
+    
+    /**
+     * Parses the specified date using the given custom format then
      * formats the parsed date using the second given custom format.
      *
      * @param dateTime     is the current date and time as string.
@@ -851,6 +870,7 @@ public class DateUtils
      */
     public static void main(String args[])
     {
+
         long dateMillis = System.currentTimeMillis();
 
         // Parse the command-line parameters
@@ -1175,6 +1195,9 @@ public class DateUtils
             e.printStackTrace(System.err);
         }
 
+        
+        
+        
         System.exit(0);
     }
 
