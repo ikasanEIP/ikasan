@@ -141,17 +141,4 @@ public class UserTest
         user.revokeAuthority(anAuthority);
     }
     
-    /**
-     * Test to ensure that User comparisons are being performed correctly.
-     */
-    @Test
-    public void testCompare()
-    {
-        User alice = new User("Alice", "password", "email", true);
-        User bob = new User("Bob", "password", "email", true);
-        
-        Assert.assertTrue(bob.compareTo(alice) > 0);
-        Assert.assertTrue(bob.compareTo(bob) == 0);
-        Assert.assertTrue(alice.compareTo(bob) < 0);
-    }
 }

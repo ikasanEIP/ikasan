@@ -39,6 +39,6 @@ CREATE TABLE  `ikasan01`.`initiatorstartupcontrol` (
   `ModuleName` varchar(255) NOT NULL,
   `InitiatorName` varchar(255) NOT NULL,
   `StartupType` varchar(16) NOT NULL,
-  `Comment` varchar(255)  NULL
+  `Comment` varchar(255)  NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

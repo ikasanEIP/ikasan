@@ -148,6 +148,27 @@
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>
 	</bean>
     
+    <bean id="messageFilterService" lazy-init="true"
+       class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
+       <constructor-arg ref="messageFilterDao" />
+    </bean>
+
+    <bean id="messageFilterDao" lazy-init="true"
+        class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
+        <property name="sessionFactory" ref="messageFilterHibernateSessionFactory" />
+    </bean>
+
+    <bean id="messageFilterHibernateSessionFactory" lazy-init="true"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/filter/duplicate/model/DefaultFilterEntry.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
 	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="ignoreResourceNotFound" value="true"/>
 		<property name="location" value="classpath:ikasan-hibernate.properties"/>
