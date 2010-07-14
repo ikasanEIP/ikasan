@@ -52,7 +52,7 @@ import org.springframework.security.userdetails.UserDetails;
  * @author Ikasan Development Team
  * 
  */
-public class User implements UserDetails, Comparable<User>
+public class User implements UserDetails
 {
     /** serialVersionUID */
     private static final long serialVersionUID = 8975017088981341914L;
@@ -387,17 +387,5 @@ public class User implements UserDetails, Comparable<User>
         }
 
         return true;
-    }
-    
-    /**
-     * Comparisons between user objects is based on alphabetical ordering
-     * of usernames
-     * 
-     * Note: Maybe extend the possible comparisons/
-     * refactor to a separate comparator
-     */
-    public int compareTo(User user)
-    {
-        return this.getUsername().compareTo(user.getUsername());
     }
 }

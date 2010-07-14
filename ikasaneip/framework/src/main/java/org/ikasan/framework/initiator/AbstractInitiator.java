@@ -293,26 +293,34 @@ public abstract class AbstractInitiator implements Initiator
 	 * @param componentName
 	 */
 	protected void logError(Event event, Throwable throwable,
-			String componentName, IkasanExceptionAction exceptionAction) {
-		if (errorLoggingService!=null){
+			String componentName, IkasanExceptionAction exceptionAction) 
+	{
+		if (errorLoggingService!=null)
+		{
 			String actionTaken = null;
-			if (exceptionAction!=null){
+			if (exceptionAction!=null)
+			{
 				actionTaken = exceptionAction.toString();
-				if (exceptionAction instanceof RetryAction){
+				if (exceptionAction instanceof RetryAction)
+				{
 					actionTaken+=" retryCount ["+retryCount+"]";
 				}
 			}
 			
 			
-			if (event!=null){
+			if (event!=null)
+			{
 				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event, actionTaken);
 			}
-			else{
+			else
+			{
 				//no event available, likely because one was not yet originated
 				errorLoggingService.logError(throwable, moduleName, name, actionTaken);
 			}
-		} else{
-			getLogger().warn("exception caught by initiator ["+moduleName+"."+name+"], but not errorLoggingService available");
+		}
+		else
+		{
+			getLogger().warn("exception caught by initiator ["+moduleName+"."+name+"], but no errorLoggingService available");
 		}
 	}
 

@@ -67,7 +67,8 @@ import org.xml.sax.XMLReader;
  * Test class for FlatFileTransformer
  * 
  * @author Ikasan Development Team
- * 
+ * @deprecated - Use XslTransformer which supports the stylesheet being specified 
+ * through an InputStream rather than a URI.
  */
 public class ExtendedXsltTransformerTest
 {

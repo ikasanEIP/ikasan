@@ -37,14 +37,16 @@
 DROP TABLE IF EXISTS `Ikasan01`.`ErrorOccurrence`;
 CREATE TABLE  `Ikasan01`.`ErrorOccurrence` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ModuleName` varchar(255) NOT NULL,
-  `FlowName` varchar(255) DEFAULT NULL,
-  `InitiatorName` varchar(255) DEFAULT NULL,
-  `FlowElementName` varchar(255) DEFAULT NULL,
-  `EventId` varchar(255) DEFAULT NULL,
-  `CurrentEvent` varchar(255) DEFAULT NULL,
+  `ModuleName` varchar(128) NOT NULL,
+  `FlowName` varchar(128) DEFAULT NULL,
+  `InitiatorName` varchar(128) DEFAULT NULL,
+  `FlowElementName` varchar(128) DEFAULT NULL,
+  `EventId` varchar(128) DEFAULT NULL,
+  `Url` varchar(512) DEFAULT NULL,
+  `ActionTaken` varchar(128) DEFAULT NULL,
   `ErrorDetail` text NOT NULL,
   `LogTime` datetime NOT NULL,
   `Expiry` datetime DEFAULT NULL,
+  `ErrorEventId` numeric(19,0) DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

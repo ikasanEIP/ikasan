@@ -40,7 +40,6 @@
  */
 package org.ikasan.framework.security.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.ikasan.framework.security.dao.AuthorityDao;
@@ -97,9 +96,7 @@ public class UserServiceImpl implements UserService
      */
     public List<User> getUsers()
     {
-        List<User> users = userDao.getUsers();
-        Collections.sort(users);
-        return users;
+        return userDao.getUsers();
     }
 
     /*

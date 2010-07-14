@@ -82,9 +82,16 @@
         <module>client-connection</module>
         <module>client-filetransfer</module>
 
+        <!-- filter -->
+        <module>filter/core</module>
+        <module>filter/framework-integration</module>
+
         <!-- samples -->
-        <module>samples</module>
-        
+        <module>samples/DemoFileDelivery</module>
+        <module>samples/DemoTransformationRouting</module>
+        <module>samples/DemoResubmission</module>
+        <module>samples/DemoErrorPublication</module>
+
         <!-- documentation -->
         <module>documentation</module>
     </modules>

@@ -43,11 +43,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-      <groupId>org.sonatype.oss</groupId>
-      <artifactId>oss-parent</artifactId>
-      <version>3</version>
-    </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
     <version>0.8.0-SNAPSHOT</version>
@@ -124,27 +119,6 @@
     <!-- Contributors -->
     <contributors>
         <contributor>
-            <name>Alex Oppong</name>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </contributor>
-        <contributor>
-            <name>Arun Rajaraman</name>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </contributor>
-        <contributor>
-            <name>Balaji Ramanujam</name>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </contributor>
-        <contributor>
             <name>Cae Fernandes</name>
             <roles>
                 <role>developer</role>
@@ -156,13 +130,6 @@
             <roles>
                 <role>developer</role>
             </roles>
-        </contributor>
-        <contributor>
-            <name>Edward Bowles</name>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>0</timezone>
         </contributor>
         <contributor>
             <name>Giridhar Teklur</name>
@@ -186,6 +153,13 @@
             <timezone>5.3</timezone>
         </contributor>
         <contributor>
+            <name>Jaikiran Pai</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
             <name>Janos Lele</name>
             <roles>
                 <role>developer</role>
@@ -196,13 +170,6 @@
             <name>Kerry Kenneally</name>
             <roles>
                 <role>graphic designer</role>
-            </roles>
-            <timezone>0</timezone>
-        </contributor>
-        <contributor>
-            <name>Marc Andreu Fernandez</name>
-            <roles>
-                <role>developer</role>
             </roles>
             <timezone>0</timezone>
         </contributor>
@@ -276,7 +243,7 @@
         <!-- Ikasan snapshot repo -->
         <repository>
             <id>ikasaneip-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -287,7 +254,7 @@
         <!-- Ikasan release repo -->
         <repository>
             <id>ikasaneip-releases</id>
-            <url>http://oss.sonatype.org/content/repositories/releases/</url>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -295,7 +262,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <!-- We rely on JBoss Maven repo for Hibernate released artifacts -->
+        <!-- TODO Check this We also rely on JBoss Maven repo for released artifacts -->
         <repository>
           <id>repository.jboss.org</id>
           <url>http://repository.jboss.org/maven2</url>
@@ -307,8 +274,31 @@
           </snapshots>
         </repository>
     </repositories>
+    <!-- Plugin repositories -->
     <pluginRepositories>
-        <!-- We rely on JBoss Maven repo for jdocbook -->
+        <!-- Ikasan snapshot repo for plugins -->
+        <pluginRepository>
+            <id>ikasaneip-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <!-- Ikasan release repo for plugins -->
+        <pluginRepository>
+            <id>ikasaneip-releases</id>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <!-- We also rely on JBoss Maven repo for jdocbook -->
         <pluginRepository>
             <id>repository.jboss.org</id>
             <url>http://repository.jboss.org/maven2</url>
@@ -326,7 +316,19 @@
       <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</developerConnection>
       <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip</url>
     </scm>
-    <!-- distributionManagment is taken care of by the sonatype parent pom -->
+    <!-- Distribution for releases -->
+    <distributionManagement>
+        <repository>
+            <id>ikasaneip-releases</id>
+            <name>Ikasan EIP Releases Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ikasaneip-snapshots</id>
+            <name>Ikasan EIP Snapshot Repository</name>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

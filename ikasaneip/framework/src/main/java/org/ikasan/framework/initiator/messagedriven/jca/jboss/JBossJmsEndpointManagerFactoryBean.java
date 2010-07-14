@@ -63,6 +63,9 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /** only create a single instance of the endpoint manager */
     JmsMessageEndpointManager endpointManager;
     
+    /** specified clientId for JMS subscribers */
+    private String clientId;
+
     /** specified name of an initiator */
     private String name;
 
@@ -158,6 +161,16 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public String getClientId()
+    {
+        return clientId;
+    }
+
+    public void setClientId(String clientId)
+    {
+        this.clientId = clientId;
     }
 
     /**
@@ -596,6 +609,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
         
         // JBoss specific JMS
         specConfig.setProviderAdapterJNDI(this.providerAdapterJNDI);
+        specConfig.setClientId(this.clientId);
         specConfig.setUser(this.username);
         specConfig.setPassword(this.password);
         specConfig.setKeepAlive(this.keepAlive.intValue());
