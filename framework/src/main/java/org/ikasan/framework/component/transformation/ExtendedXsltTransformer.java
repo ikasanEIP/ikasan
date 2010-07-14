@@ -87,6 +87,8 @@ import org.xml.sax.XMLReader;
  * designed to propagate the exceptions thrown for parse time errors and warnings
  * 
  * @author Ikasan Development Team
+ * @deprecated - Use XslTransformer which supports the stylesheet being specified 
+ * through an InputStream rather than a URI.
  */
 public class ExtendedXsltTransformer implements Transformer
 {

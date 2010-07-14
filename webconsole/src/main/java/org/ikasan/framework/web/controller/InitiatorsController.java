@@ -51,6 +51,7 @@ import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.SimpleInitiator;
 import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl;
+import org.ikasan.framework.initiator.eventdriven.EventDrivenInitiatorImpl;
 import org.ikasan.framework.initiator.scheduled.quartz.QuartzDrivenInitiator;
 import org.ikasan.framework.initiator.scheduled.quartz.QuartzStatefulScheduledDrivenInitiator;
 import org.ikasan.framework.module.Module;
@@ -137,6 +138,10 @@ public class InitiatorsController
         else if (initiator.getType().equals(JmsMessageDrivenInitiatorImpl.JMS_MESSAGE_DRIVEN_INITIATOR_TYPE))
         {
             view = "modules/initiators/viewJmsMessageDrivenInitiator";
+        }
+        else if (initiator.getType().equals(EventDrivenInitiatorImpl.EVENT_DRIVEN_INITIATOR_TYPE))
+        {
+            view = "modules/initiators/viewEventDrivenInitiator";
         }
         else if (initiator.getType().equals(
             QuartzStatefulScheduledDrivenInitiator.QUARTZ_SCHEDULE_DRIVEN_INITIATOR_TYPE))

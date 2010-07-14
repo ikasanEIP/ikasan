@@ -44,8 +44,7 @@
 --%>
 <%@ include file="/WEB-INF/jsp/modules/initiators/initiatorTop.jsp"%>
 
-
-
+<p>RetryCount: <c:out value="${initiator.retryCount}" /></p>
         
 <h3>Container</h3>
 
@@ -67,25 +66,6 @@
                     <c:out value="${initiator.messageListenerContainer.listenerSetupFailure}" />
                 </td>
             </tr>
-            
-            <tr>
-                <th>
-                    Destination Name
-                </th>
-                <td>
-                    <c:out value="${initiator.messageListenerContainer.destinationName}" />
-                </td>
-            </tr>
-            
-            <tr>
-                <th>
-                    Destination
-                </th>
-                <td>
-                    <c:out value="${initiator.messageListenerContainer.destination}" />
-                </td>
-            </tr>
-            
 
         </table>
 
