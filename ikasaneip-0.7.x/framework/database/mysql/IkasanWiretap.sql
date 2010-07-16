@@ -31,7 +31,12 @@ CREATE TABLE  `ikasan01`.`ikasanwiretap` (
   `PayloadId` varchar(255) NOT NULL,
   `PayloadContent` varchar(255) NOT NULL,
   `CreatedDateTime` datetime NOT NULL,
-  `UpdatedDateTime` datetime NOT NULL,
+  `UpdatedDateTime` datetime,
   `Expiry` datetime NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- In order to use now() as a DEFAULT, we have to do it via a BEFORE INSERT TRIGGER
+CREATE TRIGGER defaultUpdateDateTime 
+BEFORE INSERT ON ikasanwiretap FOR EACH ROW
+SET NEW.UpdatedDateTime = now();
