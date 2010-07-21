@@ -49,7 +49,7 @@
     <groupId>org.ikasan</groupId>
 	<artifactId>ikasan-flowTestHarness</artifactId>
 	<packaging>jar</packaging>
-    <version>0.7.10-SNAPSHOT</version>
+    <version>0.7.11-SNAPSHOT</version>
 	<name>Ikasan Flow Test Harness</name>
     <url>http://www.ikasan.org</url>
     <organization>
@@ -206,20 +206,20 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.7.10-SNAPSHOT</version>
+            <version>0.7.11-SNAPSHOT</version>
         </dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-            <version>0.7.10-SNAPSHOT</version>
+            <version>0.7.11-SNAPSHOT</version>
 		</dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter</artifactId>
             <!--version>0.8.0-SNAPSHOT</version-->
-            <version>0.7.10-SNAPSHOT</version>
+            <version>0.7.11-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -227,7 +227,7 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter-framework-integration</artifactId>
             <!--version>0.8.0-SNAPSHOT</version-->
-            <version>0.7.10-SNAPSHOT</version>
+            <version>0.7.11-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
