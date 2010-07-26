@@ -111,6 +111,13 @@
         <module>platform</module>
         <module>framework</module>
 
+        <!-- filter -->
+        <module>filter/core</module>
+        <module>filter/framework-integration</module>
+
+        <!-- test -->
+        <module>test</module>
+
         <!-- consoles -->
         <module>webconsole</module>
         <module>console</module>
@@ -126,9 +133,6 @@
         <module>client-connection</module>
         <module>client-filetransfer</module>
 
-		<!-- filter -->
-		<module>filter/core</module>
-		<module>filter/framework-integration</module>
 
         <!-- samples -->
         <module>samples/DemoFileDelivery</module>
