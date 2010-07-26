@@ -47,10 +47,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.ikasan</groupId> 
-    <artifactId>ikasan-build</artifactId> 
-    <version>0.8.0-SNAPSHOT</version> 
-    <relativePath>../build/pom.xml</relativePath> 
+      <groupId>org.ikasan</groupId>
+      <artifactId>filter</artifactId>
+      <version>0.8.0-SNAPSHOT</version>
   </parent>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter</artifactId>
@@ -79,33 +78,9 @@
 
         <!-- Test dependencies -->
         <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.4</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jmock</groupId>
-          <artifactId>jmock</artifactId>
-          <version>2.4.0</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.objenesis</groupId>
-          <artifactId>objenesis</artifactId>
-          <version>1.0</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
           <version>1.3</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>cglib</groupId>
-          <artifactId>cglib-nodep</artifactId>
-          <version>2.1_3</version>
           <scope>test</scope>
         </dependency>
         <!-- required for testing daos using in memory dbs -->

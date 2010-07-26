@@ -83,8 +83,7 @@
         <module>client-filetransfer</module>
 
         <!-- filter -->
-        <module>filter/core</module>
-        <module>filter/framework-integration</module>
+        <module>filter</module>
 
         <!-- samples -->
         <module>samples/DemoFileDelivery</module>
