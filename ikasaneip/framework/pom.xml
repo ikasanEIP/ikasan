@@ -145,13 +145,6 @@
         </dependency>
 
         <!-- Test Dependencies -->
-        <!--  Update to 4.8.2 at some stage -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>

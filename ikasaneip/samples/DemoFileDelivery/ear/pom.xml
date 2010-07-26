@@ -366,12 +366,12 @@
       <version>2.7.2</version>
       <scope>provided</scope>
     </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.5.4</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>1.5.4</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- module files -->
     <dependency>
       <groupId>org.ikasan.demo</groupId>
@@ -440,7 +440,7 @@
       <scope>provided</scope>
       <type>rar</type>
     </dependency>
-        <!-- TODO this is a dummy to force the reference of the cf-ds in generated application.xml -->
+    <!-- TODO this is a dummy to force the reference of the cf-ds in generated application.xml -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

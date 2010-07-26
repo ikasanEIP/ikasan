@@ -513,11 +513,11 @@
             <version>1.2.14</version>
             <scope>provided</scope>
         </dependency>
-        <!-- TODO: Update to 4.8.2, Used for Unit testing -->
+        <!-- TODO: Update to 4.8.2 when we move to Spring 3, Used for Unit testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.4</version>
             <scope>test</scope>
         </dependency>
         <!-- TODO: Update to 2.5.1, Used for creating test objects -->
