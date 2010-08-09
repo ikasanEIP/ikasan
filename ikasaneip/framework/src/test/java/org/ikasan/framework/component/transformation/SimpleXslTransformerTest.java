@@ -54,9 +54,6 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-
-
 public class SimpleXslTransformerTest {
 
     private static final String CLASSPATH_XSL_RESOURCE = "copyAll.xsl";
@@ -79,7 +76,7 @@ public class SimpleXslTransformerTest {
     
     private List<Payload> payloads = new ArrayList<Payload>();
     
-    private TransformerFactory transformerFactory = TransformerFactoryImpl.newInstance();
+    private TransformerFactory transformerFactory = TransformerFactory.newInstance();
     
     public SimpleXslTransformerTest(){
     	payloads.add(payload);
