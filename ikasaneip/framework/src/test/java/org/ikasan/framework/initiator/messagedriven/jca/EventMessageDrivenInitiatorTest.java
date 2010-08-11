@@ -138,6 +138,7 @@ public class EventMessageDrivenInitiatorTest {
             	will(returnValue("messageId"));
             	
             	one(messageListenerContainer).stop();
+                one(flow).stopManagedResources();
             }
         });
         EventMessageDrivenInitiator eventMessageDrivenInitiator = new EventMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, jmsMessageEventSerialiser);

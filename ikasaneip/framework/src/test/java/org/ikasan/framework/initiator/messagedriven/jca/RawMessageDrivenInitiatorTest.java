@@ -171,6 +171,7 @@ public class RawMessageDrivenInitiatorTest {
             	
             	allowing(mapMessage).getJMSMessageID();will(returnValue("messageId"));
             	one(messageListenerContainer).stop();
+            	one(flow).stopManagedResources();
             }
         });
         RawMessageDrivenInitiator rawDrivenInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);

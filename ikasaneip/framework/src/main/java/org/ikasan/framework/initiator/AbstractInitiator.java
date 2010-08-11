@@ -224,10 +224,17 @@ public abstract class AbstractInitiator implements Initiator
     {
         stopping=false;
         error=false;
-        startInitiator();
-        notifyMonitorListeners();
-    }
 
+        try
+        {
+            startManagedResources();
+            startInitiator();
+        }
+        finally
+        {
+            notifyMonitorListeners();
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -236,16 +243,55 @@ public abstract class AbstractInitiator implements Initiator
      */
     public void stop() throws InitiatorOperationException
     {
-            stopping=true;
-            if (isRecovering()){
-                cancelRetryCycle();
-            }
+        stopping=true;
+        if (isRecovering()){
+            cancelRetryCycle();
+        }
+        
+        try
+        {
             stopInitiator();
+            stopManagedResources();
+        }
+        finally
+        {
             notifyMonitorListeners();
-
+        }
     }
     
+    /**
+     * Start the flow's managed resources. 
+     * Do not let any exceptions interfere with the continued operation of 
+     * the initiator, simply log the issue and continue
+     * as the initiator's retry cycle may resolve this.
+     */
+    protected void startManagedResources()
+    {
+        try
+        {
+            flow.startManagedResources();
+        }
+        catch(RuntimeException e)
+        {
+            logError(null, e, moduleName, null);
+        }
+    }
     
+    /**
+     * Stop the flow's managed resources. 
+     * Just log any exceptions resulting from the stop invocation.
+     */
+    protected void stopManagedResources()
+    {
+        try
+        {
+            flow.stopManagedResources();
+        }
+        catch(RuntimeException e)
+        {
+            logError(null, e, moduleName, null);
+        }
+    }
     
 	/**
 	 * Invoke the flow with all available <code>Event</code>s, handing exception actions as we go
@@ -320,7 +366,8 @@ public abstract class AbstractInitiator implements Initiator
 		}
 		else
 		{
-			getLogger().warn("exception caught by initiator ["+moduleName+"."+name+"], but no errorLoggingService available");
+			getLogger().warn("exception caught by initiator ["+moduleName
+			        +"."+name+"], but no errorLoggingService available. Using default log.", throwable);
 		}
 	}
 

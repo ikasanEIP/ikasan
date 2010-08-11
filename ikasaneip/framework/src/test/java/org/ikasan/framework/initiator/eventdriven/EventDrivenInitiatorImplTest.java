@@ -145,6 +145,8 @@ public class EventDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
+                one(flow).startManagedResources();
+                inSequence(sequence);
                 one(messageEndpointManager).start();
                 inSequence(sequence);
                 // attempts to notify listeners of its state
@@ -169,6 +171,8 @@ public class EventDrivenInitiatorImplTest
         {
             {
                 one(messageEndpointManager).stop();
+                inSequence(sequence);
+                one(flow).stopManagedResources();
                 inSequence(sequence);
                 // attempts to notify listeners of its state
                 // lets assume the underlying container actually stops
