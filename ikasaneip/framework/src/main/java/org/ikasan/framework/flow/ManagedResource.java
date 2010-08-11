@@ -40,51 +40,25 @@
  */
 package org.ikasan.framework.flow;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
-
 /**
- * Interface representing a business path for an <code>Event<code>
+ * Interface provisioning callbacks for starting and stopping managed
+ * resources within the scope of an Ikasan flow component.
  * 
- * Invocation represents the traversal of that business path. Problems/errors
- * are represented by the invocation method returning a <code>IkasanExceptionAction</code>
+ * An example of this are resources within Ikasan components, such as Endpoints,
+ * which can benefit from being started/stopped within the scope of a flow.
+ * i.e. creating and tearing down the physical connection of a JCA resource.
  * 
  * @author Ikasan Development Team
  */
-public interface Flow
+public interface ManagedResource
 {
     /**
-     * Invocation of this method represents the handling of the <code>Event<code>
-     * with respect to some business path
-     * 
-     * @param flowInvocationContext invocation context
-     * @param event The event we're dealing with
+     * Provision for starting a managed resource.
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, Event event);
+    public void startManagedResource();
 
     /**
-     * Returns the name of this flow
-     * 
-     * @return String name of this flow
+     * Provision for stopping a managed resource.
      */
-    public String getName();
-
-    /**
-     * Accessor for moduleName
-     * 
-     * @return name of the module this flow exist for
-     */
-    public String getModuleName();
-
-    /**
-     * Locate all components in the flow that implement the ManagedResource
-     * interface and call startManagedResource() on those components.
-     */
-    public void startManagedResources();
-    
-    /**
-     * Locate all components in the flow that implement the ManagedResource
-     * interface and call stopManagedResource() on those components.
-     */
-    public void stopManagedResources();
+    public void stopManagedResource();
 }
