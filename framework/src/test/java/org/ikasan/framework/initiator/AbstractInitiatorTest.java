@@ -253,27 +253,54 @@ public class AbstractInitiatorTest
         //set up the mock implementation such that the error flag and the stopping flag are set beforehand, - we just want to make sure these get cleared on start
         ((MockInitiator)abstractInitiator).setError(true);
         ((MockInitiator)abstractInitiator).setStopping(true);
+        
+        expectFlowStartManagedResourcesSuccess();
         Assert.assertFalse("just checking that our mock implementation has not had startInitiator called on it before", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
         abstractInitiator.start();
         Assert.assertTrue("startInitiator should have been called as a part of the start method", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testStartInitiator_withStartManagedResourcesFailing()
+    {
+        expectFlowStartManagedResourcesFailed();
+        Assert.assertFalse("just checking that our mock implementation has not had startInitiator called on it before", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
+        abstractInitiator.start();
+        Assert.assertTrue("startInitiator should have been called as a part of the start method", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testStopInitiator_withStopManagedResourcesFailing()
+    {
+        expectFlowStopManagedResourcesFailed();
+        Assert.assertFalse("just checking that our mock implementation has not had stopInitiator called on it before", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+        abstractInitiator.stop();
+        Assert.assertTrue("stopInitiator should have been called as a part of the stop method", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testStop_onRecoveringInitiator_willSetStoppingFlagAndCancelRetryBeforeInvokingStopInitiator(){
     	((MockInitiator)abstractInitiator).setRetryCount(new Integer(0));
         
+        expectFlowStopManagedResourcesSuccess();
         Assert.assertFalse("just checking that our mock implementation has not had stopInitiator called on it before", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
         abstractInitiator.stop();
         Assert.assertTrue("stopInitiator should have been called as a part of the stop method", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+        mockery.assertIsSatisfied();
     }
    
     @Test
     public void testStop_onNonRecoveringInitiator_willSetStoppingBeforeInvokingStopInitiator(){
     	((MockInitiator)abstractInitiator).setRetryCount(new Integer(0));
         
+        expectFlowStopManagedResourcesSuccess();
         Assert.assertFalse("just checking that our mock implementation has not had stopInitiator called on it before", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
         abstractInitiator.stop();
         Assert.assertTrue("stopInitiator should have been called as a part of the stop method", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+        mockery.assertIsSatisfied();
     }
     
     /**
@@ -297,6 +324,7 @@ public class AbstractInitiatorTest
         //set up a recovering initiator
         ((MockInitiator)abstractInitiator).setRetryCount(0);
         
+        expectFlowStopManagedResourcesSuccess();
 
         //invoke handeAction with stopAction
     	AbortTransactionException abortTransactionException = null;
@@ -313,13 +341,16 @@ public class AbstractInitiatorTest
     	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
     	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
     	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+        mockery.assertIsSatisfied();
     }
     
     /**
      * Tests that handling a stop action will stop it in error
      */
     @Test
-    public void testHandleAction_withStopExceptionAction_onRunningInitiator_willStopInError(){
+    public void testHandleAction_withStopExceptionAction_onRunningInitiator_willStopInError()
+    {
+        expectFlowStopManagedResourcesSuccess();
         //invoke handeAction with stopAction
     	AbortTransactionException abortTransactionException = null;
     	try{
@@ -335,6 +366,7 @@ public class AbstractInitiatorTest
     	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
     	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
     	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+        mockery.assertIsSatisfied();
     }
     
     
@@ -369,7 +401,8 @@ public class AbstractInitiatorTest
     	
     	//set the excludedEventService to null on the initiator
     	abstractInitiator.setExcludedEventService(null);
-    	
+        expectFlowStopManagedResourcesSuccess();
+
         //invoke handeAction with excludeAction
     	AbortTransactionException abortTransactionException = null;
     	try{
@@ -382,6 +415,7 @@ public class AbstractInitiatorTest
         
     	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
     	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
+        mockery.assertIsSatisfied();
    }
     
     @Test 
@@ -404,8 +438,6 @@ public class AbstractInitiatorTest
         //set up a recovering initiator - ie it has already run once, failed, and gone into recovery. This invocation will be its first retry
     	int initialRetryCount = 0;
     	((MockInitiator)abstractInitiator).setRetryCount(initialRetryCount);
-        
-
     	
         //invoke handeAction with retry (once) action
     	AbortTransactionException abortTransactionException = null;
@@ -447,11 +479,6 @@ public class AbstractInitiatorTest
 
     }   
     
-    
-    
-    
-    
-    
     /**
      * Tests when the maximum retry account is reached on a recovering initiator, it will stop in error
      */
@@ -469,9 +496,9 @@ public class AbstractInitiatorTest
     	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
     	Assert.assertTrue("retry count should now be 0", 0==abstractInitiator.getRetryCount());
     	
-    	
     	//invoke again, as the first retry. This time, receiving the rollbackRetryOnce, should cause it to stop in error as it has already now retried its one time
     	abortTransactionException = null;
+        expectFlowStopManagedResourcesSuccess();
     	try{
         	((MockInitiator)abstractInitiator).handleAction(rollbackRetryOnceAction,null);
         	Assert.fail("action implied rollback which should have thrown an AbortTransactionException");
@@ -479,14 +506,12 @@ public class AbstractInitiatorTest
     		abortTransactionException = exception;
     	}
     	
-    	
     	Assert.assertNotNull("action implied rollback which should have thrown an AbortTransactionException", abortTransactionException);
     	Assert.assertTrue("cancelRetry should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isCancelRetryCycleCalled());
     	Assert.assertTrue("stopInitiator should have been called on concrete implemetation when handling a stop action on a recovering Initiator", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
     	Assert.assertTrue("initiator should now be stopping", abstractInitiator.isStopping());
     	Assert.assertTrue("initiator should now be in error", abstractInitiator.isError());
-
-
+        mockery.assertIsSatisfied();
     }
 	
     /**
@@ -557,7 +582,9 @@ public class AbstractInitiatorTest
         
         //expect the first event to get played, but fail resulting in an exceptionAction
         expectFlowInvocationFailure(event1, sequence, exceptionAction, "event1");
-        
+
+        // stop managed resources when initiator stops
+        expectFlowStopManagedResourcesSuccess();
         
         //invoke the method that will result in invokeFlow being called
         AbortTransactionException abortTransactionException = null;
@@ -575,9 +602,6 @@ public class AbstractInitiatorTest
                 
         mockery.assertIsSatisfied();
     }    
-    
-    
-    
     
     @Test
     public void testInvokeFlow_withEventNotedForExclusion_willExcludeEventAndInvokeNullAction(){
@@ -597,11 +621,9 @@ public class AbstractInitiatorTest
         ((MockInitiator)abstractInitiator).invokeFlow(eventsToPlay);
         
         Assert.assertFalse("event1 should no longer be noted for exclusion following its exclusion", abstractInitiator.getExclusions().contains("event1"));
-        mockery.assertIsSatisfied();
-    	
-    	
-    	
+        mockery.assertIsSatisfied();	
     }
+
     /**
 	 * @param event 
 	 * @param sequence
@@ -620,7 +642,71 @@ public class AbstractInitiatorTest
         });
 	}
 
-	/**
+    /**
+     * startManagedResources successful invocation expectations
+     */
+    private void expectFlowStartManagedResourcesSuccess() {
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).startManagedResources();
+            }
+        });
+    }
+
+    /**
+     * startManagedResources failed invocation expectations
+     */
+    private void expectFlowStartManagedResourcesFailed() 
+    {
+        final RuntimeException exception = new RuntimeException("test failed managed resource start");
+        final String actionTaken = null;
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).startManagedResources();
+                will(throwException(exception));
+                
+                //invokes the errorLoggingService
+                one(errorLoggingService).logError(with(equal(exception)),with(equal(moduleName)),with(any(String.class)), with(equal(actionTaken)));
+            }
+        });
+    }
+
+    /**
+     * stopManagedResources successful invocation expectations
+     */
+    private void expectFlowStopManagedResourcesSuccess() {
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).stopManagedResources();
+            }
+        });
+    }
+
+    /**
+     * stopManagedResources failed invocation expectations
+     */
+    private void expectFlowStopManagedResourcesFailed() 
+    {
+        final RuntimeException exception = new RuntimeException("test failed managed resource stop");
+        final String actionTaken = null;
+
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flow).stopManagedResources();
+                will(throwException(exception));
+                
+                //invokes the errorLoggingService
+                one(errorLoggingService).logError(with(equal(exception)),with(equal(moduleName)),with(any(String.class)), with(equal(actionTaken)));
+            }
+        });
+    }
+
+    /**
 	 * @param event 
 	 * @param sequence
 	 */

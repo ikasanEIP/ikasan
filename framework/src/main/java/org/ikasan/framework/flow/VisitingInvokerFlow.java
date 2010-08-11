@@ -149,4 +149,34 @@ public class VisitingInvokerFlow implements Flow
     {
         return moduleName;
     }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.flow.Flow#startManagedResources()
+     */
+    public void startManagedResources()
+    {
+        for(FlowElement flowElement:this.getFlowElements())
+        {
+            FlowComponent flowComponent = flowElement.getFlowComponent();
+            if(flowComponent instanceof ManagedResource)
+            {
+                ((ManagedResource) flowComponent).startManagedResource();
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.flow.Flow#stopManagedResources()
+     */
+    public void stopManagedResources()
+    {
+        for(FlowElement flowElement:this.getFlowElements())
+        {
+            FlowComponent flowComponent = flowElement.getFlowComponent();
+            if(flowComponent instanceof ManagedResource)
+            {
+                ((ManagedResource) flowComponent).stopManagedResource();
+            }
+        }
+    }
 }
