@@ -141,7 +141,6 @@
 
   <dependencies>
 
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
@@ -219,13 +218,12 @@
       <scope>provided</scope>
     </dependency>
 
-
-      <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>1.6.0</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy</artifactId>
+      <version>1.6.0</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
