@@ -104,7 +104,7 @@ public class XsltTransformer implements Transformer
     private Map<String, String> transformationParameters;
 
     /** Logger instance for this class */
-    private static final Logger logger = Logger.getLogger(ExtendedXsltTransformer.class);
+    private static final Logger logger = Logger.getLogger(XsltTransformer.class);
 
     /** A New PayloadName to set on the transformed Payloads */
     private String payloadName;
