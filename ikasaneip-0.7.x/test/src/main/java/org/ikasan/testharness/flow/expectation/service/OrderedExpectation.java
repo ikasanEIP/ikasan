@@ -178,7 +178,7 @@ public class OrderedExpectation
      */
     protected void addExpectation(DefaultExpectation<?> defaultExpectation, String description)
     {
-        defaultExpectation.setDescription("Expectation[" + this.expectations.size() + 1 
+        defaultExpectation.setDescription("Expectation[" + (this.expectations.size() + 1) 
                 + "] " + ((description == null) ? "":description) );
         this.expectations.add(defaultExpectation);
     }
