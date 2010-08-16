@@ -67,6 +67,9 @@
         <module>platform</module>
         <module>framework</module>
 
+        <!-- ikasan test harness -->
+        <module>test</module>
+
         <!-- consoles -->
         <module>webconsole</module>
         <module>console</module>
