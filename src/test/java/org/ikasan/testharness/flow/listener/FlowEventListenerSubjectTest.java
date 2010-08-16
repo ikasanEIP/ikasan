@@ -137,7 +137,7 @@ public class FlowEventListenerSubjectTest
                 exactly(1).of(flowObserver).notify(event);
 
                 // ensure we havce an independent copy of that event
-                exactly(1).of(event).spawn();
+                exactly(1).of(event).clone();
                 will(returnValue(event));
             }
         });
@@ -161,7 +161,7 @@ public class FlowEventListenerSubjectTest
         {
             {
                 // fail on the event copy
-                exactly(1).of(event).spawn();
+                exactly(1).of(event).clone();
                 will(throwException(new CloneNotSupportedException("test Clone failure")));
                 
                 // report this via notification to the listener as a text String

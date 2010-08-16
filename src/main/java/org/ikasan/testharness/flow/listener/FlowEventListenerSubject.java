@@ -139,7 +139,7 @@ public class FlowEventListenerSubject
         {
             try
             {
-                Event eventSnapshot = event.spawn();
+                Event eventSnapshot = event.clone();
                 flowObserver.notify(eventSnapshot);
             }
             catch (CloneNotSupportedException e)
