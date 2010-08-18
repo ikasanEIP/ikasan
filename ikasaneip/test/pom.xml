@@ -51,7 +51,6 @@
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>0.8.0-SNAPSHOT</version>
-        <relativePath>../build/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -60,14 +59,8 @@
     <version>0.8.0-SNAPSHOT</version>
     <name>Ikasan Test Harness</name>
     <description>The test library for the Ikasan Enterprise Integration Platform</description>
-    
-  <dependencies>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+
+    <dependencies>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -78,98 +71,20 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-filter</artifactId>
+            <artifactId>ikasan-common</artifactId>
             <version>0.8.0-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
 
+        <!-- TODO: Update to 4.8.2 when we move to Spring 3, Used for Unit testing -->
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-filter-framework-integration</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>2.5.6</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-      <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>xstream</artifactId>
-        <version>1.3.1</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <!-- Needed for mock objects when testing -->
-      <dependency>
-        <groupId>org.jmock</groupId>
-        <artifactId>jmock</artifactId>
-        <version>2.4.0</version>
-        <scope>test</scope>
-      </dependency>
-
-    <!-- Needed for mock objects when testing -->
-    <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- J2EE -->
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee_1.4_spec</artifactId>
-      <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>common-annotations</artifactId>
-      <version>unversioned</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>2.5.6</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.3</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+    </dependencies>
 
 </project>
 
