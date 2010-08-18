@@ -68,7 +68,7 @@
         </plugins>
     </build>
 
-  <!-- All dependencies are provided by the EAR that this webconsole should run inside of -->
+  <!-- Almost all dependencies are provided by the EAR that this webconsole should run inside of -->
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -93,6 +93,11 @@
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-webconsole-jar</artifactId>
+      <version>0.8.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.ikasan</groupId>
@@ -129,14 +134,6 @@
       <artifactId>spring-security-core-tiger</artifactId>
       <version>2.0.5.RELEASE</version>
       <scope>provided</scope>
-    </dependency>
-
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.4</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
