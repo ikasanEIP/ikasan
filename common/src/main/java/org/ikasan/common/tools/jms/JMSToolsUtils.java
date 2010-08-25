@@ -31,6 +31,7 @@ import javax.naming.NamingException;
 import javax.naming.InitialContext;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -133,7 +134,7 @@ public class JMSToolsUtils {
         prepareResourceBundle();
         // Override any properties from the command line
         processProperties();
-        // Re-read the args to over rdie the properties 
+        // Re-read the args to override the properties 
         processArgs(args);
         // Log the values after all of the processing
         checkRuntimeValues();
@@ -154,8 +155,15 @@ public class JMSToolsUtils {
      */
     public static void processProperties()
     {
-        serverInstanceName = bundle.getString(JMSConstants.SERVER_INSTANCE_NAME);
-        port = bundle.getString(JMSConstants.SERVER_INSTANCE_PORT);
+        try
+        {
+            serverInstanceName = bundle.getString(JMSConstants.SERVER_INSTANCE_NAME);
+            port = bundle.getString(JMSConstants.SERVER_INSTANCE_PORT);
+        }
+        catch (MissingResourceException e)
+        {
+            logger.info("ServerInstanceName and/or port were not present in the properties file.");
+        }
     }
     
     /**
@@ -166,40 +174,40 @@ public class JMSToolsUtils {
      */
     public static void processArgs(String args[])
     {
-        Options opt = new Options();
-        opt.addOption("h", false, "Help"); //$NON-NLS-1$//$NON-NLS-2$
-        opt.addOption(JMSConstants.PROPERTIES_ARG, true, "Name (without .properties extension) of the jms tool properties file."); //$NON-NLS-1$        
-        opt.addOption(JMSConstants.SERVER_INSTANCE_NAME_ARG, true, "Name of the Server Instance."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PORT_ARG, true, "Name of the Port."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.DESTINATION_NAME_ARG, true, "Name of the Topic/Queue."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.EVENTS_FILE_NAME_ARG, true, "Name of the file that holds the event we're publishing."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PAYLOAD_NAME_ARG, true, "Name of the payload."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PAYLOAD_ENCODING_ARG, true, "Encoding of the payload."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PAYLOAD_SPEC_ARG, true, "Spec of the payload."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PAYLOAD_SRC_SYSTEM_ARG, true, "Source system of the payload."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PAYLOAD_CONTENT_ARG, true, "Content of the payload to publish."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.PUBLISH_NUMBER_ARG, true, "Number of times to publish the payload."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.QUEUE_ARG, false, "Whether we're actually talking to a Queue."); //$NON-NLS-1$
-        opt.addOption(JMSConstants.CLIENT_ID_ARG, true, "Client ID");//$NON-NLS-1$
-        opt.addOption(JMSConstants.SUBSCRIPTION_NAME_ARG, true, "Subscription name");//$NON-NLS-1$
-        opt.addOption(JMSConstants.DURABLE_ARG, false, "Whether the subscriber to be created is durable or not.");//$NON-NLS-1$
-        opt.addOption(JMSConstants.USERNAME_ARG, true, "Username for secured JMS");//$NON-NLS-1$
-        opt.addOption(JMSConstants.PASSWORD_ARG, true, "Password for secured JMS");//$NON-NLS-1$
-        opt.addOption(JMSConstants.POLICY_NAME_ARG, true, "Authentication policy name for secured JMS");//$NON-NLS-1$
-        opt.addOption(JMSConstants.AUTHENTICATE_ARG, false, "Whether this client must provide authentication details to the JMS server or not.");//$NON-NLS-1$
-        opt.addOption(JMSConstants.WAIT_TIME_ARG, true, "Subscribers only. Defines the wait period for subscription. '-1'=noWait; '0'=waitForever; any other number details millis to wait.");//$NON-NLS-1$
-        opt.addOption(JMSConstants.JMS_MAP_MESSAGE_TYPE, false, "Publish as a JMS Map Message.");//$NON-NLS-1$
-        opt.addOption(JMSConstants.JMS_TEXT_MESSAGE_TYPE, false, "Publish as a JMS Text Message.");//$NON-NLS-1$
+        Options options = new Options();
+        options.addOption("h", "help", false, "Help"); //$NON-NLS-1$//$NON-NLS-2$
+        options.addOption("a", JMSConstants.PROPERTIES_ARG, true, "Name (without .properties extension) of the jms tool properties file."); //$NON-NLS-1$        
+        options.addOption("b", JMSConstants.SERVER_INSTANCE_NAME_ARG, true, "Name of the Server Instance."); //$NON-NLS-1$
+        options.addOption("c", JMSConstants.PORT_ARG, true, "Name of the Port."); //$NON-NLS-1$
+        options.addOption("d", JMSConstants.DESTINATION_NAME_ARG, true, "Name of the Topic/Queue."); //$NON-NLS-1$
+        options.addOption("e", JMSConstants.EVENTS_FILE_NAME_ARG, true, "Name of the file that holds the event we're publishing."); //$NON-NLS-1$
+        options.addOption("f", JMSConstants.PAYLOAD_NAME_ARG, true, "Name of the payload."); //$NON-NLS-1$
+        options.addOption("g", JMSConstants.PAYLOAD_ENCODING_ARG, true, "Encoding of the payload."); //$NON-NLS-1$
+        options.addOption("i", JMSConstants.PAYLOAD_SPEC_ARG, true, "Spec of the payload."); //$NON-NLS-1$
+        options.addOption("j", JMSConstants.PAYLOAD_SRC_SYSTEM_ARG, true, "Source system of the payload."); //$NON-NLS-1$
+        options.addOption("k", JMSConstants.PAYLOAD_CONTENT_ARG, true, "Content of the payload to publish."); //$NON-NLS-1$
+        options.addOption("l", JMSConstants.PUBLISH_NUMBER_ARG, true, "Number of times to publish the payload."); //$NON-NLS-1$
+        options.addOption("m", JMSConstants.QUEUE_ARG, false, "Whether we're actually talking to a Queue."); //$NON-NLS-1$
+        options.addOption("n", JMSConstants.CLIENT_ID_ARG, true, "Client ID");//$NON-NLS-1$
+        options.addOption("o", JMSConstants.SUBSCRIPTION_NAME_ARG, true, "Subscription name");//$NON-NLS-1$
+        options.addOption("p", JMSConstants.DURABLE_ARG, false, "Whether the subscriber to be created is durable or not.");//$NON-NLS-1$
+        options.addOption("q", JMSConstants.USERNAME_ARG, true, "Username for secured JMS");//$NON-NLS-1$
+        options.addOption("r", JMSConstants.PASSWORD_ARG, true, "Password for secured JMS");//$NON-NLS-1$
+        options.addOption("s", JMSConstants.POLICY_NAME_ARG, true, "Authentication policy name for secured JMS");//$NON-NLS-1$
+        options.addOption("t", JMSConstants.AUTHENTICATE_ARG, false, "Whether this client must provide authentication details to the JMS server or not.");//$NON-NLS-1$
+        options.addOption("u", JMSConstants.WAIT_TIME_ARG, true, "Subscribers only. Defines the wait period for subscription. '-1'=noWait; '0'=waitForever; any other number details millis to wait.");//$NON-NLS-1$
+        options.addOption("v", JMSConstants.JMS_MAP_MESSAGE_TYPE, false, "Publish as a JMS Map Message.");//$NON-NLS-1$
+        options.addOption("w", JMSConstants.JMS_TEXT_MESSAGE_TYPE, false, "Publish as a JMS Text Message.");//$NON-NLS-1$
         BasicParser parser = new BasicParser();
         
         CommandLine cl = null;
         try
         {
-            cl = parser.parse(opt, args);
+            cl = parser.parse(options, args);
             if (cl.hasOption('h'))
             {
                 HelpFormatter f = new HelpFormatter();
-                f.printHelp("TPublisher", opt); //$NON-NLS-1$
+                f.printHelp("TPublisher", options); //$NON-NLS-1$
                 System.exit(0);
             }
             else
@@ -308,11 +316,15 @@ public class JMSToolsUtils {
                         wait = JMSConstants.NO_WAIT;
                     }
                 }
+                if (cl.hasOption(JMSConstants.JMS_TEXT_MESSAGE_TYPE))
+                {
+                    jmsMsgType = JMSConstants.JMS_TEXT_MESSAGE_TYPE;
+                }
+                else
+                {
+                    jmsMsgType = JMSConstants.JMS_MAP_MESSAGE_TYPE;
+                }
             }
-            if (cl.hasOption(JMSConstants.JMS_TEXT_MESSAGE_TYPE))
-                jmsMsgType = JMSConstants.JMS_TEXT_MESSAGE_TYPE;
-            else
-                jmsMsgType = JMSConstants.JMS_MAP_MESSAGE_TYPE;
         }
         catch (ParseException e)
         {
