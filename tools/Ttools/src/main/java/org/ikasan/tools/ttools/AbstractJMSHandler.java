@@ -117,7 +117,7 @@ public abstract class AbstractJMSHandler {
         throws NamingException
     {
         // Set the default of the properties file(jmsTools.properties)
-        //Initialise using user arguments
+        // Initialise using user arguments
         JMSToolsUtils.init(args);
         
         this.ctx = JMSToolsUtils.getContext();
