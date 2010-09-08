@@ -43,42 +43,107 @@
 	xml:id="ArchitecturalConcepts">
 	<title>Archetectural Concepts</title>
 	<para>
-		Here we will go through all the high level concepts that Ikasan incorporates
+		Ikasan high level concepts are shown as follows:
 	</para>
 	<section>
 		<title>Modules</title>
 		<para>
-			This is where we will talk about Modules
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		     Source Integration Module
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Target Integration Module
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Target/Source Integration Module
+		    </para>
+		  </listitem>
+		</itemizedlist>
 		</para>
 	</section>
 	<section>
 		<title>Flows</title>
 		<para>
-			This is where we will talk about Flows
+		  <itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		     Source Flow
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Target Flow
+		    </para>
+		  </listitem>
+		</itemizedlist>
 		</para>
 	</section>
 	<section>
 		<title>Initiators</title>
 		<para>
-			This is where we will talk about Initiators
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		     Quartz Scheduled Driven Initiator
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Message Driven Initiator
+		    </para>
+		  </listitem>
+		</itemizedlist>
 		</para>
 	</section>	
 	<section>
 		<title>Flow Elements</title>
 		<para>
-			This is where we will talk about Flow Elements
+		    Here we will talk about flow elements.
+		</para>
+	</section>
+	<section>
+		<title>Flow Elements Invokers</title>
+		<para>
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		     VisitingElementInvoker
+		    </para>
+		  </listitem>
+		</itemizedlist>
 		</para>
 	</section>
 	<section>
 		<title>Flow Components</title>
 		<para>
-			This is where we will talk about Flow Components
-		</para>
-	</section>
-	<section>
-		<title>Flow Components</title>
-		<para>
-			This is where we will talk about Flow Components
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		     Router Components
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Transformer Components
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Sequencer Components
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Endpoint Components
+		    </para>
+		  </listitem>
+		</itemizedlist>
 		</para>
 	</section>
 </chapter>
