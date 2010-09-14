@@ -173,6 +173,8 @@
 
 </table>
 
+<%--
+    IKASAN-457, will need to overhaul this in 0.8.1 or later
 
 <form:form action="changePassword.htm" id="changePasswordForm" commandName="user" cssClass="dataform">
     <form:errors path="*" cssClass="errorMessages"/>
@@ -195,9 +197,8 @@
                 <input type="submit" value="Change Password" class="controlButton"/>
         </p>
 </form:form>
+--%>
 
 </div>
-
-
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
