@@ -264,14 +264,18 @@
         </repository>
         <!-- TODO Check this We also rely on JBoss Maven repo for released artifacts -->
         <repository>
-          <id>repository.jboss.org</id>
-          <url>http://repository.jboss.org/maven2</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
     <!-- Plugin repositories -->
@@ -300,13 +304,17 @@
         </pluginRepository>
         <!-- We also rely on JBoss Maven repo for jdocbook -->
         <pluginRepository>
-            <id>repository.jboss.org</id>
-            <url>http://repository.jboss.org/maven2</url>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
@@ -541,6 +549,15 @@
             <version>1.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- Mokito, used for mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+        
+        
     </dependencies>
 
 </project>
