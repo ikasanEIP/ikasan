@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,65 +38,63 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.sequencing;
+package org.ikasan.framework.configuration.model;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.resource.ResourceException;
-
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.service.EventAggregator;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Sequencer implementation which aggregates incoming events into a single event.
- * The associated aggregation may return one event, or 'null' if
- * the aggregation criteria has not been met.
+ * Test class for {@link Configuration}
  * 
  * @author Ikasan Development Team
- * @deprecated - use the Sequencer interface directly
+ *
  */
-public class EventAggregatingSequencer implements Sequencer
+public class ConfigurationTest
 {
-    /** Implementation of an aggregator */
-    protected EventAggregator aggregator;
+    /**
+     * Test failed constructor due to null configurationId.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failedConstructorDueToNullConfigurationId()
+    {
+        new Configuration(null, null);
+    }
 
     /**
-     * Constructor
-     * 
-     * @param aggregator The event aggregator to use
+     * Test failed constructor due to null configurationParameters.
      */
-    public EventAggregatingSequencer(EventAggregator aggregator)
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failedConstructorDueToNullConfigurationParameters()
     {
-        this.aggregator = aggregator;
-        if (this.aggregator == null)
-        {
-            throw new IllegalArgumentException("EventAggregator cannot be 'null'");
-        }
+        new Configuration("configurationId", null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
+    /**
+     * Test configuration equality.
      */
-    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
+    @Test
+    public void test_equality()
     {
-        try
-        {
-            Event aggregatedEvent = aggregator.aggregate(event);
-            if(aggregatedEvent != null)
-            {
-                List<Event> events = new ArrayList<Event>();
-                events.add(aggregatedEvent);
-                return events;
-            }
-            
-            return null;
-        }
-        catch (ResourceException e)
-        {
-            throw new SequencerException(e);
-        }
+        Configuration configuration = new Configuration("configurationId", "description", new ArrayList<ConfigurationParameter>());
+        Assert.assertEquals(new Configuration("configurationId", "description", new ArrayList<ConfigurationParameter>()), configuration);
     }
+    
+    /**
+     * Test configuration hashCode.
+     */
+    @Test
+    public void test_hashCode()
+    {
+        Map<Configuration, String> map = new HashMap<Configuration,String>();
+        map.put(new Configuration("componentIdOne", new ArrayList<ConfigurationParameter>()), "one");
+        map.put(new Configuration("componentIdOne", new ArrayList<ConfigurationParameter>()), "two");
+        map.put(new Configuration("componentIdOne", new ArrayList<ConfigurationParameter>()), "three");
+        
+        Assert.assertTrue(map.size() == 1);
+    }
+
 }

@@ -45,6 +45,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.configuration.ConfiguredResource;
+import org.ikasan.framework.configuration.model.Configuration;
+import org.ikasan.framework.configuration.service.ConfigurationException;
+import org.ikasan.framework.configuration.service.ConfigurationService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.invoker.FlowElementInvoker;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
@@ -63,11 +67,11 @@ public class VisitingInvokerFlowTest
     /**
      * Mockery for interfaces
      */
-    private Mockery mockery = new Mockery();
+//    private Mockery mockery = new Mockery();
     /**
      * Mockery for classes
      */
-    private Mockery classMockery = new Mockery()
+    private Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
@@ -76,12 +80,18 @@ public class VisitingInvokerFlowTest
     /**
      * Mocked Event object
      */
-    Event event = classMockery.mock(Event.class);
+    Event event = mockery.mock(Event.class);
     
     /**
      * Mocked invoker
      */
     FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class);
+    
+    /**
+     * Mocked configuration service
+     */
+    @SuppressWarnings("unchecked")
+    ConfigurationService configurationService = mockery.mock(ConfigurationService.class);
     
     /**
      * Mocked element for the head
@@ -126,6 +136,96 @@ public class VisitingInvokerFlowTest
         
         visitingInvokerFlow.invoke(flowInvocationContext, event);
     }
+    
+    /**
+     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     */
+    @Test
+    public void test_start_with_ManagedResources()
+    {
+        final Map<String,FlowElement> transitions = new HashMap<String,FlowElement>();
+        transitions.put("key", flowElement);
+        
+        final TestManagedResourceFlowComponent testManagedFlowComponent = mockery.mock(TestManagedResourceFlowComponent.class, "mockedManagedResourceFlowComponent");
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flowElement).getTransitions();
+                will(returnValue(transitions));
+                
+                one(flowElement).getFlowComponent();
+                will(returnValue(testManagedFlowComponent));
+                
+                one(testManagedFlowComponent).startManagedResource();
+            }
+        });
+        
+        visitingInvokerFlow.start();
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     */
+    @Test
+    public void test_start_with_ConfiguredResources()
+    {
+        final Map<String,FlowElement> transitions = new HashMap<String,FlowElement>();
+        transitions.put("key", flowElement);
+        
+        final TestConfiguredResourceFlowComponent testConfiguredFlowComponent = mockery.mock(TestConfiguredResourceFlowComponent.class, "mockedConfiguredResourceFlowComponent");
+        
+        final Configuration configuration = mockery.mock(Configuration.class, "mockedConfiguration");
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flowElement).getTransitions();
+                will(returnValue(transitions));
+                
+                one(flowElement).getFlowComponent();
+                will(returnValue(testConfiguredFlowComponent));
+                
+                one(configurationService).configure(testConfiguredFlowComponent);
+            }
+        });
+        
+        visitingInvokerFlow.setConfigurationService(configurationService);
+        visitingInvokerFlow.start();
+        mockery.assertIsSatisfied();
+    }
+    
+    
+    /**
+     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     */
+    @Test(expected = ConfigurationException.class)
+    public void test_failed_start_with_ConfiguredResources_without_a_ConfigurationService()
+    {
+        final Map<String,FlowElement> transitions = new HashMap<String,FlowElement>();
+        transitions.put("key", flowElement);
+        
+        final TestConfiguredResourceFlowComponent testConfiguredFlowComponent = mockery.mock(TestConfiguredResourceFlowComponent.class, "mockedConfiguredResourceFlowComponent");
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flowElement).getTransitions();
+                will(returnValue(transitions));
+                
+                one(flowElement).getFlowComponent();
+                will(returnValue(testConfiguredFlowComponent));
+
+                one(flowElement).getComponentName();
+                will(returnValue("componentName"));
+            }
+        });
+        
+        visitingInvokerFlow.start();
+        mockery.assertIsSatisfied();
+    }
+    
     /**
      * Creates a sufficiently complex graph of flow elements and tests that the getFlowElements
      * method returns a listing of all the elements discovered in a breadth first search
@@ -180,7 +280,7 @@ public class VisitingInvokerFlowTest
             }
         });
     	
-        VisitingInvokerFlow visitingInvokerFlow = new VisitingInvokerFlow(null,null, flowElementA, null);
+        VisitingInvokerFlow visitingInvokerFlow = new VisitingInvokerFlow("flowname", "moduleName", flowElementA, null);
     	
         List<FlowElement> flowElements = visitingInvokerFlow.getFlowElements();
         
@@ -192,6 +292,60 @@ public class VisitingInvokerFlowTest
         Assert.assertEquals("first Element is D", flowElementD, flowElements.get(3));
         Assert.assertEquals("first Element is E", flowElementE, flowElements.get(4));
         Assert.assertEquals("first Element is F", flowElementF, flowElements.get(5));
+        
+    }
+    
+    /**
+     * Test component which implements the ManagedResource contract.
+     * @author Ikasan Development Team
+     *
+     */
+    private class TestManagedResourceFlowComponent implements FlowComponent, ManagedResource
+    {
+
+        public void startManagedResource()
+        {
+            // test purposes only - ignore implementation
+        }
+
+        public void stopManagedResource()
+        {
+            // test purposes only - ignore implementation
+        }
+        
+    }
+
+    /**
+     * Test component which implements the ConfiguredResource contract.
+     * @author Ikasan Development Team
+     *
+     */
+    private class TestConfiguredResourceFlowComponent implements FlowComponent, ConfiguredResource<Configuration>
+    {
+        private String configuredResourceId;
+        
+        public String getConfiguredResourceId()
+        {
+            // test purposes only - ignore implementation
+            return configuredResourceId;
+        }
+        
+        public void setConfiguration(Configuration configuration)
+        {
+            // test purposes only - ignore implementation
+        }
+
+        public Configuration getConfiguration()
+        {
+            // test purposes only - ignore implementation
+            return null;
+        }
+
+        public void setConfiguredResourceId(String configuredResourceId)
+        {
+            // test purposes only - ignore implementation
+            this.configuredResourceId = configuredResourceId;
+        }
         
     }
 }

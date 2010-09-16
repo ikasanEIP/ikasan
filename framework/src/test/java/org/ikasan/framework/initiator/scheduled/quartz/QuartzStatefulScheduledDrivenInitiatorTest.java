@@ -52,6 +52,7 @@ import junit.framework.Assert;
 
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.configuration.service.ConfigurationException;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -60,6 +61,7 @@ import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
+import org.ikasan.framework.initiator.InitiatorOperationException;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -581,12 +583,12 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     }
 
     /**
-     * Test failed startManagedResourcs with a successful start of an initiator.
+     * Test failed ConfiguredResource on an initiator start.
      *
-     * @throws SchedulerException
+     * @throws InitiatorOperationException
      */
     @Test
-    public void test_failed_startManagedResources_with_successful_startInitiator()
+    public void test_failed_configuredResources_on_startInitiator()
         throws SchedulerException
     {
         final ErrorLoggingService errorLoggingService = classMockery.mock(ErrorLoggingService.class);
@@ -601,9 +603,8 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         // associate an error logging service
         scheduleDrivenInitiator.setErrorLoggingService(errorLoggingService);
 
-        //expect it to be started
-        setStartInitiatorExpectations(scheduleDrivenInitiator,false);
-        setStartManagedResourcesFailedExpectations(errorLoggingService);
+        // set failure expectations
+        setConfiguredResourcesFailedExpectations(errorLoggingService);
 
         // invoke start on the initiator
         scheduleDrivenInitiator.start();
@@ -629,36 +630,6 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 
         // give the initiator a quartz scheduler
         scheduleDrivenInitiator.setScheduler(scheduler);
-
-        // invoke stop on the initiator
-        scheduleDrivenInitiator.stop();
-    }
-
-    /**
-     * Test failed stopManagedResources after successful stop of an initiator.
-     *
-     * @throws SchedulerException
-     */
-    @Test
-    public void test_failed_stopManagedResources_with_successful_stopInitiator()
-        throws SchedulerException
-    {
-        final ErrorLoggingService errorLoggingService = classMockery.mock(ErrorLoggingService.class);
-
-        QuartzStatefulScheduledDrivenInitiator scheduleDrivenInitiator = new QuartzStatefulScheduledDrivenInitiator(
-            initiatorName,moduleName, eventProvider, flow,
-            exceptionHandler);
-
-        setStopInitiatorExpectations();
-        setStopManagedResourcesFailedExpectations(errorLoggingService);
-        
-        setExpectationsForIsRecovering(false);
-
-        // give the initiator a quartz scheduler
-        scheduleDrivenInitiator.setScheduler(scheduler);
-
-        // associate an error logging service
-        scheduleDrivenInitiator.setErrorLoggingService(errorLoggingService);
 
         // invoke stop on the initiator
         scheduleDrivenInitiator.stop();
@@ -700,20 +671,20 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         {
             {
                 // required as part of the start call on the initiator
-                one(flow).startManagedResources();
+                one(flow).start();
             }
         });
     }
 
-    private void setStartManagedResourcesFailedExpectations(final ErrorLoggingService errorLoggingService)
+    private void setConfiguredResourcesFailedExpectations(final ErrorLoggingService errorLoggingService)
     {
-        final RuntimeException exception = new RuntimeException("test failed managed resource start");
+        final ConfigurationException exception = new ConfigurationException("test failed configured resource start");
         final String actionTaken = null;
 
         classMockery.checking(new Expectations()
         {
             {
-                one(flow).startManagedResources();
+                one(flow).start();
                 will(throwException(exception));
                 
                 //invokes the errorLoggingService
@@ -728,24 +699,7 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         {
             {
                 // required as part of the stop call on the initiator
-                one(flow).stopManagedResources();
-            }
-        });
-    }
-
-    private void setStopManagedResourcesFailedExpectations(final ErrorLoggingService errorLoggingService)
-    {
-        final RuntimeException exception = new RuntimeException("test failed managed resource stop");
-        final String actionTaken = null;
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                one(flow).stopManagedResources();
-                will(throwException(exception));
-                
-                //invokes the errorLoggingService
-                one(errorLoggingService).logError(with(equal(exception)),with(equal(moduleName)),with(any(String.class)), with(equal(actionTaken)));
+                one(flow).stop();
             }
         });
     }

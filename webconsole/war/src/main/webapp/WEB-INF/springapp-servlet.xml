@@ -72,6 +72,7 @@
 		<property name="mappings">
 			<props>
 				<prop key="/trigger.htm">flowController</prop>
+                <prop key="/configuration.htm">flowController</prop>				
 			</props>
 		</property>
 	</bean>
@@ -123,7 +124,8 @@
 	<webflow:flow-executor id="flowExecutor" />
 
 	<webflow:flow-registry id="flowRegistry">
-		<webflow:flow-location path="/WEB-INF/triggers/trigger.xml" />
+        <webflow:flow-location path="/WEB-INF/triggers/trigger.xml" />
+        <webflow:flow-location path="/WEB-INF/configuration/componentConfiguration.xml" />
 	</webflow:flow-registry>
 	
 	<!-- Having WebFlow present stuffs up some of the default behaviour of the DispatcherServlet, including the following fixes this -->
@@ -137,7 +139,5 @@
 		<constructor-arg ref="flowEventListener"/>
 		<constructor-arg ref="moduleService" />
 	</bean>
-
-    
 
 </beans>

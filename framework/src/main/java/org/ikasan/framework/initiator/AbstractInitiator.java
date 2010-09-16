@@ -46,6 +46,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.configuration.service.ConfigurationException;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.exception.ExcludeEventAction;
@@ -227,8 +228,14 @@ public abstract class AbstractInitiator implements Initiator
 
         try
         {
-            startManagedResources();
+            flow.start();
             startInitiator();
+        }
+        catch(ConfigurationException e)
+        {
+            // unrecoverable, so log the issue and mark this initiator as errored
+            logError(null, e, moduleName, null);
+            error=true;
         }
         finally
         {
@@ -251,45 +258,11 @@ public abstract class AbstractInitiator implements Initiator
         try
         {
             stopInitiator();
-            stopManagedResources();
+            flow.stop();
         }
         finally
         {
             notifyMonitorListeners();
-        }
-    }
-    
-    /**
-     * Start the flow's managed resources. 
-     * Do not let any exceptions interfere with the continued operation of 
-     * the initiator, simply log the issue and continue
-     * as the initiator's retry cycle may resolve this.
-     */
-    protected void startManagedResources()
-    {
-        try
-        {
-            flow.startManagedResources();
-        }
-        catch(RuntimeException e)
-        {
-            logError(null, e, moduleName, null);
-        }
-    }
-    
-    /**
-     * Stop the flow's managed resources. 
-     * Just log any exceptions resulting from the stop invocation.
-     */
-    protected void stopManagedResources()
-    {
-        try
-        {
-            flow.stopManagedResources();
-        }
-        catch(RuntimeException e)
-        {
-            logError(null, e, moduleName, null);
         }
     }
     

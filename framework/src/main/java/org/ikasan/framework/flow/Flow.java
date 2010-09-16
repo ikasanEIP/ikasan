@@ -77,14 +77,15 @@ public interface Flow
     public String getModuleName();
 
     /**
-     * Locate all components in the flow that implement the ManagedResource
-     * interface and call startManagedResource() on those components.
+     * Invoke all start operations for the flow that are required prior to an event invocation.
+     * For instance, this could include setting any flow component configurations,
+     * or starting any flow managed resources.
      */
-    public void startManagedResources();
+    public void start();
     
     /**
-     * Locate all components in the flow that implement the ManagedResource
-     * interface and call stopManagedResource() on those components.
+     * Invoke all stop operations for the flow that are required on shutdown of the invoking client.
+     * For instance, this could include stopping any flow managed resources.
      */
-    public void stopManagedResources();
+    public void stop();
 }
