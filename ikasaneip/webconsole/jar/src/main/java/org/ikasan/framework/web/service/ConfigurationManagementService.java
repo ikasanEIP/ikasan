@@ -57,6 +57,7 @@ import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.systemevent.service.SystemEventService;
 import org.springframework.binding.message.MessageBuilder;
+import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -208,8 +209,7 @@ public class ConfigurationManagementService
      */
     public void insertConfiguration(Configuration configuration)
     {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, user);
+        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, getAuthentication().getName());
         this.configurationDao.save(configuration);
     }
     
@@ -219,8 +219,7 @@ public class ConfigurationManagementService
      */
     public void updateConfiguration(Configuration configuration)
     {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, user);
+        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
         this.configurationDao.save(configuration);
     }
     
@@ -230,11 +229,19 @@ public class ConfigurationManagementService
      */
     public void deleteConfiguration(Configuration configuration)
     {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, user);
+        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
         this.configurationDao.delete(configuration);
     }
 
+    /**
+     * Utility method for getting the authentication principal of the invoking user.
+     * @return Authentication
+     */
+    protected Authentication getAuthentication()
+    {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+    
     /**
      * Utility method for locating and returning the ConfiguredResource instance based on the given
      * moduleName/flowName/flowElementName.
