@@ -40,11 +40,12 @@
  */
 package org.ikasan.framework.web.service;
 
-import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.ikasan.framework.configuration.ConfiguredResource;
 import org.ikasan.framework.configuration.dao.ConfigurationDao;
 import org.ikasan.framework.configuration.model.Configuration;
@@ -177,21 +178,32 @@ public class ConfigurationManagementService
                         + flowElementName + "] resourceId [" + configuredResource.getConfiguredResourceId() + "]");
             }
             
-            PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(configuredObject);
+            //PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(configuredObject);
             Configuration configuration = new Configuration(configuredResource.getConfiguredResourceId());
             List<ConfigurationParameter> configurationParameters = new ArrayList<ConfigurationParameter>();
             configuration.setConfigurationParameters(configurationParameters);
-            for(PropertyDescriptor propertyDescriptor:propertyDescriptors)
+
+            try
             {
-                String name = propertyDescriptor.getName();
-                
-                // TODO - is there a cleaner way of ignoring the class property ?
-                if(!"class".equals(name))
+                Map<String,String> properties = BeanUtils.describe(configuredObject);
+                for(Iterator it = properties.entrySet().iterator(); it.hasNext();) 
                 {
-                    configurationParameters.add(new ConfigurationParameter(name, ""));
-                }
+                    Map.Entry<String,String> entry = (Map.Entry) it.next();
+                    String name = entry.getKey();
+                    String value = entry.getValue();
+
+                    // TODO - is there a cleaner way of ignoring the class property ?
+                    if(!"class".equals(name))
+                    {
+                        configurationParameters.add(new ConfigurationParameter(name, value));
+                    }
+                 }
             }
-            
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+
             return configuration;
         }
         catch(RuntimeException e)
