@@ -48,6 +48,7 @@ import org.ikasan.framework.component.Event;
  * Interface for components capable of aggregating <code>Event</code>s.
  * 
  * @author Ikasan Development Team
+ * @deprecated - use the Sequencer interface directly
  */
 public interface EventAggregator
 {

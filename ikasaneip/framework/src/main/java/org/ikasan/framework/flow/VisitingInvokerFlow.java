@@ -43,7 +43,11 @@ package org.ikasan.framework.flow;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.configuration.ConfiguredResource;
+import org.ikasan.framework.configuration.service.ConfigurationException;
+import org.ikasan.framework.configuration.service.ConfigurationService;
 import org.ikasan.framework.flow.invoker.FlowElementInvoker;
 import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 
@@ -54,6 +58,8 @@ import org.ikasan.framework.flow.invoker.FlowInvocationContext;
  */
 public class VisitingInvokerFlow implements Flow
 {
+    /** The logger instance. */
+    private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
     /**
      * Name of this flow
      */
@@ -74,6 +80,10 @@ public class VisitingInvokerFlow implements Flow
      */
     private FlowElementInvoker flowElementInvoker;
 
+    /** configuration service for this flow */
+    @SuppressWarnings("unchecked")
+    private ConfigurationService configurationService;
+    
     /**
      * Constructor
      * 
@@ -82,16 +92,39 @@ public class VisitingInvokerFlow implements Flow
      * @param headElement - first element in the flow
      * @param visitingInvoker - invoker for this flow
      */
+    @SuppressWarnings("unchecked")
     public VisitingInvokerFlow(String name, String moduleName, FlowElement headElement,
             FlowElementInvoker visitingInvoker)
     {
         super();
         this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+        
         this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+        
         this.headElement = headElement;
         this.flowElementInvoker = visitingInvoker;
     }
 
+    @SuppressWarnings("unchecked")
+    public void setConfigurationService(ConfigurationService configurationService)
+    {
+        this.configurationService = configurationService;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public ConfigurationService getConfigurationService()
+    {
+        return this.configurationService;
+    }
+    
     public String getName()
     {
         return name;
@@ -151,32 +184,64 @@ public class VisitingInvokerFlow implements Flow
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#startManagedResources()
+     * @see org.ikasan.framework.flow.Flow#start()
      */
-    public void startManagedResources()
+    @SuppressWarnings("unchecked")
+    public void start()
     {
         for(FlowElement flowElement:this.getFlowElements())
         {
             FlowComponent flowComponent = flowElement.getFlowComponent();
+
+            // configure any components marked as configured resources
+            if(flowComponent instanceof ConfiguredResource)
+            {
+                if(this.configurationService == null)
+                {
+                    throw new ConfigurationException("Component " + flowElement.getComponentName() +
+                            " marked as a 'ConfiguredResource', but the configurationService has not been set on the module "
+                            + this.moduleName + " flow " + this.name);
+                }
+                this.configurationService.configure((ConfiguredResource)flowComponent);
+            }
+
+            // start any component resources marked as managed resources
             if(flowComponent instanceof ManagedResource)
             {
-                ((ManagedResource) flowComponent).startManagedResource();
+                try
+                {
+                    ((ManagedResource)flowComponent).startManagedResource();
+                }
+                catch(RuntimeException e)
+                {
+                    logger.warn("Failed to start managed resource in component [" 
+                            + flowElement.getComponentName() + "] " + e.getMessage(), e);
+                }
             }
         }
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#stopManagedResources()
+     * @see org.ikasan.framework.flow.Flow#stop()
      */
-    public void stopManagedResources()
+    public void stop()
     {
         for(FlowElement flowElement:this.getFlowElements())
         {
             FlowComponent flowComponent = flowElement.getFlowComponent();
             if(flowComponent instanceof ManagedResource)
             {
-                ((ManagedResource) flowComponent).stopManagedResource();
+                try
+                {
+                    ((ManagedResource)flowComponent).stopManagedResource();
+                }
+                catch(RuntimeException e)
+                {
+                    logger.warn("Failed to stop managed resource in component [" 
+                            + flowElement.getComponentName() + "] " + e.getMessage(), e);
+                }
             }
         }
     }
+    
 }

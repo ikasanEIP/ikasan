@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.hamcrest.Description;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.framework.configuration.service.ConfigurationException;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.exception.ExcludeEventAction;
@@ -254,7 +255,7 @@ public class AbstractInitiatorTest
         ((MockInitiator)abstractInitiator).setError(true);
         ((MockInitiator)abstractInitiator).setStopping(true);
         
-        expectFlowStartManagedResourcesSuccess();
+        expectFlowStartSuccess();
         Assert.assertFalse("just checking that our mock implementation has not had startInitiator called on it before", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
         abstractInitiator.start();
         Assert.assertTrue("startInitiator should have been called as a part of the start method", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
@@ -262,22 +263,12 @@ public class AbstractInitiatorTest
     }
 
     @Test
-    public void testStartInitiator_withStartManagedResourcesFailing()
+    public void testStartInitiator_withConfiguredResourcesFailing()
     {
-        expectFlowStartManagedResourcesFailed();
+        this.expectFlowStartConfiguredResourcesFailed();
         Assert.assertFalse("just checking that our mock implementation has not had startInitiator called on it before", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
         abstractInitiator.start();
-        Assert.assertTrue("startInitiator should have been called as a part of the start method", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
-        mockery.assertIsSatisfied();
-    }
-
-    @Test
-    public void testStopInitiator_withStopManagedResourcesFailing()
-    {
-        expectFlowStopManagedResourcesFailed();
-        Assert.assertFalse("just checking that our mock implementation has not had stopInitiator called on it before", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
-        abstractInitiator.stop();
-        Assert.assertTrue("stopInitiator should have been called as a part of the stop method", ((MockInitiator)abstractInitiator).isStopInitiatorCalled());
+        Assert.assertFalse("startInitiator should not have been called as a part of the start method", ((MockInitiator)abstractInitiator).isStartInitiatorCalled());
         mockery.assertIsSatisfied();
     }
 
@@ -643,29 +634,29 @@ public class AbstractInitiatorTest
 	}
 
     /**
-     * startManagedResources successful invocation expectations
+     * startManagedResources & configuredResource successful invocation expectations
      */
-    private void expectFlowStartManagedResourcesSuccess() {
+    private void expectFlowStartSuccess() {
         mockery.checking(new Expectations()
         {
             {
-                one(flow).startManagedResources();
+                one(flow).start();
             }
         });
     }
 
     /**
-     * startManagedResources failed invocation expectations
+     * startConfiguredResources failed invocation expectations
      */
-    private void expectFlowStartManagedResourcesFailed() 
+    private void expectFlowStartConfiguredResourcesFailed() 
     {
-        final RuntimeException exception = new RuntimeException("test failed managed resource start");
+        final ConfigurationException exception = new ConfigurationException("test failed managed resource start");
         final String actionTaken = null;
         
         mockery.checking(new Expectations()
         {
             {
-                one(flow).startManagedResources();
+                one(flow).start();
                 will(throwException(exception));
                 
                 //invokes the errorLoggingService
@@ -681,27 +672,7 @@ public class AbstractInitiatorTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).stopManagedResources();
-            }
-        });
-    }
-
-    /**
-     * stopManagedResources failed invocation expectations
-     */
-    private void expectFlowStopManagedResourcesFailed() 
-    {
-        final RuntimeException exception = new RuntimeException("test failed managed resource stop");
-        final String actionTaken = null;
-
-        mockery.checking(new Expectations()
-        {
-            {
-                one(flow).stopManagedResources();
-                will(throwException(exception));
-                
-                //invokes the errorLoggingService
-                one(errorLoggingService).logError(with(equal(exception)),with(equal(moduleName)),with(any(String.class)), with(equal(actionTaken)));
+                one(flow).stop();
             }
         });
     }

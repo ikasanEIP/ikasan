@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,65 +38,55 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.sequencing;
+package org.ikasan.framework.configuration.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.resource.ResourceException;
-
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.service.EventAggregator;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.ikasan.framework.configuration.model.Configuration;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Sequencer implementation which aggregates incoming events into a single event.
- * The associated aggregation may return one event, or 'null' if
- * the aggregation criteria has not been met.
+ * Implementation of the ConfigurationDao interface providing
+ * the Hibernate persistence for configuration instances.
  * 
  * @author Ikasan Development Team
- * @deprecated - use the Sequencer interface directly
  */
-public class EventAggregatingSequencer implements Sequencer
+public class ConfigurationHibernateImpl extends HibernateDaoSupport 
+    implements ConfigurationDao
 {
-    /** Implementation of an aggregator */
-    protected EventAggregator aggregator;
-
-    /**
-     * Constructor
-     * 
-     * @param aggregator The event aggregator to use
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
      */
-    public EventAggregatingSequencer(EventAggregator aggregator)
+    public Configuration findById(String configurationId)
     {
-        this.aggregator = aggregator;
-        if (this.aggregator == null)
-        {
-            throw new IllegalArgumentException("EventAggregator cannot be 'null'");
-        }
-    }
+        DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
+        criteria.add(Restrictions.eq("configurationId", configurationId));
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
-     */
-    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
-    {
-        try
+        List<Configuration> configuration = getHibernateTemplate().findByCriteria(criteria);
+        if(configuration == null || configuration.size() == 0)
         {
-            Event aggregatedEvent = aggregator.aggregate(event);
-            if(aggregatedEvent != null)
-            {
-                List<Event> events = new ArrayList<Event>();
-                events.add(aggregatedEvent);
-                return events;
-            }
-            
             return null;
         }
-        catch (ResourceException e)
-        {
-            throw new SequencerException(e);
-        }
+
+        return configuration.get(0);
     }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#saveConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     */
+    public void save(Configuration configuration)
+    {
+        getHibernateTemplate().saveOrUpdate(configuration);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.dao.ConfigurationDao#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     */
+    public void delete(Configuration configuration)
+    {
+        getHibernateTemplate().delete(configuration);
+    }
+
 }

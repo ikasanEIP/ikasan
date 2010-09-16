@@ -84,6 +84,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.8.3</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
       <version>1.7.3</version>

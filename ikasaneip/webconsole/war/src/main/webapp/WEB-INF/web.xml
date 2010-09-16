@@ -61,6 +61,7 @@
 			/WEB-INF/classes/excludedevent-service-context.xml
 			/WEB-INF/classes/module-service-context.xml
 			/WEB-INF/classes/wiretap-service-context.xml
+            /WEB-INF/classes/configuration-service-context.xml
             /WEB-INF/applicationContext-security.xml
    </param-value>
 	</context-param>

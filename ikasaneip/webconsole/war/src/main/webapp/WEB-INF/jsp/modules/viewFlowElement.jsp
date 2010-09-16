@@ -59,7 +59,15 @@
 			Name
 		</th>
 		<td>
-			<c:out value="${flowElement.componentName}" />
+          <c:out value="${flowElement.componentName}" />
+          <c:url var="configurationLink" value="/componentConfiguration.htm">
+            <c:param name="moduleName" value="${moduleName}"/>
+            <c:param name="flowName" value="${flowName}"/>
+            <c:param name="flowElementName" value="${flowElement.componentName}"/>
+          </c:url>
+          <a href="<c:out value="${configurationLink}" escapeXml="true" />">
+            <c:out value=" (configure)" />
+          </a>
 		</td>
 	</tr>
 	
@@ -71,6 +79,7 @@
 			<c:out value="${flowElement.flowComponent.class.simpleName}" />
 		</td>
 	</tr>
+
 </table>
 
 <h3>Transitions</h3>
