@@ -149,7 +149,7 @@ public class JmsMessageDrivenInitiatorImplTest
             {
                 one(messageListenerContainer).stop();
                 inSequence(sequence);
-                one(flow).stopManagedResources();
+                one(flow).stop();
                 inSequence(sequence);
                 // attempts to notify listeners of its state
                 // lets assume the underlying container actually stops
@@ -171,7 +171,7 @@ public class JmsMessageDrivenInitiatorImplTest
         mockery.checking(new Expectations()
         {
             {
-                one(flow).startManagedResources();
+                one(flow).start();
                 inSequence(sequence);
                 one(messageListenerContainer).start();
                 inSequence(sequence);
@@ -273,7 +273,7 @@ public class JmsMessageDrivenInitiatorImplTest
             	will(returnValue(rollbackStopAction));
 
             	one(messageListenerContainer).stop();
-            	one(flow).stopManagedResources();
+            	one(flow).stop();
             }
         });
         monitorExpectsStoppedInError();
@@ -302,7 +302,7 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             {
                 one(messageListenerContainer).stop();
-                one(flow).stopManagedResources();
+                one(flow).stop();
             }
         });
         monitorExpectsStoppedInError();
@@ -331,7 +331,7 @@ public class JmsMessageDrivenInitiatorImplTest
         {
             {
                 one(messageListenerContainer).stop();
-                one(flow).stopManagedResources();
+                one(flow).stop();
             }
         });
         monitorExpectsStoppedInError();
@@ -382,7 +382,7 @@ public class JmsMessageDrivenInitiatorImplTest
 
 
                 one(messageListenerContainer).stop();
-                one(flow).stopManagedResources();
+                one(flow).stop();
             }
         });
         monitorExpectsStoppedInError();
@@ -549,7 +549,7 @@ public class JmsMessageDrivenInitiatorImplTest
                 // which of course results in a stop
                 one(messageListenerContainer).stop();
                 inSequence(sequence);
-                one(flow).stopManagedResources();
+                one(flow).stop();
                 inSequence(sequence);
                 monitorExpectsStoppedInError();
             }

@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,65 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.sequencing;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.resource.ResourceException;
-
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.service.EventAggregator;
+package org.ikasan.framework.configuration.service;
 
 /**
- * Sequencer implementation which aggregates incoming events into a single event.
- * The associated aggregation may return one event, or 'null' if
- * the aggregation criteria has not been met.
+ * ConfigurationService defines the operational contract of any configuration
+ * service in Ikasan.
  * 
  * @author Ikasan Development Team
- * @deprecated - use the Sequencer interface directly
  */
-public class EventAggregatingSequencer implements Sequencer
+public interface ConfigurationService<T>
 {
-    /** Implementation of an aggregator */
-    protected EventAggregator aggregator;
-
     /**
-     * Constructor
-     * 
-     * @param aggregator The event aggregator to use
+     * Allow the given resource to be configured.
+     * @param configuredResource
      */
-    public EventAggregatingSequencer(EventAggregator aggregator)
-    {
-        this.aggregator = aggregator;
-        if (this.aggregator == null)
-        {
-            throw new IllegalArgumentException("EventAggregator cannot be 'null'");
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
-     */
-    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
-    {
-        try
-        {
-            Event aggregatedEvent = aggregator.aggregate(event);
-            if(aggregatedEvent != null)
-            {
-                List<Event> events = new ArrayList<Event>();
-                events.add(aggregatedEvent);
-                return events;
-            }
-            
-            return null;
-        }
-        catch (ResourceException e)
-        {
-            throw new SequencerException(e);
-        }
-    }
+    public void configure(T configuredResource);
 }

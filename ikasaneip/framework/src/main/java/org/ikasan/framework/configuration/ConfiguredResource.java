@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,65 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.sequencing;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.resource.ResourceException;
-
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.service.EventAggregator;
+package org.ikasan.framework.configuration;
 
 /**
- * Sequencer implementation which aggregates incoming events into a single event.
- * The associated aggregation may return one event, or 'null' if
- * the aggregation criteria has not been met.
+ * Interface provisioning callbacks for setting configuration properties
+ * for a flow component as required for runtime. 
  * 
  * @author Ikasan Development Team
- * @deprecated - use the Sequencer interface directly
  */
-public class EventAggregatingSequencer implements Sequencer
+public interface ConfiguredResource<T>
 {
-    /** Implementation of an aggregator */
-    protected EventAggregator aggregator;
+    /**
+     * Get the id for this configured resource
+     * @return
+     */
+    public String getConfiguredResourceId();
 
     /**
-     * Constructor
-     * 
-     * @param aggregator The event aggregator to use
+     * Set the id for this configured resource
+     * @return
      */
-    public EventAggregatingSequencer(EventAggregator aggregator)
-    {
-        this.aggregator = aggregator;
-        if (this.aggregator == null)
-        {
-            throw new IllegalArgumentException("EventAggregator cannot be 'null'");
-        }
-    }
+    public void setConfiguredResourceId(String id);
+    
+    /**
+     * Set configuration.
+     */
+    public T getConfiguration();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
+    /**
+     * Set configuration.
      */
-    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
-    {
-        try
-        {
-            Event aggregatedEvent = aggregator.aggregate(event);
-            if(aggregatedEvent != null)
-            {
-                List<Event> events = new ArrayList<Event>();
-                events.add(aggregatedEvent);
-                return events;
-            }
-            
-            return null;
-        }
-        catch (ResourceException e)
-        {
-            throw new SequencerException(e);
-        }
-    }
+    public void setConfiguration(T configuration);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,65 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.sequencing;
+package org.ikasan.framework.configuration.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.resource.ResourceException;
-
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.event.service.EventAggregator;
+import org.ikasan.framework.configuration.model.Configuration;
 
 /**
- * Sequencer implementation which aggregates incoming events into a single event.
- * The associated aggregation may return one event, or 'null' if
- * the aggregation criteria has not been met.
- * 
+ * Configuration DAO interface defining the operations for interacting with
+ * a runtime configuration.
+ *
  * @author Ikasan Development Team
- * @deprecated - use the Sequencer interface directly
  */
-public class EventAggregatingSequencer implements Sequencer
+public interface ConfigurationDao
 {
-    /** Implementation of an aggregator */
-    protected EventAggregator aggregator;
+    /**
+     * Find and return the configuration entry instance for this configurationId.
+     * If not found then 'null' is returned.
+     * @param configurationId
+     * @return Configuration
+     */
+    public Configuration findById(String id);
 
     /**
-     * Constructor
-     * 
-     * @param aggregator The event aggregator to use
+     * Create/update a configuration entry.
+     * @param Configuration
      */
-    public EventAggregatingSequencer(EventAggregator aggregator)
-    {
-        this.aggregator = aggregator;
-        if (this.aggregator == null)
-        {
-            throw new IllegalArgumentException("EventAggregator cannot be 'null'");
-        }
-    }
+    public void save(Configuration configuration);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.component.sequencing.Sequencer#onEvent(org.ikasan.framework.component.Event)
+    /**
+     * Delete a configuration entry.
+     * @param Configuration
      */
-    public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
-    {
-        try
-        {
-            Event aggregatedEvent = aggregator.aggregate(event);
-            if(aggregatedEvent != null)
-            {
-                List<Event> events = new ArrayList<Event>();
-                events.add(aggregatedEvent);
-                return events;
-            }
-            
-            return null;
-        }
-        catch (ResourceException e)
-        {
-            throw new SequencerException(e);
-        }
-    }
+    public void delete(Configuration configuration);
 }
