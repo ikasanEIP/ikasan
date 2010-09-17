@@ -40,16 +40,11 @@
  */
 package org.ikasan.framework.web.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.ikasan.framework.configuration.ConfiguredResource;
-import org.ikasan.framework.configuration.dao.ConfigurationDao;
 import org.ikasan.framework.configuration.model.Configuration;
-import org.ikasan.framework.configuration.model.ConfigurationParameter;
+import org.ikasan.framework.configuration.service.ConfigurationService;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.FlowComponent;
 import org.ikasan.framework.flow.FlowElement;
@@ -79,8 +74,8 @@ public class ConfigurationManagementService
     /** constant for logging deleted configuration */
     public static final String CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION = "Configuration deleted";
 
-    /** configuration DAO used for accessing the configuration */
-    private ConfigurationDao configurationDao;
+    /** configuration service */
+    private ConfigurationService<ConfiguredResource,Configuration> configurationService;
     
     /** system event service records all changes to configurations */
     private SystemEventService systemEventService;
@@ -94,13 +89,13 @@ public class ConfigurationManagementService
      * @param systemEventService
      * @param moduleService
      */
-    public ConfigurationManagementService(ConfigurationDao configurationDao, SystemEventService systemEventService, 
+    public ConfigurationManagementService(ConfigurationService<ConfiguredResource,Configuration> configurationService, SystemEventService systemEventService, 
             ModuleService moduleService)
     {
-        this.configurationDao = configurationDao;
-        if(configurationDao == null)
+        this.configurationService = configurationService;
+        if(configurationService == null)
         {
-            throw new IllegalArgumentException("configurationDao cannot be 'null'");
+            throw new IllegalArgumentException("configurationService cannot be 'null'");
         }
 
         this.systemEventService = systemEventService;
@@ -143,7 +138,7 @@ public class ConfigurationManagementService
         try
         {
             ConfiguredResource configuredResource = getConfiguredResource(moduleName, flowName, flowElementName);
-            return this.configurationDao.findById(configuredResource.getConfiguredResourceId());
+            return this.configurationService.getConfiguration(configuredResource);
         }
         catch(RuntimeException e)
         {
@@ -168,43 +163,7 @@ public class ConfigurationManagementService
         try
         {
             ConfiguredResource configuredResource = getConfiguredResource(moduleName, flowName, flowElementName);
-            Object configuredObject = configuredResource.getConfiguration();
-            if(configuredObject == null)
-            {
-                throw new RuntimeException("ConfiguredResource returned a 'null' configuration instance. "
-                        + "Please ensure the ConfiguredResource returns a valid configuration instance. "
-                        + "See ModuleName [" + moduleName 
-                        + "] flowName [" + flowName + "] flowElementName ["
-                        + flowElementName + "] resourceId [" + configuredResource.getConfiguredResourceId() + "]");
-            }
-            
-            //PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(configuredObject);
-            Configuration configuration = new Configuration(configuredResource.getConfiguredResourceId());
-            List<ConfigurationParameter> configurationParameters = new ArrayList<ConfigurationParameter>();
-            configuration.setConfigurationParameters(configurationParameters);
-
-            try
-            {
-                Map<String,String> properties = BeanUtils.describe(configuredObject);
-                for(Iterator it = properties.entrySet().iterator(); it.hasNext();) 
-                {
-                    Map.Entry<String,String> entry = (Map.Entry) it.next();
-                    String name = entry.getKey();
-                    String value = entry.getValue();
-
-                    // TODO - is there a cleaner way of ignoring the class property ?
-                    if(!"class".equals(name))
-                    {
-                        configurationParameters.add(new ConfigurationParameter(name, value));
-                    }
-                 }
-            }
-            catch(Exception e)
-            {
-                throw new RuntimeException(e);
-            }
-
-            return configuration;
+            return configurationService.createConfiguration(configuredResource);
         }
         catch(RuntimeException e)
         {
@@ -222,7 +181,7 @@ public class ConfigurationManagementService
     public void insertConfiguration(Configuration configuration)
     {
         this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, getAuthentication().getName());
-        this.configurationDao.save(configuration);
+        this.configurationService.saveConfiguration(configuration);
     }
     
     /**
@@ -232,7 +191,7 @@ public class ConfigurationManagementService
     public void updateConfiguration(Configuration configuration)
     {
         this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
-        this.configurationDao.save(configuration);
+        this.configurationService.saveConfiguration(configuration);
     }
     
     /**
@@ -242,7 +201,7 @@ public class ConfigurationManagementService
     public void deleteConfiguration(Configuration configuration)
     {
         this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
-        this.configurationDao.delete(configuration);
+        this.configurationService.deleteConfiguration(configuration);
     }
 
     /**

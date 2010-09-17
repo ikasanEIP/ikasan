@@ -52,30 +52,19 @@
           class="org.ikasan.framework.configuration.service.ConfiguredResourceConfigurationService">
         <constructor-arg>
             <bean class="org.ikasan.framework.configuration.dao.ConfigurationHibernateImpl">
-                <property name="sessionFactory" ref="configurationSessionFactory"/>
+                <property name="sessionFactory">
+				    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+				        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
+				        <property name="mappingResources">
+				            <list>
+				                <value>org/ikasan/framework/configuration/model/Configuration.hbm.xml</value>
+				            </list>
+				        </property>
+				        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+				    </bean>
+                </property>
             </bean>
         </constructor-arg>
-    </bean>
-
-    <bean id="configurationManagementService"
-          class="org.ikasan.framework.web.service.ConfigurationManagementService">
-        <constructor-arg>
-            <bean class="org.ikasan.framework.configuration.dao.ConfigurationHibernateImpl">
-                <property name="sessionFactory" ref="configurationSessionFactory"/>
-            </bean>
-        </constructor-arg>
-        <constructor-arg ref="systemEventService" />
-        <constructor-arg ref="moduleService" />
-    </bean>
-
-    <bean id="configurationSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
-        <property name="mappingResources">
-            <list>
-                <value>org/ikasan/framework/configuration/model/Configuration.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
 </beans>

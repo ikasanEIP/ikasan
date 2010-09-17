@@ -40,17 +40,45 @@
  */
 package org.ikasan.framework.configuration.service;
 
+import org.ikasan.framework.configuration.model.Configuration;
+
 /**
  * ConfigurationService defines the operational contract of any configuration
  * service in Ikasan.
  * 
  * @author Ikasan Development Team
  */
-public interface ConfigurationService<T>
+public interface ConfigurationService<RESOURCE,MODEL>
 {
     /**
-     * Allow the given resource to be configured.
+     * Configure the given resource.
      * @param configuredResource
      */
-    public void configure(T configuredResource);
+    public void configure(RESOURCE configuredResource);
+
+    /**
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
+     * @return
+     */
+    public MODEL getConfiguration(RESOURCE configuredResource);
+
+    /**
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
+     * @return
+     */
+    public MODEL createConfiguration(RESOURCE configuredResource);
+
+    /**
+     * Save the given configuration.
+     * @param configuredResource
+     */
+    public void saveConfiguration(MODEL configuration);
+
+    /**
+     * Delete the given configuration.
+     * @param configuredResource
+     */
+    public void deleteConfiguration(MODEL configuration);
 }
