@@ -140,4 +140,11 @@
 		<constructor-arg ref="moduleService" />
 	</bean>
 
+    <bean id="configurationManagementService"
+          class="org.ikasan.framework.web.service.ConfigurationManagementService">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="moduleService" />
+    </bean>
+
 </beans>

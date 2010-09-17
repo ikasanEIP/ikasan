@@ -41,6 +41,10 @@
 package org.ikasan.framework.configuration.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
@@ -56,7 +60,7 @@ import org.ikasan.framework.configuration.model.ConfigurationParameter;
  *
  */
 public class ConfiguredResourceConfigurationService
-    implements ConfigurationService<ConfiguredResource> 
+    implements ConfigurationService<ConfiguredResource,Configuration> 
 {
     /** Logger instance */
     private static Logger logger = Logger.getLogger(ConfiguredResourceConfigurationService.class);
@@ -123,4 +127,70 @@ public class ConfiguredResourceConfigurationService
         }
     }
 
+    /**
+     * Create a new configuration instance for the given ConfiguredResource.
+     * @param ConfiguredResource
+     * @return Configuration
+     */
+    public Configuration createConfiguration(ConfiguredResource configuredResource)
+    {
+        Object configuredObject = configuredResource.getConfiguration();
+        if(configuredObject == null)
+        {
+            throw new RuntimeException("ConfiguredResource id [" 
+                    + configuredResource.getConfiguredResourceId() 
+                    + "] returned a 'null' configuration instance. ");
+        }
+        
+        Configuration configuration = new Configuration(configuredResource.getConfiguredResourceId());
+        List<ConfigurationParameter> configurationParameters = new ArrayList<ConfigurationParameter>();
+        configuration.setConfigurationParameters(configurationParameters);
+
+        try
+        {
+            Map<String,String> properties = BeanUtils.describe(configuredObject);
+            for(Iterator it = properties.entrySet().iterator(); it.hasNext();) 
+            {
+                Map.Entry<String,String> entry = (Map.Entry) it.next();
+                String name = entry.getKey();
+                String value = entry.getValue();
+
+                // TODO - is there a cleaner way of ignoring the class property ?
+                if(!"class".equals(name))
+                {
+                    configurationParameters.add(new ConfigurationParameter(name, value));
+                }
+             }
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return configuration;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     */
+    public void deleteConfiguration(Configuration configuration)
+    {
+        this.configurationDao.delete(configuration);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.service.ConfigurationService#saveConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     */
+    public void saveConfiguration(Configuration configuration)
+    {
+        this.configurationDao.save(configuration);
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.service.ConfigurationService#getConfiguration(java.lang.Object)
+     */
+    public Configuration getConfiguration(ConfiguredResource configuredResource)
+    {
+        return this.configurationDao.findById(configuredResource.getConfiguredResourceId());
+    }
 }
