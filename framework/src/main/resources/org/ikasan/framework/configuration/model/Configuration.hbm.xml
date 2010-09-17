@@ -67,7 +67,7 @@
                 <property name="name"           type="java.lang.String" 
                           column="Name"         not-null="true" />
                 <property name="value"          type="java.lang.String" 
-                          column="Value"        not-null="true" />
+                          column="Value"        not-null="false" />
                 <property name="description"    type="java.lang.String" 
                           column="Description"  not-null="false" />
             </composite-element>

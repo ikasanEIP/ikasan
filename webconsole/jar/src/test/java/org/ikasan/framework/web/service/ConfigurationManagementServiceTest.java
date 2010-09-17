@@ -48,9 +48,8 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.ikasan.framework.configuration.ConfiguredResource;
-import org.ikasan.framework.configuration.dao.ConfigurationDao;
 import org.ikasan.framework.configuration.model.Configuration;
-import org.ikasan.framework.configuration.model.ConfigurationParameter;
+import org.ikasan.framework.configuration.service.ConfigurationService;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.FlowComponent;
 import org.ikasan.framework.flow.FlowElement;
@@ -80,8 +79,8 @@ public class ConfigurationManagementServiceTest
         }
     };
 
-    /** mock configurationDao */
-    final ConfigurationDao configurationDao = mockery.mock(ConfigurationDao.class, "mockConfigurationDao");
+    /** mock configurationService */
+    final ConfigurationService configurationService = mockery.mock(ConfigurationService.class, "mockConfigurationService");
     
     /** mock systemEventService */
     final SystemEventService systemEventService = mockery.mock(SystemEventService.class, "mockSystemEventService");
@@ -94,9 +93,6 @@ public class ConfigurationManagementServiceTest
     
     /** mock configuration */
     final Configuration configuration = mockery.mock(Configuration.class, "mockConfiguration");
-    
-    /** mock configuration parameter */
-    final ConfigurationParameter configurationParameter = mockery.mock(ConfigurationParameter.class, "mockConfigurationParameter");
     
     /** mock RequestContext */
     final RequestContext requestContext = mockery.mock(RequestContext.class, "mockRequestContext");
@@ -118,13 +114,13 @@ public class ConfigurationManagementServiceTest
     
     /** instance on test */
     final ConfigurationManagementService configurationManagementService = 
-        new ConfigurationManagementService(configurationDao, systemEventService, moduleService);
+        new ConfigurationManagementService(configurationService, systemEventService, moduleService);
 
     /**
-     * Test failed constructor due to null configurationDAO.
+     * Test failed constructor due to null configurationService.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void test_failedConstructorDueToNullConfigurationDao()
+    public void test_failedConstructorDueToNullConfigurationService()
     {
         new ConfigurationManagementService(null, null, null);
     }
@@ -135,7 +131,7 @@ public class ConfigurationManagementServiceTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructorDueToNullSystemEventService()
     {
-        new ConfigurationManagementService(configurationDao, null, null);
+        new ConfigurationManagementService(configurationService, null, null);
     }
 
     /**
@@ -144,7 +140,7 @@ public class ConfigurationManagementServiceTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructorDueToNullModuleService()
     {
-        new ConfigurationManagementService(configurationDao, systemEventService, null);
+        new ConfigurationManagementService(configurationService, systemEventService, null);
     }
 
     /**
@@ -158,6 +154,9 @@ public class ConfigurationManagementServiceTest
         
         final List<FlowElement> flowElements = new ArrayList<FlowElement>();
         flowElements.add(flowElement);
+
+        // dummy flow/configuredResource component for testing
+        final TestComponent testComponent = new TestComponent();
         
         // expectations
         mockery.checking(new Expectations()
@@ -181,10 +180,10 @@ public class ConfigurationManagementServiceTest
                 
                 // return the component in this flowElement
                 exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(new TestComponent()));
+                will(returnValue(testComponent));
                 
                 // find the configuration for this component
-                one(configurationDao).findById("configuredResourceId");
+                one(configurationService).getConfiguration(testComponent);
                 will(returnValue(configuration));
             }
         });
@@ -248,6 +247,9 @@ public class ConfigurationManagementServiceTest
         final List<FlowElement> flowElements = new ArrayList<FlowElement>();
         flowElements.add(flowElement);
         
+        // dummy flow/configuredResource component for testing
+        final TestComponent testComponent = new TestComponent();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -270,7 +272,11 @@ public class ConfigurationManagementServiceTest
                 
                 // return the component in this flowElement
                 exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(new TestComponent()));
+                will(returnValue(testComponent));
+
+                // create configuration via the configuration service
+                exactly(1).of(configurationService).createConfiguration(testComponent);
+                will(returnValue(configuration));
             }
         });
         
@@ -291,6 +297,9 @@ public class ConfigurationManagementServiceTest
         final List<FlowElement> flowElements = new ArrayList<FlowElement>();
         flowElements.add(flowElement);
         
+        // dummy flow/configuredResource component for testing
+        final TestComponent testComponent = new TestComponent();
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -309,7 +318,15 @@ public class ConfigurationManagementServiceTest
                 
                 // this is this the flowElement name we are looking for 
                 one(flowElement).getComponentName();
-                will(returnValue("doNotMatchFlowElementName"));
+                will(returnValue("flowElementName"));
+                
+                // return the component in this flowElement
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(testComponent));
+
+                // create configuration via the configuration service
+                exactly(1).of(configurationService).createConfiguration(testComponent);
+                will(throwException(new RuntimeException("Failed for testing")));
                 
                 // return the component in this flowElement
                 exactly(1).of(requestContext).getMessageContext();
@@ -338,12 +355,12 @@ public class ConfigurationManagementServiceTest
                 will(returnValue("configurationId"));
                 
                 exactly(1).of(systemEventService).logSystemEvent("configurationId", "Configuration created", "prinicpalOfInvokingUser");
-                exactly(1).of(configurationDao).save(configuration);
+                exactly(1).of(configurationService).saveConfiguration(configuration);
             }
         });
         
         // run the test
-        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationDao, systemEventService, moduleService);
+        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationService, systemEventService, moduleService);
         testConfigurationManagementService.insertConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
@@ -365,12 +382,12 @@ public class ConfigurationManagementServiceTest
                 will(returnValue("configurationId"));
                 
                 exactly(1).of(systemEventService).logSystemEvent("configurationId", "Configuration updated", "prinicpalOfInvokingUser");
-                exactly(1).of(configurationDao).save(configuration);
+                exactly(1).of(configurationService).saveConfiguration(configuration);
             }
         });
         
         // run the test
-        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationDao, systemEventService, moduleService);
+        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationService, systemEventService, moduleService);
         testConfigurationManagementService.updateConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
@@ -392,12 +409,12 @@ public class ConfigurationManagementServiceTest
                 will(returnValue("configurationId"));
                 
                 exactly(1).of(systemEventService).logSystemEvent("configurationId", "Configuration deleted", "prinicpalOfInvokingUser");
-                exactly(1).of(configurationDao).delete(configuration);
+                exactly(1).of(configurationService).deleteConfiguration(configuration);
             }
         });
         
         // run the test
-        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationDao, systemEventService, moduleService);
+        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationService, systemEventService, moduleService);
         testConfigurationManagementService.deleteConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
@@ -411,11 +428,11 @@ public class ConfigurationManagementServiceTest
          * @param moduleService
          */
         public TestConfigurationManagementService(
-                ConfigurationDao configurationDao,
+                ConfigurationService configurationService,
                 SystemEventService systemEventService,
                 ModuleService moduleService)
         {
-            super(configurationDao, systemEventService, moduleService);
+            super(configurationService, systemEventService, moduleService);
         }
      
         @Override

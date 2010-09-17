@@ -83,7 +83,7 @@ public class ConfiguredResourceConfigurationServiceTest
     final Object configurationObject = mockery.mock(Object.class, "mockObject");
     
     /** instance on test */
-    final ConfigurationService<ConfiguredResource> configurationService = 
+    final ConfigurationService<ConfiguredResource,Configuration> configurationService = 
         new ConfiguredResourceConfigurationService(configurationDao);
 
     /**
@@ -172,7 +172,7 @@ public class ConfiguredResourceConfigurationServiceTest
      * resource with a configuration. In this case just warn.
      */
     @Test 
-    public void test_configure_without_any_configuiration_as_configurationObject_is_null()
+    public void test_configure_without_any_configuration_as_configurationObject_is_null()
     {
         final List<ConfigurationParameter> configurationParams = new ArrayList<ConfigurationParameter>();
         configurationParams.add(configurationParameter);
@@ -197,6 +197,96 @@ public class ConfiguredResourceConfigurationServiceTest
         
         // run the test
         configurationService.configure(configuredResource);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test retrieval of a configuredResource's configuration.
+     */
+    @Test 
+    public void test_getConfiguration()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the configured resources unique identifier
+                exactly(1).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
+                // find the persisted configuration based on this identifier
+                one(configurationDao).findById("configuredResourceId");
+                will(returnValue(configuration));
+            }
+        });
+        
+        // run the test
+        configurationService.getConfiguration(configuredResource);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test saving of a configuredResource's configuration.
+     */
+    @Test 
+    public void test_saveConfiguration()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // update the configuration
+                one(configurationDao).save(configuration);
+            }
+        });
+        
+        // run the test
+        configurationService.saveConfiguration(configuration);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test deleting of a configuredResource's configuration.
+     */
+    @Test 
+    public void test_deleteConfiguration()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // delete the configuration
+                one(configurationDao).delete(configuration);
+            }
+        });
+        
+        // run the test
+        configurationService.deleteConfiguration(configuration);
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Test creation of a configuredResource's configuration.
+     */
+    @Test 
+    public void test_createConfiguration()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the configuration model instance
+                one(configuredResource).getConfiguration();
+                will(returnValue(configurationObject));
+                
+                // get the configuredResources id
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+            }
+        });
+        
+        // run the test
+        configurationService.createConfiguration(configuredResource);
         mockery.assertIsSatisfied();
     }
 
