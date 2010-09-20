@@ -165,7 +165,10 @@ public class Configuration implements Serializable
 
         // is same object type
         Configuration configuration = (Configuration) object;
-        if(this.configurationId.equals(configuration.configurationId))
+        if(this.configurationId.equals(configuration.configurationId) &&
+           equalsOrNull(this.description, configuration.description) &&
+           this.configurationParameters.size() == configuration.configurationParameters.size() &&
+           this.configurationParameters.containsAll(configuration.configurationParameters))
         {
             return true;
         }
@@ -174,6 +177,26 @@ public class Configuration implements Serializable
         return false;
     }
 
+    /**
+     * Utility method for object comparison
+     * @param object1
+     * @param object2
+     * @return
+     */
+    private boolean equalsOrNull(Object object1, Object object2)
+    {
+        if(object1 != null && object1.equals(object2))
+        {
+            return true;
+        }
+        else if(object1 == null && object2 == null)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
     /**
      * HashCode default implementation
      * 
@@ -184,6 +207,11 @@ public class Configuration implements Serializable
     {
         int hash = 1;
         hash = hash * 31 + this.configurationId.hashCode();
+        hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
+        for(ConfigurationParameter configurationParameter:this.configurationParameters)
+        {
+            hash = hash * 31 + (configurationParameter == null ? 0 : configurationParameter.hashCode());
+        }
         return hash;
     }
         
