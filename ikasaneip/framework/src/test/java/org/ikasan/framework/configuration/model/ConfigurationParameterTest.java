@@ -40,7 +40,9 @@
  */
 package org.ikasan.framework.configuration.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -69,8 +71,42 @@ public class ConfigurationParameterTest
     @Test
     public void test_equality()
     {
-        ConfigurationParameter configurationParameter = new ConfigurationParameter("configurationParameterName", "configurationParameterValue");
-        Assert.assertEquals(new ConfigurationParameter("configurationParameterName", "configurationParameterValue"), configurationParameter);
+        ConfigurationParameter configurationParameter1 = new ConfigurationParameter("configurationParameterName", "configurationParameterValue", "configurationDescription");
+        ConfigurationParameter configurationParameter2 = new ConfigurationParameter("configurationParameterName", "configurationParameterValue", "configurationDescription");
+        Assert.assertTrue(configurationParameter1.equals(configurationParameter2));
+    }
+
+    /**
+     * Test configurationParameter name inequality.
+     */
+    @Test
+    public void test_inequalityDueToName()
+    {
+        ConfigurationParameter configurationParameter1 = new ConfigurationParameter("configurationParameterName1", "configurationParameterValue", "configurationDescription");
+        ConfigurationParameter configurationParameter2 = new ConfigurationParameter("configurationParameterName2", "configurationParameterValue", "configurationDescription");
+        Assert.assertFalse(configurationParameter1.equals(configurationParameter2));
+    }
+
+    /**
+     * Test configurationParameter value inequality.
+     */
+    @Test
+    public void test_inequalityDueToValue()
+    {
+        ConfigurationParameter configurationParameter1 = new ConfigurationParameter("configurationParameterName", "configurationParameterValue1", "configurationDescription");
+        ConfigurationParameter configurationParameter2 = new ConfigurationParameter("configurationParameterName", "configurationParameterValue2", "configurationDescription");
+        Assert.assertFalse(configurationParameter1.equals(configurationParameter2));
+    }
+
+    /**
+     * Test configurationParameter description inequality.
+     */
+    @Test
+    public void test_inequalityDueToDescription()
+    {
+        ConfigurationParameter configurationParameter1 = new ConfigurationParameter("configurationParameterName", "configurationParameterValue", "configurationDescription1");
+        ConfigurationParameter configurationParameter2 = new ConfigurationParameter("configurationParameterName", "configurationParameterValue", "configurationDescription2");
+        Assert.assertFalse(configurationParameter1.equals(configurationParameter2));
     }
 
     /**
@@ -79,11 +115,12 @@ public class ConfigurationParameterTest
     @Test
     public void test_hashCode()
     {
-        Map<ConfigurationParameter, String> map = new HashMap<ConfigurationParameter,String>();
-        map.put(new ConfigurationParameter("nameOne", "valueOne"), "one");
-        map.put(new ConfigurationParameter("nameOne", "valueTwo"), "two");
-        map.put(new ConfigurationParameter("nameOne", "valueThree"), "three");
+        Map<ConfigurationParameter,String> parametersMap = new HashMap<ConfigurationParameter,String>();
+        parametersMap.put(new ConfigurationParameter("nameOne", "valueOne"), "One");
+        parametersMap.put(new ConfigurationParameter("nameOne", "valueTwo"), "Two");
+        parametersMap.put(new ConfigurationParameter("nameOne", null), "Three");
+        parametersMap.put(new ConfigurationParameter("nameOne", null), "Three");
         
-        Assert.assertTrue(map.size() == 1);
+        Assert.assertTrue(parametersMap.size() == 3);
     }
 }

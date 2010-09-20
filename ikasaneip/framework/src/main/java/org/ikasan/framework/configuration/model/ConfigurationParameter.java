@@ -148,7 +148,9 @@ public class ConfigurationParameter implements Serializable
 
         // is same object type
         ConfigurationParameter configurationParameter = (ConfigurationParameter) object;
-        if( this.name.equals(configurationParameter.getName()) )
+        if( this.name.equals(configurationParameter.getName()) && 
+            equalsOrNull(this.value, configurationParameter.getValue()) &&
+            equalsOrNull(this.description, configurationParameter.getDescription()) )
         {
             return true;
         }
@@ -157,6 +159,26 @@ public class ConfigurationParameter implements Serializable
         return false;
     }
 
+    /**
+     * Utility method for object comparison
+     * @param object1
+     * @param object2
+     * @return
+     */
+    private boolean equalsOrNull(Object object1, Object object2)
+    {
+        if(object1 != null && object1.equals(object2))
+        {
+            return true;
+        }
+        else if(object1 == null && object2 == null)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
     /**
      * HashCode default implementation
      * 
@@ -167,6 +189,8 @@ public class ConfigurationParameter implements Serializable
     {
         int hash = 1;
         hash = hash * 31 + this.name.hashCode();
+        hash = hash * 31 + (this.value == null ? 0 : this.value.hashCode());
+        hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
         return hash;
     }
     

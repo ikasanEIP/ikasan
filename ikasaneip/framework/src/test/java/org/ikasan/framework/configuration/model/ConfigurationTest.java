@@ -42,6 +42,7 @@ package org.ikasan.framework.configuration.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -79,8 +80,58 @@ public class ConfigurationTest
     @Test
     public void test_equality()
     {
-        Configuration configuration = new Configuration("configurationId", "description", new ArrayList<ConfigurationParameter>());
-        Assert.assertEquals(new Configuration("configurationId", "description", new ArrayList<ConfigurationParameter>()), configuration);
+        Configuration configuration1 = new Configuration("configurationName", "configurationDescription", new ArrayList<ConfigurationParameter>());
+        Configuration configuration2 = new Configuration("configurationName", "configurationDescription", new ArrayList<ConfigurationParameter>());
+        Assert.assertTrue(configuration1.equals(configuration2));
+    }
+    
+    /**
+     * Test configuration name inequality.
+     */
+    @Test
+    public void test_name_inequality()
+    {
+        Configuration configuration1 = new Configuration("configurationName1", "configurationDescription", new ArrayList<ConfigurationParameter>());
+        Configuration configuration2 = new Configuration("configurationName2", "configurationDescription", new ArrayList<ConfigurationParameter>());
+        Assert.assertFalse(configuration1.equals(configuration2));
+    }
+    
+    /**
+     * Test configuration description inequality.
+     */
+    @Test
+    public void test_description_inequality()
+    {
+        Configuration configuration1 = new Configuration("configurationName", "configurationDescription1", new ArrayList<ConfigurationParameter>());
+        Configuration configuration2 = new Configuration("configurationName", "configurationDescription2", new ArrayList<ConfigurationParameter>());
+        Assert.assertFalse(configuration1.equals(configuration2));
+    }
+    
+    /**
+     * Test configuration parameter inequality.
+     */
+    @Test
+    public void test_parameter_inequality()
+    {
+        ConfigurationParameter configurationParameter1 = new ConfigurationParameter("name", "value");
+        List<ConfigurationParameter> configurationParameters1 = new ArrayList<ConfigurationParameter>();
+        configurationParameters1.add(configurationParameter1);
+        
+        List<ConfigurationParameter> configurationParameters2 = new ArrayList<ConfigurationParameter>();
+        
+        // test when parameters are not equal
+        Configuration configuration1 = new Configuration("configurationName", "configurationDescription", configurationParameters1);
+        Configuration configuration2 = new Configuration("configurationName", "configurationDescription", configurationParameters2);
+        Assert.assertFalse(configuration1.equals(configuration2));
+
+        // make parameters equal and reassert the test
+        ConfigurationParameter configurationParameter2 = new ConfigurationParameter("name", "value");
+        configuration2.getConfigurationParameters().add(configurationParameter2);
+        Assert.assertTrue(configuration1.equals(configuration2));
+        
+        // make parameters content unequal and reassert the test
+        configurationParameter2.setName("different");
+        Assert.assertFalse(configuration1.equals(configuration2));
     }
     
     /**
@@ -90,11 +141,18 @@ public class ConfigurationTest
     public void test_hashCode()
     {
         Map<Configuration, String> map = new HashMap<Configuration,String>();
-        map.put(new Configuration("componentIdOne", new ArrayList<ConfigurationParameter>()), "one");
-        map.put(new Configuration("componentIdOne", new ArrayList<ConfigurationParameter>()), "two");
-        map.put(new Configuration("componentIdOne", new ArrayList<ConfigurationParameter>()), "three");
+        List<ConfigurationParameter> configurationParameters1 = new ArrayList<ConfigurationParameter>();
+        List<ConfigurationParameter> configurationParameters2 = new ArrayList<ConfigurationParameter>();
+        List<ConfigurationParameter> configurationParameters3 = new ArrayList<ConfigurationParameter>();
         
-        Assert.assertTrue(map.size() == 1);
+        map.put(new Configuration("componentIdOne", configurationParameters1), "one");
+        map.put(new Configuration("componentIdOne", configurationParameters1), "oneA");
+        map.put(new Configuration("componentIdTwo", configurationParameters2), "two");
+        map.put(new Configuration("componentIdTwo", configurationParameters2), "twoB");
+        map.put(new Configuration("componentIdThree", configurationParameters3), "three");
+        map.put(new Configuration("componentIdThree", configurationParameters3), "threeC");
+        
+        Assert.assertTrue(map.size() == 3);
     }
 
 }
