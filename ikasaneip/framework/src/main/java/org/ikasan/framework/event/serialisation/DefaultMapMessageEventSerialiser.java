@@ -65,24 +65,24 @@ import org.ikasan.framework.component.Event;
 public class DefaultMapMessageEventSerialiser implements
 		JmsMessageEventSerialiser<MapMessage> {
 
-	static final String PAYLOAD_PREFIX = "PAYLOAD_";
-	static final String ATTRIBUTE_PREFIX = "_ATTRIBUTE_";
+	static final protected String PAYLOAD_PREFIX = "PAYLOAD_";
+	static final protected String ATTRIBUTE_PREFIX = "_ATTRIBUTE_";
 
-	static final String PAYLOAD_CONTENT_SUFFIX = "_CONTENT";
-	static final String PAYLOAD_SRC_SYSTEM_SUFFIX = "_SRC_SYSTEM";
+	static final protected String PAYLOAD_CONTENT_SUFFIX = "_CONTENT";
+	static final protected String PAYLOAD_SRC_SYSTEM_SUFFIX = "_SRC_SYSTEM";
 
-	static final String PAYLOAD_ID_SUFFIX = "_ID";
-	static final String PAYLOAD_SPEC_SUFFIX = "_SPEC";
+	static final protected String PAYLOAD_ID_SUFFIX = "_ID";
+	static final protected String PAYLOAD_SPEC_SUFFIX = "_SPEC";
 	
-	static final String EVENT_FIELD_ID = "EVENT_ID";
-	static final String EVENT_FIELD_PRIORITY = "EVENT_PRIORITY";
-	static final String EVENT_FIELD_TIMESTAMP = "EVENT_TIMESTAMP";
-	static final String EVENT_FIELD_SRC_SYSTEM = "EVENT_FIELD_SRC_SYSTEM";
+	static final protected String EVENT_FIELD_ID = "EVENT_ID";
+	static final protected String EVENT_FIELD_PRIORITY = "EVENT_PRIORITY";
+	static final protected String EVENT_FIELD_TIMESTAMP = "EVENT_TIMESTAMP";
+	static final protected String EVENT_FIELD_SRC_SYSTEM = "EVENT_FIELD_SRC_SYSTEM";
 	
 	/**
 	 * Payload factory, only needed for deserialisation
 	 */
-	private PayloadFactory payloadFactory;
+	protected PayloadFactory payloadFactory;
 
 	@SuppressWarnings("unchecked")
 	public Event fromMessage(MapMessage mapMessage, String moduleName,
@@ -109,7 +109,7 @@ public class DefaultMapMessageEventSerialiser implements
 		return result;
 	}
 
-	private Event demapEvent(MapMessage mapMessage, String moduleName,
+	protected Event demapEvent(MapMessage mapMessage, String moduleName,
 			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException, EventDeserialisationException {
 		String eventId = null;
 		int priority = -1;
@@ -134,7 +134,7 @@ public class DefaultMapMessageEventSerialiser implements
 		return new Event(eventId, priority, timestamp, payloads);
 	}
 
-	private Payload demapPayload(int payloadOrdinal, MapMessage mapMessage,
+	protected Payload demapPayload(int payloadOrdinal, MapMessage mapMessage,
 			List<String> payloadFieldNames) throws JMSException, EventDeserialisationException {
 		String fullPayloadPrefix = PAYLOAD_PREFIX+payloadOrdinal;
 		
@@ -188,7 +188,7 @@ public class DefaultMapMessageEventSerialiser implements
 	 * @param mapNames
 	 * @return complex List of Lists as described above
 	 */
-	private List<List<String>> groupMapNames(Enumeration<String> mapNames) {
+	protected List<List<String>> groupMapNames(Enumeration<String> mapNames) {
 		List<List<String>> result = new ArrayList<List<String>>();
 		
 		List<String> eventFields = new ArrayList<String>();

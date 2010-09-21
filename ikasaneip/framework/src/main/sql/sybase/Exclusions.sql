@@ -67,10 +67,10 @@ CREATE TABLE ExcludedEvent
     FlowName           varchar(255)  NOT NULL,
     ExclusionTime      datetime      NOT NULL,
     EventId            varchar(255)  NOT NULL,
-    Priority        int  NULL,
-    Timestamp       datetime  NULL,
-    LastUpdatedTime       datetime  NULL,
-    LastUpdatedBy        varchar(255) NULL,
+    Priority           int  NULL,
+    Timestamp          datetime  NULL,
+    LastUpdatedTime    datetime  NULL,
+    LastUpdatedBy      varchar(255) NULL,
     Resolution         varchar(128) NULL,
     CONSTRAINT ExcludedEv_125240472
     PRIMARY KEY CLUSTERED (Id)

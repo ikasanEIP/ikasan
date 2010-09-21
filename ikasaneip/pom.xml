@@ -88,6 +88,9 @@
         <!-- filter -->
         <module>filter</module>
 
+        <!-- version compatibility glue -->
+        <module>compatibility</module>
+
         <!-- samples -->
         <module>samples/DemoFileDelivery</module>
         <module>samples/DemoTransformationRouting</module>
