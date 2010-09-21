@@ -41,7 +41,7 @@ CREATE TABLE  `Ikasan01`.`IkasanWiretap` (
   `ModuleName` varchar(128) NOT NULL,
   `FlowName` varchar(128) NOT NULL,
   `ComponentName` varchar(128) NOT NULL,
-  `EventId` varchar(64) NOT NULL,
+  `EventId` varchar(255) NOT NULL,
   `PayloadId` varchar(64) NOT NULL,
   `PayloadContent` longtext NOT NULL,
   `CreatedDateTime` datetime NOT NULL,
