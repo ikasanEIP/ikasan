@@ -41,7 +41,7 @@ CREATE TABLE  `Ikasan01`.`ErrorOccurrence` (
   `FlowName` varchar(128) DEFAULT NULL,
   `InitiatorName` varchar(128) DEFAULT NULL,
   `FlowElementName` varchar(128) DEFAULT NULL,
-  `EventId` varchar(128) DEFAULT NULL,
+  `EventId` varchar(255) DEFAULT NULL,
   `Url` varchar(512) DEFAULT NULL,
   `ActionTaken` varchar(128) DEFAULT NULL,
   `ErrorDetail` text NOT NULL,

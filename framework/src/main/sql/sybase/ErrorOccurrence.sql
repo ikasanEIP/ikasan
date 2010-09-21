@@ -95,7 +95,7 @@ CREATE TABLE ErrorOccurrence
     FlowName            VARCHAR(128) NULL,
     InitiatorName       VARCHAR(128) NULL,
     FlowElementName     VARCHAR(128) NULL,
-    EventId             VARCHAR(128) NULL,
+    EventId             VARCHAR(255) NULL,
     Url          		VARCHAR(512)  NULL,
     ActionTaken   		VARCHAR(128)  NULL,
     ErrorDetail         TEXT NOT NULL,
