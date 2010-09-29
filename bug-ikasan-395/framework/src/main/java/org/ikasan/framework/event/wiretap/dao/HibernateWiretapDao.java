@@ -76,7 +76,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     private static final String HOUSEKEEP_QUERY = "delete WiretapEvent w where w.expiry <= ?";
 
     /** Query for finding all wiretap events with the same payloadId */
-    private static final String WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID = "select w.id from WiretapEvent w where w.payloadId = ?";
+    private static final String WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID = "select w.id from WiretapEvent w where w.payloadIdHashCode = ?";
 
     /** Batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete WiretapEvent s where s.id in (:event_ids)";
@@ -132,7 +132,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
         // get the WiretapEvent
         WiretapEvent wiretapEvent = (WiretapEvent) getHibernateTemplate().get(WiretapEvent.class, id);
         // find any next or previous by payloadId
-        List<Long> relatedIds = getHibernateTemplate().find(WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID, wiretapEvent.getPayloadId());
+        List<Long> relatedIds = getHibernateTemplate().find(WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID, (wiretapEvent.getPayloadId()).hashCode());
         Collections.sort(relatedIds);
         int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getId());
         Long nextEvent = null;
@@ -188,11 +188,11 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 if (restrictionExists(eventId))
                 {
-                    criteria.add(Restrictions.eq("eventId", eventId));
+                    criteria.add(Restrictions.eq("eventIdHashCode", eventId.hashCode()));
                 }
                 if (restrictionExists(payloadId))
                 {
-                    criteria.add(Restrictions.eq("payloadId", payloadId));
+                    criteria.add(Restrictions.eq("payloadIdHashCode", payloadId.hashCode()));
                 }
                 if (restrictionExists(payloadContent))
                 {
@@ -278,11 +278,11 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 }
                 if (restrictionExists(eventId))
                 {
-                    criteria.add(Restrictions.eq("eventId", eventId));
+                    criteria.add(Restrictions.eq("eventIdHashCode", eventId.hashCode()));
                 }
                 if (restrictionExists(payloadId))
                 {
-                    criteria.add(Restrictions.eq("payloadId", payloadId));
+                    criteria.add(Restrictions.eq("payloadIdHashCode", payloadId.hashCode()));
                 }
                 if (restrictionExists(payloadContent))
                 {

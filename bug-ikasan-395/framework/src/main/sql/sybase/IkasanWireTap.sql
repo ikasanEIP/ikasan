@@ -53,8 +53,10 @@ CREATE TABLE IkasanWiretap
     ModuleName          VARCHAR(128)  NOT NULL,
     FlowName            VARCHAR(128)  NOT NULL,
     ComponentName       VARCHAR(128)  NOT NULL,
-    EventId             VARCHAR(255)  NOT NULL,
-    PayloadId           VARCHAR(255)  NOT NULL,
+    EventIdHashCode     NUMERIC       NULL,
+    EventId             TEXT          NOT NULL,
+    PayloadIdHashCode   NUMERIC       NULL,
+    PayloadId           TEXT          NOT NULL,
     PayloadContent      TEXT          NOT NULL,
     CreatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
     Expiry              DATETIME      NOT NULL
@@ -63,7 +65,8 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
 CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)
-CREATE NONCLUSTERED INDEX IkasanWiretap02i ON IkasanWiretap(PayloadId)
+CREATE NONCLUSTERED INDEX IkasanWiretap02i ON IkasanWiretap(PayloadIdHashCode)
+CREATE NONCLUSTERED INDEX IkasanWiretap03i ON IkasanWiretap(EventIdHashCode)
 
 IF OBJECT_ID('IkasanWiretap') IS NOT NULL
     PRINT '<<< CREATED TABLE IkasanWiretap >>>'

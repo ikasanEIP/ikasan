@@ -67,8 +67,12 @@
                   column="FlowName"        not-null="true" />
         <property name="componentName"     type="java.lang.String"
                   column="ComponentName"   not-null="true" />
+        <property name="eventIdHashCode"   type="java.lang.Integer"
+                  column="EventIdHashCode" not-null="true" />
         <property name="eventId"           type="java.lang.String"
                   column="EventId"         not-null="true" />
+        <property name="payloadIdHashCode" type="java.lang.Integer"
+                  column="PayloadIdHashCode" not-null="true" />
         <property name="payloadId"         type="java.lang.String"
                   column="PayloadId"       not-null="true" />
         <property name="payloadContent"    type="java.lang.String"

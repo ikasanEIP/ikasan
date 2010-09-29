@@ -67,8 +67,14 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /** Event id */
     protected String eventId;
 
+    /** Event id hash code */
+    protected Integer eventIdHashCode;
+
     /** Payload id */
     protected String payloadId;
+
+    /** Payload id hash code */
+    protected Integer payloadIdHashCode;
 
     /** Created date/time */
     protected Date created;
@@ -99,7 +105,9 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
         this.flowName = flowName;
         this.componentName = componentName;
         this.eventId = eventId;
+        this.eventIdHashCode = Integer.valueOf(eventId.hashCode());
         this.payloadId = payloadId;
+        this.payloadIdHashCode = Integer.valueOf(payloadId.hashCode());
         this.expiry = expiry;
         Date now = new Date();
         this.created = now;
@@ -109,6 +117,26 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     protected WiretapEventHeader()
     {
         // Empty constructor
+    }
+
+    protected Integer getEventIdHashCode()
+    {
+        return this.eventIdHashCode;
+    }
+
+    protected void setEventIdHashCode(Integer eventIdHashCode)
+    {
+        this.eventIdHashCode = eventIdHashCode;
+    }
+
+    protected Integer getPayloadIdHashCode()
+    {
+        return this.payloadIdHashCode;
+    }
+
+    protected void setPayloadIdHashCode(Integer payloadIdHashCode)
+    {
+        this.payloadIdHashCode = payloadIdHashCode;
     }
 
     /**
