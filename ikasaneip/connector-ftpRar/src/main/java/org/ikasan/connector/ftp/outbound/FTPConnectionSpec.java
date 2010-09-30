@@ -59,8 +59,8 @@ public class FTPConnectionSpec extends EISConnectionSpec
     /** The Remote Host */
     private String remoteHostname = null;
 
-    /** The maximum amount of retries - default none */
-    private Integer maxRetryAttempts = 0;
+    /** The maximum amount of retries - defaults to 1 */
+    private Integer maxRetryAttempts = 1;
 
     /** The Password */
     private String password = null;
