@@ -60,8 +60,8 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     /** The known hosts file name (fully qualified path) */
     private String knownHostsFilename = null;
 
-    /** The maximum amount of retries - default 0 */
-    private Integer maxRetryAttempts = 0;
+    /** The maximum amount of retries - defaults to 1 */
+    private Integer maxRetryAttempts = 1;
 
     /** The Port (default 22) */
     private Integer remotePort = 22;
