@@ -49,7 +49,7 @@
     <groupId>org.ikasan</groupId>
   <artifactId>ikasan-test</artifactId>
   <packaging>jar</packaging>
-    <version>0.7.11-SNAPSHOT</version>
+    <version>0.7.11</version>
     <name>Ikasan Test Harness</name>
     <url>http://www.ikasan.org</url>
     <organization>
@@ -124,8 +124,8 @@
         3.0</name> <url>http://www.gnu.org/licenses/LICENSE-3.0.txt</url>
         <distribution>repo</distribution> </license> </licenses>
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</connection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</url>
     </scm>
 
   <build>
@@ -206,26 +206,26 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.7.11-SNAPSHOT</version>
+            <version>0.7.11</version>
         </dependency>
 
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-            <version>0.7.11-SNAPSHOT</version>
+            <version>0.7.11</version>
     </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter</artifactId>
-            <version>0.7.11-SNAPSHOT</version>
+            <version>0.7.11</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter-framework-integration</artifactId>
-            <version>0.7.11-SNAPSHOT</version>
+            <version>0.7.11</version>
             <scope>provided</scope>
         </dependency>
 
