@@ -41,10 +41,7 @@
 select @authorityUserId:= Id from Authorities where Authority = 'ROLE_USER';
 select @authorityAdminId:= Id from Authorities where Authority = 'ROLE_ADMIN';
 
-
 select @username:=<username here>;
-
-
 
 INSERT INTO Users ( username, Password, Enabled )
          VALUES ( @username, <sha1 hashed password here>, 1 ) ;
