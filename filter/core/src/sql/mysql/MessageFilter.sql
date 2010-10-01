@@ -42,10 +42,10 @@
 -- 
 
 -- Drop aleady existing table if any
-DROP TABLE IF ESISTS `ikasan01`.`messagefilter`;
+DROP TABLE IF ESISTS `ikasan01`.`MessageFilter`;
 
 -- Create new table
-CREATE TABLE `ikasan01`.`messagefilter`
+CREATE TABLE `ikasan01`.`MessageFilter`
 (
     Criteria        binint(18)    NOT NULL,
     ClientId        varchar(255)  NOT NULL,

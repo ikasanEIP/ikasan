@@ -33,8 +33,8 @@
 -- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
-DROP TABLE IF EXISTS `ikasan01`.`initiatorstartupcontrol`;
-CREATE TABLE  `ikasan01`.`initiatorstartupcontrol` (
+DROP TABLE IF EXISTS `ikasan01`.`InitiatorStartupControl`;
+CREATE TABLE  `ikasan01`.`InitiatorStartupControl` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(255) NOT NULL,
   `InitiatorName` varchar(255) NOT NULL,
