@@ -1,3 +1,26 @@
+Release Notes - Ikasan - Version 0.7.11
+
+** Sub-task
+    * [IKASAN-485] - Implement for 0.7.x
+
+** Bug
+    * [IKASAN-446] - Demo apps fail due to missing filter libraries at runtime (0.7.10 only)
+    * [IKASAN-454] - connector-sftp creates a log file when tests are run
+    * [IKASAN-458] - Cannot create Wiretap for demoTransformationRouting app (possibly others)
+    * [IKASAN-461] - Default IkasanExceptionAction should be ROLLBACK_RETRY indefinitely for exceptions from EventDriveInitiator
+    * [IKASAN-483] - Split platform and web-console code into JAR and WAR components
+    * [IKASAN-488] - XSLTransformer had incorrectly configured logger
+    * [IKASAN-489] - Expectation execution position text is being incorrectly formatted when reporting the expectation executed.
+
+** Improvement
+
+    * [IKASAN-455] - Add milliseconds from epoch to Date utility method
+    * [IKASAN-467] - Move test harness out of ikasan tools and into its own ikasan-test project
+
+** Task
+
+    * [IKASAN-476] - Release 0.7.11
+
 Release Notes - Ikasan - Version 0.7.10
 
 ** Bug
