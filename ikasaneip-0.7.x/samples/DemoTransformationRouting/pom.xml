@@ -31,7 +31,7 @@
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoTransformationRouting-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.7.11</version>
+  <version>0.7.12-SNAPSHOT</version>
 
 	<name>demoTransformationRouting :: Parent Project</name>
   <organization>
@@ -125,8 +125,8 @@
      </modules>
 
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</connection>
-        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</url>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
     </scm>
 
   <distributionManagement>

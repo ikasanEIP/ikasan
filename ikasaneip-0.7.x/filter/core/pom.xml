@@ -35,7 +35,7 @@
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter</artifactId>
   <packaging>jar</packaging>
-  <version>0.7.11</version>
+  <version>0.7.12-SNAPSHOT</version>
   <name>ikasan :: filter</name>
   
   <organization>
@@ -117,8 +117,8 @@
     </licenses>
 
   <scm>
-    <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</connection>
-    <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</url>
+    <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasan-0.7.x</connection>
+    <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
   </scm>
 
     <build>

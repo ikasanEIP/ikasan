@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-components</artifactId>
-	<version>0.7.11</version>
+	<version>0.7.12-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: components : jar</name>
 
@@ -86,8 +86,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</connection>
-        <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.7.11</url>
+        <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+        <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
     </scm>
 
 
@@ -109,12 +109,12 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-framework</artifactId>
-			<version>0.7.11</version>
+			<version>0.7.12-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-common</artifactId>
-			<version>0.7.11</version>
+			<version>0.7.12-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

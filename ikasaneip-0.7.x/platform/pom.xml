@@ -43,7 +43,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>platform</artifactId>
-    <version>0.7.11</version>
+    <version>0.7.12-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration Platform</name>
 
