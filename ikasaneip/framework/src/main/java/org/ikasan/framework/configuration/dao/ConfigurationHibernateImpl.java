@@ -45,6 +45,7 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.framework.configuration.model.Configuration;
+import org.ikasan.framework.configuration.model.ConfigurationParameter;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
@@ -78,6 +79,27 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public void save(Configuration configuration)
     {
+        // work-around for Sybase issue where it converts empty strings to single spaces.
+        // See http://open.jira.com/browse/IKASAN-520
+        // Where we would have persisted "" change this to a null to stop Sybase
+        // inserting a single space character.
+        if("".equals(configuration.getDescription()))
+        {
+            configuration.setDescription(null);
+        }
+        for(ConfigurationParameter configurationParameter:configuration.getConfigurationParameters())
+        {
+            if("".equals(configurationParameter.getValue()))
+            {
+                configurationParameter.setValue(null);
+            }
+
+            if("".equals(configurationParameter.getDescription()))
+            {
+                configurationParameter.setDescription(null);
+            }
+        }
+        
         getHibernateTemplate().saveOrUpdate(configuration);
     }
 
