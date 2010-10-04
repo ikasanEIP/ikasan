@@ -102,8 +102,38 @@ public class ConfigurationHibernateImplTest
         configurationDao.save(configuration);
         
         // test execution
-        Assert.assertEquals("Compare updated configuraionParameter with saved", "new value", 
+        Assert.assertEquals("Compare updated configurationParameter with saved", "new value", 
                 (configurationDao.findById("configurationId")).getConfigurationParameters().get(0).getValue());
+    }
+
+    /**
+     * Test specific Sybase work-around for single space conversion issue
+     * See http://open.jira.com/browse/IKASAN-520
+     * Specifically test for the configuration description, 
+     * configurationParameter value and configurationParameter description.
+     * No other aspects of the model are nullable.
+     */
+    @Test
+    @DirtiesContext
+    public void configuration_save_updated_configurationParameter_where_empty_string_is_reverted_to_null()
+    {
+        Configuration configuration = this.configurationDao.findById("configurationId");
+        configuration.setDescription("");
+        configuration.getConfigurationParameters().get(0).setValue("");
+        configuration.getConfigurationParameters().get(0).setDescription("");
+        configurationDao.save(configuration);
+        
+        // test for null description
+        Assert.assertNull("Ensure empty configuration description String was converted to null",  
+                (configurationDao.findById("configurationId")).getDescription());
+
+        // test for null parameter value
+        Assert.assertNull("Ensure empty configurationParameter value String was converted to null",  
+                (configurationDao.findById("configurationId")).getConfigurationParameters().get(0).getValue());
+
+        // test for null parameter description
+        Assert.assertNull("Ensure empty configurationParameter description String was converted to null",  
+                (configurationDao.findById("configurationId")).getConfigurationParameters().get(0).getDescription());
     }
 
     /**

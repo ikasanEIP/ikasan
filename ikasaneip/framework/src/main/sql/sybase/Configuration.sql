@@ -53,7 +53,7 @@ END
 CREATE TABLE Configuration
 (
     ConfigurationId         VARCHAR(256) NOT NULL,
-    Description             VARCHAR(256) NULL
+    Description             VARCHAR(256) DEFAULT NULL NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
