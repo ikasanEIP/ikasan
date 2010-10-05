@@ -46,36 +46,46 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
 
 /**
- * A {@link Transformer} implementation that uncompresses  data in GZIP format
+ * A {@link Transformer} implementation that uncompresses  data in GZIP format. Not that
+ * this implementation does not support character encoding.
  * 
  * @author Ikasan Development Team
  *
  */
 public class UncompressDataTransformer implements Transformer
 {
+    /** Logger instance */
+    private final static Logger logger = Logger.getLogger(UncompressDataTransformer.class);
+
     /** Constant representing end-of-file is reached. */
-    private static final int END_OF_FILE = -1;
+    protected static final int END_OF_FILE = -1;
 
     /* (non-Javadoc)
      * @see org.ikasan.framework.component.transformation.Transformer#onEvent(org.ikasan.framework.component.Event)
      */
     public void onEvent(Event event) throws TransformationException
     {
+        ByteArrayOutputStream uncompressedContent = null;
+        GZIPInputStream gzipReader = null;
+        InputStream compressedContent = null;
+        int bytesRead = 0;
+
         for (Payload payload: event.getPayloads())
         {
-            ByteArrayOutputStream uncompressedContent = null;
-            GZIPInputStream gzipReader = null;
-            InputStream compressedContent = new ByteArrayInputStream(payload.getContent());
+            uncompressedContent = null;
+            gzipReader = null;
+            compressedContent = new ByteArrayInputStream(payload.getContent());
             try
             {
                 // Read the compressed file
                 gzipReader = new GZIPInputStream(compressedContent);
                 uncompressedContent = new ByteArrayOutputStream();
-                int bytesRead = 0;
+                bytesRead = 0;
                 while ((bytesRead = gzipReader.read())!= END_OF_FILE)
                 {
                     // Write it to output stream
@@ -104,6 +114,7 @@ public class UncompressDataTransformer implements Transformer
                 }
                 catch (IOException e)
                 {
+                    logger.warn("Could not close streams properly.");
                     throw new TransformationException(e);
                 }
             }
