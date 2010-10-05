@@ -1,7 +1,7 @@
-/*
+ /* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -58,83 +58,110 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * This test class supports the <code>WiretapEvent</code> class.
+ * This test class supports the <code>WiretapEventHeader</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class WiretapEventTest
+public class WiretapEventHeaderTest
 {
-	
 	// reference to the instance under test
-	private WiretapEvent wiretapEvent;	
+	private WiretapEventHeader wiretapEventHeader;	
 	
-	// initialize the values for the required fields 
+	// initialize the values for required fields 
 	final String moduleName = "moduleName";
     final String flowName = "flowName";
     final String componentName = "componentName";
     final String eventId = "eventId";
-    final String payloadId = "payloadId";     
-    final String payloadContent = "payloadContent";
+    final String payloadId = "payloadId";        
     
     // variables to be initialized in the setUp() 
     long currentTimeInMillis;  
     Date expiry;  
+    	
     
-    
-    /**
-     * setUp() runs before each test
-     */
-    @Before
-    public void setUp()
-    {
-    	// set the expiry date
+	/**
+	 * setUp() runs before each test 	 
+	 */
+	@Before
+	public void setup()
+	{
+		// set the expiry date
 		currentTimeInMillis = System.currentTimeMillis();
 		expiry = new Date(currentTimeInMillis + 10000);
 		
 	    // create an instance to be tested
-	    wiretapEvent = new WiretapEvent(moduleName, flowName, componentName, eventId, payloadId,payloadContent, expiry);	    
-    }
-    
-    /**
+	    wiretapEventHeader = new WiretapEventHeader(moduleName, flowName, componentName, eventId, payloadId, expiry);	    
+	}
+	
+	/**
 	 * tearDown() runs after each test
-	 */
-    @After
+	 */	
+	@After
 	public void tearDown()
 	{
 		// reset the members after each test
 		currentTimeInMillis = 0;
 		expiry = null;		
-	}    
-
-    /**
-     * Test successful wiretap save with an event containing a single payload.
-     */
-    @Test
-    public void test_createWiretapEvent()
-    {        
-        // create the instance to be tested
-        WiretapEvent wiretapEvent = new WiretapEvent(moduleName, flowName, componentName, eventId, payloadId, new String(payloadContent.getBytes()), expiry);
-         
-        assertEquals(wiretapEvent.getModuleName(), this.moduleName);
-        assertEquals(wiretapEvent.getFlowName(), this.flowName);
-        assertEquals(wiretapEvent.getComponentName(), this.componentName);
-        assertEquals(wiretapEvent.getEventId(), this.eventId);
-        assertEquals(wiretapEvent.getPayloadId(), this.payloadId);
-        assertEquals(new String(wiretapEvent.getPayloadContent()), this.payloadContent);
-        assertTrue(wiretapEvent.getCreated().getTime() < wiretapEvent.getExpiry().getTime());
-    }
-    
-    /**
-	 * Tests WiretapEventHeader objects for Serializable interface implementation.
-	 * This round-trip test makes sure both the original and the serialized objects are equal. 
+	}
+	
+	/**
+	 * Tests the creation of a WiretapEventHeader instance 	  
+	 */	
+	@Test
+	public void test_createWiretapEventHeader()
+	{  
+		// values for the optional member variables
+		final Long nextPayloadId = new Long(4);
+		final Long previousPayloadId = new Long(2);
+		
+		// set the optional member variables	    
+	    wiretapEventHeader.setNextByPayload(nextPayloadId);
+	    wiretapEventHeader.setPreviousByPayload(previousPayloadId);
+		
+        assertEquals(wiretapEventHeader.getModuleName(), this.moduleName);
+        assertEquals(wiretapEventHeader.getFlowName(), this.flowName);
+        assertEquals(wiretapEventHeader.getComponentName(), this.componentName);
+        assertEquals(wiretapEventHeader.getEventId(), this.eventId);
+        assertEquals(wiretapEventHeader.getPayloadId(), this.payloadId);        
+		assertEquals(wiretapEventHeader.getExpiry(), new Date(this.currentTimeInMillis + 10000));
+		assertEquals(wiretapEventHeader.getNextByPayload(), nextPayloadId);
+		assertEquals(wiretapEventHeader.getPreviousByPayload(), previousPayloadId);
+		assertTrue(wiretapEventHeader.getCreated().getTime() < wiretapEventHeader.getExpiry().getTime());		
+	}
+	
+	/**
+	 * Tests WiretapeventHeader objects for the Comparable interface implementation	 
 	 */
 	@Test
-	public void test_serializeWiretapEvent() throws IOException, ClassNotFoundException
+	public void test_compareWiretapEventHeader()
+	{
+		// create the instances to be tested 
+		WiretapEventHeader wiretapEventheader1 = new WiretapEventHeader();
+		WiretapEventHeader wiretapEventheader2 = new WiretapEventHeader();
+		WiretapEventHeader wiretapEventheader3 = new WiretapEventHeader();
+		
+		// set the Id of each instances
+		wiretapEventheader1.setId(new Long(1));
+		wiretapEventheader2.setId(new Long(2));
+		wiretapEventheader3.setId(new Long(1));
+		
+		// test for the comparable implementation 
+		assertTrue(wiretapEventheader1.compareTo(wiretapEventheader2) < 0);
+		assertTrue(wiretapEventheader2.compareTo(wiretapEventheader1) > 0);
+		assertTrue(wiretapEventheader1.compareTo(wiretapEventheader3) == 0);		
+	}
+	
+	/**
+	 * Tests WiretapEventHeader objects for Serializable interface implementation.
+	 * This round-trip test make sure both the original and the serialized objects are equal. 
+	 */
+	@Test
+	public void test_serializeWiretapEventHeader() throws IOException, ClassNotFoundException
 	{
 		// serialize
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(wiretapEvent);
+		oos.writeObject(wiretapEventHeader);
 		oos.close();
 		
 		// deserialize
@@ -142,25 +169,24 @@ public class WiretapEventTest
 		InputStream is = new ByteArrayInputStream(inputBytes);
 		ObjectInputStream ois = new ObjectInputStream(is);
 		Object obj = ois.readObject();
-		WiretapEvent copyObj = (WiretapEvent) obj;
+		WiretapEventHeader copyObj = (WiretapEventHeader) obj;
 		
-		// test the deserialized object with the original 
+		// compare the deserialized object with the original 
 		assertEquals(copyObj.getModuleName(), this.moduleName);
         assertEquals(copyObj.getFlowName(), this.flowName);
         assertEquals(copyObj.getComponentName(), this.componentName);
         assertEquals(copyObj.getEventId(), this.eventId);
         assertEquals(copyObj.getPayloadId(), this.payloadId);
-        assertEquals(copyObj.getPayloadContent(), this.payloadContent);
 		assertEquals(copyObj.getExpiry(), new Date(this.currentTimeInMillis + 10000));		
 	}	
-    
-    /**
+	
+	/**
      * The suite is this class
      * 
      * @return JUnit Test class
      */
     public static junit.framework.Test suite()
     {
-        return new JUnit4TestAdapter(WiretapEventTest.class);
-    }
+        return new JUnit4TestAdapter(WiretapEventHeaderTest.class);
+    }	
 }
