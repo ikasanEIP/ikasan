@@ -44,7 +44,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.ikasan.common.Payload;
@@ -74,13 +73,13 @@ public class UncompressDataTransformerTest
      * 
      * @throws IOException thrown if test data file could not be read
      */
-    @Test public void uncompress_GZIP_into_orignal_single_file() throws IOException
+    @Test public void uncompress_GZIP_into_original_single_file() throws IOException
     {
         // Setup test objects
         Payload payload = new DefaultPayload("gzipFile", this.loadFile("data/TEST.TXT.gz"));
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
-        Event event = new Event("gzipFileEvent", 4, new Date(), payloads);
+        Event event = new Event("unitTest", "uncompressTestCase", "gzipFileEvent", payloads);
 
         // Run the test
         this.transformerToTest.onEvent(event);
@@ -99,10 +98,34 @@ public class UncompressDataTransformerTest
         Payload payload = new DefaultPayload("gzipFile", "This is not a GZIP format file".getBytes());
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
-        Event event = new Event("gzipFileEvent", 4, new Date(), payloads);
+        Event event = new Event("unitTest", "failureTestCase", "gzipFileEvent", payloads);
 
         this.transformerToTest.onEvent(event);
         Assert.fail();
+    }
+
+    /**
+     * Incoming event contains multiple payloads each is a GZIP file. The transformer
+     * will uncompress each of the payloads
+     * 
+     * @throws IOException thrown if test data file could not be read
+     */
+    @Test public void uncompress_multiple_files() throws IOException
+    {
+        // Setup test objects
+        Payload payload_1 = new DefaultPayload("gzipFile_1", this.loadFile("data/TEST.TXT.gz"));
+        Payload payload_2 = new DefaultPayload("gzipFile_2", this.loadFile("data/TEST.TXT.gz"));
+        List<Payload> payloads = new ArrayList<Payload>();
+        payloads.add(payload_1);
+        payloads.add(payload_2);
+        Event event = new Event("unitTest", "multiplePayloadsTestCase", "gzipFileEvent", payloads);
+
+        // Run the test
+        this.transformerToTest.onEvent(event);
+
+        // Making assertions
+        Assert.assertEquals(new String(this.loadFile("data/TEST.TXT")), new String(event.getPayloads().get(0).getContent()));
+        Assert.assertEquals(new String(this.loadFile("data/TEST.TXT")), new String(event.getPayloads().get(1).getContent()));
     }
 
     /**
@@ -112,11 +135,11 @@ public class UncompressDataTransformerTest
      * @return byte array representation of loaded file
      * @throws IOException Thrown if file could not be read.
      */
-    private byte[] loadFile(String fileName) throws IOException
+    private byte[] loadFile(final String fileName) throws IOException
     {
         InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(fileName);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        for (int c = resourceAsStream.read(); c != -1; c = resourceAsStream.read())
+        for (int c = resourceAsStream.read(); c != UncompressDataTransformer.END_OF_FILE; c = resourceAsStream.read())
         {
             // Write each byte into the output stream.
             byteArrayOutputStream.write(c);
