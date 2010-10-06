@@ -1,40 +1,40 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * =============================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
@@ -81,7 +81,7 @@ import org.apache.log4j.Logger;
  * </pre>
  *
  * WARNING:  This is mainly used by stylesheets, take care in removing any code!
- * 
+ *
  * TODO:  Split out the main method into its own client
  *
  * @author Ikasan Development Team
@@ -102,9 +102,9 @@ public class DateUtils
      * Creates a new instance of <code>DateUtils</code>
      * with the specified date and time as <code>java.util.Date</code>
      * in the given time zone and the default trace level.
-     * 
-     * @param date 
-     * @param timeZone 
+     *
+     * @param date
+     * @param timeZone
      */
     public DateUtils(Date date, TimeZone timeZone)
     {
@@ -116,9 +116,9 @@ public class DateUtils
      * Creates a new instance of <code>DateUtils</code>
      * with the specified date and time as <code>java.util.Date</code>
      * in the given time zone and the default trace level.
-     * 
-     * @param date 
-     * @param timeZoneId 
+     *
+     * @param date
+     * @param timeZoneId
      */
     public DateUtils(Date date, String timeZoneId)
     {
@@ -128,8 +128,8 @@ public class DateUtils
     /**
      * Creates a new instance of <code>DateUtils</code>
      * with the specified date and time as <code>java.util.Date</code>.
-     * 
-     * @param date 
+     *
+     * @param date
      */
     public DateUtils(Date date)
     {
@@ -140,9 +140,9 @@ public class DateUtils
      * Creates a new instance of <code>DateUtils</code>
      * with the specified date and time (milliseconds)
      * in the given time zone and the default trace level.
-     * 
-     * @param dateMillis 
-     * @param timeZone 
+     *
+     * @param dateMillis
+     * @param timeZone
      */
     public DateUtils(long dateMillis, TimeZone timeZone)
     {
@@ -154,9 +154,9 @@ public class DateUtils
      * Creates a new instance of <code>DateUtils</code>
      * with the specified date and time (milliseconds)
      * in the given time zone and the default trace level.
-     * 
-     * @param dateMillis 
-     * @param timeZoneId 
+     *
+     * @param dateMillis
+     * @param timeZoneId
      */
     public DateUtils(long dateMillis, String timeZoneId)
     {
@@ -166,8 +166,8 @@ public class DateUtils
     /**
      * Creates a new instance of <code>DateUtils</code>
      * with date and time specified in milliseconds.
-     * 
-     * @param dateMillis 
+     *
+     * @param dateMillis
      */
     public DateUtils(long dateMillis)
     {
@@ -186,7 +186,7 @@ public class DateUtils
 
     /**
      * Returns the date and time as a <code>java.util.Calendar</code> object.
-     * 
+     *
      * @return Time in calendar
      */
     public Calendar getTimeInCalendar()
@@ -197,8 +197,8 @@ public class DateUtils
     /**
      * Sets this calendar's current time
      * to the given <code>java.util.Date</code> object.
-     * 
-     * @param date 
+     *
+     * @param date
      */
     public void setTimeInDate(Date date)
     {
@@ -207,7 +207,7 @@ public class DateUtils
 
     /**
      * Returns the date and time as a <code>java.util.Date</code> object.
-     * 
+     *
      * @return time in date
      */
     public Date getTimeInDate()
@@ -217,7 +217,7 @@ public class DateUtils
 
     /**
      * Sets this calendar's current time to the given long value.
-     * @param dateMillis 
+     * @param dateMillis
      */
     public void setTimeInMillis(long dateMillis)
     {
@@ -226,7 +226,7 @@ public class DateUtils
 
     /**
      * Returns the date and time in milliseconds.
-     * 
+     *
      * @return the date and time in milliseconds.
      */
     public long getTimeInMillis()
@@ -258,7 +258,7 @@ public class DateUtils
      * @param format   is the date time format.
      * @param timeZone is the <code>TimeZone</code> instance
      *                    holding a new time zone.
-     * @return the date and time in the given format                    
+     * @return the date and time in the given format
      */
     public String getTimeInFormatString(String format, TimeZone timeZone)
     {
@@ -272,7 +272,7 @@ public class DateUtils
      *
      * @param format     is the date time format.
      * @param timeZoneId is the new time zone ID.
-     * @return the date and time in the given format 
+     * @return the date and time in the given format
      */
     public String getTimeInFormatString(String format, String timeZoneId)
     {
@@ -285,7 +285,7 @@ public class DateUtils
      * and returns the formatted string.
      *
      * @param format is the date time format.
-     * @return the date and time in the given format 
+     * @return the date and time in the given format
      */
     public String getTimeInFormatString(String format)
     {
@@ -310,8 +310,8 @@ public class DateUtils
 
     /**
      * Returns only date part in milliseconds.
-     * 
-     * @return only date part in milliseconds. 
+     *
+     * @return only date part in milliseconds.
      */
     public long getOnlyDateInMillis()
     {
@@ -383,7 +383,7 @@ public class DateUtils
 
     /**
      * Returns the date to the next date with its time set to midnight.
-     * 
+     *
      * @return the date to the next date with its time set to midnight.
      */
     public Date getNextDayMidnightInDate()
@@ -397,7 +397,7 @@ public class DateUtils
 
     /**
      * Returns the date to the next date with its time set to midnight.
-     * 
+     *
      * @return the date to the next date with its time set to midnight.
      */
     public long getNextDayMidnightInMillis()
@@ -407,8 +407,8 @@ public class DateUtils
 
     /**
      * Compares today's date to the specified date for equality.
-     * 
-     * @param targetDate 
+     *
+     * @param targetDate
      * @return true if date is today
      */
     public static boolean isToday(Date targetDate)
@@ -434,8 +434,8 @@ public class DateUtils
 
     /**
      * Compares today's date to the specified date.
-     * 
-     * @param targetDate 
+     *
+     * @param targetDate
      * @return true if data is today
      */
     public static boolean isToday(long targetDate)
@@ -445,9 +445,9 @@ public class DateUtils
 
     /**
      * Compares specified date to see if it is less than today's date.
-     * 
-     * @param targetDate 
-     * @return true if date is less than today 
+     *
+     * @param targetDate
+     * @return true if date is less than today
      */
     public static boolean isLessThanToday(Date targetDate)
     {
@@ -472,9 +472,9 @@ public class DateUtils
 
     /**
      * Compares specified date to see if it is less than today's date.
-     * 
-     * @param targetDate 
-     * @return true if date is less than today 
+     *
+     * @param targetDate
+     * @return true if date is less than today
      */
     public static boolean isLessThanToday(long targetDate)
     {
@@ -483,8 +483,8 @@ public class DateUtils
 
     /**
      * Compares specified date to see if it is greater than today's date.
-     * 
-     * @param targetDate 
+     *
+     * @param targetDate
      * @return true if date is greater than today
      */
     public static boolean isGreaterThanToday(Date targetDate)
@@ -510,8 +510,8 @@ public class DateUtils
 
     /**
      * Compares specified date to see if it is greater than today's date.
-     * 
-     * @param targetDate 
+     *
+     * @param targetDate
      * @return true if date is greater than today
      */
     public static boolean isGreaterThanToday(long targetDate)
@@ -530,7 +530,7 @@ public class DateUtils
      * @param howmany  is the amount of units to add/subtract
      *                    to/from the current date time.
      * @return the added/subtracted date string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String add(String dateTime, String format,
                              int field, int howmany)
@@ -563,7 +563,7 @@ public class DateUtils
      * @param howmany  is the days to add/subtract to/from
      *                    the current date time.
      * @return the added/subtracted date string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String addDaysToAny(String dateTime, String format,
                                       int howmany)
@@ -580,7 +580,7 @@ public class DateUtils
      * @param howmany  is the months to add/subtract to/from
      *                    the current date time.
      * @return the added/subtracted date string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String addMonthsToAny(String dateTime, String format,
                                         int howmany)
@@ -597,7 +597,7 @@ public class DateUtils
      * @param howmany  is the years to add/subtract to/from
      *                    the current date time.
      * @return the added/subtracted date string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String addYearsToAny(String dateTime, String format,
                                        int howmany)
@@ -700,7 +700,7 @@ public class DateUtils
      * into the specified format in the given time zone.
      *
      * @param newFormat is the new format.
-     * @param newTimeZone 
+     * @param newTimeZone
      * @return the newly formatted string.
      */
     public static String nowToAny(String newFormat, TimeZone newTimeZone)
@@ -741,7 +741,7 @@ public class DateUtils
      * @param dateTime     is the current date and time as string.
      * @param currFormat   is the current format.
      * @return the newly created Date object.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static Date anyToDate(final String dateTime, final String currFormat)
         throws ParseException
@@ -754,6 +754,25 @@ public class DateUtils
 
     /**
      * Parses the specified date using the given custom format then
+     * instantiates and returns the associated Date object.
+     *
+     * @param dateTime     is the current date and time as long.
+     * @param currFormat   is the current format.
+     * @return the newly created Date object.
+     * @throws ParseException
+     */
+    public static Date anyToDate(final long dateTime, final String currFormat)
+        throws ParseException
+    {
+        // Parse the current date and time using the current format
+        SimpleDateFormat dateFormat = new SimpleDateFormat(currFormat);
+        Date date = new Date(dateTime);
+        String formattedDateString = dateFormat.format(date);
+        return dateFormat.parse(formattedDateString);
+    }
+
+    /**
+     * Parses the specified date using the given custom format then
      * formats the parsed date using the second given custom format.
      *
      * @param dateTime     is the current date and time as string.
@@ -762,7 +781,7 @@ public class DateUtils
      * @param newFormat    is the new format.
      * @param newTimeZone  is the new time zone.
      * @return the newly formatted string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String anyToAny(String dateTime,
                                   String currFormat, TimeZone currTimeZone,
@@ -786,7 +805,7 @@ public class DateUtils
      * @param newFormat      is the new format.
      * @param newTimeZoneId  is the new time zone ID.
      * @return the newly formatted string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String anyToAny(String dateTime,
                                   String currFormat, String currTimeZoneId,
@@ -806,7 +825,7 @@ public class DateUtils
      * @param newFormat    is the new format.
      * @param newTimeZone  is the new time zone.
      * @return the newly formatted string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String anyToAny(String dateTime, String currFormat,
                                   String newFormat, TimeZone newTimeZone)
@@ -825,7 +844,7 @@ public class DateUtils
      * @param newFormat     is the new format.
      * @param newTimeZoneId is the new time zone ID.
      * @return the newly formatted string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String anyToAny(String dateTime, String currFormat,
                                   String newFormat, String newTimeZoneId)
@@ -843,7 +862,7 @@ public class DateUtils
      * @param currFormat   is the current format.
      * @param newFormat    is the new format.
      * @return the newly formatted string.
-     * @throws ParseException 
+     * @throws ParseException
      */
     public static String anyToAny(String dateTime, String currFormat,
                                   String newFormat)
@@ -859,8 +878,8 @@ public class DateUtils
     /**
      * Runs this class for testing in a live environment (sometimes Unit testing
      * does not cover the variations of date/time on a server).
-     * 
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String args[])
     {
@@ -1212,10 +1231,10 @@ public class DateUtils
      * finally returns an answer as string. It returns the default value
      * if the answer is empty provided the default value is not null.
      * This is used in main() method.
-     * 
-     * @param str 
-     * @param question 
-     * @return String from question 
+     *
+     * @param str
+     * @param question
+     * @return String from question
      */
     protected static String getString(String str, String question)
     {
@@ -1228,10 +1247,10 @@ public class DateUtils
      * finally returns an answer as integer. It returns the default value
      * if the answer is empty provided the default value is not null.
      * This is used in main() method.
-     * 
-     * @param number 
-     * @param question 
-     * @return int from question 
+     *
+     * @param number
+     * @param question
+     * @return int from question
      */
     protected static int getInteger(int number, String question)
     {
@@ -1253,10 +1272,10 @@ public class DateUtils
      * finally returns an answer as long. It returns the default value
      * if the answer is empty provided the default value is not null.
      * This is used in main() method.
-     * 
-     * @param number 
-     * @param question 
-     * @return long from question 
+     *
+     * @param number
+     * @param question
+     * @return long from question
      */
     protected static long getLong(long number, String question)
     {
@@ -1276,10 +1295,10 @@ public class DateUtils
      * finally returns an answer. It returns the default value
      * if the answer is empty provided the default value is not null.
      * This is used in main() method.
-     * 
-     * @param question 
-     * @param defValue 
-     * @return answer 
+     *
+     * @param question
+     * @param defValue
+     * @return answer
      */
     private static String askQuestion(String question, String defValue)
     {
@@ -1309,9 +1328,9 @@ public class DateUtils
      * Asks a simple question, waits for response and
      * finally returns an answer. It keeps asking until it gets something.
      * This is used in main() method.
-     * 
-     * @param question 
-     * @return answer 
+     *
+     * @param question
+     * @return answer
      */
     protected static String askQuestion(String question)
     {
