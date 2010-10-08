@@ -77,7 +77,6 @@
       <!-- For sample assembly only, users should assemble their own wrapped connector separately -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assemble/distribution.xml</descriptor>

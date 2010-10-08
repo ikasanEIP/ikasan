@@ -13,16 +13,6 @@
     <name>Ikasan Console</name>
     <description>The web console for end users of the Ikasan Enterprise Integration Platform</description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1</version>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
