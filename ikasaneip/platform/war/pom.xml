@@ -58,16 +58,6 @@
     <version>0.8.0-SNAPSHOT</version>
     <name>ikasan :: platform :: war</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1</version>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
