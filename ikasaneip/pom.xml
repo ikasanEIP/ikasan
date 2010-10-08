@@ -101,5 +101,33 @@
         <module>documentation</module>
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.8.0</version>
+                <configuration>
+                    <header>LICENSE2.txt</header>
+                    <encoding>UTF-8</encoding>
+                    <aggregate>true</aggregate>
+                    <strictCheck>false</strictCheck>
+                    <skipExistingHeaders>true</skipExistingHeaders>
+                    <excludes>
+                        <exclude>license/**</exclude>
+                        <exclude>*LICENSE.txt</exclude>
+                        <exclude>*LICENSE2.txt</exclude>
+                        <exclude>*ReleaseNotes.txt</exclude>
+                        <exclude>*ReleaseNotes.html</exclude>
+                        <exclude>**/console/war/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/DD_belatedPNG.js</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/js/DD_belatedPNG.js</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
 
