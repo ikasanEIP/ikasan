@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
  ====================================================================
@@ -54,7 +55,6 @@
             <plugin>
                 <groupId>org.jboss.maven.plugins</groupId>
                 <artifactId>maven-jdocbook-plugin</artifactId>
-                <version>2.3.3</version>
                 <extensions>true</extensions>
                 <configuration>
                     <sourceDocumentName>master.xml</sourceDocumentName>
