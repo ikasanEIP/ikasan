@@ -113,6 +113,11 @@
                     <aggregate>true</aggregate>
                     <strictCheck>false</strictCheck>
                     <skipExistingHeaders>true</skipExistingHeaders>
+                    <mapping>
+                        <tld>XML_STYLE</tld>
+                        <application>XML_STYLE</application>
+                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
+                    </mapping>
                     <excludes>
                         <exclude>license/**</exclude>
                         <exclude>*LICENSE.txt</exclude>
@@ -121,13 +126,33 @@
                         <exclude>*ReleaseNotes.html</exclude>
                         <exclude>**/console/war/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
                         <exclude>**/console/war/src/main/webapp/js/DD_belatedPNG.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery-1.4.2.min.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery.hovertip-1.0.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery.simpleautogrow.js</exclude>
                         <exclude>**/webconsole/war/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
-                        <exclude>**/webconsole/war/src/main/webapp/js/DD_belatedPNG.js</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/js/jquery-1.4.2.min.js</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
+                        <exclude>**/*.xls</exclude>
+                        <exclude>**/*.gz</exclude>
                     </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/framework/src/test/resources/firstTxt
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/framework/src/test/resources/unzipTestZip
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/framework/src/test/resources/secondTxt
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/conf/ikasan-hibernate.properties.mysql
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/conf/ikasan-hibernate.properties.sybase
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/war/src/main/webapp/WEB-INF/spring.tld
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/war/src/main/webapp/WEB-INF/spring-form.tld
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/war/src/main/webapp/WEB-INF/security.tld
+[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/console/war/src/main/webapp/WEB-INF/tld/spring-form.tld
+
+
 
 </project>
 
