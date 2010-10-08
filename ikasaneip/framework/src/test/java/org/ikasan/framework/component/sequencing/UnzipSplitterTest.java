@@ -67,8 +67,6 @@ public class UnzipSplitterTest
     /** Constant representing end-of-file is reached. */
     private static final int END_OF_FILE = -1;
 
-
-
 	/**
 	 * ModuleName
 	 */
@@ -95,10 +93,10 @@ public class UnzipSplitterTest
     @Test
     public void test_successfullUnzippingIntoTwoPayloads() throws SequencerException, IOException
     {   	
-        final byte[] zippedFileData = this.loadFile("unzipTestZip");
-        final byte[] firstFileData = this.loadFile("secondTxt");
+        final byte[] zippedFileData = this.loadFile("unzipTestZip.zip");
+        final byte[] firstFileData = this.loadFile("secondTxt.txt");
         final String firstFileName = "second.txt";
-        final byte[] secondFileData = this.loadFile("firstTxt");
+        final byte[] secondFileData = this.loadFile("firstTxt.txt");
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payload
@@ -135,10 +133,10 @@ public class UnzipSplitterTest
     @Test
     public void test_successfullUnzippingIntoFourPayloads() throws SequencerException, IOException
     {
-        final byte[] zippedFileData = this.loadFile("unzipTestZip");// bb0.array();
-        final byte[] firstFileData = this.loadFile("secondTxt");
+        final byte[] zippedFileData = this.loadFile("unzipTestZip.zip");// bb0.array();
+        final byte[] firstFileData = this.loadFile("secondTxt.txt");
         final String firstFileName = "second.txt";
-        final byte[] secondFileData = this.loadFile("firstTxt");
+        final byte[] secondFileData = this.loadFile("firstTxt.txt");
         final String secondFileName = "unziptest/first.txt";
         
         //create the original payloads
@@ -180,10 +178,6 @@ public class UnzipSplitterTest
         Assert.assertTrue(Arrays.equals(secondFileData, newEvents.get(3).getPayloads().get(0).getContent()));
     }
 
-
-
-
-
     /**
      * Load test files from classpath.
      * 
@@ -203,6 +197,5 @@ public class UnzipSplitterTest
         byte[] content = byteArrayOutputStream.toByteArray();
         return content;
     }
-
 
 }
