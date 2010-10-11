@@ -1,0 +1,32 @@
+diff -Naur default/deploy/ejb-deployer.xml removeEjbPersistence/deploy/ejb-deployer.xml
+--- default/deploy/ejb-deployer.xml	2008-07-18 14:21:02.000000000 +0100
++++ removeEjbPersistence/deploy/ejb-deployer.xml	2010-05-14 10:11:53.379136502 +0100
+@@ -14,7 +14,7 @@
+   <mbean code="org.jboss.ejb.txtimer.EJBTimerServiceImpl"
+     name="jboss.ejb:service=EJBTimerService">
+     <attribute name="RetryPolicy">jboss.ejb:service=EJBTimerService,retryPolicy=fixedDelay</attribute>
+-    <attribute name="PersistencePolicy">jboss.ejb:service=EJBTimerService,persistencePolicy=database</attribute>
++    <!--<attribute name="PersistencePolicy">jboss.ejb:service=EJBTimerService,persistencePolicy=database</attribute>-->
+     <attribute name="TimerIdGeneratorClassName">org.jboss.ejb.txtimer.BigIntegerTimerIdGenerator</attribute>
+     <attribute name="TimedObjectInvokerClassName">org.jboss.ejb.txtimer.TimedObjectInvokerImpl</attribute>
+     <depends optional-attribute-name="TransactionManagerFactory" proxy-type="org.jboss.tm.TransactionManagerFactory">
+@@ -43,14 +43,14 @@
+     When overriding the timers table, an optional schema can be specified
+     using the syntax [schema.]table
+   -->
+-  <mbean code="org.jboss.ejb.txtimer.DatabasePersistencePolicy" name="jboss.ejb:service=EJBTimerService,persistencePolicy=database">
++  <!--<mbean code="org.jboss.ejb.txtimer.DatabasePersistencePolicy" name="jboss.ejb:service=EJBTimerService,persistencePolicy=database">-->
+     <!-- DataSourceBinding ObjectName -->
+-    <depends optional-attribute-name="DataSource">jboss.jca:service=DataSourceBinding,name=DefaultDS</depends>
++    <!--<depends optional-attribute-name="DataSource">jboss.jca:service=DataSourceBinding,name=DefaultDS</depends>-->
+     <!-- The plugin that handles database persistence -->
+-    <attribute name="DatabasePersistencePlugin">org.jboss.ejb.txtimer.GeneralPurposeDatabasePersistencePlugin</attribute>
++    <!--<attribute name="DatabasePersistencePlugin">org.jboss.ejb.txtimer.GeneralPurposeDatabasePersistencePlugin</attribute>-->
+     <!-- The timers table name -->
+-    <attribute name="TimersTable">TIMERS</attribute>
+-  </mbean>
++    <!--<attribute name="TimersTable">TIMERS</attribute>-->
++  <!--</mbean>-->
+ 
+   <!-- ==================================================================== -->
+   <!-- EJB Deployer                                                         -->

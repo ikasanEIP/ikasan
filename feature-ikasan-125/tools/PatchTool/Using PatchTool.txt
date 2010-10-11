@@ -1,0 +1,41 @@
+Things you need
+---------------
+
+1) Install Ant
+2) Install AntContrib
+
+3) Know what/where your profile is
+
+What is a profile? A profile is a set of patches that will be applied to some known starting point, to create the final product that you need. A profile will exist in a profile file, that is itself a piece of ant script.
+
+Example contents:
+
+<project>
+    <path id="testServer">
+        <pathelement location="patches/removeEjbTimerPersistence.patch"/>
+    </path>
+
+</project>
+
+This defines the profile 'testServer', that contains just a single patch. The path to the patch file here is relative to where you are running ant from.
+
+
+4) Know where your template is
+
+This is our starting point. This is the thing that will not change, but will be copied and patched to create the final product.
+
+5) Know where your target should go
+
+This is the final product. This needs to be a directory (not yet existing) inside an already existing location
+
+
+6) Run the build.xml ant script, specifying all the variables required. Eg.
+
+ant -DprofileFile=/home/ross/PatchTool/profiles/testProfile.xml -DtemplateDir=/home/ross/tools/jboss-4.2.3.GA/server/default -DtargetDir=/home/ross/tools/jboss-4.2.3.GA/server/testServer -DprofileName=testServer applyPatchProfile
+
+
+You should now see the 'testServer' created as a copy of the 'default' (which remains untouched), and patched with the patch 'removeEjbTimerPersistence.patch'
+
+
+
+
