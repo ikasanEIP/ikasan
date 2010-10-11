@@ -91,4 +91,8 @@
 	<bean id="baseUrl" class="java.lang.String">
 		<constructor-arg value="${base.server.url}/${webapp.context}"/>
 	</bean>
+
+    <bean id="environment" class="java.lang.String">
+        <constructor-arg value="${monitor.email.env}"/>
+    </bean>
 </beans>
