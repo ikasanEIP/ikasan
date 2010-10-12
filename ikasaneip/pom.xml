@@ -144,18 +144,5 @@
         </plugins>
     </build>
 
-
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/framework/src/test/resources/firstTxt
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/framework/src/test/resources/unzipTestZip
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/framework/src/test/resources/secondTxt
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/conf/ikasan-hibernate.properties.mysql
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/conf/ikasan-hibernate.properties.sybase
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/war/src/main/webapp/WEB-INF/spring.tld
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/war/src/main/webapp/WEB-INF/spring-form.tld
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/webconsole/war/src/main/webapp/WEB-INF/security.tld
-[WARNING] Unknown file extension: /sandbox/verbma-sbox/workspace/IKASAN/ikasaneip/console/war/src/main/webapp/WEB-INF/tld/spring-form.tld
-
-
-
 </project>
 
