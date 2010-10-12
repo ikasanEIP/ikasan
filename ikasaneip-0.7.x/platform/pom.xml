@@ -47,6 +47,110 @@
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration Platform</name>
 
+    <organization>
+        <name>Ikasan</name>
+        <url>http://www.ikasan.org</url>
+    </organization>
+    <url>http://www.ikasan.org</url>
+    <inceptionYear>2009</inceptionYear>
+    <description>Platform</description>
+    <developers>
+        <developer>
+            <id>karianna</id>
+            <name>Martijn Verburg</name>
+            <organization>Ikasan Development Team</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>magicduncan</id>
+            <name>Ross Duncan</name>
+            <organization>Ikasan Development Team</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>mitcje</id>
+            <name>Jeff Mitchell</name>
+            <organization>Ikasan Development Team</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>hasasu</id>
+            <name>Summer Hasani</name>
+            <organization>Ikasan Development Team</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>suetju</id>
+            <name>Junichi Suetake</name>
+            <organization>Ikasan Development Team</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>koukhe</id>
+            <name>Herodotos Koukkides</name>
+            <organization>Ikasan Development Team</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>The Lesser GNU Public License, Version 3.0</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+    <mailingLists>
+        <mailingList>
+            <name>Ikasan Users</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>Ikasan Development</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
+        </mailingList>
+        <mailingList>
+            <name>Ikasan Announce</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
+        </mailingList>
+    </mailingLists>
+    <issueManagement>
+        <url>http://open.jira.com/browse/IKASAN</url>
+    </issueManagement>
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</url>
+    </scm>
+
     <modules>
        <module>jar</module>
        <module>war</module>
