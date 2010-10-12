@@ -100,6 +100,8 @@ public abstract class JmsMessageDrivenInitiatorImpl
     /** The Anesthetist for stopping/starting the message listener container */
     protected Anesthetist anesthetist = null;
 
+    /** The Halt for activating/deactivating the jms endpoint */
+    protected Halt halt = null;
 
     /**
      * Constructor
@@ -223,7 +225,23 @@ public abstract class JmsMessageDrivenInitiatorImpl
 
     public boolean isRunning()
     {
-        return (messageListenerContainer.isRunning() || anesthetistOperating());
+        //if there is halt object means we are stopping!
+        if (this.halt != null)
+        {
+            return false;
+        }
+        //if there is an anesthetist means we are stopping/retrying
+        else if (this.anesthetistOperating())
+        {
+            return true;
+        }
+        //we have to check for happy state
+        else if (this.messageListenerContainer.isRunning())
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -237,7 +255,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
     }
     
     @Override
-    protected void startInitiator(){
+    protected void startInitiator()
+    {
+        this.halt = null;
         messageListenerContainer.start();
     }
     
@@ -258,10 +278,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
         {
             cancelRetryCycle();
         }
+        this.halt = new Halt();
+        this.halt.start();
         notifyMonitorListeners();
-
-        Halt halt = new Halt();
-        halt.start();
     }
 
     /**
@@ -511,7 +530,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
         {
             logger.info("stopping messageListenerContainer...");
             messageListenerContainer.stop();
-            logger.info("stopped messageListenerContainer");
+            logger.info("stopped messageListenerContainer successfully.");
         }
     }
 }
