@@ -54,11 +54,11 @@
     	<ol>
   			<li>
 		    	<label for="moduleName">Module Name</label>
-				<input id="moduleName" type="text" name="moduleName" size="30" value="${searchParams["moduleName"]}"/>
+				<input id="moduleName" type="text" name="moduleName" size="30" value="${searchParams['moduleName']}"/>
 			</li>
   			<li>
 		    	<label for="flowName">Flow Name</label>
-				<input id="flowName" type="text" name="flowName" size="30" value="${searchParams["flowName"]}"/>
+				<input id="flowName" type="text" name="flowName" size="30" value="${searchParams['flowName']}"/>
 			</li>
   			<li>
 		    	<label for="orderBy">Order By</label>
