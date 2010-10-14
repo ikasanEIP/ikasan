@@ -138,6 +138,7 @@
                         <exclude>**/webconsole/war/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
                         <exclude>**/*.xls</exclude>
                         <exclude>**/*.gz</exclude>
+                        <exclude>eclipse_bin/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
