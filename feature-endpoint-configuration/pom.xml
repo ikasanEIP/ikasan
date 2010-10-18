@@ -66,6 +66,7 @@
         <module>common</module>
         <module>platform</module>
         <module>framework</module>
+        <module>spec</module>
 
         <!-- ikasan test harness -->
         <module>test</module>
@@ -79,7 +80,7 @@
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
         <module>connector-ftpRar</module>
-        <module>connector-sftpRar</module>
+        <module>connector-sftp</module>
 
         <!-- connector clients -->
         <module>client-connection</module>
