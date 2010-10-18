@@ -50,32 +50,14 @@
         <artifactId>ikasan-connector-filetransfer-parent</artifactId>
         <version>0.8.0-SNAPSHOT</version>
     </parent>
-    <artifactId>ikasan-connector-sftpRar</artifactId>
+    <artifactId>ikasan-connector-sftp-parent</artifactId>
     <version>0.8.0-SNAPSHOT</version>  
-    <packaging>rar</packaging>
-    <name>Connector SFTP Resource Adapter</name>
+    <packaging>pom</packaging>
+    <name>Connector SFTP Resource Adapter Parent</name>
 
-    <dependencies>
-        <!-- 
-            TODO:  Should be able to haul this up one level
-            Used for the common connector functionality for the ikasan platform 
-         -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
-        </dependency>
-        <!-- The SFTP library -->
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.42</version>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2</version>
-        </dependency>
-    </dependencies>
+  <modules>
+    <module>jar</module>
+    <module>rar</module>
+  </modules>
 
 </project>
