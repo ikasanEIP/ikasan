@@ -56,15 +56,15 @@ import org.jmock.Mockery;
 import org.junit.Test;
 
 /**
- * Unit test for {@link ConvertionMapMessageEventFromHeadSerialiser}
+ * Unit test for {@link ConversionMapMessageEventFromHeadSerialiser}
  * 
  * @author Ikasan Development Team
  *
  */
-public class ConvertionMapMessageEventFromHeadSerialiserTest
+public class ConversionMapMessageEventFromHeadSerialiserTest
 {
     /** Serializer to test */
-    private JmsMessageEventSerialiser<MapMessage> serializerToTest = new ConvertionMapMessageEventFromHeadSerialiser();
+    private JmsMessageEventSerialiser<MapMessage> serializerToTest = new ConversionMapMessageEventFromHeadSerialiser();
 
     /** Object mockery */
     private final Mockery mockery = new Mockery();
@@ -102,9 +102,9 @@ public class ConvertionMapMessageEventFromHeadSerialiserTest
         payloads.add(payload);
         final Event an080Event = new Event(eventId, priority, new Date(), payloads);
 
-        final String expectedPayloadContentMapKey = ConvertionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_PREFIX + 0 + ConvertionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_CONTENT_SUFFIX;
-        final String expectedPayloadIdMapKey = ConvertionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_PREFIX + 0 + ConvertionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_ID_SUFFIX;
-        final String expectedPayloadAttributeKey = ConvertionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_PREFIX + 0 + ConvertionMapMessageEventFromHeadSerialiser.SEPARATOR + PAYLOD_NAME_ATTRIBUTE_KEY;
+        final String expectedPayloadContentMapKey = ConversionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_PREFIX + 0 + ConversionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_CONTENT_SUFFIX;
+        final String expectedPayloadIdMapKey = ConversionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_PREFIX + 0 + ConversionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_ID_SUFFIX;
+        final String expectedPayloadAttributeKey = ConversionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_PREFIX + 0 + ConversionMapMessageEventFromHeadSerialiser.SEPARATOR + PAYLOD_NAME_ATTRIBUTE_KEY;
 
         // Expectations
         this.mockery.checking(new Expectations()
@@ -123,7 +123,7 @@ public class ConvertionMapMessageEventFromHeadSerialiserTest
                 one(mockMapMessage).setString(expectedPayloadAttributeKey, payload.getAttribute(PAYLOD_NAME_ATTRIBUTE_KEY));
 
                 // Setting number of payloads
-                one(mockMapMessage).setInt(ConvertionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_COUNT_PROPERTY, payloads.size());
+                one(mockMapMessage).setInt(ConversionMapMessageEventFromHeadSerialiser.OLD_PAYLOAD_COUNT_PROPERTY, payloads.size());
 
                 // Priority
                 one(mockMapMessage).setJMSPriority(an080Event.getPriority());
