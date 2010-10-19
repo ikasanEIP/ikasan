@@ -43,12 +43,12 @@ package org.ikasan.spec.endpoint;
 import javax.resource.ResourceException;
 
 /**
- * Optional Interface for a resource Endpoint (such as a Producer, Consumer, or Broker)
+ * Optional Interface for an Endpoint (such as a Producer, Consumer, or Broker)
  * allowing the endpoint to be activated or deactivated as required.
  * This interface is only required where the endpoint can expose this level of control.
  * @author Ikasan Development Team
  */
-public interface ManagedEndpoint
+public interface EndpointActivator
 {
     /**
      * Activate the endpoint so its ready for use. This may involve opening connections
