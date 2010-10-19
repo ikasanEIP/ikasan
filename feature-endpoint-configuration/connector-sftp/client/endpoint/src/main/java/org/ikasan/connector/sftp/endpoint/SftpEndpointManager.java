@@ -55,7 +55,7 @@ import org.ikasan.spec.endpoint.Producer;
  * Sftp protocol and configuration.
  * @author Ikasan Development Team
  */
-public class SftpEndpointResourceManager implements EndpointManager<Producer<?>,SftpConfiguration>
+public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConfiguration>
 {
     /** configuration */
     private SftpConfiguration sftpConfiguration;
@@ -71,7 +71,7 @@ public class SftpEndpointResourceManager implements EndpointManager<Producer<?>,
      * @param connectionFactory
      * @param sftpConfiguration
      */
-    public SftpEndpointResourceManager(ConnectionFactory connectionFactory, SftpConfiguration sftpConfiguration)
+    public SftpEndpointManager(ConnectionFactory connectionFactory, SftpConfiguration sftpConfiguration)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
