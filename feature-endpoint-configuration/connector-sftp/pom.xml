@@ -57,6 +57,7 @@
 
   <modules>
     <module>jar</module>
+    <module>client</module>
     <module>rar</module>
   </modules>
 
