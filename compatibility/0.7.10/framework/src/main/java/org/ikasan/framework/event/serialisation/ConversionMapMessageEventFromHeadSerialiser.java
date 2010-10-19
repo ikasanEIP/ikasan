@@ -63,7 +63,7 @@ import org.ikasan.framework.component.Event;
  * @author Ikasan Development Team
  *
  */
-public class ConvertionMapMessageEventFromHeadSerialiser extends DefaultMapMessageEventSerialiser
+public class ConversionMapMessageEventFromHeadSerialiser extends DefaultMapMessageEventSerialiser
 {
     /** Map key name separator constant*/
     protected static final String SEPARATOR = "_";
