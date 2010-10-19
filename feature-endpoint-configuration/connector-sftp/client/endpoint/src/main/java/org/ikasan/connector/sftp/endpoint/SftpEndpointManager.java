@@ -47,7 +47,7 @@ import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.configuration.SftpConfiguration;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.spec.endpoint.EndpointManager;
-import org.ikasan.spec.endpoint.ManagedEndpoint;
+import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.Producer;
 
 /**
@@ -103,9 +103,9 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
         spec.setCleanupJournalOnComplete(sftpConfiguration.getCleanupJournalOnComplete());
         this.producer = new SftpMapProducer(new FileTransferConnectionTemplate(connectionFactory, spec), sftpConfiguration);
         
-        if(this.producer instanceof ManagedEndpoint)
+        if(this.producer instanceof EndpointActivator)
         {
-            ((ManagedEndpoint) this.producer).activate();
+            ((EndpointActivator) this.producer).activate();
         }
     }
 
@@ -122,11 +122,11 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
      */
     public void stop() throws ResourceException
     {
-        if(this.producer != null && this.producer instanceof ManagedEndpoint)
+        if(this.producer != null && this.producer instanceof EndpointActivator)
         {
             try
             {
-                ((ManagedEndpoint)producer).deactivate();
+                ((EndpointActivator)producer).deactivate();
             }
             finally
             {
