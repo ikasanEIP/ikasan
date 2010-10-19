@@ -43,12 +43,18 @@ package org.ikasan.spec.endpoint;
 import javax.resource.ResourceException;
 
 /**
- * Interface defining the operational contract of an endpoint resource 
- * where the interaction is that we deliver data and the resource responds
- * with data which is returned to the invoker.
+ * Interface defining the operational contract of an endpoint 
+ * where we send business data to the resource and the resource responds with
+ * business data which we return to the invoker.
  * @author Ikasan Development Team
  */
 public interface Broker<D,R>
 {
+    /**
+     * Invoke the endpoint with a deliverable and return a response.
+     * @param deliverable
+     * @return
+     * @throws ResourceException
+     */
     public R invoke(D deliverable) throws ResourceException;
 }

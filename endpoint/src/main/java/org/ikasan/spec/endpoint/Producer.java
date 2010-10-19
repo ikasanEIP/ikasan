@@ -43,11 +43,16 @@ package org.ikasan.spec.endpoint;
 import javax.resource.ResourceException;
 
 /**
- * Interface defining the operational contract of an endpoint resource 
- * where we deliver data to the resource.
+ * Interface defining the operational contract of an endpoint 
+ * where we send business data to a resource.
  * @author Ikasan Development Team
  */
 public interface Producer<D>
 {
+    /**
+     * Invoke the endpoint to send a deliverable.
+     * @param deliverable
+     * @throws ResourceException
+     */
     public void invoke(D deliverable) throws ResourceException;
 }

@@ -43,11 +43,16 @@ package org.ikasan.spec.endpoint;
 import javax.resource.ResourceException;
 
 /**
- * Interface defining the operational contract of an endpoint resource consumer
- * for consuming data from a resource and returning it to the invoker.
+ * Interface defining the operational contract of an endpoint 
+ * where we receive business data from a resource which we return to the invoker.
  * @author Ikasan Development Team
  */
 public interface Consumer<R>
 {
+    /**
+     * Invoke the endpoint and return the response.
+     * @return
+     * @throws ResourceException
+     */
     public R invoke() throws ResourceException;
 }
