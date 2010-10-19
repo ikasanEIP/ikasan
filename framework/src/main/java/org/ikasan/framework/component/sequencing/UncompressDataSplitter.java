@@ -62,15 +62,15 @@ import org.ikasan.framework.component.Event;
  * A new <code>Event</code> will be created for each new <code>Payload</code>.
  * </p>
  * <p>
- * Examples: @see {@link org.ikasan.framework.component.sequencing.UnzipSplitterTest}
+ * Examples: @see {@link org.ikasan.framework.component.sequencing.UncompressDataSplitterTest}
  * </p>
  * 
  * @author Ikasan Development Team
  */
-public class UnzipSplitter implements Sequencer
+public class UncompressDataSplitter implements Sequencer
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(UnzipSplitter.class);
+    private static Logger logger = Logger.getLogger(UncompressDataSplitter.class);
 
     /** Constant representing end-of-file is reached. */
     private static final int END_OF_FILE = -1;

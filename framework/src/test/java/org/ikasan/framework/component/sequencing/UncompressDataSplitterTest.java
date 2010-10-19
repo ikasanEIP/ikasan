@@ -56,13 +56,13 @@ import org.ikasan.framework.component.Event;
 import org.junit.Test;
 
 /**
- * This test class supports the <code>UnzipSplitter</class> class.
+ * This test class supports the {@link UncompressDataSplitter} class.
  * 
  * TODO testing exceptions for 100% coverage. Currently tests cover 97.5%
  * 
  * @author Ikasan Development Team
  */
-public class UnzipSplitterTest
+public class UncompressDataSplitterTest
 {
     /** Constant representing end-of-file is reached. */
     private static final int END_OF_FILE = -1;
@@ -79,7 +79,7 @@ public class UnzipSplitterTest
 
 
     /** The splitter to be tested. */
-    private UnzipSplitter splitter = new UnzipSplitter();
+    private UncompressDataSplitter splitter = new UncompressDataSplitter();
 
 
 
