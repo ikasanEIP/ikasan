@@ -66,10 +66,10 @@ import org.ikasan.framework.event.serialisation.EventDeserialisationException;
  * @author Ikasan Development Team
  *
  */
-public class ConversionMapMessageEventSerialiser extends DefaultMapMessageEventSerialiser
+public class ConversionMapMessageEventToHeadSerialiser extends DefaultMapMessageEventSerialiser
 {
     /** Logger instance */
-    private static Logger logger = Logger.getLogger(ConversionMapMessageEventSerialiser.class);
+    private static Logger logger = Logger.getLogger(ConversionMapMessageEventToHeadSerialiser.class);
 
     static final String OLD_PAYLOAD_PREFIX = "payload_";
 
@@ -82,50 +82,49 @@ public class ConversionMapMessageEventSerialiser extends DefaultMapMessageEventS
     static final String ENVELOPE_ID = "envelope_id";
     static final String ENVELOPE_PRIORITY = "envelope_priority";
     static final String ENVELOPE_TIMESTAMP = "envelope_timestamp";
-    
+
     @Override
     protected Event demapEvent(MapMessage mapMessage, String moduleName,
-			String componentName, List<Payload> payloads, List<String> eventFieldNames) 
-    throws JMSException, EventDeserialisationException 
+            String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException 
     {
-		String eventId = null;
-		int priority = -1;
-		Date timestamp = null;
-		
-		for(String fieldName : eventFieldNames)
-		{
-			if (fieldName.equals(EVENT_FIELD_ID))
-			{
-				eventId=mapMessage.getString(EVENT_FIELD_ID);
-			}
-			else if (fieldName.equals(ENVELOPE_ID))
+        String eventId = null;
+        int priority = -1;
+        Date timestamp = null;
+        
+        for(String fieldName : eventFieldNames)
+        {
+            if (fieldName.equals(EVENT_FIELD_ID))
+            {
+                eventId=mapMessage.getString(EVENT_FIELD_ID);
+            }
+            else if (fieldName.equals(ENVELOPE_ID))
             {
                 eventId=mapMessage.getString(ENVELOPE_ID);
             }
-			else if (fieldName.equals(EVENT_FIELD_PRIORITY))
-			{
-				priority=mapMessage.getInt(EVENT_FIELD_PRIORITY);
-			}
+            else if (fieldName.equals(EVENT_FIELD_PRIORITY))
+            {
+                priority=mapMessage.getInt(EVENT_FIELD_PRIORITY);
+            }
             else if (fieldName.equals(ENVELOPE_PRIORITY))
             {
                 priority=mapMessage.getInt(ENVELOPE_PRIORITY);
             }
             else if (fieldName.equals(EVENT_FIELD_TIMESTAMP))
-			{
-				timestamp=new Date(mapMessage.getLong(EVENT_FIELD_TIMESTAMP));
-			}
+            {
+                timestamp=new Date(mapMessage.getLong(EVENT_FIELD_TIMESTAMP));
+            }
             else if (fieldName.equals(ENVELOPE_TIMESTAMP))
             {
                 timestamp=new Date(mapMessage.getLong(ENVELOPE_TIMESTAMP));
             }
-			else
-			{
-				logger.debug("Ignoring fieldName [" + fieldName + "]");
-			}
-		}
-		
-		return new Event(eventId, priority, timestamp, payloads);
-	}
+            else
+            {
+                logger.debug("Ignoring fieldName [" + fieldName + "]");
+            }
+        }
+        
+        return new Event(eventId, priority, timestamp, payloads);
+    }
 
     @Override
     protected Payload demapPayload(int payloadOrdinal, MapMessage mapMessage, List<String> payloadFieldNames) 
@@ -172,7 +171,7 @@ public class ConversionMapMessageEventSerialiser extends DefaultMapMessageEventS
             }
         }
 
-        Payload payload = payloadFactory.newPayload(payloadId, payloadContent);
+        Payload payload = this.payloadFactory.newPayload(payloadId, payloadContent);
         
         //set any payload attributs
         for (String attributeName : payloadAttributes.keySet())
@@ -195,7 +194,7 @@ public class ConversionMapMessageEventSerialiser extends DefaultMapMessageEventS
         
         while(mapNames.hasMoreElements())
         {
-            String mapName = (String)mapNames.nextElement();
+            String mapName = mapNames.nextElement();
             
             if(mapName.startsWith(PAYLOAD_PREFIX) || mapName.startsWith(PAYLOAD_PREFIX.toLowerCase()))
             {
@@ -215,7 +214,7 @@ public class ConversionMapMessageEventSerialiser extends DefaultMapMessageEventS
                 eventFields.add(mapName);
             }
         }
-        
+
         List<String> fullPayloadPrefixes = new ArrayList<String>(payloadFieldNameLists.keySet());
         Collections.sort(fullPayloadPrefixes);
         
