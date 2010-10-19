@@ -56,7 +56,7 @@
     <artifactId>ikasan-spec-endpoint</artifactId>
     <packaging>jar</packaging>
     <version>0.8.0-SNAPSHOT</version>
-    <name>Ikasan Specification Endpoint Contracts</name>
+    <name>Ikasan Specification Endpoint Resource Contracts</name>
     <description>The specification endpoint contracts for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>

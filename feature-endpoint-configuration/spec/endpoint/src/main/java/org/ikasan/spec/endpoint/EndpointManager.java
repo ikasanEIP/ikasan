@@ -43,24 +43,39 @@ package org.ikasan.spec.endpoint;
 import javax.resource.ResourceException;
 
 /**
- * Optional Interface for a resource Endpoint (such as a Producer, Consumer, or Broker)
- * allowing the endpoint to be activated or deactivated as required.
- * This interface is only required where the endpoint can expose this level of control.
+ * Interface defining the operational contract of an endpoint manager
+ * for such endpoints as Producers, Consumers, and Brokers.
  * @author Ikasan Development Team
  */
-public interface ManagedEndpoint
+public interface EndpointManager<E,C>
 {
     /**
-     * Activate the endpoint so its ready for use. This may involve opening connections
-     * establishing sessions, etc.
-     * @throws ResourceException
+     * Allow configuration to be mutated
+     * @param configuration
      */
-    public void activate() throws ResourceException;
+    public void setConfiguration(C configuration);
 
     /**
-     * Deactivate the endpoint after use. This may involve shutting down of this 
-     * endpoints connections, releasing of resources, etc. 
+     * Retrieve current configuration.
+     * @return
+     */
+    public C getConfiguration();
+    
+    /**
+     * Get an endpoint resource instance
+     * @return
+     */
+    public E getEndpoint();
+
+    /**
+     * Start the instance managed by this resource manager
      * @throws ResourceException
      */
-    public void deactivate() throws ResourceException;
+    public void start() throws ResourceException;
+
+    /**
+     * Stop the instance managed by this resource manager
+     * @throws ResourceException
+     */
+    public void stop() throws ResourceException;
 }
