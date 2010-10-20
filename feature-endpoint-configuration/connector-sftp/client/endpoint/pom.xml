@@ -64,26 +64,31 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-endpoint</artifactId>
             <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-filetransfer</artifactId>
             <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-connection</artifactId>
             <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-sftp-classes</artifactId>
             <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
             <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!-- J2EE -->
         <dependency>
@@ -91,6 +96,12 @@
             <artifactId>geronimo-spec-j2ee</artifactId>
             <version>1.4-rc3</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
