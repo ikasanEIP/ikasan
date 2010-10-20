@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-/*
+/* 
  * $Id$
- * $URL$ 
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -39,43 +37,30 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
- * Author:  Ikasan Development Team
- * 
--->
- <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-connector-filetransfer-parent</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>ikasan-connector-sftpRar</artifactId>
-    <version>0.8.0-SNAPSHOT</version>  
-    <packaging>rar</packaging>
-    <name>Connector SFTP Resource Adapter</name>
+ */
+package org.ikasan.spec.endpoint;
 
-    <dependencies>
-        <!-- 
-            TODO:  Should be able to haul this up one level
-            Used for the common connector functionality for the ikasan platform 
-         -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
-        </dependency>
-        <!-- The SFTP library -->
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.42</version>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2</version>
-        </dependency>
-    </dependencies>
+import javax.resource.ResourceException;
 
-</project>
+/**
+ * Optional Interface for an Endpoint (such as a Producer, Consumer, or Broker)
+ * allowing the endpoint to be activated or deactivated as required.
+ * This interface is only required where the endpoint can expose this level of control.
+ * @author Ikasan Development Team
+ */
+public interface EndpointActivator
+{
+    /**
+     * Activate the endpoint so its ready for use. This may involve opening connections
+     * establishing sessions, etc.
+     * @throws ResourceException
+     */
+    public void activate() throws ResourceException;
+
+    /**
+     * Deactivate the endpoint after use. This may involve shutting down of this 
+     * endpoints connections, releasing of resources, etc. 
+     * @throws ResourceException
+     */
+    public void deactivate() throws ResourceException;
+}
