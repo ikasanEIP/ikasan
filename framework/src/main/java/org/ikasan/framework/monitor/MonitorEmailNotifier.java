@@ -40,14 +40,22 @@
  */
 package org.ikasan.framework.monitor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.initiator.InitiatorState;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 /**
- * Monitor listener implementation which notifies the JNDI of state changes.
+ * Monitor listener implementation which sends emails for state changes. By default, this monitor will generate an email
+ * if the initiator its monitoring has current state <code>stoppedInError</code>. To override this behavior, configure the
+ * monitor with a {@link Map} of required reported states to email distributions list(s) to notify if current state is a match.
  * 
  * @author Ikasan Development Team
  */
@@ -59,45 +67,67 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
     /** Mail sender */
     private JavaMailSender mailSender;
 
-    /** Mail recipient(s) address */
-    private String to;
-
     /** Mail sender address */
     private String from;
 
     /** Mail body */
     private String body;
 
-    /** Support for multipart message - defaults to false */
-    private boolean multipart = false;
-
     /** Runtime environment (dev, int, uat or prod) */
     private String environment;
 
+    /** A map of state to email distribution lists that must be notified if current state matches the key */
+    private Map<String, List<String>> stateToDistributionListMap;
+
     /**
-     * Constructor non optional parameters
-     * 
+     * Create a monitor that notifies a single recipient if initaitor state is <code>stoppedInError</code>.
      * @param name Monitor name
      * @param mailSender Mail sender
-     * @param to email recipient
-     * @param environment The runtime environment
+     * @param to email distribution list
+     * @param environment Runtime environment
      */
-    public MonitorEmailNotifier(String name, final JavaMailSender mailSender, String to, String environment)
+    public MonitorEmailNotifier(final String name, final JavaMailSender mailSender, final String to, final String environment)
     {
         super(name);
-        this.mailSender = mailSender;
-        this.to = to;
         this.environment = environment;
+        this.mailSender = mailSender;
+        List<String> toList = new ArrayList<String>();
+        toList.add(to);
+        this.stateToDistributionListMap = new HashMap<String, List<String>>();
+        this.stateToDistributionListMap.put(InitiatorState.ERROR.getName(), toList);
     }
 
     /**
-     * Setter for to address.
+     * Creates a monitor that notifies configured recipients if initiator state is <code>stoppedInError</code> only.
      * 
-     * @param to email message to address
+     * @param name Monitor name
+     * @param mailSender Mail sender
+     * @param to email distribution list
+     * @param environment Runtime environment
      */
-    public void setTo(String to)
+    public MonitorEmailNotifier(final String name, final JavaMailSender mailSender, final List<String> to, final String environment)
     {
-        this.to = to;
+        super(name);
+        this.environment = environment;
+        this.mailSender = mailSender;
+        this.stateToDistributionListMap = new HashMap<String, List<String>>();
+        this.stateToDistributionListMap.put(InitiatorState.ERROR.getName(), to);
+    }
+
+    /**
+     * Creates a monitor that matches current initiator state to a map of pre-configured states to recipient list.
+     * 
+     * @param name Monitor name
+     * @param mailSender Mail sender
+     * @param stateToDistributionListMap map of initiator states to recipient list
+     * @param environment Runtime envirnoment
+     */
+    public MonitorEmailNotifier(final String name, final JavaMailSender mailSender, final Map<String, List<String>> stateToDistributionListMap, final String environment)
+    {
+        super(name);
+        this.environment = environment;
+        this.mailSender = mailSender;
+        this.stateToDistributionListMap = stateToDistributionListMap;
     }
 
     /**
@@ -111,7 +141,7 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
     }
 
     /**
-     * Setter for mail
+     * Setter for mail from field
      * 
      * @param from sender email address
      */
@@ -120,52 +150,48 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
         this.from = from;
     }
 
-    /**
-     * Support for multipart message (i.e.: attachments)
-     * 
-     * TODO: probably this setter is not needed. We will not be sending attachments with email notifications!
-     * 
-     * @param multipart boolean flag
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.monitor.AbstractMonitorListener#notify(java.lang.String)
      */
-    public void setMultipart(boolean multipart)
-    {
-        this.multipart = multipart;
-    }
-
     @Override
-    public void notify(String state)
+    public void notify(final String state)
     {
         try
         {
-            MimeMessage email = this.mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(email, this.multipart);
-            if (this.from != null)
+            if (this.stateToDistributionListMap.containsKey(state))
             {
-                helper.setFrom(this.from);
-            }
-            helper.setTo(this.to);
-            helper.setSubject("[" + this.environment + "] Initiator Email Notifier");
-            if (state != null)
-            {
-                if (state.equals("stoppedInError"))
+                // Get the recipient(s) distribution list
+                List<String> recipientList = this.stateToDistributionListMap.get(state);
+
+                // Create the email
+                MimeMessage email = this.mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(email);
+                if (this.from != null)
                 {
-                    if (this.body != null)
-                    {
-                        helper.setText(this.body);
-                    }
-                    else
-                    {
-                        helper.setText(this.getName() + " is reporting status [" + state
-                                + "] and requires manual intervention.");
-                    }
-                    this.mailSender.send(email);
+                    // Set 'from'
+                    helper.setFrom(this.from);
                 }
-                // otherwise don't bother
+
+                // Set 'to'
+                helper.setTo(recipientList.toArray(new String [recipientList.size()]));
+
+                // Set 'subject'
+                helper.setSubject("[" + this.environment + "] Initiator Email Notifier");
+
+                // Set 'body'
+                String text = "Initiator [" + this.getName() + "] is reporting status [" + state + "].";
+                if (this.body != null)
+                {
+                    text = text + this.body;
+                }
+                helper.setText(text);
+
+                // Send away
+                this.mailSender.send(email);
             }
             else
             {
-                helper.setText(this.getName() + " reporting unknown status. There might be a problem.");
-                this.mailSender.send(email);
+                logger.warn("Initiator reporting unsupported state [" + state + "]. No email will be sent.");
             }
         }
         catch (Throwable t)
