@@ -42,6 +42,7 @@ package org.ikasan.connector.sftp.endpoint;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
+import javax.resource.cci.ConnectionSpec;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.configuration.SftpConfiguration;
@@ -91,7 +92,7 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
      */
     public void start() throws ResourceException
     {
-        SFTPConnectionSpec spec = new SFTPConnectionSpec();
+        SFTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(sftpConfiguration.getClientID());
         spec.setRemoteHostname(sftpConfiguration.getRemoteHost());
         spec.setKnownHostsFilename(sftpConfiguration.getKnownHostsFilename());
@@ -101,7 +102,7 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
         spec.setConnectionTimeout(sftpConfiguration.getConnectionTimeout());
         spec.setUsername(sftpConfiguration.getUsername());
         spec.setCleanupJournalOnComplete(sftpConfiguration.getCleanupJournalOnComplete());
-        this.producer = new SftpMapProducer(new FileTransferConnectionTemplate(connectionFactory, spec), sftpConfiguration);
+        this.producer = this.getProducer(spec);
         
         if(this.producer instanceof EndpointActivator)
         {
@@ -109,6 +110,25 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
         }
     }
 
+    /**
+     * Utility method to aid testing of this class
+     * @return
+     */
+    protected SFTPConnectionSpec getConnectionSpec()
+    {
+        return new SFTPConnectionSpec();
+    }
+    
+    /**
+     * Utility method to aid testing of this class
+     * @param spec
+     * @return
+     */
+    protected Producer<?> getProducer(ConnectionSpec spec)
+    {
+        return new SftpMapProducer(new FileTransferConnectionTemplate(connectionFactory, spec), sftpConfiguration);
+    }
+    
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#getEndpoint()
      */

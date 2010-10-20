@@ -72,7 +72,16 @@ public class SftpMapProducer implements Producer<Map<String,InputStream>>
     public SftpMapProducer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpConfiguration configuration)
     {
         this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
+        if(fileTransferConnectionTemplate == null)
+        {
+            throw new IllegalArgumentException("fileTransferConnectionTemplate cannot be 'null'");
+        }
+
         this.configuration = configuration;
+        if(configuration == null)
+        {
+            throw new IllegalArgumentException("configuration cannot be 'null'");
+        }
     }
     
     /**
