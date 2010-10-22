@@ -38,14 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.endpoint;
+package org.ikasan.connector.sftp.producer;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.sftp.configuration.SftpConfiguration;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
@@ -56,10 +55,10 @@ import org.ikasan.spec.endpoint.Producer;
  * Sftp protocol and configuration.
  * @author Ikasan Development Team
  */
-public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConfiguration>
+public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,SftpProducerConfiguration>
 {
     /** configuration */
-    private SftpConfiguration sftpConfiguration;
+    private SftpProducerConfiguration sftpConfiguration;
     
     /** producer endpoint */
     private Producer<?> producer;
@@ -72,7 +71,7 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
      * @param connectionFactory
      * @param sftpConfiguration
      */
-    public SftpEndpointManager(ConnectionFactory connectionFactory, SftpConfiguration sftpConfiguration)
+    public SftpProducerEndpointManager(ConnectionFactory connectionFactory, SftpProducerConfiguration sftpConfiguration)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
@@ -158,7 +157,7 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#setConfiguration(java.lang.Object)
      */
-    public void setConfiguration(SftpConfiguration sftpConfiguration)
+    public void setConfiguration(SftpProducerConfiguration sftpConfiguration)
     {
         this.sftpConfiguration = sftpConfiguration;
     }
@@ -166,7 +165,7 @@ public class SftpEndpointManager implements EndpointManager<Producer<?>,SftpConf
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#getConfiguration()
      */
-    public SftpConfiguration getConfiguration()
+    public SftpProducerConfiguration getConfiguration()
     {
         return this.sftpConfiguration;
     }
