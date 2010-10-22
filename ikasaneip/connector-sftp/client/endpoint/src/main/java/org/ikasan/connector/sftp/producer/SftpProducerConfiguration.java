@@ -38,14 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.configuration;
+package org.ikasan.connector.sftp.producer;
 
 /**
- * SFTP Configuration model.
+ * SFTP Producer Configuration model.
  * 
  * @author Ikasan Development Team
  */
-public class SftpConfiguration
+public class SftpProducerConfiguration
 {
     /** SFTP unqiue clientId */
     protected String clientID;
@@ -54,16 +54,16 @@ public class SftpConfiguration
     protected Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
     /** SFTP default Remote host */
-    protected String remoteHost = "localhost";
+    protected String remoteHost = String.valueOf("localhost");
 
     /** SFTP private key hosts */
     protected String privateKeyFilename;
 
     /** SFTP max retry attempts */
-    protected Integer maxRetryAttempts = new Integer(3);
+    protected Integer maxRetryAttempts = Integer.valueOf(3);
 
     /** SFTP default remote port */
-    protected Integer remotePort = new Integer(22);
+    protected Integer remotePort = Integer.valueOf(22);
 
     /** SFTP known hosts */
     protected String knownHostsFilename;
@@ -75,13 +75,13 @@ public class SftpConfiguration
     protected String password;
 
     /** SFTP remote port */
-    protected Integer connectionTimeout = new Integer(60000);
+    protected Integer connectionTimeout = Integer.valueOf(60000);
 
     /** SFTP output directory */
     protected String outputDirectory;
 
     /** SFTP default rename extension */
-    protected String renameExtension = ".tmp";
+    protected String renameExtension = String.valueOf(".tmp");
 
     /** SFTP overwrite */
     protected Boolean overwrite = Boolean.FALSE;

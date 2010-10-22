@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.endpoint;
+package org.ikasan.connector.sftp.producer;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
@@ -46,7 +46,6 @@ import javax.resource.cci.ConnectionSpec;
 
 import junit.framework.Assert;
 
-import org.ikasan.connector.sftp.configuration.SftpConfiguration;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.Producer;
@@ -57,12 +56,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test class for {@link SftpEndpointManager}
+ * Test class for {@link SftpProducerEndpointManager}
  * 
  * @author Ikasan Development Team
  *
  */
-public class SftpEndpointManagerTest
+public class SftpProducerEndpointManagerTest
 {
     Mockery mockery = new Mockery()
     {
@@ -75,7 +74,7 @@ public class SftpEndpointManagerTest
     final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
     
     /** mock sftpConfiguration */
-    final SftpConfiguration sftpConfiguration = mockery.mock(SftpConfiguration.class, "mockSftpConfiguration");
+    final SftpProducerConfiguration sftpConfiguration = mockery.mock(SftpProducerConfiguration.class, "mockSftpConfiguration");
 
     /** mock SFTPConnectionSpec */
     final SFTPConnectionSpec sftpConnectionSpec = mockery.mock(SFTPConnectionSpec.class, "mockSFTPConnectionSpec");
@@ -87,7 +86,7 @@ public class SftpEndpointManagerTest
     final ProducerEndpointActivator producerEndpointActivator = mockery.mock(ProducerEndpointActivator.class, "mockProducerEndpointActivator");
 
     /** instance on test */
-    SftpEndpointManager sftpEndpointManager;
+    SftpProducerEndpointManager sftpProducerEndpointManager;
 
     /**
      * Test failed constructor due to null connectionFactory.
@@ -95,7 +94,7 @@ public class SftpEndpointManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullConnectionFactory()
     {
-        new SftpEndpointManager(null, null);
+        new SftpProducerEndpointManager(null, null);
     }
 
     /**
@@ -104,7 +103,7 @@ public class SftpEndpointManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullSftpConfiguration()
     {
-        new SftpEndpointManager(connectionFactory, null);
+        new SftpProducerEndpointManager(connectionFactory, null);
     }
 
     /**
@@ -113,7 +112,7 @@ public class SftpEndpointManagerTest
     @Before
     public void setUp()
     {
-        this.sftpEndpointManager = new SftpEndpointManagerWithMockedSpecAndProducer(connectionFactory, sftpConfiguration);
+        this.sftpProducerEndpointManager = new SftpProducerEndpointManagerWithMockedSpecAndProducer(connectionFactory, sftpConfiguration);
     }
     
     /**
@@ -123,13 +122,13 @@ public class SftpEndpointManagerTest
     public void test_sftpEndpointManager_configuration_mutator()
     {
         // test getConfiguration
-        Assert.assertTrue("sftpConfiguration", sftpEndpointManager.getConfiguration().equals(sftpConfiguration));
+        Assert.assertTrue("sftpConfiguration", sftpProducerEndpointManager.getConfiguration().equals(sftpConfiguration));
 
         // test setConfiguration
-        sftpEndpointManager.setConfiguration(null);
-        Assert.assertNull("sftpConfiguration", sftpEndpointManager.getConfiguration());
-        sftpEndpointManager.setConfiguration(sftpConfiguration);
-        Assert.assertTrue("sftpConfiguration", sftpEndpointManager.getConfiguration().equals(sftpConfiguration));
+        sftpProducerEndpointManager.setConfiguration(null);
+        Assert.assertNull("sftpConfiguration", sftpProducerEndpointManager.getConfiguration());
+        sftpProducerEndpointManager.setConfiguration(sftpConfiguration);
+        Assert.assertTrue("sftpConfiguration", sftpProducerEndpointManager.getConfiguration().equals(sftpConfiguration));
     }
 
     /**
@@ -143,7 +142,7 @@ public class SftpEndpointManagerTest
         setConfigurationAndSpecExpectations();
         
         // test
-        sftpEndpointManager.start();
+        sftpProducerEndpointManager.start();
         mockery.assertIsSatisfied();
     }
     
@@ -154,7 +153,7 @@ public class SftpEndpointManagerTest
     @Test
     public void test_sftpEndpointManager_start_for_producer_which_implements_EndpointActivator() throws ResourceException
     {
-        this.sftpEndpointManager = new SftpEndpointManagerWithMockedSpecAndProducerEndpointActivator(connectionFactory, sftpConfiguration);
+        this.sftpProducerEndpointManager = new SftpProducerEndpointManagerWithMockedSpecAndProducerEndpointActivator(connectionFactory, sftpConfiguration);
 
         // common expectations
         setConfigurationAndSpecExpectations();
@@ -169,7 +168,7 @@ public class SftpEndpointManagerTest
         });
         
         // test
-        sftpEndpointManager.start();
+        sftpProducerEndpointManager.start();
         mockery.assertIsSatisfied();
     }
     
@@ -180,16 +179,16 @@ public class SftpEndpointManagerTest
     @Test
     public void test_sftpEndpointManager_getEndpoint() throws ResourceException
     {
-        this.sftpEndpointManager = new SftpEndpointManagerWithMockedSpec(connectionFactory, sftpConfiguration);
+        this.sftpProducerEndpointManager = new SftpEndpointManagerWithMockedSpec(connectionFactory, sftpConfiguration);
 
         // common expectations
         setConfigurationAndSpecExpectations();
         
         // setup
-        sftpEndpointManager.start();
+        sftpProducerEndpointManager.start();
 
         // test
-        Assert.assertTrue("Producer is an SftpMapProducer", sftpEndpointManager.getEndpoint() instanceof SftpMapProducer);
+        Assert.assertTrue("Producer is an SftpMapProducer", sftpProducerEndpointManager.getEndpoint() instanceof SftpMapProducer);
         mockery.assertIsSatisfied();
     }
     
@@ -204,10 +203,10 @@ public class SftpEndpointManagerTest
         setConfigurationAndSpecExpectations();
         
         // setup
-        sftpEndpointManager.start();
+        sftpProducerEndpointManager.start();
 
         // test
-        sftpEndpointManager.stop();
+        sftpProducerEndpointManager.stop();
         mockery.assertIsSatisfied();
     }
     
@@ -218,7 +217,7 @@ public class SftpEndpointManagerTest
     @Test
     public void test_sftpEndpointManager_stop_for_producer_which_implements_EndpointActivator() throws ResourceException
     {
-        this.sftpEndpointManager = new SftpEndpointManagerWithMockedSpecAndProducerEndpointActivator(connectionFactory, sftpConfiguration);
+        this.sftpProducerEndpointManager = new SftpProducerEndpointManagerWithMockedSpecAndProducerEndpointActivator(connectionFactory, sftpConfiguration);
 
         // common expectations
         setConfigurationAndSpecExpectations();
@@ -234,10 +233,10 @@ public class SftpEndpointManagerTest
         });
         
         // setup
-        sftpEndpointManager.start();
+        sftpProducerEndpointManager.start();
 
         // test
-        sftpEndpointManager.stop();
+        sftpProducerEndpointManager.stop();
         mockery.assertIsSatisfied();
     }
     
@@ -292,10 +291,10 @@ public class SftpEndpointManagerTest
      * @author Ikasan Development Team
      *
      */
-    private class SftpEndpointManagerWithMockedSpec extends SftpEndpointManager
+    private class SftpEndpointManagerWithMockedSpec extends SftpProducerEndpointManager
     {
 
-        public SftpEndpointManagerWithMockedSpec(ConnectionFactory connectionFactory, SftpConfiguration sftpConfiguration)
+        public SftpEndpointManagerWithMockedSpec(ConnectionFactory connectionFactory, SftpProducerConfiguration sftpConfiguration)
         {
             super(connectionFactory, sftpConfiguration);
         }
@@ -313,10 +312,10 @@ public class SftpEndpointManagerTest
      * @author Ikasan Development Team
      *
      */
-    private class SftpEndpointManagerWithMockedSpecAndProducer extends SftpEndpointManager
+    private class SftpProducerEndpointManagerWithMockedSpecAndProducer extends SftpProducerEndpointManager
     {
 
-        public SftpEndpointManagerWithMockedSpecAndProducer(ConnectionFactory connectionFactory, SftpConfiguration sftpConfiguration)
+        public SftpProducerEndpointManagerWithMockedSpecAndProducer(ConnectionFactory connectionFactory, SftpProducerConfiguration sftpConfiguration)
         {
             super(connectionFactory, sftpConfiguration);
         }
@@ -340,10 +339,10 @@ public class SftpEndpointManagerTest
      * @author Ikasan Development Team
      *
      */
-    private class SftpEndpointManagerWithMockedSpecAndProducerEndpointActivator extends SftpEndpointManagerWithMockedSpecAndProducer
+    private class SftpProducerEndpointManagerWithMockedSpecAndProducerEndpointActivator extends SftpProducerEndpointManagerWithMockedSpecAndProducer
     {
 
-        public SftpEndpointManagerWithMockedSpecAndProducerEndpointActivator(ConnectionFactory connectionFactory, SftpConfiguration sftpConfiguration)
+        public SftpProducerEndpointManagerWithMockedSpecAndProducerEndpointActivator(ConnectionFactory connectionFactory, SftpProducerConfiguration sftpConfiguration)
         {
             super(connectionFactory, sftpConfiguration);
         }

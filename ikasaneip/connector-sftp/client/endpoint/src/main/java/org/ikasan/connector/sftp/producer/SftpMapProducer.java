@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.endpoint;
+package org.ikasan.connector.sftp.producer;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -46,12 +46,11 @@ import java.util.Map;
 import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.sftp.configuration.SftpConfiguration;
 import org.ikasan.spec.endpoint.Producer;
 
 
 /**
- * Sftp endpoint based on a Map<String,InputStream>.
+ * Sftp producer based on a Map<String,InputStream>.
  * This implementation is provided as a stepping stone to moving away from
  * the FileTransfer client approach. Ideally, this class should be interacting
  * with the SFTP API and not another File Transfer client layer. TODO!
@@ -63,13 +62,13 @@ public class SftpMapProducer implements Producer<Map<String,InputStream>>
     private FileTransferConnectionTemplate fileTransferConnectionTemplate;
     
     /** configuration */
-    private SftpConfiguration configuration;
+    private SftpProducerConfiguration configuration;
 
     /**
      * Constructor
      * @param fileTransferConnectionTemplate
      */
-    public SftpMapProducer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpConfiguration configuration)
+    public SftpMapProducer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpProducerConfiguration configuration)
     {
         this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
         if(fileTransferConnectionTemplate == null)
