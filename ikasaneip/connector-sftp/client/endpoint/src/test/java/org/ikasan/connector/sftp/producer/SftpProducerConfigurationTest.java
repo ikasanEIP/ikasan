@@ -38,19 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.configuration;
+package org.ikasan.connector.sftp.producer;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 /**
- * Test class for {@link SftpConfiguration}
+ * Test class for {@link SftpProducerConfiguration}
  * 
  * @author Ikasan Development Team
  *
  */
-public class SftpConfigurationTest
+public class SftpProducerConfigurationTest
 {
     /**
      * Test sftpConfiguration bean defaults.
@@ -58,7 +58,7 @@ public class SftpConfigurationTest
     @Test
     public void test_sftpConfiguration_defaults()
     {
-        SftpConfiguration sftpConfiguration = new SftpConfiguration();
+        SftpProducerConfiguration sftpConfiguration = new SftpProducerConfiguration();
         
         Assert.assertNull(sftpConfiguration.getClientID());
         Assert.assertTrue(sftpConfiguration.getCleanupJournalOnComplete());
@@ -83,7 +83,7 @@ public class SftpConfigurationTest
     @Test
     public void test_sftpConfiguration_mutators()
     {
-        SftpConfiguration sftpConfiguration = new SftpConfiguration();
+        SftpProducerConfiguration sftpConfiguration = new SftpProducerConfiguration();
         
         sftpConfiguration.setClientID("clientID");
         Assert.assertTrue("clientID", sftpConfiguration.getClientID().equals("clientID"));

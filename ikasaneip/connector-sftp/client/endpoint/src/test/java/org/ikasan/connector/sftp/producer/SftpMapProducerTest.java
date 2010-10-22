@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.endpoint;
+package org.ikasan.connector.sftp.producer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -48,7 +48,6 @@ import java.util.Map;
 import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.sftp.configuration.SftpConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -73,16 +72,13 @@ public class SftpMapProducerTest
     final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
     
     /** mock sftpConfiguration */
-    final SftpConfiguration sftpConfiguration = mockery.mock(SftpConfiguration.class, "mockSftpConfiguration");
+    final SftpProducerConfiguration sftpConfiguration = mockery.mock(SftpProducerConfiguration.class, "mockSftpProducerConfiguration");
 
     /** mock filenameContentPairsMap */
     final Map<String,InputStream> filenameContentPairsMap = mockery.mock(Map.class, "mockFilenameContentPairsMap");
 
     /** mock map entry */
     final Map.Entry<String,InputStream> filenameContent = mockery.mock(Map.Entry.class, "mockFilenameContent");
-
-    /** instance on test */
-    SftpEndpointManager sftpEndpointManager;
 
     /**
      * Test failed constructor due to null fileTransferConnectionTemplate.
