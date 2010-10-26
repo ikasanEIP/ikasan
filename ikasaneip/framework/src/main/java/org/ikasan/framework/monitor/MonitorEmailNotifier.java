@@ -189,10 +189,7 @@ public class MonitorEmailNotifier extends AbstractMonitorListener
                 // Send away
                 this.mailSender.send(email);
             }
-            else
-            {
-                logger.warn("Initiator reporting unsupported state [" + state + "]. No email will be sent.");
-            }
+            // If the current state is not found in map, there is nothing to notify!
         }
         catch (Throwable t)
         {
