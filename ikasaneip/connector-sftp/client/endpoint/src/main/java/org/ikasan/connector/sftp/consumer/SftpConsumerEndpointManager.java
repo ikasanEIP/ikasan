@@ -41,12 +41,9 @@
 package org.ikasan.connector.sftp.consumer;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionSpec;
 
-import org.ikasan.connector.base.outbound.EISConnectionFactory;
-import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
-import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
 import org.ikasan.spec.endpoint.Consumer;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
 
@@ -57,26 +54,26 @@ import org.ikasan.spec.endpoint.EndpointActivator;
  */
 public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,SftpConsumerConfiguration>
 {
+    /** consumer factory */
+    private EndpointFactory<Consumer<?>,SftpConsumerConfiguration> endpointFactory;
+    
     /** configuration */
     private SftpConsumerConfiguration sftpConfiguration;
     
     /** consumer endpoint */
     private Consumer<?> consumer;
 
-    /** connection factory */
-    private EISConnectionFactory connectionFactory;
-    
     /**
      * Constructor
      * @param connectionFactory
      * @param sftpConfiguration
      */
-    public SftpConsumerEndpointManager(EISConnectionFactory connectionFactory, SftpConsumerConfiguration sftpConfiguration)
+    public SftpConsumerEndpointManager(EndpointFactory<Consumer<?>,SftpConsumerConfiguration> endpointFactory, SftpConsumerConfiguration sftpConfiguration)
     {
-        this.connectionFactory = connectionFactory;
-        if(connectionFactory == null)
+        this.endpointFactory = endpointFactory;
+        if(endpointFactory == null)
         {
-            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
+            throw new IllegalArgumentException("endpointFactory cannot be 'null'");
         }
 
         this.sftpConfiguration = sftpConfiguration;
@@ -91,44 +88,13 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
      */
     public void start() throws ResourceException
     {
-        SFTPConnectionSpec spec = this.getConnectionSpec();
-        spec.setClientID(sftpConfiguration.getClientID());
-        spec.setRemoteHostname(sftpConfiguration.getRemoteHost());
-        spec.setKnownHostsFilename(sftpConfiguration.getKnownHostsFilename());
-        spec.setMaxRetryAttempts(sftpConfiguration.getMaxRetryAttempts());
-        spec.setRemotePort(sftpConfiguration.getRemotePort());
-        spec.setPrivateKeyFilename(sftpConfiguration.getPrivateKeyFilename());
-        spec.setConnectionTimeout(sftpConfiguration.getConnectionTimeout());
-        spec.setUsername(sftpConfiguration.getUsername());
-        spec.setCleanupJournalOnComplete(sftpConfiguration.getCleanupJournalOnComplete());
-        this.consumer = this.getConsumer(spec);
-        
+        this.consumer = this.endpointFactory.createEndpoint(sftpConfiguration);
         if(this.consumer instanceof EndpointActivator)
         {
             ((EndpointActivator) this.consumer).activate();
         }
     }
 
-    /**
-     * Utility method to aid testing of this class
-     * @return
-     */
-    protected SFTPConnectionSpec getConnectionSpec()
-    {
-        return new SFTPConnectionSpec();
-    }
-    
-    /**
-     * Utility method to aid testing of this class
-     * @param spec
-     * @return
-     */
-    protected Consumer<?> getConsumer(ConnectionSpec spec)
-    {
-        return new SftpMapConsumer(new FileTransferPayloadProvider(sftpConfiguration.getSourceDirectory(), 
-            sftpConfiguration.getFilenamePattern(), connectionFactory, spec), sftpConfiguration);
-    }
-    
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#getEndpoint()
      */

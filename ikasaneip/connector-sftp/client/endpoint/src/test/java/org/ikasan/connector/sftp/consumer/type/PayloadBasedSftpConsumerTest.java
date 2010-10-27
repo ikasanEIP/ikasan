@@ -38,10 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer;
+package org.ikasan.connector.sftp.consumer.type;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -51,6 +50,7 @@ import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.common.Payload;
+import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -59,12 +59,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Test class for {@link SftpMapProducer}
+ * Test class for {@link PayloadBasedSftpConsumer}
  * 
  * @author Ikasan Development Team
  *
  */
-public class SftpMapConsumerTest
+public class PayloadBasedSftpConsumerTest
 {
     Mockery mockery = new Mockery()
     {
@@ -82,22 +82,16 @@ public class SftpMapConsumerTest
     /** mock sftpConfiguration */
     final SftpConsumerConfiguration sftpConfiguration = mockery.mock(SftpConsumerConfiguration.class, "mockSftpConsumerConfiguration");
 
-    /** mock filenameContentPairsMap */
-    final Map<String,InputStream> filenameContentPairsMap = mockery.mock(Map.class, "mockFilenameContentPairsMap");
-
-    /** mock map entry */
-    final Map.Entry<String,InputStream> filenameContent = mockery.mock(Map.Entry.class, "mockFilenameContent");
-
-    /** mock payload - TODO - remove Payload dependency */
+    /** mock payload */
     final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
     /**
-     * Test failed constructor due to null fileTransferConnectionTemplate.
+     * Test failed constructor due to null fileTransferPayloadProvider.
      */
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullFileTransferPayloadProvider()
     {
-        new SftpMapConsumer(null, null);
+        new PayloadBasedSftpConsumer(null, null);
     }
 
     /**
@@ -106,7 +100,7 @@ public class SftpMapConsumerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullSftpConfiguration()
     {
-        new SftpMapConsumer(fileTransferPayloadProvider, null);
+        new PayloadBasedSftpConsumer(fileTransferPayloadProvider, null);
     }
 
     /**
@@ -115,7 +109,7 @@ public class SftpMapConsumerTest
      * @throws IOException 
      */
     @Test
-    public void test_successful_sftpMapConsumer_invocation_no_discovered_file() throws ResourceException, IOException
+    public void test_successful_invocation_no_discovered_file() throws ResourceException, IOException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
@@ -165,8 +159,9 @@ public class SftpMapConsumerTest
             }
         });
 
-        SftpMapConsumer sftpMapConsumer = new SftpMapConsumer(fileTransferPayloadProvider, sftpConfiguration);
-        Assert.assertNull(sftpMapConsumer.invoke());
+        PayloadBasedSftpConsumer payloadBasedSftpConsumer = 
+            new PayloadBasedSftpConsumer(fileTransferPayloadProvider, sftpConfiguration);
+        Assert.assertNull(payloadBasedSftpConsumer.invoke());
         mockery.assertIsSatisfied();
     }
 
@@ -176,7 +171,7 @@ public class SftpMapConsumerTest
      * @throws IOException 
      */
     @Test
-    public void test_successful_sftpMapConsumer_invocation_discovering_a_file() throws ResourceException, IOException
+    public void test_successful_invocation_discovering_a_file() throws ResourceException, IOException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
@@ -223,27 +218,12 @@ public class SftpMapConsumerTest
                     Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
                     Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
                 will(returnValue(payload));
-                
-                exactly(1).of(payload).getId();
-                will(returnValue("filename"));
-                exactly(1).of(payload).getContent();
-                will(returnValue("fileContents".getBytes()));
             }
         });
 
-        SftpMapConsumer sftpMapConsumer = new SftpMapConsumer(fileTransferPayloadProvider, sftpConfiguration);
-        Map<String,InputStream> discoveredFiles = sftpMapConsumer.invoke();
-        Assert.assertTrue(discoveredFiles.size() == 1);
-        for(Map.Entry<String,InputStream> discoveredFile : discoveredFiles.entrySet())
-        {
-            Assert.assertTrue("filename".equals(discoveredFile.getKey()));
-            ByteArrayInputStream bais = (ByteArrayInputStream)discoveredFile.getValue();
-            byte[] contentBytes = new byte[12];
-            bais.read(contentBytes);
-            Assert.assertTrue("fileContents".equals(new String(contentBytes)));
-        }        
-        
+        PayloadBasedSftpConsumer payloadBasedSftpConsumer = 
+            new PayloadBasedSftpConsumer(fileTransferPayloadProvider, sftpConfiguration);
+        Assert.assertNotNull(payloadBasedSftpConsumer.invoke());
         mockery.assertIsSatisfied();
     }
-
 }

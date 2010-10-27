@@ -174,7 +174,7 @@ public class SftpConsumerEndpointManagerTest
     }
     
     /**
-     * Test getEndpoint returns a producer which is SftpMapProducer.
+     * Test getEndpoint returns a producer which is MapBasedSftpProducerEndpoint.
      * @throws ResourceException 
      */
     @Test
