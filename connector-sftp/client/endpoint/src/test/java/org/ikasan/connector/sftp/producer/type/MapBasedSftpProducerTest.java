@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.producer;
+package org.ikasan.connector.sftp.producer.type;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -48,18 +48,19 @@ import java.util.Map;
 import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.sftp.producer.SftpProducerConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
 /**
- * Test class for {@link SftpMapProducer}
+ * Test class for {@link MapBasedSftpProducer}
  * 
  * @author Ikasan Development Team
  *
  */
-public class SftpMapProducerTest
+public class MapBasedSftpProducerTest
 {
     Mockery mockery = new Mockery()
     {
@@ -86,7 +87,7 @@ public class SftpMapProducerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullFileTransferConnectionTemplate()
     {
-        new SftpMapProducer(null, null);
+        new MapBasedSftpProducer(null, null);
     }
 
     /**
@@ -95,7 +96,7 @@ public class SftpMapProducerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullSftpConfiguration()
     {
-        new SftpMapProducer(fileTransferConnectionTemplate, null);
+        new MapBasedSftpProducer(fileTransferConnectionTemplate, null);
     }
 
     /**
@@ -128,7 +129,7 @@ public class SftpMapProducerTest
             }
         });
 
-        SftpMapProducer sftpMapProducer = new SftpMapProducer(fileTransferConnectionTemplate, sftpConfiguration);
+        MapBasedSftpProducer sftpMapProducer = new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpConfiguration);
         sftpMapProducer.invoke(filenameContentPairsMap);
         mockery.assertIsSatisfied();
     }
@@ -167,7 +168,7 @@ public class SftpMapProducerTest
             }
         });
 
-        SftpMapProducer sftpMapProducer = new SftpMapProducer(fileTransferConnectionTemplate, sftpConfiguration);
+        MapBasedSftpProducer sftpMapProducer = new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpConfiguration);
         sftpMapProducer.invoke(filenameContentPairsMap);
         mockery.assertIsSatisfied();
     }
