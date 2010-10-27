@@ -42,10 +42,10 @@ package org.ikasan.connector.sftp.producer;
 
 import javax.resource.ResourceException;
 
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.Producer;
-import org.ikasan.spec.endpoint.ProducerFactory;
 
 /**
  * Endpoint manager for SFTP producer endpoint implementations based on an 
@@ -55,8 +55,7 @@ import org.ikasan.spec.endpoint.ProducerFactory;
 public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,SftpProducerConfiguration>
 {
     /** producer factory */
-    @SuppressWarnings("rawtypes")
-    private ProducerFactory producerFactory;
+    private EndpointFactory<Producer<?>,SftpProducerConfiguration> endpointFactory;
     
     /** configuration */
     private SftpProducerConfiguration sftpConfiguration;
@@ -69,12 +68,12 @@ public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,
      * @param producerFactory
      * @param sftpConfiguration
      */
-    public SftpProducerEndpointManager(@SuppressWarnings("rawtypes") ProducerFactory producerFactory, SftpProducerConfiguration sftpConfiguration)
+    public SftpProducerEndpointManager(EndpointFactory<Producer<?>,SftpProducerConfiguration> endpointFactory, SftpProducerConfiguration sftpConfiguration)
     {
-        this.producerFactory = producerFactory;
-        if(producerFactory == null)
+        this.endpointFactory = endpointFactory;
+        if(endpointFactory == null)
         {
-            throw new IllegalArgumentException("producerFactory cannot be 'null'");
+            throw new IllegalArgumentException("endpointFactory cannot be 'null'");
         }
 
         this.sftpConfiguration = sftpConfiguration;
@@ -87,10 +86,9 @@ public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#start()
      */
-    @SuppressWarnings("unchecked")
     public void start() throws ResourceException
     {
-        this.producer = this.producerFactory.createProducer(sftpConfiguration);
+        this.producer = this.endpointFactory.createEndpoint(sftpConfiguration);
         if(this.producer instanceof EndpointActivator)
         {
             ((EndpointActivator) this.producer).activate();

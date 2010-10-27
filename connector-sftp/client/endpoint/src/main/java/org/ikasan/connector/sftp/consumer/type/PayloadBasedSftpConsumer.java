@@ -38,28 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+package org.ikasan.connector.sftp.consumer.type;
 
 import javax.resource.ResourceException;
 
-// TODO - remove this Payload dependency which is forced on us by the underlying Transfer client
 import org.ikasan.common.Payload;
+import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
 import org.ikasan.spec.endpoint.Consumer;
 
 /**
- * Sftp endpoint based on a Map<String,InputStream>.
- * This implementation is provided as a stepping stone to moving away from
- * the FileTransfer client approach. Ideally, this class should be interacting
- * with the SFTP API and not another File Transfer client layer. TODO!
+ * Sftp endpoint based on a Payload.
  * @author Ikasan Development Team
  */
-public class SftpMapConsumer implements Consumer<Map<String,InputStream>>
+public class PayloadBasedSftpConsumer implements Consumer<Payload>
 {
     /** existing template */
     private FileTransferPayloadProvider fileTransferPayloadProvider;
@@ -71,7 +63,7 @@ public class SftpMapConsumer implements Consumer<Map<String,InputStream>>
      * Constructor
      * @param fileTransferConnectionTemplate
      */
-    public SftpMapConsumer(FileTransferPayloadProvider fileTransferPayloadProvider, SftpConsumerConfiguration configuration)
+    public PayloadBasedSftpConsumer(FileTransferPayloadProvider fileTransferPayloadProvider, SftpConsumerConfiguration configuration)
     {
         this.fileTransferPayloadProvider = fileTransferPayloadProvider;
         if(fileTransferPayloadProvider == null)
@@ -90,12 +82,9 @@ public class SftpMapConsumer implements Consumer<Map<String,InputStream>>
      * Return a map of filename and content entries. If no file is available for
      * return then null is returned.
      */
-    public Map<String, InputStream> invoke() throws ResourceException
+    public Payload invoke() throws ResourceException
     {
-        Map<String,InputStream> filenameContentPairs = null;
-        
-        // TODO - remove Payload dependency which is forced upon us by the getDiscoveredFile
-        Payload payload = this.fileTransferPayloadProvider.getFileTransferConnectionTemplate().getDiscoveredFile(
+        return this.fileTransferPayloadProvider.getFileTransferConnectionTemplate().getDiscoveredFile(
             configuration.getSourceDirectory(), configuration.getFilenamePattern(), 
             configuration.getRenameOnSuccess(), configuration.getRenameOnSuccessExtension(),
             configuration.getMoveOnSuccess(), configuration.getMoveOnSuccessNewPath(),
@@ -103,14 +92,5 @@ public class SftpMapConsumer implements Consumer<Map<String,InputStream>>
             configuration.getMinAge(), configuration.getDestructive(), 
             configuration.getFilterDuplicates(), configuration.getFilterOnFilename(),
             configuration.getFilterOnLastModifiedDate(), configuration.getChronological());
-            
-        if(payload != null)
-        {
-            filenameContentPairs = new HashMap<String,InputStream>();
-            String filename = payload.getId();
-            InputStream contentInputStream = new ByteArrayInputStream(payload.getContent());
-            filenameContentPairs.put(filename, contentInputStream);
-        }
-        return filenameContentPairs;
     }
 }

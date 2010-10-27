@@ -38,15 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.producer.type;
-
-import javax.resource.cci.ConnectionFactory;
+package org.ikasan.connector.sftp.consumer.type;
 
 import junit.framework.Assert;
 
+import org.ikasan.connector.base.outbound.EISConnectionFactory;
+import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
-import org.ikasan.connector.sftp.producer.SftpProducerConfiguration;
-import org.ikasan.spec.endpoint.Producer;
+import org.ikasan.spec.endpoint.Consumer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -54,12 +53,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test class for {@link MapBasedSftpProducerFactory}
+ * Test class for {@link PayloadBasedSftpConsumerFactory}
  * 
  * @author Ikasan Development Team
  *
  */
-public class MapBasedSftpProducerFactoryTest
+public class PayloadBasedSftpConsumerFactoryTest
 {
     Mockery mockery = new Mockery()
     {
@@ -69,19 +68,19 @@ public class MapBasedSftpProducerFactoryTest
     };
 
     /** mock connectionFactory */
-    final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
+    final EISConnectionFactory connectionFactory = mockery.mock(EISConnectionFactory.class, "mockConnectionFactory");
     
     /** mock sftpConfiguration */
-    final SftpProducerConfiguration sftpConfiguration = mockery.mock(SftpProducerConfiguration.class, "mockSftpConfiguration");
+    final SftpConsumerConfiguration sftpConfiguration = mockery.mock(SftpConsumerConfiguration.class, "mockSftpConfiguration");
 
     /** mock SFTPConnectionSpec */
     final SFTPConnectionSpec sftpConnectionSpec = mockery.mock(SFTPConnectionSpec.class, "mockSFTPConnectionSpec");
 
-    /** mock producer */
-    final Producer<?> producer = mockery.mock(Producer.class, "mockProducer");
+    /** mock consumer */
+    final Consumer<?> consumer = mockery.mock(Consumer.class, "mockConsumer");
 
     /** instance on test */
-    MapBasedSftpProducerFactory mapBasedSftpProducerFactory;
+    PayloadBasedSftpConsumerFactory payloadBasedSftpConsumerFactory;
 
     /**
      * Test failed constructor due to null connectionFactory.
@@ -89,7 +88,7 @@ public class MapBasedSftpProducerFactoryTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullConnectionFactory()
     {
-        new MapBasedSftpProducerFactory(null);
+        new PayloadBasedSftpConsumerFactory(null);
     }
 
     /**
@@ -98,19 +97,24 @@ public class MapBasedSftpProducerFactoryTest
     @Before
     public void setUp()
     {
-        this.mapBasedSftpProducerFactory = new MapBasedSftpProducerFactoryWithMockSpec(connectionFactory);
+        this.payloadBasedSftpConsumerFactory = new PayloadBasedSftpConsumerFactoryWithMockSpec(connectionFactory);
     }
     
     /**
-     * Test create producer invocation.
+     * Test create consumer invocation.
      */
     @Test
-    public void test_createProducer()
+    public void test_createConsumer()
     {
         // expectations
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(sftpConfiguration).getSourceDirectory();
+                will(returnValue("sourceDirectory"));
+                exactly(1).of(sftpConfiguration).getFilenamePattern();
+                will(returnValue("filenamePattern"));
+
                 exactly(1).of(sftpConfiguration).getClientID();
                 will(returnValue("clientID"));
                 one(sftpConnectionSpec).setClientID("clientID");
@@ -150,20 +154,20 @@ public class MapBasedSftpProducerFactoryTest
         });
                 
         // test
-        Assert.assertTrue(mapBasedSftpProducerFactory.createEndpoint(sftpConfiguration) instanceof MapBasedSftpProducer);
+        Assert.assertTrue(payloadBasedSftpConsumerFactory.createEndpoint(sftpConfiguration) instanceof PayloadBasedSftpConsumer);
         mockery.assertIsSatisfied();
     }
     
     /**
-     * Test MapBasedSftpProducerFactory instance to allow us to return a mock 
+     * Test PayloadBasedSftpConsumerFactory instance to allow us to return a mock 
      * instance of the ConnectionSpec.
      * @author Ikasan Development Team
      *
      */
-    private class MapBasedSftpProducerFactoryWithMockSpec extends MapBasedSftpProducerFactory
+    private class PayloadBasedSftpConsumerFactoryWithMockSpec extends PayloadBasedSftpConsumerFactory
     {
 
-        public MapBasedSftpProducerFactoryWithMockSpec(ConnectionFactory connectionFactory)
+        public PayloadBasedSftpConsumerFactoryWithMockSpec(EISConnectionFactory connectionFactory)
         {
             super(connectionFactory);
         }
