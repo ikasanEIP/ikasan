@@ -41,19 +41,18 @@
 package org.ikasan.connector.sftp.producer.type;
 
 import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.ConnectionSpec;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.connector.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
-import org.ikasan.spec.endpoint.ProducerFactory;
 
 /**
  * SFTP producer factory for creating sftpProducer endpoint implementations.
  * @author Ikasan Development Team
  */
-public class MapBasedSftpProducerFactory implements ProducerFactory<SftpProducerConfiguration>
+public class MapBasedSftpProducerFactory implements EndpointFactory<Producer<?>,SftpProducerConfiguration>
 {
     /** connection factory */
     private ConnectionFactory connectionFactory;
@@ -61,7 +60,6 @@ public class MapBasedSftpProducerFactory implements ProducerFactory<SftpProducer
     /**
      * Constructor
      * @param connectionFactory
-     * @param sftpConfiguration
      */
     public MapBasedSftpProducerFactory(ConnectionFactory connectionFactory)
     {
@@ -72,7 +70,10 @@ public class MapBasedSftpProducerFactory implements ProducerFactory<SftpProducer
         }
     }
 
-    public Producer<?> createProducer(SftpProducerConfiguration sftpProducerConfiguration)
+    /* (non-Jsdoc)
+     * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
+     */
+    public Producer<?> createEndpoint(SftpProducerConfiguration sftpProducerConfiguration)
     {
         SFTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(sftpProducerConfiguration.getClientID());
@@ -90,11 +91,11 @@ public class MapBasedSftpProducerFactory implements ProducerFactory<SftpProducer
 
     /**
      * Utility method to aid testing of this class
-     * @return
+     * @return SFTPConnectionSpec
      */
     protected SFTPConnectionSpec getConnectionSpec()
     {
         return new SFTPConnectionSpec();
     }
-    
+  
 }
