@@ -41,14 +41,11 @@
 package org.ikasan.connector.sftp.producer;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.ConnectionSpec;
 
-import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.Producer;
+import org.ikasan.spec.endpoint.ProducerFactory;
 
 /**
  * Endpoint manager for SFTP producer endpoint implementations based on an 
@@ -57,26 +54,27 @@ import org.ikasan.spec.endpoint.Producer;
  */
 public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,SftpProducerConfiguration>
 {
+    /** producer factory */
+    @SuppressWarnings("rawtypes")
+    private ProducerFactory producerFactory;
+    
     /** configuration */
     private SftpProducerConfiguration sftpConfiguration;
     
     /** producer endpoint */
     private Producer<?> producer;
 
-    /** connection factory */
-    private ConnectionFactory connectionFactory;
-
     /**
      * Constructor
-     * @param connectionFactory
+     * @param producerFactory
      * @param sftpConfiguration
      */
-    public SftpProducerEndpointManager(ConnectionFactory connectionFactory, SftpProducerConfiguration sftpConfiguration)
+    public SftpProducerEndpointManager(@SuppressWarnings("rawtypes") ProducerFactory producerFactory, SftpProducerConfiguration sftpConfiguration)
     {
-        this.connectionFactory = connectionFactory;
-        if(connectionFactory == null)
+        this.producerFactory = producerFactory;
+        if(producerFactory == null)
         {
-            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
+            throw new IllegalArgumentException("producerFactory cannot be 'null'");
         }
 
         this.sftpConfiguration = sftpConfiguration;
@@ -89,45 +87,16 @@ public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#start()
      */
+    @SuppressWarnings("unchecked")
     public void start() throws ResourceException
     {
-        SFTPConnectionSpec spec = this.getConnectionSpec();
-        spec.setClientID(sftpConfiguration.getClientID());
-        spec.setRemoteHostname(sftpConfiguration.getRemoteHost());
-        spec.setKnownHostsFilename(sftpConfiguration.getKnownHostsFilename());
-        spec.setMaxRetryAttempts(sftpConfiguration.getMaxRetryAttempts());
-        spec.setRemotePort(sftpConfiguration.getRemotePort());
-        spec.setPrivateKeyFilename(sftpConfiguration.getPrivateKeyFilename());
-        spec.setConnectionTimeout(sftpConfiguration.getConnectionTimeout());
-        spec.setUsername(sftpConfiguration.getUsername());
-        spec.setCleanupJournalOnComplete(sftpConfiguration.getCleanupJournalOnComplete());
-        this.producer = this.getProducer(spec);
-        
+        this.producer = this.producerFactory.createProducer(sftpConfiguration);
         if(this.producer instanceof EndpointActivator)
         {
             ((EndpointActivator) this.producer).activate();
         }
     }
 
-    /**
-     * Utility method to aid testing of this class
-     * @return
-     */
-    protected SFTPConnectionSpec getConnectionSpec()
-    {
-        return new SFTPConnectionSpec();
-    }
-    
-    /**
-     * Utility method to aid testing of this class
-     * @param spec
-     * @return
-     */
-    protected Producer<?> getProducer(ConnectionSpec spec)
-    {
-        return new SftpMapProducer(new FileTransferConnectionTemplate(connectionFactory, spec), sftpConfiguration);
-    }
-    
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#getEndpoint()
      */
