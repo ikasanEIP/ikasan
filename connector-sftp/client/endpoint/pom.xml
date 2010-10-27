@@ -60,6 +60,13 @@
     <description>The client endpoint for SFTP within the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
+        <!-- TODO - remove this dependency created by the underlying FileTransfer using Payload -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-endpoint</artifactId>
@@ -99,10 +106,16 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-common</artifactId>
+            <artifactId>ikasan-framework</artifactId>
             <version>0.8.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <!--dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.8.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency-->
     </dependencies>
 
 </project>

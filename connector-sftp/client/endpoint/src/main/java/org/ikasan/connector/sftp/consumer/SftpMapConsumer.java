@@ -40,11 +40,15 @@
  */
 package org.ikasan.connector.sftp.consumer;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.resource.ResourceException;
 
+// TODO - remove this Payload dependency which is forced on us by the underlying Transfer client
+import org.ikasan.common.Payload;
 import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
 import org.ikasan.spec.endpoint.Consumer;
 
@@ -82,18 +86,31 @@ public class SftpMapConsumer implements Consumer<Map<String,InputStream>>
         }
     }
     
+    /**
+     * Return a map of filename and content entries. If no file is available for
+     * return then null is returned.
+     */
     public Map<String, InputStream> invoke() throws ResourceException
     {
         Map<String,InputStream> filenameContentPairs = null;
         
-//        this.fileTransferPayloadProvider.getFileTransferConnectionTemplate().getDiscoveredFile(configuration.getSourceDirectory(), configuration.getFilenamePattern(),
-//            configuration.getRenameOnSuccess(), configuration.getRenameOnSuccessExtension(),
-//            configuration.getMoveOnSuccess(), configuration.getMoveOnSuccessNewPath(),
-//            configuration.getChunking(), configuration.getChunkSize(), configuration.getChecksum(),
-//            configuration.getMinAge(), configuration.getDestructive(), 
-//            configuration.getFilterDuplicates(), configuration.getFilterOnFilename(),
-//            configuration.getFilterOnLastModifiedDate(), configuration.getChronological());
+        // TODO - remove Payload dependency which is forced upon us by the getDiscoveredFile
+        Payload payload = this.fileTransferPayloadProvider.getFileTransferConnectionTemplate().getDiscoveredFile(
+            configuration.getSourceDirectory(), configuration.getFilenamePattern(), 
+            configuration.getRenameOnSuccess(), configuration.getRenameOnSuccessExtension(),
+            configuration.getMoveOnSuccess(), configuration.getMoveOnSuccessNewPath(),
+            configuration.getChunking(), configuration.getChunkSize(), configuration.getChecksum(),
+            configuration.getMinAge(), configuration.getDestructive(), 
+            configuration.getFilterDuplicates(), configuration.getFilterOnFilename(),
+            configuration.getFilterOnLastModifiedDate(), configuration.getChronological());
             
+        if(payload != null)
+        {
+            filenameContentPairs = new HashMap<String,InputStream>();
+            String filename = payload.getId();
+            InputStream contentInputStream = new ByteArrayInputStream(payload.getContent());
+            filenameContentPairs.put(filename, contentInputStream);
+        }
         return filenameContentPairs;
     }
 }

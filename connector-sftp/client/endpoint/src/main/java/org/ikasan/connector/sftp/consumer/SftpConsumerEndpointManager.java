@@ -41,15 +41,14 @@
 package org.ikasan.connector.sftp.consumer;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
-import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
 import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
-import org.ikasan.spec.endpoint.Producer;
 
 /**
  * Endpoint manager for SFTP consumer endpoint implementations based on an 
@@ -65,14 +64,14 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
     private Consumer<?> consumer;
 
     /** connection factory */
-    private ConnectionFactory connectionFactory;
-
+    private EISConnectionFactory connectionFactory;
+    
     /**
      * Constructor
      * @param connectionFactory
      * @param sftpConfiguration
      */
-    public SftpConsumerEndpointManager(ConnectionFactory connectionFactory, SftpConsumerConfiguration sftpConfiguration)
+    public SftpConsumerEndpointManager(EISConnectionFactory connectionFactory, SftpConsumerConfiguration sftpConfiguration)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
@@ -126,8 +125,8 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
      */
     protected Consumer<?> getConsumer(ConnectionSpec spec)
     {
-       // return new SftpMapConsumer(new FileTransferConnectionTemplate(connectionFactory, spec), sftpConfiguration);
-        return null;
+        return new SftpMapConsumer(new FileTransferPayloadProvider(sftpConfiguration.getSourceDirectory(), 
+            sftpConfiguration.getFilenamePattern(), connectionFactory, spec), sftpConfiguration);
     }
     
     /* (non-Jsdoc)
