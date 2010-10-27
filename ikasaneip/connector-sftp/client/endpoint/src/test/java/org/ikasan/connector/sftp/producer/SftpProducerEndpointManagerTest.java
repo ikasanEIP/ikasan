@@ -46,7 +46,7 @@ import junit.framework.Assert;
 
 import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.Producer;
-import org.ikasan.spec.endpoint.ProducerFactory;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -69,7 +69,7 @@ public class SftpProducerEndpointManagerTest
     };
 
     /** mock producerFactory */
-    final ProducerFactory producerFactory = mockery.mock(ProducerFactory.class,
+    final EndpointFactory producerFactory = mockery.mock(EndpointFactory.class,
             "mockProducerFactory");
 
     /** mock sftpConfiguration */
@@ -145,7 +145,7 @@ public class SftpProducerEndpointManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(producerFactory).createProducer(sftpConfiguration);
+                exactly(1).of(producerFactory).createEndpoint(sftpConfiguration);
                 will(returnValue(producer));
             }
         });
@@ -168,7 +168,7 @@ public class SftpProducerEndpointManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(producerFactory).createProducer(sftpConfiguration);
+                exactly(1).of(producerFactory).createEndpoint(sftpConfiguration);
                 will(returnValue(producerWithEndpointActivator));
 
                 exactly(1).of(producerWithEndpointActivator).activate();
@@ -194,7 +194,7 @@ public class SftpProducerEndpointManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(producerFactory).createProducer(sftpConfiguration);
+                exactly(1).of(producerFactory).createEndpoint(sftpConfiguration);
                 will(returnValue(producer));
             }
         });

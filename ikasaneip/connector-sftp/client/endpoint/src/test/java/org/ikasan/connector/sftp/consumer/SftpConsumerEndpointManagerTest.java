@@ -41,15 +41,12 @@
 package org.ikasan.connector.sftp.consumer;
 
 import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.ConnectionSpec;
 
 import junit.framework.Assert;
 
-import org.ikasan.connector.base.outbound.EISConnectionFactory;
-import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointActivator;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -71,20 +68,17 @@ public class SftpConsumerEndpointManagerTest
         }
     };
 
-    /** mock connectionFactory */
-    final EISConnectionFactory connectionFactory = mockery.mock(EISConnectionFactory.class, "mockEISConnectionFactory");
+    /** mock endpointFactory */
+    final EndpointFactory endpointFactory = mockery.mock(EndpointFactory.class, "mockEndpointFactory");
     
     /** mock sftpConfiguration */
     final SftpConsumerConfiguration sftpConfiguration = mockery.mock(SftpConsumerConfiguration.class, "mockSftpConfiguration");
-
-    /** mock SFTPConnectionSpec */
-    final SFTPConnectionSpec sftpConnectionSpec = mockery.mock(SFTPConnectionSpec.class, "mockSFTPConnectionSpec");
 
     /** mock consumer */
     final Consumer<?> consumer = mockery.mock(Consumer.class, "mockConsumer");
 
     /** mock consumerEndpointActivator */
-    final ConsumerEndpointActivator consumerEndpointActivator = mockery.mock(ConsumerEndpointActivator.class, "mockConsumerEndpointActivator");
+    final ConsumerEndpointActivator consumerWithEndpointActivator = mockery.mock(ConsumerEndpointActivator.class, "mockConsumerEndpointActivator");
 
     /** instance on test */
     SftpConsumerEndpointManager sftpConsumerEndpointManager;
@@ -104,7 +98,7 @@ public class SftpConsumerEndpointManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullSftpConfiguration()
     {
-        new SftpConsumerEndpointManager(connectionFactory, null);
+        new SftpConsumerEndpointManager(endpointFactory, null);
     }
 
     /**
@@ -113,7 +107,7 @@ public class SftpConsumerEndpointManagerTest
     @Before
     public void setUp()
     {
-        this.sftpConsumerEndpointManager = new SftpConsumerEndpointManagerWithMockedSpecAndConsumer(connectionFactory, sftpConfiguration);
+        this.sftpConsumerEndpointManager = new SftpConsumerEndpointManager(endpointFactory, sftpConfiguration);
     }
     
     /**
@@ -133,241 +127,75 @@ public class SftpConsumerEndpointManagerTest
     }
 
     /**
-     * Test start invocation.
+     * Test start and stop invocations.
      * @throws ResourceException 
      */
     @Test
-    public void test_sftpEndpointManager_start() throws ResourceException
+    public void test_sftpEndpointManager_start_stop() throws ResourceException
     {
-        // common expectations
-        setConfigurationAndSpecExpectations();
-        
-        // test
-        sftpConsumerEndpointManager.start();
-        mockery.assertIsSatisfied();
-    }
-    
-    /**
-     * Test start on producer which implements the EndpointActivator.
-     * @throws ResourceException 
-     */
-    @Test
-    public void test_sftpEndpointManager_start_for_producer_which_implements_EndpointActivator() throws ResourceException
-    {
-        this.sftpConsumerEndpointManager = new SftpConsumerEndpointManagerWithMockedSpecAndConsumerEndpointActivator(connectionFactory, sftpConfiguration);
-
-        // common expectations
-        setConfigurationAndSpecExpectations();
-        
         // expectations
         mockery.checking(new Expectations()
         {
             {
-
-                exactly(1).of(consumerEndpointActivator).activate();
+                exactly(1).of(endpointFactory).createEndpoint(sftpConfiguration);
+                will(returnValue(consumer));
             }
         });
         
         // test
         sftpConsumerEndpointManager.start();
+        sftpConsumerEndpointManager.stop();
         mockery.assertIsSatisfied();
     }
     
     /**
-     * Test getEndpoint returns a producer which is MapBasedSftpProducerEndpoint.
+     * Test start and stop invocations for an endpoint with the EndpointActivator contract.
      * @throws ResourceException 
+     */
+    @Test
+    public void test_sftpEndpointManager_start_stop_with_endpointActivator() throws ResourceException
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(endpointFactory).createEndpoint(sftpConfiguration);
+                will(returnValue(consumerWithEndpointActivator));
+
+                exactly(1).of(consumerWithEndpointActivator).activate();
+                exactly(1).of(consumerWithEndpointActivator).deactivate();                
+            }
+        });
+        
+        // test
+        sftpConsumerEndpointManager.start();
+        sftpConsumerEndpointManager.stop();
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
+     * Test getEndpoint invocation.
+     * 
+     * @throws ResourceException
      */
     @Test
     public void test_sftpEndpointManager_getEndpoint() throws ResourceException
     {
-        this.sftpConsumerEndpointManager = new SftpConsumerEndpointManagerWithMockedSpec(connectionFactory, sftpConfiguration);
-
-        // common expectations
-        setConfigurationAndSpecExpectations();
-        
         // expectations
         mockery.checking(new Expectations()
         {
             {
-
-                exactly(1).of(sftpConfiguration).getSourceDirectory();
-                will(returnValue("/sourceDirectory"));
-                exactly(1).of(sftpConfiguration).getFilenamePattern();
-                will(returnValue("filenamePattern"));
+                exactly(1).of(endpointFactory).createEndpoint(sftpConfiguration);
+                will(returnValue(consumer));
             }
         });
-        
-        // setup
-        sftpConsumerEndpointManager.start();
 
         // test
-        Assert.assertTrue("Consumer is an SftpMapConsumer", sftpConsumerEndpointManager.getEndpoint() instanceof SftpMapConsumer);
-        mockery.assertIsSatisfied();
-    }
-    
-    /**
-     * Test stop invocation.
-     * @throws ResourceException 
-     */
-    @Test
-    public void test_sftpEndpointManager_stop() throws ResourceException
-    {
-        // common expectations
-        setConfigurationAndSpecExpectations();
-        
-        // setup
         sftpConsumerEndpointManager.start();
-
-        // test
-        sftpConsumerEndpointManager.stop();
+        Assert.assertEquals(consumer, sftpConsumerEndpointManager.getEndpoint());
         mockery.assertIsSatisfied();
     }
-    
-    /**
-     * Test stop invocation.
-     * @throws ResourceException 
-     */
-    @Test
-    public void test_sftpEndpointManager_stop_for_producer_which_implements_EndpointActivator() throws ResourceException
-    {
-        this.sftpConsumerEndpointManager = new SftpConsumerEndpointManagerWithMockedSpecAndConsumerEndpointActivator(connectionFactory, sftpConfiguration);
 
-        // common expectations
-        setConfigurationAndSpecExpectations();
-        
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-
-                exactly(1).of(consumerEndpointActivator).activate();
-                exactly(1).of(consumerEndpointActivator).deactivate();
-            }
-        });
-        
-        // setup
-        sftpConsumerEndpointManager.start();
-
-        // test
-        sftpConsumerEndpointManager.stop();
-        mockery.assertIsSatisfied();
-    }
-    
-    private void setConfigurationAndSpecExpectations()
-    {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(sftpConfiguration).getClientID();
-                will(returnValue("clientID"));
-                one(sftpConnectionSpec).setClientID("clientID");
-
-                exactly(1).of(sftpConfiguration).getRemoteHost();
-                will(returnValue("hostname"));
-                one(sftpConnectionSpec).setRemoteHostname("hostname");
-
-                exactly(1).of(sftpConfiguration).getKnownHostsFilename();
-                will(returnValue("knownhosts"));
-                one(sftpConnectionSpec).setKnownHostsFilename("knownhosts");
-
-                exactly(1).of(sftpConfiguration).getMaxRetryAttempts();
-                will(returnValue(1));
-                one(sftpConnectionSpec).setMaxRetryAttempts(1);
-
-                exactly(1).of(sftpConfiguration).getRemotePort();
-                will(returnValue(23));
-                one(sftpConnectionSpec).setRemotePort(23);
-
-                exactly(1).of(sftpConfiguration).getPrivateKeyFilename();
-                will(returnValue("PrivateKeyFilename"));
-                one(sftpConnectionSpec).setPrivateKeyFilename("PrivateKeyFilename");
-
-                exactly(1).of(sftpConfiguration).getConnectionTimeout();
-                will(returnValue(234));
-                one(sftpConnectionSpec).setConnectionTimeout(234);
-
-                exactly(1).of(sftpConfiguration).getUsername();
-                will(returnValue("username"));
-                one(sftpConnectionSpec).setUsername("username");
-
-                exactly(1).of(sftpConfiguration).getCleanupJournalOnComplete();
-                will(returnValue(Boolean.TRUE));
-                one(sftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
-            }
-        });
-    }
-    
-    /**
-     * Test SftpEndpointManager instance to allow us to provide mock instances of 
-     * classes created inside the life of the manager.
-     * @author Ikasan Development Team
-     *
-     */
-    private class SftpConsumerEndpointManagerWithMockedSpec extends SftpConsumerEndpointManager
-    {
-
-        public SftpConsumerEndpointManagerWithMockedSpec(EISConnectionFactory connectionFactory, SftpConsumerConfiguration sftpConfiguration)
-        {
-            super(connectionFactory, sftpConfiguration);
-        }
-
-        @Override
-        protected SFTPConnectionSpec getConnectionSpec()
-        {
-            return sftpConnectionSpec;
-        }
-    }
-    
-    /**
-     * Test SftpEndpointManager instance to allow us to provide mock instances of 
-     * classes created inside the life of the manager.
-     * @author Ikasan Development Team
-     *
-     */
-    private class SftpConsumerEndpointManagerWithMockedSpecAndConsumer extends SftpConsumerEndpointManager
-    {
-
-        public SftpConsumerEndpointManagerWithMockedSpecAndConsumer(EISConnectionFactory connectionFactory, SftpConsumerConfiguration sftpConfiguration)
-        {
-            super(connectionFactory, sftpConfiguration);
-        }
-
-        @Override
-        protected SFTPConnectionSpec getConnectionSpec()
-        {
-            return sftpConnectionSpec;
-        }
-
-        @Override
-        protected Consumer<?> getConsumer(ConnectionSpec spec)
-        {
-            return consumer;
-        }
-    }
-    
-    /**
-     * Test SftpEndpointManager instance to allow us to provide mock instances of 
-     * classes created inside the life of the manager.
-     * @author Ikasan Development Team
-     *
-     */
-    private class SftpConsumerEndpointManagerWithMockedSpecAndConsumerEndpointActivator 
-        extends SftpConsumerEndpointManagerWithMockedSpecAndConsumer
-    {
-
-        public SftpConsumerEndpointManagerWithMockedSpecAndConsumerEndpointActivator(EISConnectionFactory connectionFactory, SftpConsumerConfiguration sftpConfiguration)
-        {
-            super(connectionFactory, sftpConfiguration);
-        }
-
-        @Override
-        protected Consumer<?> getConsumer(ConnectionSpec spec)
-        {
-            return consumerEndpointActivator;
-        }
-    }
-    
     /**
      * Implementation of a producer implementing the EndpointActivator
      * @author Ikasan Development Team
