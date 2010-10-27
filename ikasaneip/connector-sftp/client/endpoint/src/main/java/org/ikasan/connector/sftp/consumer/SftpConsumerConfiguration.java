@@ -40,7 +40,6 @@
  */
 package org.ikasan.connector.sftp.consumer;
 
-import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 
 /**
@@ -97,9 +96,6 @@ public class SftpConsumerConfiguration
 
     /** Whether or not we delete the file after picking it up */
     protected Boolean destructive = Boolean.FALSE;
-
-    /** The file transfer connection template */
-    protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
 
     /** Maximum rows that housekeeping can deal with, defaults to -1 (ignore) */
     protected Integer maxRows = Integer.valueOf(-1);
@@ -295,16 +291,6 @@ public class SftpConsumerConfiguration
     public void setDestructive(Boolean destructive)
     {
         this.destructive = destructive;
-    }
-
-    public FileTransferConnectionTemplate getFileTransferConnectionTemplate()
-    {
-        return fileTransferConnectionTemplate;
-    }
-
-    public void setFileTransferConnectionTemplate(FileTransferConnectionTemplate fileTransferConnectionTemplate)
-    {
-        this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
     }
 
     public Integer getMaxRows()
