@@ -571,11 +571,10 @@
     </profiles>
 
     <dependencies>
-        <!-- TODO: Update to 1.2.15 if jboss ever sorts its clashes out -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
+            <version>1.2.16</version>
             <scope>provided</scope>
         </dependency>
         <!-- TODO: Update to 4.8.2 when we move to Spring 3, Used for Unit testing -->
