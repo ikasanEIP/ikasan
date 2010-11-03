@@ -49,25 +49,25 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-RC1</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-platform</artifactId>
     <packaging>war</packaging>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-RC1</version>
     <name>ikasan :: platform :: war</name>
 
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-platform-jar</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

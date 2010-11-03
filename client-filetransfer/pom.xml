@@ -48,13 +48,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-RC1</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-client-filetransfer</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-RC1</version>
     <name>Client Filetransfer</name>
     <description>A default client for developers to use with File transfer based connectors in the Ikasan Enterprise Integration Platform</description>
 
@@ -63,35 +63,35 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
             <scope>provided</scope>
         </dependency>
         <!-- Common functionality for Ikasan Connector Clients-->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-connection</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
             <scope>provided</scope>
         </dependency>
         <!-- base connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
             <scope>provided</scope>
         </dependency>
         <!-- Filetransfer connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
             <scope>provided</scope>
         </dependency>
         <!-- Framework -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-RC1</version>
             <scope>provided</scope>
         </dependency>
         <!-- j2ee -->
