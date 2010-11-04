@@ -42,7 +42,6 @@ package org.ikasan.framework.component.transformation;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +52,11 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 
 import junit.framework.Assert;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.component.Event;
 
 import org.jmock.Expectations;
@@ -67,7 +66,7 @@ import org.junit.Test;
 import org.xml.sax.XMLReader;
 
 /**
- * Test class for XsltTransformer
+ * Test class for {@link XsltTransformer}
  * 
  * @author Ikasan Development Team
  * 
@@ -76,18 +75,16 @@ public class XsltTransformerTest
 {
     /**
      * Constructor
-     * @throws URISyntaxException 
      */
-    public XsltTransformerTest() throws URISyntaxException
+    public XsltTransformerTest()
     {
         super();
         this.xslInputStream = new ByteArrayInputStream("blah".getBytes());
     }
 
-    /** Payload time stamp */
-    final Long PAYLOAD_TIMESTAMP = 1218726802809l;
     /** Mockery for interfaces */
-    Mockery mockery = new Mockery();
+    private Mockery mockery = new Mockery();
+
     /** Mockery for classes */
     private Mockery classMockery = new Mockery()
     {
@@ -95,73 +92,122 @@ public class XsltTransformerTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
+
     /** XML Reader */
-    final XMLReader xmlReader = mockery.mock(XMLReader.class);
+    private final XMLReader xmlReader = this.mockery.mock(XMLReader.class);
+
     /** Paylaod */
-    final Payload payload = mockery.mock(Payload.class);
+    private final Payload payload = this.mockery.mock(Payload.class);
+
     /** Event */
-    final Event event = classMockery.mock(Event.class);
-    
+    private final Event event = this.classMockery.mock(Event.class);
+
     /** The XSL Input Stream */
-    final InputStream xslInputStream; 
+    private final InputStream xslInputStream;
+
     /** Transformer factory */
-    final TransformerFactory transformerFactory = classMockery.mock(TransformerFactory.class);
+    private final TransformerFactory transformerFactory = this.classMockery.mock(TransformerFactory.class);
+
     /** Templates */
-    final Templates templates = classMockery.mock(Templates.class);
+    final Templates templates = this.classMockery.mock(Templates.class);
+
     /** Transformer */
-    final Transformer transformer = classMockery.mock(Transformer.class);
+    final Transformer transformer = this.classMockery.mock(Transformer.class);
+
     /** Transformer Exception */
     final TransformerException transformerException = new TransformerException((String) null);
+
+    /** Dummy content expected from transformation */
+    private static final String DUMMY_CONTENT = "content";
 
     /**
      * Test the invocation of the transform method with InputStream and
      * OutputStream args based on the stylesheet referenced via an InputStream.
      * 
-     * @throws TransformerException
-     * @throws TransformationException
+     * @throws TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void testTransformInputStreamOutputStream_xslViaInputStream() throws TransformerException, TransformationException
+    public void testTransformInputStreamOutputStream_xslViaInputStream() throws TransformerException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(payload);
-        classMockery.checking(new Expectations()
+        payloads.add(this.payload);
+
+        this.classMockery.checking(new Expectations()
         {
             {
                 one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformerFactory).newTemplates((Source) with(a(Source.class)));
-                will(returnValue(templates));
-                one(event).getPayloads();
-                will(returnValue(payloads));
-                one(templates).newTransformer();
-                will(returnValue(transformer));
+                one(transformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(templates));
+                one(event).getPayloads(); will(returnValue(payloads));
+                one(templates).newTransformer(); will(returnValue(transformer));
                 one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
                 one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
             }
         });
-        mockery.checking(new Expectations()
+
+        this.mockery.checking(new Expectations()
         {
             {
-                one(payload).getContent();
-                will(returnValue("content".getBytes()));
+                one(payload).getContent(); will(returnValue(DUMMY_CONTENT.getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-//                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
 
-        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null, xmlReader);
-        flatFileTransformer.onEvent(event);
-        mockery.assertIsSatisfied();
-        classMockery.assertIsSatisfied();
+        XsltTransformer flatFileTransformer = new XsltTransformer(this.transformerFactory, this.xslInputStream, true, null, null, this.xmlReader);
+        flatFileTransformer.onEvent(this.event);
+
+        this.mockery.assertIsSatisfied();
+        this.classMockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test the invocation of the transform method with InputStream and
+     * OutputStream args based on the stylesheet referenced via an InputStream.
+     * 
+     * @throws TransformerException Thrown if error transforming event content
+     */
+    @Test
+    public void transform_event_using_inputStream_stylesheet_and_customeURIResolver() throws TransformerException
+    {
+        final List<Payload> payloads = new ArrayList<Payload>();
+        payloads.add(this.payload);
+
+        final URIResolver mockURIResolver = this.mockery.mock(URIResolver.class, "uriResolver");
+
+        this.classMockery.checking(new Expectations()
+        {
+            {
+                one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(transformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(templates));
+                one(event).getPayloads(); will(returnValue(payloads));
+                one(templates).newTransformer(); will(returnValue(transformer));
+                one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
+                one(transformer).setURIResolver(mockURIResolver);
+            }
+        });
+
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(payload).getContent(); will(returnValue(DUMMY_CONTENT.getBytes()));
+                one(payload).setContent((byte[]) with(a(byte[].class)));
+            }
+        });
+
+        XsltTransformer flatFileTransformer = new XsltTransformer(this.transformerFactory, this.xslInputStream, true, null, null, this.xmlReader);
+        flatFileTransformer.setURIResolver(mockURIResolver);
+        flatFileTransformer.onEvent(this.event);
+
+        this.mockery.assertIsSatisfied();
+        this.classMockery.assertIsSatisfied();
     }
 
     /**
      * Test the invocation of the transform method with InputStream and
      * OutputStream args based on the stylesheet referenced via an input stream.
      * 
-     * @throws TransformerException
+     * @throws TransformerException Thrown if error transforming event content
      */
-    @SuppressWarnings({"unqualified-field-access"})
     @Test
     public void testTransformInputStreamOutputStream_xslViaInputStream_throwsTransformationExcetpionForTransformerException() throws TransformerException
     {
@@ -171,27 +217,23 @@ public class XsltTransformerTest
         {
             {
                 one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformerFactory).newTemplates((Source) with(a(Source.class)));
-                will(returnValue(templates));
-                one(event).getPayloads();
-                will(returnValue(payloads));
-                one(templates).newTransformer();
-                will(returnValue(transformer));
+                one(transformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(templates));
+                one(event).getPayloads(); will(returnValue(payloads));
+                one(templates).newTransformer(); will(returnValue(transformer));
                 one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
-                will(throwException(transformerException));
+                one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class))); will(throwException(transformerException));
             }
         });
         mockery.checking(new Expectations()
         {
             {
-                one(payload).getContent();
-                will(returnValue("content".getBytes()));
+                one(payload).getContent(); will(returnValue(DUMMY_CONTENT.getBytes()));
             }
         });
 
-        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null, xmlReader);
+        XsltTransformer flatFileTransformer = new XsltTransformer(this.transformerFactory, this.xslInputStream, true, null, null, this.xmlReader);
         TransformationException transformationException = null;
+
         try
         {
             flatFileTransformer.onEvent(event);
@@ -201,10 +243,11 @@ public class XsltTransformerTest
         {
             transformationException = t;
         }
+
         Assert.assertNotNull("transformationException should have been thrown", transformationException);
-        Assert.assertEquals("underlying cause should have been the TransformerException", transformerException, transformationException.getCause());
-        mockery.assertIsSatisfied();
-        classMockery.assertIsSatisfied();
+        Assert.assertEquals("Underlying cause should have been the TransformerException", this.transformerException, transformationException.getCause());
+        this.mockery.assertIsSatisfied();
+        this.classMockery.assertIsSatisfied();
     }
 
     /**
@@ -212,42 +255,39 @@ public class XsltTransformerTest
      * OutputStream args, constructing without specifying an XMLReader
      * based on the stylesheet referenced via an input stream.
      * 
-     * @throws TransformerException
-     * @throws TransformationException
+     * @throws TransformerException Thrown if error transforming event
      */
     @Test
-    public void testTransformInputStreamOutputStream_xslViaInputStream_withDefaultXmlReader() throws TransformerException, TransformationException
+    public void testTransformInputStreamOutputStream_xslViaInputStream_withDefaultXmlReader() throws TransformerException
     {
         final List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(payload);
-        classMockery.checking(new Expectations()
+        payloads.add(this.payload);
+
+        this.classMockery.checking(new Expectations()
         {
             {
                 one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformerFactory).newTemplates((Source) with(a(Source.class)));
-                will(returnValue(templates));
-                one(event).getPayloads();
-                will(returnValue(payloads));
-                one(templates).newTransformer();
-                will(returnValue(transformer));
+                one(transformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(templates));
+                one(event).getPayloads(); will(returnValue(payloads));
+                one(templates).newTransformer(); will(returnValue(transformer));
                 one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
                 one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
             }
         });
-        mockery.checking(new Expectations()
+
+        this.mockery.checking(new Expectations()
         {
             {
-                one(payload).getContent();
-                will(returnValue("content".getBytes()));
+                one(payload).getContent(); will(returnValue(DUMMY_CONTENT.getBytes()));
                 one(payload).setContent((byte[]) with(a(byte[].class)));
-//                one(payload).setSpec(Spec.TEXT_XML.toString());
             }
         });
 
-        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null);
-        flatFileTransformer.onEvent(event);
-        mockery.assertIsSatisfied();
-        classMockery.assertIsSatisfied();
+        XsltTransformer flatFileTransformer = new XsltTransformer(this.transformerFactory, this.xslInputStream, true, null, null);
+        flatFileTransformer.onEvent(this.event);
+
+        this.mockery.assertIsSatisfied();
+        this.classMockery.assertIsSatisfied();
     }
     
 }
