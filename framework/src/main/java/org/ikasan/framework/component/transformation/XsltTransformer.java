@@ -52,6 +52,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -121,6 +122,9 @@ public class XsltTransformer implements Transformer
 
     /** A New PayloadName to set on the transformed Payloads */
     private String payloadName;
+
+    /** A custom implementation of URIResolver */
+    private URIResolver uriResolver;
 
     /**
      * Constructor
@@ -230,6 +234,10 @@ public class XsltTransformer implements Transformer
         setPayloadParameters(transformer);
         // Set any other parameters on the transformer
         addTransformationParameters(transformer, this.transformationParameters);
+        if (this.uriResolver != null)
+        {
+            transformer.setURIResolver(this.uriResolver);
+        }
         return transformer;
     }
 
@@ -293,6 +301,17 @@ public class XsltTransformer implements Transformer
     public void setPayloadName(String payloadName)
     {
         this.payloadName = payloadName;
+    }
+
+    /**
+     * Override the default {@link URIResolver} provided
+     * by transformer library.
+     * 
+     * @param resolver custom {@link URIResolver} implementation
+     */
+    public void setURIResolver(URIResolver resolver)
+    {
+        this.uriResolver = resolver;
     }
 
     /**
