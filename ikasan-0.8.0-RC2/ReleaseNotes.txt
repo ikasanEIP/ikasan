@@ -1,0 +1,184 @@
+Release Notes - Ikasan - Version 0.8.0
+
+** Sub-task
+    * [IKASAN-428] - Investigate encrypting the housekeeping password so it's not in plain text in a properties file
+    * [IKASAN-439] - Merge 0.7.10 into trunk
+    * [IKASAN-497] - Create and deploy ikasan.org / ikasan.com web site pages
+
+
+** Bug
+    * [IKASAN-69] - Several components are hard coded to use Sybase
+    * [IKASAN-102] - FTP Sample App has MySQL setup files which do not adhere to case sensitivity, this causes a problem for non Windows based installs
+    * [IKASAN-103] - Add parent pom.xml for documentation component
+    * [IKASAN-140] - Remove build.xml file from connector-base, we use Maven to build now
+    * [IKASAN-153] - Payload clone does not clone all fields
+    * [IKASAN-171] - FOP warnings in documentation downloading using maven 2.2.1
+    * [IKASAN-172] - Remove UpdatedDateTime from IkasanWiretep DAO and database schema
+    * [IKASAN-180] - Create simpler implementation of JmsMessageEventSerialiser
+    * [IKASAN-202] - Console Context needs to be set to console as opposed to console-<version number>
+    * [IKASAN-213] - JXR Plugin was incorrectly referenced across several projects
+    * [IKASAN-222] - Admin Console does not seem to be logging the user idenitity when a user stops or starts a flow
+    * [IKASAN-224] - Quartz Initiator recovery not compatible with Quartz 1.6.4
+    * [IKASAN-226] - URL Encode data to and from console pages
+    * [IKASAN-227] - Security for Console fails to filter out flows that contain modules that users don't have access to
+    * [IKASAN-236] - When hiding search fields in console, the +/- Search link has a blue bar running through it
+    * [IKASAN-237] - Wrong exceptionHandler defined on the ftpSource initiator of the samples DemoFileDelivery appln
+    * [IKASAN-244] - Quartz jobs sometimes fail to call back on the initiator
+    * [IKASAN-246] - MySQL IkasanWiretap SQL table definition is incorrect. It should mirror the Sybase IkasanWiretap SQL table definition.
+    * [IKASAN-253] - Minimise search pane 'button' not clear enough
+    * [IKASAN-255] - Next, Previous, First and Last links should be greyed out, not removed if not needed
+    * [IKASAN-270] - Move +/- links for the wiretap events search screen to the LHS of the point to point flow, allows IE6 users to see this
+    * [IKASAN-273] - Wiretap Event details Payload content can spill over content area
+    * [IKASAN-274] - Duplicate Constrains found in EAI.retrievefilecommand table
+    * [IKASAN-283] - Mysql tables do not tear down properly in table creation script
+    * [IKASAN-284] - Spelling mistake in Client List entry logging
+    * [IKASAN-287] - tag libs were incorrectly defined in web.xml for web-console
+    * [IKASAN-296] - Reconstruct User Exception Handing 
+    * [IKASAN-310] - Change Hard Coding of user name and password for housekeeping to be spring injected (or properties injected)
+    * [IKASAN-314] - DateUtilsTest.testAddDays fails
+    * [IKASAN-315] - Admin screen for maintaining user roles, renders the "Change Password" textbox in wrong place
+    * [IKASAN-318] - Maintain Users (Current User listing) - White background content section does not vertically expand with table that goes beyond it's min-height
+    * [IKASAN-319] - Console login sometimes takes you to a linked Javascript page
+    * [IKASAN-323] - Navigation bar in console is the same colour as the bacground and therefore does not look like part of the page
+    * [IKASAN-324] - Transparent PNG files do not work for IE6
+    * [IKASAN-325] - IE6 does not respect jquery change() or click() events for radio buttons causing the search mode to fail in search events screen
+    * [IKASAN-326] - IE6 Needs a height specified in order for overflow:auto to work - Login screen had incorrect background colour
+    * [IKASAN-327] - Borders of tables were 'separated' in IE6 for the console
+    * [IKASAN-329] - Default size of payloadContent in wiretap event details should be larger
+    * [IKASAN-332] - search mode radio buttons on console weren't mutually exclusive
+    * [IKASAN-339] - Column headings on wiretap search don't indicate their sort order
+    * [IKASAN-344] - Ikasan security configuration for admin screens not as restrictive as first thought
+    * [IKASAN-389] - Quartz data structure not mutable following upgrade to latest version
+    * [IKASAN-391] - Refactor Action Strings to be constants in the various implementing classes of IkasanExceptionAction
+    * [IKASAN-392] - Remove scheduler.paused bean reference in web console after upgrade of quartz
+    * [IKASAN-396] - Rename EventId column on ErrorEvent to ErrorEventPersistenceId
+    * [IKASAN-399] - Add default values to email based properties in the ikasan.properties file
+    * [IKASAN-415] - Get documentation project working with entire Maven build
+    * [IKASAN-435] - Change Password fails on console
+    * [IKASAN-440] - Default event capture in the flowTestHarness captures a reference to the inflight event rather than the fixed content
+    * [IKASAN-441] - Ensure the user defined comparators are explicitly assigned to the given expectation
+    * [IKASAN-443] - Align the release numbers of flowTestHarness with the other Ikasan project modules
+    * [IKASAN-444] - File comment part of the Ikasan code template isn't working once imported in to the IDE (Eclipse) as expected. 
+    * [IKASAN-452] - Remove redundant ACL table scripts under webconsole
+    * [IKASAN-454] - connector-sftp creates a log file when tests are run
+    * [IKASAN-456] - JMS (JNDI) port is specified incorrectly (8080 should be 1099)
+    * [IKASAN-483] - Split platform and web-console code into JAR and WAR components
+    * [IKASAN-508] - Allow configuration parameter values to be nullable 
+    * [IKASAN-516] - Standardise EventId and PayloadId schema persistence definitions across all Ikasan tables
+    * [IKASAN-517] - Default maxRetryAttempts property in FTPConnectionSpec is 0, which means that FTPClient will not be created
+    * [IKASAN-518] - UnzipSplitter sequencer only supports ZIP formats
+    * [IKASAN-519] - Logger instance for XsltTransformer uses wrong class parameter
+    * [IKASAN-520] - Configuration Parameter persistence - Sybase persistence of empty strings changes the value to a single space 
+    * [IKASAN-523] - webconsole platform-environment-context is missing the environment property bean creation 
+    * [IKASAN-527] - JMS driven rollback retry or stop seem to intermittently result in a threading deadlock
+    * [IKASAN-528] - Ikasan license header standardisation has caused XML files to become invalid (not well-formed as PI must be the first line in the file)
+    * [IKASAN-532] - Loading embedded stylesheets and/or documents from a parent stylesheet from classpath fails
+    * [IKASAN-535] - Connector SFTP client endpoint is not currently supporting the DirectoryURLFactory as this is a complex object which cannot be configured via the WebConsole front end
+
+
+** Improvement
+    * [IKASAN-5] - Break Event class inheritance from MetaData
+    * [IKASAN-6] - Resubmission Support
+    * [IKASAN-11] - Remove CONTINUE from the set of ExceptionActions
+    * [IKASAN-16] - Create ErrorLoggingService
+    * [IKASAN-17] - Create ExcludedEventService
+    * [IKASAN-18] - Create ErrorReportingService
+    * [IKASAN-20] - Change ExceptionActions to support Exclude
+    * [IKASAN-21] - Add handling for the Exclude ExceptionAction to the AbstractInitiator
+    * [IKASAN-22] - Create WebConsole screens for displaying logged Errors
+    * [IKASAN-23] - Create WebConsole screens for displaying Excluded Events
+    * [IKASAN-48] - AOP pointcut failure on scheduled driven initiators
+    * [IKASAN-65] - Cannot produce Maven site for ikasan-framework
+    * [IKASAN-80] - Provide an EclipseIDE Ikasan code template (license etc for new files)
+    * [IKASAN-84] - Scheduler Initiators are not correctly recovering on rollback retry
+    * [IKASAN-88] - Make DefaultPayload ORM persistence friendly
+    * [IKASAN-89] - Changes to Payload to accomodate resubmission
+    * [IKASAN-97] - Look at repackaging the ftpRar and sftpRar projects
+    * [IKASAN-108] - If no modules are returned on the console then display a warning message saying the the user is not authorised to see any
+    * [IKASAN-109] - Stylesheet and UI overhaul for console
+    * [IKASAN-112] - Console to provide a raw view of the data returned from Event searches
+    * [IKASAN-118] - Implement Resubmission for Ikasan Events
+    * [IKASAN-133] - Investigate SVN server side hooks for code formatting
+    * [IKASAN-141] - Upgrade to jsch 0.1.42 for SFTP lib
+    * [IKASAN-149] - Extract TPublisher and TSubscriber from Common
+    * [IKASAN-154] - Fields encoding and charSet are not clearly definied in Payload
+    * [IKASAN-160] - Update to latest version of Hibernate
+    * [IKASAN-167] - Add the ability to download the payload content of a wiretapped event
+    * [IKASAN-177] - Console maintains lib jars explicitly
+    * [IKASAN-184] - Distrinction in SVN between Ikasan platform projects and other tools/projects
+    * [IKASAN-199] - Back to Top was confusing for some users on wiretap search screen, replace with 'Back up to Search Form' 
+    * [IKASAN-200] - Add a First and Last link in the paged search results section for the console
+    * [IKASAN-240] - Remove Spring's LoggerListener and instead create a Ikasan specific audit logger
+    * [IKASAN-269] - Allow users to search on ModuleFlow for wiretap events
+    * [IKASAN-282] - Remove 'Save my password for 2 weeks' option
+    * [IKASAN-289] - Changing default FTP connection timeout values
+    * [IKASAN-328] - User list in maintain users screen is not alphabetically ordered
+    * [IKASAN-333] - payload content on wiretap event details to expand with content size
+    * [IKASAN-363] - Upgrade JQuery Javascript libs to 1.4.2
+    * [IKASAN-364] - Update Maven plugin versions to their latest counterparts (As of 18th March 2010)
+    * [IKASAN-382] - Look to remove org.ikasan.framework.component.serialisation from framework project
+    * [IKASAN-400] - Improve documentation for developer getting started guide on Wiki
+    * [IKASAN-411] - Update Maven Javadoc plugin to 2.7
+    * [IKASAN-413] - Add FileZilla (Windows) install instructions to the Wiki for DemoFileDelivery app
+    * [IKASAN-442] - Associate an optional text description with each expectation to allow easier identification at runtime
+    * [IKASAN-459] - Create Ikasan Code Formatting standard for Eclipse IDE
+    * [IKASAN-462] - Use the ExceptionHandler available in the initiator to determine the exception action when invoked from the left side of the initiator i.e. by a connector
+    * [IKASAN-468] - Create test flow integration tests for sample apps
+    * [IKASAN-469] - Create splash pages for ikasan.org and ikasan.com
+    * [IKASAN-478] - Remove dependency on com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl from test class(es)
+    * [IKASAN-492] - Configuration implementation to allow persistence and change of component configurations without a server bounce
+    * [IKASAN-507] - Allow default component configuration to be sourced from the components configuration bean (See http://open.jira.com/browse/IKASAN-492 for initial requirement)
+    * [IKASAN-509] - Hide the access to the configurationDao (of the component configuration) to only be behind the configurationService rather than being a requirement within the ConfigurationManagementService
+    * [IKASAN-512] - Provide compatibility between events generated in version 0.7.x and 0.8.x of Ikasan
+    * [IKASAN-525] - Comparability serializer implementation converting events/payloads generated by HEAD version to 0.7.10 version
+    * [IKASAN-530] - Make the MonitorEmailNotifier configurable for the alerted status and email recipients 
+    * [IKASAN-531] - Create a consistent and re-usable separation between Ikasan components and the underlying protocol (starting with SFTP)
+
+** New Feature
+    * [IKASAN-106] - Add the ability for users to select the number of search results per page for wiretap searches
+    * [IKASAN-122] - Create a new component/sub project within IkasanEIP for Integration Tests 
+    * [IKASAN-187] - Create the JmsConnectionFactory as a platform service
+    * [IKASAN-198] - Show/Hide Search fields in Wiretap Search screen
+    * [IKASAN-260] - Add ability to display diagram of module in console, especially for search
+    * [IKASAN-482] - Ability for Initiators to invoke existing lifecycle hooks on resources used within flow components
+    * [IKASAN-521] - New transformer component for GZIP formats
+
+
+
+
+
+
+** Task
+    * [IKASAN-7] - Extract TPublisher, TSubscriber and TUnsubscriber out of Common project into a tools project
+    * [IKASAN-12] - Refactor the flow invocation routine from amoungst existing Initiators
+    * [IKASAN-13] - Move core ExceptionHandling into Initiators
+    * [IKASAN-15] - Enforce provision of Id on creation of new Events
+    * [IKASAN-144] - Merge framework-0.7.1 back to trunk
+    * [IKASAN-148] - Remove DatasourceSessionFactoryFactory as it is redundant
+    * [IKASAN-174] - Merge webconsole 0.7.1 into trunk
+    * [IKASAN-193] - Merge 0.7.2 back into trunk
+    * [IKASAN-196] - Amend license from LGPLv3 to modified BSD
+    * [IKASAN-204] - Realign SVN trunk/branches to remove blocker development currently on trunk   
+    * [IKASAN-220] - merge 0.7.4 into trunk
+    * [IKASAN-223] - Clean up the Ikasan Domain Model
+    * [IKASAN-225] - Fix license text on tld files
+    * [IKASAN-238] - Configure the Maven repositories within project pom
+    * [IKASAN-239] - Upload quartz 1.6.5 to our maven repo 
+    * [IKASAN-241] - Add Eclipse IDE .settings, .project. and .classpath to the SVN ignore list for the top level Ikasan project.
+    * [IKASAN-242] - Package the license and copyright.txt files with each project distribution
+    * [IKASAN-243] - Change Ikasan license assignment on SF from LGPLv3 to Modified BSD
+    * [IKASAN-265] - Port SVN from SourceForge to Atlassian hosting
+    * [IKASAN-309] - Remove empty Java source package "org.ikasan.common.tools" from common
+    * [IKASAN-313] - Ensure all runtime servers have <track-connection-by-tx> in all XA connection factories, both for JMS and JDBC 
+    * [IKASAN-349] - Merge 0.7.8 and 0.7.9 on the 0.7.x branch back to trunk
+    * [IKASAN-381] - Look to remove UnknownMessageContentException from Common project
+    * [IKASAN-385] - Strengthen the Unit test cases around the WiretapEvent object
+    * [IKASAN-398] - Architecture Guide  - e.g. Document http://sourceforge.net/apps/mediawiki/ikasaneip/index.php?title=Design into Docbook format
+    * [IKASAN-472] - Create a docs location outside the ikasaneip project for documentation (not built via maven) i.e. presentations, whitepapers, etc
+    * [IKASAN-477] - Merge appropriate 0.7.11 changes to trunk
+    * [IKASAN-480] - Update sample apps to 0.8.0 standards
+    * [IKASAN-487] - Release 0.8.0
+    * [IKASAN-490] - Merge Ikasan test project from 0.7.x back onto trunk
+    * [IKASAN-506] - Overhaul the demo applications to align with the standard look and feel development approach for Ikasan modules
+    * [IKASAN-513] - Create a home for migration scripts and other artefacts required as transient operations to ease migration between Ikasan versions
+
