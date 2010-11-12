@@ -45,6 +45,7 @@ import junit.framework.Assert;
 import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.endpoint.Consumer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -75,6 +76,9 @@ public class PayloadBasedSftpConsumerFactoryTest
 
     /** mock SFTPConnectionSpec */
     final SFTPConnectionSpec sftpConnectionSpec = mockery.mock(SFTPConnectionSpec.class, "mockSFTPConnectionSpec");
+
+    /** mock DirectoryURLFactory */
+    final DirectoryURLFactory directoryURLFactory = mockery.mock(DirectoryURLFactory.class, "mockDirectoryURLFactory");
 
     /** mock consumer */
     final Consumer<?> consumer = mockery.mock(Consumer.class, "mockConsumer");
@@ -110,11 +114,8 @@ public class PayloadBasedSftpConsumerFactoryTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(sftpConfiguration).getSourceDirectory();
-                will(returnValue("sourceDirectory"));
-                exactly(1).of(sftpConfiguration).getFilenamePattern();
-                will(returnValue("filenamePattern"));
-
+                exactly(1).of(sftpConfiguration).setSourceDirectoryURLFactory(null);
+                
                 exactly(1).of(sftpConfiguration).getClientID();
                 will(returnValue("clientID"));
                 one(sftpConnectionSpec).setClientID("clientID");
@@ -159,6 +160,61 @@ public class PayloadBasedSftpConsumerFactoryTest
     }
     
     /**
+     * Test create consumer invocation.
+     */
+    @Test
+    public void test_createConsumerWithDirectoryURLFactory()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(sftpConfiguration).setSourceDirectoryURLFactory(directoryURLFactory);
+                
+                exactly(1).of(sftpConfiguration).getClientID();
+                will(returnValue("clientID"));
+                one(sftpConnectionSpec).setClientID("clientID");
+
+                exactly(1).of(sftpConfiguration).getRemoteHost();
+                will(returnValue("hostname"));
+                one(sftpConnectionSpec).setRemoteHostname("hostname");
+
+                exactly(1).of(sftpConfiguration).getKnownHostsFilename();
+                will(returnValue("knownhosts"));
+                one(sftpConnectionSpec).setKnownHostsFilename("knownhosts");
+
+                exactly(1).of(sftpConfiguration).getMaxRetryAttempts();
+                will(returnValue(1));
+                one(sftpConnectionSpec).setMaxRetryAttempts(1);
+
+                exactly(1).of(sftpConfiguration).getRemotePort();
+                will(returnValue(23));
+                one(sftpConnectionSpec).setRemotePort(23);
+
+                exactly(1).of(sftpConfiguration).getPrivateKeyFilename();
+                will(returnValue("PrivateKeyFilename"));
+                one(sftpConnectionSpec).setPrivateKeyFilename("PrivateKeyFilename");
+
+                exactly(1).of(sftpConfiguration).getConnectionTimeout();
+                will(returnValue(234));
+                one(sftpConnectionSpec).setConnectionTimeout(234);
+
+                exactly(1).of(sftpConfiguration).getUsername();
+                will(returnValue("username"));
+                one(sftpConnectionSpec).setUsername("username");
+
+                exactly(1).of(sftpConfiguration).getCleanupJournalOnComplete();
+                will(returnValue(Boolean.TRUE));
+                one(sftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);            }
+        });
+                
+        // test
+        PayloadBasedSftpConsumerFactory payloadBasedSftpConsumerFactory = new PayloadBasedSftpConsumerFactoryWithMockSpec(connectionFactory,directoryURLFactory);
+        Assert.assertTrue(payloadBasedSftpConsumerFactory.createEndpoint(sftpConfiguration) instanceof PayloadBasedSftpConsumer);
+        mockery.assertIsSatisfied();
+    }
+    
+    /**
      * Test PayloadBasedSftpConsumerFactory instance to allow us to return a mock 
      * instance of the ConnectionSpec.
      * @author Ikasan Development Team
@@ -170,6 +226,11 @@ public class PayloadBasedSftpConsumerFactoryTest
         public PayloadBasedSftpConsumerFactoryWithMockSpec(EISConnectionFactory connectionFactory)
         {
             super(connectionFactory);
+        }
+
+        public PayloadBasedSftpConsumerFactoryWithMockSpec(EISConnectionFactory connectionFactory, DirectoryURLFactory directoryURLFactory)
+        {
+            super(connectionFactory, directoryURLFactory);
         }
 
         @Override

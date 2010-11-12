@@ -43,7 +43,9 @@ package org.ikasan.connector.sftp.consumer.type;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.resource.ResourceException;
@@ -51,7 +53,7 @@ import javax.resource.ResourceException;
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.common.Payload;
 import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
-import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
+import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -73,14 +75,14 @@ public class PayloadBasedSftpConsumerTest
         }
     };
 
-    /** mock fileTransferPayloadProvider */
-    final FileTransferPayloadProvider fileTransferPayloadProvider = mockery.mock(FileTransferPayloadProvider.class, "mockFileTransferPayloadProvider");
-    
     /** mock fileTransferConnectionTemplate */
     final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
 
     /** mock sftpConfiguration */
     final SftpConsumerConfiguration sftpConfiguration = mockery.mock(SftpConsumerConfiguration.class, "mockSftpConsumerConfiguration");
+
+    /** mock sourceDirectoryURLFactory */
+    final DirectoryURLFactory sourceDirectoryURLFactory = mockery.mock(DirectoryURLFactory.class, "mockDirectoryURLFactory");
 
     /** mock payload */
     final Payload payload = mockery.mock(Payload.class, "mockPayload");
@@ -100,18 +102,22 @@ public class PayloadBasedSftpConsumerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullSftpConfiguration()
     {
-        new PayloadBasedSftpConsumer(fileTransferPayloadProvider, null);
+        new PayloadBasedSftpConsumer(fileTransferConnectionTemplate, null);
     }
 
     /**
-     * Test successful invocation based on no discovered files.
+     * Test successful invocation based on injected DirectoryURLFactory, 
+     * but no discovered files.
      * @throws ResourceException 
      * @throws IOException 
      */
     @Test
-    public void test_successful_invocation_no_discovered_file() throws ResourceException, IOException
+    public void test_successful_invocation_withDirectoryURLFactory_no_discovered_file()
+        throws ResourceException, IOException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final List<String> sourceDirectories = new ArrayList<String>();
+        sourceDirectories.add("sourceDirectory");
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
         filenameContentPairsMap.put("filename", content);
         
@@ -119,8 +125,15 @@ public class PayloadBasedSftpConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                // we have a sourceDirectoryURLFactory specified
+                exactly(2).of(sftpConfiguration).getSourceDirectoryURLFactory();
+                will(returnValue(sourceDirectoryURLFactory));
+
                 exactly(1).of(sftpConfiguration).getSourceDirectory();
                 will(returnValue("sourceDirectory"));
+                exactly(1).of(sourceDirectoryURLFactory).getDirectoriesURLs("sourceDirectory");
+                will(returnValue(sourceDirectories));
+                
                 exactly(1).of(sftpConfiguration).getFilenamePattern();
                 will(returnValue("filenamePattern"));
                 exactly(1).of(sftpConfiguration).getRenameOnSuccess();
@@ -150,17 +163,95 @@ public class PayloadBasedSftpConsumerTest
                 exactly(1).of(sftpConfiguration).getChronological();
                 will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(fileTransferPayloadProvider).getFileTransferConnectionTemplate();
-                will(returnValue(fileTransferConnectionTemplate));
                 exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
                     Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
                     Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
                 will(returnValue(null));
+                
+                // with housekeeping
+                exactly(1).of(sftpConfiguration).getMaxRows();
+                will(returnValue(new Integer(1)));
+                exactly(1).of(sftpConfiguration).getAgeOfFiles();
+                will(returnValue(new Integer(1)));
+                exactly(1).of(fileTransferConnectionTemplate).housekeep(1, 1);
             }
         });
 
         PayloadBasedSftpConsumer payloadBasedSftpConsumer = 
-            new PayloadBasedSftpConsumer(fileTransferPayloadProvider, sftpConfiguration);
+            new PayloadBasedSftpConsumer(fileTransferConnectionTemplate, sftpConfiguration);
+        Assert.assertNull(payloadBasedSftpConsumer.invoke());
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful invocation based on no discovered files.
+     * @throws ResourceException 
+     * @throws IOException 
+     */
+    @Test
+    public void test_successful_invocation_no_discovered_file()
+        throws ResourceException, IOException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // we have a sourceDirectoryURLFactory specified
+                exactly(1).of(sftpConfiguration).getSourceDirectoryURLFactory();
+                will(returnValue(null));
+
+                exactly(1).of(sftpConfiguration).getSourceDirectory();
+                will(returnValue("sourceDirectory"));
+                
+                exactly(1).of(sftpConfiguration).getFilenamePattern();
+                will(returnValue("filenamePattern"));
+                exactly(1).of(sftpConfiguration).getRenameOnSuccess();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getRenameOnSuccessExtension();
+                will(returnValue("renameExtention"));
+                exactly(1).of(sftpConfiguration).getMoveOnSuccess();
+                will(returnValue(Boolean.FALSE));
+                exactly(1).of(sftpConfiguration).getMoveOnSuccessNewPath();
+                will(returnValue("moveOnSuccessNewPath"));
+                exactly(1).of(sftpConfiguration).getChunking();
+                will(returnValue(Boolean.FALSE));
+                exactly(1).of(sftpConfiguration).getChunkSize();
+                will(returnValue(Integer.valueOf(-1)));
+                exactly(1).of(sftpConfiguration).getChecksum();
+                will(returnValue(Boolean.FALSE));
+                exactly(1).of(sftpConfiguration).getMinAge();
+                will(returnValue(Long.valueOf(1)));
+                exactly(1).of(sftpConfiguration).getDestructive();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getFilterDuplicates();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getFilterOnFilename();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getFilterOnLastModifiedDate();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getChronological();
+                will(returnValue(Boolean.TRUE));
+
+                exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                    Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
+                    Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+                will(returnValue(null));
+                
+                // with housekeeping
+                exactly(1).of(sftpConfiguration).getMaxRows();
+                will(returnValue(new Integer(1)));
+                exactly(1).of(sftpConfiguration).getAgeOfFiles();
+                will(returnValue(new Integer(1)));
+                exactly(1).of(fileTransferConnectionTemplate).housekeep(1, 1);
+            }
+        });
+
+        PayloadBasedSftpConsumer payloadBasedSftpConsumer = 
+            new PayloadBasedSftpConsumer(fileTransferConnectionTemplate, sftpConfiguration);
         Assert.assertNull(payloadBasedSftpConsumer.invoke());
         mockery.assertIsSatisfied();
     }
@@ -181,6 +272,10 @@ public class PayloadBasedSftpConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                // we have a sourceDirectoryURLFactory specified
+                exactly(1).of(sftpConfiguration).getSourceDirectoryURLFactory();
+                will(returnValue(null));
+
                 exactly(1).of(sftpConfiguration).getSourceDirectory();
                 will(returnValue("sourceDirectory"));
                 exactly(1).of(sftpConfiguration).getFilenamePattern();
@@ -212,8 +307,6 @@ public class PayloadBasedSftpConsumerTest
                 exactly(1).of(sftpConfiguration).getChronological();
                 will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(fileTransferPayloadProvider).getFileTransferConnectionTemplate();
-                will(returnValue(fileTransferConnectionTemplate));
                 exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
                     Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
                     Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
@@ -222,7 +315,76 @@ public class PayloadBasedSftpConsumerTest
         });
 
         PayloadBasedSftpConsumer payloadBasedSftpConsumer = 
-            new PayloadBasedSftpConsumer(fileTransferPayloadProvider, sftpConfiguration);
+            new PayloadBasedSftpConsumer(fileTransferConnectionTemplate, sftpConfiguration);
+        Assert.assertNotNull(payloadBasedSftpConsumer.invoke());
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful invocation based on a discovered file using the DirectoryURLFactory.
+     * @throws ResourceException 
+     * @throws IOException 
+     */
+    @Test
+    public void test_successful_invocation_with_DirectoryURLFactory_discovering_a_file() throws ResourceException, IOException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final List<String> sourceDirectories = new ArrayList<String>();
+        sourceDirectories.add("sourceDirectory");
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // we have a sourceDirectoryURLFactory specified
+                exactly(2).of(sftpConfiguration).getSourceDirectoryURLFactory();
+                will(returnValue(sourceDirectoryURLFactory));
+
+                exactly(1).of(sftpConfiguration).getSourceDirectory();
+                will(returnValue("sourceDirectory"));
+                exactly(1).of(sourceDirectoryURLFactory).getDirectoriesURLs("sourceDirectory");
+                will(returnValue(sourceDirectories));
+                
+                exactly(1).of(sftpConfiguration).getFilenamePattern();
+                will(returnValue("filenamePattern"));
+                exactly(1).of(sftpConfiguration).getRenameOnSuccess();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getRenameOnSuccessExtension();
+                will(returnValue("renameExtention"));
+                exactly(1).of(sftpConfiguration).getMoveOnSuccess();
+                will(returnValue(Boolean.FALSE));
+                exactly(1).of(sftpConfiguration).getMoveOnSuccessNewPath();
+                will(returnValue("moveOnSuccessNewPath"));
+                exactly(1).of(sftpConfiguration).getChunking();
+                will(returnValue(Boolean.FALSE));
+                exactly(1).of(sftpConfiguration).getChunkSize();
+                will(returnValue(Integer.valueOf(-1)));
+                exactly(1).of(sftpConfiguration).getChecksum();
+                will(returnValue(Boolean.FALSE));
+                exactly(1).of(sftpConfiguration).getMinAge();
+                will(returnValue(Long.valueOf(1)));
+                exactly(1).of(sftpConfiguration).getDestructive();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getFilterDuplicates();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getFilterOnFilename();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getFilterOnLastModifiedDate();
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(sftpConfiguration).getChronological();
+                will(returnValue(Boolean.TRUE));
+
+                exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                    Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
+                    Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+                will(returnValue(payload));
+            }
+        });
+
+        PayloadBasedSftpConsumer payloadBasedSftpConsumer = 
+            new PayloadBasedSftpConsumer(fileTransferConnectionTemplate, sftpConfiguration);
         Assert.assertNotNull(payloadBasedSftpConsumer.invoke());
         mockery.assertIsSatisfied();
     }

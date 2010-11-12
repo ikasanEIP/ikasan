@@ -40,6 +40,8 @@
  */
 package org.ikasan.connector.sftp.consumer;
 
+import javax.resource.spi.InvalidPropertyException;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -183,4 +185,84 @@ public class SftpConsumerConfigurationTest
         sftpConfiguration.setConnectionTimeout(1500);
         Assert.assertEquals("connectionTimeout", new Integer(1500), sftpConfiguration.getConnectionTimeout());
     }
+    
+    /**
+     * Test property successful validate invocation.
+     * @throws InvalidPropertyException 
+     */
+    @Test
+    public void test_sftpConfiguration_validate_success() throws InvalidPropertyException
+    {
+        SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.validate();
+    }
+    
+    /**
+     * Test property failed validate invocation based on mutually exclusive properties
+     * of destructive and renameOnSuccess being true.
+     * @throws InvalidPropertyException 
+     */
+    @Test(expected = InvalidPropertyException.class)
+    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidPropertyException
+    {
+        SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
+        sftpConfiguration.setDestructive(Boolean.TRUE);
+        sftpConfiguration.validate();
+    }
+    
+    /**
+     * Test property failed validate invocation based on mutually exclusive properties
+     * of moveOnSuccess and renameOnSuccess being true.
+     * @throws InvalidPropertyException 
+     */
+    @Test(expected = InvalidPropertyException.class)
+    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidPropertyException
+    {
+        SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
+        sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
+        sftpConfiguration.validate();
+    }
+    
+    /**
+     * Test property failed validate invocation based a missing property when
+     * of renameOnSuccess is true and renameOnSuccessExtension is missing.
+     * @throws InvalidPropertyException 
+     */
+    @Test(expected = InvalidPropertyException.class)
+    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidPropertyException
+    {
+        SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
+        sftpConfiguration.validate();
+    }
+
+    /**
+     * Test property failed validate invocation based on mutually exclusive properties
+     * of moveOnSuccess is true and destructive is true.
+     * @throws InvalidPropertyException 
+     */
+    @Test(expected = InvalidPropertyException.class)
+    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidPropertyException
+    {
+        SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
+        sftpConfiguration.setDestructive(Boolean.TRUE);
+        sftpConfiguration.validate();
+    }
+
+    /**
+     * Test property failed validate invocation based a missing property when
+     * of moveOnSuccess is true and moveOnSuccessNewPath is missing.
+     * @throws InvalidPropertyException 
+     */
+    @Test(expected = InvalidPropertyException.class)
+    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidPropertyException
+    {
+        SftpConsumerConfiguration sftpConfiguration = new SftpConsumerConfiguration();
+        sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
+        sftpConfiguration.validate();
+    }
+
 }

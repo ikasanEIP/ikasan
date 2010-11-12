@@ -40,11 +40,14 @@
  */
 package org.ikasan.connector.sftp.consumer.type;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.resource.ResourceException;
 
+import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.common.Payload;
 import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
-import org.ikasan.framework.payload.service.FileTransferPayloadProvider;
 import org.ikasan.spec.endpoint.Consumer;
 
 /**
@@ -54,21 +57,21 @@ import org.ikasan.spec.endpoint.Consumer;
 public class PayloadBasedSftpConsumer implements Consumer<Payload>
 {
     /** existing template */
-    private FileTransferPayloadProvider fileTransferPayloadProvider;
-    
+    protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
+
     /** configuration */
-    private SftpConsumerConfiguration configuration;
+    protected SftpConsumerConfiguration configuration;
 
     /**
      * Constructor
      * @param fileTransferConnectionTemplate
      */
-    public PayloadBasedSftpConsumer(FileTransferPayloadProvider fileTransferPayloadProvider, SftpConsumerConfiguration configuration)
+    public PayloadBasedSftpConsumer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpConsumerConfiguration configuration)
     {
-        this.fileTransferPayloadProvider = fileTransferPayloadProvider;
-        if(fileTransferPayloadProvider == null)
+        this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
+        if(fileTransferConnectionTemplate == null)
         {
-            throw new IllegalArgumentException("fileTransferPayloadProvider cannot be 'null'");
+            throw new IllegalArgumentException("fileTransferConnectionTemplate cannot be 'null'");
         }
 
         this.configuration = configuration;
@@ -79,18 +82,69 @@ public class PayloadBasedSftpConsumer implements Consumer<Payload>
     }
     
     /**
-     * Return a map of filename and content entries. If no file is available for
-     * return then null is returned.
+     * Return the first file found as a payload. If no file is available 
+     * then null is returned.
      */
     public Payload invoke() throws ResourceException
     {
-        return this.fileTransferPayloadProvider.getFileTransferConnectionTemplate().getDiscoveredFile(
-            configuration.getSourceDirectory(), configuration.getFilenamePattern(), 
-            configuration.getRenameOnSuccess(), configuration.getRenameOnSuccessExtension(),
-            configuration.getMoveOnSuccess(), configuration.getMoveOnSuccessNewPath(),
-            configuration.getChunking(), configuration.getChunkSize(), configuration.getChecksum(),
-            configuration.getMinAge(), configuration.getDestructive(), 
-            configuration.getFilterDuplicates(), configuration.getFilterOnFilename(),
-            configuration.getFilterOnLastModifiedDate(), configuration.getChronological());
+        Payload payload = null;
+        for (String sourceDirectory : this.getSrcDirs())
+        {
+            payload = this.fileTransferConnectionTemplate.getDiscoveredFile(
+                    sourceDirectory, configuration.getFilenamePattern(), 
+                    configuration.getRenameOnSuccess(), configuration.getRenameOnSuccessExtension(),
+                    configuration.getMoveOnSuccess(), configuration.getMoveOnSuccessNewPath(),
+                    configuration.getChunking(), configuration.getChunkSize(), configuration.getChecksum(),
+                    configuration.getMinAge(), configuration.getDestructive(), 
+                    configuration.getFilterDuplicates(), configuration.getFilterOnFilename(),
+                    configuration.getFilterOnLastModifiedDate(), configuration.getChronological());
+
+            if(payload != null)
+            {
+                return payload;
+            }
+        }
+        
+        this.housekeep();
+        return payload;
     }
+    
+    /**
+     * Apply any configured housekeeping on this connection template.
+     * 
+     * @throws ResourceException - Exception if the JCA connector fails
+     */
+    protected void housekeep() throws ResourceException
+    {
+        int maxRows = this.configuration.getMaxRows().intValue();
+        int ageOfFiles = this.configuration.getAgeOfFiles().intValue();
+        
+        // If the values have been set then housekeep, else don't
+        if(maxRows > -1 && ageOfFiles > -1)
+        {
+            this.fileTransferConnectionTemplate.housekeep(maxRows, ageOfFiles);
+        }
+    }
+
+    /**
+     * Return a list of src directories to be polled.
+     * 
+     * @return List of src directories
+     */
+    protected List<String> getSrcDirs()
+    {
+        List<String> dirs = new ArrayList<String>();
+        // If we've been passed a factory it means there are multiple directories to
+        // poll, starting from this.srcDirectory
+        if (this.configuration.getSourceDirectoryURLFactory() != null)
+        {
+            dirs = this.configuration.getSourceDirectoryURLFactory().getDirectoriesURLs(this.configuration.getSourceDirectory());
+        }
+        else
+        {
+            dirs.add(this.configuration.getSourceDirectory());
+        }
+        return dirs;
+    }
+    
 }
