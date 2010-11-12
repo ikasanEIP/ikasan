@@ -88,6 +88,8 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
      */
     public void start() throws ResourceException
     {
+        sftpConfiguration.validate();
+        
         this.consumer = this.endpointFactory.createEndpoint(sftpConfiguration);
         if(this.consumer instanceof EndpointActivator)
         {

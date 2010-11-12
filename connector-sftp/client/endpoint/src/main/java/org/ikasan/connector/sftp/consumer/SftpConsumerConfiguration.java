@@ -40,6 +40,8 @@
  */
 package org.ikasan.connector.sftp.consumer;
 
+import javax.resource.spi.InvalidPropertyException;
+
 import org.ikasan.framework.factory.DirectoryURLFactory;
 
 /**
@@ -50,88 +52,88 @@ import org.ikasan.framework.factory.DirectoryURLFactory;
 public class SftpConsumerConfiguration
 {
     /** Remote directory from which to discover files */
-    protected String sourceDirectory;
+    private String sourceDirectory;
 
     /** Regular expression for matching file names */
-    protected String filenamePattern;
+    private String filenamePattern;
 
     /** Classname for source directories URLs factory */
-    protected DirectoryURLFactory sourceDirectoryURLFactory;
+    private DirectoryURLFactory sourceDirectoryURLFactory;
 
     /** Whether we filterDuplicates what we are picking up - True by default */
-    protected Boolean filterDuplicates = Boolean.TRUE;
+    private Boolean filterDuplicates = Boolean.TRUE;
 
     /** Filter on Filename - True by default */
-    protected Boolean filterOnFilename = Boolean.TRUE;
+    private Boolean filterOnFilename = Boolean.TRUE;
 
     /** Filter on LastModifiedDate - True by default */
-    protected Boolean filterOnLastModifiedDate = Boolean.TRUE;
+    private Boolean filterOnLastModifiedDate = Boolean.TRUE;
 
     /** Rename the remote file once successfully retrieved */
-    protected Boolean renameOnSuccess = Boolean.FALSE;
+    private Boolean renameOnSuccess = Boolean.FALSE;
 
     /** Extension to use when renaming file */
-    protected String renameOnSuccessExtension;
+    private String renameOnSuccessExtension;
 
     /** Move the remote file to once successfully retrieved */
-    protected Boolean moveOnSuccess = Boolean.FALSE;
+    private Boolean moveOnSuccess = Boolean.FALSE;
 
     /** New path to use when moving the file */
-    protected String moveOnSuccessNewPath;
+    private String moveOnSuccessNewPath;
 
     /** Sort result set by chronological order - false by default. */
-    protected Boolean chronological = Boolean.FALSE;
+    private Boolean chronological = Boolean.FALSE;
 
     /** Chunk files when retrieving */
-    protected Boolean chunking = Boolean.FALSE;
+    private Boolean chunking = Boolean.FALSE;
 
     /** Maximum size of chunk when chunking, defaults to 1MB */
-    protected Integer chunkSize = Integer.valueOf(1048576);
+    private Integer chunkSize = Integer.valueOf(1048576);
 
     /** Attempt to verify integrity of retrieved file by comparing with a checksum supplied by the remote system */
-    protected Boolean checksum = Boolean.FALSE;
+    private Boolean checksum = Boolean.FALSE;
 
     /** Minimum age (in seconds) of file to match */
-    protected Long minAge = Long.valueOf(120);
+    private Long minAge = Long.valueOf(120);
 
     /** Whether or not we delete the file after picking it up */
-    protected Boolean destructive = Boolean.FALSE;
+    private Boolean destructive = Boolean.FALSE;
 
     /** Maximum rows that housekeeping can deal with, defaults to -1 (ignore) */
-    protected Integer maxRows = Integer.valueOf(-1);
+    private Integer maxRows = Integer.valueOf(-1);
 
     /** Number of days in age the files need to be to be considered for housekeeping, defaults to -1 (ignore) */
-    protected Integer ageOfFiles = Integer.valueOf(-1);
+    private Integer ageOfFiles = Integer.valueOf(-1);
     
     /** SFTP unqiue clientId */
-    protected String clientID;
+    private String clientID;
 
     /** SFTP cleanup journal on completion */
-    protected Boolean cleanupJournalOnComplete = Boolean.TRUE;
+    private Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
     /** SFTP default Remote host */
-    protected String remoteHost = String.valueOf("localhost");
+    private String remoteHost = String.valueOf("localhost");
 
     /** SFTP private key hosts */
-    protected String privateKeyFilename;
+    private String privateKeyFilename;
 
     /** SFTP max retry attempts */
-    protected Integer maxRetryAttempts = Integer.valueOf(3);
+    private Integer maxRetryAttempts = Integer.valueOf(3);
 
     /** SFTP default remote port */
-    protected Integer remotePort = Integer.valueOf(22);
+    private Integer remotePort = Integer.valueOf(22);
 
     /** SFTP known hosts */
-    protected String knownHostsFilename;
+    private String knownHostsFilename;
 
     /** SFTP user */
-    protected String username;
+    private String username;
 
     /** SFTP password/passphrase */
-    protected String password;
+    private String password;
 
     /** SFTP remote port */
-    protected Integer connectionTimeout = Integer.valueOf(60000);
+    private Integer connectionTimeout = Integer.valueOf(60000);
 
     public String getSourceDirectory()
     {
@@ -413,5 +415,46 @@ public class SftpConsumerConfiguration
         this.connectionTimeout = connectionTimeout;
     }
 
+    /* (non-Jsdoc)
+     * @see org.ikasan.spec.endpoint.EndpointConfiguration#validate()
+     */
+    public void validate() throws InvalidPropertyException
+    {
+        if(this.renameOnSuccess)
+        {
+            if(this.destructive)
+            {
+                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                        + "] and destructive[" + this.destructive 
+                        + "] are mutually exclusive.");
+            }
+            if(this.moveOnSuccess)
+            {
+                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                        + "] and moveOnSuccess[" + this.moveOnSuccess 
+                        + "] are mutually exclusive.");
+            }
+            if(this.renameOnSuccessExtension == null)
+            {
+                throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
+                        + "] requires renameOnSuccessExtention to be specified.");
+            }
+        }
+        
+        if(moveOnSuccess)
+        {
+            if(destructive)
+            {
+                throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
+                        + "] and destructive[" + this.destructive 
+                        + "] are mutually exclusive.");
+            }
+            if(moveOnSuccessNewPath == null)
+            {
+                throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
+                        + "] requires moveOnSuccessNewPath to be specified.");
+            }
+        }
+    }
     
 }

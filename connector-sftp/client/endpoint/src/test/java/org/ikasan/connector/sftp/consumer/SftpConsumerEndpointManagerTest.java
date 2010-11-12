@@ -139,6 +139,7 @@ public class SftpConsumerEndpointManagerTest
             {
                 exactly(1).of(endpointFactory).createEndpoint(sftpConfiguration);
                 will(returnValue(consumer));
+                exactly(1).of(sftpConfiguration).validate();
             }
         });
         
@@ -161,6 +162,7 @@ public class SftpConsumerEndpointManagerTest
             {
                 exactly(1).of(endpointFactory).createEndpoint(sftpConfiguration);
                 will(returnValue(consumerWithEndpointActivator));
+                exactly(1).of(sftpConfiguration).validate();
 
                 exactly(1).of(consumerWithEndpointActivator).activate();
                 exactly(1).of(consumerWithEndpointActivator).deactivate();                
@@ -187,6 +189,7 @@ public class SftpConsumerEndpointManagerTest
             {
                 exactly(1).of(endpointFactory).createEndpoint(sftpConfiguration);
                 will(returnValue(consumer));
+                exactly(1).of(sftpConfiguration).validate();                
             }
         });
 
