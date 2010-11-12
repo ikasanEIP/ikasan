@@ -44,12 +44,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-RC2</version>
+        <version>0.8.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec</artifactId>
-    <version>0.8.0-RC2</version>
+    <version>0.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 
