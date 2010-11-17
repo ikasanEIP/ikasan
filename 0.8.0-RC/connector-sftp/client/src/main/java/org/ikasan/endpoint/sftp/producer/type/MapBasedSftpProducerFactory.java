@@ -44,10 +44,7 @@ import javax.resource.cci.ConnectionFactory;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
-import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
-import org.ikasan.endpoint.sftp.consumer.type.PayloadBasedSftpConsumer;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
-import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
 
