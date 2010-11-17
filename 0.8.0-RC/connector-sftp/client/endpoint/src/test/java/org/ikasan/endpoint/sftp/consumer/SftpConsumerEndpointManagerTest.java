@@ -38,12 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer;
+package org.ikasan.endpoint.sftp.consumer;
 
 import javax.resource.ResourceException;
 
 import junit.framework.Assert;
 
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerEndpointManager;
 import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.EndpointFactory;

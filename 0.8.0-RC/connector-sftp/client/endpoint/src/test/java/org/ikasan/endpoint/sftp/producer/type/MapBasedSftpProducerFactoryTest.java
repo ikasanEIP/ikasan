@@ -38,14 +38,16 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.producer.type;
+package org.ikasan.endpoint.sftp.producer.type;
 
 import javax.resource.cci.ConnectionFactory;
 
 import junit.framework.Assert;
 
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
-import org.ikasan.connector.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducer;
+import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducerFactory;
 import org.ikasan.spec.endpoint.Producer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

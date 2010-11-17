@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer;
+package org.ikasan.endpoint.sftp.consumer;
 
 import javax.resource.spi.InvalidPropertyException;
 

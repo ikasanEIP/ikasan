@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer.type;
+package org.ikasan.endpoint.sftp.consumer.type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.common.Payload;
-import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.spec.endpoint.Consumer;
 
 /**

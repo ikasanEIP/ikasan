@@ -38,37 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer;
+package org.ikasan.endpoint.sftp.producer;
 
 import javax.resource.ResourceException;
 
-import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
+import org.ikasan.spec.endpoint.Producer;
 
 /**
- * Endpoint manager for SFTP consumer endpoint implementations based on an 
+ * Endpoint manager for SFTP producer endpoint implementations based on an 
  * Sftp protocol and configuration.
  * @author Ikasan Development Team
  */
-public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,SftpConsumerConfiguration>
+public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,SftpProducerConfiguration>
 {
-    /** consumer factory */
-    private EndpointFactory<Consumer<?>,SftpConsumerConfiguration> endpointFactory;
+    /** producer factory */
+    private EndpointFactory<Producer<?>,SftpProducerConfiguration> endpointFactory;
     
     /** configuration */
-    private SftpConsumerConfiguration sftpConfiguration;
+    private SftpProducerConfiguration sftpConfiguration;
     
-    /** consumer endpoint */
-    private Consumer<?> consumer;
+    /** producer endpoint */
+    private Producer<?> producer;
 
     /**
      * Constructor
-     * @param connectionFactory
+     * @param producerFactory
      * @param sftpConfiguration
      */
-    public SftpConsumerEndpointManager(EndpointFactory<Consumer<?>,SftpConsumerConfiguration> endpointFactory, SftpConsumerConfiguration sftpConfiguration)
+    public SftpProducerEndpointManager(EndpointFactory<Producer<?>,SftpProducerConfiguration> endpointFactory, SftpProducerConfiguration sftpConfiguration)
     {
         this.endpointFactory = endpointFactory;
         if(endpointFactory == null)
@@ -88,21 +88,19 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
      */
     public void start() throws ResourceException
     {
-        sftpConfiguration.validate();
-        
-        this.consumer = this.endpointFactory.createEndpoint(sftpConfiguration);
-        if(this.consumer instanceof EndpointActivator)
+        this.producer = this.endpointFactory.createEndpoint(sftpConfiguration);
+        if(this.producer instanceof EndpointActivator)
         {
-            ((EndpointActivator) this.consumer).activate();
+            ((EndpointActivator) this.producer).activate();
         }
     }
 
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#getEndpoint()
      */
-    public Consumer<?> getEndpoint()
+    public Producer<?> getEndpoint()
     {
-        return this.consumer;
+        return this.producer;
     }
 
     /* (non-Jsdoc)
@@ -110,15 +108,15 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
      */
     public void stop() throws ResourceException
     {
-        if(this.consumer != null && this.consumer instanceof EndpointActivator)
+        if(this.producer != null && this.producer instanceof EndpointActivator)
         {
             try
             {
-                ((EndpointActivator)consumer).deactivate();
+                ((EndpointActivator)producer).deactivate();
             }
             finally
             {
-                this.consumer = null;
+                this.producer = null;
             }
         }
     }
@@ -126,7 +124,7 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#setConfiguration(java.lang.Object)
      */
-    public void setConfiguration(SftpConsumerConfiguration sftpConfiguration)
+    public void setConfiguration(SftpProducerConfiguration sftpConfiguration)
     {
         this.sftpConfiguration = sftpConfiguration;
     }
@@ -134,7 +132,7 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#getConfiguration()
      */
-    public SftpConsumerConfiguration getConfiguration()
+    public SftpProducerConfiguration getConfiguration()
     {
         return this.sftpConfiguration;
     }
