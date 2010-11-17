@@ -38,12 +38,12 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.consumer.type;
+package org.ikasan.endpoint.sftp.consumer.type;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.base.outbound.EISConnectionFactory;
-import org.ikasan.connector.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointFactory;

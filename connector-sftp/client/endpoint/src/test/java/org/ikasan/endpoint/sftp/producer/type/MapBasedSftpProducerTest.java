@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.connector.sftp.producer.type;
+package org.ikasan.endpoint.sftp.producer.type;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -48,7 +48,8 @@ import java.util.Map;
 import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
