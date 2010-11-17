@@ -60,10 +60,10 @@ import org.ikasan.spec.endpoint.Producer;
 public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
 {
     /** existing template */
-    private FileTransferConnectionTemplate fileTransferConnectionTemplate;
+    protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
     
     /** configuration */
-    private SftpProducerConfiguration sftpProducerConfiguration;
+    protected SftpProducerConfiguration sftpProducerConfiguration;
 
     /**
      * Constructor
