@@ -44,7 +44,10 @@ import javax.resource.cci.ConnectionFactory;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
+import org.ikasan.endpoint.sftp.consumer.type.PayloadBasedSftpConsumer;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
 
@@ -86,9 +89,20 @@ public class MapBasedSftpProducerFactory implements EndpointFactory<Producer<?>,
         spec.setUsername(sftpProducerConfiguration.getUsername());
         spec.setCleanupJournalOnComplete(sftpProducerConfiguration.getCleanupJournalOnComplete());
 
-        return new MapBasedSftpProducer(new FileTransferConnectionTemplate(connectionFactory, spec), sftpProducerConfiguration);
+        return getEndpoint(new FileTransferConnectionTemplate(connectionFactory, spec), sftpProducerConfiguration);
     }
 
+    /**
+     * Internal endpoint creation method allows for easier overriding of the actual endpoint creation and simpler testing.
+     * @param fileTransferConnectionTemplate
+     * @param sftpProducerConfiguration
+     * @return
+     */
+    protected Producer<?> getEndpoint(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpProducerConfiguration sftpProducerConfiguration)
+    {
+        return new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpProducerConfiguration);
+    }
+    
     /**
      * Utility method to aid testing of this class
      * @return SFTPConnectionSpec
