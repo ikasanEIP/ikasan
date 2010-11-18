@@ -95,7 +95,7 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
      * @throws ResourceException - Exception from the JCA connector
      */
     public void deliverInputStream(InputStream inputStream, String fileName, String outputDir, boolean overwrite,
-            String renameExtension, boolean checksumDelivered, boolean unzip) throws ResourceException
+            String renameExtension, boolean checksumDelivered, boolean unzip, boolean createParentDirectory) throws ResourceException
     {
         ExecutionContext executionContext = new ExecutionContext();
         TransactionalResourceCommand deliveryCommand = null;
@@ -103,7 +103,7 @@ public abstract class BaseFileTransferConnectionImpl extends EISConnectionImpl
         {
             executionContext.put(ExecutionContext.FILE_INPUT_STREAM, inputStream);
             executionContext.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, fileName);
-            deliveryCommand = new DeliverFileCommand(outputDir, renameExtension, overwrite);
+            deliveryCommand = new DeliverFileCommand(outputDir, renameExtension, overwrite, createParentDirectory);
         }
         else
         // unzip

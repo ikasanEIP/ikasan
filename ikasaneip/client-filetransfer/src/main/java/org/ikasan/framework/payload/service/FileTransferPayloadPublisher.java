@@ -51,7 +51,7 @@ import org.ikasan.common.Payload;
 
 /**
  * @author Ikasan Development Team
- * 
+ * @deprecated - use Ikasan Client Endpoint implementation
  */
 public class FileTransferPayloadPublisher implements PayloadPublisher
 {
