@@ -79,6 +79,10 @@ public class FileTransferInputStreamPayloadPublisher implements PayloadPublisher
 
     /** Deliver using a checksum flag */
     protected boolean checksumDelivered = false;
+    
+    /** dont allow payload driven methods to create missing parent dirs on file delivery 
+     * as we really want to discourage Payload delivery usage - use InputStream instead. */
+    protected boolean createParentDirectory = false;
 
     /**
      * Constructor
@@ -110,7 +114,7 @@ public class FileTransferInputStreamPayloadPublisher implements PayloadPublisher
         {
             InputStream inputStream = payloadInputStreamProvider.acquireInputStream(payload);
             fileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), outputDir, overwrite,
-                renameExtension, checksumDelivered, unzip);
+                renameExtension, checksumDelivered, unzip, createParentDirectory);
         }
         catch (IOException e)
         {
