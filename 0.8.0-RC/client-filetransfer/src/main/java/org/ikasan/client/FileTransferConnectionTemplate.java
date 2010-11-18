@@ -81,6 +81,7 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate
      * @param unzip - Flag for whether we unzip the delivered file
      * @param cleanup - Cleanup txn journal flag
      * @throws ResourceException - Exception if JCA connector fails
+     * @deprecated - use deliverInputStream
      */
     public void deliverPayload(final Payload payload, final String outputDir, final Map<String, String> outputTargets, final boolean overwrite,
             final String renameExtension, final boolean checksumDelivered, final boolean unzip, final boolean cleanup) throws ResourceException
@@ -109,13 +110,13 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate
      * @throws ResourceException - Exception if JCA connector fails
      */
     public void deliverInputStream(final InputStream inputStream, final String fileName, final String outputDir, final boolean overwrite,
-            final String renameExtension, final boolean checksumDelivered, final boolean unzip) throws ResourceException
+            final String renameExtension, final boolean checksumDelivered, final boolean unzip, final boolean createParentDirectory) throws ResourceException
     {
         execute(new ConnectionCallback()
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                ((BaseFileTransferConnection) connection).deliverInputStream(inputStream, fileName, outputDir,  overwrite, renameExtension, checksumDelivered,unzip);
+                ((BaseFileTransferConnection) connection).deliverInputStream(inputStream, fileName, outputDir,  overwrite, renameExtension, checksumDelivered,unzip, createParentDirectory);
                 return null;
             }
         });

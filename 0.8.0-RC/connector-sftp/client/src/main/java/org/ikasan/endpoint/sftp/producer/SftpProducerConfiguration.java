@@ -92,6 +92,9 @@ public class SftpProducerConfiguration
     /** SFTP generate and deliver a checksum */
     protected Boolean checksumDelivered = Boolean.FALSE;
 
+    /** Creates any missing parent directory in the fully qualified filename of the file to be delivered */
+    protected Boolean createParentDirectory = Boolean.FALSE;
+
     public String getPassword()
     {
         return password;
@@ -240,6 +243,16 @@ public class SftpProducerConfiguration
     public void setChecksumDelivered(Boolean checksumDelivered)
     {
         this.checksumDelivered = checksumDelivered;
+    }
+
+    public Boolean getCreateParentDirectory()
+    {
+        return createParentDirectory;
+    }
+
+    public void setCreateParentDirectory(Boolean createParentDirectory)
+    {
+        this.createParentDirectory = createParentDirectory;
     }
 
 }

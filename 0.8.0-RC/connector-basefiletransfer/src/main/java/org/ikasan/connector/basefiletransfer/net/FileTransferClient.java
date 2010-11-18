@@ -192,4 +192,11 @@ public interface FileTransferClient extends TransactionalResource
     
     /**TODO add comment */
     public void disconnect();
+
+    /**
+     * Allow the creation of directories.
+     * @param directory
+     * @throws ClientCommandMkdirException
+     */
+    public void mkdir(String directory) throws ClientCommandMkdirException;
 }

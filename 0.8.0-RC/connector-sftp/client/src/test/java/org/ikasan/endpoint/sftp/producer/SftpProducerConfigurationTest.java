@@ -76,6 +76,7 @@ public class SftpProducerConfigurationTest
         Assert.assertFalse(sftpConfiguration.getOverwrite());
         Assert.assertFalse(sftpConfiguration.getUnzip());
         Assert.assertFalse(sftpConfiguration.getChecksumDelivered());
+        Assert.assertFalse(sftpConfiguration.getCreateParentDirectory());
     }
 
     /**
@@ -130,5 +131,8 @@ public class SftpProducerConfigurationTest
 
         sftpConfiguration.setChecksumDelivered(Boolean.TRUE);
         Assert.assertTrue("checksumDelivered", sftpConfiguration.getChecksumDelivered());
+
+        sftpConfiguration.setCreateParentDirectory(Boolean.TRUE);
+        Assert.assertTrue("createParentDirectory", sftpConfiguration.getCreateParentDirectory());
     }
 }
