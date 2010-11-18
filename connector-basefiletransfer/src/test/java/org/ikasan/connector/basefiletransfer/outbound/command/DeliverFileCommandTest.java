@@ -95,6 +95,11 @@ public class DeliverFileCommandTest extends TestCase
     boolean overwriteExisting = true;
 
     /**
+     * create parent directory if missing on file delivery
+     */
+    boolean createParentDirectory = true;
+
+    /**
      * name of the file being delivered
      */
     final String fileName = "fileName";
@@ -155,7 +160,7 @@ public class DeliverFileCommandTest extends TestCase
             e.printStackTrace();
         }
 
-        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting);
+        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, createParentDirectory);
     }
 
     /**
@@ -225,7 +230,7 @@ public class DeliverFileCommandTest extends TestCase
     {
 
         final String dotOutputDir = ".";
-        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting);
+        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting, createParentDirectory);
 
         classMockery.checking(new Expectations()
         {
@@ -276,7 +281,7 @@ public class DeliverFileCommandTest extends TestCase
             URISyntaxException
     {
 
-        deliverFileCommand = new DeliverFileCommand(startingDir, renameExtension, overwriteExisting);
+        deliverFileCommand = new DeliverFileCommand(startingDir, renameExtension, overwriteExisting, createParentDirectory);
 
         classMockery.checking(new Expectations()
         {
@@ -519,6 +524,9 @@ public class DeliverFileCommandTest extends TestCase
     public void testRollback_PutFileNotAttempted() throws ClientCommandPwdException, ClientCommandCdException,
             ResourceException
     {
+        // create new Deliver File Command with no parent directory creation option (false)
+        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, false);
+
         classMockery.checking(new Expectations()
         {
             {
@@ -626,7 +634,7 @@ public class DeliverFileCommandTest extends TestCase
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String sameOutputDir = "startingDir";
-        deliverFileCommand = new DeliverFileCommand(sameOutputDir, renameExtension, overwriteExisting);
+        deliverFileCommand = new DeliverFileCommand(sameOutputDir, renameExtension, overwriteExisting, createParentDirectory);
 
         classMockery.checking(new Expectations()
         {
@@ -674,7 +682,7 @@ public class DeliverFileCommandTest extends TestCase
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String dotOutputDir = ".";
-        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting);
+        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting, createParentDirectory);
 
         classMockery.checking(new Expectations()
         {
@@ -702,4 +710,67 @@ public class DeliverFileCommandTest extends TestCase
             tempFilename);
     }
 
+    /**
+     * Tests that the command successfully handles a non chunked data in the
+     * form of an input stream. Output directory does not exist, 
+     * but createParentDirectory is true.
+     * 
+     * 
+     * @throws ResourceException
+     * @throws ClientCommandPwdException
+     * @throws ClientCommandCdException
+     * @throws ClientCommandPutException
+     * @throws ClientCommandLsException
+     * @throws URISyntaxException
+     * @throws ClientCommandMkdirException
+     */
+    public void testExecute_withInputStream_toNonExistentParentDirectory_with_createParentDirectory_true() 
+        throws ResourceException, ClientCommandPwdException,
+            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+            URISyntaxException, ClientCommandMkdirException
+    {
+        final InputStream inputStream = new ByteArrayInputStream(content);
+        final String originalDir = "here";
+        final String outputDir = "some/directory";
+        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, createParentDirectory);
+
+        classMockery.checking(new Expectations()
+        {
+            {
+                // where are we?
+                one(client).pwd();
+                will(returnValue(originalDir));
+
+                // try to change dir to delivery directory, but it doesnt exist so fails
+                one(client).cd(outputDir);
+                will(throwException(new ClientCommandCdException()));
+
+                // create the missing parent delivery dirs
+                one(client).mkdir(outputDir);
+
+                // now change dir to the delivery dir
+                one(client).cd(outputDir);
+
+                // put the new file
+                one(client).putWithOutputStream(nestedFile.getPath() + renameExtension, inputStream);
+
+                // now change back to original dir
+                one(client).cd(originalDir);
+            }
+        });
+
+        ExecutionContext context = new ExecutionContext();
+        context.put(ExecutionContext.FILE_INPUT_STREAM, inputStream);
+        context.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, nestedFile.getPath());
+        deliverFileCommand.setExecutionContext(context);
+
+        deliverFileCommand.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(deliverFileCommand, 3));
+        ExecutionOutput executionOutput = deliverFileCommand.execute(client, new XidImpl(new byte[0], new byte[0],
+            0));
+
+        String tempFilename = (String) executionOutput.getResult();
+
+        assertEquals("temp filename should be the filname with the rename extension", outputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename);
+    }
 }
