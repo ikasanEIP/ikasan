@@ -277,9 +277,11 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
      * @param cleanup - Flag to indicate whether we cleanup the transaction
      *            journal
      * @throws ResourceException - Exception thrown by the FTP connector
+     * @deprecated
      */
     public void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets, boolean overwrite, String renameExtension,
-            boolean checksumDelivered, boolean unzip, boolean cleanup) throws ResourceException
+            boolean checksumDelivered, boolean unzip, boolean cleanup) 
+        throws ResourceException
     {
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.PAYLOAD, payload);
@@ -326,7 +328,8 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             {
                 executionContext.put(ExecutionContext.FILE_INPUT_STREAM, chunkInputStream);
                 executionContext.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, fileChunkHeader.getFileName());
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite);
+                // do not support createParentDirectory for PayloadDelivery as this should be deprecated
+                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false);
             }
             else
             // unzip
@@ -365,7 +368,8 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             if(!unzip)
             {
                 executionContext.put(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD, mappedRecord);
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite);
+                // do not support createParentDirectory for PayloadDelivery as this should be deprecated
+                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false);
             }
             else
             {

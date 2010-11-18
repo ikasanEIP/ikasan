@@ -49,6 +49,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
+import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
+import org.ikasan.connector.basefiletransfer.net.ClientCommandMkdirException;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 
@@ -95,6 +97,9 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     private boolean putAttempted = false;
 
+    /** allow delivery to create any parent directory in the delivery directory structure if missing */
+    private boolean createParentDirectory = false;
+    
     /** Default Constructor for Hibernate */
     public DeliverFileCommand()
     {
@@ -108,13 +113,15 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      * @param renameExtension
      * @param overwriteExisting
      */
-    public DeliverFileCommand(String outputDirectory, String renameExtension, boolean overwriteExisting)
+    public DeliverFileCommand(String outputDirectory, String renameExtension, 
+            boolean overwriteExisting, boolean createParentDirectory)
     {
         super();
 
         this.renameExtension = renameExtension;
         this.outputDirectory = outputDirectory;
         this.overwriteExisting = overwriteExisting;
+        this.createParentDirectory = createParentDirectory;
     }
 
     @Override
@@ -126,10 +133,34 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         String originalDirectory = printWorkingDirectoryName();
         if(!outputDirectory.equals(".") && !outputDirectory.equals(originalDirectory))
         {
-            changeDirectory(outputDirectory);
-            changeDirectory = true;
+            try
+            {
+                changeDirectory(outputDirectory);
+                changeDirectory = true;
+            }
+            catch(ResourceException e)
+            {
+                if(this.createParentDirectory && e.getCause() instanceof ClientCommandCdException)
+                {
+                    logger.warn("Failed to change directory, creating missing parent directories...");
+                    try
+                    {
+                        getClient().mkdir(outputDirectory);
+                        changeDirectory(outputDirectory);
+                        changeDirectory = true;
+                    }
+                    catch (ClientCommandMkdirException e1)
+                    {
+                        throw new ResourceException(e1);
+                    }
+                }
+                else
+                {
+                    throw e;
+                }
+            }
         }
-
+        
         BaseFileTransferMappedRecord mappedRecord = (BaseFileTransferMappedRecord) executionContext
             .get(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD);
 

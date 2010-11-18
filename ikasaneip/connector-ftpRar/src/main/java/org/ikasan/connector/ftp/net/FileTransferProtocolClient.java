@@ -949,7 +949,7 @@ public class FileTransferProtocolClient implements FileTransferClient
             throw new ClientCommandRenameException("Failed to rename [" + currentPath + "] to [" + newPath + "]", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
-
+    
     /**
      * Constructing a <code>ClientListEntry</code> object from an
      * <code>FTPFile</code> object. This is a direct map with some formatting
@@ -1100,7 +1100,7 @@ public class FileTransferProtocolClient implements FileTransferClient
      * @throws ClientCommandMkdirException Exception if we can't make a
      *             directory
      */
-    private void mkdir(String newPath) throws ClientCommandMkdirException
+    public void mkdir(String newPath) throws ClientCommandMkdirException
     {
         try
         {

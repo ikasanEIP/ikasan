@@ -56,6 +56,7 @@ import org.ikasan.framework.factory.DirectoryURLFactory;
  * The FileTransfer Payload Provider
  * 
  * @author Ikasan Development Team
+ * @deprecated - use Ikasan Client Endpoint implementation
  */
 public class FileTransferPayloadProvider implements PayloadProvider
 {
