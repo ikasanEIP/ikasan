@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.ErrorListener;
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -60,6 +61,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.transformation.configuration.XsltConfiguration;
+import org.ikasan.framework.configuration.ConfiguredResource;
+import org.ikasan.framework.flow.ManagedResource;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -88,22 +92,28 @@ import org.xml.sax.XMLReader;
  * 
  * @author Ikasan Development Team
  */
-public class XsltTransformer implements Transformer
+public class XsltTransformer implements Transformer, ManagedResource, ConfiguredResource<XsltConfiguration>
 {
+    /**
+     * Classpath URL prefix <code>classpath:</code> expected in stylesheet locations
+     * to be picked up off of classpath
+     */
+    private final static String CLASSPATH_URL_PREFIX = "classpath:";
+
+    /** Configuration of resource in this component*/
+    private XsltConfiguration configuration;
+
+    /** Unique id for configured resource in this component */
+    private String configuredResourceId;
+
     /** Reader class used to consume incoming content */
     private XMLReader xmlReader;
 
     /** XSLTC templates, if we are using translets */
     private Templates templates;
 
-    /** Input steam for the stylesheet transformation */
-    private InputStream styleSheetInputStream;
-
     /** <code>TransformerFactory</code> instance */
     private TransformerFactory transformerFactory;
-
-    /** Additional Java beans to be made available to the transformer at transform time */
-    private Map<String, Object> externalDataBeans;
 
     /**
      * A very sensitive ErrorListener that will throw errors.  This replaces the default ErrorListener that simply logs
@@ -117,8 +127,8 @@ public class XsltTransformer implements Transformer
      */
     private Map<String, String> transformationParameters;
 
-    /** Logger instance for this class */
-    private static final Logger logger = Logger.getLogger(XsltTransformer.class);
+    /** Additional Java beans to be made available to the transformer at transform time */
+    private Map<String, Object> externalDataBeans;
 
     /** A New PayloadName to set on the transformed Payloads */
     private String payloadName;
@@ -126,59 +136,134 @@ public class XsltTransformer implements Transformer
     /** A custom implementation of URIResolver */
     private URIResolver uriResolver;
 
-    /**
-     * Constructor
-     * 
-     * @param transformerFactory - Transformer Factory to use
-     * @param styleSheetInputStream - Input stream for stylesheet for transformation
-     * @param useTranslets - flag controlling whether or not we should compile the stylesheet up front
-     * @param externalDataBeans - map of named beans that are made available to the SLT
-     * @param transformationParameters - any parameters used by the stylesheet that do not change on a per invocation
-     *            basis
-     * @param xmlReader - used for reading source on transformation            
-     * 
-     * @throws TransformerConfigurationException - Exception if the transformation fails badly
-     */
-    public XsltTransformer(TransformerFactory transformerFactory, InputStream styleSheetInputStream, boolean useTranslets,
-            Map<String, Object> externalDataBeans, Map<String, String> transformationParameters, XMLReader xmlReader)
-            throws TransformerConfigurationException
-    {
-        // Make sure that any errors in the style sheet result in an exception
-        transformerFactory.setErrorListener(this.exceptionThrowingErrorListener);
-        this.xmlReader = xmlReader;
-        this.styleSheetInputStream = styleSheetInputStream;
-        if(this.styleSheetInputStream == null)
-        {
-            throw new IllegalArgumentException("stylesheetInputStream cannot be 'null'");
-        }
-        this.transformerFactory = transformerFactory;
-        this.externalDataBeans = externalDataBeans;
-        this.transformationParameters = transformationParameters;
-        if (useTranslets)
-        {
-            logger.debug("using translets!");
-            StreamSource streamSource = new StreamSource(styleSheetInputStream);
-            this.templates = transformerFactory.newTemplates(streamSource);
-        }
-    }
+    /** Logger instance for this class */
+    private static final Logger logger = Logger.getLogger(XsltTransformer.class);
 
     /**
      * Constructor
      * 
      * @param transformerFactory - Transformer Factory to use
-     * @param styleSheetInputStream - Input stream for stylesheet for transformation
-     * @param useTranslets - flag controlling whether or not we should compile the stylesheet upfront
-     * @param externalDataBeans - map of named beans that are made available to the xslt
-     * @param transformationParameters - any parameters used by the stylesheet that do not change on a per invocation
-     *            basis
      * 
-     * @throws TransformerConfigurationException - Exception if the transformation fails badly
      */
-    public XsltTransformer(TransformerFactory transformerFactory, InputStream styleSheetInputStream, boolean useTranslets,
-            Map<String, Object> externalDataBeans, Map<String, String> transformationParameters)
-            throws TransformerConfigurationException
+    public XsltTransformer(final TransformerFactory transformerFactory)
     {
-        this(transformerFactory, styleSheetInputStream, useTranslets, externalDataBeans, transformationParameters, null);
+        this.transformerFactory = transformerFactory;
+        if (this.transformerFactory == null)
+        {
+            throw new IllegalArgumentException("The TransformerFactory cannot be null.");
+        }
+        this.transformerFactory.setErrorListener(this.exceptionThrowingErrorListener);
+    }
+
+    /**
+     * Accessor for optional payloadName
+     * 
+     * @return payloadName or null if it has not been set
+     */
+    public String getPayloadName()
+    {
+        return this.payloadName;
+    }
+
+    /**
+     * Mutator for payloadName
+     * 
+     * @param payloadName - The payload name to set
+     */
+    public void setPayloadName(String payloadName)
+    {
+        this.payloadName = payloadName;
+    }
+
+    /**
+     * Override the default {@link URIResolver} provided
+     * by transformer library.
+     * 
+     * @param resolver custom {@link URIResolver} implementation
+     */
+    public void setURIResolver(URIResolver resolver)
+    {
+        this.uriResolver = resolver;
+    }
+
+    /**
+     * @return the xmlReader
+     */
+    public XMLReader getXmlReader()
+    {
+        return this.xmlReader;
+    }
+
+    /**
+     * @param xmlReader the xmlReader to set
+     */
+    public void setXmlReader(XMLReader xmlReader)
+    {
+        this.xmlReader = xmlReader;
+    }
+
+    /**
+     * @return the transformationParameters
+     */
+    public Map<String, String> getTransformationParameters()
+    {
+        return this.transformationParameters;
+    }
+
+    /**
+     * @param transformationParameters the transformationParameters to set
+     */
+    public void setTransformationParameters(Map<String, String> transformationParameters)
+    {
+        this.transformationParameters = transformationParameters;
+    }
+
+    /**
+     * @return the externalDataBeans
+     */
+    public Map<String, Object> getExternalDataBeans()
+    {
+        return this.externalDataBeans;
+    }
+
+    /**
+     * @param externalDataBeans the externalDataBeans to set
+     */
+    public void setExternalDataBeans(Map<String, Object> externalDataBeans)
+    {
+        this.externalDataBeans = externalDataBeans;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.ConfiguredResource#getConfiguredResourceId()
+     */
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.ConfiguredResource#setConfiguredResourceId(java.lang.String)
+     */
+    public void setConfiguredResourceId(String id)
+    {
+        this.configuredResourceId = id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.ConfiguredResource#getConfiguration()
+     */
+    public XsltConfiguration getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.ConfiguredResource#setConfiguration(java.lang.Object)
+     */
+    public void setConfiguration(XsltConfiguration configuration)
+    {
+        this.configuration = configuration;
     }
 
     /*
@@ -225,7 +310,7 @@ public class XsltTransformer implements Transformer
         }
         else
         {
-            StreamSource streamSource = new StreamSource(this.styleSheetInputStream);
+            StreamSource streamSource = new StreamSource(this.configuration.getStylesheetLocation());
             transformer = this.transformerFactory.newTransformer(streamSource);
         }
         // Set our custom error listener to ensure errors aren't ignored
@@ -276,42 +361,15 @@ public class XsltTransformer implements Transformer
      * Adds a map of parameters to the list of parameters already set, typically 
      * used by children of this class.
      * 
+     * TODO get rid of this method? what's the point of it? Provide a setter method
+     * on the transformationParameters map to be used by children. What if tranformationParameters
+     * were null? this method would lead to a {@link NullPointerException}!!!
+     * 
      * @param parameters - Parameters to set
      */
     protected void addTransformationParameters(Map<String, String> parameters)
     {
         this.transformationParameters.putAll(parameters);
-    }
-    
-    /**
-     * Accessor for optional payloadName
-     * 
-     * @return payloadName or null if it has not been set
-     */
-    public String getPayloadName()
-    {
-        return this.payloadName;
-    }
-
-    /**
-     * Mutator for payloadName
-     * 
-     * @param payloadName - The payload name to set
-     */
-    public void setPayloadName(String payloadName)
-    {
-        this.payloadName = payloadName;
-    }
-
-    /**
-     * Override the default {@link URIResolver} provided
-     * by transformer library.
-     * 
-     * @param resolver custom {@link URIResolver} implementation
-     */
-    public void setURIResolver(URIResolver resolver)
-    {
-        this.uriResolver = resolver;
     }
 
     /**
@@ -361,5 +419,65 @@ public class XsltTransformer implements Transformer
 //        }
 //        payload.setSpec(Spec.TEXT_XML.toString());
         logger.debug(new String(transformedData));
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.flow.ManagedResource#startManagedResource()
+     */
+    public void startManagedResource()
+    {
+        /*
+         * Given available runtime configurations in XsltConfiguration, we can
+         * only manage the creation of templates at the moment.
+         */
+        if (this.configuration.isUseTranslates())
+        {
+            Source xsltSource = null;
+            String xslLocation = this.configuration.getStylesheetLocation();
+            if (xslLocation.startsWith(CLASSPATH_URL_PREFIX))
+            {
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                InputStream xslIS = classLoader.getResourceAsStream(this.stripClasspathScheme(xslLocation));
+                xsltSource = new StreamSource(xslIS);
+            }
+            else
+            {
+                xsltSource = new StreamSource(xslLocation);
+            }
+    
+            try
+            {
+                this.templates = this.transformerFactory.newTemplates(xsltSource);
+                
+            }
+            catch (TransformerConfigurationException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.flow.ManagedResource#stopManagedResource()
+     */
+    public void stopManagedResource()
+    {
+        // Get rid of existing Templates if any
+        this.templates = null;
+    }
+
+    /**
+     * Utility method to remove the <code>classpath:</code> prefix from injected
+     * stylesheet location.
+     * @see ClassLoader#getResource(String)
+     * 
+     * @param xslLocation raw stylesheet location
+     * @return stylesheet location without <code>classpath:</code> prefix.
+     * 
+     */
+    private String stripClasspathScheme(final String xslLocation)
+    {
+        int index = xslLocation.indexOf(CLASSPATH_URL_PREFIX) + CLASSPATH_URL_PREFIX.length();
+        return xslLocation.substring(index);
     }
 }
