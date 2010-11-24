@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -73,6 +72,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  * 
  */
+@SuppressWarnings("unqualified-field-access")
 public class XsltTransformerTest
 {
     /** Mockery for objects */
@@ -95,9 +95,7 @@ public class XsltTransformerTest
     /** The test object */
     private XsltTransformer transformerToTest;
 
-    // Test bits and pieces
     /** Dummy xml content expected from transformation */
-    // Ick! So many better ways to create this, but is it worth it?
     private static final String DUMMY_CONTENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dummy />";
 
     /** Event passed to Transformer component being tested*/
@@ -115,7 +113,8 @@ public class XsltTransformerTest
         Payload payload = new DefaultPayload("paylodToTransform", DUMMY_CONTENT.getBytes());
         List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
-        this.testEvent = new Event("testEvent", 4, new Date(), payloads);
+        int defaultPriority = 4; // See jira IKASAN-543
+        this.testEvent = new Event("testEvent", defaultPriority, new Date(), payloads);
 
         this.defaultConfig = new XsltConfiguration();
         this.defaultConfig.setStylesheetLocation("classpath:anyStylesheet.xsl");
@@ -124,6 +123,7 @@ public class XsltTransformerTest
     /**
      * Creating a n XsltTransformer will fail if injected {@link TransformerFactory} is null.
      */
+    @SuppressWarnings("unused")
     @Test(expected=IllegalArgumentException.class)
     public void construction_fails_null_transformerFactory()
     {
@@ -131,7 +131,7 @@ public class XsltTransformerTest
     }
 
     /**
-     * Test successful transformation using configured stylesheet where use of trasletes
+     * Test successful transformation using configured stylesheet where use of translets
      * is switched on. No extra parameters are set on transformer.
      * 
      * @throws TransformerException Thrown if error transforming event content.
@@ -144,19 +144,19 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Because using translets was switched on, create Templates from factory
-                one(mockTransformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(mockTemplates));
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
 
                 // Create a new Transformer instance
                 one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
 
-                // Transformer instance needs its own ErrorListener to control error handling for tranformations
-                one(mockTransformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                // Transformer instance needs its own ErrorListener to control error handling for transformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // The transformation itself
-                one(mockTransformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
             }
         });
 
@@ -169,7 +169,7 @@ public class XsltTransformerTest
     }
 
     /**
-     * Test successful transformation using configured stylesheet where use of trasletes
+     * Test successful transformation using configured stylesheet where use of translets
      * is switched off. No extra parameters are set on transformer.
      * 
      * @throws TransformerException Thrown if error transforming event content.
@@ -186,16 +186,16 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Because using translets was switched off, create Transformer directly from factory
-                one(mockTransformerFactory).newTransformer((Source) with(a(Source.class))); will(returnValue(mockTransformer));
+                one(mockTransformerFactory).newTransformer(with(any(Source.class))); will(returnValue(mockTransformer));
 
-                // Transformer instance needs its own ErrorListener to control error handling for tranformations
-                one(mockTransformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                // Transformer instance needs its own ErrorListener to control error handling for transformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // The transformation itself
-                one(mockTransformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
             }
         });
 
@@ -225,10 +225,10 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Because using translets was switched on, create Templates from factory
-                one(mockTransformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(mockTemplates));
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
 
                 // Create a new Transformer instance
                 one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
@@ -237,14 +237,12 @@ public class XsltTransformerTest
                 one(mockTransformer).setParameter("name", "value");
 
                 // Transformer instance needs its own ErrorListener to control error handling for tranformations
-                one(mockTransformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // The transformation itself
-                one(mockTransformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
             }
         });
-
-
 
         // Run the test:
         this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
@@ -274,10 +272,10 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Because using translets was switched on, create Templates from factory
-                one(mockTransformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(mockTemplates));
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
 
                 // Create a new Transformer instance
                 one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
@@ -286,10 +284,10 @@ public class XsltTransformerTest
                 one(mockTransformer).setURIResolver(mockURIResolver);
 
                 // Transformer instance needs its own ErrorListener to control error handling for tranformations
-                one(mockTransformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // The transformation itself
-                one(mockTransformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
             }
         });
 
@@ -319,19 +317,19 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Because using translets was switched on, create Templates from factory
-                one(mockTransformerFactory).newTemplates((Source) with(a(Source.class))); will(returnValue(mockTemplates));
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
 
                 // Create a new Transformer instance
                 one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
 
                 // Transformer instance needs its own ErrorListener to control error handling for tranformations
-                one(mockTransformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // The transformation itself
-                one(mockTransformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));will(throwException(expectedException));
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));will(throwException(expectedException));
             }
         });
 
@@ -362,14 +360,14 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Create a Templates
-                one(mockTransformerFactory).newTemplates((Source)with(a(Source.class)));will(throwException(expectedException));
+                one(mockTransformerFactory).newTemplates(with(any(Source.class)));will(throwException(expectedException));
 
                 //Creating templates failed, so transformer tries to create Transformer from factory
                 // but fails since stylesheet location is a malformed uril: classpath is not a supported scheme!
-                one(mockTransformerFactory).newTransformer((Source)with(a(Source.class)));will(throwException(expectedException));
+                one(mockTransformerFactory).newTransformer(with(any(Source.class)));will(throwException(expectedException));
             }
         });
 
@@ -419,10 +417,10 @@ public class XsltTransformerTest
         {
             {
                 // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
                 // Create a new Transformer instance (using translets is switched off)
-                one(mockTransformerFactory).newTransformer((Source) with(a(Source.class))); will(throwException(expectedException));
+                one(mockTransformerFactory).newTransformer(with(any(Source.class))); will(throwException(expectedException));
             }
         });
 
