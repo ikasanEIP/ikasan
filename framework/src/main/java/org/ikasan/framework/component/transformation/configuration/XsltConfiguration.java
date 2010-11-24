@@ -51,28 +51,31 @@ import org.ikasan.framework.component.transformation.XsltTransformer;
 public class XsltConfiguration
 {
     /** To compile stylesheet or not? Default is <code>true</code>.*/
-    private boolean useTranslates = true;
+    private boolean useTranslets = true;
 
     /** Location of stylesheet used for transformation */
     private String stylesheetLocation;
 
     /**
+     * Accessor
      * @return the useTranslates
      */
-    public boolean isUseTranslates()
+    public boolean isUseTranslets()
     {
-        return this.useTranslates;
+        return this.useTranslets;
     }
 
     /**
-     * @param useTranslates the useTranslates to set
+     * Mutator
+     * @param useTranslets the useTranslates to set
      */
-    public void setUseTranslates(boolean useTranslates)
+    public void setUseTranslates(boolean useTranslets)
     {
-        this.useTranslates = useTranslates;
+        this.useTranslets = useTranslets;
     }
 
     /**
+     * Accessor
      * @return the stylesheetLocation
      */
     public String getStylesheetLocation()
@@ -81,6 +84,7 @@ public class XsltConfiguration
     }
 
     /**
+     * Mutator
      * @param stylesheetLocation the stylesheetLocation to set
      */
     public void setStylesheetLocation(String stylesheetLocation)
