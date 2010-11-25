@@ -42,15 +42,15 @@
 -- 
 
 -- Drop aleady existing table if any
-DROP TABLE IF ESISTS `ikasan01`.`MessageFilter`;
+DROP TABLE IF ESISTS `Ikasan01`.`MessageFilter`;
 
 -- Create new table
-CREATE TABLE `ikasan01`.`MessageFilter`
+CREATE TABLE `Ikasan01`.`MessageFilter`
 (
-    Criteria        binint(18)    NOT NULL,
-    ClientId        varchar(255)  NOT NULL,
-    CreatedDateTime datetime      NOT NULL,
-    Expiry          datetime      NOT NULL
+    `Criteria`        bigint(18)    NOT NULL,
+    `ClientId`        varchar(256)  NOT NULL,
+    `CreatedDateTime` datetime      NOT NULL,
+    `Expiry`          datetime      NOT NULL,
     PRIMARY KEY     (`Criteria`, `ClientId`)
 )
 ENGINE=InnoDB DEFAULT CHARSET=latin1;
