@@ -49,7 +49,7 @@ import org.ikasan.spec.endpoint.Consumer;
 import org.ikasan.spec.endpoint.EndpointFactory;
 
 /**
- * SFTP consumer factory for creating sftpConsumer endpoint implementations.
+ * FTP consumer factory for creating SFTP Consumer endpoint implementations.
  * @author Ikasan Development Team
  */
 public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<?>,FtpConsumerConfiguration>
@@ -62,7 +62,7 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
 
     /**
      * Constructor
-     * @param connectionFactory
+     * @param connectionFactory The FTP connection factory
      */
     public PayloadBasedFtpConsumerFactory(EISConnectionFactory connectionFactory)
     {
@@ -71,7 +71,8 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
 
     /**
      * Constructor
-     * @param connectionFactory
+     * @param connectionFactory FTP connection factory
+     * @param directoryURLFactory Factory for dynamic source directory
      */
     public PayloadBasedFtpConsumerFactory(EISConnectionFactory connectionFactory, DirectoryURLFactory directoryURLFactory)
     {
@@ -106,7 +107,7 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
         spec.setUsername(ftpConsumerConfiguration.getUsername());
         
         
-        return getEndpoint(new FileTransferConnectionTemplate(connectionFactory, spec), ftpConsumerConfiguration);
+        return getEndpoint(new FileTransferConnectionTemplate(this.connectionFactory, spec), ftpConsumerConfiguration);
     }
 
     /**
