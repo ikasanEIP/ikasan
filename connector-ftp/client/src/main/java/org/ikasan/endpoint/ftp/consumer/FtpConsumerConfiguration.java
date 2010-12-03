@@ -106,33 +106,31 @@ public class FtpConsumerConfiguration
     /** Number of days in age the files need to be to be considered for housekeeping, defaults to -1 (ignore) */
     private Integer ageOfFiles = Integer.valueOf(-1);
     
-    /** SFTP unqiue clientId */
+    /** Unique client identifier */
     private String clientID;
 
-    /** SFTP cleanup journal on completion */
+    /** Cleanup transactional journal on completion */
     private Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
-    /** SFTP default Remote host */
+    /** Remote host */
     private String remoteHost = String.valueOf("localhost");
     
-    /** SFTP default remote port */
+    /** Remote port */
     private Integer remotePort = Integer.valueOf(21);
 
-    /** SFTP max retry attempts */
+    /** Max retry attempts */
     private Integer maxRetryAttempts = Integer.valueOf(3);
 
-    /** SFTP default remote port */
-
-    /** SFTP user */
+    /** User */
     private String username;
 
-    /** SFTP password/passphrase */
+    /** Password/passphrase */
     private String password;
 
     /** Whether it is active transfer mode - default False */
     private Boolean active = Boolean.FALSE;
 
-    /** SFTP remote port */
+    /** Connection Timeout */
     private Integer connectionTimeout = Integer.valueOf(60000);
 
     /** Data connection timeout, default is 0 (infinite) */
@@ -141,7 +139,7 @@ public class FtpConsumerConfiguration
     /** Socket connection timeout, default is 0 (infinite) */
     private Integer socketTimeout = Integer.valueOf(300000);
 
-    /** system key */
+    /** System key */
     private String systemKey = "";
 
     /** Logger instance */
@@ -190,7 +188,7 @@ public class FtpConsumerConfiguration
             }
         }
         
-        if (this.systemKey == null || this.systemKey.equals(" "));
+        if (this.systemKey == null || this.systemKey.equals(" "))
         {
             logger.info("Provided systemKey value [" + this.systemKey + "] is invalid. Reverting to default empty String.");
             this.systemKey = "";
@@ -237,7 +235,6 @@ public class FtpConsumerConfiguration
         return this.sourceDirectoryURLFactory;
     }
 
-
     /**
      * @param sourceDirectoryURLFactory the sourceDirectoryURLFactory to set
      */
@@ -247,7 +244,6 @@ public class FtpConsumerConfiguration
         this.sourceDirectoryURLFactory = sourceDirectoryURLFactory;
     }
 
-
     /**
      * @return the filterDuplicates
      */
@@ -256,7 +252,6 @@ public class FtpConsumerConfiguration
         return this.filterDuplicates;
     }
 
-
     /**
      * @param filterDuplicates the filterDuplicates to set
      */
@@ -264,7 +259,6 @@ public class FtpConsumerConfiguration
     {
         this.filterDuplicates = filterDuplicates;
     }
-
 
     /**
      * @return the filterOnFilename

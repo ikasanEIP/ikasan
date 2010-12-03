@@ -51,20 +51,21 @@ import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.spec.endpoint.Consumer;
 
 /**
- * Sftp endpoint based on a Payload.
+ * FTP endpoint based on a Payload.
  * @author Ikasan Development Team
  */
 public class PayloadBasedFtpConsumer implements Consumer<Payload>
 {
-    /** existing template */
+    /** Existing template */
     protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
 
-    /** configuration */
+    /** Configuration */
     protected FtpConsumerConfiguration configuration;
 
     /**
      * Constructor
-     * @param fileTransferConnectionTemplate
+     * @param fileTransferConnectionTemplate FTP connection template
+     * @param configuration the FTP connection runtime configuration
      */
     public PayloadBasedFtpConsumer(FileTransferConnectionTemplate fileTransferConnectionTemplate, FtpConsumerConfiguration configuration)
     {
