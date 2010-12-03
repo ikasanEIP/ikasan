@@ -51,26 +51,14 @@
         <artifactId>ikasan-connector-filetransfer-parent</artifactId>
         <version>0.8.0-SNAPSHOT</version>
     </parent>
-    <artifactId>ikasan-connector-ftpRar</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
-    <packaging>rar</packaging>
-    <name>Connector FTP Resource Adapter</name>
+    <artifactId>ikasan-connector-ftp-parent</artifactId>
+    <version>0.8.0-SNAPSHOT</version>  
+    <packaging>pom</packaging>
+    <name>Connector FTP Resource Adapter Parent</name>
 
-    <dependencies>
-        <!-- 
-            TODO:  Should be able to haul this up one level
-            Used for the common connector functionality for the ikasan platform 
-         -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
-        </dependency>
-        <!-- The FTP library -->
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>2.0</version>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>jar</module>
+        <module>client</module>
+        <module>rar</module>
+    </modules>
 </project>
