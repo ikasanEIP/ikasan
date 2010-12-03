@@ -85,8 +85,6 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.ChunkHeaderLoadException;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class implements the virtual connection to the FTP server.<br>
