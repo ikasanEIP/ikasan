@@ -65,15 +65,21 @@ public class FtpConsumerEndpointManager implements EndpointManager<Consumer<?>, 
      * @param factory {@link EndpointFactory} implementation for creating the endpoint
      * @param config Runtime configuration of endpoint
      */
-    public FtpConsumerEndpointManager(final EndpointFactory<Consumer<?>, FtpConsumerConfiguration> factory, final FtpConsumerConfiguration config)
+    public FtpConsumerEndpointManager(final EndpointFactory<Consumer<?>, FtpConsumerConfiguration> factory, final FtpConsumerConfiguration configuration)
     {
         this.endpointFactory = factory;
         if (this.endpointFactory == null)
         {
             throw new IllegalArgumentException("EndpointFactory cannot be null.");
         }
-        this.configuration = config;
+        
+        this.configuration = configuration;
+        if (this.configuration == null)
+        {
+            throw new IllegalArgumentException("configuration cannot be null.");
+        }
     }
+    
     /*
      * (non-Javadoc)
      * @see org.ikasan.spec.endpoint.EndpointManager#setConfiguration(java.lang.Object)
