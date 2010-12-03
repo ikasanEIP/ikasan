@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+# //
+# //
+# // $Id$
+# // $URL$
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# //
+# // Distributed under the Modified BSD License.
+# // Copyright notice: The copyright for this software and a full listing
+# // of individual contributors are as shown in the packaged copyright.txt
+# // file.
+# //
+# // All rights reserved.
+# //
+# // Redistribution and use in source and binary forms, with or without
+# // modification, are permitted provided that the following conditions are met:
+# //
+# //  - Redistributions of source code must retain the above copyright notice,
+# //    this list of conditions and the following disclaimer.
+# //
+# //  - Redistributions in binary form must reproduce the above copyright notice,
+# //    this list of conditions and the following disclaimer in the documentation
+# //    and/or other materials provided with the distribution.
+# //
+# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
+# //    be used to endorse or promote products derived from this software without
+# //    specific prior written permission.
+# //
+# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# //
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-project</artifactId>
+    <version>0.8.0-RC4</version>
+    <packaging>pom</packaging>
+    <name>Ikasan Projects Parent Project</name>
+
+    <modules>
+        <!--
+            You have to keep the order correct here, dependent projects first, not alphabetical!
+        -->
+        <!--
+             The build module acts the parent of the rest of the modules,
+             controlling the repos, dependencies etc.
+         -->
+        <module>build</module>
+
+        <!-- ikasan core -->
+        <module>common</module>
+        <module>platform</module>
+        <module>framework</module>
+        <module>spec</module>
+
+        <!-- ikasan test harness -->
+        <module>test</module>
+
+        <!-- consoles -->
+        <module>webconsole</module>
+        <module>console</module>
+
+        <!-- connectors  -->
+        <module>connector-base</module>
+        <module>connector-basefiletransfer</module>
+        <module>connector-filetransfer-parent</module>
+        <module>connector-ftp</module>
+        <module>connector-sftp</module>
+
+        <!-- connector clients -->
+        <module>client-connection</module>
+        <module>client-filetransfer</module>
+
+        <!-- filter -->
+        <module>filter</module>
+
+        <!-- version compatibility glue -->
+        <module>compatibility</module>
+
+        <!-- samples -->
+        <module>samples/DemoFileDelivery</module>
+        <module>samples/DemoTransformationRouting</module>
+        <module>samples/DemoResubmission</module>
+        <module>samples/DemoErrorPublication</module>
+
+        <!-- documentation -->
+        <module>documentation</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.8.0</version>
+                <configuration>
+                    <header>LICENSE2.txt</header>
+                    <encoding>UTF-8</encoding>
+                    <aggregate>true</aggregate>
+                    <strictCheck>false</strictCheck>
+                    <skipExistingHeaders>true</skipExistingHeaders>
+                    <mapping>
+                        <tld>XML_STYLE</tld>
+                        <application>XML_STYLE</application>
+                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
+                    </mapping>
+                    <excludes>
+                        <exclude>license/**</exclude>
+                        <exclude>*LICENSE.txt</exclude>
+                        <exclude>*LICENSE2.txt</exclude>
+                        <exclude>*ReleaseNotes.txt</exclude>
+                        <exclude>*ReleaseNotes.html</exclude>
+                        <exclude>**/console/war/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/DD_belatedPNG.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery-1.4.2.min.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery.hovertip-1.0.js</exclude>
+                        <exclude>**/console/war/src/main/webapp/js/jquery.simpleautogrow.js</exclude>
+                        <exclude>**/framework/src/test/resources/data/TEST.TXT</exclude>
+                        <exclude>**/framework/src/test/resources/firstTxt.txt</exclude>
+                        <exclude>**/framework/src/test/resources/secondTxt.txt</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/js/jquery-1.4.2.min.js</exclude>
+                        <exclude>**/webconsole/war/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
+                        <exclude>**/*.xls</exclude>
+                        <exclude>**/*.gz</exclude>
+                        <exclude>eclipse_bin/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
