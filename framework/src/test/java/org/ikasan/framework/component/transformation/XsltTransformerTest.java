@@ -40,214 +40,410 @@
  */
 package org.ikasan.framework.component.transformation;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-
-import junit.framework.Assert;
+import javax.xml.transform.URIResolver;
 
 import org.ikasan.common.Payload;
-import org.ikasan.common.component.Spec;
+import org.ikasan.common.component.DefaultPayload;
 import org.ikasan.framework.component.Event;
+import org.ikasan.framework.component.transformation.configuration.XsltConfiguration;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.XMLReader;
 
 /**
- * Test class for XsltTransformer
+ * Test class for {@link XsltTransformer}
  * 
  * @author Ikasan Development Team
  * 
  */
+@SuppressWarnings("unqualified-field-access")
 public class XsltTransformerTest
 {
-    /**
-     * Constructor
-     * @throws URISyntaxException 
-     */
-    public XsltTransformerTest() throws URISyntaxException
-    {
-        super();
-        this.xslInputStream = new ByteArrayInputStream("blah".getBytes());
-    }
-
-    /** Payload time stamp */
-    final Long PAYLOAD_TIMESTAMP = 1218726802809l;
-    /** Mockery for interfaces */
-    Mockery mockery = new Mockery();
-    /** Mockery for classes */
-    private Mockery classMockery = new Mockery()
+    /** Mockery for objects */
+    private final Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
-    /** XML Reader */
-    final XMLReader xmlReader = mockery.mock(XMLReader.class);
-    /** Paylaod */
-    final Payload payload = mockery.mock(Payload.class);
-    /** Event */
-    final Event event = classMockery.mock(Event.class);
-    
-    /** The XSL Input Stream */
-    final InputStream xslInputStream; 
+
     /** Transformer factory */
-    final TransformerFactory transformerFactory = classMockery.mock(TransformerFactory.class);
+    private final TransformerFactory mockTransformerFactory = this.mockery.mock(TransformerFactory.class, "transformerFactory");
+
     /** Templates */
-    final Templates templates = classMockery.mock(Templates.class);
+    private final Templates mockTemplates = this.mockery.mock(Templates.class, "templates");
+
     /** Transformer */
-    final Transformer transformer = classMockery.mock(Transformer.class);
-    /** Transformer Exception */
-    final TransformerException transformerException = new TransformerException((String) null);
+    private final Transformer mockTransformer = this.mockery.mock(Transformer.class, "transformer");
+
+    /** The test object */
+    private XsltTransformer transformerToTest;
+
+    /** Dummy xml content expected from transformation */
+    private static final String DUMMY_CONTENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dummy />";
+
+    /** Event passed to Transformer component being tested*/
+    private Event testEvent;
+
+    /** Default component configuration object */
+    private XsltConfiguration defaultConfig;
 
     /**
-     * Test the invocation of the transform method with InputStream and
-     * OutputStream args based on the stylesheet referenced via an InputStream.
-     * 
-     * @throws TransformerException
-     * @throws TransformationException
+     * Setup common objects used to prepare each test case
      */
-    @Test
-    public void testTransformInputStreamOutputStream_xslViaInputStream() throws TransformerException, TransformationException
+    @Before public void setup()
     {
-        final List<Payload> payloads = new ArrayList<Payload>();
+        // Setup test objects
+        Payload payload = new DefaultPayload("paylodToTransform", DUMMY_CONTENT.getBytes());
+        List<Payload> payloads = new ArrayList<Payload>();
         payloads.add(payload);
-        classMockery.checking(new Expectations()
-        {
-            {
-                one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformerFactory).newTemplates((Source) with(a(Source.class)));
-                will(returnValue(templates));
-                one(event).getPayloads();
-                will(returnValue(payloads));
-                one(templates).newTransformer();
-                will(returnValue(transformer));
-                one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
-            }
-        });
-        mockery.checking(new Expectations()
-        {
-            {
-                one(payload).getContent();
-                will(returnValue("content".getBytes()));
-                one(payload).setContent((byte[]) with(a(byte[].class)));
-//                one(payload).setSpec(Spec.TEXT_XML.toString());
-            }
-        });
+        int defaultPriority = 4; // See jira IKASAN-543
+        this.testEvent = new Event("testEvent", defaultPriority, new Date(), payloads);
 
-        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null, xmlReader);
-        flatFileTransformer.onEvent(event);
-        mockery.assertIsSatisfied();
-        classMockery.assertIsSatisfied();
+        this.defaultConfig = new XsltConfiguration();
+        this.defaultConfig.setStylesheetLocation("classpath:anyStylesheet.xsl");
     }
 
     /**
-     * Test the invocation of the transform method with InputStream and
-     * OutputStream args based on the stylesheet referenced via an input stream.
-     * 
-     * @throws TransformerException
+     * Creating a n XsltTransformer will fail if injected {@link TransformerFactory} is null.
      */
-    @SuppressWarnings({"unqualified-field-access"})
-    @Test
-    public void testTransformInputStreamOutputStream_xslViaInputStream_throwsTransformationExcetpionForTransformerException() throws TransformerException
+    @SuppressWarnings("unused")
+    @Test(expected=IllegalArgumentException.class)
+    public void construction_fails_null_transformerFactory()
     {
-        final List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(this.payload);
-        this.classMockery.checking(new Expectations()
+        new XsltTransformer(null);
+    }
+
+    /**
+     * Test successful transformation using configured stylesheet where use of translets
+     * is switched on. No extra parameters are set on transformer.
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transformation_successful_with_default_setup() throws TransformerException
+    {
+        // Setup expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformerFactory).newTemplates((Source) with(a(Source.class)));
-                will(returnValue(templates));
-                one(event).getPayloads();
-                will(returnValue(payloads));
-                one(templates).newTransformer();
-                will(returnValue(transformer));
-                one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
-                will(throwException(transformerException));
-            }
-        });
-        mockery.checking(new Expectations()
-        {
-            {
-                one(payload).getContent();
-                will(returnValue("content".getBytes()));
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Because using translets was switched on, create Templates from factory
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+
+                // Create a new Transformer instance
+                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+
+                // Transformer instance needs its own ErrorListener to control error handling for transformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // The transformation itself
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
             }
         });
 
-        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null, xmlReader);
-        TransformationException transformationException = null;
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful transformation using configured stylesheet where use of translets
+     * is switched off. No extra parameters are set on transformer.
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transformation_successful_without_using_translets() throws TransformerException
+    {
+        // Changing the configuration to test other branch of code
+        this.defaultConfig.setUseTranslates(false);
+        this.defaultConfig.setStylesheetLocation("file://anyStylesheet.xsl");
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Because using translets was switched off, create Transformer directly from factory
+                one(mockTransformerFactory).newTransformer(with(any(Source.class))); will(returnValue(mockTransformer));
+
+                // Transformer instance needs its own ErrorListener to control error handling for transformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // The transformation itself
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
+            }
+        });
+
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful transformation using the default configuration but with
+     * extra transformation parameters to be set on {@link Transformer}
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transformation_successful_with_extra_tranformationParams_configured() throws TransformerException
+    {
+        // Setup test objects
+        final Map<String, String> transformationParams = new HashMap<String, String>();
+        transformationParams.put("name", "value");
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Because using translets was switched on, create Templates from factory
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+
+                // Create a new Transformer instance
+                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+
+                // Setting the provided parameters on transformer
+                one(mockTransformer).setParameter("name", "value");
+
+                // Transformer instance needs its own ErrorListener to control error handling for tranformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // The transformation itself
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
+            }
+        });
+
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        // Setup the transformer to be tested with extra transformation parameters
+        this.transformerToTest.setTransformationParameters(transformationParams);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Sometimes the default URIResolver provided by implementation cannot be used
+     * to resolve resources from classpath. Therefore, a custom URIResolver implementation
+     * must be configured on created {@link Transformer} instance
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transformation_successful_with_custom_uriResolver() throws TransformerException
+    {
+        // Setup test objects
+        final URIResolver mockURIResolver = this.mockery.mock(URIResolver.class, "customURIResolver");
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Because using translets was switched on, create Templates from factory
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+
+                // Create a new Transformer instance
+                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+
+                // Setting the custom URI resolver on transformer
+                one(mockTransformer).setURIResolver(mockURIResolver);
+
+                // Transformer instance needs its own ErrorListener to control error handling for tranformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // The transformation itself
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
+            }
+        });
+
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        // Setup the transformer being tested with a custom uri resolver
+        this.transformerToTest.setURIResolver(mockURIResolver);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Transformation fail
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test(expected=TransformationException.class)
+    public void transformation_fail() throws TransformerException
+    {
+        // Setup test objects
+        final TransformerException expectedException = new TransformerException("Transformation fail for some reason or another.");
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Because using translets was switched on, create Templates from factory
+                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+
+                // Create a new Transformer instance
+                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+
+                // Transformer instance needs its own ErrorListener to control error handling for tranformations
+                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // The transformation itself
+                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));will(throwException(expectedException));
+            }
+        });
+
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * If the configured stylesheet is not found, creating a {@link Transformer} instance
+     * will fail
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test(expected=TransformationException.class)
+    public void transformation_fail_at_start_time_to_create_transformer_xsl_not_found() throws TransformerException
+    {
+        // Setup test objects
+        this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
+
+        final TransformerConfigurationException expectedException = new TransformerConfigurationException();
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Create a Templates
+                one(mockTransformerFactory).newTemplates(with(any(Source.class)));will(throwException(expectedException));
+
+                //Creating templates failed, so transformer tries to create Transformer from factory
+                // but fails since stylesheet location is a malformed uril: classpath is not a supported scheme!
+                one(mockTransformerFactory).newTransformer(with(any(Source.class)));will(throwException(expectedException));
+            }
+        });
+
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        // As this transformer is a ConfiguredResource, set the configuration object
+        this.transformerToTest.setConfiguration(this.defaultConfig);
+        // As this transformer is a ManagedResource, start it
         try
         {
-            flatFileTransformer.onEvent(event);
-            Assert.fail("TransformationException should have been thrown");
+            this.transformerToTest.startManagedResource();
         }
-        catch (TransformationException t)
+        catch (RuntimeException e)
         {
-            transformationException = t;
+            /*
+             * This is mimicing how Flow handles failures of starting a managed resource;
+             * it is swallowed. Pushing data through to the component will fail throwing an
+             * exception that is handled by exception handler.
+             */
         }
-        Assert.assertNotNull("transformationException should have been thrown", transformationException);
-        Assert.assertEquals("underlying cause should have been the TransformerException", transformerException, transformationException.getCause());
-        mockery.assertIsSatisfied();
-        classMockery.assertIsSatisfied();
+        // Push data through
+        this.transformerToTest.onEvent(this.testEvent);
+        // Now stop it
+        this.transformerToTest.stopManagedResource();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
     }
 
     /**
-     * Test the invocation of the transform method with InputStream and
-     * OutputStream args, constructing without specifying an XMLReader
-     * based on the stylesheet referenced via an input stream.
+     * If the configured stylesheet is not found, creating a {@link Transformer} instance
+     * will fail
      * 
-     * @throws TransformerException
-     * @throws TransformationException
+     * @throws TransformerException Thrown if error transforming event content.
      */
-    @Test
-    public void testTransformInputStreamOutputStream_xslViaInputStream_withDefaultXmlReader() throws TransformerException, TransformationException
+    @Test(expected=TransformationException.class)
+    public void transformation_fail_at_transform_time_to_create_transformer_xsl_not_found() throws TransformerException
     {
-        final List<Payload> payloads = new ArrayList<Payload>();
-        payloads.add(payload);
-        classMockery.checking(new Expectations()
+        // Setup test objects
+        this.defaultConfig.setUseTranslates(false);
+        this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
+
+        final TransformerConfigurationException expectedException = new TransformerConfigurationException();
+
+        // Setup expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                one(transformerFactory).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformerFactory).newTemplates((Source) with(a(Source.class)));
-                will(returnValue(templates));
-                one(event).getPayloads();
-                will(returnValue(payloads));
-                one(templates).newTransformer();
-                will(returnValue(transformer));
-                one(transformer).setErrorListener((ErrorListener) with(an(ExceptionThrowingErrorListener.class)));
-                one(transformer).transform((Source) with(a(Source.class)), (Result) with(a(Result.class)));
-            }
-        });
-        mockery.checking(new Expectations()
-        {
-            {
-                one(payload).getContent();
-                will(returnValue("content".getBytes()));
-                one(payload).setContent((byte[]) with(a(byte[].class)));
-//                one(payload).setSpec(Spec.TEXT_XML.toString());
+                // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+
+                // Create a new Transformer instance (using translets is switched off)
+                one(mockTransformerFactory).newTransformer(with(any(Source.class))); will(throwException(expectedException));
             }
         });
 
-        XsltTransformer flatFileTransformer = new XsltTransformer(transformerFactory, xslInputStream, true, null, null);
-        flatFileTransformer.onEvent(event);
-        mockery.assertIsSatisfied();
-        classMockery.assertIsSatisfied();
+        // Run the test:
+        this.transformerToTest = new XsltTransformer(this.mockTransformerFactory);
+        this.runTest();
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
     }
-    
+
+    /**
+     * Utility method refactored for steps required to run a test case 
+     */
+    private void runTest()
+    {
+        // As this transformer is a ConfiguredResource, set the configuration object
+        this.transformerToTest.setConfiguration(this.defaultConfig);
+        // As this transformer is a ManagedResource, start it
+        this.transformerToTest.startManagedResource();
+        // Push data through
+        this.transformerToTest.onEvent(this.testEvent);
+        // Now stop it
+        this.transformerToTest.stopManagedResource();
+    }
 }
