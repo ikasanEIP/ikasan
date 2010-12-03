@@ -44,7 +44,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoResubmission-app</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-RC4</version>
   <packaging>ear</packaging>
 
   <name>demoResubmission :: demoResubmission : ear</name>
@@ -58,7 +58,7 @@
 
           <jboss>
                   <version>4.2</version>
-                  <loader-repository>org.ikasan:archive=demoResubmission-app-0.8.0-SNAPSHOT.ear</loader-repository>
+                  <loader-repository>org.ikasan:archive=demoResubmission-app-0.8.0-RC4.ear</loader-repository>
                   <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
                 </jboss>
           <modules>
@@ -209,7 +209,7 @@
     <dependency>
       <groupId>org.ikasan.demo</groupId>
       <artifactId>demoResubmission-war</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0-RC4</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -236,7 +236,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0-RC4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -285,7 +285,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0-RC4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -356,7 +356,7 @@
     <dependency>
       <groupId>org.ikasan.demo</groupId>
       <artifactId>demoResubmission-jar</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0-RC4</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
