@@ -79,7 +79,7 @@
         <module>connector-base</module>
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
-        <module>connector-ftpRar</module>
+        <module>connector-ftp</module>
         <module>connector-sftp</module>
 
         <!-- connector clients -->
