@@ -58,9 +58,7 @@ import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalImpl;
 import org.ikasan.connector.base.outbound.EISManagedConnectionFactory;
 import org.ikasan.connector.basefiletransfer.DataAccessUtil;
-import org.springframework.context.ApplicationContext;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 /**
