@@ -38,18 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow.invoker;
+package org.ikasan.core.flow.invoker;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.component.endpoint.Endpoint;
-import org.ikasan.core.flow.FlowComponent;
+import org.ikasan.core.Event;
 import org.ikasan.core.flow.FlowElement;
-import org.ikasan.core.flow.invoker.FlowElementInvoker;
-import org.ikasan.core.flow.invoker.FlowInvocationContext;
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.InvalidFlowException;
+import org.ikasan.core.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
 import org.ikasan.spec.routing.Router;
 import org.ikasan.spec.sequencing.Sequencer;
@@ -79,30 +75,23 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         this.flowEventListener = flowEventListener;
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see flow.visitinginvoker.FlowElementInvoker#invoke(event.Event, flow.FlowElement)
+    /* (non-Javadoc)
+     * @see org.ikasan.core.flow.invoker.FlowElementInvoker#invoke(org.ikasan.core.flow.invoker.FlowInvocationContext, org.ikasan.core.Event, java.lang.String, java.lang.String, org.ikasan.core.flow.FlowElement)
      */
     public void invoke(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName, FlowElement flowElement)
     {
         while (flowElement != null)
         {
            flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Invoking [" + flowElement.getComponentName() + "] of [" + flowName + "] " + event.idToString());
-            }
             notifyListenersBeforeElement(event, moduleName, flowName, flowElement);
-            FlowComponent flowComponent = flowElement.getFlowComponent();
+            Object flowComponent = flowElement.getFlowComponent();
             if (flowComponent instanceof Translator)
             {
                 handleTransformer(event, moduleName, flowName, flowElement);
 
                 // sort out the next element
                 FlowElement previousFlowElement = flowElement;
-                flowElement = getDefaultTransition(flowElement);
+                flowElement = this.getDefaultTransition(flowElement);
                 if (flowElement == null)
                 {
                     logger.error("transformer is last element in flow!");
@@ -111,12 +100,12 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                             + "Transformers should never be the last component in a flow");
                 }
             }
-            else if (flowComponent instanceof Endpoint)
-            {
-                handleEndpoint(event, moduleName, flowName, flowElement);
-
-                flowElement = getDefaultTransition(flowElement);
-            }
+//            else if (flowComponent instanceof Endpoint)
+//            {
+//                handleEndpoint(event, moduleName, flowName, flowElement);
+//
+//                flowElement = getDefaultTransition(flowElement);
+//            }
             else if (flowComponent instanceof Router)
             {
                 handleRouter(flowInvocationContext, event, moduleName, flowName, flowElement);
@@ -137,22 +126,25 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
 
     /**
      * The behaviour for visiting a <code>Sequencer</code>
+     * @param flowInvocationContext 
      * 
      * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private void handleSequencer(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName,
+    private void handleSequencer(FlowInvocationContext flowInvocationContext, Event event, 
+            String moduleName, String flowName,
             FlowElement flowElement)
     {
-        Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
+            Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
 
-            List<Event> events = sequencer.onEvent(event, moduleName, flowElement.getComponentName());
-            if (events!=null){
+            List events = sequencer.sequence(event.getPayload());
+            if (events != null)
+            {
                 notifyListenersAfterSequencerElement(events, moduleName, flowName, flowElement);
             }
-            FlowElement nextFlowElement = getDefaultTransition(flowElement);
+            FlowElement nextFlowElement = this.getDefaultTransition(flowElement);
             if (nextFlowElement == null)
             {
                 logger.error("sequencer is last element in flow!");
@@ -162,7 +154,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             }
             if (events != null)
             {
-                for (Event constituentEvent : events)
+                for (Object constituentEvent : events)
                 {
                     invoke(flowInvocationContext, spawnEvent(constituentEvent), moduleName, flowName, nextFlowElement);
 
@@ -283,14 +275,14 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private void handleEndpoint(Event event, String moduleName, String flowName,
-            FlowElement flowElement)
-    {
-        Endpoint endpoint = (Endpoint) flowElement.getFlowComponent();
-        endpoint.route(event);
-        notifyListenersAfterElement(event, moduleName, flowName, flowElement);
-
-    }
+//    private void handleEndpoint(Event event, String moduleName, String flowName,
+//            FlowElement flowElement)
+//    {
+//        Endpoint endpoint = (Endpoint) flowElement.getFlowComponent();
+//        endpoint.route(event);
+//        notifyListenersAfterElement(event, moduleName, flowName, flowElement);
+//
+//    }
 
     /**
      * The behaviour for visiting a <code>Transformer</code>
@@ -303,9 +295,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private void handleTransformer(Event event, String moduleName, String flowName,
             FlowElement flowElement)
     {
-        Translator transformer = (Translator) flowElement.getFlowComponent();
+        Translator translator = (Translator) flowElement.getFlowComponent();
 
-        transformer.onEvent(event);
+        translator.translate(event.getPayload());
         notifyListenersAfterElement(event, moduleName, flowName, flowElement);
 
     }
@@ -318,15 +310,10 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @return new Event, representing the original
      * @throws CloneNotSupportedException Exception if we could not clone the event
      */
-    private Event spawnEvent(Event originalEvent) 
+    private Event spawnEvent(Object originalEvent) 
     {
-        Event clone = null;
-        
-        try {
-			clone=originalEvent.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
+        Event clone = new Event("id"); //TODO
+		clone.setPayload(originalEvent);
 		return clone;
     }
 

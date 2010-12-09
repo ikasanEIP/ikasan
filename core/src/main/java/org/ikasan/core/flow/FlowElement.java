@@ -49,8 +49,9 @@ import java.util.Map;
  * FlowComponent may return to subsequent (downstream) <code>FlowElement<code>s
  * 
  * @author Ikasan Development Team
+ * @param <C> Component type being wrapped by FlowElement
  */
-public interface FlowElement
+public interface FlowElement<C>
 {
     /** Name of the default transition for <code>FlowComponent</code>s that have a unique result */
     public static final String DEFAULT_TRANSITION_NAME = "default";
@@ -60,7 +61,7 @@ public interface FlowElement
      * 
      * @return FlowComponent
      */
-    //public abstract FlowComponent getFlowComponent();
+    public abstract C getFlowComponent();
 
     /**
      * Accessor for the componentName. This is the unique identifier for a <code>FlowElement</code>
@@ -76,14 +77,14 @@ public interface FlowElement
      *            flowComponent
      * @return FlowElement representing the next node in the flow
      */
-    public abstract FlowElement getTransition(String transitionName);
+    public abstract FlowElement<C> getTransition(String transitionName);
 
     /**
      * Retrieves a Map of all this FlowElement's transitions
      * 
      * @return a Map of all this FlowElement's transitions
      */
-    public Map<String, FlowElement> getTransitions();
+    public Map<String, FlowElement<C>> getTransitions();
     
     /**
      * Returns a human readable description of this FlowElement

@@ -38,27 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow;
+package org.ikasan.spec.configuration;
 
 /**
- * Interface provisioning callbacks for starting and stopping managed
- * resources within the scope of an Ikasan flow component.
- * 
- * An example of this are resources within Ikasan components, such as Endpoints,
- * which can benefit from being started/stopped within the scope of a flow.
- * i.e. creating and tearing down the physical connection of a JCA resource.
+ * Interface provisioning callbacks for setting configuration properties
+ * for a flow component as required for runtime. 
  * 
  * @author Ikasan Development Team
  */
-public interface ManagedResource
+public interface ConfiguredResource<T>
 {
     /**
-     * Provision for starting a managed resource.
+     * Get the id for this configured resource
+     * @return
      */
-    public void startManagedResource();
+    public String getConfiguredResourceId();
 
     /**
-     * Provision for stopping a managed resource.
+     * Set the id for this configured resource
+     * @return
      */
-    public void stopManagedResource();
+    public void setConfiguredResourceId(String id);
+    
+    /**
+     * Set configuration.
+     */
+    public T getConfiguration();
+
+    /**
+     * Set configuration.
+     */
+    public void setConfiguration(T configuration);
 }

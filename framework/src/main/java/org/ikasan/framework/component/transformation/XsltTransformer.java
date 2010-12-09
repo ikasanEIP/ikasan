@@ -64,7 +64,7 @@ import org.ikasan.core.configuration.ConfiguredResource;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.configuration.XsltConfiguration;
 import org.ikasan.framework.component.transformation.xslt.util.ClasspathURIResolver;
-import org.ikasan.framework.flow.ManagedResource;
+import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.transformation.TransformationException;
 import org.ikasan.spec.transformation.Translator;
 import org.xml.sax.InputSource;

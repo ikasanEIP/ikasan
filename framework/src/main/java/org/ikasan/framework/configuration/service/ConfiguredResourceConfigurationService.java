@@ -48,10 +48,12 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
-import org.ikasan.framework.configuration.ConfiguredResource;
 import org.ikasan.framework.configuration.dao.ConfigurationDao;
 import org.ikasan.framework.configuration.model.Configuration;
 import org.ikasan.framework.configuration.model.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.service.ConfigurationService;
 
 /**
  * Implementation of the Configuration Service based on a ConfiguredResource.

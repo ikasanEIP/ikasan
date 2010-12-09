@@ -47,6 +47,8 @@ import org.ikasan.core.configuration.ConfiguredResource;
 import org.ikasan.core.configuration.dao.ConfigurationDao;
 import org.ikasan.framework.configuration.model.Configuration;
 import org.ikasan.framework.configuration.model.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.service.ConfigurationService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
