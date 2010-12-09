@@ -59,5 +59,5 @@ public interface FlowElementInvoker
      * @param flowName - name of this flow
      * @param flowElement for invocation
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, Event event, String moduleName, String flowName, FlowElement flowElement);
+    public void invoke(FlowInvocationContext flowInvocationContext, Event<?> event, String moduleName, String flowName, FlowElement flowElement);
 }

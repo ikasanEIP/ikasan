@@ -60,43 +60,46 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public class FlowInvocationContext {
-	
-	/**
-	 * a stack of the names of all components invoked so far
-	 */
-	private List<String> invokedComponents = new ArrayList<String>();
-	
-	
-	/**
-	 * Accessor for the name of the last component invoked
-	 * 
-	 * @return name of the last component invoked, or null if none exists yet
-	 */
-	public String getLastComponentName(){
-		String lastComponentName = null;
-		if (!invokedComponents.isEmpty()){
-			lastComponentName = invokedComponents.get(invokedComponents.size()-1);
-		}
-		return lastComponentName;
-	}
-	
-	/**
-	 * Allows a new componentName to be added to the stack of invoked components
-	 * 
-	 * @param componentName
-	 */
-	public void addInvokedComponentName(String componentName){
-		invokedComponents.add(componentName);
-	}
+public class FlowInvocationContext
+{
+    /**
+     * a stack of the names of all components invoked so far
+     */
+    private List<String> invokedComponents = new ArrayList<String>();
 
-	/**
-	 * Safe accessor for the entire stack of invoked components
-	 * 
-	 * @return List of componentNames of all invoked components
-	 */
-	public List<String> getInvokedComponents(){
-		return new ArrayList<String>(invokedComponents);
-	}
+    /**
+     * Accessor for the name of the last component invoked
+     * 
+     * @return name of the last component invoked, or null if none exists yet
+     */
+    public String getLastComponentName()
+    {
+        String lastComponentName = null;
+        if (!this.invokedComponents.isEmpty())
+        {
+            lastComponentName = this.invokedComponents.get(this.invokedComponents.size()-1);
+        }
+        return lastComponentName;
+    }
+
+    /**
+     * Allows a new componentName to be added to the stack of invoked components
+     * 
+     * @param componentName componentName
+     */
+    public void addInvokedComponentName(String componentName)
+    {
+        this.invokedComponents.add(componentName);
+    }
+
+    /**
+     * Safe accessor for the entire stack of invoked components
+     * 
+     * @return List of componentNames of all invoked components
+     */
+    public List<String> getInvokedComponents()
+    {
+        return new ArrayList<String>(this.invokedComponents);
+    }
 
 }

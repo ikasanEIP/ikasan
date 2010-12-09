@@ -1,4 +1,4 @@
-/* 
+ /* 
  * $Id$
  * $URL$
  *
@@ -38,47 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.configuration.service;
+package org.ikasan.core.flow;
 
 /**
- * Exception resulting from failure to configure a resource 
- * marked as a 'ConfiguredResource'.
+ * Exception representing an invalid Flow configuration
  * 
  * @author Ikasan Development Team
  *
  */
-@SuppressWarnings("serial")
-public class ConfigurationException 
-    extends RuntimeException
+public class InvalidFlowException extends RuntimeException
 {
+
     /**
      * Constructor
      * 
      * @param message
      */
-    public ConfigurationException(String message)
+    public InvalidFlowException(String message)
     {
         super(message);
     }
 
     /**
-     * Constructor
-     * 
-     * @param message
-     * @param exception
+     * serialVersionUID
      */
-    public ConfigurationException(String message, Exception exception)
-    {
-        super(message, exception);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param exception
-     */
-    public ConfigurationException(Exception exception)
-    {
-        super(exception);
-    }
+    private static final long serialVersionUID = 303376919145399965L;
 }

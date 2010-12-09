@@ -38,47 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.configuration.service;
+package org.ikasan.spec.configuration.service;
 
-import org.ikasan.framework.configuration.model.Configuration;
+import org.ikasan.spec.configuration.ConfiguredResource;
 
 /**
  * ConfigurationService defines the operational contract of any configuration
  * service in Ikasan.
  * 
  * @author Ikasan Development Team
+ * 
+ * @param <RESOURCE> Resource being configured
+ * @param <MODEL> Configuration object
  */
 public interface ConfigurationService<RESOURCE,MODEL>
 {
     /**
      * Configure the given resource.
-     * @param configuredResource
+     * @param configuredResource resource to configure
      */
-    public void configure(RESOURCE configuredResource);
+    public void configure(ConfiguredResource<RESOURCE> configuredResource);
 
     /**
      * Create a configuration instance for the given configured resource.
-     * @param configuredResource
-     * @return
+     * @param configuredResource resource to configure
+     * @return configuration object for that resource
      */
-    public MODEL getConfiguration(RESOURCE configuredResource);
+    public MODEL getConfiguration(ConfiguredResource<RESOURCE> configuredResource);
 
     /**
      * Create a configuration instance for the given configured resource.
-     * @param configuredResource
-     * @return
+     * @param configuredResource resource to configure
+     * @return configuration object
      */
-    public MODEL createConfiguration(RESOURCE configuredResource);
+    public MODEL createConfiguration(ConfiguredResource<RESOURCE>  configuredResource);
 
     /**
      * Save the given configuration.
-     * @param configuredResource
+     * @param configuration configuration to add
      */
-    public void saveConfiguration(MODEL configuration);
+    public void saveConfiguration(final MODEL configuration);
 
     /**
      * Delete the given configuration.
-     * @param configuredResource
+     * @param configuration configuration to remove
      */
     public void deleteConfiguration(MODEL configuration);
 }

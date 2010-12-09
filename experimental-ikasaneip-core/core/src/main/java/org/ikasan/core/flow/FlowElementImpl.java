@@ -38,29 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow;
+package org.ikasan.core.flow;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.ikasan.core.flow.FlowComponent;
-import org.ikasan.core.flow.FlowElement;
 
 /**
  * Simple implementation of <code>FlowElement</code>
  * 
  * @author Ikasan Development Team
+ * @param <C> The underlying Component doing actual work
  */
-public class FlowElementImpl implements FlowElement
+public class FlowElementImpl<C> implements FlowElement<C>
 {
     /** <code>FlowComponent</code> being wrapped and given flow context */
-    private FlowComponent flowComponent;
+    private C flowComponent;
 
     /** Flow context specific name for the wrapped component */
     private String componentName;
 
     /** <code>Map</code> of all flowComponent results to downstream <code>FlowElement</code>s */
-    private Map<String, FlowElement> transitions;
+    private Map<String, FlowElement<C>> transitions;
     
     /**
      * Human readable description of this FlowElement
@@ -75,7 +73,7 @@ public class FlowElementImpl implements FlowElement
      * @param flowComponent The FlowComponent
      * @param transitions A map of transitions
      */
-    public FlowElementImpl(String componentName, FlowComponent flowComponent, Map<String, FlowElement> transitions)
+    public FlowElementImpl(String componentName, C flowComponent, Map<String, FlowElement<C>> transitions)
     {
         this.componentName = componentName;
         this.flowComponent = flowComponent;
@@ -89,9 +87,14 @@ public class FlowElementImpl implements FlowElement
      * @param flowComponent The FlowComponent
      * @param defaultTransition The default transition
      */
-    public FlowElementImpl(String componentName, FlowComponent flowComponent, FlowElement defaultTransition)
+    public FlowElementImpl(String componentName, C flowComponent, FlowElement<C> defaultTransition)
     {
-        this(componentName, flowComponent, createTransitionMap(defaultTransition));
+        this.componentName = componentName;
+        this.flowComponent = flowComponent;
+        //icky
+        Map<String, FlowElement<C>> defaultTransitions = new HashMap<String, FlowElement<C>>();
+        defaultTransitions.put(DEFAULT_TRANSITION_NAME, defaultTransition);
+        this.transitions = defaultTransitions;
     }
 
     /**
@@ -100,55 +103,51 @@ public class FlowElementImpl implements FlowElement
      * @param componentName The name of the component
      * @param flowComponent The FlowComponent
      */
-    public FlowElementImpl(String componentName, FlowComponent flowComponent)
+    public FlowElementImpl(String componentName, C flowComponent)
     {
-        this(componentName, flowComponent, (Map<String, FlowElement>) null);
+        this(componentName, flowComponent, (Map<String, FlowElement<C>>) null);
     }
 
-    /**
-     * Creates the transition map when there is just the default transition
-     * 
-     * @param defaultTransition The default transition
-     * @return Map<String, FlowElement> mapping "default" to the specified <code>FlowElement</code>
+//    /**
+//     * Creates the transition map when there is just the default transition
+//     * 
+//     * @param defaultTransition The default transition
+//     * @return Map<String, FlowElement> mapping "default" to the specified <code>FlowElement</code>
+//     */
+//    //was static
+//    private Map<String, FlowElement<C>> createTransitionMap(FlowElement<C> defaultTransition)
+//    {
+//        Map<String, FlowElement<C>> defaultTransitions = new HashMap<String, FlowElement<C>>();
+//        defaultTransitions.put(DEFAULT_TRANSITION_NAME, defaultTransition);
+//        return defaultTransitions;
+//    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.core.flow.FlowElement#getFlowComponent()
      */
-    private static Map<String, FlowElement> createTransitionMap(FlowElement defaultTransition)
+    public C getFlowComponent()
     {
-        Map<String, FlowElement> defaultTransitions = new HashMap<String, FlowElement>();
-        defaultTransitions.put(DEFAULT_TRANSITION_NAME, defaultTransition);
-        return defaultTransitions;
+        return this.flowComponent;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see flow.FlowElement#getFlowComponent()
-     */
-    public FlowComponent getFlowComponent()
-    {
-        return flowComponent;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see flow.FlowElement#getComponentName()
+    /* (non-Javadoc)
+     * @see org.ikasan.core.flow.FlowElement#getComponentName()
      */
     public String getComponentName()
     {
-        return componentName;
+        return this.componentName;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see flow.FlowElement#getTransition(java.lang.String)
+     * @see org.ikasan.core.flow.FlowElement#getTransition(java.lang.String)
      */
-    public FlowElement getTransition(String transitionName)
+    public FlowElement<C> getTransition(String transitionName)
     {
-        FlowElement result = null;
-        if (transitions != null)
+        FlowElement<C> result = null;
+        if (this.transitions != null)
         {
-            result = transitions.get(transitionName);
+            result = this.transitions.get(transitionName);
         }
         return result;
     }
@@ -158,41 +157,47 @@ public class FlowElementImpl implements FlowElement
      */
     public String getDescription()
     {
-        return description;
+        return this.description;
     }
 
     /**
      * Setter for description
      * 
-     * @param description
+     * @param description User-friendly description of what this flow is all about
      */
     public void setDescription(String description)
     {
         this.description = description;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder(getClass().getName() + " [");
         sb.append("name=");
-        sb.append(componentName);
+        sb.append(this.componentName);
         sb.append(",");
         sb.append("flowComponent=");
-        sb.append(flowComponent);
+        sb.append(this.flowComponent);
         sb.append(",");
         sb.append("transitions=");
-        sb.append(transitions);
+        sb.append(this.transitions);
         sb.append("]");
         return sb.toString();
     }
 
-    public Map<String, FlowElement> getTransitions()
+    /* (non-Javadoc)
+     * @see org.ikasan.core.flow.FlowElement#getTransitions()
+     */
+    public Map<String, FlowElement<C>> getTransitions()
     {
-        Map<String, FlowElement> result = new HashMap<String, FlowElement>();
-        if (transitions != null)
+        Map<String, FlowElement<C>> result = new HashMap<String, FlowElement<C>>();
+        if (this.transitions != null)
         {
-            result.putAll(transitions);
+            result.putAll(this.transitions);
         }
         return result;
     }

@@ -47,13 +47,15 @@ import java.util.Map;
 import org.ikasan.core.configuration.ConfiguredResource;
 import org.ikasan.core.flow.FlowComponent;
 import org.ikasan.core.flow.FlowElement;
+import org.ikasan.core.flow.VisitingInvokerFlow;
 import org.ikasan.core.flow.invoker.FlowElementInvoker;
 import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.configuration.model.Configuration;
-import org.ikasan.framework.configuration.service.ConfigurationException;
-import org.ikasan.framework.configuration.service.ConfigurationService;
 import org.ikasan.framework.exception.IkasanExceptionAction;
+import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.management.ManagedResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -123,7 +125,7 @@ public class VisitingInvokerFlowTest
     
     
     /**
-     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#invoke(org.ikasan.framework.component.Event)}.
+     * Test method for {@link org.ikasan.core.flow.VisitingInvokerFlow#invoke(org.ikasan.framework.component.Event)}.
      */
     @Test
     public void testInvoke()
@@ -140,7 +142,7 @@ public class VisitingInvokerFlowTest
     }
     
     /**
-     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     * Test method for {@link org.ikasan.core.flow.VisitingInvokerFlow#start()}.
      */
     @Test
     public void test_start_with_ManagedResources()
@@ -168,7 +170,7 @@ public class VisitingInvokerFlowTest
     }
     
     /**
-     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     * Test method for {@link org.ikasan.core.flow.VisitingInvokerFlow#start()}.
      */
     @Test
     public void test_start_with_ConfiguredResources()
@@ -200,7 +202,7 @@ public class VisitingInvokerFlowTest
     
     
     /**
-     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     * Test method for {@link org.ikasan.core.flow.VisitingInvokerFlow#start()}.
      */
     @Test(expected = ConfigurationException.class)
     public void test_failed_start_with_ConfiguredResources_without_a_ConfigurationService()

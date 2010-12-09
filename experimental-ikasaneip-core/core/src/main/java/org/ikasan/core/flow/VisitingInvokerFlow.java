@@ -38,21 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow;
+package org.ikasan.core.flow;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.configuration.ConfiguredResource;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.core.flow.FlowComponent;
-import org.ikasan.core.flow.FlowElement;
+import org.ikasan.core.Event;
 import org.ikasan.core.flow.invoker.FlowElementInvoker;
 import org.ikasan.core.flow.invoker.FlowInvocationContext;
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.configuration.service.ConfigurationException;
-import org.ikasan.framework.configuration.service.ConfigurationService;
+import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.management.ManagedResource;
 
 /**
  * Default implementation of a Flow
@@ -76,7 +74,7 @@ public class VisitingInvokerFlow implements Flow
     /**
      * The first element in this flow
      */
-    private FlowElement headElement;
+    private FlowElement<?> headElement;
 
     /**
      * Invoker for invoking this flow
@@ -84,9 +82,8 @@ public class VisitingInvokerFlow implements Flow
     private FlowElementInvoker flowElementInvoker;
 
     /** configuration service for this flow */
-    @SuppressWarnings("unchecked")
-    private ConfigurationService configurationService;
-    
+    private ConfigurationService<?, ?> configurationService;
+
     /**
      * Constructor
      * 
@@ -95,8 +92,8 @@ public class VisitingInvokerFlow implements Flow
      * @param headElement - first element in the flow
      * @param visitingInvoker - invoker for this flow
      */
-    @SuppressWarnings("unchecked")
-    public VisitingInvokerFlow(String name, String moduleName, FlowElement headElement,
+    public VisitingInvokerFlow(String name, String moduleName,
+            FlowElement<?> headElement,
             FlowElementInvoker visitingInvoker)
     {
         super();
@@ -116,30 +113,37 @@ public class VisitingInvokerFlow implements Flow
         this.flowElementInvoker = visitingInvoker;
     }
 
-    @SuppressWarnings("unchecked")
-    public void setConfigurationService(ConfigurationService configurationService)
+    /**
+     * @param configurationService configurationService to set
+     */
+    public void setConfigurationService(ConfigurationService<?,?> configurationService)
     {
         this.configurationService = configurationService;
     }
-    
-    @SuppressWarnings("unchecked")
-    public ConfigurationService getConfigurationService()
+
+    /**
+     * @return configurationService
+     */
+    public ConfigurationService<?,?> getConfigurationService()
     {
         return this.configurationService;
     }
-    
+
+    /* (non-Javadoc)
+     * @see org.ikasan.core.flow.Flow#getName()
+     */
     public String getName()
     {
-        return name;
+        return this.name;
     }
     
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#invoke(org.ikasan.framework.flow.FlowInvocationContext, org.ikasan.framework.component.Event)
+     * @see org.ikasan.core.flow.Flow#invoke(org.ikasan.core.flow.invoker.FlowInvocationContext, org.ikasan.core.Event)
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, Event event)
+    public void invoke(FlowInvocationContext flowInvocationContext, Event<?> event)
     {
-        flowElementInvoker.invoke(flowInvocationContext, event, moduleName, name, headElement);
+        this.flowElementInvoker.invoke(flowInvocationContext, event, this.moduleName, this.name, this.headElement);
     }
 
     /**
@@ -147,20 +151,20 @@ public class VisitingInvokerFlow implements Flow
      * 
      * @return List<FlowElement>
      */
-    public List<FlowElement> getFlowElements()
+    public List<FlowElement<?>> getFlowElements()
     {
-        List<FlowElement> result = new ArrayList<FlowElement>();
-        List<FlowElement> elementsToVisit = new ArrayList<FlowElement>();
-        elementsToVisit.add(headElement);
+        List<FlowElement<?>> result = new ArrayList<FlowElement<?>>();
+        List<FlowElement<?>> elementsToVisit = new ArrayList<FlowElement<?>>();
+        elementsToVisit.add(this.headElement);
         while (!elementsToVisit.isEmpty())
         {
-            FlowElement thisFlowElement = elementsToVisit.get(0);
+            FlowElement<?> thisFlowElement = elementsToVisit.get(0);
             elementsToVisit.remove(0);
             if (!result.contains(thisFlowElement))
             {
                 result.add(thisFlowElement);
             }
-            for (FlowElement subsequentElement : thisFlowElement.getTransitions().values())
+            for (FlowElement<?> subsequentElement : thisFlowElement.getTransitions().values())
             {
                 if (!result.contains(subsequentElement))
                 {
@@ -181,20 +185,23 @@ public class VisitingInvokerFlow implements Flow
         this.moduleName = moduleName;
     }
 
+    /* (non-Javadoc)
+     * @see org.ikasan.core.flow.Flow#getModuleName()
+     */
     public String getModuleName()
     {
-        return moduleName;
+        return this.moduleName;
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#start()
+     * @see org.ikasan.core.flow.Flow#start()
      */
     @SuppressWarnings("unchecked")
     public void start()
     {
-        for(FlowElement flowElement:this.getFlowElements())
+        for(FlowElement<?> flowElement:this.getFlowElements())
         {
-            FlowComponent flowComponent = flowElement.getFlowComponent();
+            Object flowComponent = flowElement.getFlowComponent();
 
             // configure any components marked as configured resources
             if(flowComponent instanceof ConfiguredResource)
@@ -225,13 +232,13 @@ public class VisitingInvokerFlow implements Flow
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#stop()
+     * @see org.ikasan.core.flow.Flow#stop()
      */
     public void stop()
     {
-        for(FlowElement flowElement:this.getFlowElements())
+        for(FlowElement<?> flowElement:this.getFlowElements())
         {
-            FlowComponent flowComponent = flowElement.getFlowComponent();
+            Object flowComponent = flowElement.getFlowComponent();
             if(flowComponent instanceof ManagedResource)
             {
                 try
