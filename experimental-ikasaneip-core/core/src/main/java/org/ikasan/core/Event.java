@@ -57,7 +57,7 @@ public class Event<PAYLOAD>
      * date-time stamp of creation of this event. Defaults to
      * System time: current time in milliseconds measured from epoc
      */
-    private long timestamp = System.currentTimeMillis();
+    private final long timestamp = System.currentTimeMillis();
 
     /** Content carried by this event */
     private PAYLOAD payload;
@@ -76,19 +76,19 @@ public class Event<PAYLOAD>
     }
 
     /**
+     * @return the identifier
+     */
+    public String getIdentifier()
+    {
+        return this.identifier;
+    }
+
+    /**
      * @return the timestamp
      */
     public long getTimestamp()
     {
         return this.timestamp;
-    }
-
-    /**
-     * @param timestamp the timestamp to set
-     */
-    public void setTimestamp(long timestamp)
-    {
-        this.timestamp = timestamp;
     }
 
     /**
@@ -105,14 +105,6 @@ public class Event<PAYLOAD>
     public void setPayload(PAYLOAD payload)
     {
         this.payload = payload;
-    }
-
-    /**
-     * @return the identifier
-     */
-    public String getIdentifier()
-    {
-        return this.identifier;
     }
 
 }
