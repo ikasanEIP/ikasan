@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -38,33 +38,28 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.routing;
-
-import java.util.List;
-
-import org.ikasan.core.flow.FlowComponent;
+package org.ikasan.spec.transformation;
 
 /**
- * Interface for all FlowComponents that perform a Routing function. These are characterised by a dynamic evaluation of
- * business path. The resultant path or paths for the given <code>
- * Event</code> are identified by the values in the resultant
- * <code>List<String</code>
+ * Sometimes it is essential to translate data syntax (that is the representation of data)
+ * being transported within a flow. Such translation is particularly necessary at both
+ * ends of the flow: {@link Initiator} and {@link Endpoint} as data must be translated
+ * from one domain object to another.
  * 
- * @author Ikasan Development Team
- * @param <T> 
+ * A {@link Converter} defines a contract for such translation.
+ * 
+ * @param <SOURCE> Type of object to be converted
+ * @param <TARGET> Type of conversion result
+ *
+ * @author Ikasan Development Teams
  */
-public interface Router<T> extends FlowComponent
+public interface Converter<SOURCE,TARGET> //extends FlowComponent
 {
-    /** Default result for any unresolved routing implementation */
-    public static final String DEFAULT_RESULT = "default";
-
     /**
-     * Handles the <code>Event<code> in a read-only fashion, returning an ordered List of 
-     * paths/routes for this <code>Event</code> to take next
-     * 
-     * @param messageToRoute Event to handle
-     * @return List<String> of paths/routes for this <code>Event</code> to take next
-     * @throws RouterException - if the result cannot be calculated for any reason
+     * Convert source object into target object of type T.
+     * @param source object to be converted
+     * @return conversion result
+     * @throws TransformationException if error converting S to T
      */
-    public List<String> route(final T messageToRoute) throws RouterException;
+    public TARGET convert(final SOURCE source) throws TransformationException;
 }

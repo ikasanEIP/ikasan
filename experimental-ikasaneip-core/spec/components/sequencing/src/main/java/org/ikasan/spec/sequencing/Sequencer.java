@@ -38,40 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.routing;
+package org.ikasan.spec.sequencing;
+
+import java.util.List;
 
 /**
- * Exception representing a problem calculating a routing
+ * Interface for all FlowComponents that perform a Sequencing function.
  * 
- * This should only ever be thrown from within a Router's onEvent method, signifying that router's failure to calculate
- * route
+ * These are characterised by a variable number of <code>Event<code>s being routed downstream
+ * based on the incoming <code>Event<code>.
  * 
  * @author Ikasan Development Team
+ * @param <T> message to split or aggregate
  */
-public class RouterException extends RuntimeException //TODO why extend from RTE?
+public interface Sequencer<T> //extends FlowComponent
 {
     /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = 3203142027287174087L;
-
-    /**
-     * Constructor
+     * Returns an ordered List<Event> for forwarding downstream
      * 
-     * @param cause The original cause of the exception
+     * @param event The event to perform sequencing on
+     * @return List<Event> for forwarding downstream in order
+     * @throws SequencerException Exception if we could not sequence
      */
-    public RouterException(Throwable cause)
-    {
-        super(cause);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param message The exception message
-     */
-    public RouterException(String message)
-    {
-        super(message);
-    }
+    public List<T> sequence(final T event) throws SequencerException;
 }

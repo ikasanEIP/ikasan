@@ -44,9 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.sequencing.Sequencer;
-import org.ikasan.core.component.sequencing.SequencerException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.sequencing.Sequencer;
+import org.ikasan.spec.sequencing.SequencerException;
 
 /**
  * Sequencer implementation which splits an incoming event's payloads

@@ -49,10 +49,10 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.routing.Router;
-import org.ikasan.core.component.routing.RouterException;
-import org.ikasan.core.component.routing.UnroutableEventException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.routing.Router;
+import org.ikasan.spec.routing.RouterException;
+import org.ikasan.spec.routing.UnroutableEventException;
 
 /**
  * Simple <code>Router</code> that routes <code>Event<code>s to a single configured path based on the value of a named attribute

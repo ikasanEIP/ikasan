@@ -57,9 +57,9 @@ import javax.xml.transform.URIResolver;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
-import org.ikasan.core.component.transformation.TransformationException;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.configuration.XsltConfiguration;
+import org.ikasan.spec.transformation.TransformationException;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;

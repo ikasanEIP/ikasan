@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,31 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.conversion;
-
-import org.ikasan.core.component.endpoint.Endpoint;
-import org.ikasan.core.flow.FlowComponent;
+package org.ikasan.spec.routing;
 
 /**
- * Sometimes it is essential to translate data syntax (that is the representation of data)
- * being transported within a flow. Such translation is particularly necessary at both
- * ends of the flow: {@link Initiator} and {@link Endpoint} as data must be translated
- * from one domain object to another.
+ * Exception representing a problem calculating a routing
  * 
- * A {@link Converter} defines a contract for such translation.
+ * This should only ever be thrown from within a Router's onEvent method, signifying that router's failure to calculate
+ * route
  * 
- * @param <SOURCE> Type of object to be converted
- * @param <TARGET> Type of conversion result
- *
- * @author Ikasan Development Teams
+ * @author Ikasan Development Team
  */
-public interface Converter<SOURCE,TARGET> extends FlowComponent
+public class RouterException extends RuntimeException //TODO why extend from RTE?
 {
     /**
-     * Convert source object into target object of type T.
-     * @param source object to be converted
-     * @return conversion result
-     * @throws ConversionException if error converting S to T
+     * serialVersionUID
      */
-    public TARGET convert(final SOURCE source) throws ConversionException;
+    private static final long serialVersionUID = 3203142027287174087L;
+
+    /**
+     * Constructor
+     * 
+     * @param cause The original cause of the exception
+     */
+    public RouterException(Throwable cause)
+    {
+        super(cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message The exception message
+     */
+    public RouterException(String message)
+    {
+        super(message);
+    }
 }

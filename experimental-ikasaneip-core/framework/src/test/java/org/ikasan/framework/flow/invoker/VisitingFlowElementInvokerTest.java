@@ -47,17 +47,17 @@ import java.util.Map;
 
 import org.ikasan.core.component.endpoint.Endpoint;
 import org.ikasan.core.component.endpoint.EndpointException;
-import org.ikasan.core.component.routing.Router;
-import org.ikasan.core.component.routing.RouterException;
-import org.ikasan.core.component.sequencing.Sequencer;
-import org.ikasan.core.component.sequencing.SequencerException;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.core.flow.FlowElement;
 import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
+import org.ikasan.spec.routing.Router;
+import org.ikasan.spec.routing.RouterException;
+import org.ikasan.spec.sequencing.Sequencer;
+import org.ikasan.spec.sequencing.SequencerException;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -91,7 +91,7 @@ public class VisitingFlowElementInvokerTest
     /**
      * Mocked Transformer
      */
-    Transformer transformer = classMockery.mock(Transformer.class);
+    Translator transformer = classMockery.mock(Translator.class);
     /**
      * Mocked Endpoint
      */
@@ -412,7 +412,7 @@ public class VisitingFlowElementInvokerTest
      * @param defaultTransition
      * @throws TransformationException
      */
-    private void mockTransformerVisitingExpectations(final FlowElement transformerElement, final Transformer aTransformer, final String componentName,
+    private void mockTransformerVisitingExpectations(final FlowElement transformerElement, final Translator aTransformer, final String componentName,
             final Event event, final FlowElement defaultTransition) throws TransformationException
     {
         classMockery.checking(new Expectations()

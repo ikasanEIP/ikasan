@@ -38,46 +38,31 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.sequencing;
+package org.ikasan.spec.routing;
+
+import java.util.List;
 
 /**
- * Exception thrown by Sequencers
+ * Interface for all FlowComponents that perform a Routing function. These are characterised by a dynamic evaluation of
+ * business path. The resultant path or paths for the given <code>
+ * Event</code> are identified by the values in the resultant
+ * <code>List<String</code>
  * 
  * @author Ikasan Development Team
+ * @param <T> message to route
  */
-public class SequencerException extends RuntimeException
+public interface Router<T>// extends FlowComponent
 {
-    /** serialVersionUID */
-    private static final long serialVersionUID = -6107850100714275149L;
+    /** Default result for any unresolved routing implementation */
+    public static final String DEFAULT_RESULT = "default";
 
     /**
-     * Constructor
+     * Handles the <code>Event<code> in a read-only fashion, returning an ordered List of 
+     * paths/routes for this <code>Event</code> to take next
      * 
-     * @param cause - The cause of the exception
+     * @param messageToRoute Event to handle
+     * @return List<String> of paths/routes for this <code>Event</code> to take next
+     * @throws RouterException - if the result cannot be calculated for any reason
      */
-    public SequencerException(Throwable cause)
-    {
-        super(cause);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param message - The exception message
-     * @param cause - The exception cause
-     */
-    public SequencerException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param message - The exception message
-     */
-    public SequencerException(String message)
-    {
-        super(message);
-    }
+    public List<String> route(final T messageToRoute) throws RouterException;
 }

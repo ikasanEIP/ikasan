@@ -44,9 +44,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.core.component.endpoint.Endpoint;
-import org.ikasan.core.component.routing.Router;
-import org.ikasan.core.component.sequencing.Sequencer;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.core.flow.FlowComponent;
 import org.ikasan.core.flow.FlowElement;
 import org.ikasan.core.flow.invoker.FlowElementInvoker;
@@ -54,6 +51,9 @@ import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
+import org.ikasan.spec.routing.Router;
+import org.ikasan.spec.sequencing.Sequencer;
+import org.ikasan.spec.transformation.Translator;
 
 /**
  * A default implementation of the FlowElementInvoker
@@ -96,7 +96,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             }
             notifyListenersBeforeElement(event, moduleName, flowName, flowElement);
             FlowComponent flowComponent = flowElement.getFlowComponent();
-            if (flowComponent instanceof Transformer)
+            if (flowComponent instanceof Translator)
             {
                 handleTransformer(event, moduleName, flowName, flowElement);
 
@@ -303,7 +303,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private void handleTransformer(Event event, String moduleName, String flowName,
             FlowElement flowElement)
     {
-        Transformer transformer = (Transformer) flowElement.getFlowComponent();
+        Translator transformer = (Translator) flowElement.getFlowComponent();
 
         transformer.onEvent(event);
         notifyListenersAfterElement(event, moduleName, flowName, flowElement);

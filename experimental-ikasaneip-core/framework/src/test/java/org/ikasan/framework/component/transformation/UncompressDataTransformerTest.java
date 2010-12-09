@@ -48,9 +48,9 @@ import java.util.List;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -67,7 +67,7 @@ import org.junit.Test;
 public class UncompressDataTransformerTest
 {
     /** Transformer instance being tested */
-    private Transformer transformerToTest = new UncompressDataTransformer();
+    private Translator transformerToTest = new UncompressDataTransformer();
 
     /**
      * Uncompressing data in GZIP file, result in the original 

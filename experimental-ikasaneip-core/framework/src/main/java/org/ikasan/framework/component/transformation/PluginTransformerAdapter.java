@@ -41,13 +41,13 @@
 package org.ikasan.framework.component.transformation;
 
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.plugins.EventInvocable;
 import org.ikasan.framework.plugins.PayloadInvocable;
 import org.ikasan.framework.plugins.Plugin;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 
 /**
  * Adapter class for using <code>Plugin</code>'s within the Transformer framework
@@ -56,7 +56,7 @@ import org.ikasan.framework.plugins.invoker.PluginInvocationException;
  * @author Ikasan Development Team
  */
 @Deprecated
-public class PluginTransformerAdapter implements Transformer
+public class PluginTransformerAdapter implements Translator
 {
     /** Plugin being wrapped */
     private Plugin plugin;

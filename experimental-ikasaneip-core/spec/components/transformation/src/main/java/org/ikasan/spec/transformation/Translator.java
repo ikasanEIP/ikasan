@@ -38,16 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.endpoint;
-
-import org.ikasan.core.flow.FlowComponent;
+package org.ikasan.spec.transformation;
 
 /**
+ * Interface for all FlowComponents that perform a Transformer function.
+ * 
+ * These are characterised by the content of the <code>Event</code> being 
+ * changed in some way during the execution of the onEvent method.
+ * <p>
+ * <b>Syntactic Change</b>
  * 
  * @author Ikasan Development Team
- * 
+ * @param <T> message to transform
  */
-public interface Endpoint<T> extends FlowComponent
+public interface Translator<T> //extends FlowComponent
 {
-    public void invoke(final T content) throws EndpointException;
+    /**
+     * Transforms or otherwise changes the passed in <code>Event</code>
+     * 
+     * @param event Event to transform
+     * @throws TransformationException Exception if we could not transform
+     */
+    public void translate(T event) throws TransformationException;
 }

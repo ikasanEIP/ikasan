@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -38,26 +38,22 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.routing;
-
+package org.ikasan.spec.transformation;
 
 /**
- * Exception for when an Event can't be routed.
+ * Wrapper for errors experienced while converting between types.
  * 
  * @author Ikasan Development Team
+ *
  */
-public class UnroutableEventException extends RouterException
+@SuppressWarnings("serial")
+public class DataTransformationException extends TransformationException
 {
-    /** serialVersionUID */
-    private static final long serialVersionUID = -7298409079689693254L;
-
     /**
-     * Constructor
-     * 
-     * @param message - The exception message
+     * @see Exception#Exception(Throwable)
      */
-    public UnroutableEventException(String message)
+    public DataTransformationException(final Throwable cause)
     {
-        super(message);
+        super(cause);
     }
 }

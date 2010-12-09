@@ -60,7 +60,7 @@ public interface FlowElement
      * 
      * @return FlowComponent
      */
-    public abstract FlowComponent getFlowComponent();
+    //public abstract FlowComponent getFlowComponent();
 
     /**
      * Accessor for the componentName. This is the unique identifier for a <code>FlowElement</code>
