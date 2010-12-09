@@ -44,9 +44,9 @@ import javax.jms.Destination;
 import javax.jms.Session;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.jca.EventMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiatorImpl;

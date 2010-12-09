@@ -44,7 +44,7 @@ package org.ikasan.framework.component.transformation.xslt.util;
 import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.transformation.TrivialTransformerException;
+import org.ikasan.core.component.transformation.TrivialTransformerException;
 
 /**
  * This class provides a range of static XSLT utility methods for error

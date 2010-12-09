@@ -44,6 +44,8 @@ import java.util.ArrayList;
 
 import junit.framework.Assert;
 
+import org.ikasan.core.configuration.dao.ConfigurationDao;
+import org.ikasan.core.configuration.dao.ConfigurationHibernateImpl;
 import org.ikasan.framework.configuration.model.Configuration;
 import org.ikasan.framework.configuration.model.ConfigurationParameter;
 import org.junit.Before;

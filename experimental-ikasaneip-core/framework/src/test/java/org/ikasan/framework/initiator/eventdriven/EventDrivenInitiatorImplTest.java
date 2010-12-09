@@ -43,13 +43,13 @@ package org.ikasan.framework.initiator.eventdriven;
 import static org.junit.Assert.fail;
 import junit.framework.Assert;
 
+import org.ikasan.core.flow.Flow;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.RetryAction;
 import org.ikasan.framework.exception.StopAction;
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.InitiatorState;
 import org.ikasan.framework.initiator.eventdriven.EventDrivenInitiatorImpl;

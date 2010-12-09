@@ -49,13 +49,13 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
+import org.ikasan.core.flow.Flow;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.management.search.PagedSearchResult;

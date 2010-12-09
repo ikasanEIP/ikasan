@@ -49,13 +49,13 @@
   <parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
   </parent>
 
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-common</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
   <name>Ikasan Common</name>
   <description>The common library for the Ikasan Enterprise Integration Platform</description>
 

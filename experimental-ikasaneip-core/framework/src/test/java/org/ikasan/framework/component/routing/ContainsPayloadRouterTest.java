@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -117,7 +119,7 @@ public class ContainsPayloadRouterTest
                 will(returnValue(payloads));
             }
         });
-        List<String> result = containsPayloadRouter.onEvent(event);
+        List<String> result = containsPayloadRouter.route(event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("Should return String value of true when Event contains payloads", Boolean.TRUE.toString(), result.get(0));
     }
@@ -136,7 +138,7 @@ public class ContainsPayloadRouterTest
                 will(returnValue(new ArrayList<Payload>()));
             }
         });
-        List<String> result = containsPayloadRouter.onEvent(event);
+        List<String> result = containsPayloadRouter.route(event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("Should return String value of false when Event does not contain payloads", Boolean.FALSE.toString(), result.get(0));
 
@@ -156,7 +158,7 @@ public class ContainsPayloadRouterTest
                 will(returnValue(null));
             }
         });
-        List<String> result = containsPayloadRouter.onEvent(event);
+        List<String> result = containsPayloadRouter.route(event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("Should return String value of false when Event does not contain payloads", Boolean.FALSE.toString(), result.get(0));
 

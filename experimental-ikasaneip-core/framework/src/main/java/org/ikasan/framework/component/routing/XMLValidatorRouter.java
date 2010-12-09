@@ -51,6 +51,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.ExceptionThrowingErrorHandler;
 import org.xml.sax.ErrorHandler;

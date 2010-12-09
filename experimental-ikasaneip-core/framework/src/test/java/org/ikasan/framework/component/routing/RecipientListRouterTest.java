@@ -82,7 +82,7 @@ public class RecipientListRouterTest
         recipientList.add("recipient1");
         recipientList.add("recipient2");
         RecipientListRouter recipientListRouter = new RecipientListRouter(recipientList);
-        List<String> result = recipientListRouter.onEvent(event);
+        List<String> result = recipientListRouter.route(event);
         Assert.assertEquals("RecipientListRouter should simply return an equivallent List of Strings to that with which it is configured", recipientList,
             result);
     }

@@ -46,9 +46,9 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.flow.Flow;
 
 /**
  * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create and fire new <code>Event</code>s based

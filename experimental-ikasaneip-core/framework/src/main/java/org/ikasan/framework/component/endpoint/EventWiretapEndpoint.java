@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.endpoint.Endpoint;
 import org.ikasan.framework.component.Event;
 
 /**

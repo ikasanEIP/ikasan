@@ -43,6 +43,9 @@ package org.ikasan.framework.flow;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ikasan.core.flow.FlowComponent;
+import org.ikasan.core.flow.FlowElement;
+
 /**
  * Simple implementation of <code>FlowElement</code>
  * 

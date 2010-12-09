@@ -44,11 +44,11 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.messagedriven.spring.SpringMessageListenerContainer;
 import org.springframework.beans.factory.BeanNameAware;

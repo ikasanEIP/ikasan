@@ -51,10 +51,12 @@ import java.util.zip.ZipInputStream;
 import org.apache.log4j.Logger;
 import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.sequencing.Sequencer;
+import org.ikasan.core.component.sequencing.SequencerException;
 import org.ikasan.framework.component.Event;
 
 /**
- * Implementation of @see {@link org.ikasan.framework.component.sequencing.Sequencer}.
+ * Implementation of @see {@link org.ikasan.core.component.sequencing.Sequencer}.
  * <p>
  * An incoming <code>Event</code> will have a zip file entry as its <code>Payload</code>(s).<br>
  * The <code>UnzipSplitter</code> will unzip each of the <code>Event</code>'s payloads,<br>
@@ -77,7 +79,7 @@ public class UncompressDataSplitter implements Sequencer
     
 
 	/**
-     * Implementation of {@link org.ikasan.framework.component.sequencing.Sequencer#onEvent(Event)}
+     * Implementation of {@link org.ikasan.core.component.sequencing.Sequencer#sequence(Event)}
      * 
      * @param event - The incoming event with payload containing a zip file
      * @throws SequencerException Wrapper exception thrown when cloning and/or transforming the<br>

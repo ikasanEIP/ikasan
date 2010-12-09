@@ -45,16 +45,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ikasan.core.component.endpoint.Endpoint;
+import org.ikasan.core.component.endpoint.EndpointException;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
+import org.ikasan.core.component.sequencing.Sequencer;
+import org.ikasan.core.component.sequencing.SequencerException;
+import org.ikasan.core.component.transformation.TransformationException;
+import org.ikasan.core.component.transformation.Transformer;
+import org.ikasan.core.flow.FlowElement;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.endpoint.Endpoint;
-import org.ikasan.framework.component.endpoint.EndpointException;
-import org.ikasan.framework.component.routing.Router;
-import org.ikasan.framework.component.routing.RouterException;
-import org.ikasan.framework.component.sequencing.Sequencer;
-import org.ikasan.framework.component.sequencing.SequencerException;
-import org.ikasan.framework.component.transformation.TransformationException;
-import org.ikasan.framework.component.transformation.Transformer;
-import org.ikasan.framework.flow.FlowElement;
 import org.ikasan.framework.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
 import org.jmock.Expectations;
@@ -383,7 +384,7 @@ public class VisitingFlowElementInvokerTest
                 exactly(2).of(terminatingElement).getFlowComponent();
                 will(returnValue(anEndpoint));
                 one(flowEventListener).beforeFlowElement(moduleName, flowName, terminatingElement, event);
-                one(anEndpoint).onEvent(event);
+                one(anEndpoint).route(event);
                 if (throwable != null)
                 {
                     will(throwException(throwable));
@@ -459,7 +460,7 @@ public class VisitingFlowElementInvokerTest
                 exactly(2).of(routerWrappingElement).getFlowComponent();
                 will(returnValue(aRouter));
                 one(flowEventListener).beforeFlowElement(moduleName, flowName, routerWrappingElement, event);
-                one(aRouter).onEvent(event);
+                one(aRouter).route(event);
                 will(returnValue(new ArrayList<String>(routerTransitions.keySet())));
                 one(flowEventListener).afterFlowElement(moduleName, flowName, routerWrappingElement, event);
                 // expect each of the transitions to be taken

@@ -60,10 +60,12 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.hibernate.property.Setter;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.transformation.TransformationException;
+import org.ikasan.core.component.transformation.Transformer;
+import org.ikasan.core.configuration.ConfiguredResource;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.configuration.XsltConfiguration;
 import org.ikasan.framework.component.transformation.xslt.util.ClasspathURIResolver;
-import org.ikasan.framework.configuration.ConfiguredResource;
 import org.ikasan.framework.flow.ManagedResource;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;

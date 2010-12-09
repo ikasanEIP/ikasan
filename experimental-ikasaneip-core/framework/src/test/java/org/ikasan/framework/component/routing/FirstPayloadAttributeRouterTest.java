@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
+import org.ikasan.core.component.routing.UnroutableEventException;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -140,7 +143,7 @@ public class FirstPayloadAttributeRouterTest
         });
         
         FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, null, true);
-        final List<String> result = eventNameRouter.onEvent(event);
+        final List<String> result = eventNameRouter.route(event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("evaluator should return its default when it cannot match the event name", Router.DEFAULT_RESULT, result.get(0)); 
     }
@@ -168,7 +171,7 @@ public class FirstPayloadAttributeRouterTest
         });
         
         FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, null, true);
-        final List<String> result = eventNameRouter.onEvent(event);
+        final List<String> result = eventNameRouter.route(event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("evaluator should return its default when it cannot match the event name", Router.DEFAULT_RESULT, result.get(0)); 
     }
@@ -194,7 +197,7 @@ public class FirstPayloadAttributeRouterTest
         RouterException routerException = null;
         try
         {
-            eventNameRouter.onEvent(this.event);
+            eventNameRouter.route(this.event);
             Assert.fail("Exception should have been thrown for unmatched event name");
         }
         catch(RouterException re)
@@ -234,7 +237,7 @@ public class FirstPayloadAttributeRouterTest
         });
         
         FirstPayloadAttributeRouter eventNameRouter = new FirstPayloadAttributeRouter(attributeName, eventNamesToResults, false);
-        final List<String> result = eventNameRouter.onEvent(this.event);
+        final List<String> result = eventNameRouter.route(this.event);
         Assert.assertEquals("Result should be of size 1", 1, result.size());
         Assert.assertEquals("evaluator should return its configured result for a matched event name", knownEventResult, result.get(0));
     }

@@ -41,6 +41,7 @@
 package org.ikasan.framework.component.endpoint;
 
 import org.apache.log4j.Logger;
+import org.ikasan.core.component.endpoint.Endpoint;
 import org.ikasan.framework.component.Event;
 
 /**

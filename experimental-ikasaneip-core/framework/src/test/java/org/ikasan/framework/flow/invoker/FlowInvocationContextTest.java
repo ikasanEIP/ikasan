@@ -42,7 +42,7 @@ package org.ikasan.framework.flow.invoker;
 
 import java.util.List;
 
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public class FlowInvocationContextTest {
 	String componentName1 = "componentName1";
 	String componentName2 = "componentName2";
 	/**
-	 * Test method for {@link org.ikasan.framework.flow.FlowInvocationContext#getLastComponentName()}.
+	 * Test method for {@link org.ikasan.core.flow.invoker.FlowInvocationContext#getLastComponentName()}.
 	 */
 	@Test
 	public void testGetLastComponentName_willReturnNullWhenNoComponentsAdded() {
@@ -61,7 +61,7 @@ public class FlowInvocationContextTest {
 	}
 	
 	/**
-	 * Test method for {@link org.ikasan.framework.flow.FlowInvocationContext#getLastComponentName()}.
+	 * Test method for {@link org.ikasan.core.flow.invoker.FlowInvocationContext#getLastComponentName()}.
 	 */
 	@Test
 	public void testGetLastComponentName_willReturnMostRecentlyAddedComponentName() {
@@ -80,7 +80,7 @@ public class FlowInvocationContextTest {
 
 
 	/**
-	 * Test method for {@link org.ikasan.framework.flow.FlowInvocationContext#getInvokedComponents()}.
+	 * Test method for {@link org.ikasan.core.flow.invoker.FlowInvocationContext#getInvokedComponents()}.
 	 */
 	@Test
 	public void testGetInvokedComponents() {

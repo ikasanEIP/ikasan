@@ -45,8 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ikasan.core.flow.FlowElement;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.FlowElement;
 import org.ikasan.framework.flow.event.dao.TriggerDao;
 import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;

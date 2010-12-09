@@ -43,7 +43,7 @@ package org.ikasan.framework.module;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.framework.flow.Flow;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.initiator.Initiator;
 
 /**

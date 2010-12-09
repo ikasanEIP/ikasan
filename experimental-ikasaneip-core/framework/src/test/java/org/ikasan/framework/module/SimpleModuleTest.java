@@ -46,7 +46,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.ikasan.framework.flow.Flow;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.initiator.Initiator;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
