@@ -51,9 +51,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Ikasan Development Team
  */
-public class XMLValidator implements Transformer
+public class XMLValidator implements Translator
 {
     /** Logger instance */
     private static Logger logger = Logger.getLogger(XMLValidator.class);

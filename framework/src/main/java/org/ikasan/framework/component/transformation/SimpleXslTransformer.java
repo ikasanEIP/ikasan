@@ -91,9 +91,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 import org.xml.sax.InputSource;
 
 /**
@@ -102,7 +102,7 @@ import org.xml.sax.InputSource;
  * @author Ikasan Development Team
  *
  */
-public class SimpleXslTransformer implements Transformer{
+public class SimpleXslTransformer implements Translator{
 
 	/**
 	 * compiled stylesheets

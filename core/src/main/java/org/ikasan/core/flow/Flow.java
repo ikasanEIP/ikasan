@@ -60,7 +60,7 @@ public interface Flow
      * @param flowInvocationContext invocation context
      * @param event The event we're dealing with
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, Event event);
+    public void invoke(FlowInvocationContext flowInvocationContext, Event<?> event);
 
     /**
      * Returns the name of this flow

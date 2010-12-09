@@ -48,18 +48,18 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 
 /**
- * A {@link Transformer} implementation that uncompresses  data in GZIP format. Not that
+ * A {@link Translator} implementation that uncompresses  data in GZIP format. Not that
  * this implementation does not support character encoding.
  * 
  * @author Ikasan Development Team
  *
  */
-public class UncompressDataTransformer implements Transformer
+public class UncompressDataTransformer implements Translator
 {
     /** Logger instance */
     private final static Logger logger = Logger.getLogger(UncompressDataTransformer.class);

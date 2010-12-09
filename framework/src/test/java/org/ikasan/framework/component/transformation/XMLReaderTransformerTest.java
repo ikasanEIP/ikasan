@@ -51,8 +51,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.transformation.TransformationException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

@@ -43,8 +43,8 @@ package org.ikasan.framework.component.routing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.core.component.routing.Router;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.routing.Router;
 
 /**
  * Implementation of EIP 'RecipientList' Pattern as a <code>Router</code>

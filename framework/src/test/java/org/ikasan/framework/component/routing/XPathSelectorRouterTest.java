@@ -51,10 +51,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.routing.Router;
-import org.ikasan.core.component.routing.RouterException;
-import org.ikasan.core.component.routing.UnroutableEventException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.routing.Router;
+import org.ikasan.spec.routing.RouterException;
+import org.ikasan.spec.routing.UnroutableEventException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

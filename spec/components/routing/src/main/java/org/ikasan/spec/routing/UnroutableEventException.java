@@ -38,34 +38,25 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.transformation;
+package org.ikasan.spec.routing;
+
 
 /**
- * Base TransformationException
+ * Exception for when an Event can't be routed.
  * 
  * @author Ikasan Development Team
  */
-public class TransformationException extends RuntimeException
+public class UnroutableEventException extends RouterException
 {
     /** serialVersionUID */
-    private static final long serialVersionUID = 5643215546008399313L;
-
-    /**
-     * Constructor
-     * 
-     * @param cause - The cause
-     */
-    public TransformationException(Throwable cause)
-    {
-        super(cause);
-    }
+    private static final long serialVersionUID = -7298409079689693254L;
 
     /**
      * Constructor
      * 
      * @param message - The exception message
      */
-    public TransformationException(String message)
+    public UnroutableEventException(String message)
     {
         super(message);
     }

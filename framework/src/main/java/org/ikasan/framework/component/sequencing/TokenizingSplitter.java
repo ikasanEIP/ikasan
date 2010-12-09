@@ -48,9 +48,9 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.sequencing.Sequencer;
-import org.ikasan.core.component.sequencing.SequencerException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.sequencing.Sequencer;
+import org.ikasan.spec.sequencing.SequencerException;
 
 /**
  * Sequencer implementation which tokenises an incoming event's payloads into individual multiple outgoing events,

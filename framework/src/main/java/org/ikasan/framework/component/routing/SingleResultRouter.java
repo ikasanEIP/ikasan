@@ -43,9 +43,9 @@ package org.ikasan.framework.component.routing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.core.component.routing.Router;
-import org.ikasan.core.component.routing.RouterException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.routing.Router;
+import org.ikasan.spec.routing.RouterException;
 
 /**
  * Simple abstraction for <code>Router</code> implementations that are only ever to return a single result

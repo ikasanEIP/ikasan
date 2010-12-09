@@ -48,8 +48,8 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.sequencing.SequencerException;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.sequencing.SequencerException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;

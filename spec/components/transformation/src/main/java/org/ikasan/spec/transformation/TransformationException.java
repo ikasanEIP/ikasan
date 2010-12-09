@@ -1,4 +1,4 @@
- /* 
+/* 
  * $Id$
  * $URL$
  *
@@ -38,36 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.endpoint;
-
+package org.ikasan.spec.transformation;
 
 /**
+ * Base TransformationException
+ * 
  * @author Ikasan Development Team
- *
  */
-public class EndpointException extends RuntimeException //TODO is this wise to extend from Runtime?
+public class TransformationException extends RuntimeException
 {
+    /** serialVersionUID */
+    private static final long serialVersionUID = 5643215546008399313L;
 
     /**
      * Constructor
      * 
-     * @param cause
+     * @param cause - The cause
      */
-    public EndpointException(Throwable cause)
+    public TransformationException(Throwable cause)
     {
-       super(cause);
+        super(cause);
     }
 
     /**
-     * @param message
+     * Constructor
+     * 
+     * @param message - The exception message
      */
-    public EndpointException(String message)
+    public TransformationException(String message)
     {
         super(message);
     }
-
-    /**
-     * serial version id
-     */
-    private static final long serialVersionUID = -7516026162758830789L;
 }

@@ -38,30 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.core.component.sequencing;
-
-import java.util.List;
-
-import org.ikasan.core.flow.FlowComponent;
+package org.ikasan.spec.sequencing;
 
 /**
- * Interface for all FlowComponents that perform a Sequencing function.
- * 
- * These are characterised by a variable number of <code>Event<code>s being routed downstream
- * based on the incoming <code>Event<code>.
+ * Exception thrown by Sequencers
  * 
  * @author Ikasan Development Team
  */
-public interface Sequencer<T> extends FlowComponent
+public class SequencerException extends RuntimeException
 {
+    /** serialVersionUID */
+    private static final long serialVersionUID = -6107850100714275149L;
+
     /**
-     * Returns an ordered List<Event> for forwarding downstream
+     * Constructor
      * 
-     * @param event The event to perform sequencing on
-     * @param componentName 
-     * @param moduleName 
-     * @return List<Event> for forwarding downstream in order
-     * @throws SequencerException Exception if we could not sequence
+     * @param cause - The cause of the exception
      */
-    public List<T> sequence(final T event) throws SequencerException;
+    public SequencerException(Throwable cause)
+    {
+        super(cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message - The exception message
+     * @param cause - The exception cause
+     */
+    public SequencerException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message - The exception message
+     */
+    public SequencerException(String message)
+    {
+        super(message);
+    }
 }

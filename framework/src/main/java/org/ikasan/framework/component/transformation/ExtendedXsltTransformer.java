@@ -59,9 +59,9 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
-import org.ikasan.core.component.transformation.TransformationException;
-import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
+import org.ikasan.spec.transformation.TransformationException;
+import org.ikasan.spec.transformation.Translator;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -92,7 +92,7 @@ import org.xml.sax.XMLReader;
  * @deprecated - Use XslTransformer which supports the stylesheet being specified 
  * through an InputStream rather than a URI.
  */
-public class ExtendedXsltTransformer implements Transformer
+public class ExtendedXsltTransformer implements Translator
 {
     /** Reader class used to consume incoming content */
     private XMLReader xmlReader;
