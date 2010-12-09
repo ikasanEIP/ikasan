@@ -43,6 +43,8 @@ package org.ikasan.framework.component.routing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
 import org.ikasan.framework.component.Event;
 
 /**
@@ -59,7 +61,7 @@ public abstract class SingleResultRouter implements Router
      * @return List of paths
      * @throws RouterException Exception if we could bnot route the event
      */
-    public List<String> onEvent(Event event) throws RouterException
+    public List<String> route(Event event) throws RouterException
     {
         List<String> result = new ArrayList<String>();
         result.add(evaluate(event));

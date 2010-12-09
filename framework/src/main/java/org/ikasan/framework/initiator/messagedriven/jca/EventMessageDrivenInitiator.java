@@ -44,11 +44,11 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
 
 /**
  * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to recreate and fire an <code>Event</code>s based

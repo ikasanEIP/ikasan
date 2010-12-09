@@ -46,6 +46,8 @@ import static org.junit.Assert.assertNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ikasan.core.flow.FlowComponent;
+import org.ikasan.core.flow.FlowElement;
 import org.jmock.Mockery;
 import org.junit.Test;
 
@@ -82,7 +84,7 @@ public class FlowElementImplTest
     private String componentName = "componentName";
     
     /**
-     * Test method for {@link org.ikasan.framework.flow.FlowElementImpl#FlowElementImpl(java.lang.String, org.ikasan.framework.flow.FlowComponent, java.util.Map)}.
+     * Test method for {@link org.ikasan.framework.flow.FlowElementImpl#FlowElementImpl(java.lang.String, org.ikasan.core.flow.FlowComponent, java.util.Map)}.
      */
     @Test
     public void testConstructor_withTransitionMap_setsAllPropertiesCorrectly()
@@ -107,7 +109,7 @@ public class FlowElementImplTest
     }
 
     /**
-     * Test method for {@link org.ikasan.framework.flow.FlowElementImpl#FlowElementImpl(java.lang.String, org.ikasan.framework.flow.FlowComponent, org.ikasan.framework.flow.FlowElement)}.
+     * Test method for {@link org.ikasan.framework.flow.FlowElementImpl#FlowElementImpl(java.lang.String, org.ikasan.core.flow.FlowComponent, org.ikasan.core.flow.FlowElement)}.
      */
     @Test
     public void testConstructor_withSingleFlowElement_setsAllPropertiesCorrectly()
@@ -122,7 +124,7 @@ public class FlowElementImplTest
     }
     
     /**
-     * Test method for {@link org.ikasan.framework.flow.FlowElementImpl#FlowElementImpl(java.lang.String, org.ikasan.framework.flow.FlowComponent, org.ikasan.framework.flow.FlowElement)}.
+     * Test method for {@link org.ikasan.framework.flow.FlowElementImpl#FlowElementImpl(java.lang.String, org.ikasan.core.flow.FlowComponent, org.ikasan.core.flow.FlowElement)}.
      */
     @Test
     public void testConstructor_withNoTransitions_setsAllPropertiesCorrectly()

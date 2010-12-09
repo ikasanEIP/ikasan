@@ -48,11 +48,11 @@ import javax.jms.Topic;
 import junit.framework.Assert;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
 import org.jmock.Mockery;
 import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;

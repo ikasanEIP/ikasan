@@ -54,6 +54,7 @@ import junit.framework.Assert;
 import junit.framework.JUnit4TestAdapter;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.RouterException;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -150,7 +151,7 @@ public class XMLValidatorRouterTest
             }
         });
 
-        List<String> result = this.xmlValidatorRouter.onEvent(this.event);
+        List<String> result = this.xmlValidatorRouter.route(this.event);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.get(0).equals("valid"));
     }
@@ -191,7 +192,7 @@ public class XMLValidatorRouterTest
             }
         });
 
-        List<String> result = this.xmlValidatorRouter.onEvent(this.event);
+        List<String> result = this.xmlValidatorRouter.route(this.event);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.get(0).equals("invalid"));
     }

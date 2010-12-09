@@ -46,12 +46,12 @@ import javax.jms.TextMessage;
 
 import junit.framework.Assert;
 
+import org.ikasan.core.flow.Flow;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.messagedriven.EventMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.ListenerSetupFailureListener;

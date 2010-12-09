@@ -48,6 +48,7 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.endpoint.EndpointException;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.payload.service.PayloadPublisher;
 import org.jmock.Expectations;

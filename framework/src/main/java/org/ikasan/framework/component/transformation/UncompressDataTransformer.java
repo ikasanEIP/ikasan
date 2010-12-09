@@ -48,6 +48,8 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.transformation.TransformationException;
+import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
 
 /**

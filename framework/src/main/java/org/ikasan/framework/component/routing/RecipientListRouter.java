@@ -43,6 +43,7 @@ package org.ikasan.framework.component.routing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ikasan.core.component.routing.Router;
 import org.ikasan.framework.component.Event;
 
 /**
@@ -78,7 +79,7 @@ public class RecipientListRouter implements Router
      * 
      * @see org.ikasan.framework.component.routing.Router#onEvent(org.ikasan.framework.component.Event)
      */
-    public List<String> onEvent(Event event)
+    public List<String> route(Event event)
     {
         return new ArrayList<String>(recipients);
     }

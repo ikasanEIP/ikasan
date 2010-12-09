@@ -48,13 +48,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-connector-basefiletransfer</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     <name>Connector Base Filetransfer</name>
     <description>The base library to support the file transfer connectors in the Ikasan Enterprise Integration Platform</description>
 
@@ -89,14 +89,14 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- Used for the common connector functionality for the ikasan platform -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- J2EE -->

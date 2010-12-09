@@ -52,6 +52,7 @@ import junit.framework.Assert;
 import org.ikasan.common.FilePayloadAttributeNames;
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
+import org.ikasan.core.component.sequencing.SequencerException;
 import org.ikasan.framework.component.Event;
 import org.junit.Test;
 

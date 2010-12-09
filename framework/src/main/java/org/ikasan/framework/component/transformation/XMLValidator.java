@@ -51,6 +51,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.transformation.TransformationException;
+import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;

@@ -43,8 +43,8 @@ package org.ikasan.framework.configuration.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.framework.configuration.ConfiguredResource;
-import org.ikasan.framework.configuration.dao.ConfigurationDao;
+import org.ikasan.core.configuration.ConfiguredResource;
+import org.ikasan.core.configuration.dao.ConfigurationDao;
 import org.ikasan.framework.configuration.model.Configuration;
 import org.ikasan.framework.configuration.model.ConfigurationParameter;
 import org.jmock.Expectations;

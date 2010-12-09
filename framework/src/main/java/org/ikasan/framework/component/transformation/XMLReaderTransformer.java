@@ -53,6 +53,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.transformation.TransformationException;
+import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;

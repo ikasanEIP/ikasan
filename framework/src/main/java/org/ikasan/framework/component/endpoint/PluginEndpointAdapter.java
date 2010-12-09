@@ -41,6 +41,8 @@
 package org.ikasan.framework.component.endpoint;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.endpoint.Endpoint;
+import org.ikasan.core.component.endpoint.EndpointException;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.plugins.EventInvocable;
 import org.ikasan.framework.plugins.PayloadInvocable;

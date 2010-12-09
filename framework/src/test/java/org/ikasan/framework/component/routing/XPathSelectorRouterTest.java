@@ -51,6 +51,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
+import org.ikasan.core.component.routing.UnroutableEventException;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -148,7 +151,7 @@ public class XPathSelectorRouterTest
         
         // create the class to be tested
         Router xpathSelectorRouter = new XPathSelectorRouter(this.factory, this.xpathExpression);
-        List<String> result = xpathSelectorRouter.onEvent(event);
+        List<String> result = xpathSelectorRouter.route(event);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.get(0).equals("one"));
     }
@@ -195,7 +198,7 @@ public class XPathSelectorRouterTest
         
         // create the class to be tested
         Router xpathSelectorRouter = new XPathSelectorRouter(this.factory, this.xpathExpression, useDefault);
-        List<String> result = xpathSelectorRouter.onEvent(event);
+        List<String> result = xpathSelectorRouter.route(event);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.get(0).equals("one"));
     }
@@ -242,7 +245,7 @@ public class XPathSelectorRouterTest
         
         // create the class to be tested
         Router xpathSelectorRouter = new XPathSelectorRouter(this.factory, this.xpathExpression, useDefault);
-        List<String> result = xpathSelectorRouter.onEvent(event);
+        List<String> result = xpathSelectorRouter.route(event);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.get(0).equals("one"));
     }
@@ -287,7 +290,7 @@ public class XPathSelectorRouterTest
         
         // create the class to be tested
         Router xpathSelectorRouter = new XPathSelectorRouter(this.factory, this.xpathExpression, useDefault);
-        List<String> result = xpathSelectorRouter.onEvent(event);
+        List<String> result = xpathSelectorRouter.route(event);
         Assert.assertTrue(result.size() == 1);
         Assert.assertTrue(result.get(0).equals("default"));
     }
@@ -334,7 +337,7 @@ public class XPathSelectorRouterTest
         });
         
         Router xpathSelectorRouter = new XPathSelectorRouter(this.factory, this.xpathExpression);
-        xpathSelectorRouter.onEvent(event);
+        xpathSelectorRouter.route(event);
     }
 
     /**

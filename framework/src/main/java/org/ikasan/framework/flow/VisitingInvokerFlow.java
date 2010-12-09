@@ -44,12 +44,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.core.configuration.ConfiguredResource;
+import org.ikasan.core.flow.Flow;
+import org.ikasan.core.flow.FlowComponent;
+import org.ikasan.core.flow.FlowElement;
+import org.ikasan.core.flow.invoker.FlowElementInvoker;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.configuration.ConfiguredResource;
 import org.ikasan.framework.configuration.service.ConfigurationException;
 import org.ikasan.framework.configuration.service.ConfigurationService;
-import org.ikasan.framework.flow.invoker.FlowElementInvoker;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 
 /**
  * Default implementation of a Flow

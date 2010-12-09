@@ -46,14 +46,13 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.CommonEnvironment;
 
 /**
  * This class captures all environment variables set in Java system property option.
  * 
  * @author Ikasan Development Team
  */
-public class Env implements CommonEnvironment
+public class Env
 {
     /** Serial ID */
     private static final long serialVersionUID = 1L;

@@ -45,9 +45,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.flow.Flow;
 
 /**
  * Experimental implementation of <code>Initiator</code> that is invoked directly with content

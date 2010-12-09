@@ -43,13 +43,15 @@ package org.ikasan.framework.flow.invoker;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.core.component.endpoint.Endpoint;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.sequencing.Sequencer;
+import org.ikasan.core.component.transformation.Transformer;
+import org.ikasan.core.flow.FlowComponent;
+import org.ikasan.core.flow.FlowElement;
+import org.ikasan.core.flow.invoker.FlowElementInvoker;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.endpoint.Endpoint;
-import org.ikasan.framework.component.routing.Router;
-import org.ikasan.framework.component.sequencing.Sequencer;
-import org.ikasan.framework.component.transformation.Transformer;
-import org.ikasan.framework.flow.FlowComponent;
-import org.ikasan.framework.flow.FlowElement;
 import org.ikasan.framework.flow.InvalidFlowException;
 import org.ikasan.framework.flow.event.listener.FlowEventListener;
 
@@ -254,7 +256,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         Router router = (Router) flowElement.getFlowComponent();
 
 
-        List<String> targetNames = router.onEvent(event);
+        List<String> targetNames = router.route(event);
         notifyListenersAfterElement(event, moduleName, flowName, flowElement);
         for (String targetName : targetNames)
         {
@@ -285,7 +287,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             FlowElement flowElement)
     {
         Endpoint endpoint = (Endpoint) flowElement.getFlowComponent();
-        endpoint.onEvent(event);
+        endpoint.route(event);
         notifyListenersAfterElement(event, moduleName, flowName, flowElement);
 
     }

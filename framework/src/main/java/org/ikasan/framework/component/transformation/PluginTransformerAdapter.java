@@ -41,6 +41,8 @@
 package org.ikasan.framework.component.transformation;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.transformation.TransformationException;
+import org.ikasan.core.component.transformation.Transformer;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.plugins.EventInvocable;
 import org.ikasan.framework.plugins.PayloadInvocable;

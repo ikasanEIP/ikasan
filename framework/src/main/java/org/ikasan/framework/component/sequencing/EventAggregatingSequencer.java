@@ -45,6 +45,8 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
+import org.ikasan.core.component.sequencing.Sequencer;
+import org.ikasan.core.component.sequencing.SequencerException;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.service.EventAggregator;
 

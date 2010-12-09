@@ -43,11 +43,11 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     </parent>
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoTransformationRouting-components</artifactId>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>demoTransformationRouting :: components : jar</name>
 
@@ -55,12 +55,12 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

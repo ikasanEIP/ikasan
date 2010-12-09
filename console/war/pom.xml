@@ -3,13 +3,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>console</artifactId>
     <packaging>war</packaging>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     <name>Ikasan Console</name>
     <description>The web console for end users of the Ikasan Enterprise Integration Platform</description>
 
@@ -27,17 +27,17 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>console-jar</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

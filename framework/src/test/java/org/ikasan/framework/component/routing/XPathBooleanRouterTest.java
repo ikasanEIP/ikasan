@@ -55,6 +55,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.JUnit4TestAdapter;
 
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
+import org.ikasan.core.component.routing.UnroutableEventException;
 import org.ikasan.framework.component.Event;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -169,7 +172,7 @@ public class XPathBooleanRouterTest
             }
         });
         
-        List<String> results = this.xpathBooleanRouter.onEvent(event);
+        List<String> results = this.xpathBooleanRouter.route(event);
         Assert.assertTrue(results.size() == 2);
         Assert.assertEquals("Should return [" + this.firstMatch + "]", this.firstMatch, results.get(0));
         Assert.assertEquals("Should return [" + this.secondMatch + "]", this.secondMatch, results.get(1));
@@ -216,7 +219,7 @@ public class XPathBooleanRouterTest
             }
         });
         
-        List<String> results = this.xpathBooleanRouter.onEvent(event);
+        List<String> results = this.xpathBooleanRouter.route(event);
         Assert.assertTrue(results.size() == 2);
         Assert.assertEquals("Should return [" + this.firstMatch + "]", this.firstMatch, results.get(0));
         Assert.assertEquals("Should return [" + this.secondMatch + "]", this.secondMatch, results.get(1));
@@ -263,7 +266,7 @@ public class XPathBooleanRouterTest
             }
         });
         
-        List<String> results = this.xpathBooleanRouter.onEvent(event);
+        List<String> results = this.xpathBooleanRouter.route(event);
         Assert.assertTrue(results.size() == 2);
         Assert.assertEquals("Should return [" + this.firstMatch + "]", this.firstMatch, results.get(0));
         Assert.assertEquals("Should return [" + this.secondMatch + "]", this.secondMatch, results.get(1));
@@ -311,7 +314,7 @@ public class XPathBooleanRouterTest
             }
         });
         
-        List<String> results = this.xpathBooleanRouter.onEvent(event);
+        List<String> results = this.xpathBooleanRouter.route(event);
         Assert.assertTrue(results.size() == 1);
         Assert.assertEquals("Should return [" + Router.DEFAULT_RESULT + "]", Router.DEFAULT_RESULT, results.get(0));
     }
@@ -359,7 +362,7 @@ public class XPathBooleanRouterTest
             }
         });
         
-        this.xpathBooleanRouter.onEvent(event);
+        this.xpathBooleanRouter.route(event);
     }
 
     /**

@@ -43,8 +43,8 @@ package org.ikasan.framework.initiator.messagedriven.jca.jboss;
 import javax.jms.Session;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.jboss.JBossJmsActivationSpecConfig;
 import org.ikasan.framework.initiator.messagedriven.jca.jboss.JBossResourceAdapterUtils;

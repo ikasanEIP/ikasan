@@ -40,6 +40,7 @@
  */
 package org.ikasan.framework.component.routing;
 
+import org.ikasan.core.component.routing.RouterException;
 import org.ikasan.framework.component.Event;
 
 public abstract class AbstractFilteringRouter extends SingleResultRouter{

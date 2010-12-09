@@ -44,11 +44,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
-import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorOperationException;
 import org.ikasan.framework.monitor.MonitorSubject;

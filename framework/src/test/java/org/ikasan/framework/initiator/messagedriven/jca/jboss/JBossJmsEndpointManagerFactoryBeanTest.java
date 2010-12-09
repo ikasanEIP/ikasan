@@ -44,8 +44,8 @@ import javax.jms.Session;
 import javax.resource.spi.ResourceAdapter;
 
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
-import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.RawMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JmsMessageEndpointManager;

@@ -49,10 +49,10 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-connector-filetransfer-parent</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
     </parent>
     <artifactId>ikasan-connector-ftp-parent</artifactId>
-    <version>0.8.0-SNAPSHOT</version>  
+    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>  
     <packaging>pom</packaging>
     <name>Connector FTP Resource Adapter Parent</name>
 

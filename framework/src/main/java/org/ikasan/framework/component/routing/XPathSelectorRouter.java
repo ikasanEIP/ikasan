@@ -55,6 +55,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
+import org.ikasan.core.component.routing.Router;
+import org.ikasan.core.component.routing.RouterException;
+import org.ikasan.core.component.routing.UnroutableEventException;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.transformation.ExceptionThrowingErrorHandler;
 import org.w3c.dom.Document;

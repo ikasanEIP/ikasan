@@ -47,6 +47,8 @@ import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.hamcrest.Description;
+import org.ikasan.core.flow.Flow;
+import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.configuration.service.ConfigurationException;
@@ -56,8 +58,6 @@ import org.ikasan.framework.exception.ExcludeEventAction;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.RetryAction;
 import org.ikasan.framework.exception.StopAction;
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.invoker.FlowInvocationContext;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
