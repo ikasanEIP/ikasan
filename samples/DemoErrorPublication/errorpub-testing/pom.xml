@@ -44,7 +44,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ikasan</groupId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-RC5</version>
     <artifactId>ikasan-errorpub-testing</artifactId>    
 	<packaging>jar</packaging>
 
@@ -54,7 +54,7 @@
   		<dependency>
   			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-errorpub</artifactId>
-			<version>0.8.0-SNAPSHOT</version>
+			<version>0.8.0-RC5</version>
     	</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
