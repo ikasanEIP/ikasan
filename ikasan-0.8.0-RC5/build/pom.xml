@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+#
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# //
+# // Distributed under the Modified BSD License.
+# // Copyright notice: The copyright for this software and a full listing
+# // of individual contributors are as shown in the packaged copyright.txt
+# // file.
+# //
+# // All rights reserved.
+# //
+# // Redistribution and use in source and binary forms, with or without
+# // modification, are permitted provided that the following conditions are met:
+# //
+# //  - Redistributions of source code must retain the above copyright notice,
+# //    this list of conditions and the following disclaimer.
+# //
+# //  - Redistributions in binary form must reproduce the above copyright notice,
+# //    this list of conditions and the following disclaimer in the documentation
+# //    and/or other materials provided with the distribution.
+# //
+# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
+# //    be used to endorse or promote products derived from this software without
+# //    specific prior written permission.
+# //
+# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# //
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>5</version>
+    </parent>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-build</artifactId>
+    <version>0.8.0-RC5</version>
+    <packaging>pom</packaging>
+    <organization>
+      <name>Ikasan</name>
+      <url>http://www.ikasan.org</url>
+    </organization>
+    <inceptionYear>2007</inceptionYear>
+    <name>Ikasan Build Project</name>
+    <!-- List the core committers -->
+    <developers>
+      <developer>
+        <id>karianna</id>
+        <name>Martijn Verburg</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>magicduncan</id>
+        <name>Ross Duncan</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>mitcje</id>
+        <name>Jeff Mitchell</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>hasasu</id>
+        <name>Summer Hasani</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>suetju</id>
+        <name>Junichi Suetake</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>koukhe</id>
+        <name>Herodotos Koukkides</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+    </developers>
+    <!-- Contributors -->
+    <contributors>
+        <contributor>
+            <name>Cae Fernandes</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-3</timezone>
+        </contributor>
+        <contributor>
+            <name>Chia-Hung Lin</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Giridhar Teklur</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-4</timezone>
+        </contributor>
+        <contributor>
+            <name>Ioannis Mavroukakis</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Jaikiran Pai</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Jaikiran Pai</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Janos Lele</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Kerry Kenneally</name>
+            <roles>
+                <role>graphic designer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Matthew Potter</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Prasad Saya</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Vijitha Kumara</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+    </contributors>
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>Modified BSD License</name>
+            <url>http://www.ikasan.org/license.html</url>
+            <distribution>manual</distribution>
+            <comments>A fairly non-restrictive OSS license</comments>
+        </license>
+    </licenses>
+    <!-- Our mailing lists -->
+    <mailingLists>
+        <mailingList>
+            <name>Ikasan Users</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
+            <post>ikasaneip-user@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>Ikasan Development</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
+            <post>ikasaneip-developer@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
+        </mailingList>
+        <mailingList>
+            <name>Ikasan Announce</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
+            <post>ikasaneip-announce@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
+        </mailingList>
+    </mailingLists>
+    <!-- Our Issue Management -->
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://open.jira.com/browse/IKASAN</url>
+    </issueManagement>
+    <!-- CI Server -->
+    <ciManagement>
+        <system>hudson</system>
+        <url>http://bane.chaosaltar.org/hudson/</url>
+    </ciManagement>
+    <!-- Repositories required for Ikasan modules -->
+    <repositories>
+        <!-- Ikasan snapshot repo -->
+        <repository>
+            <id>ikasaneip-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <!-- Ikasan release repo -->
+        <repository>
+            <id>ikasaneip-releases</id>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- TODO Check this We also rely on JBoss Maven repo for released artifacts -->
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+    <!-- Plugin repositories -->
+    <pluginRepositories>
+        <!-- Ikasan snapshot repo for plugins -->
+        <pluginRepository>
+            <id>ikasaneip-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <!-- Ikasan release repo for plugins -->
+        <pluginRepository>
+            <id>ikasaneip-releases</id>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <!-- We also rely on JBoss Maven repo for jdocbook -->
+        <pluginRepository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <!-- SCM details -->
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip</url>
+    </scm>
+    <!-- Distribution for releases -->
+    <distributionManagement>
+        <repository>
+            <id>ikasaneip-releases</id>
+            <name>Ikasan EIP Releases Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ikasaneip-snapshots</id>
+            <name>Ikasan EIP Snapshot Repository</name>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ear-plugin</artifactId>
+                    <version>2.4.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jboss.maven.plugins</groupId>
+                    <artifactId>maven-jdocbook-plugin</artifactId>
+                    <version>2.3.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-rar-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.4.3</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>2.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>1.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>cobertura-maven-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <reporting>
+        <plugins>
+            <!-- TODO Enable change log reporting once we figure out the SCM referencing issue -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-linkcheck-plugin</artifactId>
+                <version>1.0.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>2.0-beta-2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <targetJdk>1.5</targetJdk>
+                </configuration>
+             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <!-- Profile for Releasing to Nexus -->
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <useAgent>true</useAgent>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- TODO: Update to 4.8.2 when we move to Spring 3, Used for Unit testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- TODO: Update to 2.5.1, Used for creating test objects -->
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <version>2.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- CGLib, used for testing assitance to jmock -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Objenesis, used for testing assitance to jmock -->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mokito, used for mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+
+</project>
+

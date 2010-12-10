@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-build</artifactId>
+        <version>0.8.0-RC5</version>
+    </parent>
+
+    <groupId>org.ikasan</groupId>
+    <artifactId>console</artifactId>
+    <packaging>war</packaging>
+    <version>0.8.0-RC5</version>
+    <name>Ikasan Console</name>
+    <description>The web console for end users of the Ikasan Enterprise Integration Platform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>2.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-common</artifactId>
+            <version>0.8.0-RC5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-framework</artifactId>
+            <version>0.8.0-RC5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>console-jar</artifactId>
+            <version>0.8.0-RC5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.5.4-Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>2.0.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core-tiger</artifactId>
+            <version>2.0.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>2.0.5.RELEASE</version>
+        </dependency>
+        <!-- The latest and greatest version of LDAP libs -->
+        <!--
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core</artifactId>
+            <version>1.3.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core-tiger</artifactId>
+            <version>1.3.0.RELEASE</version>
+        </dependency>
+        -->
+        <!-- We'll try the 1.2.1.RELEASE as that is what was released alongside spring-security-2.0.5.RELEASE -->
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-tiger</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--
+            This jar is added because jboss startup throwing exception
+            Failed to load class "org.slf4j.impl.StaticLoggerBinder"
+            TODO: UPDATE to 1.5.11 When Jboss can handle it?
+         -->
+        <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-log4j12</artifactId>
+           <version>1.5.8</version>
+        </dependency>
+    </dependencies>
+
+</project>
