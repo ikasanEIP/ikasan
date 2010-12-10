@@ -202,12 +202,6 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
 
         if(!overwriteExisting)
         {
-            if(fileExists(tempFileName))
-            {
-                throw new ResourceException("Cannot deliver tempfile [" 
-                    + tempFileName + "] as a file of that name already exists");
-            }
-
             if(fileExists(fileName))
             {
                 throw new ResourceException("Cannot deliver file [" 
@@ -233,12 +227,6 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
 
         if(!overwriteExisting)
         {
-            if(fileExists(tempFileName))
-            {
-                throw new ResourceException("Cannot deliver tempfile [" 
-                    + tempFileName + "] as a file of that name already exists");
-            }
-
             if(fileExists(fileName))
             {
                 throw new ResourceException("Cannot deliver file [" 
