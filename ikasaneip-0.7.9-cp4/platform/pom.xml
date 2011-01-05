@@ -37,7 +37,7 @@
   <packaging>war</packaging>
   <version>0.7.9</version>
   <name>ikasan :: platform</name>
-  
+
   <organization>
     <name>Ikasan</name>
     <url>http://www.ikasan.org</url>
@@ -107,7 +107,7 @@
       <timezone>0</timezone>
     </developer>
   </developers>
-  
+
     <licenses>
         <license>
             <name>The Lesser GNU Public License, Version 3.0</name>
@@ -131,7 +131,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      
+
     </plugins>
   </build>
 
@@ -177,7 +177,7 @@
     </dependency>
 
     <dependency>
-      <groupId>quartz</groupId>
+      <groupId>opensymphony</groupId>
       <artifactId>quartz</artifactId>
       <version>1.6.0</version>
     </dependency>
