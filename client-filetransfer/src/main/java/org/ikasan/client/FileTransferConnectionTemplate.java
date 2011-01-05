@@ -107,16 +107,19 @@ public class FileTransferConnectionTemplate extends ConnectionTemplate
      * @param renameExtension - The extension for the temp file rename
      * @param checksumDelivered - Flag for whether we perform checksumming
      * @param unzip - Flag for whether we unzip the delivered file
+     * @param createParentDirectory -  
+     * @param tempFileName -
      * @throws ResourceException - Exception if JCA connector fails
      */
     public void deliverInputStream(final InputStream inputStream, final String fileName, final String outputDir, final boolean overwrite,
-            final String renameExtension, final boolean checksumDelivered, final boolean unzip, final boolean createParentDirectory) throws ResourceException
+            final String renameExtension, final boolean checksumDelivered, final boolean unzip, final boolean createParentDirectory,
+            final String tempFileName) throws ResourceException
     {
         execute(new ConnectionCallback()
         {
             public Object doInConnection(Connection connection) throws ResourceException
             {
-                ((BaseFileTransferConnection) connection).deliverInputStream(inputStream, fileName, outputDir,  overwrite, renameExtension, checksumDelivered,unzip, createParentDirectory);
+                ((BaseFileTransferConnection) connection).deliverInputStream(inputStream, fileName, outputDir,  overwrite, renameExtension, checksumDelivered,unzip, createParentDirectory, tempFileName);
                 return null;
             }
         });

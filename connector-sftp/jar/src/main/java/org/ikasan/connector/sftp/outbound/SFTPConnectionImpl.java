@@ -331,7 +331,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
                 executionContext.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, fileChunkHeader.getFileName());
 
                 // do not support createParentDirectory for PayloadDelivery as this should be deprecated
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false);
+                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false, null);
             }
             else
             // unzip
@@ -382,7 +382,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl implement
 
                 executionContext.put(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD, mappedRecord);
                 // do not support createParentDirectory for PayloadDelivery as this should be deprecated
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false);
+                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false, null);
 
             }
             else

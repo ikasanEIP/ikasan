@@ -83,6 +83,8 @@ public class SftpProducerConfiguration
     /** SFTP default rename extension */
     protected String renameExtension = String.valueOf(".tmp");
 
+    protected String tempFileName;
+
     /** SFTP overwrite */
     protected Boolean overwrite = Boolean.FALSE;
 
@@ -97,7 +99,7 @@ public class SftpProducerConfiguration
 
     public String getPassword()
     {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password)
@@ -107,7 +109,7 @@ public class SftpProducerConfiguration
 
     public String getClientID()
     {
-        return clientID;
+        return this.clientID;
     }
 
     public void setClientID(String clientID)
@@ -117,7 +119,7 @@ public class SftpProducerConfiguration
 
     public Boolean getCleanupJournalOnComplete()
     {
-        return cleanupJournalOnComplete;
+        return this.cleanupJournalOnComplete;
     }
 
     public void setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete)
@@ -127,7 +129,7 @@ public class SftpProducerConfiguration
 
     public String getRemoteHost()
     {
-        return remoteHost;
+        return this.remoteHost;
     }
 
     public void setRemoteHost(String remoteHost)
@@ -137,7 +139,7 @@ public class SftpProducerConfiguration
 
     public String getPrivateKeyFilename()
     {
-        return privateKeyFilename;
+        return this.privateKeyFilename;
     }
 
     public void setPrivateKeyFilename(String privateKeyFilename)
@@ -147,7 +149,7 @@ public class SftpProducerConfiguration
 
     public Integer getMaxRetryAttempts()
     {
-        return maxRetryAttempts;
+        return this.maxRetryAttempts;
     }
 
     public void setMaxRetryAttempts(Integer maxRetryAttempts)
@@ -157,7 +159,7 @@ public class SftpProducerConfiguration
 
     public Integer getRemotePort()
     {
-        return remotePort;
+        return this.remotePort;
     }
 
     public void setRemotePort(Integer remotePort)
@@ -167,7 +169,7 @@ public class SftpProducerConfiguration
 
     public String getKnownHostsFilename()
     {
-        return knownHostsFilename;
+        return this.knownHostsFilename;
     }
 
     public void setKnownHostsFilename(String knownHostsFilename)
@@ -177,7 +179,7 @@ public class SftpProducerConfiguration
 
     public String getUsername()
     {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username)
@@ -187,7 +189,7 @@ public class SftpProducerConfiguration
 
     public Integer getConnectionTimeout()
     {
-        return connectionTimeout;
+        return this.connectionTimeout;
     }
 
     public void setConnectionTimeout(Integer connectionTimeout)
@@ -197,7 +199,7 @@ public class SftpProducerConfiguration
 
     public String getOutputDirectory()
     {
-        return outputDirectory;
+        return this.outputDirectory;
     }
 
     public void setOutputDirectory(String outputDirectory)
@@ -207,7 +209,7 @@ public class SftpProducerConfiguration
 
     public String getRenameExtension()
     {
-        return renameExtension;
+        return this.renameExtension;
     }
 
     public void setRenameExtension(String renameExtension)
@@ -215,9 +217,25 @@ public class SftpProducerConfiguration
         this.renameExtension = renameExtension;
     }
 
+    /**
+     * @return the tempFileName
+     */
+    public String getTempFileName()
+    {
+        return this.tempFileName;
+    }
+
+    /**
+     * @param tempFileName the tempFileName to set
+     */
+    public void setTempFileName(String tempFileName)
+    {
+        this.tempFileName = tempFileName;
+    }
+
     public Boolean getOverwrite()
     {
-        return overwrite;
+        return this.overwrite;
     }
 
     public void setOverwrite(Boolean overwrite)
@@ -227,7 +245,7 @@ public class SftpProducerConfiguration
 
     public Boolean getUnzip()
     {
-        return unzip;
+        return this.unzip;
     }
 
     public void setUnzip(Boolean unzip)
@@ -237,7 +255,7 @@ public class SftpProducerConfiguration
 
     public Boolean getChecksumDelivered()
     {
-        return checksumDelivered;
+        return this.checksumDelivered;
     }
 
     public void setChecksumDelivered(Boolean checksumDelivered)
@@ -247,7 +265,7 @@ public class SftpProducerConfiguration
 
     public Boolean getCreateParentDirectory()
     {
-        return createParentDirectory;
+        return this.createParentDirectory;
     }
 
     public void setCreateParentDirectory(Boolean createParentDirectory)

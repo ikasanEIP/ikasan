@@ -114,7 +114,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      * @param overwriteExisting
      */
     public DeliverFileCommand(String outputDirectory, String renameExtension, 
-            boolean overwriteExisting, boolean createParentDirectory)
+            boolean overwriteExisting, boolean createParentDirectory, String tempFileName)
     {
         super();
 
@@ -122,6 +122,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         this.outputDirectory = outputDirectory;
         this.overwriteExisting = overwriteExisting;
         this.createParentDirectory = createParentDirectory;
+        this.tempFileName = tempFileName;
     }
 
     @Override
@@ -131,11 +132,11 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         logger.info("execute called on this command: [" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         String originalDirectory = printWorkingDirectoryName();
-        if(!outputDirectory.equals(".") && !outputDirectory.equals(originalDirectory))
+        if(!this.outputDirectory.equals(".") && !this.outputDirectory.equals(originalDirectory))
         {
             try
             {
-                changeDirectory(outputDirectory);
+                changeDirectory(this.outputDirectory);
                 changeDirectory = true;
             }
             catch(ResourceException e)
@@ -145,8 +146,8 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
                     logger.warn("Failed to change directory, creating missing parent directories...");
                     try
                     {
-                        getClient().mkdir(outputDirectory);
-                        changeDirectory(outputDirectory);
+                        getClient().mkdir(this.outputDirectory);
+                        changeDirectory(this.outputDirectory);
                         changeDirectory = true;
                     }
                     catch (ClientCommandMkdirException e1)
@@ -161,7 +162,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             }
         }
         
-        BaseFileTransferMappedRecord mappedRecord = (BaseFileTransferMappedRecord) executionContext
+        BaseFileTransferMappedRecord mappedRecord = (BaseFileTransferMappedRecord) this.executionContext
             .get(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD);
 
         if (mappedRecord != null)
@@ -170,8 +171,8 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         }
         else
         {
-            InputStream inputStream = (InputStream) executionContext.getRequired(ExecutionContext.FILE_INPUT_STREAM);
-            String filePath = (String) executionContext.getRequired(ExecutionContext.RELATIVE_FILE_PATH_PARAM);
+            InputStream inputStream = (InputStream) this.executionContext.getRequired(ExecutionContext.FILE_INPUT_STREAM);
+            String filePath = (String) this.executionContext.getRequired(ExecutionContext.RELATIVE_FILE_PATH_PARAM);
 
             deliverInputStream(filePath, inputStream);
         }
@@ -181,7 +182,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             changeDirectory(originalDirectory);
         }
 
-        String destinationPath = outputDirectory + FILE_SEPARATOR + tempFileName;
+        String destinationPath = this.outputDirectory + this.FILE_SEPARATOR + this.tempFileName;
         
         logger.info("delivered file as hidden: [" + destinationPath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return new ExecutionOutput(destinationPath);
@@ -196,20 +197,23 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     private void deliverInputStream(String filePath, InputStream inputStream) throws ResourceException
     {
-        fileName = filePath;
-        tempFileName = filePath+renameExtension;
-        String tempFilePath = tempFileName;
-
-        if(!overwriteExisting)
+        this.fileName = filePath;
+        if (this.tempFileName == null || this.tempFileName.trim().length() == 0)
         {
-            if(fileExists(fileName))
+            this.tempFileName = filePath + this.renameExtension;
+        }
+        String tempFilePath = this.tempFileName;
+
+        if(!this.overwriteExisting)
+        {
+            if(fileExists(this.fileName))
             {
                 throw new ResourceException("Cannot deliver file [" 
-                    + fileName + "] as a file of that name already exists");
+                    + this.fileName + "] as a file of that name already exists");
             }
         }
         
-        putAttempted = true;
+        this.putAttempted = true;
         putWithOutputStream(tempFilePath, inputStream);
     }
 
@@ -221,20 +225,23 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     private void deliverMappedRecord(BaseFileTransferMappedRecord mappedRecord) throws ResourceException
     {
-        fileName = mappedRecord.getName();
-        tempFileName = fileName + renameExtension;
-        mappedRecord.setName(tempFileName);
-
-        if(!overwriteExisting)
+        this.fileName = mappedRecord.getName();
+        if (this.tempFileName == null || this.tempFileName.trim().length() == 0)
         {
-            if(fileExists(fileName))
+            this.tempFileName = this.fileName + this.renameExtension;
+        }
+        mappedRecord.setName(this.tempFileName);
+
+        if(!this.overwriteExisting)
+        {
+            if(fileExists(this.fileName))
             {
                 throw new ResourceException("Cannot deliver file [" 
-                    + fileName + "] as a file of that name already exists");
+                    + this.fileName + "] as a file of that name already exists");
             }
         }
         
-        putAttempted = true;
+        this.putAttempted = true;
         putFile(mappedRecord);
     }
 
@@ -275,9 +282,9 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
         FileTransferClient client = getClient();
         client.ensureConnection();
         String originalDirectory = printWorkingDirectoryName();
-        if(!outputDirectory.equals(".") && !outputDirectory.equals(originalDirectory))
+        if(!this.outputDirectory.equals(".") && !this.outputDirectory.equals(originalDirectory))
         {
-            changeDirectory(outputDirectory);
+            changeDirectory(this.outputDirectory);
             changeDirectory = true;
         }
 
@@ -304,7 +311,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
             logger.warn(e);
         }
 
-        renameFile(tempFileName, fileName);
+        renameFile(this.tempFileName, this.fileName);
 
         if(changeDirectory)
         {
@@ -322,17 +329,17 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
 
         //only need to even try and do anything if an put was actually attempted
         
-        logger.info("put attempted: [" +putAttempted + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (putAttempted){
+        logger.info("put attempted: [" +this.putAttempted + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (this.putAttempted){
             String originalDirectory = printWorkingDirectoryName();
-            changeDirectory(outputDirectory);
+            changeDirectory(this.outputDirectory);
 
-            ClientListEntry deliveredEntry = findFile(tempFileName);
+            ClientListEntry deliveredEntry = findFile(this.tempFileName);
             if (deliveredEntry!=null){
-                deleteFile(tempFileName);
+                deleteFile(this.tempFileName);
     
                 // Log the output directory and change back to the working dir
-                logFileList(listDirectory(CURRENT_DIRECTORY), outputDirectory);
+                logFileList(listDirectory(CURRENT_DIRECTORY), this.outputDirectory);
     
                 changeDirectory(originalDirectory);
             }
@@ -363,7 +370,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     public String getFileName()
     {
-        return fileName;
+        return this.fileName;
     }
 
     /**
@@ -384,7 +391,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     public String getTempFileName()
     {
-        return tempFileName;
+        return this.tempFileName;
     }
 
     /**
@@ -404,7 +411,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     public boolean isPutAttempted()
     {
-        return putAttempted;
+        return this.putAttempted;
     }
 
     /**
@@ -424,7 +431,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     public String getOutputDirectory()
     {
-        return outputDirectory;
+        return this.outputDirectory;
     }
 
     /**
@@ -443,7 +450,7 @@ public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalRes
      */
     public boolean isOverwriteExisting()
     {
-        return overwriteExisting;
+        return this.overwriteExisting;
     }
 
     /**
