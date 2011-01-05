@@ -42,6 +42,7 @@ package org.ikasan.connector.ftp.outbound;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -278,8 +279,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
      * @deprecated
      */
     public void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets, boolean overwrite, String renameExtension,
-            boolean checksumDelivered, boolean unzip, boolean cleanup) 
-        throws ResourceException
+            boolean checksumDelivered, boolean unzip, boolean cleanup)throws ResourceException
     {
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.PAYLOAD, payload);
@@ -327,7 +327,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
                 executionContext.put(ExecutionContext.FILE_INPUT_STREAM, chunkInputStream);
                 executionContext.put(ExecutionContext.RELATIVE_FILE_PATH_PARAM, fileChunkHeader.getFileName());
                 // do not support createParentDirectory for PayloadDelivery as this should be deprecated
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false);
+                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false, null);
             }
             else
             // unzip
@@ -367,7 +367,7 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl implements
             {
                 executionContext.put(ExecutionContext.BASE_FILE_TRANSFER_MAPPED_RECORD, mappedRecord);
                 // do not support createParentDirectory for PayloadDelivery as this should be deprecated
-                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false);
+                deliveryCommand = new DeliverFileCommand(outputTarget, renameExtension, overwrite, false, null);
             }
             else
             {
