@@ -97,7 +97,7 @@ public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
             this.fileTransferConnectionTemplate.deliverInputStream(filenameContent.getValue(), filenameContent.getKey(), 
                     sftpProducerConfiguration.getOutputDirectory(), sftpProducerConfiguration.getOverwrite(), 
                     sftpProducerConfiguration.getRenameExtension(), sftpProducerConfiguration.getChecksumDelivered(), 
-                    sftpProducerConfiguration.getUnzip(), sftpProducerConfiguration.getCreateParentDirectory());
+                    sftpProducerConfiguration.getUnzip(), sftpProducerConfiguration.getCreateParentDirectory(), sftpProducerConfiguration.getTempFileName());
         }        
     }
 }

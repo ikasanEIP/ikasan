@@ -153,7 +153,7 @@ public class FileTransferAlternateConnectionPayloadPublisherTest
 
 				one(fileTransferConnection).deliverInputStream(
 						byteContentInputStream, payloadName, parentPath, false,
-						renameExtension, false, false, false);
+						renameExtension, false, false, false, null);
 
 			}
 		});
@@ -222,7 +222,7 @@ public class FileTransferAlternateConnectionPayloadPublisherTest
 
                 exactly(1).of(fileTransferConnection).deliverInputStream(
                         byteContentInputStream, payloadName, parentPath, false,
-                        renameExtension, false, false, false);
+                        renameExtension, false, false, false, null);
                 will(throwException(resourceException));
             }
         });

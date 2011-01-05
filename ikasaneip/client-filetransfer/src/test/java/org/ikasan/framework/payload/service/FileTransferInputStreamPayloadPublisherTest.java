@@ -138,7 +138,7 @@ public class FileTransferInputStreamPayloadPublisherTest {
 
 				one(fileTransferConnection).deliverInputStream(
 						byteContentInputStream, payloadName, parentPath, false,
-						renameExtension, false, false, false);
+						renameExtension, false, false, false, null);
 
 			}
 		});
