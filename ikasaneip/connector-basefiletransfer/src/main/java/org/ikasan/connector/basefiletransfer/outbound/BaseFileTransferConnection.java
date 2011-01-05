@@ -109,7 +109,7 @@ public interface BaseFileTransferConnection extends EISConnection
      * @throws ResourceException -
      */
     public void deliverInputStream(InputStream inputStream, String fileName, String outputDir, boolean overwrite, String renameExtension,
-            boolean checksumDelivered, boolean unzip, boolean createParentDirectory) throws ResourceException;
+            boolean checksumDelivered, boolean unzip, boolean createParentDirectory, final String tempFileName) throws ResourceException;
 
     /**
      * Discovers any new file on a remote system using a File Transfer

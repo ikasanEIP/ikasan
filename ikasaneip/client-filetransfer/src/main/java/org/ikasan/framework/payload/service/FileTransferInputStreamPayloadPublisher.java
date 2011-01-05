@@ -71,6 +71,8 @@ public class FileTransferInputStreamPayloadPublisher implements PayloadPublisher
     /** The file extension to rename to */
     protected String renameExtension;
 
+    protected String tempFileName;
+
     /** Overwrite existing file flag */
     protected boolean overwrite = false;
 
@@ -114,7 +116,7 @@ public class FileTransferInputStreamPayloadPublisher implements PayloadPublisher
         {
             InputStream inputStream = payloadInputStreamProvider.acquireInputStream(payload);
             fileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), outputDir, overwrite,
-                renameExtension, checksumDelivered, unzip, createParentDirectory);
+                renameExtension, checksumDelivered, unzip, createParentDirectory, tempFileName);
         }
         catch (IOException e)
         {

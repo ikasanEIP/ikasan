@@ -120,15 +120,16 @@ public class MapBasedSftpProducerTest
                 exactly(1).of(sftpConfiguration).getOverwrite();
                 will(returnValue(Boolean.FALSE));
                 exactly(1).of(sftpConfiguration).getRenameExtension();
-                will(returnValue(".tmp"));
+                will(returnValue(""));
                 exactly(1).of(sftpConfiguration).getChecksumDelivered();
                 will(returnValue(Boolean.FALSE));
                 exactly(1).of(sftpConfiguration).getUnzip();
                 will(returnValue(Boolean.FALSE));
                 exactly(1).of(sftpConfiguration).getCreateParentDirectory();
                 will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
                 
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
+                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory", Boolean.FALSE, "", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, "file.tmp");
             }
         });
 
@@ -166,10 +167,11 @@ public class MapBasedSftpProducerTest
                 will(returnValue(Boolean.FALSE));
                 exactly(3).of(sftpConfiguration).getCreateParentDirectory();
                 will(returnValue(Boolean.FALSE));
+                exactly(3).of(sftpConfiguration).getTempFileName();will(returnValue(null));
                 
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename1", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename2", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename3", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
+                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename1", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
+                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename2", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
+                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename3", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
             }
         });
 

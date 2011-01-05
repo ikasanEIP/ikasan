@@ -109,7 +109,7 @@ public class FileTransferAlternateConnectionPayloadPublisher extends FileTransfe
             try
             {
                 activeFileTransferConnectionTemplate.deliverInputStream(inputStream, payload.getAttribute(FilePayloadAttributeNames.FILE_NAME), outputDir,
-                    overwrite, renameExtension, checksumDelivered, unzip, createParentDirectory);
+                    overwrite, renameExtension, checksumDelivered, unzip, createParentDirectory, tempFileName);
             }
             catch (ResourceException e)
             {
