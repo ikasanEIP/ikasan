@@ -182,9 +182,7 @@
             <scope>test</scope>
         </dependency>
         <!--
-            This jar is added because jboss startup throwing exception
-            Failed to load class "org.slf4j.impl.StaticLoggerBinder"
-            TODO: UPDATE to 1.5.11 When Jboss can handle it?
+            TODO Update to 1.5.11
         -->
         <dependency>
             <groupId>org.slf4j</groupId>
