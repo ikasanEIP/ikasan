@@ -253,7 +253,7 @@
 						<!-- additional jars required by the module -->
 
 						<jarModule>
-							<groupId>quartz</groupId>
+							<groupId>opensymphony</groupId>
 							<artifactId>quartz</artifactId>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
@@ -412,7 +412,7 @@
 
 		<!-- dependencies of the module -->
 		<dependency>
-			<groupId>quartz</groupId>
+			<groupId>opensymphony</groupId>
 			<artifactId>quartz</artifactId>
 			<version>1.6.0</version>
 			<scope>provided</scope>
