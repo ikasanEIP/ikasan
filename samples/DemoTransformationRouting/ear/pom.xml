@@ -61,7 +61,7 @@
 
           <jboss>
             <version>4.2</version>
-            <loader-repository>org.ikasan:archive=demoTransformationRouting-app-0.8.0-SNAPSHOT.ear</loader-repository>
+            <loader-repository>org.ikasan:archive=${project.artifactId}-${project.version}.ear</loader-repository>
             <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
           </jboss>
 
