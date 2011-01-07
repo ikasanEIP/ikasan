@@ -93,10 +93,7 @@
         <module>compatibility</module>
 
         <!-- samples -->
-        <module>samples/DemoFileDelivery</module>
-        <module>samples/DemoTransformationRouting</module>
-        <module>samples/DemoResubmission</module>
-        <module>samples/DemoErrorPublication</module>
+        <module>samples</module>
 
         <!-- documentation -->
         <module>documentation</module>
