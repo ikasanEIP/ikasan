@@ -45,7 +45,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan.demo</groupId>
     <artifactId>demoErrorPublication-errorManagerTarget-jar</artifactId>
-    <version>0.8.0-SNAPSHOT</version>    
+    <version>0.8.0</version>    
     <packaging>jar</packaging>
 
     <name>demoErrorPublication :: errorManagerTarget : jar</name>
