@@ -48,7 +48,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>ikasan-0.8.0</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent Project</name>
 
@@ -101,6 +101,26 @@
         <!-- documentation -->
         <module>documentation</module>
     </modules>
+
+    <!-- SCM details -->
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</url>
+    </scm>
+    <!-- Distribution for releases -->
+    <distributionManagement>
+        <repository>
+            <id>ikasaneip-releases</id>
+            <name>Ikasan EIP Releases Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ikasaneip-snapshots</id>
+            <name>Ikasan EIP Snapshot Repository</name>
+            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
