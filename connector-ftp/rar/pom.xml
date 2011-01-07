@@ -48,7 +48,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-connector-ftpRar</artifactId>
-    <version>0.8.0-SNAPSHOT</version>  
+    <version>0.8.0</version>  
     <packaging>rar</packaging>
     <name>Connector FTP Resource Adapter</name>
 
@@ -60,12 +60,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-ftp-classes</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.0</version>
         </dependency>
         <!-- The FTP library -->
         <dependency>
