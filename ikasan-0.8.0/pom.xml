@@ -100,13 +100,21 @@
         <module>documentation</module>
     </modules>
 
-    <!-- SCM details -->
+    <!-- 
+         SCM details
+         TODO: Not sure if this is strictly required here, either this or <distributionManagement> is needed 
+         Figure this out when 0.8.1 rolls around
+     -->
     <scm>
       <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</connection>
       <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</developerConnection>
       <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</url>
     </scm>
-    <!-- Distribution for releases -->
+    <!-- 
+         Distribution for releases
+         TODO: Not sure if this is strictly required here, either this or <scm> is needed 
+         Figure this out when 0.8.1 rolls around
+    -->
     <distributionManagement>
         <repository>
             <id>ikasaneip-releases</id>
