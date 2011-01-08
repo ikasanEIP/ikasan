@@ -245,12 +245,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <!-- SCM details -->
-    <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</developerConnection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</url>
-    </scm>
     <!-- Distribution for releases -->
     <distributionManagement>
         <repository>
