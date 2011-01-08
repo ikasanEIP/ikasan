@@ -42,6 +42,11 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>5</version>
+    </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
     <version>0.8.0</version>
@@ -240,6 +245,25 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <!-- SCM details -->
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.0</url>
+    </scm>
+    <!-- Distribution for releases -->
+    <distributionManagement>
+        <repository>
+            <id>ikasaneip-releases</id>
+            <name>Ikasan EIP Releases Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ikasaneip-snapshots</id>
+            <name>Ikasan EIP Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <pluginManagement>
             <plugins>
