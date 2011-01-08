@@ -325,6 +325,19 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <!-- Distribution for releases -->
+    <distributionManagement>
+        <repository>
+            <id>ikasaneip-releases</id>
+            <name>Ikasan EIP Releases Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ikasaneip-snapshots</id>
+            <name>Ikasan EIP Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <pluginManagement>
             <plugins>
