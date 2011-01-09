@@ -149,7 +149,7 @@
     </organization>
     <inceptionYear>2007</inceptionYear>
     <name>Ikasan Projects Parent Project</name>
-    <description>An free and open source Enterprise Integration Platform</name>
+    <description>An free and open source Enterprise Integration Platform</description>
     <url>http://www.ikasan.org</url>
 
     <!-- List the core committers -->
