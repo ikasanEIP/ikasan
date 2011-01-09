@@ -143,6 +143,8 @@
         </plugins>
     </build>
 
+    <name>Ikasan</name>
+    <description>An free and open source Enterprise Integration Platform</name>
     <organization>
       <name>Ikasan</name>
       <url>http://www.ikasan.org</url>
