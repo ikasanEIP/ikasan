@@ -143,14 +143,15 @@
         </plugins>
     </build>
 
-    <name>Ikasan</name>
-    <description>An free and open source Enterprise Integration Platform</name>
     <organization>
       <name>Ikasan</name>
       <url>http://www.ikasan.org</url>
     </organization>
     <inceptionYear>2007</inceptionYear>
     <name>Ikasan Projects Parent Project</name>
+    <description>An free and open source Enterprise Integration Platform</name>
+    <url>http://www.ikasan.org</url>
+
     <!-- List the core committers -->
     <developers>
       <developer>
