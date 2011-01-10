@@ -46,11 +46,11 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.1-SNAPSHOT</version>
+        <version>0.9.0-SNAPSHOT</version>
     </parent>
     <groupId>org.ikasan.demo</groupId>
     <artifactId>demoFileDelivery-ftpTarget-jar</artifactId>
-    <version>0.8.1-SNAPSHOT</version>    
+    <version>0.9.0-SNAPSHOT</version>    
     <packaging>jar</packaging>
 
 	<name>demoFileDelivery :: ftpTarget : jar</name>
