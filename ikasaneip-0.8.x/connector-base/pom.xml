@@ -48,13 +48,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0</version>
+        <version>0.8.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-connector-base</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.0</version>
+    <version>0.8.1-SNAPSHOT</version>
     <name>Connector Base</name>
     <description>The common library for the Ikasan Enterprise Integration Platform</description>
 
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.0</version>
+            <version>0.8.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- J2EE -->
