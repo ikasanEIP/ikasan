@@ -42,11 +42,15 @@ package org.ikasan.framework.component.sequencing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 import junit.framework.JUnit4TestAdapter;
 
 import org.ikasan.common.Payload;
 import org.ikasan.framework.component.Event;
+import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.common.factory.PayloadFactoryImpl;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -135,99 +139,47 @@ public class TokenizingSplitterTest
     public void test_successfulTokenisingSinglePayloadTokenizedToThreeEvents()
         throws SequencerException, CloneNotSupportedException
     {
-        final int NUM_EVENTS_OUT = 3; // one payload per event on the splitter
+       
+        final int NUM_EVENTS_OUT = 3; //3 payloads per event on the splitter
 
-        // create the class to be tested with
-        // delimiter (regular) expression and null encoding
-        this.tokenSplitter = new TokenizingSplitter("\\$");
+        this.tokenSplitter = new TokenizingSplitter("\n");
 
-        /** Real payload list */
+        PayloadFactory payloadFactory = new PayloadFactoryImpl();
+
+        Payload bumperString = payloadFactory.newPayload("bumperString", ("This is the first!\n" +
+                                                                          "This is the second\n" +
+                                                                          "Finally, the third\n").getBytes());
         this.payloads = new ArrayList<Payload>();
-        /** Expected three payloads */
-        final Payload firstNewPayload = this.classMockery.mock(Payload.class);
-        final Payload secondNewPayload = this.classMockery.mock(Payload.class);
-        final Payload thirdNewPayload = this.classMockery.mock(Payload.class);
 
-        final Event firstNewEvent = this.classMockery.mock(Event.class);
-        final Event secondNewEvent = this.classMockery.mock(Event.class);
-        final Event thirdNewEvent = this.classMockery.mock(Event.class);
+        this.payloads.add(bumperString);
 
-        // Populate two payload entries
-        payloads.add(payload);
+        Payload first = payloadFactory.newPayload("bumperString_0", "This is the first!".getBytes());
 
-        /** Real content - from the mocked payload */
-        final String payloadContentStr =
-            new String("A, you're adorable$"
-                     + "B, you're so beautiful$"
-                     + "C, you have some cutiful charms!");
-        /** Expected payload content after tokenizing. */
-        final String [] expectedSinglePayloadContent =
-                {"A, you're adorable",
-                 "B, you're so beautiful",
-                 "C, you have some cutiful charms!"};
+        Payload second = payloadFactory.newPayload("bumperString_1", "This is the second".getBytes());
 
-        classMockery.checking(new Expectations()
+        Payload third = payloadFactory.newPayload("bumperString_2", "Finally, the third".getBytes());
+
+        ArrayList<Payload> expectedPayloads = new ArrayList<Payload>();
+
+        expectedPayloads.add(first);
+        expectedPayloads.add(second);
+        expectedPayloads.add(third);
+
+        Event event = new Event("multiplePayloadEvent",1, new Date(), payloads);
+
+        List<Event> returnedEvents = this.tokenSplitter.onEvent(event, moduleName, componentName);
+
+        Assert.assertEquals(returnedEvents.size(), NUM_EVENTS_OUT);
+
+        for(int i = 0; i < returnedEvents.size(); i++)
         {
-            {
-                //Calls expected during logging.
-                exactly(1).of(event).getId();
-                exactly(1).of(event).idToString();
-                exactly(NUM_EVENTS_OUT).of(payload).getId();
+            List<Payload> returnedPayloads = returnedEvents.get(i).getPayloads();
 
-                //Calls expected on incoming event; will be called once only
-                exactly(4).of(event).getPayloads();
-                will(returnValue(payloads));
+            Assert.assertEquals(returnedPayloads.size(), 1);
 
-                //Calls expected on event's payload; here the original event has only one payload
-                //and therefore these methods will be called once.
-                exactly(1).of(payload).getContent();
-                will(returnValue(payloadContentStr.getBytes()));
-
-                //Calls when creating first payload
-                exactly(1).of(payload).spawnChild(0);
-                will(returnValue(firstNewPayload));
-                exactly(1).of(firstNewPayload).setContent(expectedSinglePayloadContent[0].getBytes());
-                exactly(1).of(firstNewPayload).getId();
-
-                //Calls when creating second payload
-                exactly(1).of(payload).spawnChild(1);
-                will(returnValue(secondNewPayload));
-                exactly(1).of(secondNewPayload).setContent(expectedSinglePayloadContent[1].getBytes());
-                exactly(1).of(secondNewPayload).getId();
-
-                //Calls when creating third payload
-                exactly(1).of(payload).spawnChild(2);
-                will(returnValue(thirdNewPayload));
-                exactly(1).of(thirdNewPayload).setContent(expectedSinglePayloadContent[2].getBytes());
-                exactly(1).of(thirdNewPayload).getId();
-
-                //Calls when creating first event
-                one(event).spawnChild(moduleName, componentName, 0, firstNewPayload);
-                will(returnValue(firstNewEvent));
-//                exactly(1).of(firstNewEvent).getPayloads();
-//                exactly(1).of(firstNewEvent).setPayload(firstNewPayload);
-                exactly(1).of(firstNewEvent).getId();
-
-                //Calls when creating second event
-                one(event).spawnChild(moduleName, componentName, 1, secondNewPayload);
-                will(returnValue(secondNewEvent));
-//                exactly(1).of(secondNewEvent).getPayloads();
-//                exactly(1).of(secondNewEvent).setPayload(secondNewPayload);
-                exactly(1).of(secondNewEvent).getId();
-
-                //Calls when creating third event
-                one(event).spawnChild(moduleName, componentName, 2, thirdNewPayload);
-                will(returnValue(thirdNewEvent));
-
-                exactly(1).of(thirdNewEvent).getId();
-
-            }
-        } );
-        List<Event> events = this.tokenSplitter.onEvent(event,moduleName,componentName);
-        Assert.assertTrue(events.size() == NUM_EVENTS_OUT);
-        Assert.assertEquals(firstNewEvent, events.get(0));
-        Assert.assertEquals(secondNewEvent, events.get(1));
-        Assert.assertEquals(thirdNewEvent, events.get(2));
+            Assert.assertTrue(new String(returnedPayloads.get(0).getContent()).equals(new String(expectedPayloads.get(i).getContent())));
+        }
+    
     }
 
     /**
