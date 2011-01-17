@@ -51,13 +51,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+        <version>0.9.0-EXPERIMENT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+    <version>0.9.0-EXPERIMENT</version>
 
     <name>Ikasan Core</name>
     <description>The core library for the Ikasan Enterprise Integration Platform</description>
