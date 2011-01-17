@@ -63,45 +63,49 @@
         <module>build</module>
 
         <!-- ikasan core -->
-        <module>common</module>
-        <module>platform</module>
-        <module>framework</module>
         <module>spec</module>
+        <module>core</module>
 
         <!-- ikasan test harness -->
-        <module>test</module>
+        <!--<module>test</module>-->
 
-        <!-- consoles -->
+        <!--
+        <module>common</module>
+        <module>framework</module>
+        <module>platform</module>
+
+        <!- - consoles - ->
         <module>webconsole</module>
         <module>console</module>
 
-        <!-- connectors  -->
+        <!- - connectors  - ->
         <module>connector-base</module>
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
         <module>connector-ftp</module>
         <module>connector-sftp</module>
 
-        <!-- connector clients -->
+        <!- - connector clients - ->
         <module>client-connection</module>
         <module>client-filetransfer</module>
 
-        <!-- filter -->
+        <!- - filter - ->
         <module>filter</module>
 
-        <!-- version compatibility glue -->
+        <!- - version compatibility glue - ->
         <module>compatibility</module>
 
-        <!-- samples -->
+        <!- - samples - ->
         <module>samples</module>
 
-        <!-- documentation -->
+        <!- - documentation - ->
         <module>documentation</module>
+        -->
     </modules>
 
-    <!-- 
+    <!--
          SCM details
-         TODO: Not sure if this is strictly required here, either this or <distributionManagement> is needed 
+         TODO: Not sure if this is strictly required here, either this or <distributionManagement> is needed
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
@@ -109,9 +113,9 @@
       <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</developerConnection>
       <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip</url>
     </scm>
-    <!-- 
+    <!--
          Distribution for releases
-         TODO: Not sure if this is strictly required here, either this or <scm> is needed 
+         TODO: Not sure if this is strictly required here, either this or <scm> is needed
          Figure this out when 0.8.1 rolls around
     -->
     <distributionManagement>
