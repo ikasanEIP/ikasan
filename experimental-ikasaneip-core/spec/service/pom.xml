@@ -50,7 +50,7 @@
     -->
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-spec-services</artifactId>
+    <artifactId>ikasan-spec-service</artifactId>
     <version>0.9.0-EXPERIMENT</version>
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration Specification Contracts</name>
