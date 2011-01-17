@@ -43,6 +43,7 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -160,7 +161,7 @@ public class DeliverFileCommandTest extends TestCase
             e.printStackTrace();
         }
 
-        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, createParentDirectory);
+        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, createParentDirectory, null);
     }
 
     /**
@@ -230,7 +231,7 @@ public class DeliverFileCommandTest extends TestCase
     {
 
         final String dotOutputDir = ".";
-        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting, createParentDirectory);
+        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting, createParentDirectory, null);
 
         classMockery.checking(new Expectations()
         {
@@ -281,7 +282,7 @@ public class DeliverFileCommandTest extends TestCase
             URISyntaxException
     {
 
-        deliverFileCommand = new DeliverFileCommand(startingDir, renameExtension, overwriteExisting, createParentDirectory);
+        deliverFileCommand = new DeliverFileCommand(startingDir, renameExtension, overwriteExisting, createParentDirectory, null);
 
         classMockery.checking(new Expectations()
         {
@@ -525,7 +526,7 @@ public class DeliverFileCommandTest extends TestCase
             ResourceException
     {
         // create new Deliver File Command with no parent directory creation option (false)
-        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, false);
+        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, false, null);
 
         classMockery.checking(new Expectations()
         {
@@ -634,7 +635,7 @@ public class DeliverFileCommandTest extends TestCase
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String sameOutputDir = "startingDir";
-        deliverFileCommand = new DeliverFileCommand(sameOutputDir, renameExtension, overwriteExisting, createParentDirectory);
+        deliverFileCommand = new DeliverFileCommand(sameOutputDir, renameExtension, overwriteExisting, createParentDirectory, null);
 
         classMockery.checking(new Expectations()
         {
@@ -682,7 +683,7 @@ public class DeliverFileCommandTest extends TestCase
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String dotOutputDir = ".";
-        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting, createParentDirectory);
+        deliverFileCommand = new DeliverFileCommand(dotOutputDir, renameExtension, overwriteExisting, createParentDirectory, null);
 
         classMockery.checking(new Expectations()
         {
@@ -732,7 +733,7 @@ public class DeliverFileCommandTest extends TestCase
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String originalDir = "here";
         final String outputDir = "some/directory";
-        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, createParentDirectory);
+        deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, createParentDirectory, null);
 
         classMockery.checking(new Expectations()
         {

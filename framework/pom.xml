@@ -49,13 +49,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+        <version>0.9.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-framework</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Ikasan Framework</name>
     <description>The framework library for the Ikasan Enterprise Integration Platform</description>
 
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -182,9 +182,7 @@
             <scope>test</scope>
         </dependency>
         <!--
-            This jar is added because jboss startup throwing exception
-            Failed to load class "org.slf4j.impl.StaticLoggerBinder"
-            TODO: UPDATE to 1.5.11 When Jboss can handle it?
+            TODO Update to 1.5.11
         -->
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -60,28 +60,28 @@ public class FTPConnectionSpec extends EISConnectionSpec
     private String remoteHostname = null;
 
     /** The maximum amount of retries - defaults to 1 */
-    private Integer maxRetryAttempts = 1;
+    private Integer maxRetryAttempts = Integer.valueOf(1);
 
     /** The Password */
     private String password = null;
 
     /** The Remote Port */
-    private Integer remotePort = 0;
+    private Integer remotePort = Integer.valueOf(0);
 
     /** The username */
     private String username = null;
 
     /** Initial poll time for source system only */
-    private Integer pollTime = 0;
+    private Integer pollTime = Integer.valueOf(0);
 
     /** Connection timeout, default is 0 (infinite) */
-    private Integer connectionTimeout = 0;
+    private Integer connectionTimeout = Integer.valueOf(0);
 
     /** Data connection timeout, default is 0 (infinite) */
-    private Integer dataTimeout = 0;
+    private Integer dataTimeout = Integer.valueOf(0);
     
     /** Socket connection timeout, default is 0 (infinite) */
-    private Integer socketTimeout = 0;
+    private Integer socketTimeout = Integer.valueOf(0);
 
     /** The systemKey */
     private String systemKey = new String();
@@ -104,7 +104,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public Boolean getActive()
     {
-        return active;
+        return this.active;
     }
 
     /**
@@ -122,7 +122,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public Boolean getCleanupJournalOnComplete()
     {
-        return cleanupJournalOnComplete;
+        return this.cleanupJournalOnComplete;
     }
 
     /**
@@ -140,7 +140,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public String getRemoteHostname()
     {
-        return remoteHostname;
+        return this.remoteHostname;
     }
 
     /**
@@ -158,7 +158,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public Integer getMaxRetryAttempts()
     {
-        return maxRetryAttempts;
+        return this.maxRetryAttempts;
     }
 
     /**
@@ -176,7 +176,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public String getPassword()
     {
-        return password;
+        return this.password;
     }
 
     /**
@@ -194,7 +194,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public Integer getRemotePort()
     {
-        return remotePort;
+        return this.remotePort;
     }
 
     /**
@@ -212,7 +212,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public String getUsername()
     {
-        return username;
+        return this.username;
     }
 
     /**
@@ -230,7 +230,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public Integer getPollTime()
     {
-        return pollTime;
+        return this.pollTime;
     }
 
     /**
@@ -248,7 +248,7 @@ public class FTPConnectionSpec extends EISConnectionSpec
      */
     public String getSystemKey()
     {
-        return systemKey;
+        return this.systemKey;
     }
 
     /**

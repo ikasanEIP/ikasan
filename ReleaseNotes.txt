@@ -134,6 +134,7 @@ Release Notes - Ikasan - Version 0.8.0
     * [IKASAN-530] - Make the MonitorEmailNotifier configurable for the alerted status and email recipients 
     * [IKASAN-531] - Create a consistent and re-usable separation between Ikasan components and the underlying protocol (starting with SFTP)
     * [IKASAN-537] - Adjust package name of the connector-sftp client endpoint to reflect it as an endpoint
+    * [IKASAN-563] - Allow file transfer temporary files to overwrite any existing temp files as part of the file delivery
 
 ** New Feature
     * [IKASAN-106] - Add the ability for users to select the number of search results per page for wiretap searches
