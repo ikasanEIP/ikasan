@@ -43,10 +43,10 @@ package org.ikasan.core.flow.invoker;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.Event;
+import org.ikasan.core.domain.Event;
 import org.ikasan.core.flow.FlowElement;
 import org.ikasan.core.flow.InvalidFlowException;
-import org.ikasan.framework.flow.event.listener.FlowEventListener;
+import org.ikasan.core.flow.listener.FlowListener;
 import org.ikasan.spec.routing.Router;
 import org.ikasan.spec.sequencing.Sequencer;
 import org.ikasan.spec.transformation.Translator;
@@ -62,17 +62,17 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private static final Logger logger = Logger.getLogger(VisitingFlowElementInvoker.class);
 
 
-    /** The flow event listener */
-    private FlowEventListener flowEventListener;
+    /** The flow listener */
+    private FlowListener flowListener;
 
     /**
      * Set the flow event listener
      * 
      * @param flowEventListener The flow event listener to set
      */
-    public void setFlowEventListener(FlowEventListener flowEventListener)
+    public void setFlowEventListener(FlowListener flowListener)
     {
-        this.flowEventListener = flowEventListener;
+        this.flowListener = flowListener;
     }
 
     /* (non-Javadoc)
@@ -172,11 +172,11 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      */
     private void notifyListenersBeforeElement(Event event, String moduleName, String flowName, FlowElement flowElement)
     {
-        if (flowEventListener != null)
+        if (flowListener != null)
         {
             try
             {
-                flowEventListener.beforeFlowElement(moduleName, flowName, flowElement, event);
+            	flowListener.beforeFlowElement(moduleName, flowName, flowElement, event);
             }
             catch (Throwable t)
             {
@@ -200,11 +200,11 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      */
     private void notifyListenersAfterElement(Event event, String moduleName, String flowName, FlowElement flowElement)
     {
-        if (flowEventListener != null)
+        if (flowListener != null)
         {
             try
             {
-                flowEventListener.afterFlowElement(moduleName, flowName, flowElement, event);
+            	flowListener.afterFlowElement(moduleName, flowName, flowElement, event);
             }
             catch (Throwable t)
             {

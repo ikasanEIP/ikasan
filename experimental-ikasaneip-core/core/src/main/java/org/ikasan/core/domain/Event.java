@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.core;
+package org.ikasan.core.domain;
 
 /**
  * Ikasan's domain object.

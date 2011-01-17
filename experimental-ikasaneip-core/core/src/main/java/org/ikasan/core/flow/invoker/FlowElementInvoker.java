@@ -40,7 +40,7 @@
  */
 package org.ikasan.core.flow.invoker;
 
-import org.ikasan.core.Event;
+import org.ikasan.core.domain.Event;
 import org.ikasan.core.flow.FlowElement;
 
 /**
