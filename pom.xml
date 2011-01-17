@@ -54,6 +54,7 @@
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 
     <modules>
+       <module>component</module>
        <module>endpoint</module>
        <module>service</module>
     </modules>
