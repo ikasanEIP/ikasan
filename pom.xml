@@ -40,8 +40,7 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
       <groupId>org.sonatype.oss</groupId>
@@ -50,7 +49,7 @@
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
@@ -323,28 +322,22 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-    <!-- SCM details -->
-    <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/trunk/ikasaneip</developerConnection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/trunk/ikasaneip</url>
-    </scm>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
         <repository>
             <id>ikasaneip-releases</id>
             <name>Ikasan EIP Releases Repository</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>ikasaneip-snapshots</id>
             <name>Ikasan EIP Snapshot Repository</name>
-            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <url>https://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <build>
         <pluginManagement>
             <plugins>
@@ -449,7 +442,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>2.1.1</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -512,12 +505,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -536,12 +529,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.3.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>1.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.1</version>
             </plugin>
         </plugins>
     </reporting>
@@ -625,6 +623,5 @@
 
 
     </dependencies>
-
 </project>
 
