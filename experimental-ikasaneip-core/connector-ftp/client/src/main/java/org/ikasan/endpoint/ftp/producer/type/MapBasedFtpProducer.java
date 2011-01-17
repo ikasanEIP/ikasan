@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.endpoint.sftp.producer.type;
+package org.ikasan.endpoint.ftp.producer.type;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -46,7 +46,7 @@ import java.util.Map;
 import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.ikasan.spec.endpoint.Producer;
 
 
@@ -57,20 +57,20 @@ import org.ikasan.spec.endpoint.Producer;
  * with the SFTP API and not another File Transfer client layer. TODO!
  * @author Ikasan Development Team
  */
-public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
+public class MapBasedFtpProducer implements Producer<Map<String,InputStream>>
 {
     /** existing template */
     protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
     
     /** configuration */
-    protected SftpProducerConfiguration sftpProducerConfiguration;
+    protected FtpProducerConfiguration ftpProducerConfiguration;
 
     /**
      * Constructor
      * @param fileTransferConnectionTemplate
      * @param sftpProducerConfiguration
      */
-    public MapBasedSftpProducer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpProducerConfiguration sftpProducerConfiguration)
+    public MapBasedFtpProducer(FileTransferConnectionTemplate fileTransferConnectionTemplate, FtpProducerConfiguration sftpProducerConfiguration)
     {
         this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
         if(fileTransferConnectionTemplate == null)
@@ -78,7 +78,7 @@ public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
             throw new IllegalArgumentException("fileTransferConnectionTemplate cannot be 'null'");
         }
 
-        this.sftpProducerConfiguration = sftpProducerConfiguration;
+        this.ftpProducerConfiguration = sftpProducerConfiguration;
         if(sftpProducerConfiguration == null)
         {
             throw new IllegalArgumentException("sftpProducerConfiguration cannot be 'null'");
@@ -95,9 +95,9 @@ public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
         for(Map.Entry<String,InputStream> filenameContent : filenameContentPairs.entrySet())
         {
             this.fileTransferConnectionTemplate.deliverInputStream(filenameContent.getValue(), filenameContent.getKey(), 
-                    sftpProducerConfiguration.getOutputDirectory(), sftpProducerConfiguration.getOverwrite(), 
-                    sftpProducerConfiguration.getRenameExtension(), sftpProducerConfiguration.getChecksumDelivered(), 
-                    sftpProducerConfiguration.getUnzip(), sftpProducerConfiguration.getCreateParentDirectory(), sftpProducerConfiguration.getTempFileName());
+                    ftpProducerConfiguration.getOutputDirectory(), ftpProducerConfiguration.getOverwrite(), 
+                    ftpProducerConfiguration.getRenameExtension(), ftpProducerConfiguration.getChecksumDelivered(), 
+                    ftpProducerConfiguration.getUnzip(), ftpProducerConfiguration.getCreateParentDirectory(), ftpProducerConfiguration.getTempFileName());
         }        
     }
 }

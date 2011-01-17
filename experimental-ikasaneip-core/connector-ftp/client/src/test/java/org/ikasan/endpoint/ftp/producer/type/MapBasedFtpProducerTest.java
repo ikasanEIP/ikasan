@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.endpoint.sftp.producer.type;
+package org.ikasan.endpoint.ftp.producer.type;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -48,20 +48,19 @@ import java.util.Map;
 import javax.resource.ResourceException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
-import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducer;
+import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
 /**
- * Test class for {@link MapBasedSftpProducer}
+ * Test class for {@link MapBasedFtpProducer}
  * 
  * @author Ikasan Development Team
  *
  */
-public class MapBasedSftpProducerTest
+public class MapBasedFtpProducerTest
 {
     Mockery mockery = new Mockery()
     {
@@ -73,8 +72,8 @@ public class MapBasedSftpProducerTest
     /** mock fileTransferConnectionTemplate */
     final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
     
-    /** mock sftpConfiguration */
-    final SftpProducerConfiguration sftpConfiguration = mockery.mock(SftpProducerConfiguration.class, "mockSftpProducerConfiguration");
+    /** mock ftpConfiguration */
+    final FtpProducerConfiguration ftpConfiguration = mockery.mock(FtpProducerConfiguration.class, "mockFtpProducerConfiguration");
 
     /** mock filenameContentPairsMap */
     final Map<String,InputStream> filenameContentPairsMap = mockery.mock(Map.class, "mockFilenameContentPairsMap");
@@ -88,16 +87,16 @@ public class MapBasedSftpProducerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullFileTransferConnectionTemplate()
     {
-        new MapBasedSftpProducer(null, null);
+        new MapBasedFtpProducer(null, null);
     }
 
     /**
-     * Test failed constructor due to null sftpConfiguration.
+     * Test failed constructor due to null ftpConfiguration.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void test_failedConstructor_nullSftpConfiguration()
+    public void test_failedConstructor_nullFtpConfiguration()
     {
-        new MapBasedSftpProducer(fileTransferConnectionTemplate, null);
+        new MapBasedFtpProducer(fileTransferConnectionTemplate, null);
     }
 
     /**
@@ -105,7 +104,7 @@ public class MapBasedSftpProducerTest
      * @throws ResourceException 
      */
     @Test
-    public void test_successful_sftpMapProducer_invocation_single_file() throws ResourceException
+    public void test_successful_ftpMapProducer_invocation_single_file() throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
@@ -115,26 +114,26 @@ public class MapBasedSftpProducerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(sftpConfiguration).getOutputDirectory();
+                exactly(1).of(ftpConfiguration).getOutputDirectory();
                 will(returnValue("outputDirectory"));
-                exactly(1).of(sftpConfiguration).getOverwrite();
+                exactly(1).of(ftpConfiguration).getOverwrite();
                 will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getRenameExtension();
+                exactly(1).of(ftpConfiguration).getRenameExtension();
                 will(returnValue(""));
-                exactly(1).of(sftpConfiguration).getChecksumDelivered();
+                exactly(1).of(ftpConfiguration).getChecksumDelivered();
                 will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getUnzip();
+                exactly(1).of(ftpConfiguration).getUnzip();
                 will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getCreateParentDirectory();
+                exactly(1).of(ftpConfiguration).getCreateParentDirectory();
                 will(returnValue(Boolean.FALSE));
-                one(sftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
+                one(ftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
                 
                 exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory", Boolean.FALSE, "", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, "file.tmp");
             }
         });
 
-        MapBasedSftpProducer sftpMapProducer = new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpConfiguration);
-        sftpMapProducer.invoke(filenameContentPairsMap);
+        MapBasedFtpProducer ftpMapProducer = new MapBasedFtpProducer(fileTransferConnectionTemplate, ftpConfiguration);
+        ftpMapProducer.invoke(filenameContentPairsMap);
         mockery.assertIsSatisfied();
     }
 
@@ -143,7 +142,7 @@ public class MapBasedSftpProducerTest
      * @throws ResourceException 
      */
     @Test
-    public void test_successful_sftpMapProducer_invocation_multiple_files() throws ResourceException
+    public void test_successful_ftpMapProducer_invocation_multiple_files() throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
@@ -155,19 +154,19 @@ public class MapBasedSftpProducerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(3).of(sftpConfiguration).getOutputDirectory();
+                exactly(3).of(ftpConfiguration).getOutputDirectory();
                 will(returnValue("outputDirectory"));
-                exactly(3).of(sftpConfiguration).getOverwrite();
+                exactly(3).of(ftpConfiguration).getOverwrite();
                 will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getRenameExtension();
+                exactly(3).of(ftpConfiguration).getRenameExtension();
                 will(returnValue(".tmp"));
-                exactly(3).of(sftpConfiguration).getChecksumDelivered();
+                exactly(3).of(ftpConfiguration).getChecksumDelivered();
                 will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getUnzip();
+                exactly(3).of(ftpConfiguration).getUnzip();
                 will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getCreateParentDirectory();
+                exactly(3).of(ftpConfiguration).getCreateParentDirectory();
                 will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getTempFileName();will(returnValue(null));
+                exactly(3).of(ftpConfiguration).getTempFileName();will(returnValue(null));
                 
                 exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename1", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
                 exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename2", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
@@ -175,8 +174,8 @@ public class MapBasedSftpProducerTest
             }
         });
 
-        MapBasedSftpProducer sftpMapProducer = new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpConfiguration);
-        sftpMapProducer.invoke(filenameContentPairsMap);
+        MapBasedFtpProducer ftpMapProducer = new MapBasedFtpProducer(fileTransferConnectionTemplate, ftpConfiguration);
+        ftpMapProducer.invoke(filenameContentPairsMap);
         mockery.assertIsSatisfied();
     }
 }

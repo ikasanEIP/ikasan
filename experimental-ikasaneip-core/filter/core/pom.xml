@@ -49,12 +49,12 @@
   <parent>
       <groupId>org.ikasan</groupId>
       <artifactId>filter</artifactId>
-      <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+      <version>0.9.0-SNAPSHOT</version>
   </parent>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+  <version>0.9.0-SNAPSHOT</version>
   <name>Ikasan Filter Core</name>
   <description>The core functional filter module for the Ikasan Enterprise Integration Platform</description>
   <dependencies>
@@ -66,13 +66,14 @@
 
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-            <version>3.2.0.ga</version>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.5.4-Final</version>
+            <scope>provided</scope>
             <exclusions>
-              <exclusion>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -106,6 +107,19 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-j2ee_1.4_spec</artifactId>
             <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- TODO Upgrade these two at some point -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.11.0.GA</version>
             <scope>test</scope>
         </dependency>
   </dependencies>

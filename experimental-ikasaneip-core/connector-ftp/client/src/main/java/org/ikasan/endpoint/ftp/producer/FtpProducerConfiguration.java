@@ -38,180 +38,295 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.endpoint.sftp.producer;
+package org.ikasan.endpoint.ftp.producer;
+
+import org.apache.log4j.Logger;
 
 /**
- * SFTP Producer Configuration model.
+ * FTP Producer Configuration model.
  * 
  * @author Ikasan Development Team
  */
-public class SftpProducerConfiguration
+public class FtpProducerConfiguration
 {
-    /** SFTP unqiue clientId */
+    /** FTP unqiue clientId */
     protected String clientID;
 
-    /** SFTP cleanup journal on completion */
+    /** Whether it is active transfer mode - default False */
+    protected Boolean active = Boolean.FALSE;
+
+    /** FTP cleanup journal on completion */
     protected Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
-    /** SFTP default Remote host */
+    /** FTP default Remote host */
     protected String remoteHost = String.valueOf("localhost");
 
-    /** SFTP private key hosts */
-    protected String privateKeyFilename;
-
-    /** SFTP max retry attempts */
+    /** FTP max retry attempts */
     protected Integer maxRetryAttempts = Integer.valueOf(3);
 
-    /** SFTP default remote port */
-    protected Integer remotePort = Integer.valueOf(22);
+    /** FTP default remote port */
+    protected Integer remotePort = Integer.valueOf(21);
 
-    /** SFTP known hosts */
-    protected String knownHostsFilename;
-
-    /** SFTP user */
+    /** FTP user */
     protected String username;
 
-    /** SFTP password/passphrase */
+    /** FTP password/passphrase */
     protected String password;
 
-    /** SFTP remote port */
-    protected Integer connectionTimeout = Integer.valueOf(60000);
-
-    /** SFTP output directory */
+    /** FTP output directory */
     protected String outputDirectory;
 
-    /** SFTP default rename extension */
+    /** FTP default rename extension */
     protected String renameExtension = String.valueOf(".tmp");
 
     protected String tempFileName;
 
-    /** SFTP overwrite */
+    /** FTP overwrite */
     protected Boolean overwrite = Boolean.FALSE;
 
-    /** SFTP unzip */
+    /** FTP unzip */
     protected Boolean unzip = Boolean.FALSE;
 
-    /** SFTP generate and deliver a checksum */
+    /** FTP generate and deliver a checksum */
     protected Boolean checksumDelivered = Boolean.FALSE;
 
     /** Creates any missing parent directory in the fully qualified filename of the file to be delivered */
     protected Boolean createParentDirectory = Boolean.FALSE;
 
-    public String getPassword()
+    /** Connection Timeout */
+    private Integer connectionTimeout = Integer.valueOf(60000);
+
+    /** Data connection timeout, default is 0 (infinite) */
+    protected Integer dataTimeout = Integer.valueOf(300000);
+    
+    /** Socket connection timeout, default is 0 (infinite) */
+    protected Integer socketTimeout = Integer.valueOf(300000);
+
+    /** System key */
+    protected String systemKey = "";
+
+    /** Logger instance */
+    private static final Logger logger = Logger.getLogger(FtpProducerConfiguration.class);
+
+    /**
+     * @param active the active to set
+     */
+    public void setActive(Boolean active)
     {
-        return this.password;
+        this.active = active;
     }
 
-    public void setPassword(String password)
+    /**
+     * @return the active
+     */
+    public Boolean getActive()
     {
-        this.password = password;
+        return this.active;
     }
 
+    /**
+     * @return the clientID
+     */
     public String getClientID()
     {
         return this.clientID;
     }
 
+    /**
+     * @param clientID the clientID to set
+     */
     public void setClientID(String clientID)
     {
         this.clientID = clientID;
     }
 
+    /**
+     * @return the cleanupJournalOnComplete
+     */
     public Boolean getCleanupJournalOnComplete()
     {
         return this.cleanupJournalOnComplete;
     }
 
+    /**
+     * @param cleanupJournalOnComplete the cleanupJournalOnComplete to set
+     */
     public void setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete)
     {
         this.cleanupJournalOnComplete = cleanupJournalOnComplete;
     }
 
+    /**
+     * @return the remoteHost
+     */
     public String getRemoteHost()
     {
         return this.remoteHost;
     }
 
+    /**
+     * @param remoteHost the remoteHost to set
+     */
     public void setRemoteHost(String remoteHost)
     {
         this.remoteHost = remoteHost;
     }
 
-    public String getPrivateKeyFilename()
-    {
-        return this.privateKeyFilename;
-    }
-
-    public void setPrivateKeyFilename(String privateKeyFilename)
-    {
-        this.privateKeyFilename = privateKeyFilename;
-    }
-
+    /**
+     * @return the maxRetryAttempts
+     */
     public Integer getMaxRetryAttempts()
     {
         return this.maxRetryAttempts;
     }
 
+    /**
+     * @param maxRetryAttempts the maxRetryAttempts to set
+     */
     public void setMaxRetryAttempts(Integer maxRetryAttempts)
     {
         this.maxRetryAttempts = maxRetryAttempts;
     }
 
+    /**
+     * @return the remotePort
+     */
     public Integer getRemotePort()
     {
         return this.remotePort;
     }
 
+    /**
+     * @param remotePort the remotePort to set
+     */
     public void setRemotePort(Integer remotePort)
     {
         this.remotePort = remotePort;
     }
 
-    public String getKnownHostsFilename()
-    {
-        return this.knownHostsFilename;
-    }
-
-    public void setKnownHostsFilename(String knownHostsFilename)
-    {
-        this.knownHostsFilename = knownHostsFilename;
-    }
-
+    /**
+     * @return the username
+     */
     public String getUsername()
     {
         return this.username;
     }
 
+    /**
+     * @param username the username to set
+     */
     public void setUsername(String username)
     {
         this.username = username;
     }
 
+    /**
+     * @return the password
+     */
+    public String getPassword()
+    {
+        return this.password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
+    /**
+     * @return the connectionTimeout
+     */
     public Integer getConnectionTimeout()
     {
         return this.connectionTimeout;
     }
 
+    /**
+     * @param connectionTimeout the connectionTimeout to set
+     */
     public void setConnectionTimeout(Integer connectionTimeout)
     {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * @return the dataTimeout
+     */
+    public Integer getDataTimeout()
+    {
+        return this.dataTimeout;
+    }
+
+    /**
+     * @param dataTimeout the dataTimeout to set
+     */
+    public void setDataTimeout(Integer dataTimeout)
+    {
+        this.dataTimeout = dataTimeout;
+    }
+
+    /**
+     * @return the socketTimeout
+     */
+    public Integer getSocketTimeout()
+    {
+        return this.socketTimeout;
+    }
+
+    /**
+     * @param socketTimeout the socketTimeout to set
+     */
+    public void setSocketTimeout(Integer socketTimeout)
+    {
+        this.socketTimeout = socketTimeout;
+    }
+
+    /**
+     * @return the systemKey
+     */
+    public String getSystemKey()
+    {
+        return this.systemKey;
+    }
+
+    /**
+     * @param systemKey the systemKey to set
+     */
+    public void setSystemKey(String systemKey)
+    {
+        this.systemKey = systemKey;
+    }
+
+    /**
+     * @return the outputDirectory
+     */
     public String getOutputDirectory()
     {
         return this.outputDirectory;
     }
 
+    /**
+     * @param outputDirectory the outputDirectory to set
+     */
     public void setOutputDirectory(String outputDirectory)
     {
         this.outputDirectory = outputDirectory;
     }
 
+    /**
+     * @return the renameExtension
+     */
     public String getRenameExtension()
     {
         return this.renameExtension;
     }
 
+    /**
+     * @param renameExtension the renameExtension to set
+     */
     public void setRenameExtension(String renameExtension)
     {
         this.renameExtension = renameExtension;
@@ -222,7 +337,7 @@ public class SftpProducerConfiguration
      */
     public String getTempFileName()
     {
-        return this.tempFileName;
+        return tempFileName;
     }
 
     /**
@@ -233,44 +348,76 @@ public class SftpProducerConfiguration
         this.tempFileName = tempFileName;
     }
 
+    /**
+     * @return the overwrite
+     */
     public Boolean getOverwrite()
     {
         return this.overwrite;
     }
 
+    /**
+     * @param overwrite the overwrite to set
+     */
     public void setOverwrite(Boolean overwrite)
     {
         this.overwrite = overwrite;
     }
 
+    /**
+     * @return the unzip
+     */
     public Boolean getUnzip()
     {
         return this.unzip;
     }
 
+    /**
+     * @param unzip the unzip to set
+     */
     public void setUnzip(Boolean unzip)
     {
         this.unzip = unzip;
     }
 
+    /**
+     * @return the checksumDelivered
+     */
     public Boolean getChecksumDelivered()
     {
         return this.checksumDelivered;
     }
 
+    /**
+     * @param checksumDelivered the checksumDelivered to set
+     */
     public void setChecksumDelivered(Boolean checksumDelivered)
     {
         this.checksumDelivered = checksumDelivered;
     }
 
+    /**
+     * @return the createParentDirectory
+     */
     public Boolean getCreateParentDirectory()
     {
         return this.createParentDirectory;
     }
 
+    /**
+     * @param createParentDirectory the createParentDirectory to set
+     */
     public void setCreateParentDirectory(Boolean createParentDirectory)
     {
         this.createParentDirectory = createParentDirectory;
     }
 
+    public void validate()
+    {
+        if (this.systemKey == null || this.systemKey.equals(" "))
+        {
+            logger.debug("Provided systemKey value [" + this.systemKey + "] is invalid. Reverting to default empty String.");
+            this.systemKey = "";
+        }
+    }
 }

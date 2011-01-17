@@ -46,9 +46,15 @@
  <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-build</artifactId>
+        <version>0.9.0-SNAPSHOT</version>
+    </parent>
+
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-connector-ftpRar</artifactId>
-    <version>0.8.0-EXPERIMENT-SNAPSHOT</version>  
+    <version>0.9.0-SNAPSHOT</version>  
     <packaging>rar</packaging>
     <name>Connector FTP Resource Adapter</name>
 
@@ -60,12 +66,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-ftp-classes</artifactId>
-            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+            <version>0.9.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
-            <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+            <version>0.9.0-SNAPSHOT</version>
         </dependency>
         <!-- The FTP library -->
         <dependency>
