@@ -44,12 +44,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>0.9.0-EXPERIMENT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>samples</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0-EXPERIMENT</version>
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration Samples</name>
 
