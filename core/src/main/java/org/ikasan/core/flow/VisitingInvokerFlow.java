@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.Event;
+import org.ikasan.core.domain.Event;
 import org.ikasan.core.flow.invoker.FlowElementInvoker;
 import org.ikasan.core.flow.invoker.FlowInvocationContext;
 import org.ikasan.spec.configuration.ConfigurationException;
