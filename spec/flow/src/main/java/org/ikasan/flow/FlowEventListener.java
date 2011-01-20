@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,40 +38,56 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.routing;
+package org.ikasan.flow;
+
+import org.ikasan.flow.event.FlowEvent;
 
 /**
- * Exception representing a problem calculating a routing
- * 
- * This should only ever be thrown from within a Router's onEvent method, signifying that router's failure to calculate
- * route
+ * Interface for objects which respond to <code>Flow</code> runtime lifecycle events
  * 
  * @author Ikasan Development Team
+ *
  */
-public class RouterException extends RuntimeException //TODO why extend from RTE?
-{
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = 3203142027287174087L;
+public interface FlowEventListener {
 
-    /**
-     * Constructor
-     * 
-     * @param cause The original cause of the exception
-     */
-    public RouterException(Throwable cause)
-    {
-        super(cause);
-    }
+	/**
+	 * Callback method to be invoked prior to <code>Flow</code> execution
+	 * 
+	 * @param moduleName - name of the module
+	 * @param flowName - name of the flow
+	 * @param event - event with which flow is to be invoked
+	 */
+	public void beforeFlow(String moduleName, String flowName, FlowEvent event);
 
-    /**
-     * Constructor
-     * 
-     * @param message The exception message
-     */
-    public RouterException(String message)
-    {
-        super(message);
-    }
+	/**
+	 * Callback method to be invoked subsequent to <code>Flow</code> execution
+	 * 
+	 * @param moduleName - name of the module
+	 * @param flowName - name of the flow
+	 * @param event - event with which flow was invoked
+	 */
+	public void afterFlow(String moduleName, String flowName, FlowEvent event);
+
+	/**
+	 * Callback method to be invoked prior to <code>FlowElement</code> execution
+	 * 
+	 * @param moduleName - name of the module
+	 * @param flowName - name of the flow
+	 * @param flowElement - FlowElement about to be invoked
+	 * @param event - event with which flow element is to be invoked
+	 */
+	public void beforeFlowElement(String moduleName, String flowName,
+			FlowElement flowElement, FlowEvent event);
+	
+	/**
+	 * Callback method to be called subsequent to <code>FlowElement</code> execution
+	 * 
+	 * @param moduleName - name of the module
+	 * @param flowName - name of the flow
+	 * @param flowElement - FlowElement which was invoked
+	 * @param event - event with which flow element was invoked
+	 */
+	public void afterFlowElement(String moduleName, String flowName,
+			FlowElement flowElement, FlowEvent event);
+
 }

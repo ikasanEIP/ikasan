@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,22 +38,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.transformation;
+package org.ikasan.spec.component.endpoint;
 
 /**
- * Wrapper for errors experienced while converting between types.
+ * Base EndpointException
  * 
  * @author Ikasan Development Team
- *
  */
-@SuppressWarnings("serial")
-public class DataTransformationException extends TransformationException
+public class EndpointException extends RuntimeException
 {
     /**
-     * @see Exception#Exception(Throwable)
+     * Constructor
+     * 
+     * @param cause - The cause
      */
-    public DataTransformationException(final Throwable cause)
+    public EndpointException(Throwable cause)
     {
         super(cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message - The exception message
+     */
+    public EndpointException(String message)
+    {
+        super(message);
     }
 }

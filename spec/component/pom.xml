@@ -62,6 +62,7 @@
     <description>The specification component contracts for the Ikasan Enterprise Integration Platform</description>
 
     <modules>
+       <module>endpoint</module>
        <module>routing</module>
        <module>sequencing</module>
        <module>transformation</module>
