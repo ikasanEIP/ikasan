@@ -53,10 +53,10 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-spec-component-sequencing</artifactId>
+    <artifactId>ikasan-spec-component-endpoint</artifactId>
     <packaging>jar</packaging>
     <version>0.9.0-EXPERIMENT</version>
-    <name>Ikasan Specification Sequencing Component Contracts</name>
-    <description>The specification sequencing component contracts for the Ikasan Enterprise Integration Platform</description>
+    <name>Ikasan Specification Endpoint Component Contracts</name>
+    <description>The specification endpoint component contracts for the Ikasan Enterprise Integration Platform</description>
 
 </project>

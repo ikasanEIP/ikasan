@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -38,27 +38,23 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.sequencing;
-
-import java.util.List;
+package org.ikasan.spec.component.endpoint;
 
 /**
- * Interface for all FlowComponents that perform a Sequencing function.
+ * Component producer for distributing to an endpoint.
  * 
- * These are characterised by a variable number of <code>Event<code>s being routed downstream
- * based on the incoming <code>Event<code>.
+ * A {@link Producer} defines a contract for such translation.
  * 
- * @author Ikasan Development Team
- * @param <T> message to split or aggregate
+ * @param <TARGET> Type of conversion result
+ *
+ * @author Ikasan Development Teams
  */
-public interface Sequencer<T> //extends FlowComponent
+public interface Producer<T> //extends FlowComponent
 {
     /**
-     * Returns an ordered List<Event> for forwarding downstream
-     * 
-     * @param event The event to perform sequencing on
-     * @return List<Event> for forwarding downstream in order
-     * @throws SequencerException Exception if we could not sequence
+     * Push payload to a protocol endpioint
+     * @param payload
+     * @throws TransformationException if error converting S to T
      */
-    public List<T> sequence(final T event) throws SequencerException;
+    public void invoke(final T payload) throws EndpointException;
 }

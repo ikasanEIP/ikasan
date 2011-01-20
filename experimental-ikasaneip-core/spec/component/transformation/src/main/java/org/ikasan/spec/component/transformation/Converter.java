@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.transformation;
+package org.ikasan.spec.component.transformation;
 
 /**
  * Sometimes it is essential to translate data syntax (that is the representation of data)

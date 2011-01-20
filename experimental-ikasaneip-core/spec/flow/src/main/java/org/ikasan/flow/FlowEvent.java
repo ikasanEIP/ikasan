@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,35 +38,60 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.transformation;
+package org.ikasan.flow;
 
 /**
- * Base TransformationException
+ * Interface for the <code>Flow Event</code>.
  * 
  * @author Ikasan Development Team
+ *
  */
-public class TransformationException extends RuntimeException
+public class FlowEvent<T>
 {
-    /** serialVersionUID */
-    private static final long serialVersionUID = 5643215546008399313L;
-
-    /**
-     * Constructor
-     * 
-     * @param cause - The cause
-     */
-    public TransformationException(Throwable cause)
+    private String identifier;
+    private long timestamp;
+    private T payload;
+    
+    public FlowEvent(String identifier)
     {
-        super(cause);
+        this.identifier = identifier;
+        this.timestamp = System.currentTimeMillis();
     }
+    
+	/**
+	 * Get immutable flow event identifier.
+	 * @return String - event identifier
+	 */
+	public String getIdentifier()
+	{
+	    return this.identifier;
+	}
 
-    /**
-     * Constructor
-     * 
-     * @param message - The exception message
-     */
-    public TransformationException(String message)
-    {
-        super(message);
-    }
+	/**
+	 * Get the immutable created date/time of the flow event.
+	 * @return long - create date time
+	 */
+	public long getTimestamp()
+	{
+	    return this.timestamp;
+	}
+
+	/**
+	 * Get the payload of this flow event.
+	 * @return T payload
+	 */
+	public T getPayload()
+	{
+	    return this.payload;
+	}
+	
+
+	/**
+	 * Set the payload of this flow event.
+	 * @param T - payload
+	 */
+	public void setPayload(T payload)
+	{
+	    this.payload = payload;
+	}
 }
