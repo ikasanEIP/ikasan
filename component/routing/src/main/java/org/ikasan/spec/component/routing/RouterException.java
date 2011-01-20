@@ -38,26 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.transformation;
+package org.ikasan.spec.component.routing;
 
 /**
- * Interface for all FlowComponents that perform a Transformer function.
+ * Exception representing a problem calculating a routing
  * 
- * These are characterised by the content of the <code>Event</code> being 
- * changed in some way during the execution of the onEvent method.
- * <p>
- * <b>Syntactic Change</b>
+ * This should only ever be thrown from within a Router's onEvent method, signifying that router's failure to calculate
+ * route
  * 
  * @author Ikasan Development Team
- * @param <T> message to transform
  */
-public interface Translator<T> //extends FlowComponent
+public class RouterException extends RuntimeException //TODO why extend from RTE?
 {
     /**
-     * Transforms or otherwise changes the passed in <code>Event</code>
-     * 
-     * @param event Event to transform
-     * @throws TransformationException Exception if we could not transform
+     * serialVersionUID
      */
-    public void translate(T payload) throws TransformationException;
+    private static final long serialVersionUID = 3203142027287174087L;
+
+    /**
+     * Constructor
+     * 
+     * @param cause The original cause of the exception
+     */
+    public RouterException(Throwable cause)
+    {
+        super(cause);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param message The exception message
+     */
+    public RouterException(String message)
+    {
+        super(message);
+    }
 }

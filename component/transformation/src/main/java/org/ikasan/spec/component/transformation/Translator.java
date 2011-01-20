@@ -38,26 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.routing;
-
+package org.ikasan.spec.component.transformation;
 
 /**
- * Exception for when an Event can't be routed.
+ * Interface for all FlowComponents that perform a Transformer function.
+ * 
+ * These are characterised by the content of the <code>Event</code> being 
+ * changed in some way during the execution of the onEvent method.
+ * <p>
+ * <b>Syntactic Change</b>
  * 
  * @author Ikasan Development Team
+ * @param <T> message to transform
  */
-public class UnroutableEventException extends RouterException
+public interface Translator<T> //extends FlowComponent
 {
-    /** serialVersionUID */
-    private static final long serialVersionUID = -7298409079689693254L;
-
     /**
-     * Constructor
+     * Transforms or otherwise changes the passed in <code>Event</code>
      * 
-     * @param message - The exception message
+     * @param event Event to transform
+     * @throws TransformationException Exception if we could not transform
      */
-    public UnroutableEventException(String message)
-    {
-        super(message);
-    }
+    public void translate(T payload) throws TransformationException;
 }

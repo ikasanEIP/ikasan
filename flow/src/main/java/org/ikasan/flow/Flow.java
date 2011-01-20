@@ -38,46 +38,53 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.sequencing;
+package org.ikasan.flow;
+
+import org.ikasan.flow.event.FlowEvent;
 
 /**
- * Exception thrown by Sequencers
+ * Interface representing a business path for an <code>Event<code>
+ * 
+ * Invocation represents the traversal of that business path. Problems/errors
+ * are represented by the invocation method returning a <code>IkasanExceptionAction</code>
  * 
  * @author Ikasan Development Team
  */
-public class SequencerException extends RuntimeException
+public interface Flow
 {
-    /** serialVersionUID */
-    private static final long serialVersionUID = -6107850100714275149L;
+    /**
+     * Invocation of this method represents the handling of the <code>Event<code>
+     * with respect to some business path
+     * 
+     * @param flowInvocationContext invocation context
+     * @param event The event we're dealing with
+     */
+    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent);
 
     /**
-     * Constructor
+     * Returns the name of this flow
      * 
-     * @param cause - The cause of the exception
+     * @return String name of this flow
      */
-    public SequencerException(Throwable cause)
-    {
-        super(cause);
-    }
+    public String getName();
 
     /**
-     * Constructor
+     * Accessor for moduleName
      * 
-     * @param message - The exception message
-     * @param cause - The exception cause
+     * @return name of the module this flow exist for
      */
-    public SequencerException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
+    public String getModuleName();
 
     /**
-     * Constructor
-     * 
-     * @param message - The exception message
+     * Invoke all start operations for the flow that are required prior to an event invocation.
+     * For instance, this could include setting any flow component configurations,
+     * or starting any flow managed resources.
      */
-    public SequencerException(String message)
-    {
-        super(message);
-    }
+    public void start();
+    
+    /**
+     * Invoke all stop operations for the flow that are required on shutdown of the invoking client.
+     * For instance, this could include stopping any flow managed resources.
+     */
+    public void stop();
 }
