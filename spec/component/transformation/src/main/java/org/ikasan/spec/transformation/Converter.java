@@ -61,5 +61,5 @@ public interface Converter<SOURCE,TARGET> //extends FlowComponent
      * @return conversion result
      * @throws TransformationException if error converting S to T
      */
-    public TARGET convert(final SOURCE source) throws TransformationException;
+    public TARGET convert(final SOURCE payload) throws TransformationException;
 }
