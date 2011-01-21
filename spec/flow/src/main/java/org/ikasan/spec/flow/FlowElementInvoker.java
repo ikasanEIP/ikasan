@@ -38,9 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow;
+package org.ikasan.spec.flow;
 
-import org.ikasan.flow.event.FlowEvent;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Interface for classes capable of invoking a specified <code>FlowElement</code> with the specified <code>Event</code>

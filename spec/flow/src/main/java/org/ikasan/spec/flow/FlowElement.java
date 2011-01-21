@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,60 +38,57 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow;
+package org.ikasan.spec.flow;
+
+import java.util.Map;
 
 /**
- * Interface for the <code>Flow Event</code>.
+ * FlowElement represents a particular unique usage of a <code>FlowComponent</code> within a flow.
+ * <code>FlowElement</code>s wrap <code>FlowComponent</code>s, providing them with a context specific name. They also
+ * define any transitions from this point in flow, this is a mapping of the various potential results that a
+ * FlowComponent may return to subsequent (downstream) <code>FlowElement<code>s
  * 
  * @author Ikasan Development Team
- *
  */
-public class FlowEvent<T>
+public interface FlowElement
 {
-    private String identifier;
-    private long timestamp;
-    private T payload;
+    /** Name of the default transition for <code>FlowComponent</code>s that have a unique result */
+    public static final String DEFAULT_TRANSITION_NAME = "default";
+
+    /**
+     * Accessor for the wrapped <code>FlowComponent</code>
+     * 
+     * @return FlowComponent
+     */
+    public abstract FlowComponent getFlowComponent();
+
+    /**
+     * Accessor for the componentName. This is the unique identifier for a <code>FlowElement</code>
+     * 
+     * @return componentName
+     */
+    public abstract String getComponentName();
+
+    /**
+     * Retrieves the subsequent FlowElement (if any) representing the next node in the flow
+     * 
+     * @param transitionName - this value should be a member of the set of possible results returnable from the wrapped
+     *            flowComponent
+     * @return FlowElement representing the next node in the flow
+     */
+    public abstract FlowElement getTransition(String transitionName);
+
+    /**
+     * Retrieves a Map of all this FlowElement's transitions
+     * 
+     * @return a Map of all this FlowElement's transitions
+     */
+    public Map<String, FlowElement> getTransitions();
     
-    public FlowEvent(String identifier)
-    {
-        this.identifier = identifier;
-        this.timestamp = System.currentTimeMillis();
-    }
-    
-	/**
-	 * Get immutable flow event identifier.
-	 * @return String - event identifier
-	 */
-	public String getIdentifier()
-	{
-	    return this.identifier;
-	}
-
-	/**
-	 * Get the immutable created date/time of the flow event.
-	 * @return long - create date time
-	 */
-	public long getTimestamp()
-	{
-	    return this.timestamp;
-	}
-
-	/**
-	 * Get the payload of this flow event.
-	 * @return T payload
-	 */
-	public T getPayload()
-	{
-	    return this.payload;
-	}
-	
-
-	/**
-	 * Set the payload of this flow event.
-	 * @param T - payload
-	 */
-	public void setPayload(T payload)
-	{
-	    this.payload = payload;
-	}
+    /**
+     * Returns a human readable description of this FlowElement
+     * 
+     * @return String description
+     */
+    public String getDescription();
 }

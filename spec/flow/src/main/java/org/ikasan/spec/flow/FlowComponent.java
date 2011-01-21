@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow;
+package org.ikasan.spec.flow;
 
 /**
  * Marker interface for all components that may be represented within a Flow
