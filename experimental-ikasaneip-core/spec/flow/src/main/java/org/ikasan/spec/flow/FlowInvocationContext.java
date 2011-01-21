@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,56 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow;
+package org.ikasan.spec.flow;
 
-import org.ikasan.flow.event.FlowEvent;
+import java.util.List;
 
 /**
- * Interface for objects which respond to <code>Flow</code> runtime lifecycle events
+ * Interface providing the contract for transfer object operations within the flow invocation
  * 
  * @author Ikasan Development Team
  *
  */
-public interface FlowEventListener {
-
-	/**
-	 * Callback method to be invoked prior to <code>Flow</code> execution
-	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
-	 * @param event - event with which flow is to be invoked
-	 */
-	public void beforeFlow(String moduleName, String flowName, FlowEvent event);
-
-	/**
-	 * Callback method to be invoked subsequent to <code>Flow</code> execution
-	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
-	 * @param event - event with which flow was invoked
-	 */
-	public void afterFlow(String moduleName, String flowName, FlowEvent event);
-
-	/**
-	 * Callback method to be invoked prior to <code>FlowElement</code> execution
-	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
-	 * @param flowElement - FlowElement about to be invoked
-	 * @param event - event with which flow element is to be invoked
-	 */
-	public void beforeFlowElement(String moduleName, String flowName,
-			FlowElement flowElement, FlowEvent event);
-	
-	/**
-	 * Callback method to be called subsequent to <code>FlowElement</code> execution
-	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
-	 * @param flowElement - FlowElement which was invoked
-	 * @param event - event with which flow element was invoked
-	 */
-	public void afterFlowElement(String moduleName, String flowName,
-			FlowElement flowElement, FlowEvent event);
-
+public interface FlowInvocationContext
+{
+	public String getLastComponentName();
+	public void addInvokedComponentName(String componentName);
+	public List<String> getInvokedComponents();
 }

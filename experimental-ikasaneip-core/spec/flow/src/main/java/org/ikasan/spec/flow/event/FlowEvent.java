@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,53 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow;
-
-import org.ikasan.flow.event.FlowEvent;
+package org.ikasan.spec.flow.event;
 
 /**
- * Interface representing a business path for an <code>Event<code>
- * 
- * Invocation represents the traversal of that business path. Problems/errors
- * are represented by the invocation method returning a <code>IkasanExceptionAction</code>
+ * Interface for the <code>Flow Event</code>.
  * 
  * @author Ikasan Development Team
+ *
  */
-public interface Flow
+public interface FlowEvent<T>
 {
-    /**
-     * Invocation of this method represents the handling of the <code>Event<code>
-     * with respect to some business path
-     * 
-     * @param flowInvocationContext invocation context
-     * @param event The event we're dealing with
-     */
-    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent);
+	/**
+	 * Get immutable flow event identifier.
+	 * @return String - event identifier
+	 */
+	public String getIdentifier();
 
-    /**
-     * Returns the name of this flow
-     * 
-     * @return String name of this flow
-     */
-    public String getName();
+	/**
+	 * Get the immutable created date/time of the flow event.
+	 * @return long - create date time
+	 */
+	public long getTimestamp();
 
-    /**
-     * Accessor for moduleName
-     * 
-     * @return name of the module this flow exist for
-     */
-    public String getModuleName();
-
-    /**
-     * Invoke all start operations for the flow that are required prior to an event invocation.
-     * For instance, this could include setting any flow component configurations,
-     * or starting any flow managed resources.
-     */
-    public void start();
-    
-    /**
-     * Invoke all stop operations for the flow that are required on shutdown of the invoking client.
-     * For instance, this could include stopping any flow managed resources.
-     */
-    public void stop();
+	/**
+	 * Get the payload of this flow event.
+	 * @return T payload
+	 */
+	public T getPayload();
+	
+	/**
+	 * Set the payload of this flow event.
+	 * @param T - payload
+	 */
+	public void setPayload(T payload);
 }
