@@ -51,7 +51,7 @@ package org.ikasan.spec.component.transformation;
  * @author Ikasan Development Team
  * @param <T> message to transform
  */
-public interface Translator<T> //extends FlowComponent
+public interface Translator<T> // extends FlowComponent
 {
     /**
      * Transforms or otherwise changes the passed in <code>Event</code>
