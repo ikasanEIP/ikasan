@@ -40,6 +40,7 @@
  */
 package org.ikasan.flow.event;
 
+import org.ikasan.spec.flow.event.EventFactory;
 import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
@@ -48,61 +49,79 @@ import org.ikasan.spec.flow.event.FlowEvent;
  * @author Ikasan Development Team
  *
  */
-public class GenericFlowEvent<T> implements FlowEvent<T>
+public class FlowEventFactory implements EventFactory<String,FlowEvent>
 {
-	/** immutable identifier */
-	private String identifier;
-
-	/** immutable event creation timestamp */
-    private long timestamp;
-
-    /** payload */
-    private T payload;
-
     /**
-     * Constructor
-     * @param identifier
+     * Factory method to create a new FlowEvent instance.
+     * @param immutable identifier
      */
-    public GenericFlowEvent(String identifier)
-    {
-        this.identifier = identifier;
-        this.timestamp = System.currentTimeMillis();
-    }
-    
-	/**
-	 * Get immutable flow event identifier.
-	 * @return String - event identifier
-	 */
-	public String getIdentifier()
+	public FlowEvent newEvent(String identifier)
 	{
-	    return this.identifier;
+		return new GenericFlowEvent(identifier);
 	}
 
 	/**
-	 * Get the immutable created date/time of the flow event.
-	 * @return long - create date time
+	 * Implementation of flowEvent based on payload being of a generic type.
+	 * 
+	 * @author Ikasan Development Team
+	 *
 	 */
-	public long getTimestamp()
+	private class GenericFlowEvent<T> implements FlowEvent<T>
 	{
-	    return this.timestamp;
-	}
+		/** immutable identifier */
+		private String identifier;
 
-	/**
-	 * Get the payload of this flow event.
-	 * @return T payload
-	 */
-	public T getPayload()
-	{
-	    return this.payload;
-	}
-	
+		/** immutable event creation timestamp */
+	    private long timestamp;
 
-	/**
-	 * Set the payload of this flow event.
-	 * @param T - payload
-	 */
-	public void setPayload(T payload)
-	{
-	    this.payload = payload;
+	    /** payload */
+	    private T payload;
+
+	    /**
+	     * Constructor
+	     * @param identifier
+	     */
+	    protected GenericFlowEvent(String identifier)
+	    {
+	        this.identifier = identifier;
+	        this.timestamp = System.currentTimeMillis();
+	    }
+	    
+		/**
+		 * Get immutable flow event identifier.
+		 * @return String - event identifier
+		 */
+		public String getIdentifier()
+		{
+		    return this.identifier;
+		}
+
+		/**
+		 * Get the immutable created date/time of the flow event.
+		 * @return long - create date time
+		 */
+		public long getTimestamp()
+		{
+		    return this.timestamp;
+		}
+
+		/**
+		 * Get the payload of this flow event.
+		 * @return T payload
+		 */
+		public T getPayload()
+		{
+		    return this.payload;
+		}
+		
+
+		/**
+		 * Set the payload of this flow event.
+		 * @param T - payload
+		 */
+		public void setPayload(T payload)
+		{
+		    this.payload = payload;
+		}
 	}
 }
