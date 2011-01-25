@@ -122,6 +122,19 @@
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- trial a cloning library -->        
+		<dependency>
+		    <groupId>uk.com.robust-it</groupId>
+		    <artifactId>cloning</artifactId>
+		    <version>1.7.1</version>
+		</dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
         <!--dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
