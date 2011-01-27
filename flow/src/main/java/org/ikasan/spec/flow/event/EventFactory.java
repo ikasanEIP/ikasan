@@ -52,6 +52,14 @@ public interface EventFactory<ID,T>
 	 * Create a new instance of an event with the provided identifier.
      * @param String identifier 
      * @return T 
+     * TODO - do we need this method ?
 	 */
 	public T newEvent(ID identifier);
+
+    /**
+     * Create a new instance of an event with the provided identifier.
+     * @param String identifier 
+     * @return T 
+     */
+    public <P> T newEvent(ID identifier, P payload);
 }
