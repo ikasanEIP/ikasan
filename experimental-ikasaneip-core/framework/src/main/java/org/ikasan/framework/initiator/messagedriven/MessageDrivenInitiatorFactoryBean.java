@@ -44,13 +44,13 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.messagedriven.spring.SpringMessageListenerContainer;
+import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -105,7 +105,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     /** The error logging service */
     private ErrorLoggingService errorLoggingService;
     
-    /** The excludedEvent service */
+    /** The excludedFlowEvent service */
     private ExcludedEventService excludedEventService;
 
     /** The message initiator */
@@ -121,7 +121,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     private boolean pubSubDomain = true;
     
     /**
-     * Configures the initiator to reuse the priority from the message on the created Event
+     * Configures the initiator to reuse the priority from the message on the created FlowEvent
      * 
      * Only applicable to RawMessageDrivenInitiators
      */
@@ -203,9 +203,9 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     }
 
     /**
-     * @param jmsMessageEventSerialiser the jmsMessageEventSerialiser to set
+     * @param jmsMessageFlowEventSerialiser the jmsMessageFlowEventSerialiser to set
      */
-    public void setEventDeserialiser(JmsMessageEventSerialiser jmsMessageEventSerialiser)
+    public void setFlowEventDeserialiser(JmsMessageEventSerialiser jmsMessageEventSerialiser)
     {
         this.eventDeserialiser = jmsMessageEventSerialiser;
     }
@@ -227,7 +227,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     
     
     /**
-     * @param excludedEventService the excludedEventService to set
+     * @param excludedFlowEventService the excludedFlowEventService to set
      */   
 	public void setExcludedEventService(
 			ExcludedEventService excludedEventService) {
@@ -318,7 +318,7 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             if (payloadFactory == null)
             {
                 throw new IllegalArgumentException(
-                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageEventSerialiser has been set");
+                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageFlowEventSerialiser has been set");
             }
         }
         JmsMessageDrivenInitiator thisInitiator = null;

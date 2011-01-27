@@ -46,11 +46,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.dao.ErrorOccurrenceDao;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Default implementation of <code>ErrorLoggingServiceImpl</code>
@@ -60,7 +60,8 @@ import org.ikasan.framework.management.search.PagedSearchResult;
  * @author Ikasan Development Team
  *
  */
-public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
+public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService 
+{
 	
 	private static final long MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
@@ -81,7 +82,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	private ErrorOccurrenceDao errorOccurrenceDao;
 	
 	/**
-	 * Data access object for the persistence of ExcludedEvents 
+	 * Data access object for the persistence of ExcludedFlowEvents 
 	 */	
 	private ExcludedEventDao excludedEventDao;
 	
@@ -100,7 +101,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * Constructor
 	 *
 	 * @param errorOccurrenceDao
-	 * @param excludedEventDao
+	 * @param excludedFlowEventDao
 	 * @param baseUrl
 	 */
 	public DefaultErrorLoggingServiceImpl(ErrorOccurrenceDao errorOccurrenceDao, ExcludedEventDao excludedEventDao, URL baseUrl) {
@@ -115,7 +116,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * Constructor
 	 * 
 	 * @param errorOccurrenceDao
-	 * @param excludedEventDao
+	 * @param excludedFlowEventDao
 	 * @param baseUrl
 	 * @param errorOccurrenceListeners
 	 */
@@ -130,7 +131,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	 * Constructor
 	 * 
 	 * @param errorOccurrenceDao
-	 * @param excludedEventDao
+	 * @param excludedFlowEventDao
 	 * @param baseURl
 	 * @param errorOccurrenceListener
 	 */
@@ -141,11 +142,11 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.error.service.ErrorLoggingService#logError(java.lang.Throwable, java.lang.String, java.lang.String, java.lang.String, org.ikasan.framework.component.Event)
+	 * @see org.ikasan.framework.error.service.ErrorLoggingService#logError(java.lang.Throwable, java.lang.String, java.lang.String, java.lang.String, org.ikasan.spec.flow.event.FlowEvent)
 	 */
 	public void logError(Throwable throwable, String moduleName,
-			String flowName, String flowElementName, Event currentEvent, String actionTaken) {
-		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, currentEvent, moduleName, flowName, flowElementName, calculateExpiry(), actionTaken);
+			String flowName, String flowElementName, FlowEvent currentFlowEvent, String actionTaken) {
+		ErrorOccurrence errorOccurrence = new ErrorOccurrence(throwable, currentFlowEvent, moduleName, flowName, flowElementName, calculateExpiry(), actionTaken);
 		persistAndNotifyListeners(errorOccurrence);
 	}
 
@@ -207,7 +208,7 @@ public class DefaultErrorLoggingServiceImpl implements ErrorLoggingService {
 	public ErrorOccurrence getErrorOccurrence(long errorOccurrenceId) {
 		ErrorOccurrence errorOccurrence = errorOccurrenceDao.getErrorOccurrence(errorOccurrenceId);
 		if (errorOccurrence!=null){
-			errorOccurrence.setExcludedEvent(excludedEventDao.getExcludedEvent(errorOccurrence.getEventId(), false));
+			errorOccurrence.setExcludedFlowEvent(excludedEventDao.getExcludedEvent(errorOccurrence.getFlowEventId(), false));
 		}
 		return errorOccurrence;
 	}

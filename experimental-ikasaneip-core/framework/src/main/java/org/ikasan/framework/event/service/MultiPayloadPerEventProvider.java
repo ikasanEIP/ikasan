@@ -46,15 +46,16 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.EventFactory;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.payload.service.PayloadProvider;
 
 /**
- * Implementation of <code>EventProvider</code>.<br>
+ * Implementation of <code>FlowEventProvider</code>.<br>
  * 
- * This implementation returns a single Event containing all sourced payloads.<br>
- * The purpose of this is to keep 'related' payloads within the logical unit of a single Event.<br>
- * If no payloads are present then the Event is not created and 'null' is returned.
+ * This implementation returns a single FlowEvent containing all sourced payloads.<br>
+ * The purpose of this is to keep 'related' payloads within the logical unit of a single FlowEvent.<br>
+ * If no payloads are present then the FlowEvent is not created and 'null' is returned.
  * 
  * @author Ikasan Development Team
  */
@@ -69,6 +70,9 @@ public class MultiPayloadPerEventProvider implements EventProvider
     /** Component name that created the event */
     private String componentName;
 
+    /** TODO pass eventFactory */
+    private EventFactory<String,FlowEvent> eventFactory;
+    
     /**
      * Constructor
      * 
@@ -91,9 +95,9 @@ public class MultiPayloadPerEventProvider implements EventProvider
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.event.service.EventProvider#getEvents()
+     * @see org.ikasan.framework.event.service.FlowEventProvider#getFlowEvents()
      */
-    public List<Event> getEvents() throws ResourceException
+    public List<FlowEvent> getEvents() throws ResourceException
     {
         List<Payload> payloads = this.payloadProvider.getNextRelatedPayloads();
         if (payloads == null || payloads.isEmpty())
@@ -101,8 +105,9 @@ public class MultiPayloadPerEventProvider implements EventProvider
             return null;
         }
  
-        Event event = new Event(this.moduleName, this.componentName, hashPayloadIds(payloads), payloads);
-        List<Event> events = new ArrayList<Event>();
+//        FlowEvent event = new FlowEvent(this.moduleName, this.componentName, hashPayloadIds(payloads), payloads);
+        FlowEvent event = eventFactory.newEvent(hashPayloadIds(payloads), payloads);
+        List<FlowEvent> events = new ArrayList<FlowEvent>();
         events.add(event);
         return events;
     }

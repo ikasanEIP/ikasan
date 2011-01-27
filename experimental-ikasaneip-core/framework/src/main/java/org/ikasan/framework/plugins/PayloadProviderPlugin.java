@@ -45,13 +45,13 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.payload.service.PayloadProvider;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
  * Plugin that retrieves any available <code>Payload</code>s from a <code>PayloadProvider</code> and sets these on the
- * Event, after setting the source system on each, if known
+ * FlowEvent, after setting the source system on each, if known
  * 
  * @author Ikasan Development Team
  */
@@ -74,10 +74,10 @@ public class PayloadProviderPlugin implements EventInvocable
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.plugins.EventInvocable#invoke(org.ikasan.framework.component.Event,
+     * @see org.ikasan.framework.plugins.FlowEventInvocable#invoke(org.ikasan.spec.flow.event.FlowEvent,
      * org.ikasan.framework.component.target.TargetParams)
      */
-    public void invoke(Event event) throws PluginInvocationException
+    public void invoke(FlowEvent event) throws PluginInvocationException
     {
         List<Payload> relatedPayloads;
         try
@@ -90,7 +90,7 @@ public class PayloadProviderPlugin implements EventInvocable
         }
         if (relatedPayloads != null)
         {
-            event.setPayloads(relatedPayloads);
+            event.setPayload(relatedPayloads);
         }
     }
 }

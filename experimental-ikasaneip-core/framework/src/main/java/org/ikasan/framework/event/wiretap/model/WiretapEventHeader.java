@@ -64,7 +64,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /** Wiretap component name */
     protected String componentName;
 
-    /** Event id */
+    /** FlowEvent id */
     protected String eventId;
 
     /** Payload id */
@@ -73,13 +73,13 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /** Created date/time */
     protected Date created;
 
-    /** Time after which this WiretapEvent should be cleaned up */
+    /** Time after which this WiretapFlowEvent should be cleaned up */
     protected Date expiry;
 
-    /** Next WiretapEvent (if any) for this payload */
+    /** Next WiretapFlowEvent (if any) for this payload */
     protected transient Long nextByPayload;
 
-    /** Previous WiretapEvent (if any) for this payload */
+    /** Previous WiretapFlowEvent (if any) for this payload */
     protected transient Long previousByPayload;
 
     /**
@@ -136,7 +136,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
      * 
      * @return eventId
      */
-    public String getEventId()
+    public String getFlowEventId()
     {
         return eventId;
     }
@@ -214,9 +214,9 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /**
      * Setter for event id
      * 
-     * @param eventId - The Event id to set
+     * @param eventId - The FlowEvent id to set
      */
-    protected void setEventId(String eventId)
+    protected void setFlowEventId(String eventId)
     {
         this.eventId = eventId;
     }
@@ -283,7 +283,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /**
      * Accessor for nextByPayload
      * 
-     * @return id for next WiretapEvent related by payload
+     * @return id for next WiretapFlowEvent related by payload
      */
     public Long getNextByPayload()
     {
@@ -293,7 +293,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /**
      * Setter for nextByPayload
      * 
-     * @param nextByPayload id for next WiretapEvent related by payload
+     * @param nextByPayload id for next WiretapFlowEvent related by payload
      */
     public void setNextByPayload(Long nextByPayload)
     {
@@ -303,7 +303,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /**
      * Accessor for previousByPayload
      * 
-     * @return id for previous WiretapEvent related by payload
+     * @return id for previous WiretapFlowEvent related by payload
      */
     public Long getPreviousByPayload()
     {
@@ -313,7 +313,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
     /**
      * Setter for previousByPayload
      * 
-     * @param previousByPayload id for previous WiretapEvent related by payload
+     * @param previousByPayload id for previous WiretapFlowEvent related by payload
      */
     public void setPreviousByPayload(Long previousByPayload)
     {

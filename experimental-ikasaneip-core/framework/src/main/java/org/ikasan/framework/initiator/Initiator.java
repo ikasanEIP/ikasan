@@ -42,8 +42,8 @@ package org.ikasan.framework.initiator;
 
 import java.util.Date;
 
-import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.spec.flow.Flow;
 
 /**
  * Ikasan initiator interface defining the operations on an initiator.

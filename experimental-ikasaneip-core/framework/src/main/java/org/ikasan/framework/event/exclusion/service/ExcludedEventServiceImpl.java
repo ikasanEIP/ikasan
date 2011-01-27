@@ -49,9 +49,11 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.core.flow.invoker.FlowInvocationContext;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.flow.event.ReplicationFactory;
+import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.dao.ExcludedEventDao;
@@ -76,6 +78,9 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	
 	private ModuleService moduleService;
 	
+	/** TODO added to allow cloning equivalent as part of generics */
+	private ReplicationFactory<FlowEvent> replicationFactory;
+	
 	/**
 	 * Only used for debugging the transaction status
 	 */
@@ -86,7 +91,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	
 	
 	/**
-	 * @param excludedEventDao
+	 * @param excludedFlowEventDao
 	 * @param errorLoggingService
 	 * @param listeners
 	 * @param moduleService
@@ -101,11 +106,11 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.event.exclusion.service.EventExclusionService#excludeEvent(org.ikasan.framework.component.Event)
+	 * @see org.ikasan.framework.event.exclusion.service.FlowEventExclusionService#excludeFlowEvent(org.ikasan.spec.flow.event.FlowEvent)
 	 */
-	public void excludeEvent(Event event, String moduleName, String flowName) {
+	public void excludeEvent(FlowEvent event, String moduleName, String flowName) {
 		Date exclusionTime = new Date();
-		//create and save a new ExcludedEvent
+		//create and save a new ExcludedFlowEvent
 		logger.info("excluding event from module:"+moduleName+", flow:"+flowName);
 		excludedEventDao.save(new ExcludedEvent(event, moduleName, flowName, exclusionTime));
 		
@@ -144,7 +149,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	 * synchronously resubmit, not handling any errors, simply allowing any exception to propogate
 	 * 
 	 * 
-	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#resubmit(long)
+	 * @see org.ikasan.framework.event.exclusion.service.ExcludedFlowEventService#resubmit(long)
 	 */
 	public void resubmit(String eventId, String resubmitter) {
 		logger.info("resubmit called with eventId ["+eventId+"], resubmitter ["+resubmitter+"]");
@@ -164,7 +169,7 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId, false);
 		
 		if (excludedEvent==null){
-			throw new IllegalArgumentException("Cannot find Excluded Event id:"+eventId);
+			throw new IllegalArgumentException("Cannot find Excluded FlowEvent id:"+eventId);
 		}
 		
 		if (excludedEvent.isResolved()){
@@ -200,28 +205,30 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	    
 		
 	    
-	    //invoke the flow with the Event. Any exceptions are left to propagate
-	    Event event = excludedEvent.getEvent();
-	    FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
+	    //invoke the flow with the FlowEvent. Any exceptions are left to propagate
+	    FlowEvent event = excludedEvent.getFlowEvent();
+	    FlowInvocationContext flowInvocationContext = new DefaultFlowInvocationContext();
 	    try{
 			flow.invoke(flowInvocationContext, event);
 	    } catch (Throwable throwable){
-	    	try {
-	    		
+
+	        // TODO - clone exception no longer thrown
+//	    	try {
+//	    		
 	    		//for some reason, if dont clone event for error occurrence, hibernate fails to persist
 	    		//dont know why this is
-				Event clonedEvent = event.clone();
-				errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), clonedEvent, null);
-			} catch (CloneNotSupportedException e) {
-				//ignore
-			}
+				FlowEvent clonedFlowEvent = replicationFactory.replicate(event);
+				errorLoggingService.logError(throwable, excludedEvent.getModuleName(), excludedEvent.getFlowName(), flowInvocationContext.getLastComponentName(), clonedFlowEvent, null);
+//			} catch (CloneNotSupportedException e) {
+//				//ignore
+//			}
 			
 	    	
 	    	throw new AbortTransactionException("Resubmission failed!", throwable);
 	    }
 	    
 	    
-	    //mark excludedEvent as resubmitted
+	    //mark excludedFlowEvent as resubmitted
 	    //need to get a fresh handle on the ExcludedEvent, because the original now has changes we dont want to save
 	    excludedEvent = excludedEventDao.getExcludedEvent(eventId, true);
 	    excludedEvent.resolveAsResubmitted(resubmitter);
@@ -233,29 +240,29 @@ public class ExcludedEventServiceImpl implements ExcludedEventService {
 	
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.event.exclusion.service.ExcludedEventService#cancel(java.lang.String, java.lang.String)
+	 * @see org.ikasan.framework.event.exclusion.service.ExcludedFlowEventService#cancel(java.lang.String, java.lang.String)
 	 */
 	public void cancel(String eventId, String canceller) {
 
-		ExcludedEvent excludedEvent = excludedEventDao.getExcludedEvent(eventId, true);
+		ExcludedEvent excludedFlowEvent = excludedEventDao.getExcludedEvent(eventId, true);
 		
-		if (excludedEvent==null){
-			throw new IllegalArgumentException("Cannot find Excluded Event id:"+eventId);
+		if (excludedFlowEvent==null){
+			throw new IllegalArgumentException("Cannot find Excluded FlowEvent id:"+eventId);
 		}
 		
-		if (excludedEvent.isResolved()){
+		if (excludedFlowEvent.isResolved()){
 			throw new IllegalStateException("Attempt made to resubmit event:"+eventId);
 		}
 		
-		Module module = moduleService.getModule(excludedEvent.getModuleName());
+		Module module = moduleService.getModule(excludedFlowEvent.getModuleName());
 		if (module==null){
-			throw new IllegalArgumentException("unknown Module:"+excludedEvent.getModuleName());
+			throw new IllegalArgumentException("unknown Module:"+excludedFlowEvent.getModuleName());
 		}	
 			
-	    //mark excludedEvent as cancelled
-	    excludedEvent.resolveAsCancelled(canceller);
+	    //mark excludedFlowEvent as cancelled
+	    excludedFlowEvent.resolveAsCancelled(canceller);
 
-	    excludedEventDao.save(excludedEvent);
+	    excludedEventDao.save(excludedFlowEvent);
 	    
 	    
 

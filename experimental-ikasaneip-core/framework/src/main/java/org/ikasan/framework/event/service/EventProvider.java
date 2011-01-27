@@ -44,20 +44,20 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Interface for components capable of sourcing <code>Event</code>s
+ * Interface for components capable of sourcing <code>FlowEvent</code>s
  * 
  * @author Ikasan Development Team
  */
 public interface EventProvider 
 {
     /**
-     * Returns a List of Events known to this EventProvider
+     * Returns a List of FlowEvents known to this FlowEventProvider
      * 
-     * @return List of Events, or null if none available
+     * @return List of FlowEvents, or null if none available
      * @throws ResourceException Exception if events could not be retrieved
      */
-    public List<Event> getEvents() throws ResourceException;
+    public List<FlowEvent> getEvents() throws ResourceException;
 }

@@ -43,7 +43,6 @@ package org.ikasan.framework.initiator.messagedriven.jca.jboss;
 import javax.jms.Session;
 
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.initiator.messagedriven.jca.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.jboss.JBossJmsActivationSpecConfig;
@@ -52,6 +51,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JmsMessageEndpointManager ;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JtaTransactionManager;
+import org.ikasan.spec.flow.Flow;
 
 /**
  * This factory creates JBoss specific JMS endpoint managers.
@@ -224,7 +224,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /**
      * @return the eventDeserialiser
      */
-    public JmsMessageEventSerialiser getEventDeserialiser()
+    public JmsMessageEventSerialiser getFlowEventDeserialiser()
     {
         return eventDeserialiser;
     }
@@ -232,7 +232,7 @@ public class JBossJmsEndpointManagerFactoryBean implements FactoryBean, BeanName
     /**
      * @param eventDeserialiser the eventDeserialiser to set
      */
-    public void setEventDeserialiser(JmsMessageEventSerialiser eventDeserialiser)
+    public void setFlowEventDeserialiser(JmsMessageEventSerialiser eventDeserialiser)
     {
         this.eventDeserialiser = eventDeserialiser;
     }

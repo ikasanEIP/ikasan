@@ -40,7 +40,7 @@
  */
 package org.ikasan.framework.event.exclusion.service;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Interface for all objects that wish to be register their interest in excluded events
@@ -51,10 +51,10 @@ import org.ikasan.framework.component.Event;
 public interface ExcludedEventListener {
 	
 	/**
-	 * Callback for the notification of the exclusion of an Event
+	 * Callback for the notification of the exclusion of an FlowEvent
 	 * 
 	 * @param event that has just been excluded
 	 */
-	public void notifyExcludedEvent(Event excludedEvent);
+	public void notifyExcludedEvent(FlowEvent excludedEvent);
 
 }

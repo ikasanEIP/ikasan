@@ -46,12 +46,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.FlowElement;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.flow.event.dao.TriggerDao;
 import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;
 import org.ikasan.framework.flow.event.service.FlowEventJob;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * The <code>JobAwareFlowEventListener</code> provides a
@@ -77,7 +77,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
     private static final String BEFORE_LOCATION_PREFIX = "before";
 
     /** Registered jobs */
-    private Map<String, FlowEventJob> flowEventJobs;
+    private Map<String, FlowEventJob> flowFlowEventJobs;
 
     /** Registered triggers */
     private Map<String, List<Trigger>> triggers = new HashMap<String, List<Trigger>>();
@@ -91,13 +91,13 @@ public class JobAwareFlowEventListener implements FlowEventListener
     /**
      * Constructor
      * 
-     * @param flowEventJobs - The list of flow event jobs
+     * @param flowFlowEventJobs - The list of flow event jobs
      * @param triggerDao - The DAO for the trigger
      */
-    public JobAwareFlowEventListener(Map<String, FlowEventJob> flowEventJobs, TriggerDao triggerDao)
+    public JobAwareFlowEventListener(Map<String, FlowEventJob> flowFlowEventJobs, TriggerDao triggerDao)
     {
         super();
-        this.flowEventJobs = flowEventJobs;
+        this.flowFlowEventJobs = flowFlowEventJobs;
         this.triggerDao = triggerDao;
         for (Trigger dynamicTrigger : triggerDao.findAll())
         {
@@ -188,9 +188,9 @@ public class JobAwareFlowEventListener implements FlowEventListener
      * @see
      * org.ikasan.framework.flow.event.listener.FlowEventListener#beforeFlow
      * (java.lang.String, java.lang.String,
-     * org.ikasan.framework.component.Event)
+     * org.ikasan.spec.flow.event.FlowEvent)
      */
-    public void beforeFlow(String moduleName, String flowName, Event event)
+    public void beforeFlow(String moduleName, String flowName, FlowEvent event)
     {
         String key = moduleName + flowName + TriggerRelationship.BEFORE.getDescription();
         List<Trigger> beforeFlowTriggers = triggers.get(key);
@@ -202,9 +202,9 @@ public class JobAwareFlowEventListener implements FlowEventListener
      * 
      * @see
      * org.ikasan.framework.flow.event.listener.FlowEventListener#afterFlow(
-     * java.lang.String, java.lang.String, org.ikasan.framework.component.Event)
+     * java.lang.String, java.lang.String, org.ikasan.spec.flow.event.FlowEvent)
      */
-    public void afterFlow(String moduleName, String flowName, Event event)
+    public void afterFlow(String moduleName, String flowName, FlowEvent event)
     {
         String key = moduleName + flowName + TriggerRelationship.AFTER.getDescription();
         List<Trigger> afterFlowTriggers = triggers.get(key);
@@ -218,9 +218,9 @@ public class JobAwareFlowEventListener implements FlowEventListener
      * org.ikasan.framework.flow.event.listener.FlowEventListener#beforeFlowElement
      * (java.lang.String, java.lang.String,
      * org.ikasan.framework.flow.FlowElement,
-     * org.ikasan.framework.component.Event)
+     * org.ikasan.spec.flow.event.FlowEvent)
      */
-    public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, Event event)
+    public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
         String flowElementName = flowElement.getComponentName();
         String key = moduleName + flowName + TriggerRelationship.BEFORE.getDescription() + flowElementName;
@@ -235,9 +235,9 @@ public class JobAwareFlowEventListener implements FlowEventListener
      * org.ikasan.framework.flow.event.listener.FlowEventListener#afterFlowElement
      * (java.lang.String, java.lang.String,
      * org.ikasan.framework.flow.FlowElement,
-     * org.ikasan.framework.component.Event)
+     * org.ikasan.spec.flow.event.FlowEvent)
      */
-    public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, Event event)
+    public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
         String flowElementName = flowElement.getComponentName();
         String key = moduleName + flowName + TriggerRelationship.AFTER.getDescription() + flowElementName;
@@ -255,21 +255,21 @@ public class JobAwareFlowEventListener implements FlowEventListener
      * @param associatedTriggers - The associated triggers to fire
      * @param location - The location of the listener
      */
-    private void fireTriggers(String moduleName, String flowName, Event event, List<Trigger> associatedTriggers, String location)
+    private void fireTriggers(String moduleName, String flowName, FlowEvent event, List<Trigger> associatedTriggers, String location)
     {
         if (associatedTriggers != null)
         {
             for (Trigger associatedTrigger : associatedTriggers)
             {
                 String jobName = associatedTrigger.getJobName();
-                FlowEventJob flowEventAgent = flowEventJobs.get(jobName);
-                if (flowEventAgent == null)
+                FlowEventJob flowFlowEventAgent = flowFlowEventJobs.get(jobName);
+                if (flowFlowEventAgent == null)
                 {
                     logger.warn("unknown job [" + jobName + "]");
                 }
                 else
                 {
-                    flowEventAgent.execute(location, moduleName, flowName, event, new HashMap<String, String>(associatedTrigger.getParams()));
+                    flowFlowEventAgent.execute(location, moduleName, flowName, event, new HashMap<String, String>(associatedTrigger.getParams()));
                 }
             }
         }
@@ -352,6 +352,6 @@ public class JobAwareFlowEventListener implements FlowEventListener
      */
     public Map<String, FlowEventJob> getRegisteredJobs()
     {
-        return new HashMap<String, FlowEventJob>(flowEventJobs);
+        return new HashMap<String, FlowEventJob>(flowFlowEventJobs);
     }
 }

@@ -44,20 +44,20 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 
 /**
- * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to recreate and fire an <code>Event</code>s based
+ * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to recreate and fire an <code>FlowEvent</code>s based
  * on JMS messages.
  * 
  * This implementation expects that the incoming message data represents a previously serialised (for JMS publication)
- * <code>Event</code>.
+ * <code>FlowEvent</code>.
  * 
- * TODO the Event serialisation and deserialisation code needs to be tightly bound
+ * TODO the FlowEvent serialisation and deserialisation code needs to be tightly bound
  * 
  * @author Ikasan Development Team
  */
@@ -78,17 +78,17 @@ public class EventMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * @param name - name of this initiator
      * @param flow - flow to invoke
      * @param exceptionHandler - handler for Exceptions
-     * @param jmsMessageEventSerialiser - The serialiser for the JMS message
+     * @param jmsMessageFlowEventSerialiser - The serialiser for the JMS message
      */
     public EventMessageDrivenInitiator(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler,
-            JmsMessageEventSerialiser<MapMessage> jmsMessageEventSerialiser)
+            JmsMessageEventSerialiser<MapMessage> jmsMessageFlowEventSerialiser)
     {
         super(moduleName, name, flow, exceptionHandler);
-        this.jmsMessageEventSerialiser = jmsMessageEventSerialiser;
+        this.jmsMessageEventSerialiser = jmsMessageFlowEventSerialiser;
     }
 
     @Override
-    protected Event handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
+    protected FlowEvent handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
     {
         return jmsMessageEventSerialiser.fromMessage(message, moduleName, name);
     }

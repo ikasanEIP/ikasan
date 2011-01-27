@@ -48,7 +48,7 @@ import org.ikasan.framework.payload.dao.DatabasePayloadDao;
 import org.ikasan.framework.payload.model.DatabasePayload;
 
 /**
- * Publishes an Ikasan Event to a Database
+ * Publishes an Ikasan FlowEvent to a Database
  * 
  * @author Ikasan Development Team
  */

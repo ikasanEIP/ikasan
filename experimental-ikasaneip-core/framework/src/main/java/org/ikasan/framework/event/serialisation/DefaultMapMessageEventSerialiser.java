@@ -54,10 +54,11 @@ import javax.jms.Session;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.EventFactory;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Default implementation for converting an Event to and from a MapMessage
+ * Default implementation for converting an FlowEvent to and from a MapMessage
  * 
  * @author Ikasan Development Team
  *
@@ -84,10 +85,13 @@ public class DefaultMapMessageEventSerialiser implements
 	 */
 	protected PayloadFactory payloadFactory;
 
+    /** TODO pass eventFactory */
+    private EventFactory<String,FlowEvent> eventFactory;
+	
 	@SuppressWarnings("unchecked")
-	public Event fromMessage(MapMessage mapMessage, String moduleName,
+	public FlowEvent fromMessage(MapMessage mapMessage, String moduleName,
 			String componentName) throws JMSException, EventDeserialisationException {
-		Event result = null;
+		FlowEvent result = null;
 		
 		Enumeration<String> mapNames = mapMessage.getMapNames();
 		
@@ -109,7 +113,7 @@ public class DefaultMapMessageEventSerialiser implements
 		return result;
 	}
 
-	protected Event demapEvent(MapMessage mapMessage, String moduleName,
+	protected FlowEvent demapEvent(MapMessage mapMessage, String moduleName,
 			String componentName, List<Payload> payloads, List<String> eventFieldNames) throws JMSException, EventDeserialisationException {
 		String eventId = null;
 		int priority = -1;
@@ -131,7 +135,7 @@ public class DefaultMapMessageEventSerialiser implements
 			}
 		}
 		
-		return new Event(eventId, priority, timestamp, payloads);
+		return eventFactory.newEvent(eventId, payloads);
 	}
 
 	protected Payload demapPayload(int payloadOrdinal, MapMessage mapMessage,
@@ -179,7 +183,7 @@ public class DefaultMapMessageEventSerialiser implements
 	 * starting with a List of non payload (event level) fields.
 	 * 
 	 * Resultant list should be:
-	 * 	entry(0) -> List<String> of all Event level field names
+	 * 	entry(0) -> List<String> of all FlowEvent level field names
 	 *  entry(1) -> List<String> of all field names beginning with PAYLOAD_0
 	 *  entry(2) -> List<String> of all field names beginning with PAYLOAD_1
 	 *  
@@ -231,27 +235,28 @@ public class DefaultMapMessageEventSerialiser implements
 	}
 
 	/**
-	 * @see org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser#toMessage(org.ikasan.framework.component.Event, javax.jms.Session)
+	 * @see org.ikasan.framework.event.serialisation.JmsMessageFlowEventSerialiser#toMessage(org.ikasan.spec.flow.event.FlowEvent, javax.jms.Session)
 	 */
-	public MapMessage toMessage(Event event, Session session)
+	public MapMessage toMessage(FlowEvent event, Session session)
 			throws JMSException {
 		MapMessage mapMessage = session.createMapMessage();
 
-		List<Payload> payloads = event.getPayloads();
-		for (int i = 0; i < payloads.size(); i++) {
-			Payload payload = payloads.get(i);
-			mapMessage.setBytes(PAYLOAD_PREFIX + i + PAYLOAD_CONTENT_SUFFIX,
-					payload.getContent());
-			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_ID_SUFFIX, payload.getId());
-			
-			//map any payload attributes
-			for (String attributeName : payload.getAttributeNames()){
-				mapMessage.setString(PAYLOAD_PREFIX + i +ATTRIBUTE_PREFIX+attributeName, payload.getAttribute(attributeName));
-			}
-		}
-		mapMessage.setString(EVENT_FIELD_ID, event.getId());
-		mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());
-		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp().getTime());
+		// TODO commented out for Generics
+//		List<Payload> payloads = event.getPayloads();
+//		for (int i = 0; i < payloads.size(); i++) {
+//			Payload payload = payloads.get(i);
+//			mapMessage.setBytes(PAYLOAD_PREFIX + i + PAYLOAD_CONTENT_SUFFIX,
+//					payload.getContent());
+//			mapMessage.setString(PAYLOAD_PREFIX + i + PAYLOAD_ID_SUFFIX, payload.getId());
+//			
+//			//map any payload attributes
+//			for (String attributeName : payload.getAttributeNames()){
+//				mapMessage.setString(PAYLOAD_PREFIX + i +ATTRIBUTE_PREFIX+attributeName, payload.getAttribute(attributeName));
+//			}
+//		}
+//		mapMessage.setString(EVENT_FIELD_ID, event.getId());
+//		mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());
+//		mapMessage.setLong(EVENT_FIELD_TIMESTAMP, event.getTimestamp().getTime());
 
 		return mapMessage;
 	}

@@ -43,7 +43,7 @@ package org.ikasan.framework.event.wiretap.model;
 import java.util.Date;
 
 /**
- * Ikasan WiretapEvent Value Object.
+ * Ikasan WiretapFlowEvent Value Object.
  * 
  * @author Ikasan Development Team
  */

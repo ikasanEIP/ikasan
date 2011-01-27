@@ -41,7 +41,7 @@
 package org.ikasan.framework.event.serialisation;
 
 /**
- * Exception representing a technical problem  deserialising an <code>Event</code>
+ * Exception representing a technical problem  deserialising an <code>FlowEvent</code>
  * 
  * @author Ikasan Development Team
  *

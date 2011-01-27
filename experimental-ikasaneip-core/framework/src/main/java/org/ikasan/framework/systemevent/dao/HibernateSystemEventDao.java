@@ -59,7 +59,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Hibernate implementation of <code>SystemEventDao</code>
+ * Hibernate implementation of <code>SystemFlowEventDao</code>
  * 
  * Note that can be configured to housekeep either simply, or in batches.
  * 
@@ -69,10 +69,10 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class HibernateSystemEventDao extends HibernateDaoSupport implements SystemEventDao{
 
     /** Query used for housekeeping expired system events */
-    private static final String HOUSEKEEP_QUERY = "delete SystemEvent w where w.expiry <= ?";
+    private static final String HOUSEKEEP_QUERY = "delete SystemFlowEvent w where w.expiry <= ?";
     
     /** Batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete SystemEvent s where s.id in (:event_ids)";
+    private static final String BATCHED_HOUSEKEEP_QUERY = "delete SystemFlowEvent s where s.id in (:event_ids)";
     
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
@@ -105,14 +105,14 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
 
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.dao.SystemEventDao#save(org.ikasan.framework.systemevent.model.SystemEvent)
+	 * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#save(org.ikasan.framework.systemevent.model.SystemFlowEvent)
 	 */
 	public void save(SystemEvent systemEvent){
 		getHibernateTemplate().save(systemEvent);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.dao.SystemEventDao#find(int, int, java.lang.String, boolean, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
+	 * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#find(int, int, java.lang.String, boolean, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,final String subject, final String action,
@@ -183,7 +183,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     }	
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.dao.SystemEventDao#deleteExpired()
+	 * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#deleteExpired()
 	 */
 	public void deleteExpired() {
 		if (!batchHousekeepDelete){
@@ -225,7 +225,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
 	/**
 	 * Identifies a batch (List of Ids) of housekeepable items
 	 * 
-	 * @return List of ids for SystemEvents
+	 * @return List of ids for SystemFlowEvents
 	 */
 	@SuppressWarnings("unchecked")
 	private List<Long> getHousekeepableBatch() {
@@ -240,8 +240,8 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
 	            criteria.setMaxResults(housekeepingBatchSize);
 	            
 	            for (Object systemEventObj : criteria.list()){
-	            	SystemEvent systemEvent = (SystemEvent)systemEventObj;
-	            	ids.add(systemEvent.getId());
+	            	SystemEvent systemFlowEvent = (SystemEvent)systemEventObj;
+	            	ids.add(systemFlowEvent.getId());
 	            }
 	           
 	            return ids;
@@ -251,9 +251,9 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
 	}
 
 	/**
-	 * Checks if there are housekeepable items in existance, ie expired SystemEvents
+	 * Checks if there are housekeepable items in existance, ie expired SystemFlowEvents
 	 * 
-	 * @return true if there is at least 1 expired SystemEvent 
+	 * @return true if there is at least 1 expired SystemFlowEvent 
 	 */
 	private boolean housekeepablesExist() {
 		return (Boolean) getHibernateTemplate().execute(new HibernateCallback()

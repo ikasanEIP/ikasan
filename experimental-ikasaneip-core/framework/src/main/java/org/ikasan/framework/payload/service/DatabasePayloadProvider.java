@@ -126,7 +126,7 @@ public class DatabasePayloadProvider implements PayloadProvider
             for (DatabasePayload databasePayload : unconsumedPayloads)
             {
                 logger.info("consuming DatabasePayload with id [" + databasePayload.getId() + "]");
-                byte[] payloadContent = databasePayload.getEvent().getBytes();
+                byte[] payloadContent = databasePayload.getFlowEvent().getBytes();
                 Payload payload = payloadFactory.newPayload(databasePayload.getId().toString(),  payloadContent);
                 payload.setContent(payloadContent);
                 result.add(payload);

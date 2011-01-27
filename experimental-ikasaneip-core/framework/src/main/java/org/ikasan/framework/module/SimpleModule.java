@@ -45,8 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.initiator.Initiator;
+import org.ikasan.spec.flow.Flow;
 
 /**
  * A simple representation of a Module

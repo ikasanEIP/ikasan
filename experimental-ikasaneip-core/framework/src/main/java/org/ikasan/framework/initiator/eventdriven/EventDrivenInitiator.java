@@ -41,14 +41,15 @@
 package org.ikasan.framework.initiator.eventdriven;
 
 import org.ikasan.framework.initiator.Initiator;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Simple interface combining the powers of <code>Initiator</code>, <code>EventListener</code>,
+ * Simple interface combining the powers of <code>Initiator</code>, <code>FlowEventListener</code>,
  * and <code>ExceptionListener</code>
  * 
  * @author Ikasan Development Team
  */
-public interface EventDrivenInitiator extends Initiator, EventListener, ExceptionListener
+public interface EventDrivenInitiator extends Initiator, EventListener<FlowEvent>, ExceptionListener
 {
     /**
      * Accessor for underlying MessageEndpointManager

@@ -43,13 +43,13 @@ package org.ikasan.framework.event.wiretap.service;
 import java.util.Date;
 import java.util.Set;
 
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
 import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * This Service allows <code>Event</code>s to be dumped out at runtime for later
+ * This Service allows <code>FlowEvent</code>s to be dumped out at runtime for later
  * retrieval and inspection
  * 
  * @author Ikasan Development Team
@@ -57,9 +57,9 @@ import org.ikasan.framework.management.search.PagedSearchResult;
 public interface WiretapService
 {
     /**
-     * @deprecated - Use other findWiretapEvents instead
+     * @deprecated - Use other findWiretapFlowEvents instead
      * 
-     *             Allows previously stored Events to be searched for.
+     *             Allows previously stored FlowEvents to be searched for.
      * 
      *             By default the search has no restrictions. Specifying any of
      *             the arguments as anything other than null will cause the
@@ -69,7 +69,7 @@ public interface WiretapService
      *            contain at least one moduleName
      * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
-     * @param eventId - The Event Id
+     * @param eventId - The FlowEvent Id
      * @param payloadId - The Payload Id
      * @param fromDate - Include only events after fromDate
      * @param untilDate - Include only events before untilDate
@@ -78,14 +78,14 @@ public interface WiretapService
      * @param pageNo - page index into the greater result set
      * 
      * @throws IllegalArgumentException - if moduleNames is null or empty
-     * @return List of <code>WiretapEventHeader</code> representing the result
+     * @return List of <code>WiretapFlowEventHeader</code> representing the result
      *         of the search
      */
     public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate,
             Date untilDate, String payloadContent, int pageSize, int pageNo);
 
     /**
-     * Allows previously stored Events to be searched for.
+     * Allows previously stored FlowEvents to be searched for.
      * 
      * @param pageNo - page index into the greater result set
      * @param pageSize - how many results to return in the result
@@ -95,43 +95,43 @@ public interface WiretapService
      *            contain at least one moduleName
      * @param moduleFlow - The name of Flow internal to the Module
      * @param componentName - The name of the component
-     * @param eventId - The Event Id
+     * @param eventId - The FlowEvent Id
      * @param payloadId - The Payload Id
      * @param fromDate - Include only events after fromDate
      * @param untilDate - Include only events before untilDate
      * @param payloadContent - The Payload content
      * 
      * @throws IllegalArgumentException - if moduleNames is null or empty
-     * @return List of <code>WiretapEventHeader</code> representing the result
+     * @return List of <code>WiretapFlowEventHeader</code> representing the result
      *         of the search
      */
     public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
             String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
 
     /**
-     * Retrieve a specific <code>WiretapEvent</code> by Id
+     * Retrieve a specific <code>WiretapFlowEvent</code> by Id
      * 
-     * @param wiretapEventId - The id of the wiretap event to retrieve
-     * @return <code>WiretapEvent</code>
+     * @param wiretapFlowEventId - The id of the wiretap event to retrieve
+     * @return <code>WiretapFlowEvent</code>
      */
     public WiretapEvent getWiretapEvent(Long wiretapEventId);
 
     /**
-     * dumps a snapshot of an <code>Event</code> at runtime in the form of one
-     * or more <code>WiretapEvent</code>s - one for every <code>Payload</code>
+     * dumps a snapshot of an <code>FlowEvent</code> at runtime in the form of one
+     * or more <code>WiretapFlowEvent</code>s - one for every <code>Payload</code>
      * contained
      * 
-     * @param event - Event to snapshot
+     * @param event - FlowEvent to snapshot
      * @param componentName - name of the component
      * @param moduleName - name of the <code>Module</code>
      * @param flowName - name of the <code>Flow</code>
      * @param timeToLive - no of minutes from now until
-     *            <code>WiretapEvents</code> should expire
+     *            <code>WiretapFlowEvents</code> should expire
      */
-    public void tapEvent(Event event, String componentName, String moduleName, String flowName, Long timeToLive);
+    public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive);
 
     /**
-     * Causes all <code>WiretapEvent</code>s that are past their expiry to be
+     * Causes all <code>WiretapFlowEvent</code>s that are past their expiry to be
      * deleted
      */
     public void housekeep();

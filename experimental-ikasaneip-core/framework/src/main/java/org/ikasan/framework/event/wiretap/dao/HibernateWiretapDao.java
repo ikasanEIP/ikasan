@@ -73,13 +73,13 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 {
 
 	/** Query used for housekeeping expired wiretap events */
-    private static final String HOUSEKEEP_QUERY = "delete WiretapEvent w where w.expiry <= ?";
+    private static final String HOUSEKEEP_QUERY = "delete WiretapFlowEvent w where w.expiry <= ?";
 
     /** Query for finding all wiretap events with the same payloadId */
-    private static final String WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID = "select w.id from WiretapEvent w where w.payloadId = ?";
+    private static final String WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID = "select w.id from WiretapFlowEvent w where w.payloadId = ?";
 
     /** Batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete WiretapEvent s where s.id in (:event_ids)";
+    private static final String BATCHED_HOUSEKEEP_QUERY = "delete WiretapFlowEvent s where s.id in (:event_ids)";
     
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
@@ -108,11 +108,11 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	}
 	
 	/**
-     * Save the wiretapEvent
+     * Save the wiretapFlowEvent
      *  
      * @see
      * org.ikasan.framework.event.wiretap.dao.WiretapDao#save(
-     * org.ikasan.framework.event.wiretap.model.WiretapEvent)
+     * org.ikasan.framework.event.wiretap.model.WiretapFlowEvent)
      */
     public void save(WiretapEvent wiretapEvent)
     {
@@ -129,7 +129,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     @SuppressWarnings("unchecked")
     public WiretapEvent findById(Long id)
     {
-        // get the WiretapEvent
+        // get the WiretapFlowEvent
         WiretapEvent wiretapEvent = (WiretapEvent) getHibernateTemplate().get(WiretapEvent.class, id);
         // find any next or previous by payloadId
         List<Long> relatedIds = getHibernateTemplate().find(WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID, wiretapEvent.getPayloadId());
@@ -165,7 +165,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      * @param firstResult - The first result
      * @return PagedWiretapSearchResult
      * @throws DataAccessException - Exception if we can't get the data
-     * @deprecated - Use findWiretapEvents instead
+     * @deprecated - Use findWiretapFlowEvents instead
      */
     @Deprecated
     @SuppressWarnings("unchecked")
@@ -223,7 +223,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     }
 
     /**
-     * Perform a paged search for <code>WiretapEvent</code>s
+     * Perform a paged search for <code>WiretapFlowEvent</code>s
      * 
      * @param pageNo - The page number to retrieve
      * @param pageSize - The size of the page
@@ -345,7 +345,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	 *  and attempts to delete that batch
 	 */
 	private void batchHousekeepDelete() {
-		logger.info("called");
+//		logger.info("called");
 		while(housekeepablesExist()){
 			final List<Long> housekeepableBatch = getHousekeepableBatch();
 			
@@ -367,7 +367,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	/**
 	 * Identifies a batch (List of Ids) of housekeepable items
 	 * 
-	 * @return List of ids for WiretapEvents
+	 * @return List of ids for WiretapFlowEvents
 	 */
 	@SuppressWarnings("unchecked")
 	private List<Long> getHousekeepableBatch() {
@@ -381,9 +381,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	            criteria.add(Restrictions.lt("expiry", new Date()));
 	            criteria.setMaxResults(housekeepingBatchSize);
 	            
-	            for (Object wiretapEventObj : criteria.list()){
-	            	WiretapEvent wiretapEvent = (WiretapEvent)wiretapEventObj;
-	            	ids.add(wiretapEvent.getId());
+	            for (Object wiretapFlowEventObj : criteria.list()){
+	            	WiretapEvent wiretapFlowEvent = (WiretapEvent)wiretapFlowEventObj;
+	            	ids.add(wiretapFlowEvent.getId());
 	            }
 	           
 	            return ids;
@@ -393,9 +393,9 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	}
 
 	/**
-	 * Checks if there are housekeepable items in existance, ie expired WiretapEvents
+	 * Checks if there are housekeepable items in existance, ie expired WiretapFlowEvents
 	 * 
-	 * @return true if there is at least 1 expired WiretapEvent 
+	 * @return true if there is at least 1 expired WiretapFlowEvent 
 	 */
 	private boolean housekeepablesExist() {
 		return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
@@ -411,7 +411,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 rowCount = rowCountList.get(0);
             }
-            logger.info(rowCount+", housekeepables exist");
+//            logger.info(rowCount+", housekeepables exist");
             return new Boolean(rowCount>0);
             
             }

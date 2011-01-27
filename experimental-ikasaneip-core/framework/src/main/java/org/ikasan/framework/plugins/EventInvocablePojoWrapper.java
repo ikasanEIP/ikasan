@@ -40,14 +40,14 @@
  */
 package org.ikasan.framework.plugins;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
- * Wrapper class for plugins that do not implement the <code>EventInvocable</code> interface, but nonetheless have a
+ * Wrapper class for plugins that do not implement the <code>FlowEventInvocable</code> interface, but nonetheless have a
  * functional method that matches the parameter list.
  * 
- * All wrapped plugins must still provide a public void method that takes as arguments an <code>Event</code>, along with
+ * All wrapped plugins must still provide a public void method that takes as arguments an <code>FlowEvent</code>, along with
  * a <code>TargetParams</code> object
  * 
  * @author Ikasan Development Team
@@ -65,8 +65,8 @@ public class EventInvocablePojoWrapper extends PojoWrapperPlugin implements Even
         super(pojo, pojoMethodName);
     }
 
-    public void invoke(Event event) throws PluginInvocationException
+    public void invoke(FlowEvent event) throws PluginInvocationException
     {
-        invoke(new Object[] { event }, new Class[] { Event.class });
+        invoke(new Object[] { event }, new Class[] { FlowEvent.class });
     }
 }

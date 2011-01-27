@@ -40,18 +40,17 @@
  */
 package org.ikasan.framework.initiator.eventdriven;
 
-import org.ikasan.framework.component.Event;
 
 /**
- * Event listener operations.
+ * FlowEvent listener operations.
  * 
  * This interface provides an endpoint to allow the implementor to mark
  * an interest in message events occurring in Ikasan source adapters.
  * 
  * @author Ikasan Development Team
  */
-public interface EventListener
+public interface EventListener<T>
 {
     /** Ikasan event listener */
-    public void onEvent(Event event);
+    public void onEvent(T event);
 }

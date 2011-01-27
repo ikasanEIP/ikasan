@@ -40,21 +40,21 @@
  */
 package org.ikasan.framework.plugins;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
- * Interface for all plugins that are invokable on a per <code>Event</code> basis
+ * Interface for all plugins that are invokable on a per <code>FlowEvent</code> basis
  * 
  * @author Ikasan Development Team
  */
 public interface EventInvocable extends Plugin
 {
     /**
-     * Invoke this plugin with an <code>Event</code>
+     * Invoke this plugin with an <code>FlowEvent</code>
      * 
      * @param event The event to pass to the plugin
      * @throws PluginInvocationException Exception if the plugin could not be invoked
      */
-    public void invoke(Event event) throws PluginInvocationException;
+    public void invoke(FlowEvent event) throws PluginInvocationException;
 }

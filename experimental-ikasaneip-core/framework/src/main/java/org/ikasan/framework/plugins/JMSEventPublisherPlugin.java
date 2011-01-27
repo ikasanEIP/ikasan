@@ -48,13 +48,13 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.security.IkasanSecurityConf;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**
- * Plugin that knows how to publish an <code>Event</code> to JMS
+ * Plugin that knows how to publish an <code>FlowEvent</code> to JMS
  * 
  * @author Ikasan Development Team
  */
@@ -109,7 +109,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
      * 
      * @param destination The destination for the message
      * @param connectionFactory The connection factory
-     * @param jmsMessageEventSerialiser The JMS message serialiser
+     * @param jmsMessageFlowEventSerialiser The JMS message serialiser
      * @param ikasanSecurityConf THe security configuration
      */
     public JMSEventPublisherPlugin(Destination destination, ConnectionFactory connectionFactory,
@@ -127,7 +127,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
      * 
      * @param jndiDestinationFactory used for looking up the destination on demand
      * @param connectionFactory The connection factory
-     * @param jmsMessageEventSerialiser The JMS message serialiser
+     * @param jmsMessageFlowEventSerialiser The JMS message serialiser
      * @param ikasanSecurityConf THe security configuration
      */
     public JMSEventPublisherPlugin(JndiDestinationFactory jndiDestinationFactory, ConnectionFactory connectionFactory,
@@ -139,7 +139,7 @@ public class JMSEventPublisherPlugin implements EventInvocable
         this.jmsMessageEventSerialiser = jmsMessageEventSerialiser;
         this.ikasanSecurityConf = ikasanSecurityConf;
     }
-    public void invoke(Event event) throws PluginInvocationException
+    public void invoke(FlowEvent event) throws PluginInvocationException
     {
         Destination thisDestination;
         try
@@ -163,11 +163,14 @@ public class JMSEventPublisherPlugin implements EventInvocable
                 messageProducer.setTimeToLive(timeToLive.longValue());
             }
             
-            //use the configured priority if present, otherwise the Event priority
+            //use the configured priority if present, otherwise the FlowEvent priority
             //note MUST explicitly set priority on the messageProducer, as setting on the message gets ignored
-            messageProducer.setPriority(priority!=null?priority:event.getPriority());
+//            messageProducer.setPriority(priority!=null?priority:event.getPriority());
+
+            //TODO - how to set priority with generics
+            messageProducer.setPriority(priority!=null?priority:4);
             messageProducer.send(message);
-            logger.info("successfully sent message to destination [" + thisDestination + "]. " + event.idToString());
+            logger.info("successfully sent message to destination [" + thisDestination + "]. " + event.getIdentifier());
         }
         catch (JMSException e)
         {

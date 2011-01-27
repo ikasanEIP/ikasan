@@ -49,8 +49,8 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -65,7 +65,7 @@ import org.ikasan.framework.monitor.MonitorSubject;
  * Abstract base class for JMS Message Driven Initiators
  * 
  * Subclasses will provide an implementation for handling of one or more of the specific JMS Message types into an
- * <code>Event</code>
+ * <code>FlowEvent</code>
  * 
  * @author Ikasan Development Team
  */
@@ -135,7 +135,7 @@ public abstract class JmsMessageDrivenInitiatorImpl
             throw new AbortTransactionException(INITIATOR_ANESTHETIST_OPERATING);
         }
         
-        Event event = null;
+        FlowEvent event = null;
         try
         {
         	if (logger.isDebugEnabled()){
@@ -314,12 +314,12 @@ public abstract class JmsMessageDrivenInitiatorImpl
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event The event containing the message
+     * @return FlowEvent The event containing the message
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
+     * @throws FlowEventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
      *             by implementing children
      */
-    protected Event handleBytesMessage(BytesMessage message) throws JMSException
+    protected FlowEvent handleBytesMessage(BytesMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support BytesMessage [" + message.toString()
                 + "]");
@@ -331,9 +331,9 @@ public abstract class JmsMessageDrivenInitiatorImpl
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      */
-    protected Event handleStreamMessage(StreamMessage message)
+    protected FlowEvent handleStreamMessage(StreamMessage message)
     {
         throw new UnsupportedOperationException("This Initiator does not support StreamMessage [" + message.toString()
                 + "]");
@@ -345,12 +345,12 @@ public abstract class JmsMessageDrivenInitiatorImpl
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
+     * @throws FlowEventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
      *             by implementing children
      */
-    protected Event handleObjectMessage(ObjectMessage message) throws JMSException
+    protected FlowEvent handleObjectMessage(ObjectMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support ObjectMessage [" + message.toString()
                 + "]");
@@ -362,13 +362,13 @@ public abstract class JmsMessageDrivenInitiatorImpl
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
+     * @throws FlowEventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
      *             by implementing children
-     * @throws EventDeserialisationException 
+     * @throws FlowEventDeserialisationException 
      */
-    protected Event handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
+    protected FlowEvent handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support MapMessage [" + message.toString()
                 + "]");
@@ -380,12 +380,12 @@ public abstract class JmsMessageDrivenInitiatorImpl
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      * @throws JMSException Exception if there is a problem with JMS
-     * @throws EventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
+     * @throws FlowEventSerialisationException SuppressWarnings Exceptions aren't thrown by this parent class but should be
      *             by implementing children
      */
-    protected Event handleTextMessage(TextMessage message) throws JMSException
+    protected FlowEvent handleTextMessage(TextMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support TextMessage [" + message.toString()
                 + "]");

@@ -44,9 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.core.flow.invoker.FlowInvocationContext;
-import org.ikasan.framework.component.Event;
+import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.error.service.ErrorLoggingService;
 import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
@@ -56,6 +54,9 @@ import org.ikasan.framework.exception.RetryAction;
 import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Abstract base class for all existing <code>Initiator</code> implementations
@@ -120,13 +121,13 @@ public abstract class AbstractInitiator implements Initiator
     protected ExcludedEventService excludedEventService;
     
     /**
-     * Set of ids for Events that will be immediately excluded when next encountered
+     * Set of ids for FlowEvents that will be immediately excluded when next encountered
      */
     protected Set<String> exclusions = new HashSet<String>();
     
-    private long handledEventCount = 0;
+    private long handledFlowEventCount = 0;
     
-    private Date lastEventTime = null;
+    private Date lastFlowEventTime = null;
     
 
 
@@ -267,17 +268,17 @@ public abstract class AbstractInitiator implements Initiator
     }
     
 	/**
-	 * Invoke the flow with all available <code>Event</code>s, handing exception actions as we go
+	 * Invoke the flow with all available <code>FlowEvent</code>s, handing exception actions as we go
 	 * 
 	 * @param events
 	 */
-	protected void invokeFlow(List<Event> events) {
+	protected void invokeFlow(List<FlowEvent> events) {
 		IkasanExceptionAction exceptionAction = null;
 		String currentEventId= null;
     	if (events != null && events.size() > 0){
-	        for (Event event : events)
+	        for (FlowEvent event : events)
 	        {
-	        	currentEventId = event.getId();
+	        	currentEventId = event.getIdentifier();
 				//check if this event has been noted for exclusion, and if so exclude it
 				if (supportsExclusions()){
 					if (exclusions.contains(currentEventId)){
@@ -288,11 +289,11 @@ public abstract class AbstractInitiator implements Initiator
 				} 
 	        	
 	        	
-	        	FlowInvocationContext flowInvocationContext = new FlowInvocationContext();
+	        	FlowInvocationContext flowInvocationContext = new DefaultFlowInvocationContext();
 				try{
 					flow.invoke(flowInvocationContext, event);
-					handledEventCount = handledEventCount+1;
-					lastEventTime = new Date();
+					handledFlowEventCount = handledFlowEventCount+1;
+					lastFlowEventTime = new Date();
 				}catch (Throwable throwable){
 					String lastComponentName = flowInvocationContext.getLastComponentName();
 					exceptionAction = exceptionHandler.handleThrowable(lastComponentName, throwable);
@@ -311,7 +312,7 @@ public abstract class AbstractInitiator implements Initiator
 	 * @param throwable
 	 * @param componentName
 	 */
-	protected void logError(Event event, Throwable throwable,
+	protected void logError(FlowEvent event, Throwable throwable,
 			String componentName, IkasanExceptionAction exceptionAction) 
 	{
 		if (errorLoggingService!=null)
@@ -345,14 +346,14 @@ public abstract class AbstractInitiator implements Initiator
 	}
 
 	/**
-	 * Invoke the flow with a single <code>Event</code>
+	 * Invoke the flow with a single <code>FlowEvent</code>
 	 * 
 	 * @param event
 	 */
-	protected void invokeFlow(Event event) {
-		List<Event> events = null;
+	protected void invokeFlow(FlowEvent event) {
+		List<FlowEvent> events = null;
 		if (event !=null){
-			events = new ArrayList<Event>();
+			events = new ArrayList<FlowEvent>();
 			events.add(event);
 		}
 		invokeFlow(events);
@@ -604,14 +605,14 @@ public abstract class AbstractInitiator implements Initiator
     }
     
     /**
-     * @param excludedEventService to set
+     * @param excludedFlowEventService to set
      */
     public void setExcludedEventService(ExcludedEventService excludedEventService) {
 		this.excludedEventService = excludedEventService;
 	}
 	
 	/**
-	 * Returns true if an excludedEventService is present, and thus supports exclusions
+	 * Returns true if an excludedFlowEventService is present, and thus supports exclusions
 	 * 
 	 * @return true if exclusions are supported by this Initiator
 	 */
@@ -629,10 +630,10 @@ public abstract class AbstractInitiator implements Initiator
 	}
 	
 	public long getHandledEventCount(){
-		return handledEventCount;
+		return handledFlowEventCount;
 	}
 	
 	public Date getLastEventTime(){
-		return lastEventTime;
+		return lastFlowEventTime;
 	}
 }

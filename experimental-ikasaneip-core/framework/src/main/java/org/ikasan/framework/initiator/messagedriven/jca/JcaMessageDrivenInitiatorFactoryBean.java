@@ -44,7 +44,6 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
 
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.initiator.messagedriven.EventMessageDrivenInitiator;
@@ -52,6 +51,7 @@ import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.JmsMessageDrivenInitiatorImpl;
 import org.ikasan.framework.initiator.messagedriven.RawMessageDrivenInitiator;
 import org.ikasan.framework.initiator.messagedriven.jca.SpringMessageListenerContainer;
+import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.jms.listener.endpoint.JmsActivationSpecConfig;
@@ -110,7 +110,7 @@ public class JcaMessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNa
     private JmsMessageDrivenInitiator initiator;
 
     /**
-     * Configures the initiator to reuse the priority from the message on the created Event
+     * Configures the initiator to reuse the priority from the message on the created FlowEvent
      *
      * Only applicable to RawMessageDrivenInitiators
      */
@@ -168,9 +168,9 @@ public class JcaMessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNa
     }
 
     /**
-     * @param jmsMessageEventSerialiser the jmsMessageEventSerialiser to set
+     * @param jmsMessageFlowEventSerialiser the jmsMessageFlowEventSerialiser to set
      */
-    public void setEventDeserialiser(JmsMessageEventSerialiser jmsMessageEventSerialiser)
+    public void setFlowEventDeserialiser(JmsMessageEventSerialiser jmsMessageEventSerialiser)
     {
         this.eventDeserialiser = jmsMessageEventSerialiser;
     }
@@ -246,7 +246,7 @@ public class JcaMessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNa
             if (payloadFactory == null)
             {
                 throw new IllegalArgumentException(
-                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageEventSerialiser has been set");
+                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageFlowEventSerialiser has been set");
             }
         }
         JmsMessageDrivenInitiator thisInitiator = null;
