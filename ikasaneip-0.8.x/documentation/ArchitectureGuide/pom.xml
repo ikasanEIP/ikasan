@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>documentation</artifactId>
-        <version>0.8.2-SNAPSHOT</version>
+        <version>0.8.1-SNAPSHOT</version>
     </parent>
     <artifactId>architecture-guide</artifactId>
     <packaging>jdocbook</packaging>

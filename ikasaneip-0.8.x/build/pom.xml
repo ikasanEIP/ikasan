@@ -49,7 +49,7 @@
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.8.2-SNAPSHOT</version>
+    <version>0.8.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>

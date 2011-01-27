@@ -49,13 +49,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.2-SNAPSHOT</version>
+        <version>0.8.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-platform-jar</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.2-SNAPSHOT</version>
+    <version>0.8.1-SNAPSHOT</version>
     <name>ikasan :: platform :: jar</name>
 
     <dependencies>
