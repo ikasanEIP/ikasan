@@ -281,6 +281,18 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
+        <!-- TODO - Reviewing functional usage of this reposiory (required for cloning libs) -->        
+	    <repository>
+	        <id>central</id>
+	        <url>http://oss.sonatype.org/service/local/repositories/ukcomrobust-it-049/content</url>
+	        <releases>
+	            <enabled>true</enabled>
+	        </releases>
+	        <snapshots>
+	            <enabled>true</enabled>
+	        </snapshots>
+	    </repository>
+        
     </repositories>
     <!-- Plugin repositories -->
     <pluginRepositories>
