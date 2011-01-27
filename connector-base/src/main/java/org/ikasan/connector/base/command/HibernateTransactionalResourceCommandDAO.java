@@ -178,6 +178,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
             String xidParam = "xidParam";
             Query query = session.createQuery("from AbstractTransactionalResourceCommand c where c.xid.id = :"
                     + xidParam);
+            logger.debug("Executing from AbstractTransactionalResourceCommand c where c.xid.id = :" + xidImpl.getId());
             query.setParameter(xidParam, xidImpl.getId());
             result = query.list();
             session.getTransaction().commit();
@@ -191,6 +192,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         {
             if (session != null && session.isOpen()) session.close();
         }
+        logger.debug("Number of results [" + result.size() + "]");
         return result;
     }
 
