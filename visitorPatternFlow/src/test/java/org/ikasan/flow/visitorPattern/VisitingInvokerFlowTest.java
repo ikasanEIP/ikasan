@@ -34,7 +34,6 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowComponent;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -77,32 +76,29 @@ public class VisitingInvokerFlowTest
     /** Mock transition map */
     final Map<String,FlowElement> mockTransitions = mockery.mock(Map.class, "mockMapTransitions");
     
-    /** Mock flowComponent */
-    final FlowComponent mockFlowComponent = mockery.mock(FlowComponent.class, "mockFlowComponent");
-
     /** stubbed translator component */
-	FlowComponent stubTranslatorComponent;
+	Object stubTranslatorComponent;
 
     /** stubbed converter component */
-	FlowComponent stubConverterComponent;
+	Object stubConverterComponent;
 
 	/** stubbed router component */
-	FlowComponent stubRouterComponent;
+	Object stubRouterComponent;
 
 	/** stubbed sequencer component */
-	FlowComponent stubSequencerComponent;
+	Object stubSequencerComponent;
 
 	/** stubbed producer component */
-	FlowComponent stubProducerStringBuilderComponent;
+	Object stubProducerStringBuilderComponent;
 
 	/** stubbed producer component */
-	FlowComponent stubProducerStringComponent;
+	Object stubProducerStringComponent;
 
 	/** stubbed broker component */
-	FlowComponent stubBrokerComponent;
+	Object stubBrokerComponent;
 
 	/** stubbed producer component */
-	FlowComponent stubConsumerComponent;
+	Object stubConsumerComponent;
     
 	/** real flow context */
 	FlowInvocationContext flowInvocationContext;
@@ -614,7 +610,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed Translator to 'change' the content of incoming StringBuilder
      */
-    private class StubTranslatorComponent implements Translator<StringBuilder>, FlowComponent
+    private class StubTranslatorComponent implements Translator<StringBuilder>
     {
 		public void translate(StringBuilder payload) throws TransformationException
 		{
@@ -626,7 +622,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed Converter to convert the incoming StringBuilder to a String
      */
-    private class StubConverterComponent implements Converter<StringBuilder,String>, FlowComponent
+    private class StubConverterComponent implements Converter<StringBuilder,String>
     {
 		public String convert(StringBuilder payload) throws TransformationException
 		{
@@ -637,7 +633,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed Router routes based on incoming payload content
      */
-    private class StubRouterComponent implements Router<StringBuilder>, FlowComponent
+    private class StubRouterComponent implements Router<StringBuilder>
     {
 		public List<String> route(StringBuilder payload) throws RouterException 
 		{
@@ -667,7 +663,7 @@ public class VisitingInvokerFlowTest
      * into order of "first" and "second".
      *
      */
-    private class StubSequencerComponent implements Sequencer<StringBuilder>, FlowComponent
+    private class StubSequencerComponent implements Sequencer<StringBuilder>
     {
 		List<StringBuilder> sequenced = new ArrayList<StringBuilder>(2);
     	
@@ -694,7 +690,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed consumer based on returning a String
      */
-    private class StubConsumerComponent implements Consumer<String>, FlowComponent
+    private class StubConsumerComponent implements Consumer<String>
     {
 		public String invoke() throws EndpointException 
 		{
@@ -705,7 +701,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed broker based on incoming StringBuilder payload and a returned String
      */
-    private class StubBrokerComponent implements Broker<StringBuilder,String>, FlowComponent
+    private class StubBrokerComponent implements Broker<StringBuilder,String>
     {
 		public String invoke(StringBuilder payload) throws EndpointException 
 		{
@@ -716,7 +712,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed producer based on StringBuilder payload
      */
-    private class StubProducerStringBuilderComponent implements Producer<StringBuilder>, FlowComponent
+    private class StubProducerStringBuilderComponent implements Producer<StringBuilder>
     {
     	public void invoke(StringBuilder payload) throws EndpointException 
 		{
@@ -727,7 +723,7 @@ public class VisitingInvokerFlowTest
     /**
      * Stubbed producer based on String payload
      */
-    private class StubProducerStringComponent implements Producer<String>, FlowComponent
+    private class StubProducerStringComponent implements Producer<String>
     {
 		public void invoke(String payload) throws EndpointException 
 		{
