@@ -50,7 +50,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public interface FlowElement
+public interface FlowElement<COMPONENT>
 {
     /** Name of the default transition for <code>FlowComponent</code>s that have a unique result */
     public static final String DEFAULT_TRANSITION_NAME = "default";
@@ -60,7 +60,7 @@ public interface FlowElement
      * 
      * @return FlowComponent
      */
-    public abstract FlowComponent getFlowComponent();
+    public abstract COMPONENT getFlowComponent();
 
     /**
      * Accessor for the componentName. This is the unique identifier for a <code>FlowElement</code>
