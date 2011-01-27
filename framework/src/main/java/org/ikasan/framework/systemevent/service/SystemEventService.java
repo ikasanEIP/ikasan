@@ -61,7 +61,7 @@ public interface SystemEventService
 	 * @param action - what has happened
 	 * @param actor - who/what was driving the happening
 	 */
-	public void logSystemFlowEvent(String subject, String action, String actor);
+	public void logSystemEvent(String subject, String action, String actor);
 
 
 	/**
@@ -79,7 +79,7 @@ public interface SystemEventService
 	 * 
 	 * @return PagedSearchResult<SystemFlowEvent> - page friendly search result subset
 	 */
-	public PagedSearchResult<SystemEvent> listSystemFlowEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
+	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
 
 	
 	/**

@@ -83,7 +83,7 @@ public class SystemEventServiceImpl implements SystemEventService
 	/* (non-Javadoc)
 	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#logSystemFlowEvent(java.lang.String, java.lang.String, java.util.Date, java.lang.String)
 	 */
-	public void logSystemFlowEvent(String subject, String action, String actor){
+	public void logSystemEvent(String subject, String action, String actor){
 		Date now = new Date();
 		Date expiry = null;
 		if (eventExpiryMinutes!=null){
@@ -95,7 +95,7 @@ public class SystemEventServiceImpl implements SystemEventService
 	/* (non-Javadoc)
 	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#listSystemFlowEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
-	public PagedSearchResult<SystemEvent> listSystemFlowEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor) {
+	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor) {
 
 		return systemEventDao.find(pageNo, pageSize, orderBy, orderAscending, subject,action, timestampFrom, timestampTo, actor);
 
