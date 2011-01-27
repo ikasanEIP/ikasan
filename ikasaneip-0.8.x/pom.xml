@@ -49,7 +49,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
-    <version>0.8.1</version>
+    <version>0.8.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -344,9 +344,9 @@
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.1</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.1</developerConnection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.1</url>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.1-SNAPSHOT</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.1-SNAPSHOT</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.1-SNAPSHOT</url>
     </scm>
     <!-- 
          Distribution for releases
