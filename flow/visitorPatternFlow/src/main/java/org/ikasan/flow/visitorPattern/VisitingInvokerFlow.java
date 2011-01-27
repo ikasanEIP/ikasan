@@ -48,7 +48,6 @@ import org.ikasan.spec.configuration.ConfigurationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.service.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowComponent;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -147,20 +146,20 @@ public class VisitingInvokerFlow implements Flow
      * 
      * @return List<FlowElement>
      */
-    public List<FlowElement> getFlowElements()
+    public List<FlowElement<?>> getFlowElements()
     {
-        List<FlowElement> result = new ArrayList<FlowElement>();
-        List<FlowElement> elementsToVisit = new ArrayList<FlowElement>();
+        List<FlowElement<?>> result = new ArrayList<FlowElement<?>>();
+        List<FlowElement<?>> elementsToVisit = new ArrayList<FlowElement<?>>();
         elementsToVisit.add(headElement);
         while (!elementsToVisit.isEmpty())
         {
-            FlowElement thisFlowElement = elementsToVisit.get(0);
+            FlowElement<?> thisFlowElement = elementsToVisit.get(0);
             elementsToVisit.remove(0);
             if (!result.contains(thisFlowElement))
             {
                 result.add(thisFlowElement);
             }
-            for (FlowElement subsequentElement : thisFlowElement.getTransitions().values())
+            for (FlowElement<?> subsequentElement : thisFlowElement.getTransitions().values())
             {
                 if (!result.contains(subsequentElement))
                 {
@@ -194,7 +193,7 @@ public class VisitingInvokerFlow implements Flow
     {
         for(FlowElement flowElement:this.getFlowElements())
         {
-            FlowComponent flowComponent = flowElement.getFlowComponent();
+            Object flowComponent = flowElement.getFlowComponent();
 
             // configure any components marked as configured resources
             if(flowComponent instanceof ConfiguredResource)
@@ -231,7 +230,7 @@ public class VisitingInvokerFlow implements Flow
     {
         for(FlowElement flowElement:this.getFlowElements())
         {
-            FlowComponent flowComponent = flowElement.getFlowComponent();
+            Object flowComponent = flowElement.getFlowComponent();
             if(flowComponent instanceof ManagedResource)
             {
                 try

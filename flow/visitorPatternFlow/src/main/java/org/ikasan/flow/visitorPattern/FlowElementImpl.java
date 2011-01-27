@@ -43,7 +43,6 @@ package org.ikasan.flow.visitorPattern;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ikasan.spec.flow.FlowComponent;
 import org.ikasan.spec.flow.FlowElement;
 
 /**
@@ -51,10 +50,10 @@ import org.ikasan.spec.flow.FlowElement;
  * 
  * @author Ikasan Development Team
  */
-public class FlowElementImpl implements FlowElement
+public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
 {
     /** <code>FlowComponent</code> being wrapped and given flow context */
-    private FlowComponent flowComponent;
+    private COMPONENT flowComponent;
 
     /** Flow context specific name for the wrapped component */
     private String componentName;
@@ -75,7 +74,7 @@ public class FlowElementImpl implements FlowElement
      * @param flowComponent The FlowComponent
      * @param transitions A map of transitions
      */
-    public FlowElementImpl(String componentName, FlowComponent flowComponent, Map<String, FlowElement> transitions)
+    public FlowElementImpl(String componentName, COMPONENT flowComponent, Map<String, FlowElement> transitions)
     {
         this.componentName = componentName;
         this.flowComponent = flowComponent;
@@ -89,7 +88,7 @@ public class FlowElementImpl implements FlowElement
      * @param flowComponent The FlowComponent
      * @param defaultTransition The default transition
      */
-    public FlowElementImpl(String componentName, FlowComponent flowComponent, FlowElement defaultTransition)
+    public FlowElementImpl(String componentName, COMPONENT flowComponent, FlowElement defaultTransition)
     {
         this(componentName, flowComponent, createTransitionMap(defaultTransition));
     }
@@ -100,7 +99,7 @@ public class FlowElementImpl implements FlowElement
      * @param componentName The name of the component
      * @param flowComponent The FlowComponent
      */
-    public FlowElementImpl(String componentName, FlowComponent flowComponent)
+    public FlowElementImpl(String componentName, COMPONENT flowComponent)
     {
         this(componentName, flowComponent, (Map<String, FlowElement>) null);
     }
@@ -123,7 +122,7 @@ public class FlowElementImpl implements FlowElement
      * 
      * @see flow.FlowElement#getFlowComponent()
      */
-    public FlowComponent getFlowComponent()
+    public COMPONENT getFlowComponent()
     {
         return flowComponent;
     }
