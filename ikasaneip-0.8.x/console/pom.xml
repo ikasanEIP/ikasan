@@ -44,12 +44,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.1-SNAPSHOT</version>
+        <version>0.8.1</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>console-parent</artifactId>
-    <version>0.8.1-SNAPSHOT</version>
+    <version>0.8.1</version>
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration User Console</name>
 
