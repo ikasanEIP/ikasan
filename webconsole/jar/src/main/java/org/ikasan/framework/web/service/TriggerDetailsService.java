@@ -45,9 +45,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.FlowElement;
-import org.ikasan.framework.flow.VisitingInvokerFlow;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener;
 import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;
@@ -173,8 +173,8 @@ public class TriggerDetailsService
         Flow flow = module.getFlows().get(flowName);
         if (flow instanceof VisitingInvokerFlow)
         {
-            List<FlowElement> flowElements = ((VisitingInvokerFlow) flow).getFlowElements();
-            for (FlowElement flowElement : flowElements)
+            List<FlowElement<?>> flowElements = ((VisitingInvokerFlow) flow).getFlowElements();
+            for (FlowElement<?> flowElement : flowElements)
             {
                 result.add(flowElement.getComponentName());
             }

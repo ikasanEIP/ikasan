@@ -74,16 +74,16 @@
     </bean>
 
 	<!--  flow invocation beans -->
-	<bean id="flowElementInvoker"
+	<!--bean id="flowElementInvoker"
 		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
 		<property name="flowEventListener" ref="flowEventListener" />
-	</bean>
+	</bean-->
 	
-	<bean id="flowEventListener"
+	<!--bean id="flowEventListener"
 		class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
 		<constructor-arg ref="jobsMap"/>
 		<constructor-arg ref="triggerDao"/>
-	</bean>
+	</bean-->
 	
 	<bean id="jobsMap" class="java.util.HashMap">
 		<constructor-arg>
