@@ -55,10 +55,20 @@ public class FlowEventFactory implements EventFactory<String,FlowEvent>
      * Factory method to create a new FlowEvent instance.
      * @param immutable identifier
      */
-	public FlowEvent newEvent(String identifier)
-	{
-		return new GenericFlowEvent(identifier);
-	}
+    public FlowEvent newEvent(String identifier)
+    {
+        return new GenericFlowEvent(identifier);
+    }
+
+    /**
+     * Factory method to create a new FlowEvent instance.
+     * @param immutable identifier
+     * @param mutable payload
+     */
+    public <P> FlowEvent newEvent(String identifier, P payload)
+    {
+        return new GenericFlowEvent(identifier, payload);
+    }
 
 	/**
 	 * Implementation of flowEvent based on payload being of a generic type.
@@ -77,16 +87,26 @@ public class FlowEventFactory implements EventFactory<String,FlowEvent>
 	    /** payload */
 	    private T payload;
 
-	    /**
-	     * Constructor
-	     * @param identifier
-	     */
-	    protected GenericFlowEvent(String identifier)
-	    {
-	        this.identifier = identifier;
-	        this.timestamp = System.currentTimeMillis();
-	    }
-	    
+        /**
+         * Constructor
+         * @param identifier
+         */
+        protected GenericFlowEvent(String identifier)
+        {
+            this(identifier, null);
+        }
+        
+        /**
+         * Constructor
+         * @param identifier
+         */
+        protected GenericFlowEvent(String identifier, T payload)
+        {
+            this.identifier = identifier;
+            this.timestamp = System.currentTimeMillis();
+            this.payload = payload;
+        }
+        
 		/**
 		 * Get immutable flow event identifier.
 		 * @return String - event identifier
@@ -124,4 +144,5 @@ public class FlowEventFactory implements EventFactory<String,FlowEvent>
 		    this.payload = payload;
 		}
 	}
+
 }
