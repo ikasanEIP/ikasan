@@ -51,7 +51,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * @param <T> message to split or aggregate
  */
-public interface Sequencer<T> //extends FlowComponent
+public interface Sequencer<T>
 {
     /**
      * Returns an ordered List<Event> for forwarding downstream
