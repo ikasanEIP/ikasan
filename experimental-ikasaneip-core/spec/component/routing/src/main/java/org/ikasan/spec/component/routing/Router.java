@@ -51,7 +51,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * @param <T> message to route
  */
-public interface Router<T>// extends FlowComponent
+public interface Router<T>
 {
     /** Default result for any unresolved routing implementation */
     public static final String DEFAULT_RESULT = "default";

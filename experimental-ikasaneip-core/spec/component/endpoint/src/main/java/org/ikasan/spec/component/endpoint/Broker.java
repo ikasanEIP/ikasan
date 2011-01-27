@@ -49,7 +49,7 @@ package org.ikasan.spec.component.endpoint;
  *
  * @author Ikasan Development Teams
  */
-public interface Broker<TARGET,SOURCE> //extends FlowComponent
+public interface Broker<TARGET,SOURCE>
 {
     /**
      * Consume payload from a source protocol endpoint
