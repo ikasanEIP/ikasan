@@ -79,9 +79,9 @@ public class HibernateDatabasePayloadDao extends HibernateDaoSupport implements 
      * @see
      * org.ikasan.framework.payload.dao.DatabasePayloadDao#delete(org.ikasan.framework.payload.model.DatabasePayload)
      */
-    public void delete(DatabasePayload databaseEvent)
+    public void delete(DatabasePayload databaseFlowEvent)
     {
-        getHibernateTemplate().delete(databaseEvent);
+        getHibernateTemplate().delete(databaseFlowEvent);
     }
 
     /*
@@ -100,15 +100,15 @@ public class HibernateDatabasePayloadDao extends HibernateDaoSupport implements 
      * 
      * @see org.ikasan.framework.payload.dao.DatabasePayloadDao#save(org.ikasan.framework.payload.model.DatabasePayload)
      */
-    public void save(DatabasePayload databaseEvent)
+    public void save(DatabasePayload databaseFlowEvent)
     {
-        if (databaseEvent.getId() == null)
+        if (databaseFlowEvent.getId() == null)
         {
-            getHibernateTemplate().save(databaseEvent);
+            getHibernateTemplate().save(databaseFlowEvent);
         }
         else
         {
-            getHibernateTemplate().update(databaseEvent);
+            getHibernateTemplate().update(databaseFlowEvent);
         }
     }
 

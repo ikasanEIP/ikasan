@@ -45,11 +45,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Simple <code>FlowEventJob</code> implementation that simply logs the current
- * <code>Event</code>
+ * <code>FlowEvent</code>
  * 
  * @author Ikasan Development Team
  * 
@@ -67,9 +67,9 @@ public class LoggingEventJob implements FlowEventJob
      * @see
      * org.ikasan.framework.flow.event.service.FlowEventJob#execute(java.lang
      * .String, java.lang.String, java.lang.String,
-     * org.ikasan.framework.component.Event, java.util.Map)
+     * org.ikasan.spec.flow.event.FlowEvent, java.util.Map)
      */
-    public void execute(String location, String moduleName, String flowName, Event event, Map<String, String> params)
+    public void execute(String location, String moduleName, String flowName, FlowEvent event, Map<String, String> params)
     {
         logger.info("FlowEvent module=[" + moduleName + "] flow=[" + flowName + "] location=[" + location + "] event=[" + event + "]");
     }

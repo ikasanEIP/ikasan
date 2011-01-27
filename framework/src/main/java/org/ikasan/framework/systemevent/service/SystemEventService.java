@@ -47,7 +47,7 @@ import org.ikasan.framework.systemevent.model.SystemEvent;
 
 
 /**
- * SystemEvent service interface
+ * SystemFlowEvent service interface
  * 
  * @author Ikasan Development Team
  *
@@ -61,11 +61,11 @@ public interface SystemEventService
 	 * @param action - what has happened
 	 * @param actor - who/what was driving the happening
 	 */
-	public void logSystemEvent(String subject, String action, String actor);
+	public void logSystemFlowEvent(String subject, String action, String actor);
 
 
 	/**
-	 * Performs a paged search for <code>SystemEvent</code>s restricting by criteria fields as supplied
+	 * Performs a paged search for <code>SystemFlowEvent</code>s restricting by criteria fields as supplied
 	 * 
 	 * @param pageNo - page control field - page no of results to return
 	 * @param pageSize - page control field - size of page
@@ -77,9 +77,9 @@ public interface SystemEventService
 	 * @param timestampTo - criteria field - filter for events with timestamp less than this value
 	 * @param actor - criteria field - filter for exact match on actor
 	 * 
-	 * @return PagedSearchResult<SystemEvent> - page friendly search result subset
+	 * @return PagedSearchResult<SystemFlowEvent> - page friendly search result subset
 	 */
-	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
+	public PagedSearchResult<SystemEvent> listSystemFlowEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor);
 
 	
 	/**

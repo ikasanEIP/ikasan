@@ -47,24 +47,25 @@ import org.ikasan.framework.management.search.PagedSearchResult;
  * @author The Ikasan Development Team
  *
  */
-public interface ExcludedEventDao{
+public interface ExcludedEventDao
+{
 
 	/**
-	 * Saves an <code>ExcludedEvent</code> to persistent storage
+	 * Saves an <code>ExcludedFlowEvent</code> to persistent storage
 	 * 
-	 * @param excludedEvent
+	 * @param excludedFlowEvent
 	 */
 	public void save(ExcludedEvent excludedEvent);
 	
 	/**
-	 * Loads an <code>ExcludedEvent</code> to persistent storage
+	 * Loads an <code>ExcludedFlowEvent</code> to persistent storage
 	 * 
-	 * @param excludedEventId
+	 * @param excludedFlowEventId
 	 */
 	public ExcludedEvent load(Long excludedEventId);
 
 	/**
-	 * Perform a paged search for <code>ExcludedEvent</code>s
+	 * Perform a paged search for <code>ExcludedFlowEvent</code>s
 	 * 
 	 * @param pageNo
 	 * @param pageSize
@@ -80,10 +81,10 @@ public interface ExcludedEventDao{
 
 	
 	/**
-	 * Retrieves an ExcludedEvent by event Id
+	 * Retrieves an ExcludedFlowEvent by event Id
 	 * 
 	 * @param eventId
-	 * @return ExcludedEvent
+	 * @return ExcludedFlowEvent
 	 */
 	public ExcludedEvent getExcludedEvent(String eventId, boolean mutable);
 
@@ -91,7 +92,7 @@ public interface ExcludedEventDao{
 	/**
 	 * Deletes excluded event
 	 * 
-	 * @param excludedEvent
+	 * @param excludedFlowEvent
 	 */
 	public void delete(ExcludedEvent excludedEvent);
 

@@ -43,6 +43,7 @@ package org.ikasan.framework.component;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.StopAction;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Simple implementation of <code>IkasanExceptionHandler</code>, that simply logs the exception and returns a predefined
@@ -68,9 +69,9 @@ public class LoggingExceptionHandlerImpl implements IkasanExceptionHandler
      * (non-Javadoc)
      * 
      * @see org.ikasan.framework.component.IkasanExceptionHandler#invoke(java.lang.String,
-     * org.ikasan.framework.component.Event, java.lang.Throwable)
+     * org.ikasan.spec.flow.event.FlowEvent, java.lang.Throwable)
      */
-    public IkasanExceptionAction invoke(String componentName, Event event, Throwable throwable)
+    public IkasanExceptionAction invoke(String componentName, FlowEvent event, Throwable throwable)
     {
         logger.error("Throwable caught, componentName [" + componentName + "], event [" + event
                 + "], throwable message[" + throwable.getMessage() + "], stacktrace follows:");

@@ -62,10 +62,10 @@ public class DatabasePayload
     /** The body of the payload */
     private String event;
 
-    /** Has this Event been consumed */
+    /** Has this FlowEvent been consumed */
     private boolean consumed;
 
-    /** Last time this Event was updated */
+    /** Last time this FlowEvent was updated */
     private Date lastUpdated;
 
     /** Constructor */
@@ -132,7 +132,7 @@ public class DatabasePayload
      * 
      * @return event
      */
-    public String getEvent()
+    public String getFlowEvent()
     {
         return event;
     }
@@ -142,7 +142,7 @@ public class DatabasePayload
      * 
      * @param event - The event to set
      */
-    public void setEvent(String event)
+    public void setFlowEvent(String event)
     {
         this.event = event;
     }

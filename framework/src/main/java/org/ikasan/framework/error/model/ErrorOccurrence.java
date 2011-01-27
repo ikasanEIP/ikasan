@@ -42,8 +42,8 @@ package org.ikasan.framework.error.model;
 
 import java.util.Date;
 
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.exclusion.model.ExcludedEvent;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
@@ -84,7 +84,7 @@ public class ErrorOccurrence {
 	private String flowName;
 
 	/**
-	 * name of the initiator where this flow occurred, if it took place during Event origination
+	 * name of the initiator where this flow occurred, if it took place during FlowEvent origination
 	 */
 	private String initiatorName;
 
@@ -114,9 +114,9 @@ public class ErrorOccurrence {
 	
 	
 	/**
-	 * Representation of the Event at the time that the error took place
+	 * Representation of the FlowEvent at the time that the error took place
 	 */
-	private Event errorEvent;
+	private FlowEvent errorFlowEvent;
 
 	
 	
@@ -127,7 +127,7 @@ public class ErrorOccurrence {
 	private ErrorOccurrence(){}
 	
 	/**
-	 * Constructor, to be used when the error relates to an Event
+	 * Constructor, to be used when the error relates to an FlowEvent
 	 * 
 	 * @param flowElementName
 	 * @param flowName
@@ -136,20 +136,20 @@ public class ErrorOccurrence {
 	 * @param expiry
 	 * @param actionTaken
 	 */
-	public ErrorOccurrence(Throwable throwable, Event event, String moduleName, String flowName, String flowElementName, Date expiry, String actionTaken) {
+	public ErrorOccurrence(Throwable throwable, FlowEvent event, String moduleName, String flowName, String flowElementName, Date expiry, String actionTaken) {
 		this(throwable, moduleName, expiry, actionTaken);
 		this.flowElementName = flowElementName;
 		this.flowName = flowName;
-		this.eventId = event.getId();
+		this.eventId = event.getIdentifier();
 		
 		
-		this.errorEvent = event;
+		this.errorFlowEvent = event;
 	}
 	
 
 	
 	/**
-	 * Constructor to be used when there is no Event involved
+	 * Constructor to be used when there is no FlowEvent involved
 	 * 
 	 * @param throwable
 	 * @param moduleName
@@ -224,7 +224,7 @@ public class ErrorOccurrence {
 	/**
 	 * @return the eventId
 	 */
-	public String getEventId() {
+	public String getFlowEventId() {
 		return eventId;
 	}
 
@@ -275,7 +275,7 @@ public class ErrorOccurrence {
 	/**
 	 * @param eventId the eventId to set
 	 */
-	public void setEventId(String eventId) {
+	public void setFlowEventId(String eventId) {
 		this.eventId = eventId;
 	}
 	
@@ -366,12 +366,12 @@ public class ErrorOccurrence {
 	}
 
 	/**
-	 * Setter for excluded Event
+	 * Setter for excluded FlowEvent
 	 * TODO make this non public
 	 * 
-	 * @param excludedEvent
+	 * @param excludedFlowEvent
 	 */
-	public void setExcludedEvent(ExcludedEvent excludedEvent) {
+	public void setExcludedFlowEvent(ExcludedEvent excludedEvent) {
 		this.excludedEvent = excludedEvent;
 	}
 
@@ -413,12 +413,12 @@ public class ErrorOccurrence {
 	
 	
 	/**
-	 * Accessor for ErrorEvent
+	 * Accessor for ErrorFlowEvent
 	 * 
-	 * @return errorEvent if any
+	 * @return errorFlowEvent if any
 	 */
-	public Event getErrorEvent(){
-		return errorEvent;
+	public FlowEvent getErrorFlowEvent(){
+		return errorFlowEvent;
 	}
 	
 
@@ -436,8 +436,8 @@ public class ErrorOccurrence {
 		sb.append("expiry=");sb.append(expiry);sb.append(",");
 		sb.append("url=");sb.append(url);sb.append(",");
 		sb.append("actionTaken=");sb.append(actionTaken);sb.append(",");
-		sb.append("excludedEvent=");sb.append(excludedEvent);sb.append(",");
-		sb.append("errorEvent=");sb.append(errorEvent);
+		sb.append("excludedFlowEvent=");sb.append(excludedEvent);sb.append(",");
+		sb.append("errorFlowEvent=");sb.append(errorFlowEvent);
 		sb.append("]");
 		return sb.toString();
 	}

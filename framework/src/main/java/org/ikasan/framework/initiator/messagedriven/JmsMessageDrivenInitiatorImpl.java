@@ -49,8 +49,6 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -59,12 +57,14 @@ import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.monitor.MonitorSubject;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Abstract base class for JMS Message Driven Initiators
  * 
  * Subclasses will provide an implementation for handling of one or more of the specific JMS Message types into an
- * <code>Event</code>
+ * <code>FlowEvent</code>
  * 
  * @author Ikasan Development Team
  */
@@ -123,7 +123,7 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      */
     public void onMessage(Message message)
     {
-        Event event = null;
+        FlowEvent event = null;
         try
         {
         	if (logger.isDebugEnabled()){
@@ -274,10 +274,10 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event The event containing the message
+     * @return FlowEvent The event containing the message
      * @throws JMSException Exception if there is a problem with JMS
      */
-    protected Event handleBytesMessage(BytesMessage message) throws JMSException
+    protected FlowEvent handleBytesMessage(BytesMessage message) throws JMSException
     {
         throw new UnsupportedOperationException("This Initiator does not support BytesMessage [" + message.toString()
                 + "]");
@@ -289,9 +289,9 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      */
-    protected Event handleStreamMessage(StreamMessage message) throws JMSException, EventDeserialisationException
+    protected FlowEvent handleStreamMessage(StreamMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support StreamMessage [" + message.toString()
                 + "]");
@@ -303,10 +303,10 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      * @throws JMSException Exception if there is a problem with JMS
      */
-    protected Event handleObjectMessage(ObjectMessage message) throws JMSException, EventDeserialisationException
+    protected FlowEvent handleObjectMessage(ObjectMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support ObjectMessage [" + message.toString()
                 + "]");
@@ -318,10 +318,10 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      * @throws JMSException Exception if there is a problem with JMS
      */
-    protected Event handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
+    protected FlowEvent handleMapMessage(MapMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support MapMessage [" + message.toString()
                 + "]");
@@ -333,10 +333,10 @@ public abstract class JmsMessageDrivenInitiatorImpl extends AbstractInitiator im
      * Subclasses that wish to support this <code>Message</code> type will override this
      * 
      * @param message The message to handle
-     * @return Event
+     * @return FlowEvent
      * @throws JMSException Exception if there is a problem with JMS
      */
-    protected Event handleTextMessage(TextMessage message) throws JMSException, EventDeserialisationException
+    protected FlowEvent handleTextMessage(TextMessage message) throws JMSException, EventDeserialisationException
     {
         throw new UnsupportedOperationException("This Initiator does not support TextMessage [" + message.toString()
                 + "]");

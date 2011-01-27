@@ -42,6 +42,7 @@ package org.ikasan.framework.initiator.messagedriven.jca.jboss;
 
 import org.springframework.jms.listener.endpoint.JmsActivationSpecConfig;
 
+
 /**
  * Extended version of the Spring JmsActivationSpecConfig which supports
  * additional properties that JBoss require in their JMS activation spec.

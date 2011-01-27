@@ -46,7 +46,7 @@ import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.systemevent.model.SystemEvent;
 
 /**
- * Data access interface for persistence of <code>SystemEventDao</code>
+ * Data access interface for persistence of <code>SystemFlowEventDao</code>
  * 
  * @author Ikasan Development Team
  *
@@ -56,13 +56,13 @@ public interface SystemEventDao {
 	/**
 	 * Persists a new system event
 	 * 
-	 * @param systemEvent
+	 * @param systemFlowEvent
 	 */
 	public void save(SystemEvent systemEvent);
 
 
 	/**
-	 * Performs a paged search for <code>SystemEvent</code>s restricting by criteria fields as supplied
+	 * Performs a paged search for <code>SystemFlowEvent</code>s restricting by criteria fields as supplied
 	 * 
 	 * @param pageNo - page control field - page no of results to return
 	 * @param pageSize - page control field - size of page
@@ -74,7 +74,7 @@ public interface SystemEventDao {
 	 * @param timestampTo - criteria field - filter for events with timestamp less than this value
 	 * @param actor - criteria field - filter for exact match on actor
 	 * 
-	 * @return PagedSearchResult<SystemEvent> - page friendly search result subset
+	 * @return PagedSearchResult<SystemFlowEvent> - page friendly search result subset
 	 */
 	public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,String subject, String action,
 			Date timestampFrom, Date timestampTo, String actor);

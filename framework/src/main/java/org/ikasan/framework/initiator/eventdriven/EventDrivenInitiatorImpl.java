@@ -41,16 +41,16 @@
 package org.ikasan.framework.initiator.eventdriven;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.monitor.MonitorSubject;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Event Driven Initiator implementation.
+ * FlowEvent Driven Initiator implementation.
  *
  * @author Ikasan Development Team
  */
@@ -62,7 +62,7 @@ public class EventDrivenInitiatorImpl
 
     private static final String INITIATOR_ANESTHETIST_OPERATING = "Initiator cannot process message until anesthetist has completed.";
 
-    public static final String EVENT_DRIVEN_INITIATOR_TYPE = "EventDrivenInitiator";
+    public static final String EVENT_DRIVEN_INITIATOR_TYPE = "FlowEventDrivenInitiator";
 
     /** Logger for this class */
     static Logger logger = Logger.getLogger(EventDrivenInitiatorImpl.class);
@@ -129,7 +129,7 @@ public class EventDrivenInitiatorImpl
         handleAction(action, null);
     }
     
-    public void onEvent(Event event)
+    public void onEvent(FlowEvent event)
     {
         if(this.stopping)
         {

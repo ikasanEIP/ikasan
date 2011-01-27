@@ -44,10 +44,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Search result Data Transfer Object for WireTapEvents
+ * Search result Data Transfer Object for WireTapFlowEvents
  * 
  * This DTO object contains:
- *  + a List of WiretapEventHeaders (lightweight references to the heavy weight WiretapEvent)
+ *  + a List of WiretapFlowEventHeaders (lightweight references to the heavy weight WiretapFlowEvent)
  *      these are the page contents
  *  + resultSize - referring to the total size of the search results being paged
  *  + firstResult - the position in the greater result set where the first element of this page exists
@@ -62,16 +62,16 @@ public class PagedWiretapSearchResult implements Serializable
      */
     private static final long serialVersionUID = 7722626010968234606L;
 
-    private List<WiretapEventHeader> wiretapEventHeaders;
+    private List<WiretapEventHeader> wiretapFlowEventHeaders;
     
     private int firstResult;
     
     private long resultSize;
 
-    public PagedWiretapSearchResult(List<WiretapEventHeader> wiretapEventHeaders, long resultSize, int firstResult)
+    public PagedWiretapSearchResult(List<WiretapEventHeader> wiretapFlowEventHeaders, long resultSize, int firstResult)
     {
         super();
-        this.wiretapEventHeaders = wiretapEventHeaders;
+        this.wiretapFlowEventHeaders = wiretapFlowEventHeaders;
         this.resultSize = resultSize;
         this.firstResult = firstResult;
     }
@@ -86,9 +86,9 @@ public class PagedWiretapSearchResult implements Serializable
         return resultSize;
     }
 
-    public List<WiretapEventHeader> getWiretapEventHeaders()
+    public List<WiretapEventHeader> getWiretapFlowEventHeaders()
     {
-        return wiretapEventHeaders;
+        return wiretapFlowEventHeaders;
     }
     
     public int getFirstIndex(){
@@ -96,6 +96,6 @@ public class PagedWiretapSearchResult implements Serializable
     }
     
     public int getLastIndex(){
-        return firstResult + wiretapEventHeaders.size();
+        return firstResult + wiretapFlowEventHeaders.size();
     }
 }

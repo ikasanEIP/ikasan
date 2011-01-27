@@ -45,9 +45,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.EventFactory;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Experimental implementation of <code>Initiator</code> that is invoked directly with content
@@ -82,6 +83,9 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
      */
     private PayloadFactory payloadFactory;
 
+    /** TODO - generics required EventFactory */
+    private EventFactory<String,FlowEvent> eventFactory;
+    
     /**
      * Flow to invoke
      */
@@ -112,8 +116,8 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
         
 
 
-        List<Event>events = new ArrayList<Event>();
-        events.add(new Event(moduleName, name, originationId, singlePayload));
+        List<FlowEvent>events = new ArrayList<FlowEvent>();
+        events.add(eventFactory.newEvent(originationId, singlePayload));
         invokeFlow(events);
         
         

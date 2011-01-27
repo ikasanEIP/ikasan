@@ -44,37 +44,37 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Serialisation/Deserialisation interface for converting between <code>Event</code> and some specified <code>Message<code> implementation
+ * Serialisation/Deserialisation interface for converting between <code>FlowEvent</code> and some specified <code>Message<code> implementation
  * 
  * @author Ikasan Development Team
  */
 public interface JmsMessageEventSerialiser<T extends Message>
 {
     /**
-     * Deserialises a previously existing <code>Event</code> from a <code>MapMessage</code>
+     * Deserialises a previously existing <code>FlowEvent</code> from a <code>MapMessage</code>
      * 
      * @param message - message to deserialise
-     * @param moduleName - name of the module that is reconstituting the Event - this gets set on the Event
-     * @param componentName - name of the component/initiator that is reconstituting the Event - this gets set on the
-     *            Event
-     * @return reconstituted <code>Event</code>
-     * @throws EventDeserialisationException 
+     * @param moduleName - name of the module that is reconstituting the FlowEvent - this gets set on the FlowEvent
+     * @param componentName - name of the component/initiator that is reconstituting the FlowEvent - this gets set on the
+     *            FlowEvent
+     * @return reconstituted <code>FlowEvent</code>
+     * @throws FlowEventDeserialisationException 
      * 
      * @throws JMSException if we could not deserialise the event
      */
-    public Event fromMessage(T message, String moduleName, String componentName) throws JMSException, EventDeserialisationException;
+    public FlowEvent fromMessage(T message, String moduleName, String componentName) throws JMSException, EventDeserialisationException;
 
     /**
-     * Serialises an <code>Event</code> to a <code>MapMessage</code>
+     * Serialises an <code>FlowEvent</code> to a <code>MapMessage</code>
      * 
      * @param event The event to turn into a JMS MapMessage
      * @param session The session
      * @return Message - ready to go!
      * 
-     * @throws EventDeserialisationException Exception if we could not serialise the event
+     * @throws FlowEventDeserialisationException Exception if we could not serialise the event
      */
-    public T toMessage(Event event, Session session) throws JMSException;
+    public T toMessage(FlowEvent event, Session session) throws JMSException;
 }

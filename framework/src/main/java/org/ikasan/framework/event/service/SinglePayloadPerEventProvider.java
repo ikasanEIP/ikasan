@@ -46,20 +46,21 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.EventFactory;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.payload.service.PayloadProvider;
 
 /**
- * Implementation of <code>EventProvider</code>.
+ * Implementation of <code>FlowEventProvider</code>.
  * 
- * This implementation returns an Event per sourced payload. The purpose of this is to ensure that unrelated payloads
- * are not unnecessarily grouped into a single Event whilst at the same time ensuring maximum performance in terms of
+ * This implementation returns an FlowEvent per sourced payload. The purpose of this is to ensure that unrelated payloads
+ * are not unnecessarily grouped into a single FlowEvent whilst at the same time ensuring maximum performance in terms of
  * sourcing multiple payloads in one hit.
  * 
- * NOTE: Although an Event per payload is created and returned it is the responsibility of the flow implementer to
- * maintain Event independence, if required, when using transactions.
+ * NOTE: Although an FlowEvent per payload is created and returned it is the responsibility of the flow implementer to
+ * maintain FlowEvent independence, if required, when using transactions.
  * 
- * If no payloads are present then the Event is not created and 'null' is returned.
+ * If no payloads are present then the FlowEvent is not created and 'null' is returned.
  * 
  * @author Ikasan Development Team
  */
@@ -74,6 +75,9 @@ public class SinglePayloadPerEventProvider implements EventProvider
     /** Component name that created the event */
     private String componentName;
 
+    /** TODO pass eventFactory */
+    private EventFactory<String,FlowEvent> eventFactory;
+    
     /**
      * Constructor.
      * 
@@ -96,20 +100,21 @@ public class SinglePayloadPerEventProvider implements EventProvider
     /*
      * (non-Javadoc)
      * 
-     * @see org.ikasan.framework.event.service.EventProvider#getEvents()
+     * @see org.ikasan.framework.event.service.FlowEventProvider#getFlowEvents()
      */
-    public List<Event> getEvents() throws ResourceException
+    public List<FlowEvent> getEvents() throws ResourceException
     {
         List<Payload> payloads = this.payloadProvider.getNextRelatedPayloads();
         if (payloads == null || payloads.isEmpty())
         {
             return null;
         }
-        List<Event> events = new ArrayList<Event>();
+        List<FlowEvent> events = new ArrayList<FlowEvent>();
         for (Payload payload : payloads)
         {
          	
-            Event event = new Event(this.moduleName, this.componentName, payload.getId(),payload);
+//            FlowEvent event = new FlowEvent(this.moduleName, this.componentName, payload.getId(),payload);
+            FlowEvent event = eventFactory.newEvent(payload.getId(),payload);
             events.add(event);
         }
         return events;

@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.event.wiretap.service.WiretapService;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * <code>FlowEventJob</code> for invoking the WiretapService
@@ -66,7 +66,7 @@ public class WiretapEventJob implements FlowEventJob
 
     /**
      * Time To Live parameter specifies length of time in minutes for
-     * Wiretapped Events to be kept
+     * Wiretapped FlowEvents to be kept
      */
     public static final String TIME_TO_LIVE_PARAM = "timeToLive";
 
@@ -106,9 +106,9 @@ public class WiretapEventJob implements FlowEventJob
      * @see
      * org.ikasan.framework.flow.event.service.FlowEventJob#execute(java.lang
      * .String, java.lang.String, java.lang.String,
-     * org.ikasan.framework.component.Event, java.util.Map)
+     * org.ikasan.spec.flow.event.FlowEvent, java.util.Map)
      */
-    public void execute(String location, String moduleName, String flowName, Event event, Map<String, String> params)
+    public void execute(String location, String moduleName, String flowName, FlowEvent event, Map<String, String> params)
     {
         Long timeToLive = ONE_WEEK;
         String timeToLiveString = params.get(TIME_TO_LIVE_PARAM);

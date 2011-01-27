@@ -46,16 +46,18 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
+
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.event.EventFactory;
 
 /**
- * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create and fire new <code>Event</code>s based
+ * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create and fire new <code>FlowEvent</code>s based
  * on raw JMS messages.
  * 
  * This implementation places no expectation on the incoming message data. Do not use this for deserialising existing
- * <code>Event</code>s, rather use the <code>EventMessageDrivenInitiator</code>
+ * <code>FlowEvent</code>s, rather use the <code>FlowEventMessageDrivenInitiator</code>
  * 
  * @author Ikasan Development Team
  */
@@ -75,10 +77,12 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     protected PayloadFactory payloadFactory;
     
     /**
-     * Respect the priority of received messages by setting this on the Event
+     * Respect the priority of received messages by setting this on the FlowEvent
      */
     private boolean respectPriority;
 
+    // Generics - added EventFactory
+    private EventFactory<String,FlowEvent> eventFactory;
 
 	/**
      * Constructor
@@ -103,19 +107,22 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
      * )
      */
     @Override
-    protected Event handleTextMessage(TextMessage message) throws JMSException
+    protected FlowEvent handleTextMessage(TextMessage message) throws JMSException
     {
         Payload payload = payloadFactory.newPayload(message.getJMSMessageID(), message.getText().getBytes());
         //
-        Event event = new Event(moduleName, name, message.getJMSMessageID(), payload);
+        // FlowEvent event = new FlowEvent(moduleName, name, message.getJMSMessageID(), payload);
+        FlowEvent event = eventFactory.newEvent(message.getJMSMessageID(), payload);
         // Reuse the message's priority if we are configured to respect it
         if (respectPriority)
         {
-            event.setPriority(message.getJMSPriority());
+//            event.setPriority(message.getJMSPriority());
+            payload.setAttribute("priority", Integer.toString(message.getJMSPriority()));
         }
         else
         {
-            event.setPriority(DEFAULT_MESSAGE_PRIORITY);
+//            event.setPriority(DEFAULT_MESSAGE_PRIORITY);
+            payload.setAttribute("priority", Integer.toString(DEFAULT_MESSAGE_PRIORITY));
         }
         return event;
     }
@@ -130,7 +137,7 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     
 
     /**
-     * Respect the priority of received messages by setting this on the Event
+     * Respect the priority of received messages by setting this on the FlowEvent
 	 * @param respectPriority
 	 */
 	public void setRespectPriority(boolean respectPriority) {

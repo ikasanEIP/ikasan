@@ -50,7 +50,7 @@ import org.ikasan.framework.systemevent.model.SystemEvent;
 
 
 /**
- * SystemEvent service implementation
+ * SystemFlowEvent service implementation
  * 
  * @author Ikasan Development Team
  *
@@ -72,7 +72,7 @@ public class SystemEventServiceImpl implements SystemEventService
 	
 	/**
 	 * Constructor
-	 * @param systemEventDao
+	 * @param systemFlowEventDao
 	 * @param eventExpiryMinutes - no of minutes for this event to be kept until eligible for housekeep
 	 */
 	public SystemEventServiceImpl(SystemEventDao systemEventDao, Long eventExpiryMinutes) {
@@ -81,9 +81,9 @@ public class SystemEventServiceImpl implements SystemEventService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.service.SystemEventService#logSystemEvent(java.lang.String, java.lang.String, java.util.Date, java.lang.String)
+	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#logSystemFlowEvent(java.lang.String, java.lang.String, java.util.Date, java.lang.String)
 	 */
-	public void logSystemEvent(String subject, String action, String actor){
+	public void logSystemFlowEvent(String subject, String action, String actor){
 		Date now = new Date();
 		Date expiry = null;
 		if (eventExpiryMinutes!=null){
@@ -93,16 +93,16 @@ public class SystemEventServiceImpl implements SystemEventService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.service.SystemEventService#listSystemEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
+	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#listSystemFlowEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
-	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor) {
+	public PagedSearchResult<SystemEvent> listSystemFlowEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor) {
 
 		return systemEventDao.find(pageNo, pageSize, orderBy, orderAscending, subject,action, timestampFrom, timestampTo, actor);
 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.service.SystemEventService#housekeep()
+	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#housekeep()
 	 */
 	public void housekeep() {
 		long before = System.currentTimeMillis();

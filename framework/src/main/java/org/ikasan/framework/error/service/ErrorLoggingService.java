@@ -43,9 +43,9 @@ package org.ikasan.framework.error.service;
 
 import java.util.List;
 
-import org.ikasan.framework.component.Event;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * This class represents a platform level service for the heavyweight logging of Errors
@@ -56,16 +56,16 @@ import org.ikasan.framework.management.search.PagedSearchResult;
 public interface ErrorLoggingService {
 
 	/**
-	 * Logs an Error where there is an inflight Event involved in a Flow
+	 * Logs an Error where there is an inflight FlowEvent involved in a Flow
 	 * 
 	 * @param throwable
 	 * @param moduleName
 	 * @param flowName
 	 * @param flowElementName
-	 * @param currentEvent
+	 * @param currentFlowEvent
 	 * @param actionTaken
 	 */
-	public void logError(Throwable throwable, String moduleName, String flowName, String flowElementName, Event currentEvent, String actionTaken);
+	public void logError(Throwable throwable, String moduleName, String flowName, String flowElementName, FlowEvent currentFlowEvent, String actionTaken);
 
 	/**
 	 * Returns a paged listing of errors
@@ -80,7 +80,7 @@ public interface ErrorLoggingService {
 	public PagedSearchResult<ErrorOccurrence> getErrors(int pageNo, int pageSize, String orderBy, boolean orderAscending,String moduleName, String flowName);
 
 	/**
-	 * Logs an Error caused before there was an Event
+	 * Logs an Error caused before there was an FlowEvent
 	 * 
 	 * @param throwable
 	 * @param moduleName

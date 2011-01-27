@@ -137,7 +137,7 @@ public class ModuleServiceImpl implements ModuleService
         Initiator initiator = resolveInitiator(moduleName, initiatorName);
         
         //log the request
-        systemEventService.logSystemEvent(moduleName+"."+initiatorName, INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+        systemEventService.logSystemFlowEvent(moduleName+"."+initiatorName, INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION,  actor);
         
         //now stop the Initiator
         initiator.stop();
@@ -160,7 +160,7 @@ public class ModuleServiceImpl implements ModuleService
         
         
         //log the request
-        systemEventService.logSystemEvent(moduleName+"."+initiatorName, INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+        systemEventService.logSystemFlowEvent(moduleName+"."+initiatorName, INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION,  actor);
         
         //now start the Initiator
         initiator.start();
@@ -188,7 +188,7 @@ public class ModuleServiceImpl implements ModuleService
 			String initiatorName, StartupType startupType, String comment,
 			String actor) {
         //log the request
-        systemEventService.logSystemEvent(moduleName+"."+initiatorName, INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION+startupType.toString(), actor);
+        systemEventService.logSystemFlowEvent(moduleName+"."+initiatorName, INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION+startupType.toString(), actor);
 
         InitiatorStartupControl initiatorStartupControl = initiatorStartupControlDao.getInitiatorStartupControl(moduleName, initiatorName);
 		initiatorStartupControl.setStartupType(startupType);

@@ -43,7 +43,8 @@ package org.ikasan.framework.flow.event.service;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
+
 
 /**
  * Interface for objects that respond to Flow events
@@ -53,15 +54,15 @@ import org.ikasan.framework.component.Event;
 public interface FlowEventJob
 {
     /**
-     * Execute the Flow Event Job
+     * Execute the Flow FlowEvent Job
      * 
      * @param location - The location of the FlowEvent
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
-     * @param event - The Event
+     * @param event - The FlowEvent
      * @param params - The parameters for the Job
      */
-    public void execute(String location, String moduleName, String flowName, Event event, Map<String, String> params);
+    public void execute(String location, String moduleName, String flowName, FlowEvent event, Map<String, String> params);
 
     /**
      * Returns a List of all specifiable parameters that will be respected when

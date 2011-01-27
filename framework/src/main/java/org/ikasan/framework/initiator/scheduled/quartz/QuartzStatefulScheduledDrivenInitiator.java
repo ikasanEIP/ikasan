@@ -44,8 +44,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.core.flow.Flow;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
@@ -89,8 +89,8 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
 
 	private IkasanExceptionHandler exceptionHandler;
     
-	/** Allow Reinvoke Immediately flag to be set, when 1 or more Events is encountered, without error */
-	private boolean allowImmediateReinvocationOnEvent = false;
+	/** Allow Reinvoke Immediately flag to be set, when 1 or more FlowEvents is encountered, without error */
+	private boolean allowImmediateReinvocationOnFlowEvent = false;
 
     /**
      * Constructor.
@@ -127,14 +127,14 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
 
 
 
-//	private void invokeFlow(List<Event> events) {
+//	private void invokeFlow(List<FlowEvent> events) {
 //		// Within the event handling we need to accommodate for a
 //		// single event outcome action; and for batched events outcome
 //		// action.
 //		// The batched events have multiple potential outcome actions,
 //		// therefore, we need to use the highest precedent outcome action.
 //		IkasanExceptionAction precedentAction = null;
-//		for (Event event : events)
+//		for (FlowEvent event : events)
 //		{
 //		    IkasanExceptionAction action = this.getFlow().invoke(event);
 //		    if (action != null)
@@ -463,7 +463,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
         
         // invoke flow all the time we have event activity
         // invoke flow
-        List<Event> events = null;
+        List<FlowEvent> events = null;
         try
         {
             events = this.eventProvider.getEvents();
@@ -483,24 +483,24 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
             handleAction(action,null);
         }
         invokeFlow(events);
-        return allowImmediateReinvocationOnEvent;
+        return allowImmediateReinvocationOnFlowEvent;
     }
     
     /**
-     * Accessor for allowImmediateReinvocationOnEvent
-     * @return allowImmediateReinvocationOnEvent
+     * Accessor for allowImmediateReinvocationOnFlowEvent
+     * @return allowImmediateReinvocationOnFlowEvent
      */
-    public boolean isAllowImmediateReinvocationOnEvent() {
-		return allowImmediateReinvocationOnEvent;
+    public boolean isAllowImmediateReinvocationOnFlowEvent() {
+		return allowImmediateReinvocationOnFlowEvent;
 	}
 
 	/**
-	 * Setter for allowImmediateReinvocationOnEventS
-	 * @param allowImmediateReinvocationOnEvent
+	 * Setter for allowImmediateReinvocationOnFlowEventS
+	 * @param allowImmediateReinvocationOnFlowEvent
 	 */
-	public void setAllowImmediateReinvocationOnEvent(
-			boolean allowImmediateReinvocationOnEvent) {
-		this.allowImmediateReinvocationOnEvent = allowImmediateReinvocationOnEvent;
+	public void setAllowImmediateReinvocationOnFlowEvent(
+			boolean allowImmediateReinvocationOnFlowEvent) {
+		this.allowImmediateReinvocationOnFlowEvent = allowImmediateReinvocationOnFlowEvent;
 	}
 	
 

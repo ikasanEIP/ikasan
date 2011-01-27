@@ -56,16 +56,16 @@ public interface WiretapDao
 {
 
     /**
-     * Save a wiretapEvent entry.
+     * Save a wiretapFlowEvent entry.
      * 
-     * @param wiretapEvent - The wiretap event to save
+     * @param wiretapFlowEvent - The wiretap event to save
      */
     public void save(WiretapEvent wiretapEvent);
 
     /**
      * Find the paging for the wiretap search results
      * 
-     * @deprecated - Use findWiretapEvents instead
+     * @deprecated - Use findWiretapFlowEvents instead
      * 
      * @param moduleNames - The list of module names
      * @param moduleFlow - The name of Flow internal to the Module
@@ -83,7 +83,7 @@ public interface WiretapDao
             Date fromDate, Date untilDate, String payloadContent, final int maxResults, final int firstResult);
 
     /**
-     * Perform a paged search for <code>WiretapEvent</code>s
+     * Perform a paged search for <code>WiretapFlowEvent</code>s
      * 
      * @param pageNo - The page number to retrieve
      * @param pageSize - The size of the page
@@ -107,12 +107,12 @@ public interface WiretapDao
      * Find wiretap entry by identifier
      * 
      * @param id - The id to search on
-     * @return WiretapEvent
+     * @return WiretapFlowEvent
      */
     public WiretapEvent findById(Long id);
 
     /**
-     * Deletes all WiretapEvents that have surpassed their expiryDate
+     * Deletes all WiretapFlowEvents that have surpassed their expiryDate
      */
     public void deleteAllExpired();
 }

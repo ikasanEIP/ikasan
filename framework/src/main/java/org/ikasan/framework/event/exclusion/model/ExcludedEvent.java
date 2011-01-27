@@ -45,7 +45,7 @@ import java.util.List;
 
 import java.lang.IllegalStateException;
 
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 
 /**
@@ -55,12 +55,12 @@ import org.ikasan.framework.error.model.ErrorOccurrence;
 public class ExcludedEvent {
 	
 	/**
-	 * Resolution indicator for a Resubmitted ExcludedEvent
+	 * Resolution indicator for a Resubmitted ExcludedFlowEvent
 	 */
 	public static final String RESOLUTION_RESUBMITTED = "Resubmitted";
 	
 	/**
-	 * Resolution indicator for a Cancelled ExcludedEvent
+	 * Resolution indicator for a Cancelled ExcludedFlowEvent
 	 */
 	public static final String RESOLUTION_CANCELLED = "Cancelled";
 	
@@ -71,9 +71,9 @@ public class ExcludedEvent {
 	private Long id;
 	
 	/**
-	 * Event being excluded
+	 * FlowEvent being excluded
 	 */
-	private Event event;
+	private FlowEvent event;
 	
 	/**
 	 * Name of the module from which the event is being excluded
@@ -96,7 +96,7 @@ public class ExcludedEvent {
 	private Date lastUpdatedTime;
 	
 	/**
-	 * Indication of how this ExcludedEvent was resolved (ie cancelled, resubmitted)
+	 * Indication of how this ExcludedFlowEvent was resolved (ie cancelled, resubmitted)
 	 */
 	private String resolution = null;
 	
@@ -107,7 +107,7 @@ public class ExcludedEvent {
 	 */
 	private String lastUpdatedBy;
 	
-	/** Error Occurrences related to this ExcludedEvent */
+	/** Error Occurrences related to this ExcludedFlowEvent */
 	private List<ErrorOccurrence> errorOccurrences;
 	
 
@@ -126,7 +126,7 @@ public class ExcludedEvent {
 	 * @param flowName - flow from which event is excluded
 	 * @param exclusionTime - date/time of event exclusion
 	 */
-	public ExcludedEvent(Event event, String moduleName, String flowName, Date exclusionTime) {
+	public ExcludedEvent(FlowEvent event, String moduleName, String flowName, Date exclusionTime) {
 		this.event=event;
 		this.moduleName=moduleName;
 		this.flowName=flowName;
@@ -135,7 +135,7 @@ public class ExcludedEvent {
 	
 	
 	/**
-	 * Marks the ExcludedEvent as Resubmitted, setting the lastUpdatedBy and lastUpdatedTime fields
+	 * Marks the ExcludedFlowEvent as Resubmitted, setting the lastUpdatedBy and lastUpdatedTime fields
 	 * 
 	 * @param resolver to be used for lastUpdatedBy
 	 */
@@ -144,7 +144,7 @@ public class ExcludedEvent {
 	}
 	
 	/**
-	 * Marks the ExcludedEvent as Cancelled, setting the lastUpdatedBy and lastUpdatedTime fields
+	 * Marks the ExcludedFlowEvent as Cancelled, setting the lastUpdatedBy and lastUpdatedTime fields
 	 * 
 	 * @param resolver to be used for lastUpdatedBy
 	 */	
@@ -154,7 +154,7 @@ public class ExcludedEvent {
 	
 	private void resolve(String resolver, String resolution) throws IllegalStateException {
 		if (isResolved()){
-			throw new IllegalStateException("Cannot resolve excludedEvent ["+id+"], as it was previously resolved as ["+resolution+"]");
+			throw new IllegalStateException("Cannot resolve excludedFlowEvent ["+id+"], as it was previously resolved as ["+resolution+"]");
 		}
 		setLastUpdatedTime(new Date());
 	    setLastUpdatedBy(resolver);
@@ -185,7 +185,7 @@ public class ExcludedEvent {
 	 * 
 	 * @return event
 	 */
-	public Event getEvent() {
+	public FlowEvent getFlowEvent() {
 		return event;
 	}
 
@@ -195,7 +195,7 @@ public class ExcludedEvent {
 	 * @param event
 	 */
 	@SuppressWarnings("unused")
-	private void setEvent(Event event) {
+	private void setFlowEvent(FlowEvent event) {
 		this.event = event;
 	}
 	
@@ -294,7 +294,7 @@ public class ExcludedEvent {
 	/**
 	 * Accessor for errorOccurrences
 	 * 
-	 * @return listing of occurrences of errors processing the Event
+	 * @return listing of occurrences of errors processing the FlowEvent
 	 */
 	public List<ErrorOccurrence> getErrorOccurrences() {
 		return errorOccurrences;

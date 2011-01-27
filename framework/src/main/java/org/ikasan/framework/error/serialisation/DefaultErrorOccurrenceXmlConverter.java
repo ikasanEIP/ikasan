@@ -44,6 +44,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -57,7 +58,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.ikasan.common.Payload;
-import org.ikasan.framework.component.Event;
+import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.framework.error.model.ErrorOccurrence;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -87,7 +88,7 @@ public class DefaultErrorOccurrenceXmlConverter implements ErrorOccurrenceXmlCon
 		
 		addChildTextElement(dom, errorOccurrenceElement, "errorDetail", errorOccurence.getErrorDetail());
 		addChildTextElement(dom, errorOccurrenceElement, "actionTaken", errorOccurence.getActionTaken());
-		addChildTextElement(dom, errorOccurrenceElement, "eventId", errorOccurence.getEventId());
+		addChildTextElement(dom, errorOccurrenceElement, "eventId", errorOccurence.getFlowEventId());
 		addChildTextElement(dom, errorOccurrenceElement, "flowElementName", errorOccurence.getFlowElementName());
 		addChildTextElement(dom, errorOccurrenceElement, "flowName", errorOccurence.getFlowName());
 		addChildTextElement(dom, errorOccurrenceElement, "initiatorName", errorOccurence.getInitiatorName());
@@ -95,16 +96,20 @@ public class DefaultErrorOccurrenceXmlConverter implements ErrorOccurrenceXmlCon
 		addChildTextElement(dom, errorOccurrenceElement, "moduleName", errorOccurence.getModuleName());
 		addChildTextElement(dom, errorOccurrenceElement, "url", errorOccurence.getUrl());
 		
-		Event errorEvent = errorOccurence.getErrorEvent();
-		if (errorEvent!=null){
-			Element errorEventElement = dom.createElement("errorEvent");
-			errorOccurrenceElement.appendChild(errorEventElement);
+		FlowEvent errorFlowEvent = errorOccurence.getErrorFlowEvent();
+		if (errorFlowEvent!=null){
+			Element errorFlowEventElement = dom.createElement("errorFlowEvent");
+			errorOccurrenceElement.appendChild(errorFlowEventElement);
 			
-			addChildTextElement(dom, errorEventElement, "id", errorEvent.getId());
-			addChildTextElement(dom, errorEventElement, "priority", ""+ errorEvent.getPriority());
-			addChildTextElement(dom, errorEventElement, "timestamp",dateFormat.format(errorEvent.getTimestamp()));
-		
-			List<Payload> payloads = errorEvent.getPayloads();
+			addChildTextElement(dom, errorFlowEventElement, "id", errorFlowEvent.getIdentifier());
+
+			// TODO - where do we get priority
+//			addChildTextElement(dom, errorFlowEventElement, "priority", ""+ errorFlowEvent.getPriority());
+			addChildTextElement(dom, errorFlowEventElement, "timestamp",dateFormat.format(errorFlowEvent.getTimestamp()));
+	
+			// TODO - genericise payload correctly, until then just make this compile
+//            List<Payload> payloads = errorFlowEvent.getPayloads();
+            List<Payload> payloads = new ArrayList<Payload>();
 			for (int i=0;i<payloads.size();i++){
 				Payload payload = payloads.get(i);
 				Element payloadElement = dom.createElement("payload");
@@ -135,7 +140,7 @@ public class DefaultErrorOccurrenceXmlConverter implements ErrorOccurrenceXmlCon
 				}
 				
 				
-				errorEventElement.appendChild(payloadElement);
+				errorFlowEventElement.appendChild(payloadElement);
 
 			}
 		}

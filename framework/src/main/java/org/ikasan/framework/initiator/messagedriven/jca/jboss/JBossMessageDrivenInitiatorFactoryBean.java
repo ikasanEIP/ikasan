@@ -44,7 +44,6 @@ import javax.jms.Destination;
 import javax.jms.Session;
 
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.core.flow.Flow;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.initiator.messagedriven.jca.EventMessageDrivenInitiator;
@@ -58,6 +57,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.ikasan.framework.initiator.messagedriven.jca.spring.JmsMessageEndpointManager ;
+import org.ikasan.spec.flow.Flow;
 
 /**
  * This class helps create Message Driven Initiators specifically for the JBoss
@@ -120,7 +120,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
 
     /**
      * Configures the initiator to reuse the priority from the message on the
-     * created Event
+     * created FlowEvent
      * 
      * Only applicable to RawMessageDrivenInitiators
      */
@@ -267,7 +267,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
     /**
      * @return the eventDeserialiser
      */
-    public JmsMessageEventSerialiser getEventDeserialiser()
+    public JmsMessageEventSerialiser getFlowEventDeserialiser()
     {
         return eventDeserialiser;
     }
@@ -275,7 +275,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
     /**
      * @param eventDeserialiser the eventDeserialiser to set
      */
-    public void setEventDeserialiser(JmsMessageEventSerialiser eventDeserialiser)
+    public void setFlowEventDeserialiser(JmsMessageEventSerialiser eventDeserialiser)
     {
         this.eventDeserialiser = eventDeserialiser;
     }
@@ -658,7 +658,7 @@ public class JBossMessageDrivenInitiatorFactoryBean implements FactoryBean, Bean
             if (this.payloadFactory == null)
             {
                 throw new IllegalArgumentException(
-                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageEventSerialiser has been set");
+                    "payloadFactory is mandatory for JmsMessageDrivenInitiator creation, if no JmsMessageFlowEventSerialiser has been set");
             }
         }
         if (this.eventDeserialiser != null)

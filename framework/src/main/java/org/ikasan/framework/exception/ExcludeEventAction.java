@@ -47,11 +47,11 @@ package org.ikasan.framework.exception;
  */
 public class ExcludeEventAction implements IkasanExceptionAction
 {
-    /** Exclude Event Action */
-    public static final String EXCLUDE_EVENT = "Exclude Event";
+    /** Exclude FlowEvent Action */
+    public static final String EXCLUDE_EVENT = "Exclude FlowEvent";
 
     /**
-     * Static instance, probably all that is needed, as one ExcludeEventAction is the same as another
+     * Static instance, probably all that is needed, as one ExcludeFlowEventAction is the same as another
      */
     private static ExcludeEventAction instance = new ExcludeEventAction();
 
