@@ -49,7 +49,7 @@ package org.ikasan.spec.component.endpoint;
  *
  * @author Ikasan Development Teams
  */
-public interface Producer<T> //extends FlowComponent
+public interface Producer<T>
 {
     /**
      * Push payload to a protocol endpioint

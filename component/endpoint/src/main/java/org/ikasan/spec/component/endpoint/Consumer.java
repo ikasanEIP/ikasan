@@ -49,7 +49,7 @@ package org.ikasan.spec.component.endpoint;
  *
  * @author Ikasan Development Teams
  */
-public interface Consumer<SOURCE> //extends FlowComponent
+public interface Consumer<SOURCE>
 {
     /**
      * Consume payload from a source protocol endpoint

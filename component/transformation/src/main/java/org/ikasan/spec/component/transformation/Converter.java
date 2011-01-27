@@ -53,7 +53,7 @@ package org.ikasan.spec.component.transformation;
  *
  * @author Ikasan Development Teams
  */
-public interface Converter<SOURCE,TARGET> // extends FlowComponent
+public interface Converter<SOURCE,TARGET>
 {
     /**
      * Convert source object into target object of type T.
