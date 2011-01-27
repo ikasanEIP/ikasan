@@ -46,12 +46,12 @@
   <parent>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-build</artifactId>
-      <version>0.8.1-SNAPSHOT</version>
+      <version>0.8.1</version>
   </parent>
 
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoResubmission-app</artifactId>
-    <version>0.8.1-SNAPSHOT</version>
+    <version>0.8.1</version>
   <packaging>ear</packaging>
 
   <name>demoResubmission :: demoResubmission : ear</name>
@@ -216,7 +216,7 @@
     <dependency>
       <groupId>org.ikasan.demo</groupId>
       <artifactId>demoResubmission-war</artifactId>
-      <version>0.8.1-SNAPSHOT</version>
+      <version>0.8.1</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -243,7 +243,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.8.1-SNAPSHOT</version>
+      <version>0.8.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -292,7 +292,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.8.1-SNAPSHOT</version>
+      <version>0.8.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -363,7 +363,7 @@
     <dependency>
       <groupId>org.ikasan.demo</groupId>
       <artifactId>demoResubmission-jar</artifactId>
-      <version>0.8.1-SNAPSHOT</version>
+      <version>0.8.1</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
