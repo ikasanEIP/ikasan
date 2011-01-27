@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+
+ $Id$
+ $URL$
+ 
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+ 
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing 
+ of individual contributors are as shown in the packaged copyright.txt 
+ file. 
+ 
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without 
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+ Author:  Ikasan Development Team
+ 
+-->
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Ikasan Framework Properties</comment>
+    <entry key="contextImpl.class">org.ikasan.framework.context.DefaultContext</entry>
+    <entry key="persistenceImpl.class">org.ikasan.framework.persistence.HibernatePersistence</entry>
+    <entry key="xmlParserImpl.class">org.ikasan.framework.xml.parser.DefaultXMLParser</entry>
+    <entry key="xmlTransformerImpl.class">org.ikasan.framework.xml.transform.DefaultDOMSerializer</entry>
+    <entry key="stringTransformerImpl.class">org.ikasan.framework.transform.DefaultStringTransformer</entry>
+    <entry key="xslTransformerImpl.class">org.ikasan.framework.xml.transform.DefaultXSLTransformer</entry>
+    <entry key="environmentImpl.class">org.ikasan.framework.util.Env</entry>
+    <entry key="payloadImpl.class">org.ikasan.common.component.DefaultPayload</entry>
+    <entry key="envelopeImpl.class">org.ikasan.common.component.DefaultEnvelope</entry>
+    <entry key="flowImpl.class">org.ikasan.framework.component.DefaultFlow</entry>
+
+    <!-- Ikasan common Appln server Datasources and factories -->
+    <entry key="transaction.manager">java:/TransactionManager</entry>
+    <entry key="user.transaction">UserTransaction</entry>
+    <entry key="jms.xa.connectionFactory">java:/JmsXA</entry>
+    <entry key="jms.provider">java:/DefaultJMSProvider</entry>
+    <entry key="ds.session.factory">java:/ikasan/framework/default/hibernate/SessionFactory</entry>
+    <entry key="localds.session.factory">java:/ikasan/framework/defaultLocal/hibernate/SessionFactory</entry>
+    <entry key="xads.session.factory">java:/ikasan/framework/defaultXA/hibernate/SessionFactory</entry>
+
+    <!--  Ikasan framework component properties. -->
+    <entry key="component.env">java:comp/env</entry>
+    <entry key="component.group.name">java:comp/env/componentGroupName</entry>
+    <entry key="component.status.url">java:comp/env/componentStatusURL</entry>
+    <entry key="component.name">java:comp/env/componentName</entry>
+    <entry key="component.exception.resolver">java:comp/env/exceptionResolver</entry>
+    <entry key="component.security.conf.resource">java:comp/env/securityConf</entry>
+
+    <!--  Ikasan framework flow properties. -->
+    <entry key="flow.name">java:comp/env/flowClassName</entry>
+    <entry key="flow.method">java:comp/env/flowMethodName</entry>
+    <entry key="flow.exception.name">-exceptionHandler</entry>
+    <entry key="flow.exception.method">onException</entry>
+    <entry key="flow.destination.name">java:comp/env/flowDestination</entry>
+
+    <!-- Ikasan framework submission router - deprecated. -->
+    <entry key="submit.handler.router">submitRouter</entry>
+
+    <!-- Ikasan framework constants. -->
+    <entry key="undefined.value">undefined</entry>
+
+</properties>
