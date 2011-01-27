@@ -54,8 +54,8 @@
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 
     <modules>
-       <!--module>event</module-->
        <module>visitorPatternFlow</module>
+       <module>configuration</module>
     </modules>
 
 </project>
