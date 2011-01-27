@@ -60,12 +60,40 @@
     <description>The framework library for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
+        <!-- TODO - remove common dependency -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-configuration</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-flow-visitorPattern</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- other third party -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -92,6 +120,35 @@
             <version>1.0.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+          <version>3.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+          <version>3.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-jms</artifactId>
+          <version>3.0.5.RELEASE</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-hibernate3</artifactId>
+          <version>2.0.8</version>
+          <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
@@ -104,12 +161,6 @@
             <artifactId>geronimo-spec-j2ee</artifactId>
             <version>1.4-rc3</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring</artifactId>
-          <version>2.5.6</version>
-          <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
