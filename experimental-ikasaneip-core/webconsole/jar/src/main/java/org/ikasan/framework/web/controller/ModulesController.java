@@ -42,14 +42,14 @@ package org.ikasan.framework.web.controller;
 
 import java.util.List;
 
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.FlowElement;
-import org.ikasan.framework.flow.VisitingInvokerFlow;
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener;
 import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

@@ -42,16 +42,15 @@ package org.ikasan.framework.web.service;
 
 import java.util.List;
 
-import org.ikasan.framework.configuration.ConfiguredResource;
-import org.ikasan.framework.configuration.model.Configuration;
-import org.ikasan.framework.configuration.service.ConfigurationService;
-import org.ikasan.framework.flow.Flow;
-import org.ikasan.framework.flow.FlowComponent;
-import org.ikasan.framework.flow.FlowElement;
-import org.ikasan.framework.flow.VisitingInvokerFlow;
+import org.ikasan.flow.configuration.model.Configuration;
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.systemevent.service.SystemEventService;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowElement;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -223,7 +222,7 @@ public class ConfigurationManagementService
      */
     private ConfiguredResource getConfiguredResource(String moduleName, String flowName, String flowElementName)
     {
-        FlowComponent flowComponent = getFlowComponent(moduleName, flowName, flowElementName);
+        Object flowComponent = getFlowComponent(moduleName, flowName, flowElementName);
         if(flowComponent instanceof ConfiguredResource)
         {
             return (ConfiguredResource)flowComponent;
@@ -242,14 +241,14 @@ public class ConfigurationManagementService
      * @param flowElementName
      * @return FlowComponent
      */
-    private FlowComponent getFlowComponent(String moduleName, String flowName, String flowElementName)
+    private Object getFlowComponent(String moduleName, String flowName, String flowElementName)
     {
         Module module = moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
         if(flow instanceof VisitingInvokerFlow)
         {
-            List<FlowElement> flowElements = ((VisitingInvokerFlow) flow).getFlowElements();
-            for (FlowElement flowElement : flowElements)
+            List<FlowElement<?>> flowElements = ((VisitingInvokerFlow) flow).getFlowElements();
+            for (FlowElement<?> flowElement : flowElements)
             {
                 if(flowElementName.equals(flowElement.getComponentName()))
                 {
