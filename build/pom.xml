@@ -49,7 +49,7 @@
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.8.1</version>
+    <version>0.8.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
@@ -546,9 +546,9 @@
 
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/spice/tags/ikasan-0.8.1</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/spice/tags/ikasan-0.8.1</developerConnection>
-    <url>http://svn.sonatype.org/spice/tags/ikasan-0.8.1</url>
+    <connection>scm:svn:http://svn.sonatype.org/spice/tags/ikasan-0.8.1-SNAPSHOT</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/spice/tags/ikasan-0.8.1-SNAPSHOT</developerConnection>
+    <url>http://svn.sonatype.org/spice/tags/ikasan-0.8.1-SNAPSHOT</url>
   </scm>
 </project>
 
