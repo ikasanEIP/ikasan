@@ -51,7 +51,6 @@ import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.flow.FlowComponent;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEventListener;
@@ -117,7 +116,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 logger.debug("Invoking [" + flowElement.getComponentName() + "] of [" + flowName + "] " + flowEvent.getIdentifier());
             }
             notifyListenersBeforeElement(flowEvent, moduleName, flowName, flowElement);
-            FlowComponent flowComponent = flowElement.getFlowComponent();
+            Object flowComponent = flowElement.getFlowComponent();
 
             try
             {
