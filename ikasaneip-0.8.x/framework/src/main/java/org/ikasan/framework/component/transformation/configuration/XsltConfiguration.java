@@ -69,7 +69,7 @@ public class XsltConfiguration
      * Mutator
      * @param useTranslets the useTranslates to set
      */
-    public void setUseTranslates(boolean useTranslets)
+    public void setUseTranslets(boolean useTranslets)
     {
         this.useTranslets = useTranslets;
     }

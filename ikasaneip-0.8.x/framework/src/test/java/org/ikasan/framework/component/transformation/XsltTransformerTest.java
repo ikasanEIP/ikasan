@@ -121,7 +121,7 @@ public class XsltTransformerTest
     }
 
     /**
-     * Creating a n XsltTransformer will fail if injected {@link TransformerFactory} is null.
+     * Creating a XsltTransformer will fail if injected {@link TransformerFactory} is null.
      */
     @SuppressWarnings("unused")
     @Test(expected=IllegalArgumentException.class)
@@ -178,7 +178,7 @@ public class XsltTransformerTest
     public void transformation_successful_without_using_translets() throws TransformerException
     {
         // Changing the configuration to test other branch of code
-        this.defaultConfig.setUseTranslates(false);
+        this.defaultConfig.setUseTranslets(false);
         this.defaultConfig.setStylesheetLocation("file://anyStylesheet.xsl");
 
         // Setup expectations
@@ -407,7 +407,7 @@ public class XsltTransformerTest
     public void transformation_fail_at_transform_time_to_create_transformer_xsl_not_found() throws TransformerException
     {
         // Setup test objects
-        this.defaultConfig.setUseTranslates(false);
+        this.defaultConfig.setUseTranslets(false);
         this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
 
         final TransformerConfigurationException expectedException = new TransformerConfigurationException();
