@@ -46,6 +46,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.ikasan.common.CommonEnvironment;
+import org.ikasan.common.ResourceLoader;
+
 /**
  * unit tests for the {@link org.ikasan.common.util.Env} class.
  *
@@ -56,7 +59,7 @@ public class EnvTest
 {
     
     /** Provide a common environment */
-    Env env = null;
+    CommonEnvironment env = null;
     
     static
     {
@@ -67,7 +70,7 @@ public class EnvTest
     @Override
     protected void setUp() throws Exception
     {
-        env = new Env();
+        env = ResourceLoader.getInstance().newEnvironment();
         super.setUp();
     }
     
