@@ -259,7 +259,7 @@ public class ModulesController
      * 
      * @param jobAwareFlowEventListener - The job aware flow event listener to set
      */
-    @Autowired
+//    @Autowired - dont autowire this for the generics re-write
     public void setJobAwareFlowEventListener(JobAwareFlowEventListener jobAwareFlowEventListener)
     {
         this.jobAwareFlowEventListener = jobAwareFlowEventListener;
