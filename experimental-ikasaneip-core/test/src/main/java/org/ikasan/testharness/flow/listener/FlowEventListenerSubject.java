@@ -43,9 +43,7 @@ package org.ikasan.testharness.flow.listener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.FlowElement;
-import org.ikasan.framework.flow.event.listener.FlowEventListener;
+import org.ikasan.spec.flow.*;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.ikasan.testharness.flow.FlowSubject;
 
