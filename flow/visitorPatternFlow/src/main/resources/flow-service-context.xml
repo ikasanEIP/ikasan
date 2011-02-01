@@ -21,4 +21,6 @@
         <!--property name="flowEventListener" ref="flowEventListener" /-->
     </bean>
 
+    <bean id="flowEventFactory" class="org.ikasan.flow.event.FlowEventFactory" />
+
 </beans>
