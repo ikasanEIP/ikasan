@@ -30,7 +30,7 @@ import com.rits.cloning.Cloner;
 public class DefaultReplicationFactoryTest
 {
     /** event factory */
-    private EventFactory<String,FlowEvent> eventFactory = new FlowEventFactory();
+    private EventFactory<FlowEvent<?>> eventFactory = new FlowEventFactory();
 
     /** flowEvent */
     private FlowEvent flowEvent;
@@ -46,7 +46,7 @@ public class DefaultReplicationFactoryTest
     @Before
     public void setup()
     {
-        flowEvent = eventFactory.newEvent("identifier");
+        flowEvent = eventFactory.newEvent("identifier", "payload");
     }
     
     /**
