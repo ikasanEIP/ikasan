@@ -40,8 +40,7 @@
  */
 package org.ikasan.testharness.flow.comparator.model;
 
-import org.ikasan.framework.flow.FlowComponent;
-import org.ikasan.framework.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.expectation.model.AbstractComponent;
 
