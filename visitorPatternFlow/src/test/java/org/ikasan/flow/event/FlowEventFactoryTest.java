@@ -33,14 +33,14 @@ public class FlowEventFactoryTest
     public void test_newEvent()
     {
         long before = System.currentTimeMillis();
-        EventFactory<String,FlowEvent> eventFactory = new FlowEventFactory();
-        FlowEvent flowEvent = eventFactory.newEvent("identifier");
+        EventFactory<FlowEvent<?>> eventFactory = new FlowEventFactory();
+        FlowEvent flowEvent = eventFactory.newEvent("identifier", "original payload");
         long after = System.currentTimeMillis();
 
         Assert.assertNotNull(flowEvent);
         Assert.assertEquals("identifier", flowEvent.getIdentifier());
         Assert.assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() <= after);
-        Assert.assertNull(flowEvent.getPayload());
+        Assert.assertEquals("original payload", flowEvent.getPayload());
         
         flowEvent.setPayload(new String("Im a new payload"));
         Assert.assertEquals("Im a new payload", flowEvent.getPayload());

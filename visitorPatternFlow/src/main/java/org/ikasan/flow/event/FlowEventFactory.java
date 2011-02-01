@@ -49,25 +49,16 @@ import org.ikasan.spec.flow.event.FlowEvent;
  * @author Ikasan Development Team
  *
  */
-public class FlowEventFactory implements EventFactory<String,FlowEvent>
+public class FlowEventFactory implements EventFactory<FlowEvent<?>>
 {
-    /**
-     * Factory method to create a new FlowEvent instance.
-     * @param immutable identifier
-     */
-    public FlowEvent newEvent(String identifier)
-    {
-        return new GenericFlowEvent(identifier);
-    }
-
     /**
      * Factory method to create a new FlowEvent instance.
      * @param immutable identifier
      * @param mutable payload
      */
-    public <P> FlowEvent newEvent(String identifier, P payload)
+    public <PAYLOAD> FlowEvent<?> newEvent(String identifier, PAYLOAD payload)
     {
-        return new GenericFlowEvent(identifier, payload);
+        return new GenericFlowEvent<PAYLOAD>(identifier, payload);
     }
 
 	/**
@@ -76,7 +67,7 @@ public class FlowEventFactory implements EventFactory<String,FlowEvent>
 	 * @author Ikasan Development Team
 	 *
 	 */
-	private class GenericFlowEvent<T> implements FlowEvent<T>
+	private class GenericFlowEvent<PAYLOAD> implements FlowEvent<PAYLOAD>
 	{
 		/** immutable identifier */
 		private String identifier;
@@ -85,22 +76,13 @@ public class FlowEventFactory implements EventFactory<String,FlowEvent>
 	    private long timestamp;
 
 	    /** payload */
-	    private T payload;
+	    private PAYLOAD payload;
 
         /**
          * Constructor
-         * @param identifier
+         * @param identifier2
          */
-        protected GenericFlowEvent(String identifier)
-        {
-            this(identifier, null);
-        }
-        
-        /**
-         * Constructor
-         * @param identifier
-         */
-        protected GenericFlowEvent(String identifier, T payload)
+        protected GenericFlowEvent(String identifier, PAYLOAD payload)
         {
             this.identifier = identifier;
             this.timestamp = System.currentTimeMillis();
@@ -127,19 +109,18 @@ public class FlowEventFactory implements EventFactory<String,FlowEvent>
 
 		/**
 		 * Get the payload of this flow event.
-		 * @return T payload
+		 * @return PAYLOAD payload
 		 */
-		public T getPayload()
+		public PAYLOAD getPayload()
 		{
 		    return this.payload;
 		}
 		
-
 		/**
 		 * Set the payload of this flow event.
-		 * @param T - payload
+		 * @param PAYLOAD - payload
 		 */
-		public void setPayload(T payload)
+		public void setPayload(PAYLOAD payload)
 		{
 		    this.payload = payload;
 		}

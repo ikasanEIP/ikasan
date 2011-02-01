@@ -107,7 +107,7 @@ public class VisitingInvokerFlowTest
 	FlowElementInvoker flowElementInvoker;
 	
 	/** event factory */
-	EventFactory<String,FlowEvent> eventFactory;
+	EventFactory<FlowEvent<?>> eventFactory;
 	
 	/** replication factory */
 	ReplicationFactory<FlowEvent<?>> replicationFactory;
@@ -166,8 +166,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_consumer_producer()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new String("payload"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", "payload");
     	FlowElement consumerFlowElement = new FlowElementImpl("consumerComponentName", stubConsumerComponent, mockTransitions);
     	final FlowElement producerFlowElement = new FlowElementImpl("producerComponentName", stubProducerStringComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", consumerFlowElement, flowElementInvoker);
@@ -200,8 +199,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_consumer_not_other_flowElement()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new String("payload"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", "payload");
     	FlowElement consumerFlowElement = new FlowElementImpl("consumerComponentName", stubConsumerComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", consumerFlowElement, flowElementInvoker);
     	
@@ -235,8 +233,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_translator_producer()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("before translator"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("before translator"));
     	FlowElement translatorFlowElement = new FlowElementImpl("translatorComponentName", stubTranslatorComponent, mockTransitions);
     	final FlowElement producerFlowElement = new FlowElementImpl("producerComponentName", stubProducerStringBuilderComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", translatorFlowElement, flowElementInvoker);
@@ -268,8 +265,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_translator_no_other_flowElement()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("before translator"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("before translator"));
     	FlowElement translatorFlowElement = new FlowElementImpl("translatorComponentName", stubTranslatorComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", translatorFlowElement, flowElementInvoker);
     	
@@ -303,8 +299,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_converter_producer()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("before converter"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("before converter"));
     	FlowElement converterFlowElement = new FlowElementImpl("converterComponentName", stubConverterComponent, mockTransitions);
     	final FlowElement producerFlowElement = new FlowElementImpl("producerComponentName", stubProducerStringComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", converterFlowElement, flowElementInvoker);
@@ -336,8 +331,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_converter_no_other_flowElement()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("before translator"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("before translator"));
     	FlowElement converterFlowElement = new FlowElementImpl("converterComponentName", stubConverterComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", converterFlowElement, flowElementInvoker);
     	
@@ -371,8 +365,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_broker_producer()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("broker payload"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("broker payload"));
     	FlowElement brokerFlowElement = new FlowElementImpl("brokerComponentName", stubBrokerComponent, mockTransitions);
     	final FlowElement producerFlowElement = new FlowElementImpl("producerComponentName", stubProducerStringComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", brokerFlowElement, flowElementInvoker);
@@ -404,8 +397,7 @@ public class VisitingInvokerFlowTest
     public void test_flow_broker_no_other_flowElement()
     {
     	// setup
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("broker payload"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("broker payload"));
     	FlowElement brokerFlowElement = new FlowElementImpl("brokerComponentName", stubBrokerComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", brokerFlowElement, flowElementInvoker);
     	
@@ -457,8 +449,7 @@ public class VisitingInvokerFlowTest
         });
 
         // run test
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("second"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("second"));
         flow.invoke(flowInvocationContext, flowEvent);
 
     	flowEvent.setPayload(new StringBuilder("first"));
@@ -493,8 +484,7 @@ public class VisitingInvokerFlowTest
         });
 
         // run test
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("second"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("second"));
         flow.invoke(flowInvocationContext, flowEvent);
     }
 
@@ -529,8 +519,7 @@ public class VisitingInvokerFlowTest
         });
 
         // run test
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("payload to single valid route"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("payload to single valid route"));
         flow.invoke(flowInvocationContext, flowEvent);
 
         // test assertions
@@ -569,8 +558,7 @@ public class VisitingInvokerFlowTest
         });
 
         // run test
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	flowEvent.setPayload(new StringBuilder("payload to multiple valid route"));
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new StringBuilder("payload to multiple valid route"));
         flow.invoke(flowInvocationContext, flowEvent);
 
         // test assertions
@@ -590,10 +578,8 @@ public class VisitingInvokerFlowTest
     @Test(expected = RuntimeException.class)
     public void test_failed_componentMethodMatcher()
     {
-    	FlowEvent flowEvent = eventFactory.newEvent("id");
-    	
-    	// setup a payload class which is not supported by component method
-    	flowEvent.setPayload(new String("this translator method doesnt exist"));
+        // setup a payload class which is not supported by component method
+    	FlowEvent flowEvent = eventFactory.newEvent("id", new String("this translator method doesnt exist"));
     	FlowElement translatorFlowElement = new FlowElementImpl("componentName", stubTranslatorComponent, mockTransitions);
     	Flow flow = new VisitingInvokerFlow("flowName", "moduleName", translatorFlowElement, flowElementInvoker);
 
