@@ -46,20 +46,13 @@ package org.ikasan.spec.flow.event;
  * @author Ikasan Development Team
  *
  */
-public interface EventFactory<ID,T>
+public interface EventFactory<EVENT>
 {
-	/**
-	 * Create a new instance of an event with the provided identifier.
-     * @param String identifier 
-     * @return T 
-     * TODO - do we need this method ?
-	 */
-	public T newEvent(ID identifier);
-
     /**
-     * Create a new instance of an event with the provided identifier.
-     * @param String identifier 
+     * Create a new instance of an event with the provided identifier and payload.
+     * @param IDENTIFIER identifier - internal flow event identifier
+     * @param PAYLOAD payload - data content to be transported
      * @return T 
      */
-    public <P> T newEvent(ID identifier, P payload);
+    public <PAYLOAD> EVENT newEvent(String identifier, PAYLOAD payload);
 }
