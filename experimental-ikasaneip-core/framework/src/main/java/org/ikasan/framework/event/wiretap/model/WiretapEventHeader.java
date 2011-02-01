@@ -136,7 +136,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
      * 
      * @return eventId
      */
-    public String getFlowEventId()
+    public String getEventId()
     {
         return eventId;
     }
@@ -216,7 +216,7 @@ public class WiretapEventHeader implements Comparable<WiretapEventHeader>, Seria
      * 
      * @param eventId - The FlowEvent id to set
      */
-    protected void setFlowEventId(String eventId)
+    protected void setEventId(String eventId)
     {
         this.eventId = eventId;
     }

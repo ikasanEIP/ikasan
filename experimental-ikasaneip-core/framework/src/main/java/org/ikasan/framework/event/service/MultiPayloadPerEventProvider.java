@@ -71,7 +71,7 @@ public class MultiPayloadPerEventProvider implements EventProvider
     private String componentName;
 
     /** TODO pass eventFactory */
-    private EventFactory<String,FlowEvent> eventFactory;
+    private EventFactory<FlowEvent> eventFactory;
     
     /**
      * Constructor

@@ -44,10 +44,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowInvocationContext;
 import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.error.service.ErrorLoggingService;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.exception.ExcludeEventAction;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.RetryAction;
@@ -56,6 +55,7 @@ import org.ikasan.framework.monitor.MonitorListener;
 import org.ikasan.spec.configuration.ConfigurationException;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.event.EventFactory;
 import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
@@ -114,12 +114,12 @@ public abstract class AbstractInitiator implements Initiator
     /** Handler for exceptions*/
     protected IkasanExceptionHandler exceptionHandler;
     
-    /** Service for logging errors in a heavyweight fashion */
-    protected ErrorLoggingService errorLoggingService;
-    
-    /** Service for excluding events */
-    protected ExcludedEventService excludedEventService;
-    
+//    /** Service for logging errors in a heavyweight fashion */
+//    protected ErrorLoggingService errorLoggingService;
+//    
+//    /** Service for excluding events */
+//    protected ExcludedEventService excludedEventService;
+//    
     /**
      * Set of ids for FlowEvents that will be immediately excluded when next encountered
      */
@@ -280,13 +280,13 @@ public abstract class AbstractInitiator implements Initiator
 	        {
 	        	currentEventId = event.getIdentifier();
 				//check if this event has been noted for exclusion, and if so exclude it
-				if (supportsExclusions()){
-					if (exclusions.contains(currentEventId)){
-						excludedEventService.excludeEvent(event, moduleName, flow.getName());
-						exclusions.remove(currentEventId);
-						continue;
-					} 
-				} 
+//				if (supportsExclusions()){
+//					if (exclusions.contains(currentEventId)){
+//						excludedEventService.excludeEvent(event, moduleName, flow.getName());
+//						exclusions.remove(currentEventId);
+//						continue;
+//					} 
+//				} 
 	        	
 	        	
 	        	FlowInvocationContext flowInvocationContext = new DefaultFlowInvocationContext();
@@ -315,34 +315,34 @@ public abstract class AbstractInitiator implements Initiator
 	protected void logError(FlowEvent event, Throwable throwable,
 			String componentName, IkasanExceptionAction exceptionAction) 
 	{
-		if (errorLoggingService!=null)
-		{
-			String actionTaken = null;
-			if (exceptionAction!=null)
-			{
-				actionTaken = exceptionAction.toString();
-				if (exceptionAction instanceof RetryAction)
-				{
-					actionTaken+=" retryCount ["+retryCount+"]";
-				}
-			}
-			
-			
-			if (event!=null)
-			{
-				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event, actionTaken);
-			}
-			else
-			{
-				//no event available, likely because one was not yet originated
-				errorLoggingService.logError(throwable, moduleName, name, actionTaken);
-			}
-		}
-		else
-		{
+//		if (errorLoggingService!=null)
+//		{
+//			String actionTaken = null;
+//			if (exceptionAction!=null)
+//			{
+//				actionTaken = exceptionAction.toString();
+//				if (exceptionAction instanceof RetryAction)
+//				{
+//					actionTaken+=" retryCount ["+retryCount+"]";
+//				}
+//			}
+//			
+//			
+//			if (event!=null)
+//			{
+//				errorLoggingService.logError(throwable, moduleName, flow.getName(), componentName, event, actionTaken);
+//			}
+//			else
+//			{
+//				//no event available, likely because one was not yet originated
+//				errorLoggingService.logError(throwable, moduleName, name, actionTaken);
+//			}
+//		}
+//		else
+//		{
 			getLogger().warn("exception caught by initiator ["+moduleName
 			        +"."+name+"], but no errorLoggingService available. Using default log.", throwable);
-		}
+//		}
 	}
 
 	/**
@@ -379,13 +379,13 @@ public abstract class AbstractInitiator implements Initiator
 	            {
 	            	//exclude
 	                if(action instanceof ExcludeEventAction){
-	                	if (!supportsExclusions()){
-	                		//what do we do here?#
-	                		getLogger().error("Initiator that doesnt support Exclusions was asked to handle an EXCLUDE! Switching to rollback and stop instead!");
-	                        stopInError();
-	                        throw new AbortTransactionException(UNSUPPORTED_EXCLUDE_ENCONTERED);
-
-	                	}
+//	                	if (!supportsExclusions()){
+//	                		//what do we do here?#
+//	                		getLogger().error("Initiator that doesnt support Exclusions was asked to handle an EXCLUDE! Switching to rollback and stop instead!");
+//	                        stopInError();
+//	                        throw new AbortTransactionException(UNSUPPORTED_EXCLUDE_ENCONTERED);
+//
+//	                	}
 	                	exclusions.add(eventId);
 	                }
 	            	
@@ -544,13 +544,13 @@ public abstract class AbstractInitiator implements Initiator
         return stopping;
     }
     
-    /**
-     * Setter for optional ErrorLoggingService
-     * @param errorLoggingService
-     */
-    public void setErrorLoggingService(ErrorLoggingService errorLoggingService) {
-		this.errorLoggingService = errorLoggingService;
-	}
+//    /**
+//     * Setter for optional ErrorLoggingService
+//     * @param errorLoggingService
+//     */
+//    public void setErrorLoggingService(ErrorLoggingService errorLoggingService) {
+//		this.errorLoggingService = errorLoggingService;
+//	}
     
     /**
      * Provides access to the implementation class specific logger instance
@@ -604,22 +604,22 @@ public abstract class AbstractInitiator implements Initiator
         
     }
     
-    /**
-     * @param excludedFlowEventService to set
-     */
-    public void setExcludedEventService(ExcludedEventService excludedEventService) {
-		this.excludedEventService = excludedEventService;
-	}
-	
-	/**
-	 * Returns true if an excludedFlowEventService is present, and thus supports exclusions
-	 * 
-	 * @return true if exclusions are supported by this Initiator
-	 */
-	public boolean supportsExclusions(){
-		return excludedEventService!=null;
-	}
-	
+//    /**
+//     * @param excludedFlowEventService to set
+//     */
+//    public void setExcludedEventService(ExcludedEventService excludedEventService) {
+//		this.excludedEventService = excludedEventService;
+//	}
+//	
+//	/**
+//	 * Returns true if an excludedFlowEventService is present, and thus supports exclusions
+//	 * 
+//	 * @return true if exclusions are supported by this Initiator
+//	 */
+//	public boolean supportsExclusions(){
+//		return excludedEventService!=null;
+//	}
+//	
 	/**
 	 * Accessor for exclusions
 	 * 

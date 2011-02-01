@@ -82,7 +82,7 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     private boolean respectPriority;
 
     // Generics - added EventFactory
-    private EventFactory<String,FlowEvent> eventFactory;
+    private EventFactory<FlowEvent> eventFactory;
 
 	/**
      * Constructor

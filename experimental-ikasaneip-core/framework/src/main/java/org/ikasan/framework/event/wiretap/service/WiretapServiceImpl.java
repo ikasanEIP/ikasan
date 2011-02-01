@@ -159,8 +159,8 @@ public class WiretapServiceImpl implements WiretapService
      */
     public WiretapEvent getWiretapEvent(Long wiretapEventId)
     {
-        WiretapEvent wiretapFlowEvent = wiretapDao.findById(wiretapEventId);
-        if (wiretapFlowEvent != null)
+        WiretapEvent wiretapEvent = wiretapDao.findById(wiretapEventId);
+        if (wiretapEvent != null)
         {
             // before returning wiretapFlowEvent, check that we can access the
             // associated module
@@ -168,9 +168,9 @@ public class WiretapServiceImpl implements WiretapService
             // WiretapFlowEvent individually
             // If the user can 'read' the module, then they are allowed to read
             // its associated WiretapFlowEvents
-            moduleService.getModule(wiretapFlowEvent.getModuleName());
+            moduleService.getModule(wiretapEvent.getModuleName());
         }
-        return wiretapFlowEvent;
+        return wiretapEvent;
     }
 
     /**
