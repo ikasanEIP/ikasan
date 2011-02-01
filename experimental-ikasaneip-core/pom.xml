@@ -64,43 +64,41 @@
 
         <!-- ikasan core -->
         <module>spec</module>
-        <module>core</module>
+        <module>flow</module>
 
         <!-- ikasan test harness -->
         <!--<module>test</module>-->
 
-        <!--
         <module>common</module>
         <module>framework</module>
         <module>platform</module>
 
-        <!- - consoles - ->
+        <!-- consoles -->
         <module>webconsole</module>
         <module>console</module>
 
-        <!- - connectors  - ->
+        <!-- connectors  -->
         <module>connector-base</module>
         <module>connector-basefiletransfer</module>
         <module>connector-filetransfer-parent</module>
         <module>connector-ftp</module>
         <module>connector-sftp</module>
 
-        <!- - connector clients - ->
+        <!-- connector clients -->
         <module>client-connection</module>
         <module>client-filetransfer</module>
 
-        <!- - filter - ->
+        <!-- filter -->
         <module>filter</module>
 
-        <!- - version compatibility glue - ->
-        <module>compatibility</module>
+        <!-- version compatibility glue -->
+        <!--module>compatibility</module-->
 
-        <!- - samples - ->
-        <module>samples</module>
+        <!-- samples -->
+        <!--module>samples</module-->
 
-        <!- - documentation - ->
-        <module>documentation</module>
-        -->
+        <!-- documentation -->
+        <!--module>documentation</module-->
     </modules>
 
     <!--
