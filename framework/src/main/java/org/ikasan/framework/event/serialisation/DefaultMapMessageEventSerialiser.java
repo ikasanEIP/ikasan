@@ -86,7 +86,7 @@ public class DefaultMapMessageEventSerialiser implements
 	protected PayloadFactory payloadFactory;
 
     /** TODO pass eventFactory */
-    private EventFactory<String,FlowEvent> eventFactory;
+    private EventFactory<FlowEvent> eventFactory;
 	
 	@SuppressWarnings("unchecked")
 	public FlowEvent fromMessage(MapMessage mapMessage, String moduleName,

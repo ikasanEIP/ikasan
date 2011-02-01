@@ -84,7 +84,7 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
     private PayloadFactory payloadFactory;
 
     /** TODO - generics required EventFactory */
-    private EventFactory<String,FlowEvent> eventFactory;
+    private EventFactory<FlowEvent> eventFactory;
     
     /**
      * Flow to invoke

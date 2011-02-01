@@ -76,7 +76,7 @@ public class RawMessageDrivenInitiator extends JmsMessageDrivenInitiatorImpl
     protected PayloadFactory payloadFactory;
     
     /** EventFactory instrouced for generics */
-    protected EventFactory<String,FlowEvent> eventFactory;
+    protected EventFactory<FlowEvent> eventFactory;
     
     /**
      * Respect the priority of received messages by setting this on the FlowEvent

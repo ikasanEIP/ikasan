@@ -47,6 +47,7 @@ import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.monitor.MonitorSubject;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.event.EventFactory;
 import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
@@ -54,9 +55,9 @@ import org.ikasan.spec.flow.event.FlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class EventDrivenInitiatorImpl
+public class EventDrivenInitiatorImpl<T>
     extends AbstractInitiator
-    implements EventDrivenInitiator, MonitorSubject
+    implements EventDrivenInitiator<T>, MonitorSubject
 {
     private static final String INITIATOR_STOPPING = "Initiator cannot process message whilst managing a stop request.";
 
@@ -76,6 +77,8 @@ public class EventDrivenInitiatorImpl
     /** The Halt for activating/deactivating the jms endpoint */
     protected Halt halt = null;
 
+    protected EventFactory<FlowEvent> eventFactory;
+    
     /**
      * Constructor
      *
@@ -83,7 +86,7 @@ public class EventDrivenInitiatorImpl
      * @param name The name of this initiator
      * @param flow The name of the flow it starts
      */
-    public EventDrivenInitiatorImpl(String moduleName, String name, Flow flow, IkasanExceptionHandler exceptionHandler)
+    public EventDrivenInitiatorImpl(String moduleName, String name, Flow flow, EventFactory eventFactory, IkasanExceptionHandler exceptionHandler)
     {
         super(moduleName, name, flow, exceptionHandler);
         if(moduleName == null)
@@ -105,6 +108,13 @@ public class EventDrivenInitiatorImpl
         {
             throw new IllegalArgumentException("exceptionHandler cannot be 'null'");
         }
+
+        this.eventFactory = eventFactory;
+        if(eventFactory == null)
+        {
+            throw new IllegalArgumentException("eventFactory cannot be 'null'");
+        }
+
     }
 
     public String getType()
@@ -129,7 +139,7 @@ public class EventDrivenInitiatorImpl
         handleAction(action, null);
     }
     
-    public void onEvent(FlowEvent event)
+    public void onEvent(T event)
     {
         if(this.stopping)
         {
@@ -140,7 +150,8 @@ public class EventDrivenInitiatorImpl
             throw new AbortTransactionException(INITIATOR_ANESTHETIST_OPERATING);
         }
 
-        invokeFlow(event);
+        FlowEvent flowEvent = eventFactory.newEvent("identifier", event);
+        invokeFlow(flowEvent);
     }
 
     protected void completeRetryCycle()

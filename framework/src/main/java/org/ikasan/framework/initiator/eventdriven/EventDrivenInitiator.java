@@ -49,7 +49,7 @@ import org.ikasan.spec.flow.event.FlowEvent;
  * 
  * @author Ikasan Development Team
  */
-public interface EventDrivenInitiator extends Initiator, EventListener<FlowEvent>, ExceptionListener
+public interface EventDrivenInitiator<T> extends Initiator, EventListener<T>, ExceptionListener
 {
     /**
      * Accessor for underlying MessageEndpointManager

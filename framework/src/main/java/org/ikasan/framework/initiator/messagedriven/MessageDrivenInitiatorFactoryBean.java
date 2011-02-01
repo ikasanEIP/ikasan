@@ -45,8 +45,8 @@ import javax.jms.Destination;
 
 import org.ikasan.common.factory.PayloadFactory;
 import org.ikasan.framework.component.IkasanExceptionHandler;
-import org.ikasan.framework.error.service.ErrorLoggingService;
-import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
+//import org.ikasan.framework.error.service.ErrorLoggingService;
+//import org.ikasan.framework.event.exclusion.service.ExcludedEventService;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.messagedriven.spring.SpringMessageListenerContainer;
@@ -102,11 +102,11 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     /** The type of object */
     private Class<? extends JmsMessageDrivenInitiatorImpl> objectType;
     
-    /** The error logging service */
-    private ErrorLoggingService errorLoggingService;
-    
-    /** The excludedFlowEvent service */
-    private ExcludedEventService excludedEventService;
+//    /** The error logging service */
+//    private ErrorLoggingService errorLoggingService;
+//    
+//    /** The excludedFlowEvent service */
+//    private ExcludedEventService excludedEventService;
 
     /** The message initiator */
     private JmsMessageDrivenInitiator initiator;
@@ -226,13 +226,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
     }
     
     
-    /**
-     * @param excludedFlowEventService the excludedFlowEventService to set
-     */   
-	public void setExcludedEventService(
-			ExcludedEventService excludedEventService) {
-		this.excludedEventService = excludedEventService;
-	}
+//    /**
+//     * @param excludedFlowEventService the excludedFlowEventService to set
+//     */   
+//	public void setExcludedEventService(
+//			ExcludedEventService excludedEventService) {
+//		this.excludedEventService = excludedEventService;
+//	}
 	/**
 	 * @param respectPriority the respectPriority to setS
 	 */
@@ -240,13 +240,13 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
 		this.respectPriority = respectPriority;
 	}
 
-    /**
-     * @param errorLoggingService the errorLoggingService to set
-     */   
-	public void setErrorLoggingService(
-			ErrorLoggingService errorLoggingService) {
-		this.errorLoggingService = errorLoggingService;
-	}
+//    /**
+//     * @param errorLoggingService the errorLoggingService to set
+//     */   
+//	public void setErrorLoggingService(
+//			ErrorLoggingService errorLoggingService) {
+//		this.errorLoggingService = errorLoggingService;
+//	}
 	
     public Object getObject() throws Exception
     {
@@ -331,8 +331,8 @@ public class MessageDrivenInitiatorFactoryBean implements FactoryBean, BeanNameA
             thisInitiator = new RawMessageDrivenInitiator(moduleName, name, flow, exceptionHandler, payloadFactory);
             ((RawMessageDrivenInitiator)thisInitiator).setRespectPriority(respectPriority);
         }
-        ((AbstractInitiator)thisInitiator).setExcludedEventService(excludedEventService);
-        ((AbstractInitiator)thisInitiator).setErrorLoggingService(errorLoggingService);
+//        ((AbstractInitiator)thisInitiator).setExcludedEventService(excludedEventService);
+//        ((AbstractInitiator)thisInitiator).setErrorLoggingService(errorLoggingService);
         return thisInitiator;
     }
 
