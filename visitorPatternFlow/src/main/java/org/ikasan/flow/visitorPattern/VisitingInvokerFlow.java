@@ -50,8 +50,8 @@ import org.ikasan.spec.configuration.service.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.flow.event.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
 
 /**

@@ -53,9 +53,9 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * A default implementation of the FlowElementInvoker
@@ -124,7 +124,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 {
                 	// TODO - not currently implemented. Requires review of Initiator functions
                 	// however, we must go to the next flow element
-                	flowElement = handleConsumer(flowEvent, moduleName, flowName, flowElement);
+                    flowElement = handleConsumer(flowEvent, moduleName, flowName, flowElement);
                 }
                 else if (flowComponent instanceof Translator)
                 {
@@ -139,7 +139,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                     flowElement = handleProducer(flowEvent, moduleName, flowName, flowElement);
 
                     // TODO - flowElement should be null so no requirement for break
-                    break;
+                    //break;
                 }
                 else if (flowComponent instanceof Broker)
                 {
@@ -147,13 +147,15 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 }
                 else if (flowComponent instanceof Router)
                 {
-                    handleRouter(flowInvocationContext, flowEvent, moduleName, flowName, flowElement);
-                    break;
+                    flowElement = handleRouter(flowInvocationContext, flowEvent, moduleName, flowName, flowElement);
+                    // TODO - flowElement should be null so no requirement for break
+                    // break;
                 }
                 else if (flowComponent instanceof Sequencer)
                 {
-                    handleSequencer(flowInvocationContext, flowEvent, moduleName, flowName, flowElement);
-                    break;
+                    flowElement = handleSequencer(flowInvocationContext, flowEvent, moduleName, flowName, flowElement);
+                    // TODO - flowElement should be null so no requirement for break
+                    // break;
                 }
                 else
                 {
@@ -179,7 +181,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private void handleSequencer(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName,
+    private FlowElement handleSequencer(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName,
             FlowElement flowElement)
     {
         Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
@@ -203,6 +205,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             }
     	}
         
+        return null;
     }
 
     /**
@@ -286,7 +289,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private void handleRouter(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName, FlowElement flowElement)
+    private FlowElement handleRouter(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName, FlowElement flowElement)
     {
         Router router = (Router) flowElement.getFlowComponent();
 
@@ -336,6 +339,8 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 invoke(flowInvocationContext, replicationFactory.replicate(flowEvent), moduleName, flowName, nextFlowElement);
             }
         }
+        
+        return null;
     }
 
     /**

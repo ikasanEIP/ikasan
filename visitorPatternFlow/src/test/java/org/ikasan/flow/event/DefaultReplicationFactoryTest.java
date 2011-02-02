@@ -15,8 +15,8 @@ package org.ikasan.flow.event;
 import junit.framework.Assert;
 
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.spec.flow.event.EventFactory;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.flow.FlowEvent;
 import org.junit.Before;
 import org.junit.Test;
 
