@@ -41,7 +41,7 @@
 package org.ikasan.flow.event;
 
 /**
- * Provide a standard contract for a replication factory to clone any given object.
+ * Provide a standard contract for a replication factory to replicate any given object.
  * 
  * @author Ikasan Development Team
  *
@@ -49,9 +49,11 @@ package org.ikasan.flow.event;
 public interface ReplicationFactory<T>
 {
     /**
-     * Replicate the incoming object as a deep copy.
+     * Replicate the incoming object and return an independent copy.
+     * The returned object can be mutated without any consequence to
+     * the originating object.
      * @param object
-     * @return
+     * @return object copy
      */
 	public T replicate(T object);
 }

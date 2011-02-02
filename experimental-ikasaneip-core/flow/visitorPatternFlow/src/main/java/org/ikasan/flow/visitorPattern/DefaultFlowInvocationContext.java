@@ -53,8 +53,8 @@ import org.ikasan.spec.flow.FlowInvocationContext;
  * At time of writing, the only data item that we are interested in is the name of the last
  * component invoked, and only then when dealing with an error scenario.
  * 
- * Unlike the Event object, the same FlowInvocation object will be present immediately prior
- * to the invocation of any component in a flow. The Events of course may be split, aggregated, etc.
+ * Unlike the FlowEvent object, the same FlowInvocation object will be present immediately prior
+ * to the invocation of any component in a flow. The FlowEvents of course may be split, aggregated, etc.
  * 
  * It remains to be seen if we will need to transport any other data in this object, of if at some
  * later stage, the FlowComponents themselves will need access to this information
