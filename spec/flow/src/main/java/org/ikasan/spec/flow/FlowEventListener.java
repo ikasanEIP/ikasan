@@ -40,7 +40,6 @@
  */
 package org.ikasan.spec.flow;
 
-import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Interface for objects which respond to <code>Flow</code> runtime lifecycle events
@@ -55,7 +54,7 @@ public interface FlowEventListener {
 	 * 
 	 * @param moduleName - name of the module
 	 * @param flowName - name of the flow
-	 * @param event - event with which flow is to be invoked
+	 * @param flowEvent - flowEvent with which flow is to be invoked
 	 */
 	public void beforeFlow(String moduleName, String flowName, FlowEvent event);
 
@@ -64,7 +63,7 @@ public interface FlowEventListener {
 	 * 
 	 * @param moduleName - name of the module
 	 * @param flowName - name of the flow
-	 * @param event - event with which flow was invoked
+	 * @param flowEvent - flowEvent with which flow was invoked
 	 */
 	public void afterFlow(String moduleName, String flowName, FlowEvent event);
 
@@ -74,7 +73,7 @@ public interface FlowEventListener {
 	 * @param moduleName - name of the module
 	 * @param flowName - name of the flow
 	 * @param flowElement - FlowElement about to be invoked
-	 * @param event - event with which flow element is to be invoked
+	 * @param flowEvent - flowEvent with which flow element is to be invoked
 	 */
 	public void beforeFlowElement(String moduleName, String flowName,
 			FlowElement flowElement, FlowEvent event);
@@ -85,7 +84,7 @@ public interface FlowEventListener {
 	 * @param moduleName - name of the module
 	 * @param flowName - name of the flow
 	 * @param flowElement - FlowElement which was invoked
-	 * @param event - event with which flow element was invoked
+	 * @param flowEvent - flowEvent with which flow element was invoked
 	 */
 	public void afterFlowElement(String moduleName, String flowName,
 			FlowElement flowElement, FlowEvent event);

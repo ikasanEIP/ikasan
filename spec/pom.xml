@@ -57,6 +57,7 @@
        <module>component</module>
        <module>endpoint</module>
        <module>service</module>
+       <module>event</module>
        <module>flow</module>
     </modules>
 

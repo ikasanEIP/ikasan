@@ -50,7 +50,21 @@ import java.util.List;
  */
 public interface FlowInvocationContext
 {
+    /**
+     * Get the name of the last invoked component recorded in the context.
+     * @return componentName
+     */
 	public String getLastComponentName();
+	
+	/**
+	 * Add an invoked componentName to the context.
+	 * @param componentName
+	 */
 	public void addInvokedComponentName(String componentName);
+
+	/**
+	 * Return a list of all invoked componentNames
+	 * @return List componentNames
+	 */
 	public List<String> getInvokedComponents();
 }
