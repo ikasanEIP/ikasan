@@ -44,7 +44,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Serialisation/Deserialisation interface for converting between <code>FlowEvent</code> and some specified <code>Message<code> implementation

@@ -53,10 +53,10 @@ import org.ikasan.framework.exception.RetryAction;
 import org.ikasan.framework.exception.StopAction;
 import org.ikasan.framework.monitor.MonitorListener;
 import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.flow.event.EventFactory;
-import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
  * Abstract base class for all existing <code>Initiator</code> implementations

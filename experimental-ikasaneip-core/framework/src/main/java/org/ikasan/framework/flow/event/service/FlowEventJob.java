@@ -43,7 +43,7 @@ package org.ikasan.framework.flow.event.service;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 
 /**

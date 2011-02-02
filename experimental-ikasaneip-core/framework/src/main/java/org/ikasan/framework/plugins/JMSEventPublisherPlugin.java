@@ -48,7 +48,7 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.ikasan.common.security.IkasanSecurityConf;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.framework.messaging.jms.JndiDestinationFactory;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;

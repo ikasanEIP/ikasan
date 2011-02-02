@@ -58,7 +58,7 @@ import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.monitor.MonitorSubject;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Abstract base class for JMS Message Driven Initiators

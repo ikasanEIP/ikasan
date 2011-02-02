@@ -46,9 +46,9 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.event.EventFactory;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 
 /**

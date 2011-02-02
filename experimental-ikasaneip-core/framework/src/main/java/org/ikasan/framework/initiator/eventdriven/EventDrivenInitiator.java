@@ -41,7 +41,7 @@
 package org.ikasan.framework.initiator.eventdriven;
 
 import org.ikasan.framework.initiator.Initiator;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Simple interface combining the powers of <code>Initiator</code>, <code>FlowEventListener</code>,

@@ -41,7 +41,7 @@
 package org.ikasan.framework.flow.event.listener;
 
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Interface for objects which respond to <code>Flow</code> runtime lifecycle events

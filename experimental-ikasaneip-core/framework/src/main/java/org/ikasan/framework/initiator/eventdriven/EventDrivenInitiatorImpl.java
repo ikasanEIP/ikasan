@@ -46,9 +46,9 @@ import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.initiator.AbortTransactionException;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.monitor.MonitorSubject;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.event.EventFactory;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * FlowEvent Driven Initiator implementation.
