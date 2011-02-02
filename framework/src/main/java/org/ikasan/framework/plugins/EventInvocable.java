@@ -40,7 +40,7 @@
  */
 package org.ikasan.framework.plugins;
 
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 
 /**

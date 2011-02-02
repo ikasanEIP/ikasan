@@ -51,7 +51,7 @@ import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;
 import org.ikasan.framework.flow.event.service.FlowEventJob;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * The <code>JobAwareFlowEventListener</code> provides a

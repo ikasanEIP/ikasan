@@ -46,7 +46,7 @@ import java.util.Set;
 import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
 import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.ikasan.framework.management.search.PagedSearchResult;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * This Service allows <code>FlowEvent</code>s to be dumped out at runtime for later

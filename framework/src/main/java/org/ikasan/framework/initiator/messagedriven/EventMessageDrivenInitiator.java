@@ -48,7 +48,7 @@ import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.event.serialisation.JmsMessageEventSerialiser;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to recreate and fire an <code>FlowEvent</code>s based

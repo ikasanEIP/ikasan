@@ -43,7 +43,7 @@ package org.ikasan.framework.component;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.exception.StopAction;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Simple implementation of <code>IkasanExceptionHandler</code>, that simply logs the exception and returns a predefined

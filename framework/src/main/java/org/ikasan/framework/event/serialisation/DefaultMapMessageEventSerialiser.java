@@ -54,8 +54,8 @@ import javax.jms.Session;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.spec.flow.event.EventFactory;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Default implementation for converting an FlowEvent to and from a MapMessage
@@ -235,7 +235,7 @@ public class DefaultMapMessageEventSerialiser implements
 	}
 
 	/**
-	 * @see org.ikasan.framework.event.serialisation.JmsMessageFlowEventSerialiser#toMessage(org.ikasan.spec.flow.event.FlowEvent, javax.jms.Session)
+	 * @see org.ikasan.framework.event.serialisation.JmsMessageFlowEventSerialiser#toMessage(org.ikasan.spec.flow.FlowEvent, javax.jms.Session)
 	 */
 	public MapMessage toMessage(FlowEvent event, Session session)
 			throws JMSException {

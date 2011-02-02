@@ -48,9 +48,9 @@ import org.ikasan.common.Payload;
 import org.ikasan.common.factory.PayloadFactory;
 
 import org.ikasan.framework.component.IkasanExceptionHandler;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.event.FlowEvent;
-import org.ikasan.spec.flow.event.EventFactory;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * A <code>JmsMessageDrivenInitiator</code> implementation that seeks to create and fire new <code>FlowEvent</code>s based

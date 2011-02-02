@@ -44,7 +44,7 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
  * Interface for components capable of sourcing <code>FlowEvent</code>s

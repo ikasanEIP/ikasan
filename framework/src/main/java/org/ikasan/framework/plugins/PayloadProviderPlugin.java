@@ -45,7 +45,7 @@ import java.util.List;
 import javax.resource.ResourceException;
 
 import org.ikasan.common.Payload;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.framework.payload.service.PayloadProvider;
 import org.ikasan.framework.plugins.invoker.PluginInvocationException;
 

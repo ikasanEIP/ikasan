@@ -50,7 +50,7 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.serialisation.EventDeserialisationException;
 import org.ikasan.framework.exception.IkasanExceptionAction;
