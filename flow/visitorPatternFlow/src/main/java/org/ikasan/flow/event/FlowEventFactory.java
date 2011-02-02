@@ -40,11 +40,12 @@
  */
 package org.ikasan.flow.event;
 
-import org.ikasan.spec.flow.event.EventFactory;
-import org.ikasan.spec.flow.event.FlowEvent;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
- * Implementation of flowEvent based on payload being of a generic type.
+ * Implementation of the EventFactory contract based on the creation 
+ * of a FlowEvent.
  * 
  * @author Ikasan Development Team
  *
@@ -62,7 +63,7 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?>>
     }
 
 	/**
-	 * Implementation of flowEvent based on payload being of a generic type.
+	 * Implementation of a flowEvent based on payload being of any generic type.
 	 * 
 	 * @author Ikasan Development Team
 	 *

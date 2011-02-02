@@ -92,6 +92,12 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-event</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>

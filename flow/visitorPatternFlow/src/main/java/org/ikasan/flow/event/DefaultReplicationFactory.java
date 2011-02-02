@@ -43,20 +43,33 @@ package org.ikasan.flow.event;
 import com.rits.cloning.Cloner;
 
 /**
- * Implementation of flowEvent based on payload being of a generic type.
+ * Implementation of the replicationFactory contract.
  * 
  * @author Ikasan Development Team
  *
  */
 public class DefaultReplicationFactory<T> implements ReplicationFactory<T>
 {
+    /** Implementation of the replication class */
     private Cloner cloner;
     
+    /**
+     * Constructor
+     * @param cloner
+     */
 	public DefaultReplicationFactory(Cloner cloner)
 	{
 	    this.cloner = cloner;
 	}
 	
+	/**
+	 * Return a completely independent instance of the incoming object. The
+	 * returned object can be freely mutated without any consequential changes
+	 * being made to the originating object.
+	 * 
+	 * @param object to be replicated
+	 * @return replicated object
+	 */
 	public T replicate(T object)
 	{
 	    return cloner.deepClone(object);
