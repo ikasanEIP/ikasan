@@ -43,22 +43,22 @@ package org.ikasan.spec.flow;
 import java.util.Map;
 
 /**
- * FlowElement represents a particular unique usage of a <code>FlowComponent</code> within a flow.
- * <code>FlowElement</code>s wrap <code>FlowComponent</code>s, providing them with a context specific name. They also
+ * FlowElement represents a particular unique usage of an operational component within a flow.
+ * <code>FlowElement</code>s wrap components, providing them with a context specific name. They also
  * define any transitions from this point in flow, this is a mapping of the various potential results that a
- * FlowComponent may return to subsequent (downstream) <code>FlowElement<code>s
+ * component may return to subsequent (downstream) <code>FlowElement<code>s
  * 
  * @author Ikasan Development Team
  */
 public interface FlowElement<COMPONENT>
 {
-    /** Name of the default transition for <code>FlowComponent</code>s that have a unique result */
+    /** Name of the default transition for components that have a unique result */
     public static final String DEFAULT_TRANSITION_NAME = "default";
 
     /**
-     * Accessor for the wrapped <code>FlowComponent</code>
+     * Accessor for the wrapped component.
      * 
-     * @return FlowComponent
+     * @return COMPONENT
      */
     public abstract COMPONENT getFlowComponent();
 
@@ -73,7 +73,7 @@ public interface FlowElement<COMPONENT>
      * Retrieves the subsequent FlowElement (if any) representing the next node in the flow
      * 
      * @param transitionName - this value should be a member of the set of possible results returnable from the wrapped
-     *            flowComponent
+     *            component
      * @return FlowElement representing the next node in the flow
      */
     public abstract FlowElement getTransition(String transitionName);

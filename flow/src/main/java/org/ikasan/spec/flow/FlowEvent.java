@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow.event;
+package org.ikasan.spec.flow;
 
 /**
  * Interface for the <code>Flow Event</code>.

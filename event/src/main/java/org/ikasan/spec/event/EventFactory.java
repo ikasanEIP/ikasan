@@ -38,10 +38,11 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow.event;
+package org.ikasan.spec.event;
 
 /**
- * Interface for the <code>Flow Event</code>.
+ * Interface for an EventFactory providing the contract for any event type 
+ * creation within Ikasan.
  * 
  * @author Ikasan Development Team
  *
@@ -52,7 +53,7 @@ public interface EventFactory<EVENT>
      * Create a new instance of an event with the provided identifier and payload.
      * @param IDENTIFIER identifier - internal flow event identifier
      * @param PAYLOAD payload - data content to be transported
-     * @return T 
+     * @return EVENT
      */
     public <PAYLOAD> EVENT newEvent(String identifier, PAYLOAD payload);
 }

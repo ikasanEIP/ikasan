@@ -40,20 +40,19 @@
  */
 package org.ikasan.spec.flow;
 
-import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Interface for classes capable of invoking a specified <code>FlowElement</code> with the specified <code>Event</code>
+ * Interface for classes capable of invoking a specified <code>FlowElement</code> with the specified <code>FlowEvent</code>
  * 
  * @author Ikasan Development Team
  */
 public interface FlowElementInvoker
 {
     /**
-     * Invokes the specified <code>FlowElement</code>with the specified <code>Event</code>
+     * Invokes the specified <code>FlowElement</code>with the specified <code>FlowEvent</code>
      * 
      * @param flowInvocationContext
-     * @param event argument for the <code>FlowElement</code>'s <code>FlowComponent</code>
+     * @param flowEvent argument for the <code>FlowElement</code>'s component
      * @param moduleName - name of this module
      * @param flowName - name of this flow
      * @param flowElement for invocation

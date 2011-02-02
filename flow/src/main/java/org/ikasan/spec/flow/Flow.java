@@ -40,24 +40,22 @@
  */
 package org.ikasan.spec.flow;
 
-import org.ikasan.spec.flow.event.FlowEvent;
 
 /**
- * Interface representing a business path for an <code>Event<code>
+ * Interface representing a business path for a <code>FlowEvent<code>
  * 
- * Invocation represents the traversal of that business path. Problems/errors
- * are represented by the invocation method returning a <code>IkasanExceptionAction</code>
+ * Invocation represents the traversal of that business path.
  * 
  * @author Ikasan Development Team
  */
 public interface Flow
 {
     /**
-     * Invocation of this method represents the handling of the <code>Event<code>
+     * Invocation of this method represents the handling of the <code>FlowEvent<code>
      * with respect to some business path
      * 
      * @param flowInvocationContext invocation context
-     * @param event The event we're dealing with
+     * @param flowEvent The business event we're dealing with
      */
     public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent);
 
