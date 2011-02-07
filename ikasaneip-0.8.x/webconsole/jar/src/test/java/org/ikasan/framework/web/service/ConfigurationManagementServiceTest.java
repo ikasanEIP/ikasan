@@ -49,7 +49,7 @@ import junit.framework.Assert;
 
 import org.ikasan.framework.configuration.ConfiguredResource;
 import org.ikasan.framework.configuration.model.Configuration;
-import org.ikasan.framework.configuration.service.ConfigurationService;
+import org.ikasan.framework.configuration.service.ConfigurationManagement;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.FlowComponent;
 import org.ikasan.framework.flow.FlowElement;
@@ -79,8 +79,8 @@ public class ConfigurationManagementServiceTest
         }
     };
 
-    /** mock configurationService */
-    final ConfigurationService configurationService = mockery.mock(ConfigurationService.class, "mockConfigurationService");
+    /** mock configurationManagement */
+    final ConfigurationManagement configurationManagement = mockery.mock(ConfigurationManagement.class, "mockConfigurationManagement");
     
     /** mock systemEventService */
     final SystemEventService systemEventService = mockery.mock(SystemEventService.class, "mockSystemEventService");
@@ -114,7 +114,7 @@ public class ConfigurationManagementServiceTest
     
     /** instance on test */
     final ConfigurationManagementService configurationManagementService = 
-        new ConfigurationManagementService(configurationService, systemEventService, moduleService);
+        new ConfigurationManagementService(configurationManagement, systemEventService, moduleService);
 
     /**
      * Test failed constructor due to null configurationService.
@@ -131,7 +131,7 @@ public class ConfigurationManagementServiceTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructorDueToNullSystemEventService()
     {
-        new ConfigurationManagementService(configurationService, null, null);
+        new ConfigurationManagementService(configurationManagement, null, null);
     }
 
     /**
@@ -140,7 +140,7 @@ public class ConfigurationManagementServiceTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructorDueToNullModuleService()
     {
-        new ConfigurationManagementService(configurationService, systemEventService, null);
+        new ConfigurationManagementService(configurationManagement, systemEventService, null);
     }
 
     /**
@@ -183,7 +183,7 @@ public class ConfigurationManagementServiceTest
                 will(returnValue(testComponent));
                 
                 // find the configuration for this component
-                one(configurationService).getConfiguration(testComponent);
+                one(configurationManagement).getConfiguration(testComponent);
                 will(returnValue(configuration));
             }
         });
@@ -275,7 +275,7 @@ public class ConfigurationManagementServiceTest
                 will(returnValue(testComponent));
 
                 // create configuration via the configuration service
-                exactly(1).of(configurationService).createConfiguration(testComponent);
+                exactly(1).of(configurationManagement).createConfiguration(testComponent);
                 will(returnValue(configuration));
             }
         });
@@ -325,7 +325,7 @@ public class ConfigurationManagementServiceTest
                 will(returnValue(testComponent));
 
                 // create configuration via the configuration service
-                exactly(1).of(configurationService).createConfiguration(testComponent);
+                exactly(1).of(configurationManagement).createConfiguration(testComponent);
                 will(throwException(new RuntimeException("Failed for testing")));
                 
                 // return the component in this flowElement
@@ -355,12 +355,12 @@ public class ConfigurationManagementServiceTest
                 will(returnValue("configurationId"));
                 
                 exactly(1).of(systemEventService).logSystemEvent("configurationId", "Configuration created", "prinicpalOfInvokingUser");
-                exactly(1).of(configurationService).saveConfiguration(configuration);
+                exactly(1).of(configurationManagement).saveConfiguration(configuration);
             }
         });
         
         // run the test
-        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationService, systemEventService, moduleService);
+        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationManagement, systemEventService, moduleService);
         testConfigurationManagementService.insertConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
@@ -382,12 +382,12 @@ public class ConfigurationManagementServiceTest
                 will(returnValue("configurationId"));
                 
                 exactly(1).of(systemEventService).logSystemEvent("configurationId", "Configuration updated", "prinicpalOfInvokingUser");
-                exactly(1).of(configurationService).saveConfiguration(configuration);
+                exactly(1).of(configurationManagement).saveConfiguration(configuration);
             }
         });
         
         // run the test
-        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationService, systemEventService, moduleService);
+        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationManagement, systemEventService, moduleService);
         testConfigurationManagementService.updateConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
@@ -409,12 +409,12 @@ public class ConfigurationManagementServiceTest
                 will(returnValue("configurationId"));
                 
                 exactly(1).of(systemEventService).logSystemEvent("configurationId", "Configuration deleted", "prinicpalOfInvokingUser");
-                exactly(1).of(configurationService).deleteConfiguration(configuration);
+                exactly(1).of(configurationManagement).deleteConfiguration(configuration);
             }
         });
         
         // run the test
-        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationService, systemEventService, moduleService);
+        ConfigurationManagementService testConfigurationManagementService = new TestConfigurationManagementService(configurationManagement, systemEventService, moduleService);
         testConfigurationManagementService.deleteConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
@@ -428,11 +428,11 @@ public class ConfigurationManagementServiceTest
          * @param moduleService
          */
         public TestConfigurationManagementService(
-                ConfigurationService configurationService,
+                ConfigurationManagement configurationManagement,
                 SystemEventService systemEventService,
                 ModuleService moduleService)
         {
-            super(configurationService, systemEventService, moduleService);
+            super(configurationManagement, systemEventService, moduleService);
         }
      
         @Override

@@ -46,17 +46,31 @@ package org.ikasan.framework.configuration.service;
  * 
  * @author Ikasan Development Team
  */
-public interface ConfigurationService<RESOURCE,MODEL>
+public interface ConfigurationManagement<RESOURCE,MODEL>
 {
     /**
-     * Configure the given resource.
+     * Create a configuration instance for the given configured resource.
      * @param configuredResource
+     * @return
      */
-    public void configure(RESOURCE configuredResource);
+    public MODEL getConfiguration(RESOURCE configuredResource);
 
     /**
-     * Update the confgiured resources configuration dynamically at runtime.
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
+     * @return
+     */
+    public MODEL createConfiguration(RESOURCE configuredResource);
+
+    /**
+     * Save the given configuration.
      * @param configuredResource
      */
-    public void update(RESOURCE configuredResource);
+    public void saveConfiguration(MODEL configuration);
+
+    /**
+     * Delete the given configuration.
+     * @param configuredResource
+     */
+    public void deleteConfiguration(MODEL configuration);
 }
