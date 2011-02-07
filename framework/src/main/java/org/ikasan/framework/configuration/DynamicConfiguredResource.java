@@ -38,25 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.configuration.service;
+package org.ikasan.framework.configuration;
 
 /**
- * ConfigurationService defines the operational contract of any configuration
- * service in Ikasan.
+ * Interface provisioning callbacks for setting configuration properties
+ * for a flow component as required for runtime for dynamic configuration
+ * Dynamic configuration can be changed by in-flight events and chnges will
+ * be persisted. static ConfiguredResources do not have changes applied in 
+ * the flow persisted. 
  * 
  * @author Ikasan Development Team
  */
-public interface ConfigurationService<RESOURCE,MODEL>
+public interface DynamicConfiguredResource<T> extends ConfiguredResource<T>
 {
-    /**
-     * Configure the given resource.
-     * @param configuredResource
-     */
-    public void configure(RESOURCE configuredResource);
-
-    /**
-     * Update the confgiured resources configuration dynamically at runtime.
-     * @param configuredResource
-     */
-    public void update(RESOURCE configuredResource);
+    // same operations, but provides a marker for dynamic configured resources
 }

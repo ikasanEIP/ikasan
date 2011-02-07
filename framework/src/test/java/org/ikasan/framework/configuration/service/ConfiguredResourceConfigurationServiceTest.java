@@ -76,23 +76,39 @@ public class ConfiguredResourceConfigurationServiceTest
     /** mock configuration */
     final Configuration configuration = mockery.mock(Configuration.class, "mockConfiguration");
     
+    /** mock configuration */
+    final Configuration runtimeConfiguration = mockery.mock(Configuration.class, "mockConfiguration");
+    
     /** mock configuration parameter */
     final ConfigurationParameter configurationParameter = mockery.mock(ConfigurationParameter.class, "mockConfigurationParameter");
     
     /** mock resource configuration instance */
     final Object configurationObject = mockery.mock(Object.class, "mockObject");
     
-    /** instance on test */
+    /** configuration service instance on test */
     final ConfigurationService<ConfiguredResource,Configuration> configurationService = 
-        new ConfiguredResourceConfigurationService(configurationDao);
+        new ConfiguredResourceConfigurationService(configurationDao, configurationDao);
+
+    /** configuration management service instance on test */
+    final ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement = 
+        new ConfiguredResourceConfigurationService(configurationDao, configurationDao);
 
     /**
-     * Test failed constructor due to null configurationDAO.
+     * Test failed constructor due to null static configurationDAO.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void test_failedConstructorDueToNullConfigurationDao()
+    public void test_failedConstructorDueToNullStaticConfigurationDao()
     {
-        new ConfiguredResourceConfigurationService(null);
+        new ConfiguredResourceConfigurationService(null, null);
+    }
+
+    /**
+     * Test failed constructor due to null dynamic configurationDAO.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failedConstructorDueToNullDynamicConfigurationDao()
+    {
+        new ConfiguredResourceConfigurationService(configurationDao, null);
     }
 
     /**
@@ -168,7 +184,7 @@ public class ConfiguredResourceConfigurationServiceTest
     
     /**
      * Test configure invocation where the configuration object returned by the configured
-     * resource is null i.e. there is no confgiuration object to provide the 
+     * resource is null i.e. there is no configuration object to provide the 
      * resource with a configuration. In this case just warn.
      */
     @Test 
@@ -201,6 +217,88 @@ public class ConfiguredResourceConfigurationServiceTest
     }
 
     /**
+     * Test update invocation where the configuration object has been changed 
+     * at runtime.
+     */
+    @Test 
+    public void test_update_with_runtime_configuration_changed()
+    {
+        final List<ConfigurationParameter> configurationParams = new ArrayList<ConfigurationParameter>();
+        configurationParams.add(configurationParameter);
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the runtime configuration
+                exactly(1).of(configuredResource).getConfiguration();
+                will(returnValue(new StubbedRuntimeConfiguration()));
+                
+                // get the persisted configuration
+                exactly(1).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                one(configurationDao).findById("configuredResourceId");
+                will(returnValue(configuration));
+
+                exactly(1).of(configurationParameter).getName();
+                will(returnValue("field1"));
+                exactly(1).of(configurationParameter).getValue();
+                will(returnValue("field0Value"));
+                exactly(1).of(configurationParameter).setValue("field1Value");
+                
+                exactly(1).of(configuration).getConfigurationParameters();
+                will(returnValue(configurationParams));
+                
+                // so update persisted configuration with runtime version
+                one(configurationDao).save(configuration);
+            }
+        });
+        
+        // run the test
+        configurationService.update(configuredResource);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test update invocation where the configuration object has not been changed 
+     * at runtime.
+     */
+    @Test 
+    public void test_update_with_runtime_configuration_unchanged()
+    {
+        final List<ConfigurationParameter> configurationParams = new ArrayList<ConfigurationParameter>();
+        configurationParams.add(configurationParameter);
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the runtime configuration
+                exactly(1).of(configuredResource).getConfiguration();
+                will(returnValue(new StubbedRuntimeConfiguration()));
+                
+                // get the persisted configuration
+                exactly(1).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                one(configurationDao).findById("configuredResourceId");
+                will(returnValue(configuration));
+
+                exactly(1).of(configurationParameter).getName();
+                will(returnValue("field1"));
+                exactly(1).of(configurationParameter).getValue();
+                will(returnValue("field1Value"));
+                
+                exactly(1).of(configuration).getConfigurationParameters();
+                will(returnValue(configurationParams));
+            }
+        });
+        
+        // run the test
+        configurationService.update(configuredResource);
+        mockery.assertIsSatisfied();
+    }
+
+    /**
      * Test retrieval of a configuredResource's configuration.
      */
     @Test 
@@ -221,7 +319,7 @@ public class ConfiguredResourceConfigurationServiceTest
         });
         
         // run the test
-        configurationService.getConfiguration(configuredResource);
+        configurationManagement.getConfiguration(configuredResource);
         mockery.assertIsSatisfied();
     }
 
@@ -241,7 +339,7 @@ public class ConfiguredResourceConfigurationServiceTest
         });
         
         // run the test
-        configurationService.saveConfiguration(configuration);
+        configurationManagement.saveConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
 
@@ -261,7 +359,7 @@ public class ConfiguredResourceConfigurationServiceTest
         });
         
         // run the test
-        configurationService.deleteConfiguration(configuration);
+        configurationManagement.deleteConfiguration(configuration);
         mockery.assertIsSatisfied();
     }
     
@@ -286,8 +384,29 @@ public class ConfiguredResourceConfigurationServiceTest
         });
         
         // run the test
-        configurationService.createConfiguration(configuredResource);
+        configurationManagement.createConfiguration(configuredResource);
         mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Stubbed test configuration instance
+     * @author mitcje
+     *
+     */
+    public class StubbedRuntimeConfiguration
+    {
+        private String field1 = "field1Value";
+
+        public String getField1()
+        {
+            return field1;
+        }
+
+        public void setField1(String field1)
+        {
+            this.field1 = field1;
+        }
+        
     }
 
 }

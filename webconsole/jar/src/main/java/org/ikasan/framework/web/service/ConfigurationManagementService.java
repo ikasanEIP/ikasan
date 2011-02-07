@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.ikasan.framework.configuration.ConfiguredResource;
 import org.ikasan.framework.configuration.model.Configuration;
-import org.ikasan.framework.configuration.service.ConfigurationService;
+import org.ikasan.framework.configuration.service.ConfigurationManagement;
 import org.ikasan.framework.flow.Flow;
 import org.ikasan.framework.flow.FlowComponent;
 import org.ikasan.framework.flow.FlowElement;
@@ -75,7 +75,7 @@ public class ConfigurationManagementService
     public static final String CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION = "Configuration deleted";
 
     /** configuration service */
-    private ConfigurationService<ConfiguredResource,Configuration> configurationService;
+    private ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement;
     
     /** system event service records all changes to configurations */
     private SystemEventService systemEventService;
@@ -89,13 +89,13 @@ public class ConfigurationManagementService
      * @param systemEventService
      * @param moduleService
      */
-    public ConfigurationManagementService(ConfigurationService<ConfiguredResource,Configuration> configurationService, SystemEventService systemEventService, 
+    public ConfigurationManagementService(ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement, SystemEventService systemEventService, 
             ModuleService moduleService)
     {
-        this.configurationService = configurationService;
-        if(configurationService == null)
+        this.configurationManagement = configurationManagement;
+        if(configurationManagement == null)
         {
-            throw new IllegalArgumentException("configurationService cannot be 'null'");
+            throw new IllegalArgumentException("configurationManagement cannot be 'null'");
         }
 
         this.systemEventService = systemEventService;
@@ -138,7 +138,7 @@ public class ConfigurationManagementService
         try
         {
             ConfiguredResource configuredResource = getConfiguredResource(moduleName, flowName, flowElementName);
-            return this.configurationService.getConfiguration(configuredResource);
+            return this.configurationManagement.getConfiguration(configuredResource);
         }
         catch(RuntimeException e)
         {
@@ -163,7 +163,7 @@ public class ConfigurationManagementService
         try
         {
             ConfiguredResource configuredResource = getConfiguredResource(moduleName, flowName, flowElementName);
-            return configurationService.createConfiguration(configuredResource);
+            return configurationManagement.createConfiguration(configuredResource);
         }
         catch(RuntimeException e)
         {
@@ -181,7 +181,7 @@ public class ConfigurationManagementService
     public void insertConfiguration(Configuration configuration)
     {
         this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, getAuthentication().getName());
-        this.configurationService.saveConfiguration(configuration);
+        this.configurationManagement.saveConfiguration(configuration);
     }
     
     /**
@@ -191,7 +191,7 @@ public class ConfigurationManagementService
     public void updateConfiguration(Configuration configuration)
     {
         this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
-        this.configurationService.saveConfiguration(configuration);
+        this.configurationManagement.saveConfiguration(configuration);
     }
     
     /**
@@ -201,7 +201,7 @@ public class ConfigurationManagementService
     public void deleteConfiguration(Configuration configuration)
     {
         this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
-        this.configurationService.deleteConfiguration(configuration);
+        this.configurationManagement.deleteConfiguration(configuration);
     }
 
     /**
