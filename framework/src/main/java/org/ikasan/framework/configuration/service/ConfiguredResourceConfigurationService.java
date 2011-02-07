@@ -188,7 +188,7 @@ public class ConfiguredResourceConfigurationService
     {
         boolean configurationUpdated = false;
         Object runtimeConfiguration = configuredResource.getConfiguration();
-        Configuration configuration = getConfiguration(configuredResource);
+        Configuration configuration = this.dynamicConfigurationDao.findById(configuredResource.getConfiguredResourceId());
         for(ConfigurationParameter configurationParameter:configuration.getConfigurationParameters())
         {
             String runtimeParameterValue;
