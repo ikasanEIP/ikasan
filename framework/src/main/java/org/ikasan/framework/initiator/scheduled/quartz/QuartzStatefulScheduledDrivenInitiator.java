@@ -49,6 +49,7 @@ import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.VisitingInvokerFlow;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorOperationException;
 import org.ikasan.framework.monitor.MonitorSubject;
@@ -460,6 +461,10 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
             logger.warn("Attempt to invoke an initiator in a stopped state.");
             return false;
         }
+
+        // TODO - this sucks. we are having to sync configuration on the flow
+        // because this initiator uses the configuration as part of sourcing events
+        flow.sync();
         
         // invoke flow all the time we have event activity
         // invoke flow

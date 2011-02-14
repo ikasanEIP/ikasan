@@ -88,4 +88,10 @@ public interface Flow
      * For instance, this could include stopping any flow managed resources.
      */
     public void stop();
+
+    /**
+     * Temporary public method to support a work-around for ensuring dynamic configured resources
+     * are always sync'd with their persisted versions after failure/rollback.
+     */
+    public void sync();
 }
