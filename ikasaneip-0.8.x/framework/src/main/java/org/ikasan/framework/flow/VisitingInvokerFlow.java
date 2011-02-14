@@ -140,6 +140,8 @@ public class VisitingInvokerFlow implements Flow
      */
     public void invoke(FlowInvocationContext flowInvocationContext, Event event)
     {
+        sync();
+
         flowElementInvoker.invoke(flowInvocationContext, event, moduleName, name, headElement);
         
         for(DynamicConfiguredResource dynamicConfiguredResource:dynamicConfiguredResources)
@@ -190,6 +192,17 @@ public class VisitingInvokerFlow implements Flow
     public String getModuleName()
     {
         return moduleName;
+    }
+
+    /**
+     * Re-sync any dynamic configured resources
+     */
+    public void sync()
+    {
+        for(DynamicConfiguredResource dynamicConfiguredResource:dynamicConfiguredResources)
+        {
+            this.configurationService.configure(dynamicConfiguredResource);
+        }
     }
 
     /* (non-Javadoc)

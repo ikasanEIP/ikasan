@@ -136,7 +136,10 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 		classMockery.checking(new Expectations()
         {
             {
-            	//eventProvider fails
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
+                //eventProvider fails
                 one(eventProvider).getEvents();
                 inSequence(sequence);
                 will(throwException(throwable));
@@ -211,6 +214,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // get events from event provider
                 one(eventProvider).getEvents();
                 will(returnValue(null));
@@ -241,6 +247,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'null' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(returnValue(null));
@@ -275,6 +284,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'null' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(returnValue(null));
@@ -310,6 +322,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'null' ikasanExceptionAction from the flow invocation
                 exactly(numOfEvents).of(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(returnValue(null));
@@ -345,6 +360,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollforwardStop' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -399,6 +417,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -449,6 +470,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -477,6 +501,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -516,6 +543,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -537,6 +567,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
