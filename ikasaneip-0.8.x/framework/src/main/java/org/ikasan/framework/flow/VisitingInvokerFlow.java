@@ -140,8 +140,6 @@ public class VisitingInvokerFlow implements Flow
      */
     public void invoke(FlowInvocationContext flowInvocationContext, Event event)
     {
-        sync();
-
         flowElementInvoker.invoke(flowInvocationContext, event, moduleName, name, headElement);
         
         for(DynamicConfiguredResource dynamicConfiguredResource:dynamicConfiguredResources)
