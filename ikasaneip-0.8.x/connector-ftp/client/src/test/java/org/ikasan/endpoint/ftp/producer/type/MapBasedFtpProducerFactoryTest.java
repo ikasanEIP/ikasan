@@ -40,17 +40,19 @@
  */
 package org.ikasan.endpoint.ftp.producer.type;
 
+import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 
 import junit.framework.Assert;
 
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
+import org.ikasan.endpoint.ftp.producer.FtpProducerAlternateConfiguration;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -59,33 +61,30 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
 public class MapBasedFtpProducerFactoryTest
 {
-    Mockery mockery = new Mockery()
+    /** The mockery */
+    private final Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
 
-    /** mock connectionFactory */
-    final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
-    
-    /** mock ftpConfiguration */
-    final FtpProducerConfiguration ftpConfiguration = mockery.mock(FtpProducerConfiguration.class, "mockFtpConfiguration");
+    /** Mock connectionFactory */
+    private final ConnectionFactory connectionFactory = this.mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
 
-    /** mock SFTPConnectionSpec */
-    final FTPConnectionSpec ftpConnectionSpec = mockery.mock(FTPConnectionSpec.class, "mockFTPConnectionSpec");
+    /** Mock SFTPConnectionSpec */
+    private final FTPConnectionSpec ftpConnectionSpec = this.mockery.mock(FTPConnectionSpec.class, "mockFTPConnectionSpec");
 
-    /** mock producer */
-    final Producer<?> producer = mockery.mock(Producer.class, "mockProducer");
-
-    /** instance on test */
-    MapBasedFtpProducerFactory mapBasedFtpProducerFactory;
+    /** Instance on test */
+    private EndpointFactory<Producer<?>, FtpProducerConfiguration> mapBasedFtpProducerFactory = new MapBasedFtpProducerFactoryWithMockSpec(this.connectionFactory);
 
     /**
      * Test failed constructor due to null connectionFactory.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullConnectionFactory()
     {
@@ -93,76 +92,159 @@ public class MapBasedFtpProducerFactoryTest
     }
 
     /**
-     * Create a clean test instance prior to each test.
-     */
-    @Before
-    public void setUp()
-    {
-        this.mapBasedFtpProducerFactory = new MapBasedFtpProducerFactoryWithMockSpec(connectionFactory);
-    }
-    
-    /**
      * Test create producer invocation.
+     * @throws ResourceException if error creating endpoint
      */
     @Test
-    public void test_createProducer()
+    public void test_createProducer() throws ResourceException
     {
-        // expectations
-        mockery.checking(new Expectations()
+        /** Mock ftpConfiguration */
+        final FtpProducerConfiguration ftpConfiguration = this.mockery.mock(FtpProducerConfiguration.class, "mockFtpConfiguration");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
                 one(ftpConfiguration).validate();
 
-                exactly(1).of(ftpConfiguration).getClientID();
-                will(returnValue("clientID"));
+                one(ftpConfiguration).getClientID(); will(returnValue("clientID"));
                 one(ftpConnectionSpec).setClientID("clientID");
 
-                exactly(1).of(ftpConfiguration).getRemoteHost();
-                will(returnValue("hostname"));
+                one(ftpConfiguration).getRemoteHost(); will(returnValue("hostname"));
                 one(ftpConnectionSpec).setRemoteHostname("hostname");
 
-                exactly(1).of(ftpConfiguration).getMaxRetryAttempts();
-                will(returnValue(1));
-                one(ftpConnectionSpec).setMaxRetryAttempts(1);
+                one(ftpConfiguration).getMaxRetryAttempts();will(returnValue(Integer.valueOf(1)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
 
-                exactly(1).of(ftpConfiguration).getRemotePort();
-                will(returnValue(23));
-                one(ftpConnectionSpec).setRemotePort(23);
+                one(ftpConfiguration).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(23));
 
-                exactly(1).of(ftpConfiguration).getConnectionTimeout();
-                will(returnValue(234));
-                one(ftpConnectionSpec).setConnectionTimeout(234);
+                one(ftpConfiguration).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
 
-                one(ftpConfiguration).getSocketTimeout(); will(returnValue(234));
-                one(ftpConnectionSpec).setSocketTimeout(234);
+                one(ftpConfiguration).getSocketTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(234));
 
-                one(ftpConfiguration).getDataTimeout(); will(returnValue(234));
-                one(ftpConnectionSpec).setDataTimeout(234);
+                one(ftpConfiguration).getDataTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(234));
 
                 one(ftpConfiguration).getActive();will(returnValue(Boolean.FALSE));
                 one(ftpConnectionSpec).setActive(Boolean.FALSE);
 
-                exactly(1).of(ftpConfiguration).getUsername();
-                will(returnValue("username"));
+                one(ftpConfiguration).getUsername();will(returnValue("username"));
                 one(ftpConnectionSpec).setUsername("username");
 
                 one(ftpConfiguration).getPassword();will(returnValue("password"));
                 one(ftpConnectionSpec).setPassword("password");
 
-                exactly(1).of(ftpConfiguration).getCleanupJournalOnComplete();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
                 one(ftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
 
                 one(ftpConfiguration).getSystemKey();will(returnValue(""));
                 one(ftpConnectionSpec).setSystemKey("");
             }
         });
-                
-        // test
-        Assert.assertTrue(mapBasedFtpProducerFactory.createEndpoint(ftpConfiguration) instanceof MapBasedFtpProducer);
-        mockery.assertIsSatisfied();
+
+        // Test
+        Producer<?> createdProducer = this.mapBasedFtpProducerFactory.createEndpoint(ftpConfiguration);
+        Assert.assertTrue(createdProducer instanceof MapBasedFtpProducer);
+        Assert.assertNull(((MapBasedFtpProducer)createdProducer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
     }
-    
+
+    /**
+     * Test create producer invocation.
+     * @throws ResourceException if error creating endpoint
+     */
+    @Test
+    public void test_createProducer_with_alternate_connection_details() throws ResourceException
+    {
+        /** Mock ftpConfiguration */
+        final FtpProducerAlternateConfiguration ftpConfiguration = this.mockery.mock(FtpProducerAlternateConfiguration.class, "mockFtpConfiguration");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(ftpConfiguration).validate();
+
+                exactly(2).of(ftpConfiguration).getClientID(); will(returnValue("clientID"));
+                exactly(2).of(ftpConnectionSpec).setClientID("clientID");
+
+                one(ftpConfiguration).getRemoteHost(); will(returnValue("hostname"));
+                one(ftpConnectionSpec).setRemoteHostname("hostname");
+
+                one(ftpConfiguration).getAlternateRemoteHost(); will(returnValue("alternate.hostname"));
+                one(ftpConnectionSpec).setRemoteHostname("alternate.hostname");
+
+                one(ftpConfiguration).getMaxRetryAttempts();will(returnValue(Integer.valueOf(1)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
+
+                one(ftpConfiguration).getAlternateMaxRetryAttempts();will(returnValue(Integer.valueOf(1)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
+
+                one(ftpConfiguration).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(23));
+
+                one(ftpConfiguration).getAlternateRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(23));
+
+                one(ftpConfiguration).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
+
+                one(ftpConfiguration).getAlternateConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
+
+                one(ftpConfiguration).getSocketTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(234));
+
+                one(ftpConfiguration).getAlternateSocketTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(234));
+
+                one(ftpConfiguration).getDataTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(234));
+
+                one(ftpConfiguration).getAlternateDataTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(234));
+
+                one(ftpConfiguration).getActive();will(returnValue(Boolean.FALSE));
+                one(ftpConnectionSpec).setActive(Boolean.FALSE);
+
+                one(ftpConfiguration).getAlternateActive();will(returnValue(Boolean.FALSE));
+                one(ftpConnectionSpec).setActive(Boolean.FALSE);
+
+                one(ftpConfiguration).getUsername();will(returnValue("username"));
+                one(ftpConnectionSpec).setUsername("username");
+
+                one(ftpConfiguration).getAlternateUsername();will(returnValue("username"));
+                one(ftpConnectionSpec).setUsername("username");
+
+                one(ftpConfiguration).getPassword();will(returnValue("password"));
+                one(ftpConnectionSpec).setPassword("password");
+
+                one(ftpConfiguration).getAlternatePassword();will(returnValue("password"));
+                one(ftpConnectionSpec).setPassword("password");
+
+                exactly(2).of(ftpConfiguration).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
+
+                one(ftpConfiguration).getSystemKey();will(returnValue(""));
+                one(ftpConnectionSpec).setSystemKey("");
+
+                one(ftpConfiguration).getAlternateSystemKey();will(returnValue(""));
+                one(ftpConnectionSpec).setSystemKey("");
+
+                
+            }
+        });
+
+        // Test
+        Producer<?> createdProducer = this.mapBasedFtpProducerFactory.createEndpoint(ftpConfiguration);
+        Assert.assertTrue(createdProducer instanceof MapBasedFtpProducer);
+        Assert.assertNotNull(((MapBasedFtpProducer)createdProducer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
+    }
+
     /**
      * Test MapBasedSftpProducerFactory instance to allow us to return a mock 
      * instance of the ConnectionSpec.
@@ -180,7 +262,7 @@ public class MapBasedFtpProducerFactoryTest
         @Override
         protected FTPConnectionSpec getConnectionSpec()
         {
-            return ftpConnectionSpec;
+            return MapBasedFtpProducerFactoryTest.this.ftpConnectionSpec;
         }
     }
     

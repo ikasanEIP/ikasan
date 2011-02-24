@@ -66,6 +66,7 @@ import org.ikasan.connector.base.outbound.EISConnectionFactory;
  * should be treated as duplicate and filtered out.
  *
  * @author Ikasan Development Team
+ * @deprecated - use Ikasan Client Endpoint implementation
  */
 public class FileTransferAlternateConnectionPayloadProvider
     extends FileTransferPayloadProvider
