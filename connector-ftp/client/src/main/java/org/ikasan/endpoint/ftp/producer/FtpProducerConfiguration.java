@@ -50,60 +50,60 @@ import org.apache.log4j.Logger;
 public class FtpProducerConfiguration
 {
     /** FTP unqiue clientId */
-    protected String clientID;
+    private String clientID;
 
     /** Whether it is active transfer mode - default False */
-    protected Boolean active = Boolean.FALSE;
+    private Boolean active = Boolean.FALSE;
 
     /** FTP cleanup journal on completion */
-    protected Boolean cleanupJournalOnComplete = Boolean.TRUE;
+    private Boolean cleanupJournalOnComplete = Boolean.TRUE;
 
     /** FTP default Remote host */
-    protected String remoteHost = String.valueOf("localhost");
+    private String remoteHost = String.valueOf("localhost");
 
     /** FTP max retry attempts */
-    protected Integer maxRetryAttempts = Integer.valueOf(3);
+    private Integer maxRetryAttempts = Integer.valueOf(3);
 
     /** FTP default remote port */
-    protected Integer remotePort = Integer.valueOf(21);
+    private Integer remotePort = Integer.valueOf(21);
 
     /** FTP user */
-    protected String username;
+    private String username;
 
     /** FTP password/passphrase */
-    protected String password;
+    private String password;
 
     /** FTP output directory */
-    protected String outputDirectory;
+    private String outputDirectory;
 
     /** FTP default rename extension */
-    protected String renameExtension = String.valueOf(".tmp");
+    private String renameExtension = String.valueOf(".tmp");
 
-    protected String tempFileName;
+    private String tempFileName;
 
     /** FTP overwrite */
-    protected Boolean overwrite = Boolean.FALSE;
+    private Boolean overwrite = Boolean.FALSE;
 
     /** FTP unzip */
-    protected Boolean unzip = Boolean.FALSE;
+    private Boolean unzip = Boolean.FALSE;
 
     /** FTP generate and deliver a checksum */
-    protected Boolean checksumDelivered = Boolean.FALSE;
+    private Boolean checksumDelivered = Boolean.FALSE;
 
     /** Creates any missing parent directory in the fully qualified filename of the file to be delivered */
-    protected Boolean createParentDirectory = Boolean.FALSE;
+    private Boolean createParentDirectory = Boolean.FALSE;
 
     /** Connection Timeout */
     private Integer connectionTimeout = Integer.valueOf(60000);
 
     /** Data connection timeout, default is 0 (infinite) */
-    protected Integer dataTimeout = Integer.valueOf(300000);
+    private Integer dataTimeout = Integer.valueOf(300000);
     
     /** Socket connection timeout, default is 0 (infinite) */
-    protected Integer socketTimeout = Integer.valueOf(300000);
+    private Integer socketTimeout = Integer.valueOf(300000);
 
     /** System key */
-    protected String systemKey = "";
+    private String systemKey = "";
 
     /** Logger instance */
     private static final Logger logger = Logger.getLogger(FtpProducerConfiguration.class);
@@ -337,7 +337,7 @@ public class FtpProducerConfiguration
      */
     public String getTempFileName()
     {
-        return tempFileName;
+        return this.tempFileName;
     }
 
     /**
@@ -412,6 +412,9 @@ public class FtpProducerConfiguration
         this.createParentDirectory = createParentDirectory;
     }
 
+    /**
+     * Validating configuration parameters
+     */
     public void validate()
     {
         if (this.systemKey == null || this.systemKey.equals(" "))
