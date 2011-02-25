@@ -40,57 +40,60 @@
  */
 package org.ikasan.endpoint.ftp.consumer.type;
 
+import javax.resource.ResourceException;
+
 import junit.framework.Assert;
 
 import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
+import org.ikasan.endpoint.ftp.consumer.FtpConsumerAlternateConfiguration;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.endpoint.ftp.consumer.type.PayloadBasedFtpConsumer;
 import org.ikasan.endpoint.ftp.consumer.type.PayloadBasedFtpConsumerFactory;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.endpoint.Consumer;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test class for {@link PayloadBasedSftpConsumerFactory}
+ * Test class for {@link PayloadBasedFtpConsumerFactory}
  * 
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
 public class PayloadBasedFtpConsumerFactoryTest
 {
-    Mockery mockery = new Mockery()
+    /** The mockery */
+    private final Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
 
-    /** mock connectionFactory */
-    final EISConnectionFactory connectionFactory = mockery.mock(EISConnectionFactory.class, "mockConnectionFactory");
+    /** Mock connectionFactory */
+    private final EISConnectionFactory connectionFactory = this.mockery.mock(EISConnectionFactory.class, "mockConnectionFactory");
     
-    /** mock ftpConfiguration */
-    final FtpConsumerConfiguration ftpConfiguration = mockery.mock(FtpConsumerConfiguration.class, "mockFtpConfiguration");
+    /** Mock ftpConfiguration */
+    private final FtpConsumerConfiguration ftpConfiguration = this.mockery.mock(FtpConsumerConfiguration.class, "mockFtpConfiguration");
 
     /** mockFTPConnectionSpec */
-    final FTPConnectionSpec ftpConnectionSpec = mockery.mock(FTPConnectionSpec.class, "mockFTPConnectionSpec");
+    private final FTPConnectionSpec ftpConnectionSpec = this.mockery.mock(FTPConnectionSpec.class, "mockFTPConnectionSpec");
 
-    /** mock DirectoryURLFactory */
-    final DirectoryURLFactory directoryURLFactory = mockery.mock(DirectoryURLFactory.class, "mockDirectoryURLFactory");
+    /** Mock DirectoryURLFactory */
+    private final DirectoryURLFactory directoryURLFactory = this.mockery.mock(DirectoryURLFactory.class, "mockDirectoryURLFactory");
 
-    /** mock consumer */
-    final Consumer<?> consumer = mockery.mock(Consumer.class, "mockConsumer");
-
-    /** instance on test */
-    PayloadBasedFtpConsumerFactory payloadBasedFtpConsumerFactory;
+    /** Instance on test */
+    private EndpointFactory<Consumer<?>, FtpConsumerConfiguration> payloadBasedFtpConsumerFactory = new PayloadBasedFtpConsumerFactoryWithMockSpec(this.connectionFactory);
 
     /**
      * Test failed constructor due to null connectionFactory.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullConnectionFactory()
     {
@@ -98,152 +101,208 @@ public class PayloadBasedFtpConsumerFactoryTest
     }
 
     /**
-     * Create a clean test instance prior to each test.
-     */
-    @Before
-    public void setUp()
-    {
-        this.payloadBasedFtpConsumerFactory = new PayloadBasedFtpConsumerFactoryWithMockSpec(connectionFactory);
-    }
-    
-    /**
      * Test create consumer invocation.
+     * 
+     * @throws ResourceException if error creating endpoint
      */
     @Test
-    public void test_createConsumer()
+    public void test_createConsumer() throws ResourceException
     {
-        // expectations
-        mockery.checking(new Expectations()
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(ftpConfiguration).setSourceDirectoryURLFactory(null);
-                
-                exactly(1).of(ftpConfiguration).getClientID();
-                will(returnValue("clientID"));
+                one(ftpConfiguration).setSourceDirectoryURLFactory(null);
+
+                one(ftpConfiguration).getClientID(); will(returnValue("clientID"));
                 one(ftpConnectionSpec).setClientID("clientID");
 
-                exactly(1).of(ftpConfiguration).getRemoteHost();
-                will(returnValue("hostname"));
+                one(ftpConfiguration).getRemoteHost(); will(returnValue("hostname"));
                 one(ftpConnectionSpec).setRemoteHostname("hostname");
 
-                exactly(1).of(ftpConfiguration).getMaxRetryAttempts();
-                will(returnValue(1));
-                one(ftpConnectionSpec).setMaxRetryAttempts(1);
+                one(ftpConfiguration).getMaxRetryAttempts(); will(returnValue(Integer.valueOf(1)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
 
-                exactly(1).of(ftpConfiguration).getRemotePort();
-                will(returnValue(23));
-                one(ftpConnectionSpec).setRemotePort(23);
+                one(ftpConfiguration).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(23));
 
-                exactly(1).of(ftpConfiguration).getConnectionTimeout();
-                will(returnValue(234));
-                one(ftpConnectionSpec).setConnectionTimeout(234);
+                one(ftpConfiguration).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
 
-                exactly(1).of(ftpConfiguration).getUsername();
-                will(returnValue("username"));
+                one(ftpConfiguration).getUsername(); will(returnValue("username"));
                 one(ftpConnectionSpec).setUsername("username");
 
-                exactly(1).of(ftpConfiguration).getCleanupJournalOnComplete();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
                 one(ftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
 
-                exactly(1).of(ftpConfiguration).getActive();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getActive(); will(returnValue(Boolean.TRUE));
                 one(ftpConnectionSpec).setActive(Boolean.TRUE);
 
-                exactly(1).of(ftpConfiguration).getDataTimeout();
-                will(returnValue(Integer.valueOf(100)));
+                one(ftpConfiguration).getDataTimeout(); will(returnValue(Integer.valueOf(100)));
                 one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(100));
 
-                exactly(1).of(ftpConfiguration).getSocketTimeout();
-                will(returnValue(Integer.valueOf(100)));
+                one(ftpConfiguration).getSocketTimeout(); will(returnValue(Integer.valueOf(100)));
                 one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(100));
 
-                exactly(1).of(ftpConfiguration).getPassword();
-                will(returnValue("password"));
+                one(ftpConfiguration).getPassword(); will(returnValue("password"));
                 one(ftpConnectionSpec).setPassword("password");
 
-                exactly(1).of(ftpConfiguration).getSystemKey();
-                will(returnValue("systemKey"));
+                one(ftpConfiguration).getSystemKey(); will(returnValue("systemKey"));
                 one(ftpConnectionSpec).setSystemKey("systemKey");
             }
         });
-                
-        // test
-        Assert.assertTrue(payloadBasedFtpConsumerFactory.createEndpoint(ftpConfiguration) instanceof PayloadBasedFtpConsumer);
-        mockery.assertIsSatisfied();
+
+        // Test
+        Consumer<?> createdConsumer = this.payloadBasedFtpConsumerFactory.createEndpoint(this.ftpConfiguration);
+        Assert.assertTrue(createdConsumer instanceof PayloadBasedFtpConsumer);
+        Assert.assertNull(((PayloadBasedFtpConsumer)createdConsumer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test create consumer invocation.
+     * @throws ResourceException if error creating endpoint
      */
     @Test
-    public void test_createConsumerWithDirectoryURLFactory()
+    public void test_createConsumerWithDirectoryURLFactory() throws ResourceException
     {
-        // expectations
-        mockery.checking(new Expectations()
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(ftpConfiguration).setSourceDirectoryURLFactory(directoryURLFactory);
-                
-                exactly(1).of(ftpConfiguration).getClientID();
-                will(returnValue("clientID"));
+                one(ftpConfiguration).setSourceDirectoryURLFactory(directoryURLFactory);
+
+                one(ftpConfiguration).getClientID(); will(returnValue("clientID"));
                 one(ftpConnectionSpec).setClientID("clientID");
 
-                exactly(1).of(ftpConfiguration).getRemoteHost();
-                will(returnValue("hostname"));
+                one(ftpConfiguration).getRemoteHost(); will(returnValue("hostname"));
                 one(ftpConnectionSpec).setRemoteHostname("hostname");
 
-                exactly(1).of(ftpConfiguration).getMaxRetryAttempts();
-                will(returnValue(1));
-                one(ftpConnectionSpec).setMaxRetryAttempts(1);
+                one(ftpConfiguration).getMaxRetryAttempts(); will(returnValue(Integer.valueOf(1)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
 
-                exactly(1).of(ftpConfiguration).getRemotePort();
-                will(returnValue(23));
-                one(ftpConnectionSpec).setRemotePort(23);
+                one(ftpConfiguration).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(23));
 
-                exactly(1).of(ftpConfiguration).getConnectionTimeout();
-                will(returnValue(234));
-                one(ftpConnectionSpec).setConnectionTimeout(234);
+                one(ftpConfiguration).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
 
-                exactly(1).of(ftpConfiguration).getUsername();
-                will(returnValue("username"));
+                one(ftpConfiguration).getUsername(); will(returnValue("username"));
                 one(ftpConnectionSpec).setUsername("username");
 
-                exactly(1).of(ftpConfiguration).getCleanupJournalOnComplete();
-                will(returnValue(Boolean.TRUE));
-                one(ftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);            
-                
-                exactly(1).of(ftpConfiguration).getActive();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
+                one(ftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
+
+                one(ftpConfiguration).getActive(); will(returnValue(Boolean.TRUE));
                 one(ftpConnectionSpec).setActive(Boolean.TRUE);
 
-                exactly(1).of(ftpConfiguration).getDataTimeout();
-                will(returnValue(Integer.valueOf(100)));
+                one(ftpConfiguration).getDataTimeout(); will(returnValue(Integer.valueOf(100)));
                 one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(100));
 
-                exactly(1).of(ftpConfiguration).getSocketTimeout();
-                will(returnValue(Integer.valueOf(100)));
+                one(ftpConfiguration).getSocketTimeout(); will(returnValue(Integer.valueOf(100)));
                 one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(100));
 
-                exactly(1).of(ftpConfiguration).getPassword();
-                will(returnValue("password"));
+                one(ftpConfiguration).getPassword(); will(returnValue("password"));
                 one(ftpConnectionSpec).setPassword("password");
 
-                exactly(1).of(ftpConfiguration).getSystemKey();
-                will(returnValue("systemKey"));
+                one(ftpConfiguration).getSystemKey(); will(returnValue("systemKey"));
                 one(ftpConnectionSpec).setSystemKey("systemKey");
             }
         });
-                
-        // test
-        PayloadBasedFtpConsumerFactory payloadBasedFtpConsumerFactory = new PayloadBasedFtpConsumerFactoryWithMockSpec(connectionFactory,directoryURLFactory);
-        Assert.assertTrue(payloadBasedFtpConsumerFactory.createEndpoint(ftpConfiguration) instanceof PayloadBasedFtpConsumer);
-        mockery.assertIsSatisfied();
+
+        // Test
+        ((PayloadBasedFtpConsumerFactory)this.payloadBasedFtpConsumerFactory).setDirectoryURLFactory(this.directoryURLFactory);
+        Consumer<?> createdConsumer = this.payloadBasedFtpConsumerFactory.createEndpoint(this.ftpConfiguration);
+        Assert.assertTrue(createdConsumer instanceof PayloadBasedFtpConsumer);
+        Assert.assertNull(((PayloadBasedFtpConsumer)createdConsumer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
     }
-    
+
+    /**
+     * Test create consumer invocation.
+     * 
+     * @throws ResourceException if error creating endpoint
+     */
+    @Test
+    public void test_createConsumer_with_alternate_connection() throws ResourceException
+    {
+        final FtpConsumerAlternateConfiguration mockAlternateConfig = this.mockery.mock(FtpConsumerAlternateConfiguration.class, "alternateConfig");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(mockAlternateConfig).setSourceDirectoryURLFactory(null);
+
+                exactly(2).of(mockAlternateConfig).getClientID(); will(returnValue("clientID"));
+                exactly(2).of(ftpConnectionSpec).setClientID("clientID");
+
+                one(mockAlternateConfig).getRemoteHost(); will(returnValue("hostname"));
+                one(ftpConnectionSpec).setRemoteHostname("hostname");
+                one(mockAlternateConfig).getAlternateRemoteHost(); will(returnValue("alternate.hostname"));
+                one(ftpConnectionSpec).setRemoteHostname("alternate.hostname");
+
+                one(mockAlternateConfig).getMaxRetryAttempts(); will(returnValue(Integer.valueOf(1)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
+                one(mockAlternateConfig).getAlternateMaxRetryAttempts(); will(returnValue(Integer.valueOf(3)));
+                one(ftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(3));
+
+                one(mockAlternateConfig).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(23));
+                one(mockAlternateConfig).getAlternateRemotePort(); will(returnValue(Integer.valueOf(21)));
+                one(ftpConnectionSpec).setRemotePort(Integer.valueOf(21));
+
+                one(mockAlternateConfig).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
+                one(mockAlternateConfig).getAlternateConnectionTimeout(); will(returnValue(Integer.valueOf(235)));
+                one(ftpConnectionSpec).setConnectionTimeout(Integer.valueOf(235));
+
+                one(mockAlternateConfig).getUsername(); will(returnValue("username"));
+                one(ftpConnectionSpec).setUsername("username");
+                one(mockAlternateConfig).getAlternateUsername(); will(returnValue("altetrnateUsername"));
+                one(ftpConnectionSpec).setUsername("altetrnateUsername");
+
+                exactly(2).of(mockAlternateConfig).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
+
+                one(mockAlternateConfig).getActive(); will(returnValue(Boolean.TRUE));
+                one(ftpConnectionSpec).setActive(Boolean.TRUE);
+                one(mockAlternateConfig).getAlternateActive(); will(returnValue(Boolean.FALSE));
+                one(ftpConnectionSpec).setActive(Boolean.FALSE);
+
+                one(mockAlternateConfig).getDataTimeout(); will(returnValue(Integer.valueOf(100)));
+                one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(100));
+                one(mockAlternateConfig).getAlternateDataTimeout(); will(returnValue(Integer.valueOf(200)));
+                one(ftpConnectionSpec).setDataTimeout(Integer.valueOf(200));
+
+                one(mockAlternateConfig).getSocketTimeout(); will(returnValue(Integer.valueOf(100)));
+                one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(100));
+                one(mockAlternateConfig).getAlternateSocketTimeout(); will(returnValue(Integer.valueOf(500)));
+                one(ftpConnectionSpec).setSocketTimeout(Integer.valueOf(500));
+
+                one(mockAlternateConfig).getPassword(); will(returnValue("password"));
+                one(ftpConnectionSpec).setPassword("password");
+                one(mockAlternateConfig).getAlternatePassword(); will(returnValue("alternatePassword"));
+                one(ftpConnectionSpec).setPassword("alternatePassword");
+
+                one(mockAlternateConfig).getSystemKey(); will(returnValue("systemKey"));
+                one(ftpConnectionSpec).setSystemKey("systemKey");
+                one(mockAlternateConfig).getAlternateSystemKey(); will(returnValue("alternateSystemKey"));
+                one(ftpConnectionSpec).setSystemKey("alternateSystemKey");
+            }
+        });
+
+        // Test
+        Consumer<?> createdConsumer = this.payloadBasedFtpConsumerFactory.createEndpoint(mockAlternateConfig);
+        Assert.assertTrue(createdConsumer instanceof PayloadBasedFtpConsumer);
+        Assert.assertNotNull(((PayloadBasedFtpConsumer)createdConsumer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
+    }
+
     /**
      * Test PayloadBasedSftpConsumerFactory instance to allow us to return a mock 
      * instance of the ConnectionSpec.
+     * 
      * @author Ikasan Development Team
      *
      */
@@ -255,15 +314,10 @@ public class PayloadBasedFtpConsumerFactoryTest
             super(connectionFactory);
         }
 
-        public PayloadBasedFtpConsumerFactoryWithMockSpec(EISConnectionFactory connectionFactory, DirectoryURLFactory directoryURLFactory)
-        {
-            super(connectionFactory, directoryURLFactory);
-        }
-
         @Override
         protected FTPConnectionSpec getConnectionSpec()
         {
-            return ftpConnectionSpec;
+            return PayloadBasedFtpConsumerFactoryTest.this.ftpConnectionSpec;
         }
     }
     
