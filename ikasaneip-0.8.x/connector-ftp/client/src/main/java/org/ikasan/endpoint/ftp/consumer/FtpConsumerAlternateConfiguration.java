@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,35 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.endpoint.ftp.producer;
+package org.ikasan.endpoint.ftp.consumer;
+
+import javax.resource.spi.InvalidPropertyException;
 
 import org.apache.log4j.Logger;
 
 /**
- * FTP Producer Configuration model providing alternate connection details
+ * FTP Consumer Configuration model providing alternate connection details
  * to be used in case primary connection fails
  * 
  * @author Ikasan Development Team
  */
-public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
+public class FtpConsumerAlternateConfiguration extends FtpConsumerConfiguration
 {
-    /** Whether it is active transfer mode - default False */
-    private Boolean alternateActive = Boolean.FALSE;
-
-    /** FTP default Remote host */
+    /** Remote host */
     private String alternateRemoteHost = String.valueOf("localhost");
-
-    /** FTP max retry attempts */
-    private Integer alternateMaxRetryAttempts = Integer.valueOf(3);
-
-    /** FTP default remote port */
+    
+    /** Remote port */
     private Integer alternateRemotePort = Integer.valueOf(21);
 
-    /** FTP user */
+    /** Max retry attempts */
+    private Integer alternateMaxRetryAttempts = Integer.valueOf(3);
+
+    /** User */
     private String alternateUsername;
 
-    /** FTP password/passphrase */
+    /** Password/passphrase */
     private String alternatePassword;
+
+    /** Whether it is active transfer mode - default False */
+    private Boolean alternateActive = Boolean.FALSE;
 
     /** Connection Timeout */
     private Integer alternateConnectionTimeout = Integer.valueOf(60000);
@@ -81,23 +83,7 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
     private String alternateSystemKey = "";
 
     /** Logger instance */
-    private static final Logger logger = Logger.getLogger(FtpProducerAlternateConfiguration.class);
-
-    /**
-     * @return the alternateActive
-     */
-    public Boolean getAlternateActive()
-    {
-        return this.alternateActive;
-    }
-
-    /**
-     * @param alternateActive the alternateActive to set
-     */
-    public void setAlternateActive(Boolean alternateActive)
-    {
-        this.alternateActive = alternateActive;
-    }
+    private final static Logger logger = Logger.getLogger(FtpConsumerAlternateConfiguration.class);
 
     /**
      * @return the alternateRemoteHost
@@ -116,22 +102,6 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
     }
 
     /**
-     * @return the alternateMaxRetryAttempts
-     */
-    public Integer getAlternateMaxRetryAttempts()
-    {
-        return this.alternateMaxRetryAttempts;
-    }
-
-    /**
-     * @param alternateMaxRetryAttempts the alternateMaxRetryAttempts to set
-     */
-    public void setAlternateMaxRetryAttempts(Integer alternateMaxRetryAttempts)
-    {
-        this.alternateMaxRetryAttempts = alternateMaxRetryAttempts;
-    }
-
-    /**
      * @return the alternateRemotePort
      */
     public Integer getAlternateRemotePort()
@@ -145,6 +115,22 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
     public void setAlternateRemotePort(Integer alternateRemotePort)
     {
         this.alternateRemotePort = alternateRemotePort;
+    }
+
+    /**
+     * @return the alternateMaxRetryAttempts
+     */
+    public Integer getAlternateMaxRetryAttempts()
+    {
+        return this.alternateMaxRetryAttempts;
+    }
+
+    /**
+     * @param alternateMaxRetryAttempts the alternateMaxRetryAttempts to set
+     */
+    public void setAlternateMaxRetryAttempts(Integer alternateMaxRetryAttempts)
+    {
+        this.alternateMaxRetryAttempts = alternateMaxRetryAttempts;
     }
 
     /**
@@ -177,6 +163,22 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
     public void setAlternatePassword(String alternatePassword)
     {
         this.alternatePassword = alternatePassword;
+    }
+
+    /**
+     * @return the alternateActive
+     */
+    public Boolean getAlternateActive()
+    {
+        return this.alternateActive;
+    }
+
+    /**
+     * @param alternateActive the alternateActive to set
+     */
+    public void setAlternateActive(Boolean alternateActive)
+    {
+        this.alternateActive = alternateActive;
     }
 
     /**
@@ -243,17 +245,19 @@ public class FtpProducerAlternateConfiguration extends FtpProducerConfiguration
         this.alternateSystemKey = alternateSystemKey;
     }
 
-    @Override
     /**
-     * Validating configuration parameters
+     * Validate configured properties.
+     * 
+     * @throws InvalidPropertyException if combination of configured properties is invalid
      */
-    public void validate()
+    @Override
+    public void validate() throws InvalidPropertyException
     {
         super.validate();
-        if (this.getAlternateSystemKey() == null || this.getAlternateSystemKey().equals(" "))
+        if (this.alternateSystemKey == null || this.alternateSystemKey.equals(" "))
         {
-            logger.debug("Provided systemKey value [" + this.getAlternateSystemKey() + "] is invalid. Reverting to default empty String.");
-            this.setAlternateSystemKey("");
+            logger.info("Provided systemKey value [" + this.alternateSystemKey + "] is invalid. Reverting to default empty String.");
+            this.alternateSystemKey = "";
         }
     }
 }

@@ -40,9 +40,11 @@
  */
 package org.ikasan.endpoint.ftp.consumer.type;
 
+import javax.resource.cci.ConnectionFactory;
+
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
+import org.ikasan.endpoint.ftp.consumer.FtpConsumerAlternateConfiguration;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.endpoint.Consumer;
@@ -50,38 +52,28 @@ import org.ikasan.spec.endpoint.EndpointFactory;
 
 /**
  * FTP consumer factory for creating SFTP Consumer endpoint implementations.
+ * 
  * @author Ikasan Development Team
  */
 public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<?>,FtpConsumerConfiguration>
 {
-    /** connection factory */
-    private EISConnectionFactory connectionFactory;
+    /** Connection factory */
+    private final ConnectionFactory connectionFactory;
 
     /** Directory URL factory */
     private DirectoryURLFactory directoryURLFactory;
 
     /**
      * Constructor
-     * @param connectionFactory The FTP connection factory
-     */
-    public PayloadBasedFtpConsumerFactory(EISConnectionFactory connectionFactory)
-    {
-        this(connectionFactory, null);
-    }
-
-    /**
-     * Constructor
      * @param connectionFactory FTP connection factory
-     * @param directoryURLFactory Factory for dynamic source directory
      */
-    public PayloadBasedFtpConsumerFactory(EISConnectionFactory connectionFactory, DirectoryURLFactory directoryURLFactory)
+    public PayloadBasedFtpConsumerFactory(final ConnectionFactory connectionFactory)
     {
         this.connectionFactory = connectionFactory;
-        if(connectionFactory == null)
+        if(this.connectionFactory == null)
         {
             throw new IllegalArgumentException("connectionFactory cannot be 'null'");
         }
-        this.directoryURLFactory = directoryURLFactory;
     }
 
     /* (non-Jsdoc)
@@ -89,9 +81,6 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
      */
     public Consumer<?> createEndpoint(FtpConsumerConfiguration ftpConsumerConfiguration)
     {
-        // update populated configuration with complex objects that cannot be specified by front end clients
-        ftpConsumerConfiguration.setSourceDirectoryURLFactory(this.directoryURLFactory);
-
         FTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(ftpConsumerConfiguration.getClientID());
         spec.setActive(ftpConsumerConfiguration.getActive());
@@ -105,9 +94,31 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
         spec.setSocketTimeout(ftpConsumerConfiguration.getSocketTimeout());
         spec.setSystemKey(ftpConsumerConfiguration.getSystemKey());
         spec.setUsername(ftpConsumerConfiguration.getUsername());
-        
-        
-        return getEndpoint(new FileTransferConnectionTemplate(this.connectionFactory, spec), ftpConsumerConfiguration);
+
+        FTPConnectionSpec alternateSpec = null;
+        if (ftpConsumerConfiguration instanceof FtpConsumerAlternateConfiguration)
+        {
+            FtpConsumerAlternateConfiguration alternateConfig = (FtpConsumerAlternateConfiguration) ftpConsumerConfiguration;
+
+            alternateSpec = this.getConnectionSpec();
+            alternateSpec.setClientID(alternateConfig.getClientID());
+            alternateSpec.setActive(alternateConfig.getAlternateActive());
+            alternateSpec.setCleanupJournalOnComplete(alternateConfig.getCleanupJournalOnComplete());
+            alternateSpec.setConnectionTimeout(alternateConfig.getAlternateConnectionTimeout());
+            alternateSpec.setDataTimeout(alternateConfig.getAlternateDataTimeout());
+            alternateSpec.setMaxRetryAttempts(alternateConfig.getAlternateMaxRetryAttempts());
+            alternateSpec.setPassword(alternateConfig.getAlternatePassword());
+            alternateSpec.setRemoteHostname(alternateConfig.getAlternateRemoteHost());
+            alternateSpec.setRemotePort(alternateConfig.getAlternateRemotePort());
+            alternateSpec.setSocketTimeout(alternateConfig.getAlternateSocketTimeout());
+            alternateSpec.setSystemKey(alternateConfig.getAlternateSystemKey());
+            alternateSpec.setUsername(alternateConfig.getAlternateUsername());
+        }
+
+        // Finally, update populated configuration with complex objects that cannot be specified by front end clients
+        ftpConsumerConfiguration.setSourceDirectoryURLFactory(this.directoryURLFactory);
+
+        return getEndpoint(spec, alternateSpec, ftpConsumerConfiguration);
     }
 
     /**
@@ -116,9 +127,14 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
      * @param ftpConsumerConfiguration
      * @return
      */
-    protected Consumer<?> getEndpoint(FileTransferConnectionTemplate fileTransferConnectionTemplate, FtpConsumerConfiguration ftpConsumerConfiguration)
+    protected Consumer<?> getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec, final FtpConsumerConfiguration ftpConsumerConfiguration)
     {
-        return new PayloadBasedFtpConsumer(fileTransferConnectionTemplate, ftpConsumerConfiguration);
+        PayloadBasedFtpConsumer consumer = new PayloadBasedFtpConsumer(new FileTransferConnectionTemplate(this.connectionFactory, spec), ftpConsumerConfiguration);
+        if (alternateSpec != null)
+        {
+            consumer.setAlternateFileTransferConnectionTemplate(new FileTransferConnectionTemplate(this.connectionFactory, alternateSpec));
+        }
+        return consumer;
     }
     
     /**
@@ -129,5 +145,12 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
     {
         return new FTPConnectionSpec();
     }
-    
+
+    /**
+     * @param directoryURLFactory the directoryURLFactory to set
+     */
+    public void setDirectoryURLFactory(DirectoryURLFactory directoryURLFactory)
+    {
+        this.directoryURLFactory = directoryURLFactory;
+    }
 }

@@ -51,13 +51,20 @@ import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.spec.endpoint.Consumer;
 
 /**
- * FTP endpoint based on a Payload.
+ * FTP Consumer based on a Payload.
+ * 
  * @author Ikasan Development Team
  */
 public class PayloadBasedFtpConsumer implements Consumer<Payload>
 {
-    /** Existing template */
+    /** Currently active connection template */
+    protected FileTransferConnectionTemplate activeFileTransferConnectionTemplate;
+
+    /** A connection template */
     protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
+
+    /** Alternate template to be used in cases of failure */
+    protected FileTransferConnectionTemplate alternateFileTransferConnectionTemplate;
 
     /** Configuration */
     protected FtpConsumerConfiguration configuration;
@@ -67,13 +74,14 @@ public class PayloadBasedFtpConsumer implements Consumer<Payload>
      * @param fileTransferConnectionTemplate FTP connection template
      * @param configuration the FTP connection runtime configuration
      */
-    public PayloadBasedFtpConsumer(FileTransferConnectionTemplate fileTransferConnectionTemplate, FtpConsumerConfiguration configuration)
+    public PayloadBasedFtpConsumer(final FileTransferConnectionTemplate fileTransferConnectionTemplate, final FtpConsumerConfiguration configuration)
     {
         this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
         if(fileTransferConnectionTemplate == null)
         {
             throw new IllegalArgumentException("fileTransferConnectionTemplate cannot be 'null'");
         }
+        this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
 
         this.configuration = configuration;
         if(configuration == null)
@@ -89,24 +97,34 @@ public class PayloadBasedFtpConsumer implements Consumer<Payload>
     public Payload invoke() throws ResourceException
     {
         Payload payload = null;
-        for (String sourceDirectory : this.getSourceDirectories())
+        List<String> sourceDirectories = this.getSourceDirectories();
+        for (String sourceDirectory : sourceDirectories)
         {
-            payload = this.fileTransferConnectionTemplate.getDiscoveredFile(
-                    sourceDirectory, 
-                    this.configuration.getFilenamePattern(), 
-                    this.configuration.getRenameOnSuccess(), this.configuration.getRenameOnSuccessExtension(),
-                    this.configuration.getMoveOnSuccess(), this.configuration.getMoveOnSuccessNewPath(),
-                    this.configuration.getChunking(), this.configuration.getChunkSize(), this.configuration.getChecksum(),
-                    this.configuration.getMinAge(), this.configuration.getDestructive(), 
-                    this.configuration.getFilterDuplicates(), this.configuration.getFilterOnFilename(),
-                    this.configuration.getFilterOnLastModifiedDate(), this.configuration.getChronological());
-
-            if(payload != null)
+            try
             {
-                return payload;
+                payload = this.fileTransferConnectionTemplate.getDiscoveredFile(
+                        sourceDirectory, 
+                        this.configuration.getFilenamePattern(), 
+                        this.configuration.getRenameOnSuccess().booleanValue(), this.configuration.getRenameOnSuccessExtension(),
+                        this.configuration.getMoveOnSuccess().booleanValue(), this.configuration.getMoveOnSuccessNewPath(),
+                        this.configuration.getChunking().booleanValue(), this.configuration.getChunkSize().intValue(),
+                        this.configuration.getChecksum().booleanValue(),
+                        this.configuration.getMinAge().intValue(), this.configuration.getDestructive().booleanValue(), 
+                        this.configuration.getFilterDuplicates().booleanValue(), this.configuration.getFilterOnFilename().booleanValue(),
+                        this.configuration.getFilterOnLastModifiedDate().booleanValue(), this.configuration.getChronological().booleanValue());
+
+                if(payload != null)
+                {
+                    return payload;
+                }
+            }
+            catch (ResourceException e)
+            {
+                this.switchActiveConnection();
+                throw e;
             }
         }
-        
+
         this.housekeep();
         return payload;
     }
@@ -120,7 +138,7 @@ public class PayloadBasedFtpConsumer implements Consumer<Payload>
     {
         int maxRows = this.configuration.getMaxRows().intValue();
         int ageOfFiles = this.configuration.getAgeOfFiles().intValue();
-        
+
         // If the values have been set then housekeep, else don't
         if(maxRows > -1 && ageOfFiles > -1)
         {
@@ -148,5 +166,49 @@ public class PayloadBasedFtpConsumer implements Consumer<Payload>
         }
         return dirs;
     }
-    
+
+    /**
+     * 
+     * @param alternate the {@link FileTransferConnectionTemplate} alternate to use
+     */
+    public void setAlternateFileTransferConnectionTemplate(final FileTransferConnectionTemplate alternate)
+    {
+        this.alternateFileTransferConnectionTemplate = alternate;
+    }
+
+    /**
+     * This method is only used for testing purposes
+     * @return the alternateFileTransferConnectionTemplate
+     */
+    FileTransferConnectionTemplate getAlternateFileTransferConnectionTemplate()
+    {
+        return this.alternateFileTransferConnectionTemplate;
+    }
+
+    /**
+     * This method is only used for testing purposes
+     * @return the activeFileTransferConnectionTemplate
+     */
+    FileTransferConnectionTemplate getActiveFileTransferConnectionTemplate()
+    {
+        return this.activeFileTransferConnectionTemplate;
+    }
+
+    /**
+     * Switch the active connection to the other connection template.
+     */
+    protected void switchActiveConnection()
+    {
+        if (this.alternateFileTransferConnectionTemplate != null)
+        {
+            if(this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate)
+            {
+                this.activeFileTransferConnectionTemplate = this.alternateFileTransferConnectionTemplate;
+            }
+            else
+            {
+                this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
+            }
+        }
+    }
 }

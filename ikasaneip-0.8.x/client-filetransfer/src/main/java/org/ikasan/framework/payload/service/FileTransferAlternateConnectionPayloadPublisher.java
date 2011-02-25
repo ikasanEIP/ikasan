@@ -62,6 +62,7 @@ import org.ikasan.common.Payload;
  * NOTE: The payload is only successfully delivered on <b>one</b> connection.
  * 
  * @author Ikasan Development Team
+ * @deprecated - use Ikasan Client Endpoint implementation
  */
 public class FileTransferAlternateConnectionPayloadPublisher extends FileTransferInputStreamPayloadPublisher
 {

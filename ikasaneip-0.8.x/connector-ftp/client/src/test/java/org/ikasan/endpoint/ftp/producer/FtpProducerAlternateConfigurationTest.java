@@ -187,6 +187,23 @@ public class FtpProducerAlternateConfigurationTest
         ftpConfiguration.setCreateParentDirectory(Boolean.TRUE);
         Assert.assertTrue("createParentDirectory", ftpConfiguration.getCreateParentDirectory().booleanValue());
 
+        ftpConfiguration.setSystemKey("systemKey");
+        ftpConfiguration.validate();
+        Assert.assertEquals("systemKey", ftpConfiguration.getSystemKey());
+
+        ftpConfiguration.setAlternateSystemKey("alternateSystemKey");
+        ftpConfiguration.validate();
+        Assert.assertEquals("alternateSystemKey", ftpConfiguration.getAlternateSystemKey());
+    }
+
+    /**
+     * If the systemKey value injected was invalid, validate will reset to default value <i>empty {@link String}</i>.
+     * Invalid systemKey values are: <code>null</code> or <i>single space {@link String}</i> 
+     */
+    @Test public void validate_will_reset_systemKey_to_default_if_invalid()
+    {
+        FtpProducerAlternateConfiguration ftpConfiguration = new FtpProducerAlternateConfiguration();
+
         ftpConfiguration.setSystemKey(null);
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
@@ -195,10 +212,6 @@ public class FtpProducerAlternateConfigurationTest
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
 
-        ftpConfiguration.setSystemKey("systemKey");
-        ftpConfiguration.validate();
-        Assert.assertEquals("systemKey", ftpConfiguration.getSystemKey());
-
         ftpConfiguration.setAlternateSystemKey(null);
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
@@ -206,9 +219,5 @@ public class FtpProducerAlternateConfigurationTest
         ftpConfiguration.setAlternateSystemKey(" ");
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
-
-        ftpConfiguration.setAlternateSystemKey("alternateSystemKey");
-        ftpConfiguration.validate();
-        Assert.assertEquals("alternateSystemKey", ftpConfiguration.getAlternateSystemKey());
     }
 }

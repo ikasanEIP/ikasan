@@ -143,6 +143,19 @@ public class FtpProducerConfigurationTest
         ftpConfiguration.setCreateParentDirectory(Boolean.TRUE);
         Assert.assertTrue("createParentDirectory", ftpConfiguration.getCreateParentDirectory().booleanValue());
 
+        ftpConfiguration.setSystemKey("systemKey");
+        ftpConfiguration.validate();
+        Assert.assertEquals("systemKey", ftpConfiguration.getSystemKey());
+    }
+
+    /**
+     * If the systemKey value injected was invalid, validate will reset to default value <i>empty {@link String}</i>.
+     * Invalid systemKey values are: <code>null</code> or <i>single space {@link String}</i> 
+     */
+    @Test public void validate_will_reset_systemKey_to_default_if_invalid()
+    {
+        FtpProducerConfiguration ftpConfiguration = new FtpProducerConfiguration();
+
         ftpConfiguration.setSystemKey(null);
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
@@ -150,10 +163,5 @@ public class FtpProducerConfigurationTest
         ftpConfiguration.setSystemKey(" ");
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
-
-        ftpConfiguration.setSystemKey("systemKey");
-        ftpConfiguration.validate();
-        Assert.assertEquals("systemKey", ftpConfiguration.getSystemKey());
-
     }
 }
