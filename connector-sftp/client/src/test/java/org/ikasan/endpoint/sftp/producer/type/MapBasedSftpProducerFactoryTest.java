@@ -40,19 +40,21 @@
  */
 package org.ikasan.endpoint.sftp.producer.type;
 
+import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 
 import junit.framework.Assert;
 
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.endpoint.sftp.producer.SftpProducerAlternateConfiguration;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducer;
 import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducerFactory;
+import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -61,33 +63,30 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
 public class MapBasedSftpProducerFactoryTest
 {
-    Mockery mockery = new Mockery()
+    /** The mockery */
+    private final Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
 
-    /** mock connectionFactory */
-    final ConnectionFactory connectionFactory = mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
-    
-    /** mock sftpConfiguration */
-    final SftpProducerConfiguration sftpConfiguration = mockery.mock(SftpProducerConfiguration.class, "mockSftpConfiguration");
+    /** Mock connectionFactory */
+    private final ConnectionFactory connectionFactory = this.mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
 
-    /** mock SFTPConnectionSpec */
-    final SFTPConnectionSpec sftpConnectionSpec = mockery.mock(SFTPConnectionSpec.class, "mockSFTPConnectionSpec");
+    /** Mock SFTPConnectionSpec */
+    private final SFTPConnectionSpec sftpConnectionSpec = this.mockery.mock(SFTPConnectionSpec.class, "mockFTPConnectionSpec");
 
-    /** mock producer */
-    final Producer<?> producer = mockery.mock(Producer.class, "mockProducer");
-
-    /** instance on test */
-    MapBasedSftpProducerFactory mapBasedSftpProducerFactory;
+    /** Instance on test */
+    private EndpointFactory<Producer<?>, SftpProducerConfiguration> mapBasedFtpProducerFactory = new MapBasedSftpProducerFactoryWithMockSpec(this.connectionFactory);
 
     /**
      * Test failed constructor due to null connectionFactory.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullConnectionFactory()
     {
@@ -95,67 +94,127 @@ public class MapBasedSftpProducerFactoryTest
     }
 
     /**
-     * Create a clean test instance prior to each test.
-     */
-    @Before
-    public void setUp()
-    {
-        this.mapBasedSftpProducerFactory = new MapBasedSftpProducerFactoryWithMockSpec(connectionFactory);
-    }
-    
-    /**
      * Test create producer invocation.
+     * @throws ResourceException if error creating endpoint
      */
     @Test
-    public void test_createProducer()
+    public void test_createProducer() throws ResourceException
     {
-        // expectations
-        mockery.checking(new Expectations()
+        /** Mock sftpConfiguration */
+        final SftpProducerConfiguration sftpConfiguration = this.mockery.mock(SftpProducerConfiguration.class, "mockSftpConfiguration");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(sftpConfiguration).getClientID();
-                will(returnValue("clientID"));
+                one(sftpConfiguration).getClientID(); will(returnValue("clientID"));
                 one(sftpConnectionSpec).setClientID("clientID");
 
-                exactly(1).of(sftpConfiguration).getRemoteHost();
-                will(returnValue("hostname"));
+                one(sftpConfiguration).getRemoteHost(); will(returnValue("hostname"));
                 one(sftpConnectionSpec).setRemoteHostname("hostname");
 
-                exactly(1).of(sftpConfiguration).getKnownHostsFilename();
-                will(returnValue("knownhosts"));
-                one(sftpConnectionSpec).setKnownHostsFilename("knownhosts");
+                one(sftpConfiguration).getMaxRetryAttempts();will(returnValue(Integer.valueOf(1)));
+                one(sftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
 
-                exactly(1).of(sftpConfiguration).getMaxRetryAttempts();
-                will(returnValue(1));
-                one(sftpConnectionSpec).setMaxRetryAttempts(1);
+                one(sftpConfiguration).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(sftpConnectionSpec).setRemotePort(Integer.valueOf(23));
 
-                exactly(1).of(sftpConfiguration).getRemotePort();
-                will(returnValue(23));
-                one(sftpConnectionSpec).setRemotePort(23);
+                one(sftpConfiguration).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(sftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
 
-                exactly(1).of(sftpConfiguration).getPrivateKeyFilename();
-                will(returnValue("PrivateKeyFilename"));
-                one(sftpConnectionSpec).setPrivateKeyFilename("PrivateKeyFilename");
-
-                exactly(1).of(sftpConfiguration).getConnectionTimeout();
-                will(returnValue(234));
-                one(sftpConnectionSpec).setConnectionTimeout(234);
-
-                exactly(1).of(sftpConfiguration).getUsername();
-                will(returnValue("username"));
+                one(sftpConfiguration).getUsername();will(returnValue("username"));
                 one(sftpConnectionSpec).setUsername("username");
 
-                exactly(1).of(sftpConfiguration).getCleanupJournalOnComplete();
-                will(returnValue(Boolean.TRUE));
+                one(sftpConfiguration).getPrivateKeyFilename();will(returnValue("private.key"));
+                one(sftpConnectionSpec).setPrivateKeyFilename("private.key");
+
+                one(sftpConfiguration).getKnownHostsFilename();will(returnValue("known_host"));
+                one(sftpConnectionSpec).setKnownHostsFilename("known_host");
+
+                one(sftpConfiguration).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
                 one(sftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
             }
         });
-                
-        // test
-        Assert.assertTrue(mapBasedSftpProducerFactory.createEndpoint(sftpConfiguration) instanceof MapBasedSftpProducer);
-        mockery.assertIsSatisfied();
+
+        // Test
+        Producer<?> createdProducer = this.mapBasedFtpProducerFactory.createEndpoint(sftpConfiguration);
+        Assert.assertTrue(createdProducer instanceof MapBasedSftpProducer);
+        Assert.assertNull(((MapBasedSftpProducer)createdProducer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
     }
-    
+
+    /**
+     * Test create producer invocation.
+     * @throws ResourceException if error creating endpoint
+     */
+    @Test
+    public void test_createProducer_with_alternate_connection_details() throws ResourceException
+    {
+        /** Mock sftpConfiguration */
+        final SftpProducerAlternateConfiguration sftpConfiguration = this.mockery.mock(SftpProducerAlternateConfiguration.class, "mockSftpConfiguration");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(sftpConfiguration).getClientID(); will(returnValue("clientID"));
+                exactly(2).of(sftpConnectionSpec).setClientID("clientID");
+
+                one(sftpConfiguration).getRemoteHost(); will(returnValue("hostname"));
+                one(sftpConnectionSpec).setRemoteHostname("hostname");
+
+                one(sftpConfiguration).getAlternateRemoteHost(); will(returnValue("alternate.hostname"));
+                one(sftpConnectionSpec).setRemoteHostname("alternate.hostname");
+
+                one(sftpConfiguration).getMaxRetryAttempts();will(returnValue(Integer.valueOf(1)));
+                one(sftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
+
+                one(sftpConfiguration).getAlternateMaxRetryAttempts();will(returnValue(Integer.valueOf(1)));
+                one(sftpConnectionSpec).setMaxRetryAttempts(Integer.valueOf(1));
+
+                one(sftpConfiguration).getRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(sftpConnectionSpec).setRemotePort(Integer.valueOf(23));
+
+                one(sftpConfiguration).getAlternateRemotePort(); will(returnValue(Integer.valueOf(23)));
+                one(sftpConnectionSpec).setRemotePort(Integer.valueOf(23));
+
+                one(sftpConfiguration).getConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(sftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
+
+                one(sftpConfiguration).getAlternateConnectionTimeout(); will(returnValue(Integer.valueOf(234)));
+                one(sftpConnectionSpec).setConnectionTimeout(Integer.valueOf(234));
+
+                one(sftpConfiguration).getUsername();will(returnValue("username"));
+                one(sftpConnectionSpec).setUsername("username");
+
+                one(sftpConfiguration).getAlternateUsername();will(returnValue("username"));
+                one(sftpConnectionSpec).setUsername("username");
+
+                one(sftpConfiguration).getKnownHostsFilename();will(returnValue("known_host"));
+                one(sftpConnectionSpec).setKnownHostsFilename("known_host");
+
+                one(sftpConfiguration).getAlternateKnownHostsFilename();will(returnValue("alternate.known_host"));
+                one(sftpConnectionSpec).setKnownHostsFilename("alternate.known_host");
+
+                one(sftpConfiguration).getPrivateKeyFilename();will(returnValue("private.key"));
+                one(sftpConnectionSpec).setPrivateKeyFilename("private.key");
+
+                one(sftpConfiguration).getAlternatePrivateKeyFilename();will(returnValue("alternate.private.key"));
+                one(sftpConnectionSpec).setPrivateKeyFilename("alternate.private.key");
+
+                exactly(2).of(sftpConfiguration).getCleanupJournalOnComplete(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(sftpConnectionSpec).setCleanupJournalOnComplete(Boolean.TRUE);
+
+            }
+        });
+
+        // Test
+        Producer<?> createdProducer = this.mapBasedFtpProducerFactory.createEndpoint(sftpConfiguration);
+        Assert.assertTrue(createdProducer instanceof MapBasedSftpProducer);
+        Assert.assertNotNull(((MapBasedSftpProducer)createdProducer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
+    }
+
     /**
      * Test MapBasedSftpProducerFactory instance to allow us to return a mock 
      * instance of the ConnectionSpec.
@@ -173,8 +232,7 @@ public class MapBasedSftpProducerFactoryTest
         @Override
         protected SFTPConnectionSpec getConnectionSpec()
         {
-            return sftpConnectionSpec;
+            return MapBasedSftpProducerFactoryTest.this.sftpConnectionSpec;
         }
     }
-    
 }

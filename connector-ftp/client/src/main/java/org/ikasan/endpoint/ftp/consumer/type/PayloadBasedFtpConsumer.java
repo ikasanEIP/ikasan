@@ -102,14 +102,14 @@ public class PayloadBasedFtpConsumer implements Consumer<Payload>
         {
             try
             {
-                payload = this.fileTransferConnectionTemplate.getDiscoveredFile(
+                payload = this.activeFileTransferConnectionTemplate.getDiscoveredFile(
                         sourceDirectory, 
                         this.configuration.getFilenamePattern(), 
                         this.configuration.getRenameOnSuccess().booleanValue(), this.configuration.getRenameOnSuccessExtension(),
                         this.configuration.getMoveOnSuccess().booleanValue(), this.configuration.getMoveOnSuccessNewPath(),
                         this.configuration.getChunking().booleanValue(), this.configuration.getChunkSize().intValue(),
                         this.configuration.getChecksum().booleanValue(),
-                        this.configuration.getMinAge().intValue(), this.configuration.getDestructive().booleanValue(), 
+                        this.configuration.getMinAge().longValue(), this.configuration.getDestructive().booleanValue(), 
                         this.configuration.getFilterDuplicates().booleanValue(), this.configuration.getFilterOnFilename().booleanValue(),
                         this.configuration.getFilterOnLastModifiedDate().booleanValue(), this.configuration.getChronological().booleanValue());
 

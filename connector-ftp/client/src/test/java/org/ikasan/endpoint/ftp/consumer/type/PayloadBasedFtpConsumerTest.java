@@ -571,6 +571,7 @@ public class PayloadBasedFtpConsumerTest
     public void consumer_fails_changes_to_original_connection_template() throws ResourceException
     {
         final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+        final FileTransferConnectionTemplate mockAlternateConnectionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "alternateConnectionTemplate");
 
         this.mockery.checking(new Expectations()
         {
@@ -594,14 +595,17 @@ public class PayloadBasedFtpConsumerTest
                 exactly(2).of(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
                 exactly(2).of(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
 
-                exactly(2).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(throwException(exception));
+
+                one(mockAlternateConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
                         true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
                         false, 1, true, true, true, true, true); will(throwException(exception));
             }
         });
 
         // Test
-        final FileTransferConnectionTemplate mockAlternateConnectionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "alternateConnectionTemplate");
         ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).setAlternateFileTransferConnectionTemplate(mockAlternateConnectionTemplate);
         try
         {

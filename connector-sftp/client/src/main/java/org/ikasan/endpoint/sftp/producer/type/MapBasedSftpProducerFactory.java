@@ -44,22 +44,24 @@ import javax.resource.cci.ConnectionFactory;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.endpoint.sftp.producer.SftpProducerAlternateConfiguration;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
 
 /**
  * SFTP producer factory for creating sftpProducer endpoint implementations.
+ * 
  * @author Ikasan Development Team
  */
 public class MapBasedSftpProducerFactory implements EndpointFactory<Producer<?>,SftpProducerConfiguration>
 {
-    /** connection factory */
+    /** Connection factory */
     private ConnectionFactory connectionFactory;
 
     /**
      * Constructor
-     * @param connectionFactory
+     * @param connectionFactory SFTP connection factory
      */
     public MapBasedSftpProducerFactory(ConnectionFactory connectionFactory)
     {
@@ -70,10 +72,10 @@ public class MapBasedSftpProducerFactory implements EndpointFactory<Producer<?>,
         }
     }
 
-    /* (non-Jsdoc)
+    /* (non-Javadoc)
      * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
      */
-    public Producer<?> createEndpoint(SftpProducerConfiguration sftpProducerConfiguration)
+    public Producer<?> createEndpoint(final SftpProducerConfiguration sftpProducerConfiguration)
     {
         SFTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(sftpProducerConfiguration.getClientID());
@@ -86,7 +88,23 @@ public class MapBasedSftpProducerFactory implements EndpointFactory<Producer<?>,
         spec.setUsername(sftpProducerConfiguration.getUsername());
         spec.setCleanupJournalOnComplete(sftpProducerConfiguration.getCleanupJournalOnComplete());
 
-        return getEndpoint(new FileTransferConnectionTemplate(connectionFactory, spec), sftpProducerConfiguration);
+        SFTPConnectionSpec alternateSpec = null;
+        if (sftpProducerConfiguration instanceof SftpProducerAlternateConfiguration)
+        {
+            SftpProducerAlternateConfiguration alternateConfig = (SftpProducerAlternateConfiguration)sftpProducerConfiguration;
+
+            alternateSpec = this.getConnectionSpec();
+            alternateSpec.setClientID(alternateConfig.getClientID());
+            alternateSpec.setRemoteHostname(alternateConfig.getAlternateRemoteHost());
+            alternateSpec.setKnownHostsFilename(alternateConfig.getAlternateKnownHostsFilename());
+            alternateSpec.setMaxRetryAttempts(alternateConfig.getAlternateMaxRetryAttempts());
+            alternateSpec.setRemotePort(alternateConfig.getAlternateRemotePort());
+            alternateSpec.setPrivateKeyFilename(alternateConfig.getAlternatePrivateKeyFilename());
+            alternateSpec.setConnectionTimeout(alternateConfig.getAlternateConnectionTimeout());
+            alternateSpec.setUsername(alternateConfig.getAlternateUsername());
+            alternateSpec.setCleanupJournalOnComplete(alternateConfig.getCleanupJournalOnComplete());
+        }
+        return this.getEndpoint(spec, alternateSpec, sftpProducerConfiguration);
     }
 
     /**
@@ -95,9 +113,14 @@ public class MapBasedSftpProducerFactory implements EndpointFactory<Producer<?>,
      * @param sftpProducerConfiguration
      * @return
      */
-    protected Producer<?> getEndpoint(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpProducerConfiguration sftpProducerConfiguration)
+    protected Producer<?> getEndpoint(final SFTPConnectionSpec spec, final SFTPConnectionSpec alternateSpec, final SftpProducerConfiguration sftpProducerConfiguration)
     {
-        return new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpProducerConfiguration);
+        MapBasedSftpProducer producer = new MapBasedSftpProducer(new FileTransferConnectionTemplate(this.connectionFactory, spec), sftpProducerConfiguration);
+        if (alternateSpec != null)
+        {
+            producer.setAlternateFileTransferConnectionTemplate(new FileTransferConnectionTemplate(this.connectionFactory, alternateSpec));
+        }
+        return producer;
     }
     
     /**
