@@ -41,10 +41,10 @@
 package org.ikasan.endpoint.ftp.consumer.type;
 
 import javax.resource.ResourceException;
+import javax.resource.cci.ConnectionFactory;
 
 import junit.framework.Assert;
 
-import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerAlternateConfiguration;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
@@ -76,7 +76,7 @@ public class PayloadBasedFtpConsumerFactoryTest
     };
 
     /** Mock connectionFactory */
-    private final EISConnectionFactory connectionFactory = this.mockery.mock(EISConnectionFactory.class, "mockConnectionFactory");
+    private final ConnectionFactory connectionFactory = this.mockery.mock(ConnectionFactory.class, "mockConnectionFactory");
     
     /** Mock ftpConfiguration */
     private final FtpConsumerConfiguration ftpConfiguration = this.mockery.mock(FtpConsumerConfiguration.class, "mockFtpConfiguration");
@@ -309,7 +309,7 @@ public class PayloadBasedFtpConsumerFactoryTest
     private class PayloadBasedFtpConsumerFactoryWithMockSpec extends PayloadBasedFtpConsumerFactory
     {
 
-        public PayloadBasedFtpConsumerFactoryWithMockSpec(EISConnectionFactory connectionFactory)
+        public PayloadBasedFtpConsumerFactoryWithMockSpec(ConnectionFactory connectionFactory)
         {
             super(connectionFactory);
         }
