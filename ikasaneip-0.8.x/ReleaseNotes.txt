@@ -1,3 +1,17 @@
+Release Notes - Ikasan - Version 0.8.2
+
+** Improvement
+    * [IKASAN-575] - Allow dynamic runtime configuration to be persisted
+    * [IKASAN-576] - Extend current implementation of (S)FTP endpoints to use alternative connection details
+    * [IKASAN-578] - Ensure scheduled quartz triggers are removed and re-added as new on an initiator stop/start
+
+** New Feature
+    * [IKASAN-526] - Ability to persist and change initiator configuration parameters without a server bounce
+
+** Task
+    * [IKASAN-577] - Deprecate (S)FTP EndpointManager implementations
+    * [IKASAN-580] - Release 0.8.2
+
 Release Notes - Ikasan - Version 0.8.1
 
 ** Bug
