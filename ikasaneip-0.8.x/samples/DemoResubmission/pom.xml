@@ -46,13 +46,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.2-SNAPSHOT</version>
+        <version>0.8.2</version>
     </parent>
 
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoResubmission-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.8.2-SNAPSHOT</version>
+  <version>0.8.2</version>
 
 	<name>demoResubmission :: Parent Project</name>
 
