@@ -47,12 +47,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.2</version>
+        <version>0.8.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan.demo</groupId>
     <artifactId>demoErrorPublication-errorManagerTarget-jar</artifactId>
-    <version>0.8.2</version>    
+    <version>0.8.3-SNAPSHOT</version>    
     <packaging>jar</packaging>
 
     <name>demoErrorPublication :: errorManagerTarget : jar</name>
