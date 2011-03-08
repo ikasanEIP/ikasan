@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.ftp.consumer.type;
 
 import javax.resource.cci.ConnectionFactory;
+import javax.resource.spi.InvalidPropertyException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
@@ -79,8 +80,9 @@ public class PayloadBasedFtpConsumerFactory implements EndpointFactory<Consumer<
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
      */
-    public Consumer<?> createEndpoint(FtpConsumerConfiguration ftpConsumerConfiguration)
+    public Consumer<?> createEndpoint(FtpConsumerConfiguration ftpConsumerConfiguration) throws InvalidPropertyException
     {
+        ftpConsumerConfiguration.validate();
         FTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(ftpConsumerConfiguration.getClientID());
         spec.setActive(ftpConsumerConfiguration.getActive());
