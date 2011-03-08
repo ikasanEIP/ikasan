@@ -41,6 +41,7 @@
 package org.ikasan.endpoint.sftp.consumer.type;
 
 import javax.resource.cci.ConnectionFactory;
+import javax.resource.spi.InvalidPropertyException;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
@@ -80,8 +81,9 @@ public class PayloadBasedSftpConsumerFactory implements EndpointFactory<Consumer
     /* (non-Javadoc)
      * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
      */
-    public Consumer<?> createEndpoint(SftpConsumerConfiguration sftpConsumerConfiguration)
+    public Consumer<?> createEndpoint(SftpConsumerConfiguration sftpConsumerConfiguration) throws InvalidPropertyException
     {
+        sftpConsumerConfiguration.validate();
         SFTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(sftpConsumerConfiguration.getClientID());
         spec.setRemoteHostname(sftpConsumerConfiguration.getRemoteHost());
