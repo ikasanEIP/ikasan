@@ -60,27 +60,25 @@ import org.ikasan.connector.base.outbound.EISManagedConnectionFactory;
 import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 
-
 /**
- * This class is the factory class for obtaining physical connections to the FTP
- * EIS. The attributes are set by the default attributes in the resource
- * adapter's deployment descriptor (ra.xml) and can be overridden by client
- * supplied properties (CRI).
+ * This class is the factory class for obtaining physical connections to the FTP EIS. The attributes are set by the
+ * default attributes in the resource adapter's deployment descriptor (ra.xml) and can be overridden by client supplied
+ * properties (CRI).
  * 
- * Each connection produced from this factory is a handle to the actual physical
- * connection (ManagedConnection) to the underlying EIS.
+ * Each connection produced from this factory is a handle to the actual physical connection (ManagedConnection) to the
+ * underlying EIS.
  * 
- * On start up, the Application server first of all calls all of the setter
- * methods (populating them with the values from the ra.xml file) and then calls
- * createConnectionFactory(ConnectionManager)
+ * On start up, the Application server first of all calls all of the setter methods (populating them with the values
+ * from the ra.xml file) and then calls createConnectionFactory(ConnectionManager)
  * 
- * NOTE: Each <config-property-name> element in ra.xml must have a matching
- * private variable name in this class
+ * NOTE: Each <config-property-name> element in ra.xml must have a matching private variable name in this class
  * 
  * NOTE: Defaults of null are dealt with by calling classes
  * 
- * TODO Max Retry attempts is here because our 3rd party library needs to have
- * the value set for when openSession is called on the FTPManagedConnection
+ * NOTE: Setters are initially called by the App Server
+ * 
+ * TODO Max Retry attempts is here because our 3rd party library needs to have the value set for when openSession is
+ * called on the FTPManagedConnection
  * 
  * @author Ikasan Development Team
  */
@@ -107,13 +105,11 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     /** The remote FTP port */
     private Integer remotePort = null;
 
-    // private TargetDirectoryURIFactory = null;
     /** The username */
     private String username = null;
 
     /**
-     * FTP Client systemKey, if set, expected to be in the
-     * FTPClientConfig.SYST_* range
+     * FTP Client systemKey, if set, expected to be in the FTPClientConfig.SYST_* range
      */
     private String systemKey = null;
 
@@ -134,9 +130,10 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /** Journal for logging activity of this connector */
     private TransactionJournal transactionJournal = null;
+
     /**
-     * Create the connection factory with no connection manager, e.g. This is
-     * the version called when not invoked by the Application Server
+     * Create the connection factory with no connection manager, e.g. This is the version called when not invoked by the
+     * Application Server
      */
     @Override
     public Object createConnectionFactory()
@@ -146,8 +143,8 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * This version of createConnectionFactory is invoked by the Application
-     * Server by passing its own implemented version of connection manager.
+     * This version of createConnectionFactory is invoked by the Application Server by passing its own implemented
+     * version of connection manager.
      */
     @Override
     public Object createConnectionFactory(ConnectionManager connectionManager)
@@ -157,23 +154,19 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * This can be called in two ways, but is initiated by a client need for a
-     * Connection.
+     * This can be called in two ways, but is initiated by a client need for a Connection.
      * 
-     * In our case FTPConnectionManager's allocateConnection calls this method.
-     * (although the Application Server's ConnectionManager can also in theory
-     * call this)
+     * In our case FTPConnectionManager's allocateConnection calls this method. (although the Application Server's
+     * ConnectionManager can also in theory call this)
      */
     @Override
-    public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
+    public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
+            throws ResourceException
     {
         logger.debug("Called createManagedConnection");
-
         // Create the new Managed Connection
-        FTPManagedConnection ftpManagedConnection = new FTPManagedConnection(this, (FTPConnectionRequestInfo)cri);
-
+        FTPManagedConnection ftpManagedConnection = new FTPManagedConnection(this, (FTPConnectionRequestInfo) cri);
         ftpManagedConnection.setTransactionJournal(getTransactionJournal());
-
         // Open a session on the managed connection
         ftpManagedConnection.openSession();
         // Return the managed connection (with an open session)
@@ -181,23 +174,20 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * This method is called by the application server when the client asks for
-     * a new connection. The application server passes in a Set of all the
-     * active managed connections, and this object must pick one that is
-     * currently handling a physical connection that can be shared to support
-     * the new client request. Typically this sharing will be allowed if the
-     * security attributes and properties of the new request match an existing
-     * physical connection.
+     * This method is called by the application server when the client asks for a new connection. The application server
+     * passes in a Set of all the active managed connections, and this object must pick one that is currently handling a
+     * physical connection that can be shared to support the new client request. Typically this sharing will be allowed
+     * if the security attributes and properties of the new request match an existing physical connection.
      * 
-     * If nothing is available, the method must return null, so that the
-     * application server knows it has to create a new physical connection.
+     * If nothing is available, the method must return null, so that the application server knows it has to create a new
+     * physical connection.
      */
     @SuppressWarnings("unchecked")
-    // Cannot change method signature.
     @Override
-    public ManagedConnection matchManagedConnections(Set connections, Subject subject, ConnectionRequestInfo info)
+    public ManagedConnection matchManagedConnections(@SuppressWarnings("rawtypes") Set connections, Subject subject,
+            ConnectionRequestInfo info)
     {
-        if(logger.isDebugEnabled())
+        if (logger.isDebugEnabled())
         {
             logger.debug("Called matchManagedConnection()");
             logger.debug("Number of connections considered = [" + connections.size() + "].");
@@ -208,7 +198,7 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
         {
             Object obj = it.next();
             logger.debug("Considering object " + obj.getClass().getName());
-            if(obj instanceof FTPManagedConnection)
+            if (obj instanceof FTPManagedConnection)
             {
                 logger.debug("Object is a FTPManagedConnection instance.");
                 FTPManagedConnection fmc = (FTPManagedConnection) obj;
@@ -216,25 +206,24 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
                 FTPConnectionRequestInfo currentFcri = fmc.getConnectionRequestInfo();
                 // TODO We may also want to check that the fmcf is equal to
                 // 'this'.
-                if(currentFcri.equals(fcri))
+                if (currentFcri.equals(fcri))
                 {
-                    logger.debug("Found matched Connection."); //$NON-NLS-1$
-
+                    logger.debug("Found matched Connection.");
                     // This should never occur if the track-connection-by-tx
                     // property is set in your connection factory ds file
-                    if(fmc.transactionInProgress())
+                    if (fmc.transactionInProgress())
                     {
-                        logger.error("Managed Connection already involved in transaction."); //$NON-NLS-1$
-                        logger.error("Connection = [" + fmc + "] [" + fmc.getConnectionState().getDescription() + "].");
-                        // TODO 20080623 - if the connection is involved in a
-                        // transaction, shouldn't we get a new one?
-                        // return null;
+                        logger.warn("Managed Connection already involved in transaction.");
+                        logger.warn("Connection = [" + fmc + "] [" + fmc.getConnectionState().getDescription() + "].");
                     }
-                    return fmc;
+                    else
+                    {
+                        return fmc;
+                    }
                 }
             }
         }
-        logger.debug("No matched Connection for object."); //$NON-NLS-1$
+        logger.debug("No matched Connection for object (or at least none that weren't already involved in a transaction).");
         return null;
     }
 
@@ -242,71 +231,70 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     @Override
     public int hashCode()
     {
-        logger.debug("Called hashCode()"); //$NON-NLS-1$
+        logger.debug("Called hashCode()");
         // If the hostname is null then this is not a valid, so return 0
-        if(this.remoteHostname == null)
+        if (this.remoteHostname == null)
         {
             return 0;
         }
-
-        return this.clientID.hashCode() + this.remoteHostname.hashCode() + this.password.hashCode() + this.remotePort.hashCode() + this.username.hashCode();
+        return this.clientID.hashCode() + this.remoteHostname.hashCode() + this.password.hashCode()
+                + this.remotePort.hashCode() + this.username.hashCode();
     }
 
     /**
-     * FTP specific equality implementation. This is used by the
-     * matchManagedConnections when called by the Application Server to
-     * determine if the incoming object is the same as the instantiated object.
+     * FTP specific equality implementation. This is used by the matchManagedConnections when called by the Application
+     * Server to determine if the incoming object is the same as the instantiated object.
      * 
      * The check currently consists of host, port and username equality
      */
     @Override
     public boolean equals(Object object)
     {
-        logger.debug("Called equals"); //$NON-NLS-1$
+        logger.debug("Called equals");
         // Valid object check
-        if(object == null)
+        if (object == null)
         {
-            logger.debug("Object is null. Returning [false]."); //$NON-NLS-1$
+            logger.debug("Object is null. Returning [false].");
             return false;
         }
-
-        if(object instanceof FTPManagedConnectionFactory)
+        if (object instanceof FTPManagedConnectionFactory)
         {
-            logger.debug("Object is a FTPManagedConnectionFactory"); //$NON-NLS-1$
+            logger.debug("Object is a FTPManagedConnectionFactory");
             FTPManagedConnectionFactory fmcf = (FTPManagedConnectionFactory) object;
             return compareFMCF(fmcf);
         }
         // default else
-        logger.debug("Object is not valid, returning [false]."); //$NON-NLS-1$
+        logger.debug("Object is not valid, returning [false].");
         return false;
     }
 
     /**
      * Return true if the FMCF matches this connection
      * 
-     * @param fmcf Incoming <code>ManagedConnectionFactory</code> instance from
-     *            application server.
+     * @param fmcf Incoming <code>ManagedConnectionFactory</code> instance from application server.
      * @return true if the FMCF matches this connection
      */
     private boolean compareFMCF(FTPManagedConnectionFactory fmcf)
     {
-        if(this.remoteHostname == null || this.password == null || this.remotePort == null || this.username == null || this.clientID == null)
+        if (this.remoteHostname == null || this.password == null || this.remotePort == null || this.username == null
+                || this.clientID == null)
         {
-            logger.warn("One of the mandatory managed connection factory variables is null."); //$NON-NLS-1$
-            logger.warn("Hostname = [" + this.remoteHostname + "]\n" + "Password = [" + this.password + "]\n" + "Port = [" + this.remotePort + "]\n"
-                    + "Username = [" + this.username + "]\n" + "ClientID = [" + this.clientID + "].\n");
+            logger.warn("One of the mandatory managed connection factory variables is null.");
+            logger.warn("Hostname = [" + this.remoteHostname + "]\n" + "Password = [" + this.password + "]\n"
+                    + "Port = [" + this.remotePort + "]\n" + "Username = [" + this.username + "]\n" + "ClientID = ["
+                    + this.clientID + "].\n");
             return false;
         }
-
         // Connection specific properties check
-        if(this.remoteHostname.equalsIgnoreCase(fmcf.remoteHostname) && this.password == fmcf.password && this.remotePort == fmcf.remotePort
-                && this.username.equals(fmcf.username) && this.clientID.equals(fmcf.clientID))
+        if (this.remoteHostname.equalsIgnoreCase(fmcf.remoteHostname) && this.password == fmcf.password
+                && this.remotePort == fmcf.remotePort && this.username.equals(fmcf.username)
+                && this.clientID.equals(fmcf.clientID))
         {
-            logger.debug("Object is equal. Returning [true]."); //$NON-NLS-1$
+            logger.debug("Object is equal. Returning [true].");
             return true;
         }
         // Default else
-        logger.debug("Object is not equal. Returning [false]."); //$NON-NLS-1$
+        logger.debug("Object is not equal. Returning [false].");
         return false;
     }
 
@@ -317,29 +305,20 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     protected TransactionJournal getTransactionJournal()
     {
-        if(transactionJournal == null)
+        if (transactionJournal == null)
         {
             TransactionalResourceCommandDAO dao = DataAccessUtil.getTransactionalResourceCommandDAO();
-            
-            
-            
             FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             Map<String, Object> beanFactory = new HashMap<String, Object>();
             beanFactory.put("fileChunkDao", fileChunkDao);
-            
             transactionJournal = new TransactionJournalImpl(dao, clientID, beanFactory);
         }
         return transactionJournal;
     }
 
-    // ////////////////////////////////////////////////////////////////
-    // Getters/Setters, Setters are initially called by the App Server
-    // ////////////////////////////////////////////////////////////////
-
     /**
-     * Returns whether or not this is an active FTP transfer. There is no
-     * corresponding setter as we only want this to be a client property, not a
-     * ra.xml property
+     * Returns whether or not this is an active FTP transfer. There is no corresponding setter as we only want this to
+     * be a client property, not a ra.xml property
      * 
      * @return true if this is an active transfer
      */
@@ -349,9 +328,8 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * Returns whether or not we clean up the journal on commit. There is no
-     * corresponding setter as we only want this to be a client property, not a
-     * ra.xml property
+     * Returns whether or not we clean up the journal on commit. There is no corresponding setter as we only want this
+     * to be a client property, not a ra.xml property
      * 
      * @return true if we clean up the journal on commit
      */
@@ -413,9 +391,8 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * Get the max retry attempts, as open session requires it. There is no
-     * corresponding setter as we only want this to be a client property, not a
-     * ra.xml property
+     * Get the max retry attempts, as open session requires it. There is no corresponding setter as we only want this to
+     * be a client property, not a ra.xml property
      * 
      * @return maxRetryAttempts
      */
@@ -441,7 +418,7 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setPassword(String password)
     {
-        logger.debug("ra.xml setting password to: [" + password + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("ra.xml setting password to: [" + password + "]");
         this.password = password;
     }
 
@@ -476,7 +453,7 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
         CommonEnvironment env = new org.ikasan.common.util.Env();
         String localHost = env.expandEnvVar(rtLocalHost);
         logger.debug("Setting localhost to [" + localHost + "].");
-        if(localHost != null && localHost.length() > 0)
+        if (localHost != null && localHost.length() > 0)
         {
             this.localHostname = localHost;
         }
@@ -499,7 +476,7 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setUsername(String username)
     {
-        logger.debug("ra.xml setting username to: [" + username + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("ra.xml setting username to: [" + username + "]");
         this.username = username;
     }
 
@@ -562,5 +539,4 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
     {
         this.socketTimeout = socketTimeout;
     }
-
 }

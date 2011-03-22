@@ -52,27 +52,36 @@ import org.ikasan.spec.endpoint.Consumer;
 
 /**
  * Sftp endpoint based on a Payload.
+ * 
  * @author Ikasan Development Team
  */
 public class PayloadBasedSftpConsumer implements Consumer<Payload>
 {
-    /** existing template */
+    /** Currently active connection template */
+    protected FileTransferConnectionTemplate activeFileTransferConnectionTemplate;
+
+    /** A connection template */
     protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
 
-    /** configuration */
+    /** Alternate template to be used in cases of failure */
+    protected FileTransferConnectionTemplate alternateFileTransferConnectionTemplate;
+
+    /** Configuration */
     protected SftpConsumerConfiguration configuration;
 
     /**
      * Constructor
-     * @param fileTransferConnectionTemplate
+     * @param fileTransferConnectionTemplate SFTP connection template
+     * @param configuration the SFTP connection runtime configuration
      */
-    public PayloadBasedSftpConsumer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpConsumerConfiguration configuration)
+    public PayloadBasedSftpConsumer(final FileTransferConnectionTemplate fileTransferConnectionTemplate, final SftpConsumerConfiguration configuration)
     {
         this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
         if(fileTransferConnectionTemplate == null)
         {
             throw new IllegalArgumentException("fileTransferConnectionTemplate cannot be 'null'");
         }
+        this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
 
         this.configuration = configuration;
         if(configuration == null)
@@ -90,18 +99,26 @@ public class PayloadBasedSftpConsumer implements Consumer<Payload>
         Payload payload = null;
         for (String sourceDirectory : this.getSrcDirs())
         {
-            payload = this.fileTransferConnectionTemplate.getDiscoveredFile(
-                    sourceDirectory, configuration.getFilenamePattern(), 
-                    configuration.getRenameOnSuccess(), configuration.getRenameOnSuccessExtension(),
-                    configuration.getMoveOnSuccess(), configuration.getMoveOnSuccessNewPath(),
-                    configuration.getChunking(), configuration.getChunkSize(), configuration.getChecksum(),
-                    configuration.getMinAge(), configuration.getDestructive(), 
-                    configuration.getFilterDuplicates(), configuration.getFilterOnFilename(),
-                    configuration.getFilterOnLastModifiedDate(), configuration.getChronological());
-
-            if(payload != null)
+            try
             {
-                return payload;
+                payload = this.activeFileTransferConnectionTemplate.getDiscoveredFile(
+                        sourceDirectory, this.configuration.getFilenamePattern(), 
+                        this.configuration.getRenameOnSuccess().booleanValue(), this.configuration.getRenameOnSuccessExtension(),
+                        this.configuration.getMoveOnSuccess().booleanValue(), this.configuration.getMoveOnSuccessNewPath(),
+                        this.configuration.getChunking().booleanValue(), this.configuration.getChunkSize().intValue(), this.configuration.getChecksum().booleanValue(),
+                        this.configuration.getMinAge().longValue(), this.configuration.getDestructive().booleanValue(), 
+                        this.configuration.getFilterDuplicates().booleanValue(), this.configuration.getFilterOnFilename().booleanValue(),
+                        this.configuration.getFilterOnLastModifiedDate().booleanValue(), this.configuration.getChronological().booleanValue());
+
+                if(payload != null)
+                {
+                    return payload;
+                }
+            }
+            catch (ResourceException e)
+            {
+                this.switchActiveConnection();
+                throw e;
             }
         }
         
@@ -146,5 +163,49 @@ public class PayloadBasedSftpConsumer implements Consumer<Payload>
         }
         return dirs;
     }
-    
+
+    /**
+     * @param alternateFileTransferConnectionTemplate the alternateFileTransferConnectionTemplate to set
+     */
+    public void setAlternateFileTransferConnectionTemplate(
+            FileTransferConnectionTemplate alternateFileTransferConnectionTemplate)
+    {
+        this.alternateFileTransferConnectionTemplate = alternateFileTransferConnectionTemplate;
+    }
+
+    /**
+     * This method is only used for testing purposes
+     * @return the alternateFileTransferConnectionTemplate
+     */
+    FileTransferConnectionTemplate getAlternateFileTransferConnectionTemplate()
+    {
+        return this.alternateFileTransferConnectionTemplate;
+    }
+
+    /**
+     * This method is only used for testing purposes
+     * @return the activeFileTransferConnectionTemplate
+     */
+    FileTransferConnectionTemplate getActiveFileTransferConnectionTemplate()
+    {
+        return this.activeFileTransferConnectionTemplate;
+    }
+
+    /**
+     * Switch the active connection to the other connection template.
+     */
+    protected void switchActiveConnection()
+    {
+        if (this.alternateFileTransferConnectionTemplate != null)
+        {
+            if(this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate)
+            {
+                this.activeFileTransferConnectionTemplate = this.alternateFileTransferConnectionTemplate;
+            }
+            else
+            {
+                this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
+            }
+        }
+    }
 }

@@ -44,6 +44,7 @@ package org.ikasan.endpoint.ftp.consumer;
 import javax.resource.ResourceException;
 
 import org.ikasan.spec.endpoint.Consumer;
+import org.ikasan.spec.endpoint.DefaultEndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.EndpointManager;
@@ -52,8 +53,10 @@ import org.ikasan.spec.endpoint.EndpointManager;
  * Implementation of {@link EndpointManager} for consuming files via FTP connection
  * 
  * @author Ikasan Development Team
+ * @deprecated Use the general implementation {@link DefaultEndpointManager}
  *
  */
+@Deprecated
 public class FtpConsumerEndpointManager implements EndpointManager<Consumer<?>, FtpConsumerConfiguration>
 {
     private FtpConsumerConfiguration configuration;
@@ -63,7 +66,7 @@ public class FtpConsumerEndpointManager implements EndpointManager<Consumer<?>, 
     /**
      * Constructor
      * @param factory {@link EndpointFactory} implementation for creating the endpoint
-     * @param config Runtime configuration of endpoint
+     * @param configuration Runtime configuration of endpoint
      */
     public FtpConsumerEndpointManager(final EndpointFactory<Consumer<?>, FtpConsumerConfiguration> factory, final FtpConsumerConfiguration configuration)
     {

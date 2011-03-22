@@ -45,12 +45,12 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /**
- * Test class for {@link FtpProducerConfiguration}
+ * Test class for {@link FtpProducerAlternateConfiguration}
  * 
  * @author Ikasan Development Team
  *
  */
-public class FtpProducerConfigurationTest
+public class FtpProducerAlternateConfigurationTest
 {
     /**
      * Test ftpConfiguration bean defaults.
@@ -58,27 +58,53 @@ public class FtpProducerConfigurationTest
     @Test
     public void test_ftpConfiguration_defaults()
     {
-        FtpProducerConfiguration ftpConfiguration = new FtpProducerConfiguration();
-        
+        FtpProducerAlternateConfiguration ftpConfiguration = new FtpProducerAlternateConfiguration();
+
+        // These parameters must be the same regardless of different connections
         Assert.assertNull(ftpConfiguration.getClientID());
         Assert.assertTrue(ftpConfiguration.getCleanupJournalOnComplete().booleanValue());
-        Assert.assertEquals("localhost", ftpConfiguration.getRemoteHost());
-        Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getMaxRetryAttempts());
-        Assert.assertEquals(Integer.valueOf(21), ftpConfiguration.getRemotePort());
-        Assert.assertNull(ftpConfiguration.getUsername());
-        Assert.assertNull(ftpConfiguration.getPassword());
-        Assert.assertFalse(ftpConfiguration.getActive().booleanValue());
-        Assert.assertEquals(Integer.valueOf(60000), ftpConfiguration.getConnectionTimeout());
-        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getDataTimeout());
-        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getSocketTimeout());
-        Assert.assertNull(ftpConfiguration.getOutputDirectory());
-        Assert.assertEquals(".tmp", ftpConfiguration.getRenameExtension());
         Assert.assertFalse(ftpConfiguration.getOverwrite().booleanValue());
         Assert.assertFalse(ftpConfiguration.getUnzip().booleanValue());
         Assert.assertFalse(ftpConfiguration.getChecksumDelivered().booleanValue());
         Assert.assertFalse(ftpConfiguration.getCreateParentDirectory().booleanValue());
+
+        // These parameters can have alternates and have the same default values
+        Assert.assertEquals("localhost", ftpConfiguration.getRemoteHost());
+        Assert.assertEquals("localhost", ftpConfiguration.getAlternateRemoteHost());
+
+        Assert.assertNull(ftpConfiguration.getUsername());
+        Assert.assertNull(ftpConfiguration.getAlternateUsername());
+
+        Assert.assertEquals(Integer.valueOf(21), ftpConfiguration.getRemotePort());
+        Assert.assertEquals(Integer.valueOf(21), ftpConfiguration.getAlternateRemotePort());
+
+        Assert.assertNull(ftpConfiguration.getPassword());
+        Assert.assertNull(ftpConfiguration.getAlternatePassword());
+
+        Assert.assertFalse(ftpConfiguration.getActive().booleanValue());
+        Assert.assertFalse(ftpConfiguration.getAlternateActive().booleanValue());
+
+        Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getMaxRetryAttempts());
+        Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getAlternateMaxRetryAttempts());
+
+        Assert.assertEquals(Integer.valueOf(60000), ftpConfiguration.getConnectionTimeout());
+        Assert.assertEquals(Integer.valueOf(60000), ftpConfiguration.getAlternateConnectionTimeout());
+
+        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getDataTimeout());
+        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getAlternateDataTimeout());
+
+        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getSocketTimeout());
+        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getAlternateSocketTimeout());
+
+        // Should they be allowed to have different values in alternate?
+        Assert.assertNull(ftpConfiguration.getOutputDirectory());
+
+        Assert.assertEquals(".tmp", ftpConfiguration.getRenameExtension());
+
         Assert.assertNull(ftpConfiguration.getTempFileName());
+
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
+        Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
     }
 
     /**
@@ -87,46 +113,64 @@ public class FtpProducerConfigurationTest
     @Test
     public void test_ftpConfiguration_mutators()
     {
-        FtpProducerConfiguration ftpConfiguration = new FtpProducerConfiguration();
-        
+        FtpProducerAlternateConfiguration ftpConfiguration = new FtpProducerAlternateConfiguration();
+
         ftpConfiguration.setClientID("clientID");
-        Assert.assertTrue("clientID", ftpConfiguration.getClientID().equals("clientID"));
+        Assert.assertEquals("clientID", ftpConfiguration.getClientID());
 
         ftpConfiguration.setCleanupJournalOnComplete(Boolean.FALSE);
         Assert.assertFalse("cleanupJournalOnComplete", ftpConfiguration.getCleanupJournalOnComplete().booleanValue());
 
         ftpConfiguration.setRemoteHost("remoteHost");
-        Assert.assertTrue("remoteHost", ftpConfiguration.getRemoteHost().equals("remoteHost"));
+        Assert.assertEquals("remoteHost", ftpConfiguration.getRemoteHost());
+        ftpConfiguration.setAlternateRemoteHost("alternateRemoteHost");
+        Assert.assertEquals("alternateRemoteHost", ftpConfiguration.getAlternateRemoteHost());
 
         ftpConfiguration.setMaxRetryAttempts(Integer.valueOf(10));
-        Assert.assertEquals("maxRetryAttempts", new Integer(10), ftpConfiguration.getMaxRetryAttempts());
+        Assert.assertEquals("maxRetryAttempts", Integer.valueOf(10), ftpConfiguration.getMaxRetryAttempts());
+        ftpConfiguration.setAlternateMaxRetryAttempts(Integer.valueOf(6));
+        Assert.assertEquals("alternateMaxRetryAttempts", Integer.valueOf(6), ftpConfiguration.getAlternateMaxRetryAttempts());
 
         ftpConfiguration.setRemotePort(Integer.valueOf(21));
-        Assert.assertEquals("remotePort", new Integer(21), ftpConfiguration.getRemotePort());
+        Assert.assertEquals("remotePort", Integer.valueOf(21), ftpConfiguration.getRemotePort());
+        ftpConfiguration.setAlternateRemotePort(Integer.valueOf(1234));
+        Assert.assertEquals("alternateRemotePort", Integer.valueOf(1234), ftpConfiguration.getAlternateRemotePort());
 
         ftpConfiguration.setUsername("username");
-        Assert.assertTrue("username", ftpConfiguration.getUsername().equals("username"));
+        Assert.assertEquals("username", ftpConfiguration.getUsername());
+        ftpConfiguration.setAlternateUsername("alternateUsername");
+        Assert.assertEquals("alternateUsername", ftpConfiguration.getAlternateUsername());
 
         ftpConfiguration.setPassword("password");
-        Assert.assertTrue("password", ftpConfiguration.getPassword().equals("password"));
+        Assert.assertEquals("password", ftpConfiguration.getPassword());
+        ftpConfiguration.setAlternatePassword("alternatePassword");
+        Assert.assertEquals("alternatePassword", ftpConfiguration.getAlternatePassword());
 
         ftpConfiguration.setActive(Boolean.TRUE);
         Assert.assertTrue(ftpConfiguration.getActive().booleanValue());
+        ftpConfiguration.setAlternateActive(Boolean.FALSE);
+        Assert.assertFalse(ftpConfiguration.getAlternateActive().booleanValue());
 
         ftpConfiguration.setConnectionTimeout(Integer.valueOf(1500));
-        Assert.assertEquals("connectionTimeout", new Integer(1500), ftpConfiguration.getConnectionTimeout());
+        Assert.assertEquals("connectionTimeout", Integer.valueOf(1500), ftpConfiguration.getConnectionTimeout());
+        ftpConfiguration.setAlternateConnectionTimeout(Integer.valueOf(1000));
+        Assert.assertEquals("alternateConnectionTimeout", Integer.valueOf(1000), ftpConfiguration.getAlternateConnectionTimeout());
 
         ftpConfiguration.setDataTimeout(Integer.valueOf(5000));
-        Assert.assertEquals("dataTimeout", new Integer(5000), ftpConfiguration.getDataTimeout());
+        Assert.assertEquals("dataTimeout", Integer.valueOf(5000), ftpConfiguration.getDataTimeout());
+        ftpConfiguration.setAlternateDataTimeout(Integer.valueOf(10000));
+        Assert.assertEquals("alternateDataTimeout", Integer.valueOf(10000), ftpConfiguration.getAlternateDataTimeout());
 
-        ftpConfiguration.setSocketTimeout(Integer.valueOf(2000));
-        Assert.assertEquals("socketTimeout", new Integer(2000), ftpConfiguration.getSocketTimeout());
+        ftpConfiguration.setSocketTimeout(Integer.valueOf(60000));
+        Assert.assertEquals("socketTimeout", Integer.valueOf(60000), ftpConfiguration.getSocketTimeout());
+        ftpConfiguration.setAlternateSocketTimeout(Integer.valueOf(2000));
+        Assert.assertEquals("alternateSocketimeout", Integer.valueOf(2000), ftpConfiguration.getAlternateSocketTimeout());
 
         ftpConfiguration.setOutputDirectory("outputDirectory");
-        Assert.assertTrue("outputDirectory", ftpConfiguration.getOutputDirectory().equals("outputDirectory"));
+        Assert.assertEquals("outputDirectory", ftpConfiguration.getOutputDirectory());
 
         ftpConfiguration.setRenameExtension("renameExtension");
-        Assert.assertTrue("renameExtension", ftpConfiguration.getRenameExtension().equals("renameExtension"));
+        Assert.assertEquals("renameExtension", ftpConfiguration.getRenameExtension());
 
         ftpConfiguration.setTempFileName("filename.tmp");
         Assert.assertEquals("filename.tmp", ftpConfiguration.getTempFileName());
@@ -146,6 +190,10 @@ public class FtpProducerConfigurationTest
         ftpConfiguration.setSystemKey("systemKey");
         ftpConfiguration.validate();
         Assert.assertEquals("systemKey", ftpConfiguration.getSystemKey());
+
+        ftpConfiguration.setAlternateSystemKey("alternateSystemKey");
+        ftpConfiguration.validate();
+        Assert.assertEquals("alternateSystemKey", ftpConfiguration.getAlternateSystemKey());
     }
 
     /**
@@ -154,7 +202,7 @@ public class FtpProducerConfigurationTest
      */
     @Test public void validate_will_reset_systemKey_to_default_if_invalid()
     {
-        FtpProducerConfiguration ftpConfiguration = new FtpProducerConfiguration();
+        FtpProducerAlternateConfiguration ftpConfiguration = new FtpProducerAlternateConfiguration();
 
         ftpConfiguration.setSystemKey(null);
         ftpConfiguration.validate();
@@ -163,5 +211,13 @@ public class FtpProducerConfigurationTest
         ftpConfiguration.setSystemKey(" ");
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
+
+        ftpConfiguration.setAlternateSystemKey(null);
+        ftpConfiguration.validate();
+        Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
+
+        ftpConfiguration.setAlternateSystemKey(" ");
+        ftpConfiguration.validate();
+        Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
     }
 }

@@ -41,7 +41,6 @@
 package org.ikasan.endpoint.ftp.consumer.type;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +54,7 @@ import org.ikasan.common.Payload;
 import org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration;
 import org.ikasan.endpoint.ftp.consumer.type.PayloadBasedFtpConsumer;
 import org.ikasan.framework.factory.DirectoryURLFactory;
+import org.ikasan.spec.endpoint.Consumer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -67,30 +67,36 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
 public class PayloadBasedFtpConsumerTest
 {
-    Mockery mockery = new Mockery()
+    /** The Mockery */
+    private final Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
 
-    /** mock fileTransferConnectionTemplate */
-    final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
+    /** Mock fileTransferConnectionTemplate */
+    private final FileTransferConnectionTemplate fileTransferConnectionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
 
-    /** mock ftpConfiguration */
-    final FtpConsumerConfiguration ftpConfiguration = mockery.mock(FtpConsumerConfiguration.class, "mockFtpConsumerConfiguration");
+    /** Mock ftpConfiguration */
+    private final FtpConsumerConfiguration ftpConfiguration = this.mockery.mock(FtpConsumerConfiguration.class, "mockFtpConsumerConfiguration");
 
-    /** mock sourceDirectoryURLFactory */
-    final DirectoryURLFactory sourceDirectoryURLFactory = mockery.mock(DirectoryURLFactory.class, "mockDirectoryURLFactory");
+    /** Mock sourceDirectoryURLFactory */
+    private final DirectoryURLFactory sourceDirectoryURLFactory = this.mockery.mock(DirectoryURLFactory.class, "mockDirectoryURLFactory");
 
-    /** mock payload */
-    final Payload payload = mockery.mock(Payload.class, "mockPayload");
+    /** Mock payload */
+    private final Payload payload = this.mockery.mock(Payload.class, "mockPayload");
+
+    /** Object to test */
+    private Consumer<Payload> payloadBasedFtpConsumer = new PayloadBasedFtpConsumer(this.fileTransferConnectionTemplate, this.ftpConfiguration);
 
     /**
      * Test failed constructor due to null fileTransferPayloadProvider.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullFileTransferPayloadProvider()
     {
@@ -100,293 +106,525 @@ public class PayloadBasedFtpConsumerTest
     /**
      * Test failed constructor due to null sftpConfiguration.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullFtpConfiguration()
     {
-        new PayloadBasedFtpConsumer(fileTransferConnectionTemplate, null);
+        new PayloadBasedFtpConsumer(this.fileTransferConnectionTemplate, null);
     }
 
     /**
      * Test successful invocation based on injected DirectoryURLFactory, 
      * but no discovered files.
-     * @throws ResourceException 
-     * @throws IOException 
+     * 
+     * @throws ResourceException if error invoking endpoint
      */
-    @Test
-    public void test_successful_invocation_withDirectoryURLFactory_no_discovered_file()
-        throws ResourceException, IOException
+    @Test public void test_successful_invocation_withDirectoryURLFactory_no_discovered_file()
+        throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final List<String> sourceDirectories = new ArrayList<String>();
         sourceDirectories.add("sourceDirectory");
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
         filenameContentPairsMap.put("filename", content);
-        
-        // expectations
-        mockery.checking(new Expectations()
+
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                // we have a sourceDirectoryURLFactory specified
-                exactly(2).of(ftpConfiguration).getSourceDirectoryURLFactory();
-                will(returnValue(sourceDirectoryURLFactory));
+                // We have a sourceDirectoryURLFactory specified
+                exactly(2).of(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(sourceDirectoryURLFactory));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+                one(sourceDirectoryURLFactory).getDirectoriesURLs("sourceDirectory"); will(returnValue(sourceDirectories));
 
-                exactly(1).of(ftpConfiguration).getSourceDirectory();
-                will(returnValue("sourceDirectory"));
-                exactly(1).of(sourceDirectoryURLFactory).getDirectoriesURLs("sourceDirectory");
-                will(returnValue(sourceDirectories));
-                
-                exactly(1).of(ftpConfiguration).getFilenamePattern();
-                will(returnValue("filenamePattern"));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccess();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccessExtension();
-                will(returnValue("renameExtention"));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccess();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccessNewPath();
-                will(returnValue("moveOnSuccessNewPath"));
-                exactly(1).of(ftpConfiguration).getChunking();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getChunkSize();
-                will(returnValue(Integer.valueOf(-1)));
-                exactly(1).of(ftpConfiguration).getChecksum();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMinAge();
-                will(returnValue(Long.valueOf(1)));
-                exactly(1).of(ftpConfiguration).getDestructive();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterDuplicates();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnFilename();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnLastModifiedDate();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getChronological();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
-                    Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
-                    Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
-                will(returnValue(null));
-                
-                // with housekeeping
-                exactly(1).of(ftpConfiguration).getMaxRows();
-                will(returnValue(new Integer(1)));
-                exactly(1).of(ftpConfiguration).getAgeOfFiles();
-                will(returnValue(new Integer(1)));
-                exactly(1).of(fileTransferConnectionTemplate).housekeep(1, 1);
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                    true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                    false, 1, true, true, true, true, true); will(returnValue(null));
+
+                // With housekeeping
+                one(ftpConfiguration).getMaxRows(); will(returnValue(Integer.valueOf(1)));
+                one(ftpConfiguration).getAgeOfFiles(); will(returnValue(Integer.valueOf(1)));
+                one(fileTransferConnectionTemplate).housekeep(1, 1);
             }
         });
 
-        PayloadBasedFtpConsumer payloadBasedFtpConsumer = 
-            new PayloadBasedFtpConsumer(fileTransferConnectionTemplate, ftpConfiguration);
-        Assert.assertNull(payloadBasedFtpConsumer.invoke());
-        mockery.assertIsSatisfied();
+        Assert.assertNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
     }
 
     /**
      * Test successful invocation based on no discovered files.
-     * @throws ResourceException 
-     * @throws IOException 
+     * @throws ResourceException if error invoking endpoint
      */
-    @Test
-    public void test_successful_invocation_no_discovered_file()
-        throws ResourceException, IOException
+    @Test public void test_successful_invocation_no_discovered_file()
+        throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
         filenameContentPairsMap.put("filename", content);
-        
-        // expectations
-        mockery.checking(new Expectations()
+
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                // we have a sourceDirectoryURLFactory specified
-                exactly(1).of(ftpConfiguration).getSourceDirectoryURLFactory();
-                will(returnValue(null));
+                // We don't have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
 
-                exactly(1).of(ftpConfiguration).getSourceDirectory();
-                will(returnValue("sourceDirectory"));
-                
-                exactly(1).of(ftpConfiguration).getFilenamePattern();
-                will(returnValue("filenamePattern"));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccess();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccessExtension();
-                will(returnValue("renameExtention"));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccess();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccessNewPath();
-                will(returnValue("moveOnSuccessNewPath"));
-                exactly(1).of(ftpConfiguration).getChunking();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getChunkSize();
-                will(returnValue(Integer.valueOf(-1)));
-                exactly(1).of(ftpConfiguration).getChecksum();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMinAge();
-                will(returnValue(Long.valueOf(1)));
-                exactly(1).of(ftpConfiguration).getDestructive();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterDuplicates();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnFilename();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnLastModifiedDate();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getChronological();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
-                    Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
-                    Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
-                will(returnValue(null));
-                
-                // with housekeeping
-                exactly(1).of(ftpConfiguration).getMaxRows();
-                will(returnValue(new Integer(1)));
-                exactly(1).of(ftpConfiguration).getAgeOfFiles();
-                will(returnValue(new Integer(1)));
-                exactly(1).of(fileTransferConnectionTemplate).housekeep(1, 1);
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(returnValue(null));
+
+                //With housekeeping
+                one(ftpConfiguration).getMaxRows(); will(returnValue(Integer.valueOf(1)));
+                one(ftpConfiguration).getAgeOfFiles(); will(returnValue(Integer.valueOf(1)));
+                one(fileTransferConnectionTemplate).housekeep(1, 1);
             }
         });
 
-        PayloadBasedFtpConsumer payloadBasedFtpConsumer = 
-            new PayloadBasedFtpConsumer(fileTransferConnectionTemplate, ftpConfiguration);
-        Assert.assertNull(payloadBasedFtpConsumer.invoke());
-        mockery.assertIsSatisfied();
+        Assert.assertNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Housekeeping is an optional operation. If configuration have maximum rows to housekeep set to <code>-1</code>,
+     * consumer must not housekeep.
+     * 
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test public void consumer_must_not_perform_housekeeping_if_maxRows_not_configured()
+        throws ResourceException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // We don't have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(returnValue(null));
+
+                //With housekeeping
+                one(ftpConfiguration).getMaxRows(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getAgeOfFiles(); will(returnValue(Integer.valueOf(1)));
+            }
+        });
+
+        Assert.assertNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Housekeeping is an optional operation. If configuration have min age of files to housekeep set to <code>-1</code>,
+     * consumer must not housekeep.
+     * 
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test public void consumer_must_not_perform_housekeeping_if_ageOfFiles_not_configured()
+        throws ResourceException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // We don't have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(returnValue(null));
+
+                //With housekeeping
+                one(ftpConfiguration).getMaxRows(); will(returnValue(Integer.valueOf(1)));
+                one(ftpConfiguration).getAgeOfFiles(); will(returnValue(Integer.valueOf(-1)));
+            }
+        });
+
+        Assert.assertNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Housekeeping is an optional operation.
+     * 
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test public void consumer_must_not_perform_housekeeping_if_either_maxRows_or_ageOfFiles_not_configured()
+        throws ResourceException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // We don't have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(returnValue(null));
+
+                //With housekeeping
+                one(ftpConfiguration).getMaxRows(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getAgeOfFiles(); will(returnValue(Integer.valueOf(-1)));
+            }
+        });
+
+        Assert.assertNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
     }
 
     /**
      * Test successful invocation based on a discovered file.
-     * @throws ResourceException 
-     * @throws IOException 
+     * @throws ResourceException if error invoking endpoint
      */
-    @Test
-    public void test_successful_invocation_discovering_a_file() throws ResourceException, IOException
+    @Test public void test_successful_invocation_discovering_a_file() throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
         filenameContentPairsMap.put("filename", content);
-        
-        // expectations
-        mockery.checking(new Expectations()
+
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                // we have a sourceDirectoryURLFactory specified
-                exactly(1).of(ftpConfiguration).getSourceDirectoryURLFactory();
-                will(returnValue(null));
+                // We dont have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
 
-                exactly(1).of(ftpConfiguration).getSourceDirectory();
-                will(returnValue("sourceDirectory"));
-                exactly(1).of(ftpConfiguration).getFilenamePattern();
-                will(returnValue("filenamePattern"));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccess();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccessExtension();
-                will(returnValue("renameExtention"));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccess();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccessNewPath();
-                will(returnValue("moveOnSuccessNewPath"));
-                exactly(1).of(ftpConfiguration).getChunking();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getChunkSize();
-                will(returnValue(Integer.valueOf(-1)));
-                exactly(1).of(ftpConfiguration).getChecksum();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMinAge();
-                will(returnValue(Long.valueOf(1)));
-                exactly(1).of(ftpConfiguration).getDestructive();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterDuplicates();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnFilename();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnLastModifiedDate();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getChronological();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
-                    Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
-                    Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
-                will(returnValue(payload));
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(returnValue(payload));
             }
         });
 
-        PayloadBasedFtpConsumer payloadBasedFtpConsumer = 
-            new PayloadBasedFtpConsumer(fileTransferConnectionTemplate, ftpConfiguration);
-        Assert.assertNotNull(payloadBasedFtpConsumer.invoke());
-        mockery.assertIsSatisfied();
+        Assert.assertNotNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
     }
 
     /**
      * Test successful invocation based on a discovered file using the DirectoryURLFactory.
-     * @throws ResourceException 
-     * @throws IOException 
+     * @throws ResourceException if error invoking endpoint
      */
-    @Test
-    public void test_successful_invocation_with_DirectoryURLFactory_discovering_a_file() throws ResourceException, IOException
+    @Test public void test_successful_invocation_with_DirectoryURLFactory_discovering_a_file() throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final List<String> sourceDirectories = new ArrayList<String>();
         sourceDirectories.add("sourceDirectory");
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
         filenameContentPairsMap.put("filename", content);
-        
-        // expectations
-        mockery.checking(new Expectations()
+
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                // we have a sourceDirectoryURLFactory specified
-                exactly(2).of(ftpConfiguration).getSourceDirectoryURLFactory();
-                will(returnValue(sourceDirectoryURLFactory));
+                // We have a sourceDirectoryURLFactory specified
+                // We have a sourceDirectoryURLFactory specified
+                exactly(2).of(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(sourceDirectoryURLFactory));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+                one(sourceDirectoryURLFactory).getDirectoriesURLs("sourceDirectory"); will(returnValue(sourceDirectories));
 
-                exactly(1).of(ftpConfiguration).getSourceDirectory();
-                will(returnValue("sourceDirectory"));
-                exactly(1).of(sourceDirectoryURLFactory).getDirectoriesURLs("sourceDirectory");
-                will(returnValue(sourceDirectories));
-                
-                exactly(1).of(ftpConfiguration).getFilenamePattern();
-                will(returnValue("filenamePattern"));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccess();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getRenameOnSuccessExtension();
-                will(returnValue("renameExtention"));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccess();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMoveOnSuccessNewPath();
-                will(returnValue("moveOnSuccessNewPath"));
-                exactly(1).of(ftpConfiguration).getChunking();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getChunkSize();
-                will(returnValue(Integer.valueOf(-1)));
-                exactly(1).of(ftpConfiguration).getChecksum();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(ftpConfiguration).getMinAge();
-                will(returnValue(Long.valueOf(1)));
-                exactly(1).of(ftpConfiguration).getDestructive();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterDuplicates();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnFilename();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getFilterOnLastModifiedDate();
-                will(returnValue(Boolean.TRUE));
-                exactly(1).of(ftpConfiguration).getChronological();
-                will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
-                    Boolean.TRUE, "renameExtention", Boolean.FALSE, "moveOnSuccessNewPath", Boolean.FALSE, Integer.valueOf(-1), 
-                    Boolean.FALSE, Long.valueOf(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(returnValue(payload));
                 will(returnValue(payload));
             }
         });
 
-        PayloadBasedFtpConsumer payloadBasedFtpConsumer = 
-            new PayloadBasedFtpConsumer(fileTransferConnectionTemplate, ftpConfiguration);
-        Assert.assertNotNull(payloadBasedFtpConsumer.invoke());
-        mockery.assertIsSatisfied();
+        Assert.assertNotNull(this.payloadBasedFtpConsumer.invoke());
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * If no alternate connection details are provided, the consumer will throw the exception and give up
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void consumer_fails() throws ResourceException
+    {
+        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // We dont have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(throwException(exception));
+            }
+        });
+
+        // Test
+        try
+        {
+            this.payloadBasedFtpConsumer.invoke();
+        }
+        catch (ResourceException e)
+        {
+            Assert.assertEquals(this.fileTransferConnectionTemplate, ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).getActiveFileTransferConnectionTemplate());
+            throw e;
+        }
+        this.mockery.assertIsSatisfied();
+        Assert.fail("Unreachable code.");
+    }
+
+    /**
+     * When the consumer is configured with an alternate connection template, on failure, consumer will switch to use the
+     * alternate next time it is invoked.
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void consumer_fails_changes_to_alternate_connection_template() throws ResourceException
+    {
+        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // We dont have a sourceDirectoryURLFactory specified
+                one(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                one(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+
+                one(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                one(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                one(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                one(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                one(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                one(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                one(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                one(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(throwException(exception));
+            }
+        });
+
+        // Test
+        final FileTransferConnectionTemplate mockAlternateConnectionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "alternateConnectionTemplate");
+        ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).setAlternateFileTransferConnectionTemplate(mockAlternateConnectionTemplate);
+        try
+        {
+            this.payloadBasedFtpConsumer.invoke();
+        }
+        catch (ResourceException e)
+        {
+            Assert.assertEquals(mockAlternateConnectionTemplate, ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).getActiveFileTransferConnectionTemplate());
+            throw e;
+        }
+        this.mockery.assertIsSatisfied();
+        Assert.fail("Unreachable code.");
+    }
+
+    /**
+     * If an error occurs while consumer using alternative connection template, switch back to original connection template
+     * 
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void consumer_fails_changes_to_original_connection_template() throws ResourceException
+    {
+        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+        final FileTransferConnectionTemplate mockAlternateConnectionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "alternateConnectionTemplate");
+
+        this.mockery.checking(new Expectations()
+        {
+            {
+                // We dont have a sourceDirectoryURLFactory specified
+                exactly(2).of(ftpConfiguration).getSourceDirectoryURLFactory(); will(returnValue(null));
+                exactly(2).of(ftpConfiguration).getSourceDirectory(); will(returnValue("sourceDirectory"));
+
+                exactly(2).of(ftpConfiguration).getFilenamePattern(); will(returnValue("filenamePattern"));
+                exactly(2).of(ftpConfiguration).getRenameOnSuccess(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConfiguration).getRenameOnSuccessExtension(); will(returnValue("renameExtention"));
+                exactly(2).of(ftpConfiguration).getMoveOnSuccess(); will(returnValue(Boolean.FALSE));
+                exactly(2).of(ftpConfiguration).getMoveOnSuccessNewPath(); will(returnValue("moveOnSuccessNewPath"));
+                exactly(2).of(ftpConfiguration).getChunking(); will(returnValue(Boolean.FALSE));
+                exactly(2).of(ftpConfiguration).getChunkSize(); will(returnValue(Integer.valueOf(-1)));
+                exactly(2).of(ftpConfiguration).getChecksum(); will(returnValue(Boolean.FALSE));
+                exactly(2).of(ftpConfiguration).getMinAge(); will(returnValue(Long.valueOf(1)));
+                exactly(2).of(ftpConfiguration).getDestructive(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConfiguration).getFilterDuplicates(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConfiguration).getFilterOnFilename(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConfiguration).getFilterOnLastModifiedDate(); will(returnValue(Boolean.TRUE));
+                exactly(2).of(ftpConfiguration).getChronological(); will(returnValue(Boolean.TRUE));
+
+                one(fileTransferConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(throwException(exception));
+
+                one(mockAlternateConnectionTemplate).getDiscoveredFile("sourceDirectory", "filenamePattern", 
+                        true, "renameExtention", false, "moveOnSuccessNewPath", false, -1, 
+                        false, 1, true, true, true, true, true); will(throwException(exception));
+            }
+        });
+
+        // Test
+        ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).setAlternateFileTransferConnectionTemplate(mockAlternateConnectionTemplate);
+        try
+        {
+            this.payloadBasedFtpConsumer.invoke();
+        }
+        catch (ResourceException e)
+        {
+            Assert.assertEquals(mockAlternateConnectionTemplate, ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).getActiveFileTransferConnectionTemplate());
+            try
+            {
+                this.payloadBasedFtpConsumer.invoke();
+            }
+            catch (ResourceException e2)
+            {
+                Assert.assertEquals(this.fileTransferConnectionTemplate, ((PayloadBasedFtpConsumer)this.payloadBasedFtpConsumer).getActiveFileTransferConnectionTemplate());
+                throw e2;
+            }
+        }
+        this.mockery.assertIsSatisfied();
+        Assert.fail("Unreachable code.");
     }
 }

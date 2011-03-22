@@ -44,6 +44,7 @@ import javax.resource.cci.ConnectionFactory;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
+import org.ikasan.endpoint.ftp.producer.FtpProducerAlternateConfiguration;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.Producer;
@@ -59,7 +60,7 @@ public class MapBasedFtpProducerFactory implements EndpointFactory<Producer<?>, 
 
     /**
      * Constructor
-     * @param connectionFactory
+     * @param connectionFactory an FTP {@link ConnectionFactory}
      */
     public MapBasedFtpProducerFactory(ConnectionFactory connectionFactory)
     {
@@ -73,24 +74,44 @@ public class MapBasedFtpProducerFactory implements EndpointFactory<Producer<?>, 
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
      */
-    public Producer<?> createEndpoint(FtpProducerConfiguration ftpProducerConfiguration)
+    public Producer<?> createEndpoint(FtpProducerConfiguration configuration)
     {
-        ftpProducerConfiguration.validate();
-        FTPConnectionSpec spec = this.getConnectionSpec();
-        spec.setClientID(ftpProducerConfiguration.getClientID());
-        spec.setRemoteHostname(ftpProducerConfiguration.getRemoteHost());
-        spec.setMaxRetryAttempts(ftpProducerConfiguration.getMaxRetryAttempts());
-        spec.setRemotePort(ftpProducerConfiguration.getRemotePort());
-        spec.setConnectionTimeout(ftpProducerConfiguration.getConnectionTimeout());
-        spec.setUsername(ftpProducerConfiguration.getUsername());
-        spec.setCleanupJournalOnComplete(ftpProducerConfiguration.getCleanupJournalOnComplete());
-        spec.setActive(ftpProducerConfiguration.getActive());
-        spec.setPassword(ftpProducerConfiguration.getPassword());
-        spec.setDataTimeout(ftpProducerConfiguration.getDataTimeout());
-        spec.setSocketTimeout(ftpProducerConfiguration.getSocketTimeout());
-        spec.setSystemKey(ftpProducerConfiguration.getSystemKey());
+        configuration.validate();
 
-        return getEndpoint(new FileTransferConnectionTemplate(this.connectionFactory, spec), ftpProducerConfiguration);
+        FTPConnectionSpec spec = this.getConnectionSpec();
+        spec.setClientID(configuration.getClientID());
+        spec.setRemoteHostname(configuration.getRemoteHost());
+        spec.setMaxRetryAttempts(configuration.getMaxRetryAttempts());
+        spec.setRemotePort(configuration.getRemotePort());
+        spec.setConnectionTimeout(configuration.getConnectionTimeout());
+        spec.setUsername(configuration.getUsername());
+        spec.setCleanupJournalOnComplete(configuration.getCleanupJournalOnComplete());
+        spec.setActive(configuration.getActive());
+        spec.setPassword(configuration.getPassword());
+        spec.setDataTimeout(configuration.getDataTimeout());
+        spec.setSocketTimeout(configuration.getSocketTimeout());
+        spec.setSystemKey(configuration.getSystemKey());
+
+        FTPConnectionSpec alternateSpec = null;
+        if (configuration instanceof FtpProducerAlternateConfiguration)
+        {
+            FtpProducerAlternateConfiguration alternteConfig = (FtpProducerAlternateConfiguration)configuration;
+            alternateSpec = this.getConnectionSpec();
+            alternateSpec.setClientID(alternteConfig.getClientID());
+            alternateSpec.setRemoteHostname(alternteConfig.getAlternateRemoteHost());
+            alternateSpec.setMaxRetryAttempts(alternteConfig.getAlternateMaxRetryAttempts());
+            alternateSpec.setRemotePort(alternteConfig.getAlternateRemotePort());
+            alternateSpec.setConnectionTimeout(alternteConfig.getAlternateConnectionTimeout());
+            alternateSpec.setUsername(alternteConfig.getAlternateUsername());
+            alternateSpec.setCleanupJournalOnComplete(alternteConfig.getCleanupJournalOnComplete());
+            alternateSpec.setActive(alternteConfig.getAlternateActive());
+            alternateSpec.setPassword(alternteConfig.getAlternatePassword());
+            alternateSpec.setDataTimeout(alternteConfig.getAlternateDataTimeout());
+            alternateSpec.setSocketTimeout(alternteConfig.getAlternateSocketTimeout());
+            alternateSpec.setSystemKey(alternteConfig.getAlternateSystemKey());
+        }
+
+        return this.getEndpoint(spec, alternateSpec, configuration);
     }
 
     /**
@@ -99,9 +120,14 @@ public class MapBasedFtpProducerFactory implements EndpointFactory<Producer<?>, 
      * @param ftpProducerConfiguration
      * @return
      */
-    protected Producer<?> getEndpoint(FileTransferConnectionTemplate fileTransferConnectionTemplate, FtpProducerConfiguration ftpProducerConfiguration)
+    protected Producer<?> getEndpoint(FTPConnectionSpec spec, FTPConnectionSpec alternateSpec, FtpProducerConfiguration ftpProducerConfiguration)
     {
-        return new MapBasedFtpProducer(fileTransferConnectionTemplate, ftpProducerConfiguration);
+        MapBasedFtpProducer producer = new MapBasedFtpProducer(new FileTransferConnectionTemplate(this.connectionFactory, spec), ftpProducerConfiguration);
+        if (alternateSpec != null)
+        {
+            producer.setAlternateFileTransferConnectionTemplate(new FileTransferConnectionTemplate(this.connectionFactory, alternateSpec));
+        }
+        return producer;
     }
     
     /**

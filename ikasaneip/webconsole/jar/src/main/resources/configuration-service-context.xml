@@ -48,20 +48,38 @@
 
 <beans>
 
-    <bean id="configurationService"
+    <bean id="configurationService" 
           class="org.ikasan.framework.configuration.service.ConfiguredResourceConfigurationService">
+        <!-- DAO for static configuration updates -->
         <constructor-arg>
             <bean class="org.ikasan.framework.configuration.dao.ConfigurationHibernateImpl">
                 <property name="sessionFactory">
-				    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-				        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
-				        <property name="mappingResources">
-				            <list>
-				                <value>org/ikasan/framework/configuration/model/Configuration.hbm.xml</value>
-				            </list>
-				        </property>
-				        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-				    </bean>
+                    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                        <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
+                        <property name="mappingResources">
+                            <list>
+                                <value>org/ikasan/framework/configuration/model/Configuration.hbm.xml</value>
+                            </list>
+                        </property>
+                        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+                    </bean>
+                </property>
+            </bean>
+        </constructor-arg>
+
+        <!-- DAO for dynamic configuration updates -->
+        <constructor-arg>
+            <bean class="org.ikasan.framework.configuration.dao.ConfigurationHibernateImpl">
+                <property name="sessionFactory">
+                    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+                        <property name="mappingResources">
+                            <list>
+                                <value>org/ikasan/framework/configuration/model/Configuration.hbm.xml</value>
+                            </list>
+                        </property>
+                        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+                    </bean>
                 </property>
             </bean>
         </constructor-arg>

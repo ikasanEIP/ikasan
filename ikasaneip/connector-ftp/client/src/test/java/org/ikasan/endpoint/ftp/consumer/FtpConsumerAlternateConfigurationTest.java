@@ -44,7 +44,6 @@ import javax.resource.spi.InvalidPropertyException;
 
 import junit.framework.Assert;
 
-import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.junit.Test;
 
 /**
@@ -53,7 +52,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-public class FtpConsumerConfigurationTest
+public class FtpConsumerAlternateConfigurationTest
 {
     /**
      * Test ftpConfiguration bean defaults.
@@ -84,15 +83,25 @@ public class FtpConsumerConfigurationTest
         Assert.assertNull(ftpConfiguration.getClientID());
         Assert.assertTrue(ftpConfiguration.getCleanupJournalOnComplete().booleanValue());
         Assert.assertEquals(String.valueOf("localhost"), ftpConfiguration.getRemoteHost());
+        Assert.assertEquals(String.valueOf("localhost"), ftpConfiguration.getAlternateRemoteHost());
         Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getMaxRetryAttempts());
+        Assert.assertEquals(Integer.valueOf(3), ftpConfiguration.getAlternateMaxRetryAttempts());
         Assert.assertEquals(Integer.valueOf(21), ftpConfiguration.getRemotePort());
+        Assert.assertEquals(Integer.valueOf(21), ftpConfiguration.getAlternateRemotePort());
         Assert.assertNull(ftpConfiguration.getUsername());
+        Assert.assertNull(ftpConfiguration.getAlternateUsername());
         Assert.assertNull(ftpConfiguration.getPassword());
+        Assert.assertNull(ftpConfiguration.getAlternatePassword());
         Assert.assertFalse(ftpConfiguration.getActive().booleanValue());
+        Assert.assertFalse(ftpConfiguration.getAlternateActive().booleanValue());
         Assert.assertEquals(Integer.valueOf(60000), ftpConfiguration.getConnectionTimeout());
+        Assert.assertEquals(Integer.valueOf(60000), ftpConfiguration.getAlternateConnectionTimeout());
         Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getDataTimeout());
+        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getAlternateDataTimeout());
         Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getSocketTimeout());
+        Assert.assertEquals(Integer.valueOf(300000), ftpConfiguration.getAlternateSocketTimeout());
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
+        Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
     }
 
     /**
@@ -101,15 +110,14 @@ public class FtpConsumerConfigurationTest
     @Test
     public void test_ftpConfiguration_mutators()
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
-        
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
+
         ftpConfiguration.setSourceDirectory("sourceDirectory");
         Assert.assertEquals("sourceDirectory", ftpConfiguration.getSourceDirectory());
 
         ftpConfiguration.setFilenamePattern("filenamePattern");
         Assert.assertEquals("filenamePattern", ftpConfiguration.getFilenamePattern());
 
-        // TODO - find a way to test this mutator
         ftpConfiguration.setSourceDirectoryURLFactory(null);
         Assert.assertNull("sourceDirectoryURLFactory", ftpConfiguration.getSourceDirectoryURLFactory());
 
@@ -159,53 +167,73 @@ public class FtpConsumerConfigurationTest
         Assert.assertEquals("ageOfFiles", Integer.valueOf(10), ftpConfiguration.getAgeOfFiles());
 
         ftpConfiguration.setClientID("clientID");
-        Assert.assertTrue("clientID", ftpConfiguration.getClientID().equals("clientID"));
+        Assert.assertEquals("clientID", ftpConfiguration.getClientID());
 
         ftpConfiguration.setCleanupJournalOnComplete(Boolean.FALSE);
         Assert.assertFalse("cleanupJournalOnComplete", ftpConfiguration.getCleanupJournalOnComplete().booleanValue());
 
         ftpConfiguration.setRemoteHost("remoteHost");
-        Assert.assertTrue("remoteHost", ftpConfiguration.getRemoteHost().equals("remoteHost"));
+        Assert.assertEquals("remoteHost", ftpConfiguration.getRemoteHost());
+        ftpConfiguration.setAlternateRemoteHost("alternateRemoteHost");
+        Assert.assertTrue("alternateRemoteHost", ftpConfiguration.getAlternateRemoteHost().equals("alternateRemoteHost"));
 
         ftpConfiguration.setMaxRetryAttempts(Integer.valueOf(10));
         Assert.assertEquals("maxRetryAttempts", Integer.valueOf(10), ftpConfiguration.getMaxRetryAttempts());
+        ftpConfiguration.setAlternateMaxRetryAttempts(Integer.valueOf(5));
+        Assert.assertEquals("alternateMaxRetryAttempts", Integer.valueOf(5), ftpConfiguration.getAlternateMaxRetryAttempts());
 
         ftpConfiguration.setRemotePort(Integer.valueOf(21));
         Assert.assertEquals("remotePort", Integer.valueOf(21), ftpConfiguration.getRemotePort());
+        ftpConfiguration.setAlternateRemotePort(Integer.valueOf(20));
+        Assert.assertEquals("alternateRemotePort", Integer.valueOf(20), ftpConfiguration.getAlternateRemotePort());
 
         ftpConfiguration.setUsername("username");
         Assert.assertEquals("username", ftpConfiguration.getUsername());
+        ftpConfiguration.setAlternateUsername("alternateUsername");
+        Assert.assertEquals("alternateUsername", ftpConfiguration.getAlternateUsername());
 
         ftpConfiguration.setPassword("password");
         Assert.assertEquals("password", ftpConfiguration.getPassword());
+        ftpConfiguration.setAlternatePassword("alternatePassword");
+        Assert.assertEquals("alternatePassword", ftpConfiguration.getAlternatePassword());
 
         ftpConfiguration.setActive(Boolean.TRUE);
         Assert.assertTrue("active", ftpConfiguration.getActive().booleanValue());
+        ftpConfiguration.setAlternateActive(Boolean.FALSE);
+        Assert.assertFalse("alternateActive", ftpConfiguration.getAlternateActive().booleanValue());
 
         ftpConfiguration.setConnectionTimeout(Integer.valueOf(1500));
         Assert.assertEquals("connectionTimeout", Integer.valueOf(1500), ftpConfiguration.getConnectionTimeout());
+        ftpConfiguration.setAlternateConnectionTimeout(Integer.valueOf(1501));
+        Assert.assertEquals("alternateConnectionTimeout", Integer.valueOf(1501), ftpConfiguration.getAlternateConnectionTimeout());
 
         ftpConfiguration.setDataTimeout(Integer.valueOf(1500));
         Assert.assertEquals("dataTimeout", Integer.valueOf(1500), ftpConfiguration.getDataTimeout());
+        ftpConfiguration.setAlternateDataTimeout(Integer.valueOf(1600));
+        Assert.assertEquals("alternateDataTimeout", Integer.valueOf(1600), ftpConfiguration.getAlternateDataTimeout());
 
         ftpConfiguration.setSocketTimeout(Integer.valueOf(1500));
         Assert.assertEquals("socketTimeout", Integer.valueOf(1500), ftpConfiguration.getSocketTimeout());
+        ftpConfiguration.setAlternateSocketTimeout(Integer.valueOf(2500));
+        Assert.assertEquals("alternateSocketTimeout", Integer.valueOf(2500), ftpConfiguration.getAlternateSocketTimeout());
 
         ftpConfiguration.setSystemKey("systemKey");
         Assert.assertEquals("systemKey", "systemKey", ftpConfiguration.getSystemKey());
+        ftpConfiguration.setAlternateSystemKey("alternateSystemKey");
+        Assert.assertEquals("alternateSystemKey", "alternateSystemKey", ftpConfiguration.getAlternateSystemKey());
     }
-
+    
     /**
-     * Test default property values successful validate invocation.
+     * Test property successful validate invocation.
      * @throws InvalidPropertyException if configuration instance is invalid
      */
     @Test
-    public void test_ftpConfiguration_validate_defauls_success() throws InvalidPropertyException
+    public void test_ftpConfiguration_validate_success() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.validate();
     }
-
+    
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of destructive and renameOnSuccess being true.
@@ -215,12 +243,12 @@ public class FtpConsumerConfigurationTest
     @Test(expected = InvalidPropertyException.class)
     public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.setDestructive(Boolean.TRUE);
         ftpConfiguration.validate();
     }
-
+    
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of moveOnSuccess and renameOnSuccess being true.
@@ -230,7 +258,7 @@ public class FtpConsumerConfigurationTest
     @Test(expected = InvalidPropertyException.class)
     public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.validate();
@@ -245,7 +273,7 @@ public class FtpConsumerConfigurationTest
     @Test(expected = InvalidPropertyException.class)
     public void test_ftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.validate();
     }
@@ -259,7 +287,7 @@ public class FtpConsumerConfigurationTest
     @Test(expected = InvalidPropertyException.class)
     public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.setDestructive(Boolean.TRUE);
         ftpConfiguration.validate();
@@ -274,7 +302,7 @@ public class FtpConsumerConfigurationTest
     @Test(expected = InvalidPropertyException.class)
     public void test_ftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.validate();
     }
@@ -286,7 +314,7 @@ public class FtpConsumerConfigurationTest
     @Test
     public void test_ftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
         ftpConfiguration.setRenameOnSuccessExtension(".done");
         ftpConfiguration.validate();
@@ -299,7 +327,7 @@ public class FtpConsumerConfigurationTest
     @Test
     public void test_ftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidPropertyException
     {
-        FtpConsumerConfiguration ftpConfiguration = new FtpConsumerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
         ftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
         ftpConfiguration.setMoveOnSuccessNewPath("/done");
         ftpConfiguration.validate();
@@ -308,10 +336,12 @@ public class FtpConsumerConfigurationTest
     /**
      * If the systemKey value injected was invalid, validate will reset to default value <i>empty {@link String}</i>.
      * Invalid systemKey values are: <code>null</code> or <i>single space {@link String}</i> 
+     * 
+     * @throws InvalidPropertyException if error validating configuration
      */
-    @Test public void validate_will_reset_systemKey_to_default_if_invalid()
+    @Test public void validate_will_reset_systemKey_to_default_if_invalid() throws InvalidPropertyException
     {
-        FtpProducerConfiguration ftpConfiguration = new FtpProducerConfiguration();
+        FtpConsumerAlternateConfiguration ftpConfiguration = new FtpConsumerAlternateConfiguration();
 
         ftpConfiguration.setSystemKey(null);
         ftpConfiguration.validate();
@@ -320,6 +350,14 @@ public class FtpConsumerConfigurationTest
         ftpConfiguration.setSystemKey(" ");
         ftpConfiguration.validate();
         Assert.assertEquals("", ftpConfiguration.getSystemKey());
-    }
 
+        ftpConfiguration.setAlternateSystemKey(null);
+        ftpConfiguration.validate();
+        Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
+
+        ftpConfiguration.setAlternateSystemKey(" ");
+        ftpConfiguration.validate();
+        Assert.assertEquals("", ftpConfiguration.getAlternateSystemKey());
+    }
 }
+

@@ -135,288 +135,516 @@ public class SftpConsumerConfiguration
     /** SFTP remote port */
     private Integer connectionTimeout = Integer.valueOf(60000);
 
+
+    /**
+     * @return the sourceDirectory
+     */
     public String getSourceDirectory()
     {
-        return sourceDirectory;
+        return this.sourceDirectory;
     }
 
+
+    /**
+     * @param sourceDirectory the sourceDirectory to set
+     */
     public void setSourceDirectory(String sourceDirectory)
     {
         this.sourceDirectory = sourceDirectory;
     }
 
+
+    /**
+     * @return the filenamePattern
+     */
     public String getFilenamePattern()
     {
-        return filenamePattern;
+        return this.filenamePattern;
     }
 
+
+    /**
+     * @param filenamePattern the filenamePattern to set
+     */
     public void setFilenamePattern(String filenamePattern)
     {
         this.filenamePattern = filenamePattern;
     }
 
+
+    /**
+     * @return the sourceDirectoryURLFactory
+     */
     public DirectoryURLFactory getSourceDirectoryURLFactory()
     {
-        return sourceDirectoryURLFactory;
+        return this.sourceDirectoryURLFactory;
     }
 
-    public void setSourceDirectoryURLFactory(DirectoryURLFactory sourceDirectoryURLFactory)
+
+    /**
+     * @param sourceDirectoryURLFactory the sourceDirectoryURLFactory to set
+     */
+    public void setSourceDirectoryURLFactory(
+            DirectoryURLFactory sourceDirectoryURLFactory)
     {
         this.sourceDirectoryURLFactory = sourceDirectoryURLFactory;
     }
 
+
+    /**
+     * @return the filterDuplicates
+     */
     public Boolean getFilterDuplicates()
     {
-        return filterDuplicates;
+        return this.filterDuplicates;
     }
 
+
+    /**
+     * @param filterDuplicates the filterDuplicates to set
+     */
     public void setFilterDuplicates(Boolean filterDuplicates)
     {
         this.filterDuplicates = filterDuplicates;
     }
 
+
+    /**
+     * @return the filterOnFilename
+     */
     public Boolean getFilterOnFilename()
     {
-        return filterOnFilename;
+        return this.filterOnFilename;
     }
 
+
+    /**
+     * @param filterOnFilename the filterOnFilename to set
+     */
     public void setFilterOnFilename(Boolean filterOnFilename)
     {
         this.filterOnFilename = filterOnFilename;
     }
 
+
+    /**
+     * @return the filterOnLastModifiedDate
+     */
     public Boolean getFilterOnLastModifiedDate()
     {
-        return filterOnLastModifiedDate;
+        return this.filterOnLastModifiedDate;
     }
 
+
+    /**
+     * @param filterOnLastModifiedDate the filterOnLastModifiedDate to set
+     */
     public void setFilterOnLastModifiedDate(Boolean filterOnLastModifiedDate)
     {
         this.filterOnLastModifiedDate = filterOnLastModifiedDate;
     }
 
+
+    /**
+     * @return the renameOnSuccess
+     */
     public Boolean getRenameOnSuccess()
     {
-        return renameOnSuccess;
+        return this.renameOnSuccess;
     }
 
+
+    /**
+     * @param renameOnSuccess the renameOnSuccess to set
+     */
     public void setRenameOnSuccess(Boolean renameOnSuccess)
     {
         this.renameOnSuccess = renameOnSuccess;
     }
 
+
+    /**
+     * @return the renameOnSuccessExtension
+     */
     public String getRenameOnSuccessExtension()
     {
-        return renameOnSuccessExtension;
+        return this.renameOnSuccessExtension;
     }
 
+
+    /**
+     * @param renameOnSuccessExtension the renameOnSuccessExtension to set
+     */
     public void setRenameOnSuccessExtension(String renameOnSuccessExtension)
     {
         this.renameOnSuccessExtension = renameOnSuccessExtension;
     }
 
+
+    /**
+     * @return the moveOnSuccess
+     */
     public Boolean getMoveOnSuccess()
     {
-        return moveOnSuccess;
+        return this.moveOnSuccess;
     }
 
+
+    /**
+     * @param moveOnSuccess the moveOnSuccess to set
+     */
     public void setMoveOnSuccess(Boolean moveOnSuccess)
     {
         this.moveOnSuccess = moveOnSuccess;
     }
 
+
+    /**
+     * @return the moveOnSuccessNewPath
+     */
     public String getMoveOnSuccessNewPath()
     {
-        return moveOnSuccessNewPath;
+        return this.moveOnSuccessNewPath;
     }
 
+
+    /**
+     * @param moveOnSuccessNewPath the moveOnSuccessNewPath to set
+     */
     public void setMoveOnSuccessNewPath(String moveOnSuccessNewPath)
     {
         this.moveOnSuccessNewPath = moveOnSuccessNewPath;
     }
 
+
+    /**
+     * @return the chronological
+     */
     public Boolean getChronological()
     {
-        return chronological;
+        return this.chronological;
     }
 
+
+    /**
+     * @param chronological the chronological to set
+     */
     public void setChronological(Boolean chronological)
     {
         this.chronological = chronological;
     }
 
+
+    /**
+     * @return the chunking
+     */
     public Boolean getChunking()
     {
-        return chunking;
+        return this.chunking;
     }
 
+
+    /**
+     * @param chunking the chunking to set
+     */
     public void setChunking(Boolean chunking)
     {
         this.chunking = chunking;
     }
 
+
+    /**
+     * @return the chunkSize
+     */
     public Integer getChunkSize()
     {
-        return chunkSize;
+        return this.chunkSize;
     }
 
+
+    /**
+     * @param chunkSize the chunkSize to set
+     */
     public void setChunkSize(Integer chunkSize)
     {
         this.chunkSize = chunkSize;
     }
 
+
+    /**
+     * @return the checksum
+     */
     public Boolean getChecksum()
     {
-        return checksum;
+        return this.checksum;
     }
 
+
+    /**
+     * @param checksum the checksum to set
+     */
     public void setChecksum(Boolean checksum)
     {
         this.checksum = checksum;
     }
 
+
+    /**
+     * @return the minAge
+     */
     public Long getMinAge()
     {
-        return minAge;
+        return this.minAge;
     }
 
+
+    /**
+     * @param minAge the minAge to set
+     */
     public void setMinAge(Long minAge)
     {
         this.minAge = minAge;
     }
 
+
+    /**
+     * @return the destructive
+     */
     public Boolean getDestructive()
     {
-        return destructive;
+        return this.destructive;
     }
 
+
+    /**
+     * @param destructive the destructive to set
+     */
     public void setDestructive(Boolean destructive)
     {
         this.destructive = destructive;
     }
 
+
+    /**
+     * @return the maxRows
+     */
     public Integer getMaxRows()
     {
-        return maxRows;
+        return this.maxRows;
     }
 
+
+    /**
+     * @param maxRows the maxRows to set
+     */
     public void setMaxRows(Integer maxRows)
     {
         this.maxRows = maxRows;
     }
 
+
+    /**
+     * @return the ageOfFiles
+     */
     public Integer getAgeOfFiles()
     {
-        return ageOfFiles;
+        return this.ageOfFiles;
     }
 
+
+    /**
+     * @param ageOfFiles the ageOfFiles to set
+     */
     public void setAgeOfFiles(Integer ageOfFiles)
     {
         this.ageOfFiles = ageOfFiles;
     }
 
+
+    /**
+     * @return the clientID
+     */
     public String getClientID()
     {
-        return clientID;
+        return this.clientID;
     }
 
+
+    /**
+     * @param clientID the clientID to set
+     */
     public void setClientID(String clientID)
     {
         this.clientID = clientID;
     }
 
+
+    /**
+     * @return the cleanupJournalOnComplete
+     */
     public Boolean getCleanupJournalOnComplete()
     {
-        return cleanupJournalOnComplete;
+        return this.cleanupJournalOnComplete;
     }
 
+
+    /**
+     * @param cleanupJournalOnComplete the cleanupJournalOnComplete to set
+     */
     public void setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete)
     {
         this.cleanupJournalOnComplete = cleanupJournalOnComplete;
     }
 
+
+    /**
+     * @return the remoteHost
+     */
     public String getRemoteHost()
     {
-        return remoteHost;
+        return this.remoteHost;
     }
 
+
+    /**
+     * @param remoteHost the remoteHost to set
+     */
     public void setRemoteHost(String remoteHost)
     {
         this.remoteHost = remoteHost;
     }
 
+
+    /**
+     * @return the privateKeyFilename
+     */
     public String getPrivateKeyFilename()
     {
-        return privateKeyFilename;
+        return this.privateKeyFilename;
     }
 
+
+    /**
+     * @param privateKeyFilename the privateKeyFilename to set
+     */
     public void setPrivateKeyFilename(String privateKeyFilename)
     {
         this.privateKeyFilename = privateKeyFilename;
     }
 
+
+    /**
+     * @return the maxRetryAttempts
+     */
     public Integer getMaxRetryAttempts()
     {
-        return maxRetryAttempts;
+        return this.maxRetryAttempts;
     }
 
+
+    /**
+     * @param maxRetryAttempts the maxRetryAttempts to set
+     */
     public void setMaxRetryAttempts(Integer maxRetryAttempts)
     {
         this.maxRetryAttempts = maxRetryAttempts;
     }
 
+
+    /**
+     * @return the remotePort
+     */
     public Integer getRemotePort()
     {
-        return remotePort;
+        return this.remotePort;
     }
 
+
+    /**
+     * @param remotePort the remotePort to set
+     */
     public void setRemotePort(Integer remotePort)
     {
         this.remotePort = remotePort;
     }
 
+
+    /**
+     * @return the knownHostsFilename
+     */
     public String getKnownHostsFilename()
     {
-        return knownHostsFilename;
+        return this.knownHostsFilename;
     }
 
+
+    /**
+     * @param knownHostsFilename the knownHostsFilename to set
+     */
     public void setKnownHostsFilename(String knownHostsFilename)
     {
         this.knownHostsFilename = knownHostsFilename;
     }
 
+
+    /**
+     * @return the username
+     */
     public String getUsername()
     {
-        return username;
+        return this.username;
     }
 
+
+    /**
+     * @param username the username to set
+     */
     public void setUsername(String username)
     {
         this.username = username;
     }
 
+
+    /**
+     * @return the password
+     */
     public String getPassword()
     {
-        return password;
+        return this.password;
     }
 
+
+    /**
+     * @param password the password to set
+     */
     public void setPassword(String password)
     {
         this.password = password;
     }
 
+
+    /**
+     * @return the connectionTimeout
+     */
     public Integer getConnectionTimeout()
     {
-        return connectionTimeout;
+        return this.connectionTimeout;
     }
 
+
+    /**
+     * @param connectionTimeout the connectionTimeout to set
+     */
     public void setConnectionTimeout(Integer connectionTimeout)
     {
         this.connectionTimeout = connectionTimeout;
     }
 
-    /* (non-Jsdoc)
-     * @see org.ikasan.spec.endpoint.EndpointConfiguration#validate()
+
+    /**
+     * Validate configured properties.
+     * 
+     * @throws InvalidPropertyException if combination of configured properties is invalid
      */
     public void validate() throws InvalidPropertyException
     {
@@ -428,7 +656,7 @@ public class SftpConsumerConfiguration
                         + "] and destructive[" + this.destructive 
                         + "] are mutually exclusive.");
             }
-            if(this.moveOnSuccess)
+            if(this.moveOnSuccess.booleanValue())
             {
                 throw new InvalidPropertyException("renameOnSuccess[" + this.renameOnSuccess 
                         + "] and moveOnSuccess[" + this.moveOnSuccess 
@@ -440,16 +668,16 @@ public class SftpConsumerConfiguration
                         + "] requires renameOnSuccessExtention to be specified.");
             }
         }
-        
-        if(moveOnSuccess)
+
+        if(this.moveOnSuccess)
         {
-            if(destructive)
+            if(this.destructive)
             {
                 throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
                         + "] and destructive[" + this.destructive 
                         + "] are mutually exclusive.");
             }
-            if(moveOnSuccessNewPath == null)
+            if(this.moveOnSuccessNewPath == null)
             {
                 throw new InvalidPropertyException("moveOnSuccess[" + this.moveOnSuccess 
                         + "] requires moveOnSuccessNewPath to be specified.");

@@ -43,6 +43,7 @@ package org.ikasan.endpoint.sftp.consumer;
 import javax.resource.ResourceException;
 
 import org.ikasan.spec.endpoint.Consumer;
+import org.ikasan.spec.endpoint.DefaultEndpointManager;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
@@ -50,8 +51,11 @@ import org.ikasan.spec.endpoint.EndpointActivator;
 /**
  * Endpoint manager for SFTP consumer endpoint implementations based on an 
  * Sftp protocol and configuration.
+ * 
  * @author Ikasan Development Team
+ * @deprecated Use the general implementation {@link DefaultEndpointManager} instead
  */
+@Deprecated
 public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,SftpConsumerConfiguration>
 {
     /** consumer factory */
@@ -65,8 +69,8 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
 
     /**
      * Constructor
-     * @param connectionFactory
-     * @param sftpConfiguration
+     * @param endpointFactory {@link EndpointFactory} implementation for creating the endpoint
+     * @param sftpConfiguration Runtime configuration of endpoint
      */
     public SftpConsumerEndpointManager(EndpointFactory<Consumer<?>,SftpConsumerConfiguration> endpointFactory, SftpConsumerConfiguration sftpConfiguration)
     {
@@ -88,9 +92,9 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
      */
     public void start() throws ResourceException
     {
-        sftpConfiguration.validate();
+        this.sftpConfiguration.validate();
         
-        this.consumer = this.endpointFactory.createEndpoint(sftpConfiguration);
+        this.consumer = this.endpointFactory.createEndpoint(this.sftpConfiguration);
         if(this.consumer instanceof EndpointActivator)
         {
             ((EndpointActivator) this.consumer).activate();
@@ -114,7 +118,7 @@ public class SftpConsumerEndpointManager implements EndpointManager<Consumer<?>,
         {
             try
             {
-                ((EndpointActivator)consumer).deactivate();
+                ((EndpointActivator)this.consumer).deactivate();
             }
             finally
             {

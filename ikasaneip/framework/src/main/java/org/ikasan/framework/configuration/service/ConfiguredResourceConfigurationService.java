@@ -60,24 +60,35 @@ import org.ikasan.framework.configuration.model.ConfigurationParameter;
  *
  */
 public class ConfiguredResourceConfigurationService
-    implements ConfigurationService<ConfiguredResource,Configuration> 
+    implements ConfigurationService<ConfiguredResource,Configuration>, 
+    ConfigurationManagement<ConfiguredResource,Configuration> 
 {
     /** Logger instance */
     private static Logger logger = Logger.getLogger(ConfiguredResourceConfigurationService.class);
 
-    /** configuration DAO used for accessing the configuration */
-    private ConfigurationDao configurationDao;
+    /** configuration DAO used for accessing the configuration outside a transaction */
+    private ConfigurationDao staticConfigurationDao;
+    
+    /** configuration DAO used for accessing the configuration transactionally at runtime */
+    private ConfigurationDao dynamicConfigurationDao;
     
     /**
      * Constructor
-     * @param configurationDao
+     * @param staticConfigurationDao - used to update configuration outside a runtime transaction
+     * @param dynamicConfigurationDao - used to update configuration at runtime within a transaction
      */
-    public ConfiguredResourceConfigurationService(ConfigurationDao configurationDao)
+    public ConfiguredResourceConfigurationService(ConfigurationDao staticConfigurationDao, ConfigurationDao dynamicConfigurationDao)
     {
-        this.configurationDao = configurationDao;
-        if(configurationDao == null)
+        this.staticConfigurationDao = staticConfigurationDao;
+        if(staticConfigurationDao == null)
         {
             throw new IllegalArgumentException("configurationDao cannot be 'null'");
+        }
+        
+        this.dynamicConfigurationDao = dynamicConfigurationDao;
+        if(dynamicConfigurationDao == null)
+        {
+            throw new IllegalArgumentException("dynamicConfigurationDao cannot be 'null'");
         }
     }
 
@@ -86,7 +97,7 @@ public class ConfiguredResourceConfigurationService
      */
     public void configure(ConfiguredResource configuredResource)
     {
-        Configuration configuration = this.configurationDao.findById(configuredResource.getConfiguredResourceId());
+        Configuration configuration = this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
         if(configuration == null)
         {
             throw new ConfigurationException("Failed to configure configuredResource [" 
@@ -171,11 +182,53 @@ public class ConfiguredResourceConfigurationService
     }
 
     /* (non-Javadoc)
+     * @see org.ikasan.framework.configuration.service.ConfigurationService#update(org.ikasan.framework.configuration.model.Configuration)
+     */
+    public void update(ConfiguredResource configuredResource)
+    {
+        boolean configurationUpdated = false;
+        Object runtimeConfiguration = configuredResource.getConfiguration();
+        Configuration configuration = this.dynamicConfigurationDao.findById(configuredResource.getConfiguredResourceId());
+        for(ConfigurationParameter configurationParameter:configuration.getConfigurationParameters())
+        {
+            String runtimeParameterValue;
+            try
+            {
+                runtimeParameterValue = BeanUtils.getProperty(runtimeConfiguration, configurationParameter.getName());
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new ConfigurationException(e);
+            }
+            catch (InvocationTargetException e)
+            {
+                throw new ConfigurationException(e);
+            }
+            catch (NoSuchMethodException e)
+            {
+                throw new ConfigurationException(e);
+            }
+
+            if( (runtimeParameterValue == null && configurationParameter.getValue() != null) ||
+                (runtimeParameterValue != null && !(runtimeParameterValue.equals(configurationParameter.getValue()))) )
+            {
+                configurationUpdated = true;
+                configurationParameter.setValue(runtimeParameterValue);
+            }
+        }
+
+        if(configurationUpdated)
+        {
+            this.dynamicConfigurationDao.save(configuration);
+        }
+    }
+
+    /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
      */
     public void deleteConfiguration(Configuration configuration)
     {
-        this.configurationDao.delete(configuration);
+        this.staticConfigurationDao.delete(configuration);
     }
 
     /* (non-Javadoc)
@@ -183,7 +236,7 @@ public class ConfiguredResourceConfigurationService
      */
     public void saveConfiguration(Configuration configuration)
     {
-        this.configurationDao.save(configuration);
+        this.staticConfigurationDao.save(configuration);
     }
 
     /* (non-Javadoc)
@@ -191,6 +244,6 @@ public class ConfiguredResourceConfigurationService
      */
     public Configuration getConfiguration(ConfiguredResource configuredResource)
     {
-        return this.configurationDao.findById(configuredResource.getConfiguredResourceId());
+        return this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
     }
 }

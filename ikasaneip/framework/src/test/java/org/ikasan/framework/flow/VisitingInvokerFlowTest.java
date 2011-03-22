@@ -1,6 +1,6 @@
  /* 
- * $Id$
- * $URL$
+ * $Id: VisitingInvokerFlowTest.java 3183 2010-09-16 06:28:36Z mitcje $
+ * $URL: https://open.jira.com/svn/IKASAN/trunk/ikasaneip/framework/src/test/java/org/ikasan/framework/flow/VisitingInvokerFlowTest.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -46,6 +46,7 @@ import java.util.Map;
 
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.configuration.ConfiguredResource;
+import org.ikasan.framework.configuration.DynamicConfiguredResource;
 import org.ikasan.framework.configuration.model.Configuration;
 import org.ikasan.framework.configuration.service.ConfigurationException;
 import org.ikasan.framework.configuration.service.ConfigurationService;
@@ -196,6 +197,37 @@ public class VisitingInvokerFlowTest
         mockery.assertIsSatisfied();
     }
     
+    /**
+     * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
+     */
+    @Test
+    public void test_start_with_DynamicConfiguredResources()
+    {
+        final Map<String,FlowElement> transitions = new HashMap<String,FlowElement>();
+        transitions.put("key", flowElement);
+        
+        final TestDynamicConfiguredResourceFlowComponent testDynamicConfiguredFlowComponent = 
+            mockery.mock(TestDynamicConfiguredResourceFlowComponent.class, "mockedDynamicConfiguredResourceFlowComponent");
+        
+        final Configuration configuration = mockery.mock(Configuration.class, "mockedConfiguration");
+        
+        mockery.checking(new Expectations()
+        {
+            {
+                one(flowElement).getTransitions();
+                will(returnValue(transitions));
+                
+                one(flowElement).getFlowComponent();
+                will(returnValue(testDynamicConfiguredFlowComponent));
+                
+                one(configurationService).configure(testDynamicConfiguredFlowComponent);
+            }
+        });
+        
+        visitingInvokerFlow.setConfigurationService(configurationService);
+        visitingInvokerFlow.start();
+        mockery.assertIsSatisfied();
+    }
     
     /**
      * Test method for {@link org.ikasan.framework.flow.VisitingInvokerFlow#start()}.
@@ -321,6 +353,40 @@ public class VisitingInvokerFlowTest
      *
      */
     private class TestConfiguredResourceFlowComponent implements FlowComponent, ConfiguredResource<Configuration>
+    {
+        private String configuredResourceId;
+        
+        public String getConfiguredResourceId()
+        {
+            // test purposes only - ignore implementation
+            return configuredResourceId;
+        }
+        
+        public void setConfiguration(Configuration configuration)
+        {
+            // test purposes only - ignore implementation
+        }
+
+        public Configuration getConfiguration()
+        {
+            // test purposes only - ignore implementation
+            return null;
+        }
+
+        public void setConfiguredResourceId(String configuredResourceId)
+        {
+            // test purposes only - ignore implementation
+            this.configuredResourceId = configuredResourceId;
+        }
+        
+    }
+
+    /**
+     * Test component which implements the ConfiguredResource contract.
+     * @author Ikasan Development Team
+     *
+     */
+    private class TestDynamicConfiguredResourceFlowComponent implements FlowComponent, DynamicConfiguredResource<Configuration>
     {
         private String configuredResourceId;
         
