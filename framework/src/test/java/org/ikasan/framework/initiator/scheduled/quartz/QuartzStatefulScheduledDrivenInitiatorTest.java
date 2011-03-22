@@ -136,7 +136,10 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
 		classMockery.checking(new Expectations()
         {
             {
-            	//eventProvider fails
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
+                //eventProvider fails
                 one(eventProvider).getEvents();
                 inSequence(sequence);
                 will(throwException(throwable));
@@ -211,6 +214,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // get events from event provider
                 one(eventProvider).getEvents();
                 will(returnValue(null));
@@ -241,6 +247,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'null' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(returnValue(null));
@@ -275,6 +284,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'null' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(returnValue(null));
@@ -310,6 +322,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'null' ikasanExceptionAction from the flow invocation
                 exactly(numOfEvents).of(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(returnValue(null));
@@ -345,6 +360,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollforwardStop' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -399,6 +417,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -449,6 +470,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -477,6 +501,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -516,6 +543,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -537,6 +567,9 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
         classMockery.checking(new Expectations()
         {
             {
+                // work-around for dynamic configuration requires invoke of flow.sync
+                one(flow).sync();
+                
                 // return 'rollbackRetry' ikasanExceptionAction from the flow invocation
                 one(flow).invoke((FlowInvocationContext)with(a(FlowInvocationContext.class)), with(any(Event.class)));
                 will(throwException(throwable));
@@ -646,16 +679,26 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
     }
 
     private void setStopInitiatorExpectations()
-
     {
+        final Trigger trigger = classMockery.mock(Trigger.class);
+        final Trigger[] triggers = new Trigger[]{trigger};
 
         try
         {
             classMockery.checking(new Expectations()
             {
                 {
-                    // required as part of the stop call on the initiator
-                    one(scheduler).pauseJobGroup(with(any(String.class)));
+                    one(scheduler).getTriggersOfJob("initiatorJob", moduleName+"-"+initiatorName);
+                    will(returnValue(triggers));
+
+                    one(trigger).getName();
+                    will(returnValue("triggerName"));
+                    
+                    one(trigger).getGroup();
+                    will(returnValue("triggerGroup"));
+                    
+                    // unschedule the job trigger
+                    one(scheduler).unscheduleJob("triggerName", "triggerGroup");
                 }
             });
         }
@@ -990,27 +1033,15 @@ public class QuartzStatefulScheduledDrivenInitiatorTest
             classMockery.checking(new Expectations()
             {
                 {
-                    one(scheduler).getTriggersOfJob("initiatorJob", moduleName+"-"+initiatorName);
-                    if (previouslyStarted){
-                        will(returnValue(new Trigger[]{businessAsUsualTrigger1, businessAsUsualTrigger2}));
-                    } else{
-                        will(returnValue(new Trigger[]{}));
+                    //first trigger
+                    one(businessAsUsualTrigger1).setGroup(moduleName+"-"+initiatorName);
+                    one(scheduler).scheduleJob((JobDetail)with(any(JobDetail.class)), with(equal(businessAsUsualTrigger1)));
 
-                        //first trigger
-                        one(businessAsUsualTrigger1).setGroup(moduleName+"-"+initiatorName);
-                        one(scheduler).scheduleJob((JobDetail)with(any(JobDetail.class)), with(equal(businessAsUsualTrigger1)));
-
-                        //subsequent trigger
-                        one(businessAsUsualTrigger2).setGroup(moduleName+"-"+initiatorName);
-                        one(businessAsUsualTrigger2).setJobGroup(moduleName+"-"+initiatorName);
-                        one(businessAsUsualTrigger2).setJobName("initiatorJob");
-                        one(scheduler).scheduleJob(businessAsUsualTrigger2 );
-                    }
-
-
-
-                    // resume the flow
-                    exactly(1).of(scheduler).resumeJobGroup(with(equal(moduleName+"-"+initiatorName)));
+                    //subsequent trigger
+                    one(businessAsUsualTrigger2).setGroup(moduleName+"-"+initiatorName);
+                    one(businessAsUsualTrigger2).setJobGroup(moduleName+"-"+initiatorName);
+                    one(businessAsUsualTrigger2).setJobName("initiatorJob");
+                    one(scheduler).scheduleJob(businessAsUsualTrigger2 );
                 }
             });
         }

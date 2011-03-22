@@ -623,5 +623,11 @@
 
 
     </dependencies>
+
+  <scm>
+    <connection>scm:svn:http://svn.sonatype.org/spice/tags/ikasan-0.8.2</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/spice/tags/ikasan-0.8.2</developerConnection>
+    <url>http://svn.sonatype.org/spice/tags/ikasan-0.8.2</url>
+  </scm>
 </project>
 

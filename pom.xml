@@ -45,12 +45,12 @@
 # //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
     <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Ikasan Projects Parent Project</name>
 
     <modules>
         <!--
@@ -170,6 +170,235 @@
             </plugin>
         </plugins>
     </build>
+
+    <organization>
+      <name>Ikasan</name>
+      <url>http://www.ikasan.org</url>
+    </organization>
+    <inceptionYear>2007</inceptionYear>
+    <name>Ikasan Projects Parent Project</name>
+    <description>An free and open source Enterprise Integration Platform</description>
+    <url>http://www.ikasan.org</url>
+
+    <!-- List the core committers -->
+    <developers>
+      <developer>
+        <id>karianna</id>
+        <name>Martijn Verburg</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>magicduncan</id>
+        <name>Ross Duncan</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>mitcje</id>
+        <name>Jeff Mitchell</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>hasasu</id>
+        <name>Summer Hasani</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>suetju</id>
+        <name>Junichi Suetake</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+      <developer>
+        <id>koukhe</id>
+        <name>Herodotos Koukkides</name>
+        <organization>Ikasan</organization>
+        <organizationUrl>http://www.ikasan.org</organizationUrl>
+        <roles>
+          <role>developer</role>
+        </roles>
+        <timezone>0</timezone>
+      </developer>
+    </developers>
+    <!-- Contributors -->
+    <contributors>
+        <contributor>
+            <name>Cae Fernandes</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-3</timezone>
+        </contributor>
+        <contributor>
+            <name>Chia-Hung Lin</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Giridhar Teklur</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-4</timezone>
+        </contributor>
+        <contributor>
+            <name>Ioannis Mavroukakis</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Jaikiran Pai</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Jaikiran Pai</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Janos Lele</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Kerry Kenneally</name>
+            <roles>
+                <role>graphic designer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Matthew Potter</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </contributor>
+        <contributor>
+            <name>Prasad Saya</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+        <contributor>
+            <name>Vijitha Kumara</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>5.3</timezone>
+        </contributor>
+    </contributors>
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>Modified BSD License</name>
+            <url>http://www.ikasan.org/license.html</url>
+            <distribution>manual</distribution>
+            <comments>A fairly non-restrictive OSS license</comments>
+        </license>
+    </licenses>
+    <!-- Our Issue Management -->
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://open.jira.com/browse/IKASAN</url>
+    </issueManagement>
+    <!-- CI Server -->
+    <ciManagement>
+        <system>hudson</system>
+        <url>http://www.ikasan.org/hudson/</url>
+    </ciManagement>
+    <!-- Our mailing lists -->
+    <mailingLists>
+        <mailingList>
+            <name>Ikasan Users</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-user</unsubscribe>
+            <post>ikasaneip-user@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>Ikasan Development</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-developer</unsubscribe>
+            <post>ikasaneip-developer@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-developer</archive>
+        </mailingList>
+        <mailingList>
+            <name>Ikasan Announce</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/ikasaneip-announce</unsubscribe>
+            <post>ikasaneip-announce@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=ikasaneip-announce</archive>
+        </mailingList>
+    </mailingLists>
+
+    <profiles>
+        <!-- Profile for Releasing to Nexus -->
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <useAgent>true</useAgent>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
 

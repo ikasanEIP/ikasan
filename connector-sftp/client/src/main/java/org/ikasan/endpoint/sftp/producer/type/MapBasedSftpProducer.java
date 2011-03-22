@@ -59,24 +59,31 @@ import org.ikasan.spec.endpoint.Producer;
  */
 public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
 {
-    /** existing template */
+    /** Currently active connection template */
+    protected FileTransferConnectionTemplate activeFileTransferConnectionTemplate;
+
+    /** A connection template */
     protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
+
+    /** Alternate template to be used in cases of failure */
+    protected FileTransferConnectionTemplate alternateFileTransferConnectionTemplate;
     
-    /** configuration */
+    /** Configuration */
     protected SftpProducerConfiguration sftpProducerConfiguration;
 
     /**
      * Constructor
-     * @param fileTransferConnectionTemplate
-     * @param sftpProducerConfiguration
+     * @param fileTransferConnectionTemplate SFTP connection template
+     * @param sftpProducerConfiguration the SFTP connection runtime configuration
      */
-    public MapBasedSftpProducer(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpProducerConfiguration sftpProducerConfiguration)
+    public MapBasedSftpProducer(final FileTransferConnectionTemplate fileTransferConnectionTemplate, final SftpProducerConfiguration sftpProducerConfiguration)
     {
         this.fileTransferConnectionTemplate = fileTransferConnectionTemplate;
         if(fileTransferConnectionTemplate == null)
         {
             throw new IllegalArgumentException("fileTransferConnectionTemplate cannot be 'null'");
         }
+        this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
 
         this.sftpProducerConfiguration = sftpProducerConfiguration;
         if(sftpProducerConfiguration == null)
@@ -88,16 +95,71 @@ public class MapBasedSftpProducer implements Producer<Map<String,InputStream>>
     /**
      * Invoke delivery based on passing a map of String (filename) and InputStream (content) pairs
      * to allow compatibility with the existing FileTransferConnectionTemplate.
-     * @param Map<String,InputStream>
+     * 
+     * @param filenameContentPairs files to deliver
      */
     public void invoke(Map<String,InputStream> filenameContentPairs) throws ResourceException
     {
         for(Map.Entry<String,InputStream> filenameContent : filenameContentPairs.entrySet())
         {
-            this.fileTransferConnectionTemplate.deliverInputStream(filenameContent.getValue(), filenameContent.getKey(), 
-                    sftpProducerConfiguration.getOutputDirectory(), sftpProducerConfiguration.getOverwrite(), 
-                    sftpProducerConfiguration.getRenameExtension(), sftpProducerConfiguration.getChecksumDelivered(), 
-                    sftpProducerConfiguration.getUnzip(), sftpProducerConfiguration.getCreateParentDirectory(), sftpProducerConfiguration.getTempFileName());
-        }        
+            try
+            {
+            this.activeFileTransferConnectionTemplate.deliverInputStream(filenameContent.getValue(), filenameContent.getKey(), 
+                    this.sftpProducerConfiguration.getOutputDirectory(), this.sftpProducerConfiguration.getOverwrite().booleanValue(), 
+                    this.sftpProducerConfiguration.getRenameExtension(), this.sftpProducerConfiguration.getChecksumDelivered().booleanValue(), 
+                    this.sftpProducerConfiguration.getUnzip().booleanValue(), this.sftpProducerConfiguration.getCreateParentDirectory().booleanValue(),
+                    this.sftpProducerConfiguration.getTempFileName());
+            }
+            catch (ResourceException e)
+            {
+                this.switchActiveConnection();
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * @param alternateFileTransferConnectionTemplate the alternateFileTransferConnectionTemplate to set
+     */
+    public void setAlternateFileTransferConnectionTemplate(
+            FileTransferConnectionTemplate alternateFileTransferConnectionTemplate)
+    {
+        this.alternateFileTransferConnectionTemplate = alternateFileTransferConnectionTemplate;
+    }
+
+    /**
+     * This method is only used for testing purposes
+     * @return the alternateFileTransferConnectionTemplate
+     */
+    FileTransferConnectionTemplate getAlternateFileTransferConnectionTemplate()
+    {
+        return this.alternateFileTransferConnectionTemplate;
+    }
+
+    /**
+     * This method is only used for testing purposes
+     * @return the activeFileTransferConnectionTemplate
+     */
+    FileTransferConnectionTemplate getActiveFileTransferConnectionTemplate()
+    {
+        return this.activeFileTransferConnectionTemplate;
+    }
+
+    /**
+     * Switch the active connection to the other connection template.
+     */
+    protected void switchActiveConnection()
+    {
+        if (this.alternateFileTransferConnectionTemplate != null)
+        {
+            if(this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate)
+            {
+                this.activeFileTransferConnectionTemplate = this.alternateFileTransferConnectionTemplate;
+            }
+            else
+            {
+                this.activeFileTransferConnectionTemplate = this.fileTransferConnectionTemplate;
+            }
+        }
     }
 }

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- 
 
- ====================================================================
+
+ $Id$
+ $URL$
+ 
+ =============================================================================
  Ikasan Enterprise Integration Platform
  
  Distributed under the Modified BSD License.
@@ -35,29 +39,34 @@
  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ====================================================================
+ =============================================================================
+
+ Author:  Ikasan Development Team
+ 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                xmlns:xalan="http://xml.apache.org/xalan" 
+                exclude-result-prefixes="xalan">
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
-    </parent>
+  <xsl:output method="xml" encoding="UTF-8" indent="no" />
+  
+  <!-- Main part -->
+  <xsl:template match="/">
+    <xsl:element name="targetRoot">
+    
+	    <xsl:element name="targetElement1">
+	        <xsl:value-of select="sourceRoot/sourceElement1" />
+	    </xsl:element>
+    
+        <xsl:element name="targetElement2">
+            <xsl:value-of select="sourceRoot/sourceElement2" />
+        </xsl:element>
+    
+    </xsl:element>
+    
+  </xsl:template>
 
-    <groupId>org.ikasan.demo</groupId>
-    <artifactId>demoErrorPublication-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>0.9.0-SNAPSHOT</version>
+</xsl:stylesheet>
 
-    <name>demoErrorPublication :: Parent Project</name>
 
-    <modules>
-        <module>errorpub</module>
-        <module>jar</module>
-        <module>war</module>
-        <module>ear</module>
-    </modules>
-
-</project>

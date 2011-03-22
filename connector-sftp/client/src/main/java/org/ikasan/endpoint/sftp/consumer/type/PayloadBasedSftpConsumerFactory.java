@@ -40,9 +40,11 @@
  */
 package org.ikasan.endpoint.sftp.consumer.type;
 
+import javax.resource.cci.ConnectionFactory;
+
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.connector.base.outbound.EISConnectionFactory;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerAlternateConfiguration;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.endpoint.Consumer;
@@ -50,47 +52,36 @@ import org.ikasan.spec.endpoint.EndpointFactory;
 
 /**
  * SFTP consumer factory for creating sftpConsumer endpoint implementations.
+ * 
  * @author Ikasan Development Team
  */
 public class PayloadBasedSftpConsumerFactory implements EndpointFactory<Consumer<?>,SftpConsumerConfiguration>
 {
-    /** connection factory */
-    private EISConnectionFactory connectionFactory;
+    /** Connection factory */
+    private final ConnectionFactory connectionFactory;
 
     /** Directory URL factory */
     private DirectoryURLFactory directoryURLFactory;
 
     /**
      * Constructor
-     * @param connectionFactory
+     * @param connectionFactory The SFTP connection factory
      */
-    public PayloadBasedSftpConsumerFactory(EISConnectionFactory connectionFactory)
-    {
-        this(connectionFactory, null);
-    }
-
-    /**
-     * Constructor
-     * @param connectionFactory
-     */
-    public PayloadBasedSftpConsumerFactory(EISConnectionFactory connectionFactory, DirectoryURLFactory directoryURLFactory)
+    public PayloadBasedSftpConsumerFactory(ConnectionFactory connectionFactory)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
         {
             throw new IllegalArgumentException("connectionFactory cannot be 'null'");
         }
-        this.directoryURLFactory = directoryURLFactory;
     }
 
-    /* (non-Jsdoc)
+
+    /* (non-Javadoc)
      * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
      */
     public Consumer<?> createEndpoint(SftpConsumerConfiguration sftpConsumerConfiguration)
     {
-        // update populated configuration with complex objects that cannot be specified by front end clients
-        sftpConsumerConfiguration.setSourceDirectoryURLFactory(this.directoryURLFactory);
-
         SFTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(sftpConsumerConfiguration.getClientID());
         spec.setRemoteHostname(sftpConsumerConfiguration.getRemoteHost());
@@ -101,21 +92,56 @@ public class PayloadBasedSftpConsumerFactory implements EndpointFactory<Consumer
         spec.setConnectionTimeout(sftpConsumerConfiguration.getConnectionTimeout());
         spec.setUsername(sftpConsumerConfiguration.getUsername());
         spec.setCleanupJournalOnComplete(sftpConsumerConfiguration.getCleanupJournalOnComplete());
-        
-        return getEndpoint(new FileTransferConnectionTemplate(connectionFactory, spec), sftpConsumerConfiguration);
+
+        SFTPConnectionSpec alternateSpec = null;
+        if (sftpConsumerConfiguration instanceof SftpConsumerAlternateConfiguration)
+        {
+            SftpConsumerAlternateConfiguration alternateCofnig = (SftpConsumerAlternateConfiguration)sftpConsumerConfiguration;
+
+            alternateSpec = this.getConnectionSpec();
+            alternateSpec.setClientID(alternateCofnig.getClientID());
+            alternateSpec.setRemoteHostname(alternateCofnig.getAlternateRemoteHost());
+            alternateSpec.setKnownHostsFilename(alternateCofnig.getAlternateKnownHostsFilename());
+            alternateSpec.setMaxRetryAttempts(alternateCofnig.getAlternateMaxRetryAttempts());
+            alternateSpec.setRemotePort(alternateCofnig.getAlternateRemotePort());
+            alternateSpec.setPrivateKeyFilename(alternateCofnig.getAlternatePrivateKeyFilename());
+            alternateSpec.setConnectionTimeout(alternateCofnig.getAlternateConnectionTimeout());
+            alternateSpec.setUsername(alternateCofnig.getAlternateUsername());
+            alternateSpec.setCleanupJournalOnComplete(alternateCofnig.getCleanupJournalOnComplete());
+        }
+
+        // Update populated configuration with complex objects that cannot be specified by front end clients
+        sftpConsumerConfiguration.setSourceDirectoryURLFactory(this.directoryURLFactory);
+
+        return this.getEndpoint(spec, alternateSpec, sftpConsumerConfiguration);
+    }
+
+    /**
+     * @param directoryURLFactory the directoryURLFactory to set
+     */
+    public void setDirectoryURLFactory(DirectoryURLFactory directoryURLFactory)
+    {
+        this.directoryURLFactory = directoryURLFactory;
     }
 
     /**
      * Internal endpoint creation method allows for easier overriding of the actual endpoint creation and simpler testing.
+     * 
      * @param fileTransferConnectionTemplate
      * @param sftpConsumerConfiguration
      * @return
      */
-    protected Consumer<?> getEndpoint(FileTransferConnectionTemplate fileTransferConnectionTemplate, SftpConsumerConfiguration sftpConsumerConfiguration)
+    protected Consumer<?> getEndpoint(final SFTPConnectionSpec spec, final SFTPConnectionSpec alternateSpec, 
+            final SftpConsumerConfiguration sftpConsumerConfiguration)
     {
-        return new PayloadBasedSftpConsumer(fileTransferConnectionTemplate, sftpConsumerConfiguration);
+        PayloadBasedSftpConsumer consumer = new PayloadBasedSftpConsumer(new FileTransferConnectionTemplate(this.connectionFactory, spec), sftpConsumerConfiguration);
+        if (alternateSpec != null)
+        {
+            consumer.setAlternateFileTransferConnectionTemplate(new FileTransferConnectionTemplate(this.connectionFactory, alternateSpec));
+        }
+        return consumer;
     }
-    
+
     /**
      * Utility method to aid testing of this class
      * @return
@@ -124,5 +150,4 @@ public class PayloadBasedSftpConsumerFactory implements EndpointFactory<Consumer
     {
         return new SFTPConnectionSpec();
     }
-    
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,58 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.transformation.configuration;
-
-import org.ikasan.framework.component.transformation.XsltTransformer;
+package org.ikasan.framework.configuration.service;
 
 /**
- * POJO for configurable parameters on {@link XsltTransformer}
+ * ConfigurationService defines the operational contract of any configuration
+ * service in Ikasan.
  * 
  * @author Ikasan Development Team
- *
  */
-public class XsltConfiguration
+public interface ConfigurationManagement<RESOURCE,MODEL>
 {
-    /** To compile stylesheet or not? Default is <code>true</code>.*/
-    private boolean useTranslets = true;
-
-    /** Location of stylesheet used for transformation */
-    private String stylesheetLocation;
+    /**
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
+     * @return
+     */
+    public MODEL getConfiguration(RESOURCE configuredResource);
 
     /**
-     * Accessor
-     * @return the useTranslates
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
+     * @return
      */
-    public boolean isUseTranslets()
-    {
-        return this.useTranslets;
-    }
+    public MODEL createConfiguration(RESOURCE configuredResource);
 
     /**
-     * Mutator
-     * @param useTranslets the useTranslates to set
+     * Save the given configuration.
+     * @param configuredResource
      */
-    public void setUseTranslets(boolean useTranslets)
-    {
-        this.useTranslets = useTranslets;
-    }
+    public void saveConfiguration(MODEL configuration);
 
     /**
-     * Accessor
-     * @return the stylesheetLocation
+     * Delete the given configuration.
+     * @param configuredResource
      */
-    public String getStylesheetLocation()
-    {
-        return this.stylesheetLocation;
-    }
-
-    /**
-     * Mutator
-     * @param stylesheetLocation the stylesheetLocation to set
-     */
-    public void setStylesheetLocation(String stylesheetLocation)
-    {
-        this.stylesheetLocation = stylesheetLocation;
-    }
-
+    public void deleteConfiguration(MODEL configuration);
 }

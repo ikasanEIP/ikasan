@@ -46,6 +46,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.framework.component.Event;
 import org.ikasan.framework.configuration.ConfiguredResource;
+import org.ikasan.framework.configuration.DynamicConfiguredResource;
 import org.ikasan.framework.configuration.service.ConfigurationException;
 import org.ikasan.framework.configuration.service.ConfigurationService;
 import org.ikasan.framework.flow.invoker.FlowElementInvoker;
@@ -83,6 +84,9 @@ public class VisitingInvokerFlow implements Flow
     /** configuration service for this flow */
     @SuppressWarnings("unchecked")
     private ConfigurationService configurationService;
+    
+    /** cache (for efficiency) of dynamically configured flowComponents */
+    private List<DynamicConfiguredResource> dynamicConfiguredResources = new ArrayList<DynamicConfiguredResource>();
     
     /**
      * Constructor
@@ -137,6 +141,11 @@ public class VisitingInvokerFlow implements Flow
     public void invoke(FlowInvocationContext flowInvocationContext, Event event)
     {
         flowElementInvoker.invoke(flowInvocationContext, event, moduleName, name, headElement);
+        
+        for(DynamicConfiguredResource dynamicConfiguredResource:dynamicConfiguredResources)
+        {
+            this.configurationService.update(dynamicConfiguredResource);
+        }
     }
 
     /**
@@ -183,6 +192,17 @@ public class VisitingInvokerFlow implements Flow
         return moduleName;
     }
 
+    /**
+     * Re-sync any dynamic configured resources
+     */
+    public void sync()
+    {
+        for(DynamicConfiguredResource dynamicConfiguredResource:dynamicConfiguredResources)
+        {
+            this.configurationService.configure(dynamicConfiguredResource);
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.framework.flow.Flow#start()
      */
@@ -203,6 +223,12 @@ public class VisitingInvokerFlow implements Flow
                             + this.moduleName + " flow " + this.name);
                 }
                 this.configurationService.configure((ConfiguredResource)flowComponent);
+                
+                // cache any dynamicConfigured marked flow components
+                if(flowComponent instanceof DynamicConfiguredResource)
+                {
+                    dynamicConfiguredResources.add((DynamicConfiguredResource)flowComponent);
+                }
             }
 
             // start any component resources marked as managed resources
@@ -242,6 +268,9 @@ public class VisitingInvokerFlow implements Flow
                 }
             }
         }
+        
+        // clear cached dynamic configured resource list
+        dynamicConfiguredResources.clear();
     }
     
 }
