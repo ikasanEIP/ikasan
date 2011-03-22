@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,58 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.component.transformation.configuration;
-
-import org.ikasan.framework.component.transformation.XsltTransformer;
+package org.ikasan.framework.configuration;
 
 /**
- * POJO for configurable parameters on {@link XsltTransformer}
+ * Interface provisioning callbacks for setting configuration properties
+ * for a flow component as required for runtime for dynamic configuration
+ * Dynamic configuration can be changed by in-flight events and chnges will
+ * be persisted. static ConfiguredResources do not have changes applied in 
+ * the flow persisted. 
  * 
  * @author Ikasan Development Team
- *
  */
-public class XsltConfiguration
+public interface DynamicConfiguredResource<T> extends ConfiguredResource<T>
 {
-    /** To compile stylesheet or not? Default is <code>true</code>.*/
-    private boolean useTranslets = true;
-
-    /** Location of stylesheet used for transformation */
-    private String stylesheetLocation;
-
-    /**
-     * Accessor
-     * @return the useTranslates
-     */
-    public boolean isUseTranslets()
-    {
-        return this.useTranslets;
-    }
-
-    /**
-     * Mutator
-     * @param useTranslets the useTranslates to set
-     */
-    public void setUseTranslets(boolean useTranslets)
-    {
-        this.useTranslets = useTranslets;
-    }
-
-    /**
-     * Accessor
-     * @return the stylesheetLocation
-     */
-    public String getStylesheetLocation()
-    {
-        return this.stylesheetLocation;
-    }
-
-    /**
-     * Mutator
-     * @param stylesheetLocation the stylesheetLocation to set
-     */
-    public void setStylesheetLocation(String stylesheetLocation)
-    {
-        this.stylesheetLocation = stylesheetLocation;
-    }
-
+    // same operations, but provides a marker for dynamic configured resources
 }

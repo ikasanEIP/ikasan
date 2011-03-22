@@ -421,7 +421,11 @@ public abstract class TransactionalCommandConnection extends EISXALRCOManagedCon
     protected void commitCommands() throws ResourceException
     {
         TransactionalResource transactionalResource = getTransactionalResource();
-        for (TransactionalResourceCommand command : getCommands())
+        
+        List<TransactionalResourceCommand> commands = getCommands();
+        logger.debug("Dao returned us [" + commands.size() + "] commands");
+        
+        for (TransactionalResourceCommand command : commands)
         {
             logger.debug("about to call commit on command [" + command + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             command.setTransactionalResource(transactionalResource);

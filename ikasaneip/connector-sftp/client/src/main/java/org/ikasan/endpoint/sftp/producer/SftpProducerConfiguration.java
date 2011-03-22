@@ -97,121 +97,193 @@ public class SftpProducerConfiguration
     /** Creates any missing parent directory in the fully qualified filename of the file to be delivered */
     protected Boolean createParentDirectory = Boolean.FALSE;
 
-    public String getPassword()
-    {
-        return this.password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
+    /**
+     * @return the clientID
+     */
     public String getClientID()
     {
         return this.clientID;
     }
 
+    /**
+     * @param clientID the clientID to set
+     */
     public void setClientID(String clientID)
     {
         this.clientID = clientID;
     }
 
+    /**
+     * @return the cleanupJournalOnComplete
+     */
     public Boolean getCleanupJournalOnComplete()
     {
         return this.cleanupJournalOnComplete;
     }
 
+    /**
+     * @param cleanupJournalOnComplete the cleanupJournalOnComplete to set
+     */
     public void setCleanupJournalOnComplete(Boolean cleanupJournalOnComplete)
     {
         this.cleanupJournalOnComplete = cleanupJournalOnComplete;
     }
 
+    /**
+     * @return the remoteHost
+     */
     public String getRemoteHost()
     {
         return this.remoteHost;
     }
 
+    /**
+     * @param remoteHost the remoteHost to set
+     */
     public void setRemoteHost(String remoteHost)
     {
         this.remoteHost = remoteHost;
     }
 
+    /**
+     * @return the privateKeyFilename
+     */
     public String getPrivateKeyFilename()
     {
         return this.privateKeyFilename;
     }
 
+    /**
+     * @param privateKeyFilename the privateKeyFilename to set
+     */
     public void setPrivateKeyFilename(String privateKeyFilename)
     {
         this.privateKeyFilename = privateKeyFilename;
     }
 
+    /**
+     * @return the maxRetryAttempts
+     */
     public Integer getMaxRetryAttempts()
     {
         return this.maxRetryAttempts;
     }
 
+    /**
+     * @param maxRetryAttempts the maxRetryAttempts to set
+     */
     public void setMaxRetryAttempts(Integer maxRetryAttempts)
     {
         this.maxRetryAttempts = maxRetryAttempts;
     }
 
+    /**
+     * @return the remotePort
+     */
     public Integer getRemotePort()
     {
         return this.remotePort;
     }
 
+    /**
+     * @param remotePort the remotePort to set
+     */
     public void setRemotePort(Integer remotePort)
     {
         this.remotePort = remotePort;
     }
 
+    /**
+     * @return the knownHostsFilename
+     */
     public String getKnownHostsFilename()
     {
         return this.knownHostsFilename;
     }
 
+    /**
+     * @param knownHostsFilename the knownHostsFilename to set
+     */
     public void setKnownHostsFilename(String knownHostsFilename)
     {
         this.knownHostsFilename = knownHostsFilename;
     }
 
+    /**
+     * @return the username
+     */
     public String getUsername()
     {
         return this.username;
     }
 
+    /**
+     * @param username the username to set
+     */
     public void setUsername(String username)
     {
         this.username = username;
     }
 
+    /**
+     * @return the password
+     */
+    public String getPassword()
+    {
+        return this.password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
+    /**
+     * @return the connectionTimeout
+     */
     public Integer getConnectionTimeout()
     {
         return this.connectionTimeout;
     }
 
+    /**
+     * @param connectionTimeout the connectionTimeout to set
+     */
     public void setConnectionTimeout(Integer connectionTimeout)
     {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * @return the outputDirectory
+     */
     public String getOutputDirectory()
     {
         return this.outputDirectory;
     }
 
+    /**
+     * @param outputDirectory the outputDirectory to set
+     */
     public void setOutputDirectory(String outputDirectory)
     {
         this.outputDirectory = outputDirectory;
     }
 
+    /**
+     * @return the renameExtension
+     */
     public String getRenameExtension()
     {
         return this.renameExtension;
     }
 
+    /**
+     * @param renameExtension the renameExtension to set
+     */
     public void setRenameExtension(String renameExtension)
     {
         this.renameExtension = renameExtension;
@@ -233,41 +305,65 @@ public class SftpProducerConfiguration
         this.tempFileName = tempFileName;
     }
 
+    /**
+     * @return the overwrite
+     */
     public Boolean getOverwrite()
     {
         return this.overwrite;
     }
 
+    /**
+     * @param overwrite the overwrite to set
+     */
     public void setOverwrite(Boolean overwrite)
     {
         this.overwrite = overwrite;
     }
 
+    /**
+     * @return the unzip
+     */
     public Boolean getUnzip()
     {
         return this.unzip;
     }
 
+    /**
+     * @param unzip the unzip to set
+     */
     public void setUnzip(Boolean unzip)
     {
         this.unzip = unzip;
     }
 
+    /**
+     * @return the checksumDelivered
+     */
     public Boolean getChecksumDelivered()
     {
         return this.checksumDelivered;
     }
 
+    /**
+     * @param checksumDelivered the checksumDelivered to set
+     */
     public void setChecksumDelivered(Boolean checksumDelivered)
     {
         this.checksumDelivered = checksumDelivered;
     }
 
+    /**
+     * @return the createParentDirectory
+     */
     public Boolean getCreateParentDirectory()
     {
         return this.createParentDirectory;
     }
 
+    /**
+     * @param createParentDirectory the createParentDirectory to set
+     */
     public void setCreateParentDirectory(Boolean createParentDirectory)
     {
         this.createParentDirectory = createParentDirectory;

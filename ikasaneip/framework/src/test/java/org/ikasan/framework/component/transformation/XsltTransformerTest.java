@@ -40,6 +40,9 @@
  */
 package org.ikasan.framework.component.transformation;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +57,11 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import junit.framework.Assert;
 
 import org.ikasan.common.Payload;
 import org.ikasan.common.component.DefaultPayload;
@@ -65,6 +73,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.InputSource;
 
 /**
  * Test class for {@link XsltTransformer}
@@ -75,6 +84,8 @@ import org.junit.Test;
 @SuppressWarnings("unqualified-field-access")
 public class XsltTransformerTest
 {
+    private final static String CLASSPATH_URL_PREFIX = "classpath:";
+
     /** Mockery for objects */
     private final Mockery mockery = new Mockery()
     {
@@ -94,6 +105,12 @@ public class XsltTransformerTest
 
     /** The test object */
     private XsltTransformer transformerToTest;
+
+    /** mocked event */
+    private final Event mockedEvent = this.mockery.mock(Event.class, "mockedEvent");
+
+    /** mocked payload */
+    private final Payload mockedPayload = this.mockery.mock(Payload.class, "mockedPayload");
 
     /** Dummy xml content expected from transformation */
     private static final String DUMMY_CONTENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dummy />";
@@ -121,7 +138,7 @@ public class XsltTransformerTest
     }
 
     /**
-     * Creating a n XsltTransformer will fail if injected {@link TransformerFactory} is null.
+     * Creating a XsltTransformer will fail if injected {@link TransformerFactory} is null.
      */
     @SuppressWarnings("unused")
     @Test(expected=IllegalArgumentException.class)
@@ -178,7 +195,7 @@ public class XsltTransformerTest
     public void transformation_successful_without_using_translets() throws TransformerException
     {
         // Changing the configuration to test other branch of code
-        this.defaultConfig.setUseTranslates(false);
+        this.defaultConfig.setUseTranslets(false);
         this.defaultConfig.setStylesheetLocation("file://anyStylesheet.xsl");
 
         // Setup expectations
@@ -407,7 +424,7 @@ public class XsltTransformerTest
     public void transformation_fail_at_transform_time_to_create_transformer_xsl_not_found() throws TransformerException
     {
         // Setup test objects
-        this.defaultConfig.setUseTranslates(false);
+        this.defaultConfig.setUseTranslets(false);
         this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
 
         final TransformerConfigurationException expectedException = new TransformerConfigurationException();
@@ -433,6 +450,165 @@ public class XsltTransformerTest
     }
 
     /**
+     * Test successful actual stylesheet transformation for Xml to XML.
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transform_testXmlToXml_xsl() throws TransformerException
+    {
+        // setup test
+        XsltTransformer xsltTransformer = new XsltTransformer(org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance());
+        XsltConfiguration xsltConfiguration = new XsltConfiguration();
+        xsltConfiguration.setStylesheetLocation(CLASSPATH_URL_PREFIX + "testXmlToXml.xsl");
+        xsltTransformer.setConfiguration(xsltConfiguration);
+
+        final byte[] inboundPayloadContent = 
+            new String("<sourceRoot><sourceElement1>element1Value</sourceElement1><sourceElement2>element2Value</sourceElement2></sourceRoot>").getBytes();
+        final byte[] outboundPayloadContent = 
+            new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><targetRoot><targetElement1>element1Value</targetElement1><targetElement2>element2Value</targetElement2></targetRoot>").getBytes();
+        final List<Payload> payloads = new ArrayList<Payload>();
+        payloads.add(mockedPayload);
+        
+        // setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(mockedEvent).getPayloads();
+                will(returnValue(payloads));
+                
+                one(mockedPayload).getContent();
+                will(returnValue(inboundPayloadContent));
+                
+                one(mockedPayload).setContent(outboundPayloadContent);
+            }
+        });
+
+        // run test
+        xsltTransformer.startManagedResource();
+        xsltTransformer.onEvent(mockedEvent);
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful actual stylesheet transformation for Xml to XML.
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void transform_testXmlToText_xsl() throws TransformerException
+    {
+        // setup test
+        XsltTransformer xsltTransformer = new XsltTransformer(org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance());
+        XsltConfiguration xsltConfiguration = new XsltConfiguration();
+        xsltConfiguration.setStylesheetLocation(CLASSPATH_URL_PREFIX + "testXmlToText.xsl");
+        xsltTransformer.setConfiguration(xsltConfiguration);
+
+        final byte[] inboundPayloadContent = 
+            new String("<sourceRoot><sourceElement1>element1Value</sourceElement1><sourceElement2>element2Value</sourceElement2></sourceRoot>").getBytes();
+        final byte[] outboundPayloadContent = new String("element1Value|element2Value").getBytes();
+        final List<Payload> payloads = new ArrayList<Payload>();
+        payloads.add(mockedPayload);
+        
+        // setup expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(mockedEvent).getPayloads();
+                will(returnValue(payloads));
+                
+                one(mockedPayload).getContent();
+                will(returnValue(inboundPayloadContent));
+                
+                one(mockedPayload).setContent(outboundPayloadContent);
+            }
+        });
+
+        // run test
+        xsltTransformer.startManagedResource();
+        xsltTransformer.onEvent(mockedEvent);
+
+        // Make assertions
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful actual stylesheet transformation for Xml to XML.
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void nativeTransformer_testXmlToXml_xsl() throws TransformerException
+    {
+        TransformerFactory transformerFactory = org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance();
+
+        // load stylesheet from the classpath
+        String xslPath = CLASSPATH_URL_PREFIX + "testXmlToXml.xsl";
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream xslInputStream = classLoader.getResourceAsStream(this.stripClasspathScheme(xslPath));
+        StreamSource xsltSource = new StreamSource(xslInputStream);
+        
+        // create transformer 
+        Transformer transformer = transformerFactory.newTransformer(xsltSource);
+
+        // setup input
+        String inputXml = "<sourceRoot><sourceElement1>element1Value</sourceElement1><sourceElement2>element2Value</sourceElement2></sourceRoot>";
+        String expectedOutput = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><targetRoot><targetElement1>element1Value</targetElement1><targetElement2>element2Value</targetElement2></targetRoot>";
+        InputSource inputSource = new InputSource(new ByteArrayInputStream(inputXml.getBytes()));
+        Source source = new SAXSource(inputSource);
+
+        // setup output
+        ByteArrayOutputStream outputDataStream = new ByteArrayOutputStream();
+
+        // transform
+        transformer.transform(source, new StreamResult(outputDataStream));
+
+        // check result
+        byte[] outputBytes = outputDataStream.toByteArray();
+        
+        Assert.assertEquals(expectedOutput, new String(outputBytes));
+    }
+
+    /**
+     * Test successful actual stylesheet transformation for Xml to XML.
+     * 
+     * @throws TransformerException Thrown if error transforming event content.
+     */
+    @Test
+    public void nativeTransformer_testXmlToText_xsl() throws TransformerException
+    {
+        TransformerFactory transformerFactory = org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance();
+
+        // load stylesheet from the classpath
+        String xslPath = CLASSPATH_URL_PREFIX + "testXmlToText.xsl";
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream xslInputStream = classLoader.getResourceAsStream(this.stripClasspathScheme(xslPath));
+        StreamSource xsltSource = new StreamSource(xslInputStream);
+        
+        // create transformer 
+        Transformer transformer = transformerFactory.newTransformer(xsltSource);
+
+        // setup input
+        String inputXml = "<sourceRoot><sourceElement1>element1Value</sourceElement1><sourceElement2>element2Value</sourceElement2></sourceRoot>";
+        String expectedOutput = "element1Value|element2Value";
+        InputSource inputSource = new InputSource(new ByteArrayInputStream(inputXml.getBytes()));
+        Source source = new SAXSource(inputSource);
+
+        // setup output
+        ByteArrayOutputStream outputDataStream = new ByteArrayOutputStream();
+
+        // transform
+        transformer.transform(source, new StreamResult(outputDataStream));
+
+        // check result
+        byte[] outputBytes = outputDataStream.toByteArray();
+        
+        Assert.assertEquals(expectedOutput, new String(outputBytes));
+    }
+
+    /**
      * Utility method refactored for steps required to run a test case 
      */
     private void runTest()
@@ -445,5 +621,11 @@ public class XsltTransformerTest
         this.transformerToTest.onEvent(this.testEvent);
         // Now stop it
         this.transformerToTest.stopManagedResource();
+    }
+
+    private String stripClasspathScheme(final String xslLocation)
+    {
+        int index = xslLocation.indexOf(CLASSPATH_URL_PREFIX) + CLASSPATH_URL_PREFIX.length();
+        return xslLocation.substring(index);
     }
 }

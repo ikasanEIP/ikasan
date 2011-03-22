@@ -110,8 +110,6 @@ public class TokenizingSplitter implements Sequencer
     public List<Event> onEvent(Event event, String moduleName, String componentName) throws SequencerException
     {
         List<Event> returnedEvents = new ArrayList<Event>();
-        // TODO - we may need to pop the parent id on each of the spawned events.
-        // To be decided on review of event, payload and associated concepts.
         String parentId = event.getId();
         if (logger.isDebugEnabled())
         {
@@ -202,6 +200,7 @@ public class TokenizingSplitter implements Sequencer
                 logger.debug("Creating payload for token [" + token + "]");
             }
             Payload newPayload = payload.spawnChild(tokenCount);
+            newPayload.setContent(token.getBytes());
             newPayloads.add(newPayload);
             if (logger.isDebugEnabled())
             {

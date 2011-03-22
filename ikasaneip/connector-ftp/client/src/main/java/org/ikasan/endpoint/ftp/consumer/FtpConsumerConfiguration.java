@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 
 /**
- * SFTP Consumer Configuration model.
+ * FTP Consumer Configuration model.
  * 
  * @author Ikasan Development Team
  */

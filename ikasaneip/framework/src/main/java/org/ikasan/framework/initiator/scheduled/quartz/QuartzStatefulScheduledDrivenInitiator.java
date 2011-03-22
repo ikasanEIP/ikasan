@@ -49,6 +49,7 @@ import org.ikasan.framework.component.IkasanExceptionHandler;
 import org.ikasan.framework.event.service.EventProvider;
 import org.ikasan.framework.exception.IkasanExceptionAction;
 import org.ikasan.framework.flow.Flow;
+import org.ikasan.framework.flow.VisitingInvokerFlow;
 import org.ikasan.framework.initiator.AbstractInitiator;
 import org.ikasan.framework.initiator.InitiatorOperationException;
 import org.ikasan.framework.monitor.MonitorSubject;
@@ -299,8 +300,12 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
     {
         try
         {
-            // pause business schedule jobs
-            scheduler.pauseJobGroup(getJobGroup());
+            // unschedule business jobs
+            Trigger[] triggers = scheduler.getTriggersOfJob(INITIATOR_JOB_NAME, getJobGroup());
+            for(Trigger trigger:triggers)
+            {
+                scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
+            }
 
             logger.info("Initiator [" + this.getName() + "] stopped.");
         }
@@ -318,39 +323,26 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
     @Override
     protected void startInitiator() throws InitiatorOperationException
     {
-
-        
-        
         try
         {
-            //if there are no triggers at all, then this must be first time it is started.
-            //TODO - change the way stop/start works so that a stopped initiator is one
-            //with no triggers at all, just like the initialised states
-            if (scheduler.getTriggersOfJob(INITIATOR_JOB_NAME, getJobGroup()).length==0){
-                jobDetail = new JobDetail(INITIATOR_JOB_NAME,getJobGroup(), QuartzStatefulJob.class);
-
-                
-                //quartz api requires that first trigger registration needs to use scheduler.scheduleJob(jobDetail,firstTrigger)
-                //whilst subsequent trigger registrations for the same job use scheduler.scheduleJob(subsequentTrigger)
-                //  - where all subsequentTriggers have the jobName and jobGroup set
-                boolean firstTrigger = true;
-                for(Trigger trigger: triggers){
-                    trigger.setGroup(getTriggerGroup());
-                    if (firstTrigger){
-                        scheduler.scheduleJob(jobDetail, trigger);
-                        firstTrigger = false;
-                    }else{
-                        trigger.setJobGroup(getJobGroup());
-                        trigger.setJobName(INITIATOR_JOB_NAME);
-                        scheduler.scheduleJob(trigger);
-                    }
+            jobDetail = new JobDetail(INITIATOR_JOB_NAME,getJobGroup(), QuartzStatefulJob.class);
+            
+            //quartz api requires that first trigger registration needs to use scheduler.scheduleJob(jobDetail,firstTrigger)
+            //whilst subsequent trigger registrations for the same job use scheduler.scheduleJob(subsequentTrigger)
+            //  - where all subsequentTriggers have the jobName and jobGroup set
+            boolean firstTrigger = true;
+            for(Trigger trigger: triggers){
+                trigger.setGroup(getTriggerGroup());
+                if (firstTrigger){
+                    scheduler.scheduleJob(jobDetail, trigger);
+                    firstTrigger = false;
+                }else{
+                    trigger.setJobGroup(getJobGroup());
+                    trigger.setJobName(INITIATOR_JOB_NAME);
+                    scheduler.scheduleJob(trigger);
                 }
             }
 
-            
-            
-            // only restart business schedule jobs
-            this.scheduler.resumeJobGroup(getJobGroup());
             logger.info("Initiator [" + this.getName() + "] started.");
         }
         catch (SchedulerException e)
@@ -460,6 +452,10 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
             logger.warn("Attempt to invoke an initiator in a stopped state.");
             return false;
         }
+
+        // TODO - this sucks. we are having to sync configuration on the flow
+        // because this initiator uses the configuration as part of sourcing events
+        flow.sync();
         
         // invoke flow all the time we have event activity
         // invoke flow

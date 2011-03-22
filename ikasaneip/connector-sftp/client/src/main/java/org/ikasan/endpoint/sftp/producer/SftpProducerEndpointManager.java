@@ -42,6 +42,7 @@ package org.ikasan.endpoint.sftp.producer;
 
 import javax.resource.ResourceException;
 
+import org.ikasan.spec.endpoint.DefaultEndpointManager;
 import org.ikasan.spec.endpoint.EndpointFactory;
 import org.ikasan.spec.endpoint.EndpointManager;
 import org.ikasan.spec.endpoint.EndpointActivator;
@@ -50,8 +51,11 @@ import org.ikasan.spec.endpoint.Producer;
 /**
  * Endpoint manager for SFTP producer endpoint implementations based on an 
  * Sftp protocol and configuration.
+ * 
+ * @deprecated Use the general implementation {@link DefaultEndpointManager} instead
  * @author Ikasan Development Team
  */
+@Deprecated
 public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,SftpProducerConfiguration>
 {
     /** producer factory */
@@ -65,8 +69,8 @@ public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,
 
     /**
      * Constructor
-     * @param producerFactory
-     * @param sftpConfiguration
+     * @param endpointFactory {@link EndpointFactory} implementation for creating the endpoint
+     * @param sftpConfiguration Runtime configuration of endpoint
      */
     public SftpProducerEndpointManager(EndpointFactory<Producer<?>,SftpProducerConfiguration> endpointFactory, SftpProducerConfiguration sftpConfiguration)
     {
@@ -88,7 +92,7 @@ public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,
      */
     public void start() throws ResourceException
     {
-        this.producer = this.endpointFactory.createEndpoint(sftpConfiguration);
+        this.producer = this.endpointFactory.createEndpoint(this.sftpConfiguration);
         if(this.producer instanceof EndpointActivator)
         {
             ((EndpointActivator) this.producer).activate();
@@ -112,7 +116,7 @@ public class SftpProducerEndpointManager implements EndpointManager<Producer<?>,
         {
             try
             {
-                ((EndpointActivator)producer).deactivate();
+                ((EndpointActivator)this.producer).deactivate();
             }
             finally
             {

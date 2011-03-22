@@ -110,6 +110,7 @@ public class TransactionJournalImpl implements TransactionJournal
         {
 
             commands = dao.findCommandsByTransaction(xid);
+            logger.debug("Dao returned us [" + commands.size() + "] commands");
 
             // reset the transaction journal on each of the commands, as this is
             // transient

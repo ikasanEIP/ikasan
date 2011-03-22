@@ -60,42 +60,35 @@ import org.ikasan.connector.base.outbound.EISManagedConnectionFactory;
 import org.ikasan.connector.basefiletransfer.DataAccessUtil;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 
-import org.ikasan.connector.basefiletransfer.DataAccessUtil;
-import org.ikasan.connector.basefiletransfer.DataAccessUtil;
-import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
-
 /**
- * This class is the factory class for obtaining physical connections to the
- * SFTP EIS. The attributes are set by the default attributes in the resource
- * adapter's deployment descriptor (ra.xml) and can be overridden by client
- * supplied properties (CRI).
+ * This class is the factory class for obtaining physical connections to the SFTP EIS. The attributes are set by the
+ * default attributes in the resource adapter's deployment descriptor (ra.xml) and can be overridden by client supplied
+ * properties (CRI).
  * 
- * Each connection produced from this factory is a handle to the actual physical
- * connection (ManagedConnection) to the underlying EIS.
+ * Each connection produced from this factory is a handle to the actual physical connection (ManagedConnection) to the
+ * underlying EIS.
  * 
- * On start up, the Application server first of all calls all of the setter
- * methods (populating them with the values from the ra.xml file) and then calls
- * createConnectionFactory(ConnectionManager)
+ * On start up, the Application server first of all calls all of the setter methods (populating them with the values
+ * from the ra.xml file) and then calls createConnectionFactory(ConnectionManager)
  * 
- * NOTE: Each <config-property-name> element in ra.xml must have a matching
- * private variable name in this class
+ * NOTE: Each <config-property-name> element in ra.xml must have a matching private variable name in this class
  * 
  * NOTE: Defaults of null are dealt with by calling classes
  * 
- * TODO Max Retry attempts is here because our 3rd party library needs to have
- * the value set for when openSession is called on the SFTPManagedConnection. We
- * need to extract that at some stage
+ * NOTE: Setters are initially called by the App Server
+ * 
+ * TODO Max Retry attempts is here because our 3rd party library needs to have the value set for when openSession is
+ * called on the SFTPManagedConnection. We need to extract that at some stage
  * 
  * TODO When everything is happy, reduced some logging back to debug level.
  * 
- * @author Ikasan Development Team 
+ * @author Ikasan Development Team
  */
 public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 {
-
-    /** Whether we clean up the journal after a complete or not */
+    /** Whether we clean up the journal after a complete or not (commit, rollback etc) */
     private boolean cleanupJournalOnComplete = false;
-    
+
     /** The remote SFTP host name */
     private String remoteHostname = null;
 
@@ -104,10 +97,10 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /** The known hosts file name (fully qualified path) */
     private String knownHostsFilename = null;
-    
+
     /** Maximum retry attempts, can only be set by the CRI, not the ra.xml */
     private Integer maxRetryAttempts = null;
-    
+
     /** The remote SFTP port */
     private Integer remotePort = null;
 
@@ -125,7 +118,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /** Default serial version uid */
     private static final long serialVersionUID = 1L;
-    
+
     /** The logger instance */
     private static Logger logger = Logger.getLogger(SFTPManagedConnectionFactory.class);
 
@@ -133,19 +126,19 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     private TransactionJournal transactionJournal = null;
 
     /**
-     * Create the connection factory with no connection manager, e.g. This is
-     * the version called when not invoked by the Application Server
+     * Create the connection factory with no connection manager, e.g. This is the version called when not invoked by the
+     * Application Server
      */
     @Override
     public Object createConnectionFactory()
     {
-        logger.debug("Called createConnectionFactory()"); //$NON-NLS-1$
+        logger.debug("Called createConnectionFactory()");
         return new SFTPConnectionFactory(this, null);
     }
 
     /**
-     * This version of createConnectionFactory is invoked by the Application
-     * Server by passing its own implemented version of connection manager.
+     * This version of createConnectionFactory is invoked by the Application Server by passing its own implemented
+     * version of connection manager.
      */
     @Override
     public Object createConnectionFactory(ConnectionManager connectionManager)
@@ -155,24 +148,19 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * This can be called in two ways, but is initiated by a client need for a
-     * Connection.
+     * This can be called in two ways, but is initiated by a client need for a Connection.
      * 
-     * In our case SFTPConnectionManager's allocateConnection calls this method.
-     * (although the Application Server's ConnectionManager can also in theory
-     * call this)
+     * In our case SFTPConnectionManager's allocateConnection calls this method. (although the Application Server's
+     * ConnectionManager can also in theory call this)
      */
     @Override
     public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
             throws ResourceException
     {
-        logger.debug("Called createManagedConnection"); //$NON-NLS-1$
-        
+        logger.debug("Called createManagedConnection");
         // Create the new Managed Connection
         SFTPManagedConnection sftpManagedConnection = new SFTPManagedConnection(this, (SFTPConnectionRequestInfo) cri);
-
         sftpManagedConnection.setTransactionJournal(getTransactionJournal());
-
         // Open a session on the managed connection
         sftpManagedConnection.openSession();
         // Return the managed connection (with an open session)
@@ -180,20 +168,18 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * This method is called by the application server when the client asks for
-     * a new connection. The application server passes in a Set of all the
-     * active managed connections, and this object must pick one that is
-     * currently handling a physical connection that can be shared to support
-     * the new client request. Typically this sharing will be allowed if the
-     * security attributes and properties of the new request match an existing
-     * physical connection.
+     * This method is called by the application server when the client asks for a new connection. The application server
+     * passes in a Set of all the active managed connections, and this object must pick one that is currently handling a
+     * physical connection that can be shared to support the new client request. Typically this sharing will be allowed
+     * if the security attributes and properties of the new request match an existing physical connection.
      * 
-     * If nothing is available, the method must return null, so that the
-     * application server knows it has to create a new physical connection.
+     * If nothing is available, the method must return null, so that the application server knows it has to create a new
+     * physical connection.
      */
     @SuppressWarnings("unchecked")
     @Override
-    public ManagedConnection matchManagedConnections(Set connections, Subject subject, ConnectionRequestInfo info)
+    public ManagedConnection matchManagedConnections(@SuppressWarnings("rawtypes") Set connections, Subject subject,
+            ConnectionRequestInfo info)
     {
         logger.debug("Called matchManagedConnection()");
         int size = connections.size();
@@ -213,64 +199,60 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
                 if (currentScri.equals(scri))
                 {
                     logger.debug("Found matched Connection.");
-                    
-                    // This should never occur if the track-connection-by-tx property is set in your connection factory ds file
+                    // This should never occur if the track-connection-by-tx property is set in your connection factory
+                    // ds file
                     if (smc.transactionInProgress())
                     {
-                        logger.error("Managed Connection already involved in transaction.");
+                        logger.warn("Matched a managed connection, but it's already involved in transaction, "
+                                + "if <track-connection-by-tx/> property is specified on your "
+                                + "connection factory then this should not be occurring.");
                     }
-                    return smc;
+                    else
+                    {
+                        return smc;
+                    }
                 }
             }
         }
-        logger.debug("No matched Connection for object.");
+        logger.info("No matched Connection for object (or at least none that were not already involved in a txn).");
         return null;
     }
 
     /**
-     * Generate a hash code, this is used by the application server as part of
-     * its management of the connection pool
+     * Generate a hash code, this is used by the application server as part of its management of the connection pool
      */
     @Override
     public int hashCode()
     {
-        logger.debug("Called hashCode()"); //$NON-NLS-1$
-        int hashCode = this.remoteHostname.hashCode() +
-            this.remotePort.hashCode() +
-            this.username.hashCode() +
-            this.knownHostsFilename.hashCode() +
-            this.privateKeyFilename.hashCode() +
-            this.clientID.hashCode();
+        logger.debug("Called hashCode()");
+        int hashCode = this.remoteHostname.hashCode() + this.remotePort.hashCode() + this.username.hashCode()
+                + this.knownHostsFilename.hashCode() + this.privateKeyFilename.hashCode() + this.clientID.hashCode();
         logger.debug("HashCode = [" + hashCode + "].");
-        return  hashCode;
+        return hashCode;
     }
 
     /**
-     * SFTPManagedConnetionFactory specific equality implementation. Together
-     * with hashCode method, it is used by the Application Server to structure
-     * the connection pool (lifted from JCA Spec section 6.5.3.2).
-     * 
-     * Must always return true, otherwise JBoss throws ResourceException.
+     * SFTPManagedConnetionFactory specific equality implementation. Together with hashCode method, it is used by the
+     * Application Server to structure the connection pool (lifted from JCA Spec section 6.5.3.2).
      */
     @Override
     public boolean equals(Object object)
     {
-        logger.debug("Called equals"); //$NON-NLS-1$
+        logger.debug("Called equals");
         // Valid object check
         if (object == null)
         {
-            logger.debug("Object is null. Returning [false]."); //$NON-NLS-1$
+            logger.debug("Object is null. Returning [false].");
             return false;
         }
-
         if (object instanceof SFTPManagedConnectionFactory)
         {
-            logger.debug("Object is a SFTPManagedConnectionFactory"); //$NON-NLS-1$
+            logger.debug("Object is a SFTPManagedConnectionFactory");
             SFTPManagedConnectionFactory smcf = (SFTPManagedConnectionFactory) object;
             return compareSMCF(smcf);
         }
         // default else
-        logger.debug("Object is not valid, returning [false]."); //$NON-NLS-1$
+        logger.debug("Object is not valid, returning [false].");
         return false;
     }
 
@@ -282,36 +264,28 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     private boolean compareSMCF(SFTPManagedConnectionFactory smcf)
     {
-        if (this.remoteHostname == null || 
-            this.remotePort == null || 
-            this.username == null ||
-            this.knownHostsFilename == null ||
-            this.privateKeyFilename == null ||
-            this.clientID == null)
+        if (this.remoteHostname == null || this.remotePort == null || this.username == null
+                || this.knownHostsFilename == null || this.privateKeyFilename == null || this.clientID == null)
         {
-            logger.warn("One of the mandatory managed connection factory variables is null."); //$NON-NLS-1$
-            logger.warn("Hostname = [" + this.remoteHostname + "]"); 
+            logger.warn("One of the mandatory managed connection factory variables is null.");
+            logger.warn("Hostname = [" + this.remoteHostname + "]");
             logger.warn("Port = [" + this.remotePort + "]");
-            logger.warn("Username = [" + this.username +"]"); 
+            logger.warn("Username = [" + this.username + "]");
             logger.warn("KnonwHostFileName = [" + this.knownHostsFilename + "]");
             logger.warn("PrivateKeyFileName = [" + this.privateKeyFilename + "]");
             logger.warn("ClientID = [" + this.clientID + "].");
             return false;
         }
-
         // Connection specific properties check
-        if (this.remoteHostname.equalsIgnoreCase(smcf.remoteHostname) && 
-            this.remotePort == smcf.remotePort && 
-            this.username.equals(smcf.username) &&
-            this.knownHostsFilename.equals(smcf.knownHostsFilename) &&
-            this.privateKeyFilename.equals(smcf.privateKeyFilename) &&
-            this.clientID.equals(smcf.clientID))
+        if (this.remoteHostname.equalsIgnoreCase(smcf.remoteHostname) && this.remotePort == smcf.remotePort
+                && this.username.equals(smcf.username) && this.knownHostsFilename.equals(smcf.knownHostsFilename)
+                && this.privateKeyFilename.equals(smcf.privateKeyFilename) && this.clientID.equals(smcf.clientID))
         {
-            logger.debug("Object is equal. Returning [true]."); //$NON-NLS-1$
+            logger.debug("Object is equal. Returning [true].");
             return true;
         }
         // Default else
-        logger.debug("Object is not equal. Returning [false]."); //$NON-NLS-1$
+        logger.debug("Object is not equal. Returning [false].");
         return false;
     }
 
@@ -322,25 +296,16 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     protected TransactionJournal getTransactionJournal()
     {
-
         if (transactionJournal == null)
         {
-
-
             TransactionalResourceCommandDAO dao = DataAccessUtil.getTransactionalResourceCommandDAO();
             FileChunkDao fileChunkDao = DataAccessUtil.getFileChunkDao();
             Map<String, Object> beanFactory = new HashMap<String, Object>();
             beanFactory.put("fileChunkDao", fileChunkDao);
-            
             transactionJournal = new TransactionJournalImpl(dao, clientID, beanFactory);
-
         }
         return transactionJournal;
     }
-
-    // ////////////////////////////////////////////////////////////////
-    // Getters/Setters, Setters are initially called by the App Server
-    // ////////////////////////////////////////////////////////////////
 
     /**
      * Get the remote host name
@@ -359,12 +324,13 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setRemoteHostname(String remoteHostname)
     {
-        logger.debug("ra.xml setting hostname to: [" + remoteHostname + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("ra.xml setting hostname to: [" + remoteHostname + "]");
         this.remoteHostname = remoteHostname;
     }
 
     /**
      * Get the local host name
+     * 
      * @return local host name
      */
     public String getLocalHostname()
@@ -374,6 +340,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /**
      * Set the local host name
+     * 
      * @param rtLocalHost
      */
     public void setLocalHostname(String rtLocalHost)
@@ -404,7 +371,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setKnownHostsFilename(String knownHostsFilename)
     {
-        logger.debug("ra.xml setting knownHostsFilename to: [" + knownHostsFilename + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("ra.xml setting knownHostsFilename to: [" + knownHostsFilename + "]");
         this.knownHostsFilename = knownHostsFilename;
     }
 
@@ -425,7 +392,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setRemotePort(Integer remotePort)
     {
-        logger.debug("ra.xml setting port to: [" + remotePort + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.debug("ra.xml setting port to: [" + remotePort + "]");
         this.remotePort = remotePort;
     }
 
@@ -472,9 +439,8 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * Get the max retry attempts, as open session requires it. There is no
-     * corresponding setter as we only want this to be a client property, not a
-     * ra.xml property
+     * Get the max retry attempts, as open session requires it. There is no corresponding setter as we only want this to
+     * be a client property, not a ra.xml property
      * 
      * @return maxRetryAttempts
      */
@@ -484,9 +450,8 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     }
 
     /**
-     * Returns whether or not we clean up the journal on complete. There is no
-     * corresponding setter as we only want this to be a client property, not a
-     * ra.xml property
+     * Returns whether or not we clean up the journal on complete. There is no corresponding setter as we only want this
+     * to be a client property, not a ra.xml property
      * 
      * @return true if we clean up the journal on complete
      */
@@ -498,7 +463,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
     /**
      * Sets the authentication order
      * 
-     * @param preferredAuthentications 
+     * @param preferredAuthentications
      */
     public void setPreferredAuthentications(String preferredAuthentications)
     {
@@ -507,6 +472,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /**
      * Get the authentication order
+     * 
      * @return String
      */
     public String getPreferredAuthentications()
@@ -516,6 +482,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /**
      * Set the connection timeout
+     * 
      * @param connectionTimeout
      */
     public void setConnectionTimeout(Integer connectionTimeout)
@@ -525,6 +492,7 @@ public class SFTPManagedConnectionFactory extends EISManagedConnectionFactory
 
     /**
      * Get socket connection time out.
+     * 
      * @return Integer
      */
     public Integer getConnectionTimeout()

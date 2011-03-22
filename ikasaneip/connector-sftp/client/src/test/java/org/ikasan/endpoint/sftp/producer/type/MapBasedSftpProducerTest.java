@@ -50,9 +50,11 @@ import javax.resource.ResourceException;
 import org.ikasan.client.FileTransferConnectionTemplate;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.endpoint.sftp.producer.type.MapBasedSftpProducer;
+import org.ikasan.spec.endpoint.Producer;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -61,30 +63,30 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
 public class MapBasedSftpProducerTest
 {
-    Mockery mockery = new Mockery()
+    /** The mockery */
+    private final Mockery mockery = new Mockery()
     {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
 
-    /** mock fileTransferConnectionTemplate */
-    final FileTransferConnectionTemplate fileTransferConnectionTemplate = mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
-    
-    /** mock sftpConfiguration */
-    final SftpProducerConfiguration sftpConfiguration = mockery.mock(SftpProducerConfiguration.class, "mockSftpProducerConfiguration");
+    /** Mock fileTransferConnectionTemplate */
+    private final FileTransferConnectionTemplate fileTransferConnectionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "mockFileTransferConnectionTemplate");
 
-    /** mock filenameContentPairsMap */
-    final Map<String,InputStream> filenameContentPairsMap = mockery.mock(Map.class, "mockFilenameContentPairsMap");
+    /** Mock ftpConfiguration */
+    private final SftpProducerConfiguration sftpConfiguration = this.mockery.mock(SftpProducerConfiguration.class, "mockSftpProducerConfiguration");
 
-    /** mock map entry */
-    final Map.Entry<String,InputStream> filenameContent = mockery.mock(Map.Entry.class, "mockFilenameContent");
+    /** Object being tested */
+    private Producer<Map<String,InputStream>> sftpMapProducer = new MapBasedSftpProducer(this.fileTransferConnectionTemplate, this.sftpConfiguration);
 
     /**
      * Test failed constructor due to null fileTransferConnectionTemplate.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullFileTransferConnectionTemplate()
     {
@@ -92,58 +94,50 @@ public class MapBasedSftpProducerTest
     }
 
     /**
-     * Test failed constructor due to null sftpConfiguration.
+     * Test failed constructor due to null ftpConfiguration.
      */
+    @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void test_failedConstructor_nullSftpConfiguration()
     {
-        new MapBasedSftpProducer(fileTransferConnectionTemplate, null);
+        new MapBasedSftpProducer(this.fileTransferConnectionTemplate, null);
     }
 
     /**
      * Test successful invocation based on a single file.
-     * @throws ResourceException 
+     * @throws ResourceException if error invoking the endpoint
      */
-    @Test
-    public void test_successful_sftpMapProducer_invocation_single_file() throws ResourceException
+    @Test public void test_successful_ssftpMapProducer_invocation_single_file() throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
         filenameContentPairsMap.put("filename", content);
         
-        // expectations
-        mockery.checking(new Expectations()
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(sftpConfiguration).getOutputDirectory();
-                will(returnValue("outputDirectory"));
-                exactly(1).of(sftpConfiguration).getOverwrite();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getRenameExtension();
-                will(returnValue(""));
-                exactly(1).of(sftpConfiguration).getChecksumDelivered();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getUnzip();
-                will(returnValue(Boolean.FALSE));
-                exactly(1).of(sftpConfiguration).getCreateParentDirectory();
-                will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getOutputDirectory(); will(returnValue("outputDirectory"));
+                one(sftpConfiguration).getOverwrite();will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getRenameExtension(); will(returnValue(""));
+                one(sftpConfiguration).getChecksumDelivered(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getUnzip(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getCreateParentDirectory(); will(returnValue(Boolean.FALSE));
                 one(sftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
-                
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory", Boolean.FALSE, "", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, "file.tmp");
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory",
+                        false, "", false, false, false, "file.tmp");
             }
         });
 
-        MapBasedSftpProducer sftpMapProducer = new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpConfiguration);
-        sftpMapProducer.invoke(filenameContentPairsMap);
-        mockery.assertIsSatisfied();
+        this.sftpMapProducer.invoke(filenameContentPairsMap);
+        this.mockery.assertIsSatisfied();
     }
 
     /**
      * Test successful invocation based on a multiple files.
-     * @throws ResourceException 
+     * @throws ResourceException if error invoking endpoint
      */
-    @Test
-    public void test_successful_sftpMapProducer_invocation_multiple_files() throws ResourceException
+    @Test public void test_successful_sftpMapProducer_invocation_multiple_files() throws ResourceException
     {
         final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
         final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
@@ -151,32 +145,170 @@ public class MapBasedSftpProducerTest
         filenameContentPairsMap.put("filename2", content);
         filenameContentPairsMap.put("filename3", content);
         
-        // expectations
-        mockery.checking(new Expectations()
+        // Expectations
+        this.mockery.checking(new Expectations()
         {
             {
-                exactly(3).of(sftpConfiguration).getOutputDirectory();
-                will(returnValue("outputDirectory"));
-                exactly(3).of(sftpConfiguration).getOverwrite();
-                will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getRenameExtension();
-                will(returnValue(".tmp"));
-                exactly(3).of(sftpConfiguration).getChecksumDelivered();
-                will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getUnzip();
-                will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getCreateParentDirectory();
-                will(returnValue(Boolean.FALSE));
-                exactly(3).of(sftpConfiguration).getTempFileName();will(returnValue(null));
-                
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename1", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename2", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
-                exactly(1).of(fileTransferConnectionTemplate).deliverInputStream(content, "filename3", "outputDirectory", Boolean.FALSE, ".tmp", Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
+                exactly(3).of(sftpConfiguration).getOutputDirectory(); will(returnValue("outputDirectory"));
+                exactly(3).of(sftpConfiguration).getOverwrite(); will(returnValue(Boolean.FALSE));
+                exactly(3).of(sftpConfiguration).getRenameExtension(); will(returnValue(".tmp"));
+                exactly(3).of(sftpConfiguration).getChecksumDelivered();will(returnValue(Boolean.FALSE));
+                exactly(3).of(sftpConfiguration).getUnzip(); will(returnValue(Boolean.FALSE));
+                exactly(3).of(sftpConfiguration).getCreateParentDirectory(); will(returnValue(Boolean.FALSE));
+                exactly(3).of(MapBasedSftpProducerTest.this.sftpConfiguration).getTempFileName();will(returnValue(null));
+
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename1", "outputDirectory", 
+                        false, ".tmp", false, false, false, null);
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename2", "outputDirectory",
+                        false, ".tmp", false, false, false, null);
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename3", "outputDirectory", 
+                        false, ".tmp", false, false, false, null);
             }
         });
 
-        MapBasedSftpProducer sftpMapProducer = new MapBasedSftpProducer(fileTransferConnectionTemplate, sftpConfiguration);
-        sftpMapProducer.invoke(filenameContentPairsMap);
-        mockery.assertIsSatisfied();
+        this.sftpMapProducer.invoke(filenameContentPairsMap);
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * If no alternate connection details are provided, the producer will throw the exception and give up
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void producer_fails() throws ResourceException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(sftpConfiguration).getOutputDirectory(); will(returnValue("outputDirectory"));
+                one(sftpConfiguration).getOverwrite();will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getRenameExtension(); will(returnValue(""));
+                one(sftpConfiguration).getChecksumDelivered(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getUnzip(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getCreateParentDirectory(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory",
+                        false, "", false, false, false, "file.tmp");will(throwException(exception));
+            }
+        });
+
+        try
+        {
+            // TODO investigate why this is the only way to test this!
+            this.sftpMapProducer.invoke(filenameContentPairsMap);
+            
+        }
+        catch (ResourceException e)
+        {
+            Assert.assertEquals(this.fileTransferConnectionTemplate, ((MapBasedSftpProducer)this.sftpMapProducer).getActiveFileTransferConnectionTemplate());
+            throw e;
+        }
+        this.mockery.assertIsSatisfied();
+        Assert.fail("Unreachable code.");
+    }
+
+    /**
+     * When the producer is configured with an alternate connection template, on failure, producer will switch to use the
+     * alternate next time it is invoked.
+     * 
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void producer_fails_changes_to_alternate_connection_template() throws ResourceException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+        final FileTransferConnectionTemplate mockAlternateConncetionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "alternateConnectionTemplate");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(sftpConfiguration).getOutputDirectory(); will(returnValue("outputDirectory"));
+                one(sftpConfiguration).getOverwrite();will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getRenameExtension(); will(returnValue(""));
+                one(sftpConfiguration).getChecksumDelivered(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getUnzip(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getCreateParentDirectory(); will(returnValue(Boolean.FALSE));
+                one(sftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory",
+                        false, "", false, false, false, "file.tmp");will(throwException(exception));
+            }
+        });
+
+        ((MapBasedSftpProducer)this.sftpMapProducer).setAlternateFileTransferConnectionTemplate(mockAlternateConncetionTemplate);
+        try
+        {
+            this.sftpMapProducer.invoke(filenameContentPairsMap);
+        }
+        catch (ResourceException e)
+        {
+            Assert.assertEquals(((MapBasedSftpProducer)this.sftpMapProducer).getActiveFileTransferConnectionTemplate(), mockAlternateConncetionTemplate);
+            throw e;
+        }
+        this.mockery.assertIsSatisfied();
+        Assert.fail("Unreachable code.");
+    }
+
+    /**
+     * If an error occurs while producer using alternative connection template, switch back to original connection template
+     * 
+     * @throws ResourceException if error invoking endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void producer_fails_changes_to_original_connection_template() throws ResourceException
+    {
+        final ByteArrayInputStream content = new ByteArrayInputStream("content".getBytes());
+        final Map<String,InputStream> filenameContentPairsMap = new HashMap<String,InputStream>();
+        filenameContentPairsMap.put("filename", content);
+        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+        final FileTransferConnectionTemplate mockAlternateConncetionTemplate = this.mockery.mock(FileTransferConnectionTemplate.class, "alternateConnectionTemplate");
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(sftpConfiguration).getOutputDirectory(); will(returnValue("outputDirectory"));
+                exactly(2).of(sftpConfiguration).getOverwrite();will(returnValue(Boolean.FALSE));
+                exactly(2).of(sftpConfiguration).getRenameExtension(); will(returnValue(""));
+                exactly(2).of(sftpConfiguration).getChecksumDelivered(); will(returnValue(Boolean.FALSE));
+                exactly(2).of(sftpConfiguration).getUnzip(); will(returnValue(Boolean.FALSE));
+                exactly(2).of(sftpConfiguration).getCreateParentDirectory(); will(returnValue(Boolean.FALSE));
+                exactly(2).of(sftpConfiguration).getTempFileName();will(returnValue("file.tmp"));
+                one(fileTransferConnectionTemplate).deliverInputStream(content, "filename", "outputDirectory",
+                        false, "", false, false, false, "file.tmp");will(throwException(exception));
+                one(mockAlternateConncetionTemplate).deliverInputStream(content, "filename", "outputDirectory",
+                        false, "", false, false, false, "file.tmp");will(throwException(exception));
+            }
+        });
+
+        ((MapBasedSftpProducer)this.sftpMapProducer).setAlternateFileTransferConnectionTemplate(mockAlternateConncetionTemplate);
+        try
+        {
+            this.sftpMapProducer.invoke(filenameContentPairsMap);
+        }
+        catch (ResourceException e)
+        {
+            Assert.assertEquals(((MapBasedSftpProducer)this.sftpMapProducer).getActiveFileTransferConnectionTemplate(), mockAlternateConncetionTemplate);
+            try
+            {
+                this.sftpMapProducer.invoke(filenameContentPairsMap);
+            }
+            catch (ResourceException e2)
+            {
+                Assert.assertEquals(((MapBasedSftpProducer)this.sftpMapProducer).getActiveFileTransferConnectionTemplate(), this.fileTransferConnectionTemplate);
+                throw e2;
+            }
+        }
+        this.mockery.assertIsSatisfied();
+        Assert.fail("Unreachable code.");
     }
 }
