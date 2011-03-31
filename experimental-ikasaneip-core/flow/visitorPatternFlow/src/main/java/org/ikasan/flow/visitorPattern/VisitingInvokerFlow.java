@@ -135,6 +135,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
         }
 
         this.recoveryManager = recoveryManager;
+        if(recoveryManager == null)
+        {
+            throw new IllegalArgumentException("recoveryManager cannot be 'null'");
+        }
     }
 
     public String getName()
