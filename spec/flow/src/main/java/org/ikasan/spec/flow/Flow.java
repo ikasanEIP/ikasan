@@ -40,6 +40,7 @@
  */
 package org.ikasan.spec.flow;
 
+import java.util.List;
 
 /**
  * Interface representing a business path for a <code>FlowEvent<code>
@@ -50,15 +51,6 @@ package org.ikasan.spec.flow;
  */
 public interface Flow
 {
-    /**
-     * Invocation of this method represents the handling of the <code>FlowEvent<code>
-     * with respect to some business path
-     * 
-     * @param flowInvocationContext invocation context
-     * @param flowEvent The business event we're dealing with
-     */
-    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent);
-
     /**
      * Returns the name of this flow
      * 
@@ -72,6 +64,13 @@ public interface Flow
      * @return name of the module this flow exist for
      */
     public String getModuleName();
+
+//    /**
+//     * Accessor for getting the flow elements
+//     * TODO - is this really needed ?
+//     * @return name of the module this flow exist for
+//     */
+//    public List<FlowElement<?>> getFlowElements();
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation.

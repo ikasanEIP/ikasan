@@ -49,12 +49,10 @@ package org.ikasan.spec.component.endpoint;
  *
  * @author Ikasan Development Teams
  */
-public interface Consumer<SOURCE>
+public interface Consumer<LISTENER>
 {
-    /**
-     * Consume payload from a source protocol endpoint
-     * @return <SOURCE>
-     * @throws EndpointException
-     */
-    public SOURCE invoke() throws EndpointException;
+    public void setListener(LISTENER listener);
+    public void start();
+    public boolean isRunning();
+    public void stop();
 }
