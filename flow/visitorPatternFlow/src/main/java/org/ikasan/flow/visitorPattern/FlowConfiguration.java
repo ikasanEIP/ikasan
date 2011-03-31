@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,93 +38,28 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.event;
+package org.ikasan.flow.visitorPattern;
 
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.flow.FlowEvent;
+import java.util.List;
+
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.management.ManagedResource;
 
 /**
- * Implementation of the EventFactory contract based on the creation 
- * of a FlowEvent.
+ * Default implementation of a Flow
  * 
  * @author Ikasan Development Team
- *
  */
-public class FlowEventFactory implements EventFactory<FlowEvent<?>>
+public interface FlowConfiguration
 {
-    /**
-     * Factory method to create a new FlowEvent instance.
-     * @param immutable identifier
-     * @param mutable payload
-     */
-    public <PAYLOAD> FlowEvent<PAYLOAD> newEvent(String identifier, PAYLOAD payload)
-    {
-        return new GenericFlowEvent<PAYLOAD>(identifier, payload);
-    }
-
-	/**
-	 * Implementation of a flowEvent based on payload being of any generic type.
-	 * 
-	 * @author Ikasan Development Team
-	 *
-	 */
-	private class GenericFlowEvent<PAYLOAD> implements FlowEvent<PAYLOAD>
-	{
-		/** immutable identifier */
-		private String identifier;
-
-		/** immutable event creation timestamp */
-	    private long timestamp;
-
-	    /** payload */
-	    private PAYLOAD payload;
-
-        /**
-         * Constructor
-         * @param identifier2
-         */
-        protected GenericFlowEvent(String identifier, PAYLOAD payload)
-        {
-            this.identifier = identifier;
-            this.timestamp = System.currentTimeMillis();
-            this.payload = payload;
-        }
-        
-		/**
-		 * Get immutable flow event identifier.
-		 * @return String - event identifier
-		 */
-		public String getIdentifier()
-		{
-		    return this.identifier;
-		}
-
-		/**
-		 * Get the immutable created date/time of the flow event.
-		 * @return long - create date time
-		 */
-		public long getTimestamp()
-		{
-		    return this.timestamp;
-		}
-
-		/**
-		 * Get the payload of this flow event.
-		 * @return PAYLOAD payload
-		 */
-		public PAYLOAD getPayload()
-		{
-		    return this.payload;
-		}
-		
-		/**
-		 * Set the payload of this flow event.
-		 * @param PAYLOAD - payload
-		 */
-		public void setPayload(PAYLOAD payload)
-		{
-		    this.payload = payload;
-		}
-	}
-
+    public FlowElement<Consumer> getConsumerFlowElement();
+    public FlowElement<?> getLeadFlowElement();
+    public List<FlowElement<?>> getFlowElements();
+    public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
+    public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
+    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
+    public void configureFlowElement(FlowElement<? extends ConfiguredResource> flowElement);
 }
