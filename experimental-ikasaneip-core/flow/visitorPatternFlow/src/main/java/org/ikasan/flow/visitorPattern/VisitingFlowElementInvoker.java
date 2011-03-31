@@ -69,7 +69,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
 
     /** replication factory - only a requirement of a multi-recipient router */
     private ReplicationFactory<FlowEvent<?>> replicationFactory;
-    
+
     /** The flow event listener */
     private FlowEventListener flowEventListener;
 
@@ -80,17 +80,18 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     {
         // default constructor
     }
-    
+
     /**
-     * Constructor with a ReplicationFactory for replicating events for
-     * specific flow component requirements i.e. multi-recipient router.
+     * Constructor with a ReplicationFactory for replicating events for specific
+     * flow component requirements i.e. multi-recipient router.
+     * 
      * @param replicationFactory
      */
     public VisitingFlowElementInvoker(ReplicationFactory<FlowEvent<?>> replicationFactory)
     {
-    	this.replicationFactory = replicationFactory;
+        this.replicationFactory = replicationFactory;
     }
-    
+
     /**
      * Set the flow event listener
      * 
@@ -104,57 +105,54 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /*
      * (non-Javadoc)
      * 
-     * @see flow.visitinginvoker.FlowElementInvoker#invoke(event.Event, flow.FlowElement)
+     * @see flow.visitinginvoker.FlowElementInvoker#invoke(event.Event,
+     * flow.FlowElement)
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName, FlowElement flowElement)
+    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
     {
         while (flowElement != null)
         {
-           flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Invoking [" + flowElement.getComponentName() + "] of [" + flowName + "] " + flowEvent.getIdentifier());
-            }
-            notifyListenersBeforeElement(flowEvent, moduleName, flowName, flowElement);
+            flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+            notifyListenersBeforeElement(flowEvent, flowElement);
             Object flowComponent = flowElement.getFlowComponent();
-
             try
             {
                 if (flowComponent instanceof Consumer)
                 {
-                	// TODO - not currently implemented. Requires review of Initiator functions
-                	// however, we must go to the next flow element
-                    flowElement = handleConsumer(flowEvent, moduleName, flowName, flowElement);
+                    throw new RuntimeException("Consumer component [" + flowElement.getComponentName()
+                            + "] is not at the head of the flow. Consumers must only exist at the flow head.");
                 }
                 else if (flowComponent instanceof Translator)
                 {
-                    flowElement = handleTranslator(flowEvent, moduleName, flowName, flowElement);
+                    flowElement = handleTranslator(flowEvent, flowElement);
                 }
                 else if (flowComponent instanceof Converter)
                 {
-                    flowElement = handleConverter(flowEvent, moduleName, flowName, flowElement);
+                    flowElement = handleConverter(flowEvent, flowElement);
                 }
                 else if (flowComponent instanceof Producer)
                 {
-                    flowElement = handleProducer(flowEvent, moduleName, flowName, flowElement);
-
-                    // TODO - flowElement should be null so no requirement for break
-                    //break;
+                    flowElement = handleProducer(flowEvent, flowElement);
+                    // TODO - flowElement should be null so no requirement for
+                    // break
+                    // break;
                 }
                 else if (flowComponent instanceof Broker)
                 {
-                    flowElement = handleBroker(flowEvent, moduleName, flowName, flowElement);
+                    flowElement = handleBroker(flowEvent, flowElement);
                 }
                 else if (flowComponent instanceof Router)
                 {
-                    flowElement = handleRouter(flowInvocationContext, flowEvent, moduleName, flowName, flowElement);
-                    // TODO - flowElement should be null so no requirement for break
+                    flowElement = handleRouter(flowInvocationContext, flowEvent, flowElement);
+                    // TODO - flowElement should be null so no requirement for
+                    // break
                     // break;
                 }
                 else if (flowComponent instanceof Sequencer)
                 {
-                    flowElement = handleSequencer(flowInvocationContext, flowEvent, moduleName, flowName, flowElement);
-                    // TODO - flowElement should be null so no requirement for break
+                    flowElement = handleSequencer(flowInvocationContext, flowEvent, flowElement);
+                    // TODO - flowElement should be null so no requirement for
+                    // break
                     // break;
                 }
                 else
@@ -162,15 +160,12 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                     throw new RuntimeException("Unknown FlowComponent type[" + flowComponent.getClass() + "]");
                 }
             }
-            catch(ClassCastException e)
+            catch (ClassCastException e)
             {
-                throw new RuntimeException("Unable to find method signature on component ["
-                		+ flowElement.getComponentName()
-                		+ "] for payload class ["
-                		+ flowEvent.getPayload().getClass().getName() + "]", e);
+                throw new RuntimeException("Unable to find method signature on component [" + flowElement.getComponentName() + "] for payload class ["
+                        + flowEvent.getPayload().getClass().getName() + "]", e);
             }
         }
-
     }
 
     /**
@@ -181,30 +176,26 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleSequencer(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName,
-            FlowElement flowElement)
+    private FlowElement handleSequencer(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
     {
         Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
         List payloads = sequencer.sequence(flowEvent.getPayload());
-
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {
             logger.error("sequencer is last element in flow!");
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                    + "] contains a Sequencer, but it has no default transition! "
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Sequencer, but it has no default transition! "
                     + "Sequencers should never be the last component in a flow");
         }
-        if(payloads != null)
-    	{
-        	for(Object payload:payloads)
+        if (payloads != null)
+        {
+            for (Object payload : payloads)
             {
-            	flowEvent.setPayload(payload);
-            	notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-                invoke(flowInvocationContext, flowEvent, moduleName, flowName, nextFlowElement);
+                flowEvent.setPayload(payload);
+                notifyListenersAfterElement(flowEvent, flowElement);
+                invoke(flowInvocationContext, flowEvent, nextFlowElement);
             }
-    	}
-        
+        }
         return null;
     }
 
@@ -216,18 +207,19 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private void notifyListenersBeforeElement(FlowEvent flowEvent, String moduleName, String flowName, FlowElement flowElement)
+    // private void notifyListenersBeforeElement(FlowEvent flowEvent, String
+    // moduleName, String flowName, FlowElement flowElement)
+    private void notifyListenersBeforeElement(FlowEvent flowEvent, FlowElement flowElement)
     {
         if (flowEventListener != null)
         {
             try
             {
-                flowEventListener.beforeFlowElement(moduleName, flowName, flowElement, flowEvent);
+                flowEventListener.beforeFlowElement(flowElement, flowEvent);
             }
             catch (Throwable t)
             {
-                logger.error("flowEventListener caught throwable before flowElement [" + flowElement
-                        + "], exception is[" + t + "]", t);
+                logger.error("flowEventListener caught throwable before flowElement [" + flowElement + "], exception is[" + t + "]", t);
                 for (StackTraceElement stackTraceElement : t.getStackTrace())
                 {
                     logger.error(stackTraceElement);
@@ -238,24 +230,23 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
 
     /**
      * Helper method to notify listeners after a flow element is invoked
-     *  
+     * 
      * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private void notifyListenersAfterElement(FlowEvent flowEvent, String moduleName, String flowName, FlowElement flowElement)
+    private void notifyListenersAfterElement(FlowEvent flowEvent, FlowElement flowElement)
     {
         if (flowEventListener != null)
         {
             try
             {
-                flowEventListener.afterFlowElement(moduleName, flowName, flowElement, flowEvent);
+                flowEventListener.afterFlowElement(flowElement, flowEvent);
             }
             catch (Throwable t)
             {
-                logger.error("flowEventListener caught throwable after flowElement [" + flowElement
-                        + "], exception is[" + t + "]", t);
+                logger.error("flowEventListener caught throwable after flowElement [" + flowElement + "], exception is[" + t + "]", t);
                 for (StackTraceElement stackTraceElement : t.getStackTrace())
                 {
                     logger.error(stackTraceElement);
@@ -264,23 +255,24 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         }
     }
 
-//    /**
-//     * Helper method to notify listeners after a sequencer element is invoked
-//     * 
-//     * @param events The list of events we're passing on
-//     * @param moduleName The name of the module
-//     * @param flowName The name of the flow
-//     * @param flowElement The flow element we're dealing with
-//     */
-//    private void notifyListenersAfterSequencerElement(List<FlowEvent> flowEvents, String moduleName, String flowName,
-//            FlowElement flowElement)
-//    {
-//        for (FlowEvent flowEvent : flowEvents)
-//        {
-//            notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-//        }
-//    }
-
+    // /**
+    // * Helper method to notify listeners after a sequencer element is invoked
+    // *
+    // * @param events The list of events we're passing on
+    // * @param moduleName The name of the module
+    // * @param flowName The name of the flow
+    // * @param flowElement The flow element we're dealing with
+    // */
+    // private void notifyListenersAfterSequencerElement(List<FlowEvent>
+    // flowEvents, String moduleName, String flowName,
+    // FlowElement flowElement)
+    // {
+    // for (FlowEvent flowEvent : flowEvents)
+    // {
+    // notifyListenersAfterElement(flowEvent, moduleName, flowName,
+    // flowElement);
+    // }
+    // }
     /**
      * The behaviour for visiting a <code>Router</code>
      * 
@@ -289,57 +281,47 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleRouter(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, String moduleName, String flowName, FlowElement flowElement)
+    private FlowElement handleRouter(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
     {
         Router router = (Router) flowElement.getFlowComponent();
-
         List<String> targetNames = router.route(flowEvent.getPayload());
-        if(targetNames == null || targetNames.size() == 0)
+        if (targetNames == null || targetNames.size() == 0)
         {
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                + "] contains a Router without a valid transition. "
-                + "All Routers must result in at least one transition.");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
+                    + "All Routers must result in at least one transition.");
         }
-
-        notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-
-        if(targetNames.size() == 1)
+        notifyListenersAfterElement(flowEvent, flowElement);
+        if (targetNames.size() == 1)
         {
             String targetName = targetNames.get(0);
             final FlowElement nextFlowElement = flowElement.getTransition(targetName);
             if (nextFlowElement == null)
             {
                 throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                        + "] contains a Router, but it does not have a transition mapped for that Router's target["
-                        + targetName + "] "
+                        + "] contains a Router, but it does not have a transition mapped for that Router's target[" + targetName + "] "
                         + "All Router targets must be mapped to transitions in their enclosing FlowElement");
             }
-            
-            invoke(flowInvocationContext, flowEvent, moduleName, flowName, nextFlowElement);
+            invoke(flowInvocationContext, flowEvent, nextFlowElement);
         }
         else
         {
-            if(replicationFactory == null)
+            if (replicationFactory == null)
             {
                 throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
                         + "] ReplicationFactory is required to replicate payloads for multiple recipients.");
             }
-            
-            for(String targetName : targetNames)
+            for (String targetName : targetNames)
             {
                 final FlowElement nextFlowElement = flowElement.getTransition(targetName);
                 if (nextFlowElement == null)
                 {
                     throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
-                            + "] contains a Router, but it does not have a transition mapped for that Router's target["
-                            + targetName + "] "
+                            + "] contains a Router, but it does not have a transition mapped for that Router's target[" + targetName + "] "
                             + "All Router targets must be mapped to transitions in their enclosing FlowElement");
                 }
-
-                invoke(flowInvocationContext, replicationFactory.replicate(flowEvent), moduleName, flowName, nextFlowElement);
+                invoke(flowInvocationContext, replicationFactory.replicate(flowEvent), nextFlowElement);
             }
         }
-        
         return null;
     }
 
@@ -351,24 +333,20 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleProducer(FlowEvent flowEvent, String moduleName, String flowName,
-            FlowElement flowElement)
+    private FlowElement handleProducer(FlowEvent flowEvent, FlowElement flowElement)
     {
         Producer producer = (Producer) flowElement.getFlowComponent();
         producer.invoke(flowEvent.getPayload());
-        notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-
+        notifyListenersAfterElement(flowEvent, flowElement);
         // producer is last in the flow
         return null;
     }
 
-    private FlowElement handleBroker(FlowEvent flowEvent, String moduleName, String flowName,
-            FlowElement flowElement)
+    private FlowElement handleBroker(FlowEvent flowEvent, FlowElement flowElement)
     {
         Broker broker = (Broker) flowElement.getFlowComponent();
         flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
-        notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-        
+        notifyListenersAfterElement(flowEvent, flowElement);
         // we may or may not have a transition out
         flowElement = getDefaultTransition(flowElement);
         return flowElement;
@@ -382,23 +360,19 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleTranslator(FlowEvent flowEvent, String moduleName, String flowName,
-            FlowElement flowElement)
+    private FlowElement handleTranslator(FlowEvent flowEvent, FlowElement flowElement)
     {
         Translator translator = (Translator) flowElement.getFlowComponent();
         translator.translate(flowEvent.getPayload());
-        notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-
+        notifyListenersAfterElement(flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
         flowElement = getDefaultTransition(flowElement);
         if (flowElement == null)
         {
             throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
-                    + "] contains a Translator, but it has no default transition! "
-                    + "Translators should never be the last component in a flow");
+                    + "] contains a Translator, but it has no default transition! " + "Translators should never be the last component in a flow");
         }
-
         return flowElement;
     }
 
@@ -410,23 +384,19 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleConverter(FlowEvent flowEvent, String moduleName, String flowName,
-            FlowElement flowElement)
+    private FlowElement handleConverter(FlowEvent flowEvent, FlowElement flowElement)
     {
         Converter converter = (Converter) flowElement.getFlowComponent();
-        flowEvent.setPayload( converter.convert(flowEvent.getPayload()) );
-        notifyListenersAfterElement(flowEvent, moduleName, flowName, flowElement);
-        
+        flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
+        notifyListenersAfterElement(flowEvent, flowElement);
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
         flowElement = getDefaultTransition(flowElement);
         if (flowElement == null)
         {
             throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
-                    + "] contains a Converter, but it has no default transition! "
-                    + "Converters should never be the last component in a flow");
+                    + "] contains a Converter, but it has no default transition! " + "Converters should never be the last component in a flow");
         }
-
         return flowElement;
     }
 
@@ -437,8 +407,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleConsumer(FlowEvent flowEvent, String moduleName, String flowName,
-            FlowElement flowElement)
+    private FlowElement handleConsumer(FlowEvent flowEvent, FlowElement flowElement)
     {
         // sort out the next element
         FlowElement previousFlowElement = flowElement;
@@ -446,10 +415,8 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         if (flowElement == null)
         {
             throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
-                    + "] contains a Consumer, but it has no default transition! "
-                    + "Consumers should never be the last component in a flow");
+                    + "] contains a Consumer, but it has no default transition! " + "Consumers should never be the last component in a flow");
         }
-
         return flowElement;
     }
 
@@ -463,5 +430,4 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     {
         return flowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
     }
-
 }
