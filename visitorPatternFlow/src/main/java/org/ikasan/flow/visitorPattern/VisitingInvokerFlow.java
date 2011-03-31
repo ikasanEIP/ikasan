@@ -40,13 +40,19 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.exceptionHandler.action.ExceptionAction;
+import org.ikasan.exceptionHandler.action.StopAction;
+import org.ikasan.monitor.Monitor;
+import org.ikasan.monitor.MonitorListener;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.RecoveryManager;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.exceptionHandler.ExceptionHandler;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -59,33 +65,33 @@ import org.ikasan.spec.management.ManagedResource;
  * 
  * @author Ikasan Development Team
  */
-public class VisitingInvokerFlow implements Flow
+public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, MonitorListener
 {
-    /** The logger instance. */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
-    /**
-     * Name of this flow
-     */
+    
+    /** Exception action is an implied rollback message */
+    public static final String EXCEPTION_ACTION_IMPLIED_ROLLBACK = "Exception Action implied rollback";
+    
+    /** Exception action is an implied rollback message */
+    public static final String UNSUPPORTED_EXCLUDE_ENCONTERED = "Unsupported EXCLUDE action encountered";
+
+    /** Name of this flow */
     private String name;
 
-    /**
-     * Name of the module within which this flowExists
-     */
+    /** Name of the module within which this flow exists */
     private String moduleName;
 
-    /**
-     * The first element in this flow
-     */
-    private FlowElement headElement;
+    FlowElementInvoker flowElementInvoker;
+    ExceptionHandler exceptionHandler;
+    FlowConfiguration flowConfiguration;
+    Monitor monitor;
+    RecoveryManager recoveryManager;
+    
+    /** Flag indicating a stoppage in error */
+    protected boolean error = false;
 
-    /**
-     * Invoker for invoking this flow
-     */
-    private FlowElementInvoker flowElementInvoker;
-
-    /** configuration service for this flow */
-    @SuppressWarnings("unchecked")
-    private ConfigurationService configurationService;
+    /** Flag indicating that the initiator has received a stop call */
+    protected boolean stopping = false;
     
     /**
      * Constructor
@@ -95,9 +101,8 @@ public class VisitingInvokerFlow implements Flow
      * @param headElement - first element in the flow
      * @param visitingInvoker - invoker for this flow
      */
-    @SuppressWarnings("unchecked")
-    public VisitingInvokerFlow(String name, String moduleName, FlowElement headElement,
-            FlowElementInvoker flowElementInvoker)
+    public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, 
+            FlowElementInvoker flowElementInvoker, ExceptionHandler exceptionHandler, RecoveryManager recoveryManager)
     {
         this.name = name;
         if(name == null)
@@ -111,70 +116,32 @@ public class VisitingInvokerFlow implements Flow
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
         
-        this.headElement = headElement;
+        this.flowConfiguration = flowConfiguration;
+        if(flowConfiguration == null)
+        {
+            throw new IllegalArgumentException("flowConfiguration cannot be 'null'");
+        }
+        
         this.flowElementInvoker = flowElementInvoker;
+        if(flowElementInvoker == null)
+        {
+            throw new IllegalArgumentException("flowElementInvoker cannot be 'null'");
+        }
+        
+        this.exceptionHandler = exceptionHandler;
+        if(exceptionHandler == null)
+        {
+            throw new IllegalArgumentException("exceptionHandler cannot be 'null'");
+        }
+
+        this.recoveryManager = recoveryManager;
     }
 
-    @SuppressWarnings("unchecked")
-    public void setConfigurationService(ConfigurationService configurationService)
-    {
-        this.configurationService = configurationService;
-    }
-    
-    @SuppressWarnings("unchecked")
-    public ConfigurationService getConfigurationService()
-    {
-        return this.configurationService;
-    }
-    
     public String getName()
     {
         return name;
     }
-    
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#invoke(org.ikasan.framework.flow.FlowInvocationContext, org.ikasan.framework.component.Event)
-     */
-    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent flowEvent)
-    {
-        flowElementInvoker.invoke(flowInvocationContext, flowEvent, moduleName, name, headElement);
-    }
-
-    /**
-     * Returns a breadth first listing of the flowElements within this flow
-     * 
-     * @return List<FlowElement>
-     */
-    public List<FlowElement<?>> getFlowElements()
-    {
-        List<FlowElement<?>> result = new ArrayList<FlowElement<?>>();
-        List<FlowElement<?>> elementsToVisit = new ArrayList<FlowElement<?>>();
-        elementsToVisit.add(headElement);
-        while (!elementsToVisit.isEmpty())
-        {
-            FlowElement<?> thisFlowElement = elementsToVisit.get(0);
-            elementsToVisit.remove(0);
-            if (!result.contains(thisFlowElement))
-            {
-                result.add(thisFlowElement);
-            }
-            for (FlowElement<?> subsequentElement : thisFlowElement.getTransitions().values())
-            {
-                if (!result.contains(subsequentElement))
-                {
-                    elementsToVisit.add(subsequentElement);
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Set the module name
-     * 
-     * @param moduleName The name of the module to set
-     */
     public void setModuleName(String moduleName)
     {
         this.moduleName = moduleName;
@@ -185,65 +152,163 @@ public class VisitingInvokerFlow implements Flow
         return moduleName;
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#start()
-     */
-    @SuppressWarnings("unchecked")
     public void start()
     {
-        for(FlowElement flowElement:this.getFlowElements())
+        try
         {
-            Object flowComponent = flowElement.getFlowComponent();
-
-            // configure any components marked as configured resources
-            if(flowComponent instanceof ConfiguredResource)
+            // configure resources that are marked as configurable
+            for(FlowElement<ConfiguredResource> flowElement:flowConfiguration.getConfiguredResourceFlowElements())
             {
-                if(this.configurationService == null)
-                {
-                    throw new ConfigurationException("Component " + flowElement.getComponentName() +
-                            " marked as a 'ConfiguredResource', but the configurationService has not been set on the module "
-                            + this.moduleName + " flow " + this.name);
-                }
-                this.configurationService.configure((ConfiguredResource)flowComponent);
+                flowConfiguration.configureFlowElement(flowElement);
             }
 
-            // start any component resources marked as managed resources
-            if(flowComponent instanceof ManagedResource)
+            // start managed resources (from right to left)
+            List<FlowElement<ManagedResource>> flowElements = flowConfiguration.getManagedResourceFlowElements();
+            Collections.reverse(flowElements);
+            for(FlowElement<ManagedResource> flowElement:flowElements)
             {
                 try
                 {
-                    ((ManagedResource)flowComponent).startManagedResource();
+                    flowElement.getFlowComponent().startManagedResource();
                 }
                 catch(RuntimeException e)
                 {
-                    logger.warn("Failed to start managed resource in component [" 
+                    logger.warn("Failed to start component [" 
                             + flowElement.getComponentName() + "] " + e.getMessage(), e);
                 }
             }
+            
+            // finally start the consumer
+            FlowElement<Consumer> consumerFlowElement = flowConfiguration.getConsumerFlowElement();
+            Consumer<EventListener<FlowEvent<?>>> consumer = consumerFlowElement.getFlowComponent();
+            consumer.setListener( (EventListener<FlowEvent<?>>)this );
+
+            try
+            {
+                consumer.start();
+            }
+            catch(RuntimeException e)
+            {
+                throw new RuntimeException("Failed to start consumer component [" 
+                        + flowConfiguration.getConsumerFlowElement().getComponentName() + "] " + e.getMessage(), e);
+            }
+        }
+        finally
+        {
+            this.notifyMonitor();
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.Flow#stop()
-     */
     public void stop()
     {
-        for(FlowElement flowElement:this.getFlowElements())
+        this.stopping = true;
+        
+        try
         {
-            Object flowComponent = flowElement.getFlowComponent();
-            if(flowComponent instanceof ManagedResource)
+            // stop any active recovery
+            if(this.recoveryManager.isRecovering())
             {
-                try
-                {
-                    ((ManagedResource)flowComponent).stopManagedResource();
-                }
-                catch(RuntimeException e)
-                {
-                    logger.warn("Failed to stop managed resource in component [" 
-                            + flowElement.getComponentName() + "] " + e.getMessage(), e);
-                }
+                this.recoveryManager.cancelRecovery();
+            }
+
+            // stop consumer and remove the listener
+            Consumer<?> consumer = flowConfiguration.getConsumerFlowElement().getFlowComponent();
+            consumer.setListener(null);
+            consumer.stop();
+
+            // stop all managed resources (left to right)
+            for(FlowElement<ManagedResource> flowElement:flowConfiguration.getManagedResourceFlowElements())
+            {
+                flowElement.getFlowComponent().stopManagedResource();
             }
         }
+        finally
+        {
+            this.notifyMonitor();
+        }
+        
+    }
+
+    public void invoke(FlowEvent<?> event)
+    {
+        FlowInvocationContext flowInvocationContext = new DefaultFlowInvocationContext();
+        ExceptionAction exceptionAction = null;
+
+        try
+        {
+            // TODO - what to do about module and flow names ?
+            for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+            {
+                this.flowConfiguration.configureFlowElement(flowElement);
+            }
+        
+            flowElementInvoker.invoke(flowInvocationContext, event, flowConfiguration.getLeadFlowElement());
+        }
+        catch(Throwable throwable)
+        {
+            String lastComponentName = flowInvocationContext.getLastComponentName();
+            exceptionAction = exceptionHandler.handleThrowable(lastComponentName, throwable);
+        }
+        finally
+        {
+            this.handleAction(exceptionAction);
+            this.notifyMonitor();
+        }
+    }
+
+    protected void handleAction(ExceptionAction action)
+    {
+        if(action != null)
+        {
+            if(action instanceof StopAction)
+            {
+                stopInError();
+                throw new RuntimeException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
+            }
+            // retry
+            else if(!stopping)
+            {
+                this.recoveryManager.recover(action);
+            }
+            throw new RuntimeException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
+        }
+        else
+        {
+            if(this.recoveryManager.isRecovering())
+            {
+                this.recoveryManager.cancelRecovery();
+            }
+        }
+    }
+    
+    /**
+     * Sets the error flag before stopping the initiator by normal means
+     */
+    protected void stopInError()
+    {
+        error = true;
+        stop();
+    }
+
+    public void invoke(Throwable throwable)
+    {
+        // TODO - do something with this...
+        ExceptionAction exceptionAction = this.exceptionHandler.handleThrowable("componentName", throwable);
+        handleAction(exceptionAction);
+    }
+    
+    /**
+     * Notification to all registered <code>MonitorListener</code> of the current state of the <code>Initiator</code>
+     */
+    protected void notifyMonitor()
+    {
+        // TODO 
+        this.monitor.notifyMonitor("TO DO");
+    }
+
+    public void setMonitor(Monitor monitor)
+    {
+        this.monitor = monitor;
     }
 
 }
