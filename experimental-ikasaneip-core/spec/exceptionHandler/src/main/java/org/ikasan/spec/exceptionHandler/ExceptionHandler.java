@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,21 +38,23 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.endpoint;
-
-import javax.resource.ResourceException;
+package org.ikasan.spec.exceptionHandler;
 
 /**
- * Interface defining the operational contract of an endpoint 
- * where we receive business data from a resource which we return to the invoker.
+ * This interface defines the public interface for invocation of the Ikasan Exception Handler
+ * 
  * @author Ikasan Development Team
  */
-public interface Consumer<R>
+public interface ExceptionHandler
 {
+ 
     /**
-     * Invoke the endpoint and return the response.
-     * @return
-     * @throws ResourceException
+     * Push an exception that occurred outside the scope of handling a data event to the Exception Handler
+     * 
+     * @param componentName name of the component within which the exception occurred
+     * @param throwable The exception
+     * @return IkasanExceptionAction
      */
-    public R invoke() throws ResourceException;
+    public <T> T handleThrowable(final String componentName, final Throwable throwable);
+
 }

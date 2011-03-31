@@ -38,29 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.endpoint;
-
-import javax.resource.ResourceException;
+package org.ikasan.spec.configuration;
 
 /**
- * Optional Interface for an Endpoint (such as a Producer, Consumer, or Broker)
- * allowing the endpoint to be activated or deactivated as required.
- * This interface is only required where the endpoint can expose this level of control.
+ * Interface provisioning callbacks for setting configuration properties
+ * for a flow component as required for runtime for dynamic configuration
+ * Dynamic configuration can be changed by in-flight events and chnges will
+ * be persisted. static ConfiguredResources do not have changes applied in 
+ * the flow persisted. 
+ * 
  * @author Ikasan Development Team
  */
-public interface EndpointActivator
+public interface DynamicConfiguredResource<T> extends ConfiguredResource<T>
 {
-    /**
-     * Activate the endpoint so its ready for use. This may involve opening connections
-     * establishing sessions, etc.
-     * @throws ResourceException
-     */
-    public void activate() throws ResourceException;
-
-    /**
-     * Deactivate the endpoint after use. This may involve shutting down of this 
-     * endpoints connections, releasing of resources, etc. 
-     * @throws ResourceException
-     */
-    public void deactivate() throws ResourceException;
+    // same operations, but provides a marker for dynamic configured resources
 }

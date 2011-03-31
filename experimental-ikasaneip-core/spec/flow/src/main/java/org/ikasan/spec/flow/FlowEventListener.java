@@ -52,41 +52,31 @@ public interface FlowEventListener {
 	/**
 	 * Callback method to be invoked prior to <code>Flow</code> execution
 	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
 	 * @param flowEvent - flowEvent with which flow is to be invoked
 	 */
-	public void beforeFlow(String moduleName, String flowName, FlowEvent event);
+	public void beforeFlow(FlowEvent event);
 
 	/**
 	 * Callback method to be invoked subsequent to <code>Flow</code> execution
 	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
 	 * @param flowEvent - flowEvent with which flow was invoked
 	 */
-	public void afterFlow(String moduleName, String flowName, FlowEvent event);
+	public void afterFlow(FlowEvent event);
 
 	/**
 	 * Callback method to be invoked prior to <code>FlowElement</code> execution
 	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
 	 * @param flowElement - FlowElement about to be invoked
 	 * @param flowEvent - flowEvent with which flow element is to be invoked
 	 */
-	public void beforeFlowElement(String moduleName, String flowName,
-			FlowElement flowElement, FlowEvent event);
+	public void beforeFlowElement(FlowElement flowElement, FlowEvent event);
 	
 	/**
 	 * Callback method to be called subsequent to <code>FlowElement</code> execution
 	 * 
-	 * @param moduleName - name of the module
-	 * @param flowName - name of the flow
 	 * @param flowElement - FlowElement which was invoked
 	 * @param flowEvent - flowEvent with which flow element was invoked
 	 */
-	public void afterFlowElement(String moduleName, String flowName,
-			FlowElement flowElement, FlowEvent event);
+	public void afterFlowElement(FlowElement flowElement, FlowEvent event);
 
 }
