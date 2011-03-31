@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,23 +38,28 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.endpoint;
-
-import javax.resource.ResourceException;
+package org.ikasan.spec.exceptionHandler;
 
 /**
- * Interface defining the operational contract of an endpoint 
- * where we send business data to the resource and the resource responds with
- * business data which we return to the invoker.
+ * Binds the ability to match any given Throwable, with an IkasanExceptionAction
+ * 
  * @author Ikasan Development Team
+ * 
  */
-public interface Broker<D,R>
+public interface ExceptionGroup
 {
     /**
-     * Invoke the endpoint with a deliverable and return a response.
-     * @param deliverable
-     * @return
-     * @throws ResourceException
+     * Determines if the given Throwable is a member of this logical group
+     * 
+     * @param throwable
+     * @return true is this throwable should be considered a member
      */
-    public R invoke(D deliverable) throws ResourceException;
+    public boolean includes(Throwable throwable);
+
+    /**
+     * Accessor for bound IkasanExceptionAction
+     * 
+     * @return bound IkasanExceptionAction
+     */
+    public <T> T getAction();
 }

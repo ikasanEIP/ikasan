@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -38,21 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.endpoint;
-
-import javax.resource.ResourceException;
+package org.ikasan.spec.component.endpoint;
 
 /**
- * Optional interface defining the operational contract of an endpoint factory.
- * This facilitates the creation of Producers, Consumers, and Brokers within a factory.
- * @author Ikasan Development Team
+ * Component consumer for retrieving from an endpoint.
+ * 
+ * A {@link Consumer} defines a contract for such translation.
+ * 
+ * @return <SOURCE> 
+ *
+ * @author Ikasan Development Teams
  */
-public interface EndpointFactory<E,C>
+public interface RecoveryManager
 {
-    /**
-     * Create a new endpoint based on the provided configuration.
-     * @param configuration
-     * @throws ResourceException
-     */
-    public E createEndpoint(C configuration) throws ResourceException;
+    public void start();
+    public void stop();
 }
