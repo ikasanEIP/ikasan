@@ -60,6 +60,7 @@
        <module>event</module>
        <module>flow</module>
        <module>exceptionHandler</module>
+       <module>recoveryManager</module>
     </modules>
 
 </project>
