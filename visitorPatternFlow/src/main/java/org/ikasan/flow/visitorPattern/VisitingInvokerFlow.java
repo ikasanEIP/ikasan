@@ -49,7 +49,6 @@ import org.ikasan.exceptionHandler.action.StopAction;
 import org.ikasan.monitor.Monitor;
 import org.ikasan.monitor.MonitorListener;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.RecoveryManager;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.exceptionHandler.ExceptionHandler;
@@ -59,6 +58,7 @@ import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.recoveryManager.RecoveryManager;
 
 /**
  * Default implementation of a Flow
@@ -306,8 +306,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
      */
     protected void notifyMonitor()
     {
-        // TODO 
-        this.monitor.notifyMonitor("TO DO");
+        if(this.monitor != null)
+        {
+            // TODO 
+            this.monitor.notifyMonitor("TO DO");
+        }
     }
 
     public void setMonitor(Monitor monitor)
