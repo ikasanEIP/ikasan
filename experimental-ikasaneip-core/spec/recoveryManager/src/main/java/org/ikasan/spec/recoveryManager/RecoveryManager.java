@@ -38,19 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.component.endpoint;
+package org.ikasan.spec.recoveryManager;
 
 /**
- * Component consumer for retrieving from an endpoint.
+ * Recovery Manager contract.
  * 
- * A {@link Consumer} defines a contract for such translation.
- * 
- * @return <SOURCE> 
- *
  * @author Ikasan Development Teams
  */
-public interface RecoveryManager
+public interface RecoveryManager<CRITERIA>
 {
-    public void start();
-    public void stop();
+    /**
+     * Start or continue a recovery based on the passed CRITERIA.
+     * @param criteria
+     */
+    public void recover(CRITERIA criteria);
+    
+    /**
+     * Is the recovery manager currently running a recovery.
+     * @return
+     */
+    public boolean isRecovering();
+    
+    /**
+     * Cancel any recovery currently running in the recovery manager.
+     */
+    public void cancelRecovery();
 }
