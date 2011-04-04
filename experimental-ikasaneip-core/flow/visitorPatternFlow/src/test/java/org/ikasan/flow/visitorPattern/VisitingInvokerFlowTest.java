@@ -97,7 +97,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullConfiguration()
     {
-        new VisitingInvokerFlow(null, null, null, null, null, null);
+        new VisitingInvokerFlow(null, null, null, null, null);
     }
 
     /**
@@ -151,7 +151,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         Flow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, exceptionHandler, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager);
         
         // run test
         flow.start();

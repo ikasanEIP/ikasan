@@ -45,13 +45,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.exceptionHandler.action.ExceptionAction;
-import org.ikasan.exceptionHandler.action.StopAction;
 import org.ikasan.monitor.Monitor;
 import org.ikasan.monitor.MonitorListener;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
-import org.ikasan.spec.exceptionHandler.ExceptionHandler;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -82,10 +80,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     private String moduleName;
 
     FlowElementInvoker flowElementInvoker;
-    ExceptionHandler exceptionHandler;
     FlowConfiguration flowConfiguration;
     Monitor monitor;
-    RecoveryManager recoveryManager;
+    RecoveryManager<FlowEvent<?>> recoveryManager;
     
     /** Flag indicating a stoppage in error */
     protected boolean error = false;
@@ -102,7 +99,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
      * @param visitingInvoker - invoker for this flow
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, 
-            FlowElementInvoker flowElementInvoker, ExceptionHandler exceptionHandler, RecoveryManager recoveryManager)
+            FlowElementInvoker flowElementInvoker, RecoveryManager recoveryManager)
     {
         this.name = name;
         if(name == null)
@@ -128,12 +125,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
             throw new IllegalArgumentException("flowElementInvoker cannot be 'null'");
         }
         
-        this.exceptionHandler = exceptionHandler;
-        if(exceptionHandler == null)
-        {
-            throw new IllegalArgumentException("exceptionHandler cannot be 'null'");
-        }
-
         this.recoveryManager = recoveryManager;
         if(recoveryManager == null)
         {
@@ -209,11 +200,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
         
         try
         {
-            // stop any active recovery
-            if(this.recoveryManager.isRecovering())
-            {
-                this.recoveryManager.cancelRecovery();
-            }
+//            // stop any active recovery
+//            if(this.recoveryManager.isRecovering())
+//            {
+//                this.recoveryManager.cancelRecovery();
+//            }
 
             // stop consumer and remove the listener
             Consumer<?> consumer = flowConfiguration.getConsumerFlowElement().getFlowComponent();
@@ -250,55 +241,48 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
         }
         catch(Throwable throwable)
         {
-            String lastComponentName = flowInvocationContext.getLastComponentName();
-            exceptionAction = exceptionHandler.handleThrowable(lastComponentName, throwable);
+            handleRecovery(flowInvocationContext.getLastComponentName(), throwable, event);
         }
         finally
         {
-            this.handleAction(exceptionAction);
             this.notifyMonitor();
         }
     }
 
-    protected void handleAction(ExceptionAction action)
+    private void handleRecovery(String lastComponentName, Throwable throwable, FlowEvent event)
     {
-        if(action != null)
+        try
         {
-            if(action instanceof StopAction)
-            {
-                stopInError();
-                throw new RuntimeException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
-            }
-            // retry
-            else if(!stopping)
-            {
-                this.recoveryManager.recover(action);
-            }
-            throw new RuntimeException(EXCEPTION_ACTION_IMPLIED_ROLLBACK);
+            this.recoveryManager.recover(lastComponentName, throwable, event);
         }
-        else
+        finally
         {
-            if(this.recoveryManager.isRecovering())
+            if(recoveryManager.isRecovering())
             {
-                this.recoveryManager.cancelRecovery();
+                // recoveryManager is in an active recovery cycle
+                stopping = false;
+                error = true;
+            }
+            else if(this.flowConfiguration.getConsumerFlowElement().getFlowComponent().isRunning())
+            {
+                // recoveryManager has no need to recover - all is well
+                stopping = false;
+                error = false;
+            }
+            else
+            {
+                // stop the flow as the outcome is unrecoverable
+                stopping = true;
+                error = true;
             }
         }
+        
     }
     
-    /**
-     * Sets the error flag before stopping the initiator by normal means
-     */
-    protected void stopInError()
-    {
-        error = true;
-        stop();
-    }
-
     public void invoke(Throwable throwable)
     {
         // TODO - do something with this...
-        ExceptionAction exceptionAction = this.exceptionHandler.handleThrowable("componentName", throwable);
-        handleAction(exceptionAction);
+        this.recoveryManager.recover(this.flowConfiguration.getConsumerFlowElement().getComponentName(), throwable);
     }
     
     /**
@@ -318,4 +302,25 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
         this.monitor = monitor;
     }
 
+    private String getState()
+    {
+        if(stopping)
+        {
+            if(error)
+            {
+                return "stoppedInError";
+            }
+
+            return "stopped";
+        }
+        else
+        {
+            if(error)
+            {
+                return "recovering";
+            }
+
+            return "running";
+        }
+    }
 }
