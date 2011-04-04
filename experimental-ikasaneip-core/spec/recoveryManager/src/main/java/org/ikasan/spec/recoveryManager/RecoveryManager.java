@@ -45,13 +45,19 @@ package org.ikasan.spec.recoveryManager;
  * 
  * @author Ikasan Development Teams
  */
-public interface RecoveryManager<CRITERIA>
+public interface RecoveryManager<EVENT>
 {
     /**
      * Start or continue a recovery based on the passed CRITERIA.
      * @param criteria
      */
-    public void recover(CRITERIA criteria);
+    public void recover(String componentName, Throwable throwable, EVENT event);
+    
+    /**
+     * Start or continue a recovery based on the passed CRITERIA.
+     * @param criteria
+     */
+    public void recover(String componentName, Throwable throwable);
     
     /**
      * Is the recovery manager currently running a recovery.
