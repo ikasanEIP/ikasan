@@ -59,6 +59,7 @@
        <module>event</module>
        <module>flow</module>
        <module>recoveryManager</module>
+       <module>monitor</module>
     </modules>
 
 </project>
