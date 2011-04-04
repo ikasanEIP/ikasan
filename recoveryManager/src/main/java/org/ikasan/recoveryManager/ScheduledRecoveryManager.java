@@ -43,9 +43,14 @@ package org.ikasan.recoveryManager;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ikasan.exceptionHandler.ExceptionHandler;
+import org.ikasan.exceptionHandler.action.ExceptionAction;
+import org.ikasan.exceptionHandler.action.ExcludeEventAction;
 import org.ikasan.exceptionHandler.action.RetryAction;
+import org.ikasan.exceptionHandler.action.StopAction;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recoveryManager.RecoveryManager;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -61,7 +66,7 @@ import org.quartz.TriggerUtils;
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRecoveryManager implements RecoveryManager
+public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
@@ -77,6 +82,9 @@ public class ScheduledRecoveryManager implements RecoveryManager
     
     /** Quartz Scheduler */
     private Scheduler scheduler;
+    
+    /** Exception Handler */
+    private ExceptionHandler exceptionHandler;
     
     /** consumer to stop and start for recovery */
     private Consumer<?> consumer;
@@ -95,7 +103,7 @@ public class ScheduledRecoveryManager implements RecoveryManager
      * @param flowElement
      * @param scheduler
      */
-    public ScheduledRecoveryManager(FlowElement<Consumer<?>> flowElement, Scheduler scheduler)
+    public ScheduledRecoveryManager(FlowElement<Consumer<?>> flowElement, ExceptionHandler exceptionHandler, Scheduler scheduler)
     {
         if(flowElement == null)
         {
@@ -105,6 +113,12 @@ public class ScheduledRecoveryManager implements RecoveryManager
         this.consumer = flowElement.getFlowComponent();
         this.consumerName = flowElement.getComponentName();
 
+        this.exceptionHandler = exceptionHandler;
+        if(exceptionHandler == null)
+        {
+            throw new IllegalArgumentException("exceptionHandler cannot be 'null'");
+        }
+        
         this.scheduler = scheduler;
         if(scheduler == null)
         {
@@ -123,8 +137,59 @@ public class ScheduledRecoveryManager implements RecoveryManager
             throw new RuntimeException(e);
         }
     }
+
+
+    public void recover(String componentName, Throwable throwable, FlowEvent event)
+    {
+        ExceptionAction exceptionAction = this.exceptionHandler.handleThrowable(componentName, throwable);
+        if(exceptionAction instanceof StopAction)
+        {
+            this.recover((StopAction)exceptionAction);
+        }
+        else if(exceptionAction instanceof RetryAction)
+        {
+            this.recover((RetryAction)exceptionAction);
+        }
+        else if(exceptionAction instanceof ExcludeEventAction)
+        {
+            this.recover((ExcludeEventAction)exceptionAction, event);
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Unsupported action [" + exceptionAction + "]");
+        }
+    }
+
+    public void recover(String componentName, Throwable throwable)
+    {
+        ExceptionAction exceptionAction = this.exceptionHandler.handleThrowable(componentName, throwable);
+        if(exceptionAction instanceof StopAction)
+        {
+            this.recover((StopAction)exceptionAction);
+        }
+        else if(exceptionAction instanceof RetryAction)
+        {
+            this.recover((RetryAction)exceptionAction);
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Unsupported action [" + exceptionAction + "]");
+        }
+    }
+
+    private void recover(ExcludeEventAction stopAction, FlowEvent event)
+    {
+        // do whatever excluded event does
+    }
     
-    public void recover(RetryAction retryAction)
+    private void recover(StopAction stopAction)
+    {
+        this.consumer.stop();
+        logger.info("Stopped consumer [" + this.consumerName + "]");
+        throw new RuntimeException("Rollback all operations");
+    }
+    
+    private void recover(RetryAction retryAction)
     {
         this.consumer.stop();
         recoveryAttempts++;
