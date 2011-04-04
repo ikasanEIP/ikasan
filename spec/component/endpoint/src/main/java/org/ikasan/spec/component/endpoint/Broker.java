@@ -41,9 +41,7 @@
 package org.ikasan.spec.component.endpoint;
 
 /**
- * Component consumer for retrieving from an endpoint.
- * 
- * A {@link Consumer} defines a contract for such translation.
+ * Component broker for request/response scenario from an endpoint.
  * 
  * @return <SOURCE> 
  *
