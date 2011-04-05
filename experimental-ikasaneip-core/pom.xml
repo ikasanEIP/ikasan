@@ -65,7 +65,6 @@
         <!-- ikasan core -->
         <module>spec</module>
         <module>flow</module>
-        <module>monitor</module>
         <module>recoveryManager</module>
 
         <!-- ikasan test harness -->
