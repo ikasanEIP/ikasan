@@ -66,6 +66,12 @@ public interface RecoveryManager<EVENT>
     public boolean isRecovering();
     
     /**
+     * Is the recovery manager in an unrecoverable state.
+     * @return
+     */
+    public boolean isUnrecoverable();
+    
+    /**
      * Cancel any recovery currently running in the recovery manager.
      */
     public void cancelRecovery();
