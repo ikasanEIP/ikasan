@@ -12,279 +12,510 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.log4j.Logger;
+import junit.framework.Assert;
 
-import org.ikasan.flow.event.DefaultReplicationFactory;
-import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.flow.event.ReplicationFactory;
+import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.configuration.service.ConfigurationService;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.exceptionHandler.ExceptionHandler;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recoveryManager.RecoveryManager;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.Sequence;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.rits.cloning.Cloner;
-
 /**
- * This test class supports the <code>IonMarketDataConsumer</code> class.
+ * This test class supports the <code>VisitingInvokerFlow</code> class.
  * 
  * @author Ikasan Development Team
  */
 public class VisitingInvokerFlowTest
 {
-    /** Logger instance */
-    private Logger logger = Logger.getLogger(VisitingInvokerFlowTest.class);
-	
     /**
      * Mockery for mocking concrete classes
      */
     private Mockery mockery = new Mockery();
 
-    /** Mock flowElementInvoker */
-    final FlowElementInvoker mockFlowElementInvoker = mockery.mock(FlowElementInvoker.class, "mockFlowElementInvoker");
+    /** Mock flowConfiguration */
+    final FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class, "mockFlowConfiguration");
 
-    /** Mock exceptionHandler */
-    final ExceptionHandler exceptionHandler = mockery.mock(ExceptionHandler.class, "mockExceptionHandler");
+    /** Mock flowElementInvoker */
+    final FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class, "mockFlowElementInvoker");
 
     /** Mock recoveryManager */
     final RecoveryManager recoveryManager = mockery.mock(RecoveryManager.class, "mockRecoveryManager");
 
-    /** Mock flowElement */
-    final FlowElement mockFlowElement = mockery.mock(FlowElement.class, "mockFlowElement");
+    /** Mock list of configured resource flow elements */
+    final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements
+        = mockery.mock(List.class, "mockFlowElementConfiguredResources");
 
-    /** Mock flowInvocationContext */
-    final FlowInvocationContext mockFlowInvocationContext = mockery.mock(FlowInvocationContext.class, "mockFlowInvocationContext");
+    /** Mock configured resource flow elements */
+    final FlowElement<ConfiguredResource> configuredResourceFlowElement
+        = mockery.mock(FlowElement.class, "mockFlowElementConfiguredResource");
 
-    /** Mock configurationService */
-    final ConfigurationService configurationService = mockery.mock(ConfigurationService.class, "mockConfigurationService");
+    /** Mock list of dynamic configured resource flow elements */
+    final List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredResourceFlowElements
+        = mockery.mock(List.class, "mockFlowElementDynamicConfiguredResources");
 
-    /** Mock flowEvent */
-    final FlowEvent mockFlowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
+    /** Mock dynamic configured resource flow elements */
+    final FlowElement<DynamicConfiguredResource> dynamicConfiguredResourceFlowElement
+        = mockery.mock(FlowElement.class, "mockFlowElementDynamicConfiguredResource");
 
-    /** Mock transition map */
-    final Map<String,FlowElement> mockTransitions = mockery.mock(Map.class, "mockMapTransitions");
+    /** Mock managed resource flow element 1 */
+    final FlowElement<ManagedResource> managedResourceFlowElement1
+        = mockery.mock(FlowElement.class, "mockFlowElementManagedResource1");
     
-	/** real flow context */
-	FlowInvocationContext flowInvocationContext;
-	
-	/** flow flow element invoker */
-	FlowElementInvoker flowElementInvoker;
-	
-	/** event factory */
-	EventFactory eventFactory;
-	
-	/** replication factory */
-	ReplicationFactory<FlowEvent<?>> replicationFactory;
-	
+    /** Mock managed resource flow element 2 */
+    final FlowElement<ManagedResource> managedResourceFlowElement2
+    = mockery.mock(FlowElement.class, "mockFlowElementManagedResource2");
+
+    /** Mock managed resource flow element 3 */
+    final FlowElement<ManagedResource> managedResourceFlowElement3
+    = mockery.mock(FlowElement.class, "mockFlowElementManagedResource3");
+
+    /** Mock lead flow element */
+    final FlowElement leadFlowElement = mockery.mock(FlowElement.class, "mockLeadFlowElement");
+
+    /** mock managed resource */
+    final ManagedResource managedResource = mockery.mock(ManagedResource.class, "mockManagedResource");
+
+    /** Mock consumer flowElement */
+    final FlowElement<Consumer<EventListener<FlowEvent<?>>>> consumerFlowElement 
+        = mockery.mock(FlowElement.class, "mockFlowElement");
+
+    /** Mock consumer */
+    final Consumer<EventListener<FlowEvent<?>>> consumer = mockery.mock(Consumer.class, "mockConsumer");
+    
+    /** Mock flow event */
+    final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
+
+    /** Mock monitor */
+    final Monitor monitor = mockery.mock(Monitor.class, "mockMonitor");
+    
+    /** Mock flow invocation context */
+    final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "mockFlowInvocationContext");
+
+    /** is recovering status */
+    boolean isRecovering = false;
+
+    /** is running status */
+    boolean isRunning = false;
+    
+    /** is unrecoverable status */
+    boolean isUnrecoverable = false;
+
+    @Before
+    public void setup()
+    {
+        isRecovering = false;
+        isRunning = false;
+        isUnrecoverable = false;
+    }
+    
 	/**
-     * Test failed constructor due to null configuration.
+     * Test failed constructor due to null flow name.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullConfiguration()
+    public void test_failed_constructorDueToNullName()
     {
         new VisitingInvokerFlow(null, null, null, null, null);
     }
 
     /**
-     * Create all stubbed component types
+     * Test failed constructor due to null module name.
      */
-    @Before
-    public void setup()
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullModuleName()
     {
-    	// flow context instance
-    	flowInvocationContext = new DefaultFlowInvocationContext();
-
-    	// replication factory
-    	replicationFactory = new DefaultReplicationFactory<FlowEvent<?>>(new Cloner());
+        new VisitingInvokerFlow("flowName", null, null, null, null);
     }
-    
-    @Test
-    public void test_flow_consumer_translator_producer()
+
+    /**
+     * Test failed constructor due to null flow configuration.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullFlowConfiguration()
     {
-        // create producer component
-        Producer producer = new StubProducerStringBuilderComponent();
-        FlowElement producerFlowElement = new FlowElementImpl("producerComponentName", producer);
+        new VisitingInvokerFlow("flowName", "moduleName", null, null, null);
+    }
 
-        // create translator
-        Translator translator = new StubTranslatorComponent();
-        FlowElement translatorFlowElement = new FlowElementImpl("translatorComponentName", translator, producerFlowElement);
+    /**
+     * Test failed constructor due to null flow element invoker.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullFlowElementInvoker()
+    {
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null);
+    }
 
-        // create consumer component
-        Consumer consumer = new StubConsumerComponent(new StubbedTech(), new FlowEventFactory());
-        FlowElement consumerFlowElement = new FlowElementImpl("consumerComponentName", consumer, translatorFlowElement);
+    /**
+     * Test failed constructor due to null flow recovery manager.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullFlowRecoveryManager()
+    {
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, flowElementInvoker, null);
+    }
 
-//        // flow exception handler
-//        int delay = 1000;
-//        int retries = 10;
-//        ExceptionAction retryAction = new RetryAction(delay, retries);
-//        ExceptionAction stopAction = StopAction.instance();
-//        ExceptionAction excludeAction = ExcludeEventAction.instance();
-//        
-//        IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
-//        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, stopAction);
-//        
-//        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
-//        matchers.add(matcher);
-//        
-//        ExceptionHandler ikasanExceptionHandler = new MatchingExceptionHandler(matchers);
-//        
-        // flow configuration wiring
-        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, configurationService);
+    /**
+     * Test successful visiting flow invoker instantiation.
+     */
+    @Test
+    public void test_successful_VisitingInvokerFlow_instantiation()
+    {
+        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, flowElementInvoker, recoveryManager);
+        Assert.assertEquals("flowName setter failed", "flowName", flow.getName());
+        Assert.assertEquals("moduleName setter failed", "moduleName", flow.getModuleName());
+    }
 
-        // iterator over each flow element
-        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
-
+    /**
+     * Test successful flow start.
+     */
+    @Test
+    public void test_successful_flow_start()
+    {
         // container for the complete flow
-        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
         
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the two configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // load configuration
+                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                
+                // get the three managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // start each managed resource from right to left in flow order
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // set listener for tech callbacks
+                exactly(1).of(consumer).setListener(flow);
+                
+                // start the onsumer
+                exactly(1).of(consumer).start();
+            }
+        });
+
+        // set the monitor
+        setMonitorExpectations("stopped", isRecovering, isRunning, isUnrecoverable);
+        flow.setMonitor(monitor);
+
         // run test
+        isRunning = true;
+        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
         flow.start();
 
         // test assertions
-//        Assert.assertEquals("payload", (String)flowEvent.getPayload());
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    //
-    // Stubbed Component classes
-    //
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Stubbed Translator to 'change' the content of incoming StringBuilder
-     */
-    private class StubTranslatorComponent implements Translator<StringBuilder>
-    {
-		public void translate(StringBuilder payload) throws TransformationException
-		{
-			payload.append(" with added value");
-		}
+        mockery.assertIsSatisfied();
     }
 
     /**
-     * Stubbed Converter to convert the incoming StubbedTechMessage to a String
+     * Test failed flow start due to consumer failing to start.
      */
-    private class StubConverterComponent implements Converter<StubbedTechMessage,StringBuilder>
+    @Test
+    public void test_failed_flow_start_due_to_unrecoverable_consumer_failure()
     {
-		public StringBuilder convert(StubbedTechMessage payload) throws TransformationException
-		{
-			return new StringBuilder(payload.getData());
-		}
-    }
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
 
-    // ========================================================================
-    // Producer for StringBuilder
-    // ========================================================================
-    /**
-     * Stubbed producer based on StringBuilder payload
-     */
-    private class StubProducerStringBuilderComponent implements Producer<StringBuilder>
-    {
-    	public void invoke(StringBuilder payload) throws EndpointException 
-		{
-    		logger.info("Producer.invoke(StringBuilder payload)");
-		}
-    }
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
 
-    // ========================================================================
-    // Consumer for the Stubbed Tech
-    // ========================================================================
-    private class StubConsumerComponent implements Consumer<EventListener>, StubbedTechListener
-    {
-        private StubbedTech stubbedTech;
-        private FlowEventFactory flowEventFactory;
-
-        private EventListener eventListener;
-
-        private Thread techThread;
+        final RuntimeException exception = new RuntimeException("test consumer failing to start");
         
-        public StubConsumerComponent(StubbedTech stubbedTech, FlowEventFactory flowEventFactory)
-        {
-            this.stubbedTech = stubbedTech;
-            this.flowEventFactory = flowEventFactory;
-            this.stubbedTech.setListener(this);
-        }
-        
-        public void start()
-        {
-            techThread = new Thread(this.stubbedTech);
-            techThread.start();
-        }
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        public void stop()
+        // expectations
+        mockery.checking(new Expectations()
         {
-            techThread.interrupt();
-        }
+            {
+                // get the two configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
-        public boolean isRunning()
-        {
-            return false;
-        }
+                // load configuration
+                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                
+                // get the three managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // start each managed resource from right to left in flow order
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // set listener for tech callbacks
+                exactly(1).of(consumer).setListener(flow);
+                
+                // start the consumer
+                exactly(1).of(consumer).start();
+                will(throwException(exception));
 
-        public void setListener(EventListener eventListener)
-        {
-            this.eventListener = eventListener;
-        }
+                // recovery manager invocation
+                exactly(1).of(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                exactly(1).of(recoveryManager).recover("consumerName", exception);
+            }
+        });
 
-        public void onMessage(StubbedTechMessage message)
-        {
-            FlowEvent<?> flowEvent = flowEventFactory.newEvent("identifier", message);
-            this.eventListener.invoke(flowEvent);
-        }
+        // set the monitor
+        setMonitorExpectations("stopped", isRecovering, isRunning, isUnrecoverable);
+        flow.setMonitor(monitor);
+
+        // run test
+        isUnrecoverable = true;
+        setMonitorExpectations("stoppedInError", isRecovering, isRunning, isUnrecoverable);
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
     }
 
-    // ========================================================================
-    // Stubbed Tech implementation
-    // ========================================================================
-
-    /** Tech listener interface */
-    interface StubbedTechListener
+    /**
+     * Test successful flow stop.
+     */
+    @Test
+    public void test_successful_flow_stop()
     {
-        public void onMessage(StubbedTechMessage message);
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always check to see if recovery is in progress
+                // in this test case it isn't
+                one(recoveryManager).isRecovering();
+                will(returnValue(false));
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // nuillify the listener for tech callbacks
+                exactly(1).of(consumer).setListener(null);
+                
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+                
+                // get the three managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // stop each managed resource from left to right in flow order
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        // set the monitor
+        isRunning = true;
+        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        flow.setMonitor(monitor);
+
+        // run test
+        isRunning = false;
+        setMonitorExpectations("stopped", isRecovering, isRunning, isUnrecoverable);
+        flow.stop();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow invoke.
+     */
+    @Test
+    public void test_successful_flow_invoke()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // reload any marked dynamic configuration
+                one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                one(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+                exactly(2).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                one(flowConfiguration).getLeadFlowElement();
+                will(returnValue(leadFlowElement));
+                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                
+                // do we need to cancel recovery
+                one(recoveryManager).isRecovering();
+                will(returnValue(false));
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        flow.setMonitor(monitor);
+
+        // run test
+        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Convenience method for setting getState method expected behaviour
+     * @param isRecovering
+     * @param isRunning
+     * @param isUnrecoverable
+     */
+    private void setMonitorExpectations(final String state, final boolean isRecovering, final boolean isRunning, final boolean isUnrecoverable)
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set expectations for establishing state
+                one(recoveryManager).isRecovering();
+                will(returnValue(isRecovering));
+                
+                if(!isRecovering)
+                {
+                    one(flowConfiguration).getConsumerFlowElement();
+                    will(returnValue(consumerFlowElement));
+                    one(consumerFlowElement).getFlowComponent();
+                    will(returnValue(consumer));
+                    one(consumer).isRunning();
+                    will(returnValue(isRunning));
+                }
+                
+                if(!isRunning)
+                {
+                    one(recoveryManager).isUnrecoverable();
+                    will(returnValue(isUnrecoverable));
+                }
+                
+                // set expectation string on monitor notification
+                exactly(1).of(monitor).notifyMonitor(state);
+            }
+        });
     }
     
-    /** Tech data model */
-    private class StubbedTechMessage
+    /**
+     * Extended test class allowing return of a mocked flowInvocationContext.
+     * @author Ikasan Developer Team
+     *
+     */
+    private class ExtendedVisitingInvokerFlow extends VisitingInvokerFlow
     {
-        private String data = "data content";
 
-        public String getData()
+        public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, FlowElementInvoker flowElementInvoker,
+                RecoveryManager<FlowEvent<?>> recoveryManager)
         {
-            return data;
+            super(name, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
         }
-    }
-
-    /** Tech implementation */
-    private class StubbedTech implements Runnable
-    {
-        private StubbedTechListener stubbedTechListener;
-        
-        public void setListener(StubbedTechListener stubbedTechListener)
+     
+        @Override
+        protected FlowInvocationContext newFlowInvocationContext()
         {
-            this.stubbedTechListener = stubbedTechListener;
-        }
-        
-        public void run()
-        {
-            StubbedTechMessage message = new StubbedTechMessage();
-            this.stubbedTechListener.onMessage(message);
+            return flowInvocationContext;
         }
     }
 }
