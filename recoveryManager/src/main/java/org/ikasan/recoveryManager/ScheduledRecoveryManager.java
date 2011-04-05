@@ -98,6 +98,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
     /** keep a handle on the previous action for comparison */
     private RetryAction previousRetryAction;
     
+    /** unrecoverable status */
+    private boolean unrecoverable = false;
+    
     /**
      * Constructor
      * @param flowElement
@@ -141,6 +144,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
 
     public void recover(String componentName, Throwable throwable, FlowEvent event)
     {
+        this.unrecoverable = false;
+        
         ExceptionAction exceptionAction = this.exceptionHandler.handleThrowable(componentName, throwable);
         if(exceptionAction instanceof StopAction)
         {
@@ -162,19 +167,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
 
     public void recover(String componentName, Throwable throwable)
     {
-        ExceptionAction exceptionAction = this.exceptionHandler.handleThrowable(componentName, throwable);
-        if(exceptionAction instanceof StopAction)
-        {
-            this.recover((StopAction)exceptionAction);
-        }
-        else if(exceptionAction instanceof RetryAction)
-        {
-            this.recover((RetryAction)exceptionAction);
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Unsupported action [" + exceptionAction + "]");
-        }
+        this.recover(componentName, throwable, null);
     }
 
     private void recover(ExcludeEventAction stopAction, FlowEvent event)
@@ -185,6 +178,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
     private void recover(StopAction stopAction)
     {
         this.consumer.stop();
+        this.unrecoverable = true;
         logger.info("Stopped consumer [" + this.consumerName + "]");
         throw new RuntimeException("Rollback all operations");
     }
@@ -270,5 +264,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
         {
             consumer.start();
         }
+    }
+
+    public boolean isUnrecoverable()
+    {
+        return this.unrecoverable;
     }
 }
