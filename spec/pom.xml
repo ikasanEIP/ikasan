@@ -55,11 +55,11 @@
 
     <modules>
        <module>component</module>
-       <module>service</module>
        <module>event</module>
        <module>flow</module>
        <module>recoveryManager</module>
        <module>monitor</module>
+       <module>service</module>
     </modules>
 
 </project>
