@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -67,6 +68,18 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     /** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
     
+    /** running state string constant */
+    private static String RUNNING = "running";
+    
+    /** stopped state string constant */
+    private static String STOPPED = "stopped";
+    
+    /** recovering state string constant */
+    private static String RECOVERING = "recovering";
+    
+    /** stoppedInError state string constant */
+    private static String STOPPED_IN_ERROR = "stoppedInError";
+    
     /** Name of this flow */
     private String name;
 
@@ -74,16 +87,19 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     private String moduleName;
 
     /** flow element invoker implementation */
-    FlowElementInvoker flowElementInvoker;
+    private FlowElementInvoker flowElementInvoker;
     
     /** flow configuration implementation */
-    FlowConfiguration flowConfiguration;
+    private FlowConfiguration flowConfiguration;
 
     /** flow monitor implementation */
-    Monitor monitor;
+    private Monitor monitor;
 
     /** flow recovery manager implementation */
-    RecoveryManager<FlowEvent<?>> recoveryManager;
+    private RecoveryManager<FlowEvent<?>> recoveryManager;
+    
+    /** startup failure flag */
+    private boolean flowInitialisationFailure = false;
     
     /**
      * Constructor
@@ -146,10 +162,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     }
 
     /**
-     * Start this flow
+     * Initialise the flow elements for startup
      */
-    public void start()
+    protected void initialiseFlow()
     {
+        this.flowInitialisationFailure = false;
+        
         try
         {
             // configure resources that are marked as configurable
@@ -173,20 +191,49 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
                             + flowElement.getComponentName() + "] " + e.getMessage(), e);
                 }
             }
-            
-            // finally start the consumer
-            FlowElement<Consumer> consumerFlowElement = flowConfiguration.getConsumerFlowElement();
-            Consumer<EventListener<FlowEvent<?>>> consumer = consumerFlowElement.getFlowComponent();
-            consumer.setListener( (EventListener<FlowEvent<?>>)this );
+        }
+        catch(RuntimeException e)
+        {
+            this.flowInitialisationFailure = true;
+            throw e;
+        }
+    }
+    
+    /**
+     * Start this flow
+     */
+    public void start()
+    {
+        FlowElement<Consumer> consumerFlowElement = flowConfiguration.getConsumerFlowElement();
 
+        String currentState = this.getState();
+        if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
+        {
+            logger.info("consumer [" + consumerFlowElement.getComponentName() 
+                + "] already in a " + currentState + " state. Ignoring start request.");
+            return;
+        }
+        
+        try
+        {
+            // initialise the flow
+            initialiseFlow();
+            
+            // start the consumer
             try
             {
+                Consumer<EventListener<FlowEvent<?>>> consumer = consumerFlowElement.getFlowComponent();
+                consumer.setListener( (EventListener<FlowEvent<?>>)this );
                 consumer.start();
             }
             catch(RuntimeException e)
             {
                 this.recoveryManager.recover(consumerFlowElement.getComponentName(), e);
             }
+        }
+        catch(RuntimeException e)
+        {
+            logger.error(e);
         }
         finally
         {
@@ -234,10 +281,17 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
 
         try
         {
-            // TODO - what to do about module and flow names ?
             for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
             {
-                this.flowConfiguration.configureFlowElement(flowElement);
+                try
+                {
+                    this.flowConfiguration.configureFlowElement(flowElement);
+                }
+                catch(RuntimeException e)
+                {
+                    flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+                    throw e;
+                }
             }
         
             flowElementInvoker.invoke(flowInvocationContext, event, flowConfiguration.getLeadFlowElement());
@@ -257,12 +311,19 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     }
 
     /**
-     * Invoke this flow with an exception.
+     * Invoke the recover manager to act on the passed exception.
+     * @param throwable
      */
     public void invoke(Throwable throwable)
     {
-        // TODO - do something with this...
-        this.recoveryManager.recover(this.flowConfiguration.getConsumerFlowElement().getComponentName(), throwable);
+        try
+        {
+            this.recoveryManager.recover(this.flowConfiguration.getConsumerFlowElement().getComponentName(), throwable);
+        }
+        finally
+        {
+            this.notifyMonitor();
+        }
     }
     
     /**
@@ -286,22 +347,26 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
         this.notifyMonitor();
     }
 
-    private String getState()
+    /**
+     * Resolve the state of this flow into a string representation
+     * @return
+     */
+    protected String getState()
     {
         if(this.recoveryManager.isRecovering())
         {
-            return "recovering";
+            return RECOVERING;
         }
         else if(this.flowConfiguration.getConsumerFlowElement().getFlowComponent().isRunning())
         {
-            return "running";
+            return RUNNING;
         }
-        else if(this.recoveryManager.isUnrecoverable())
+        else if(this.flowInitialisationFailure || this.recoveryManager.isUnrecoverable())
         {
-            return "stoppedInError";
+            return STOPPED_IN_ERROR;
         }
 
-        return "stopped";
+        return STOPPED;
     }
     
     /**
