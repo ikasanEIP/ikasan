@@ -21,6 +21,7 @@ import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -179,10 +180,10 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test successful flow start.
+     * Test successful flow start from a stopped state.
      */
     @Test
-    public void test_successful_flow_start()
+    public void test_successful_flow_start_from_stopped()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
@@ -199,7 +200,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // get the two configured resources
+                // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
                 one(configuredResourceFlowElements).iterator();
@@ -208,11 +209,11 @@ public class VisitingInvokerFlowTest
                 // load configuration
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
-                // get the three managed resources
+                // get the three flow element managed resources
                 one(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
-                // start each managed resource from right to left in flow order
+                // start each managed resource from right to left (reverse order) in flow order
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
@@ -238,18 +239,23 @@ public class VisitingInvokerFlowTest
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
                 
-                // start the onsumer
+                // start the consumer
                 exactly(1).of(consumer).start();
             }
         });
 
-        // set the monitor
-        setMonitorExpectations("stopped", isRecovering, isRunning, isUnrecoverable);
+        // set the monitor and receive initial state callback
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
-        // run test
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // start will result in the monitor being updated to running
         isRunning = true;
-        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
         flow.start();
 
         // test assertions
@@ -257,10 +263,94 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test failed flow start due to consumer failing to start.
+     * Test successful flow start from a stoppedInError state.
      */
     @Test
-    public void test_failed_flow_start_due_to_unrecoverable_consumer_failure()
+    public void test_successful_flow_start_from_stoppedInError()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the two flow element configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // load configuration
+                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                
+                // get the three flow element managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // start each managed resource from right to left (reverse order) in flow order
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // set listener for tech callbacks
+                exactly(1).of(consumer).setListener(flow);
+                
+                // start the consumer
+                exactly(1).of(consumer).start();
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        isUnrecoverable = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // start will result in the monitor being updated to running
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow start due to consumer already running.
+     */
+    @Test
+    public void test_failed_flow_start_due_to_consumer_already_running()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
@@ -279,7 +369,148 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // get the two configured resources
+                // get the consumer flow element for logging its name
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // start will bail out due to flow already running
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow start due to consumer already running in recovery.
+     */
+    @Test
+    public void test_failed_flow_start_due_to_consumer_already_running_in_recovery()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+
+        final RuntimeException exception = new RuntimeException("test consumer failing to start");
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the consumer flow element for logging its name
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        isRecovering = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("recovering");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // start will bail out due to flow already running in recovery
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow start due to configuration failure.
+     */
+    @Test
+    public void test_failed_flow_start_due_to_configuration_failure()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final RuntimeException exception = new RuntimeException("test configuration failing");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get consumer flow element
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                
+                // get the flow element configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement));
+
+                // load configuration
+                exactly(1).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                will(throwException(exception));
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // this start will result in the monitor being updated to unrecoverable
+        setGetStateExpectations(isRecovering, isRunning);
+        setMonitorExpectations("stoppedInError");
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow start regardless of a managed resource successfully
+     * starting. We ignore managed resource start failures as these could 
+     * resolve themselves later in the flow invocation.
+     */
+    @Test
+    public void test_success_flow_start_even_with_managedResource_start_failure()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
                 one(configuredResourceFlowElements).iterator();
@@ -288,7 +519,85 @@ public class VisitingInvokerFlowTest
                 // load configuration
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
-                // get the three managed resources
+                // get the the flow element managed resource
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // start each managed resource from right to left (reverse order) in flow order
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                will(throwException(new RuntimeException("test managed resource start failure")));
+                one(managedResourceFlowElement1).getComponentName();
+                will(returnValue("managedResourceFlowElementName"));
+                inSequence(reverseOrder);
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // set listener for tech callbacks
+                exactly(1).of(consumer).setListener(flow);
+                
+                // start the consumer
+                exactly(1).of(consumer).start();
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // start will result in the monitor being updated to running
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow start due to consumer failing to start, but activating recovery.
+     */
+    @Test
+    public void test_failed_flow_start_due_to_recoverable_consumer_failure()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+
+        final RuntimeException exception = new RuntimeException("test consumer failing to start");
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the two flow element configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // load configuration
+                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                
+                // get the three flow element managed resources
                 one(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
@@ -329,13 +638,18 @@ public class VisitingInvokerFlowTest
             }
         });
 
-        // set the monitor
-        setMonitorExpectations("stopped", isRecovering, isRunning, isUnrecoverable);
+        // set the monitor and receive initial state callback
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.setMonitor(monitor);
 
-        // run test
-        isUnrecoverable = true;
-        setMonitorExpectations("stoppedInError", isRecovering, isRunning, isUnrecoverable);
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // this start will result in the monitor being updated to unrecoverable
+        isRecovering = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("recovering");
         flow.start();
 
         // test assertions
@@ -343,10 +657,101 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test successful flow stop.
+     * Test failed flow start due to consumer failing to start.
      */
     @Test
-    public void test_successful_flow_stop()
+    public void test_failed_flow_start_due_to_unrecoverable_consumer_failure()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+
+        final RuntimeException exception = new RuntimeException("test consumer failing to start");
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get the two flow element configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // load configuration
+                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                
+                // get the three flow element managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // start each managed resource from right to left in flow order
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                inSequence(reverseOrder);
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // set listener for tech callbacks
+                exactly(1).of(consumer).setListener(flow);
+                
+                // start the consumer
+                exactly(1).of(consumer).start();
+                will(throwException(exception));
+
+                // recovery manager invocation
+                exactly(1).of(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                exactly(1).of(recoveryManager).recover("consumerName", exception);
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // this start will result in the monitor being updated to unrecoverable
+        isUnrecoverable = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow stop on flow which is running.
+     */
+    @Test
+    public void test_successful_flow_stop_whilst_running()
     {
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -370,13 +775,13 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(consumerFlowElement).getFlowComponent();
                 will(returnValue(consumer));
                 
-                // nuillify the listener for tech callbacks
+                // nullify the listener for tech callbacks
                 exactly(1).of(consumer).setListener(null);
                 
                 // stop the consumer
                 exactly(1).of(consumer).stop();
                 
-                // get the three managed resources
+                // get the three flow element managed resources
                 one(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
@@ -405,12 +810,14 @@ public class VisitingInvokerFlowTest
 
         // set the monitor
         isRunning = true;
-        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
         flow.setMonitor(monitor);
 
         // run test
         isRunning = false;
-        setMonitorExpectations("stopped", isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
         flow.stop();
 
         // test assertions
@@ -418,10 +825,242 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test successful flow invoke.
+     * Test successful flow stop on flow which is in recovery.
      */
     @Test
-    public void test_successful_flow_invoke()
+    public void test_successful_flow_stop_whilst_recovering()
+    {
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always check to see if recovery is in progress
+                // in this test case it isn't
+                one(recoveryManager).isRecovering();
+                will(returnValue(false));
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // nullify the listener for tech callbacks
+                exactly(1).of(consumer).setListener(null);
+                
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+                
+                // get the three flow element managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // stop each managed resource from left to right in flow order
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        // set the monitor
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isRunning = false;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.stop();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow stop on flow which is already stopped. 
+     * This should go through the motions as there is no issue in 
+     * stopping a stopped flow.
+     */
+    @Test
+    public void test_successful_flow_stop_whilst_stopped()
+    {
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always check to see if recovery is in progress
+                // in this test case it isn't
+                one(recoveryManager).isRecovering();
+                will(returnValue(false));
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // nullify the listener for tech callbacks
+                exactly(1).of(consumer).setListener(null);
+                
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+                
+                // get the three flow element managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // stop each managed resource from left to right in flow order
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        // set the monitor
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.setMonitor(monitor);
+
+        // run test
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.stop();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow stop on flow which is already stoppedInError. 
+     * This should go through the motions as there is no issue in 
+     * stopping a stoppedInError flow.
+     */
+    @Test
+    public void test_successful_flow_stop_whilst_stoppedInError()
+    {
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        managedResourceFlowElements.add(managedResourceFlowElement2);
+        managedResourceFlowElements.add(managedResourceFlowElement3);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // always check to see if recovery is in progress
+                // in this test case it isn't
+                one(recoveryManager).isRecovering();
+                will(returnValue(false));
+                
+                // get the consumer
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                exactly(1).of(consumerFlowElement).getFlowComponent();
+                will(returnValue(consumer));
+                
+                // nullify the listener for tech callbacks
+                exactly(1).of(consumer).setListener(null);
+                
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+                
+                // get the three flow element managed resources
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // stop each managed resource from left to right in flow order
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement2).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+                one(managedResourceFlowElement3).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
+                inSequence(reverseOrder);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        // set the monitor
+        isUnrecoverable = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.setMonitor(monitor);
+
+        // run test
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.stop();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow invoke with a flow event.
+     */
+    @Test
+    public void test_successful_flow_invoke_with_flowEvent()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -438,7 +1077,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(leadFlowElement));
                 one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
                 
-                // do we need to cancel recovery
+                // in this test we do not need to cancel recovery
                 one(recoveryManager).isRecovering();
                 will(returnValue(false));
             }
@@ -449,11 +1088,13 @@ public class VisitingInvokerFlowTest
             flowConfiguration, flowElementInvoker, recoveryManager);
 
         isRunning = true;
-        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
         flow.setMonitor(monitor);
 
         // run test
-        setMonitorExpectations("running", isRecovering, isRunning, isUnrecoverable);
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
         flow.invoke(flowEvent);
 
         // test assertions
@@ -461,12 +1102,345 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Convenience method for setting getState method expected behaviour
+     * Test failed flow invoke with a flow event, but dynamic configuration failing.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_flowEvent_stoppingInError_due_to_dynamicConfiguration_failure()
+    {
+        final RuntimeException exception = new RuntimeException("test failed dynamic configuration");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // reload any marked dynamic configuration
+                one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                one(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement));
+                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+                will(throwException(exception));
+                
+                // add failed flow element name to the context
+                one(dynamicConfiguredResourceFlowElement).getComponentName();
+                will(returnValue("dynamicComponentName"));
+                one(flowInvocationContext).addInvokedComponentName("dynamicComponentName");
+                
+                // pass the exception to the recovery manager
+                one(flowInvocationContext).getLastComponentName();
+                will(returnValue("dynamicComponentName"));
+                one(recoveryManager).recover("dynamicComponentName", exception, flowEvent);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isUnrecoverable = true;
+        isRunning = false;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow invoke with a flow event with the resulting outcome being stoppedInError.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_flowEvent_resulting_in_stoppedInError()
+    {
+        final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // reload any marked dynamic configuration
+                one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                one(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement));
+                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                // invoke the flow elements
+                one(flowConfiguration).getLeadFlowElement();
+                will(returnValue(leadFlowElement));
+                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                will(throwException(exception));
+                
+                // pass the exception to the recovery manager
+                one(flowInvocationContext).getLastComponentName();
+                will(returnValue("componentName"));
+                one(recoveryManager).recover("componentName", exception, flowEvent);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isUnrecoverable = true;
+        isRunning = false;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow invoke with a flow event with the resulting outcome being recovering.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_flowEvent_resulting_in_recovery()
+    {
+        final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // reload any marked dynamic configuration
+                one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                one(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement));
+                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                // invoke the flow elements
+                one(flowConfiguration).getLeadFlowElement();
+                will(returnValue(leadFlowElement));
+                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                will(throwException(exception));
+                
+                // pass the exception to the recovery manager
+                one(flowInvocationContext).getLastComponentName();
+                will(returnValue("componentName"));
+                one(recoveryManager).recover("componentName", exception, flowEvent);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isRecovering = true;
+        isRunning = false;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("recovering");
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow invoke with a flow event with the resulting outcome 
+     * being continue to run.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_flowEvent_resulting_in_continuing_to_run()
+    {
+        final RuntimeException exception = new RuntimeException("test failed flow invocation");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // reload any marked dynamic configuration
+                one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                one(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement));
+                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                // invoke the flow elements
+                one(flowConfiguration).getLeadFlowElement();
+                will(returnValue(leadFlowElement));
+                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                will(throwException(exception));
+                
+                // pass the exception to the recovery manager
+                one(flowInvocationContext).getLastComponentName();
+                will(returnValue("componentName"));
+                one(recoveryManager).recover("componentName", exception, flowEvent);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.invoke(flowEvent);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow invoke with an exception resulting outcome 
+     * being continue to run.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_exception_resulting_in_continuing_to_run()
+    {
+        final RuntimeException exception = new RuntimeException("invoked with exception test");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // pass the exception to the recovery manager
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(recoveryManager).recover("consumerName", exception);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.invoke(exception);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow invoke with an exception resulting outcome 
+     * being recovery.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_exception_resulting_in_recovery()
+    {
+        final RuntimeException exception = new RuntimeException("invoked with exception test");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // pass the exception to the recovery manager
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(recoveryManager).recover("consumerName", exception);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isRecovering = true;
+        isRunning = false;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("recovering");
+        flow.invoke(exception);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test failed flow invoke with an exception resulting outcome 
+     * being stoppedInError.
+     */
+    @Test
+    public void test_failed_flow_invoke_with_exception_resulting_in_stoppedInError()
+    {
+        final RuntimeException exception = new RuntimeException("invoked with exception test");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // pass the exception to the recovery manager
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(recoveryManager).recover("consumerName", exception);
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.setMonitor(monitor);
+
+        // run test
+        isUnrecoverable = true;
+        isRunning = false;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stoppedInError");
+        flow.invoke(exception);
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Set the getState expectations based on the incoming parameters.
      * @param isRecovering
      * @param isRunning
      * @param isUnrecoverable
      */
-    private void setMonitorExpectations(final String state, final boolean isRecovering, final boolean isRunning, final boolean isUnrecoverable)
+    private void setGetStateExpectations(final boolean isRecovering, final boolean isRunning, final boolean isUnrecoverable)
     {
         // expectations
         mockery.checking(new Expectations()
@@ -486,12 +1460,54 @@ public class VisitingInvokerFlowTest
                     will(returnValue(isRunning));
                 }
                 
-                if(!isRunning)
+                if(!isRecovering && !isRunning)
                 {
                     one(recoveryManager).isUnrecoverable();
                     will(returnValue(isUnrecoverable));
                 }
+            }
+        });
+    }
+    
+    /**
+     * Set the getState expectations based on the incoming parameters.
+     * @param isRecovering
+     * @param isRunning
+     * @param isUnrecoverable
+     */
+    private void setGetStateExpectations(final boolean isRecovering, final boolean isRunning)
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set expectations for establishing state
+                one(recoveryManager).isRecovering();
+                will(returnValue(isRecovering));
                 
+                if(!isRecovering)
+                {
+                    one(flowConfiguration).getConsumerFlowElement();
+                    will(returnValue(consumerFlowElement));
+                    one(consumerFlowElement).getFlowComponent();
+                    will(returnValue(consumer));
+                    one(consumer).isRunning();
+                    will(returnValue(isRunning));
+                }
+            }
+        });
+    }
+    
+    /**
+     * Convenience method for setting monitor expectations.
+     * @param String state
+     */
+    private void setMonitorExpectations(final String state)
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
                 // set expectation string on monitor notification
                 exactly(1).of(monitor).notifyMonitor(state);
             }
