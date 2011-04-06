@@ -106,15 +106,19 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
      * @param flowElement
      * @param scheduler
      */
-    public ScheduledRecoveryManager(FlowElement<Consumer<?>> flowElement, ExceptionHandler exceptionHandler, Scheduler scheduler)
+    public ScheduledRecoveryManager(Consumer consumer, String consumerName, ExceptionHandler exceptionHandler, Scheduler scheduler)
     {
-        if(flowElement == null)
+        this.consumer = consumer;
+        if(consumer == null)
         {
-            throw new IllegalArgumentException("Flow element cannot be 'null'");
+            throw new IllegalArgumentException("consumer cannot be 'null'");
         }
         
-        this.consumer = flowElement.getFlowComponent();
-        this.consumerName = flowElement.getComponentName();
+        this.consumerName = consumerName;
+        if(consumerName == null)
+        {
+            throw new IllegalArgumentException("consumerName cannot be 'null'");
+        }
 
         this.exceptionHandler = exceptionHandler;
         if(exceptionHandler == null)
@@ -177,9 +181,15 @@ public class ScheduledRecoveryManager implements RecoveryManager<FlowEvent>
     
     private void recover(StopAction stopAction)
     {
+        if(this.isRecovering())
+        {
+            this.cancelRecovery();
+        }
+        
         this.consumer.stop();
         this.unrecoverable = true;
         logger.info("Stopped consumer [" + this.consumerName + "]");
+        
         throw new RuntimeException("Rollback all operations");
     }
     
