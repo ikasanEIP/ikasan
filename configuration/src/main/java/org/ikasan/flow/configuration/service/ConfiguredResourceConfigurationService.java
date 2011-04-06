@@ -61,7 +61,7 @@ import org.ikasan.flow.configuration.model.ConfigurationParameter;
  *
  */
 public class ConfiguredResourceConfigurationService
-    implements ConfigurationService<ConfiguredResource,Configuration>, 
+    implements org.ikasan.spec.configuration.service.ConfigurationService<ConfiguredResource,Configuration>, 
     ConfigurationManagement<ConfiguredResource,Configuration> 
 {
     /** Logger instance */
