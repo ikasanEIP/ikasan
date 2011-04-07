@@ -38,74 +38,23 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler.matcher;
-
-import org.hamcrest.Matcher;
-import org.ikasan.exceptionHandler.ExceptionGroup;
-import org.ikasan.exceptionHandler.action.ExceptionAction;
+package org.ikasan.exceptionResolver;
 
 /**
- * Default implementation of <code>ExceptionGroup</code> uses a
- * <code>TypeSafeMatcher</code> to determine if the given Throwable is a member
- * if this grouping
+ * This interface defines the public interface for invocation of the Ikasan Exception Handler
  * 
  * @author Ikasan Development Team
- * 
  */
-public class MatcherBasedExceptionGroup implements ExceptionGroup
+public interface ExceptionResolver
 {
+ 
     /**
-     * Underlying matcher used to determing inclusion in this grouping
-     */
-    private Matcher<?> matcher;
-
-    /**
-     * Bound action
-     */
-    private ExceptionAction action;
-
-    /**
-     * Constructor
+     * Push an exception that occurred outside the scope of handling a data event to the Exception Handler
      * 
-     * @param matcher
-     * @param action
+     * @param componentName name of the component within which the exception occurred
+     * @param throwable The exception
+     * @return IkasanExceptionAction
      */
-    public MatcherBasedExceptionGroup(Matcher<?> matcher, ExceptionAction action)
-    {
-        super();
-        this.matcher = matcher;
-        this.action = action;
-    }
+    public <T> T resolve(final String componentName, final Throwable throwable);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ikasan.framework.exception.matching.ExceptionGroup#getAction()
-     */
-    public ExceptionAction getAction()
-    {
-        return action;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.ikasan.framework.exception.matching.ExceptionGroup#includes(java.
-     * lang.Throwable)
-     */
-    public boolean includes(Throwable throwable)
-    {
-        return matcher.matches(throwable);
-    }
-
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer(getClass().getName() + "[");
-        sb.append("action = [" + action + "]");
-        sb.append(", ");
-        sb.append("matcher = [" + matcher + "]");
-        sb.append("]");
-        return sb.toString();
-    }
 }

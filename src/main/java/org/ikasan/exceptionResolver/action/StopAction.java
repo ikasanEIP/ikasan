@@ -38,27 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler.action;
+package org.ikasan.exceptionResolver.action;
 
 /**
- * Exception action indicating the Initiator should be Excluded
+ * Exception action indicating the Initiator should be stopped
  * 
  * @author Ikasan Development Team
  */
-public class ExcludeEventAction implements ExceptionAction
+public class StopAction implements ExceptionAction
 {
-    /** Exclude FlowEvent Action */
-    public static final String EXCLUDE_EVENT = "Exclude FlowEvent";
-
+    /** Stop Action */
+    public static final String STOP = "Stop"; 
+    
     /**
-     * Static instance, probably all that is needed, as one ExcludeFlowEventAction is the same as another
+     * Static instance, probably all that is needed, as one StopAction is the same as another
      */
-    private static ExcludeEventAction instance = new ExcludeEventAction();
+    private static StopAction instance = new StopAction();
 
     /**
      * Private constructor prevents construction other than static instance
      */
-    private ExcludeEventAction()
+    private StopAction()
     {
         // Do Nothing
     }
@@ -68,7 +68,7 @@ public class ExcludeEventAction implements ExceptionAction
      * 
      * @return static instance
      */
-    public static ExcludeEventAction instance()
+    public static StopAction instance()
     {
         return instance;
     }
@@ -76,6 +76,6 @@ public class ExcludeEventAction implements ExceptionAction
     @Override
     public String toString()
     {
-        return EXCLUDE_EVENT;
+        return STOP;
     }
 }

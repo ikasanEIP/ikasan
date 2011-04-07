@@ -38,84 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler.action;
+package org.ikasan.exceptionResolver.action;
 
 /**
- * Exception Action indicating the operation should be retried
+ * Interface for the Ikasan Exception Action.
  * 
  * @author Ikasan Development Team
  */
-public class RetryAction implements ExceptionAction
+public interface ExceptionAction
 {
-    /**
-     * indicator for an infinite retry
-     */
-    public static final Integer RETRY_INFINITE = -1;
-
-    /**
-     * Length of time in milliseconds between retries
-     */
-    private long delay = 5000l;
-
-    /**
-     * Maximum no of times to retry
-     */
-    private int maxRetries = RETRY_INFINITE;
-
-    /**
-     * Default Constructor
-     */
-    public RetryAction()
-    {
-        // Do Nothing
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param delay - The delay in milliseconds before retrying
-     * @param maxRetries - The maximum number of retries to attempt
-     */
-    public RetryAction(long delay, int maxRetries)
-    {
-        super();
-        this.delay = delay;
-        this.maxRetries = maxRetries;
-    }
-
-    /**
-     * Accessor for delay
-     * 
-     * @return delay
-     */
-    public long getDelay()
-    {
-        return delay;
-    }
-
-    /**
-     * Mutator for delay
-     * 
-     * @param delay
-     */
-    public void setDelay(long delay)
-    {
-        this.delay = delay;
-    }
-
-    /**
-     * Accessor for maxRetries
-     * 
-     * @return maxRetries
-     */
-    public int getMaxRetries()
-    {
-        return maxRetries;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Retry (delay=" + delay + ", maxRetries=" + maxRetries + ")";
-    }
+    // marker interface
 }
