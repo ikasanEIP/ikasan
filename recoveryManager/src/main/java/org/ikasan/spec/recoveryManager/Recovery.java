@@ -45,11 +45,34 @@ package org.ikasan.spec.recoveryManager;
  * 
  * @author Ikasan Development Teams
  */
-public interface RecoveryManager<RECOVERABLE>
+public interface Recovery<EVENT>
 {
     /**
      * Start or continue a recovery based on the passed CRITERIA.
      * @param criteria
      */
-    public Recovery getRecovery(String flowName, String moduleName, RECOVERABLE recoverable);
+    public void recover(String component, Throwable throwable, EVENT event);
+    
+    /**
+     * Start or continue a recovery based on the passed CRITERIA.
+     * @param criteria
+     */
+    public void recover(String component, Throwable throwable);
+    
+    /**
+     * Is the recovery manager currently running a recovery.
+     * @return
+     */
+    public boolean isRecovering();
+    
+    /**
+     * Is the recovery manager in an unrecoverable state.
+     * @return
+     */
+    public boolean isUnrecoverable();
+    
+    /**
+     * Cancel any recovery currently running in the recovery manager.
+     */
+    public void cancel();
 }
