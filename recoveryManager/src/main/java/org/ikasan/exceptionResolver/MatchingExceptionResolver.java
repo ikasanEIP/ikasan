@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler;
+package org.ikasan.exceptionResolver;
 
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ import org.ikasan.exceptionHandler.action.StopAction;
  * @author Ikasan Development Team
  * 
  */
-public class MatchingExceptionHandler implements ExceptionHandler
+public class MatchingExceptionResolver implements ExceptionResolver
 {
     /**
      * Default Action if Throwable is not matched by any configured groups
@@ -80,7 +80,7 @@ public class MatchingExceptionHandler implements ExceptionHandler
      * @param exceptionGroupings
      * @param componentExceptionGroupings
      */
-    public MatchingExceptionHandler(List<ExceptionGroup> exceptionGroupings, Map<String, List<ExceptionGroup>> componentExceptionGroupings)
+    public MatchingExceptionResolver(List<ExceptionGroup> exceptionGroupings, Map<String, List<ExceptionGroup>> componentExceptionGroupings)
     {
         this.exceptionGroupings = exceptionGroupings;
         this.componentExceptionGroupings = componentExceptionGroupings;
@@ -91,7 +91,7 @@ public class MatchingExceptionHandler implements ExceptionHandler
      * 
      * @param exceptionGroupings
      */
-    public MatchingExceptionHandler(List<ExceptionGroup> exceptionGroupings)
+    public MatchingExceptionResolver(List<ExceptionGroup> exceptionGroupings)
     {
         this(exceptionGroupings, null);
     }
@@ -103,7 +103,7 @@ public class MatchingExceptionHandler implements ExceptionHandler
      * org.ikasan.framework.component.IkasanExceptionHandler#handleThrowable
      * (java.lang.String, java.lang.Throwable)
      */
-    public ExceptionAction handleThrowable(String componentName, Throwable throwable)
+    public ExceptionAction resolve(String componentName, Throwable throwable)
     {
         // try for a component match
         if (componentExceptionGroupings != null)

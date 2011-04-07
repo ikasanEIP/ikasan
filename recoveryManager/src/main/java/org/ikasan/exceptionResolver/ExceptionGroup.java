@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler;
+package org.ikasan.exceptionResolver;
 
 /**
  * Binds the ability to match any given Throwable, with an IkasanExceptionAction

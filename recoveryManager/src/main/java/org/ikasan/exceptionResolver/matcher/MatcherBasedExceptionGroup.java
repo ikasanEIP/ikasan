@@ -38,23 +38,74 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler;
+package org.ikasan.exceptionResolver.matcher;
+
+import org.hamcrest.Matcher;
+import org.ikasan.exceptionHandler.ExceptionGroup;
+import org.ikasan.exceptionHandler.action.ExceptionAction;
 
 /**
- * This interface defines the public interface for invocation of the Ikasan Exception Handler
+ * Default implementation of <code>ExceptionGroup</code> uses a
+ * <code>TypeSafeMatcher</code> to determine if the given Throwable is a member
+ * if this grouping
  * 
  * @author Ikasan Development Team
+ * 
  */
-public interface ExceptionHandler
+public class MatcherBasedExceptionGroup implements ExceptionGroup
 {
- 
     /**
-     * Push an exception that occurred outside the scope of handling a data event to the Exception Handler
-     * 
-     * @param componentName name of the component within which the exception occurred
-     * @param throwable The exception
-     * @return IkasanExceptionAction
+     * Underlying matcher used to determing inclusion in this grouping
      */
-    public <T> T handleThrowable(final String componentName, final Throwable throwable);
+    private Matcher<?> matcher;
 
+    /**
+     * Bound action
+     */
+    private ExceptionAction action;
+
+    /**
+     * Constructor
+     * 
+     * @param matcher
+     * @param action
+     */
+    public MatcherBasedExceptionGroup(Matcher<?> matcher, ExceptionAction action)
+    {
+        super();
+        this.matcher = matcher;
+        this.action = action;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.exception.matching.ExceptionGroup#getAction()
+     */
+    public ExceptionAction getAction()
+    {
+        return action;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.exception.matching.ExceptionGroup#includes(java.
+     * lang.Throwable)
+     */
+    public boolean includes(Throwable throwable)
+    {
+        return matcher.matches(throwable);
+    }
+
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer(getClass().getName() + "[");
+        sb.append("action = [" + action + "]");
+        sb.append(", ");
+        sb.append("matcher = [" + matcher + "]");
+        sb.append("]");
+        return sb.toString();
+    }
 }
