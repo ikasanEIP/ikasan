@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler.matcher;
+package org.ikasan.exceptionResolver.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

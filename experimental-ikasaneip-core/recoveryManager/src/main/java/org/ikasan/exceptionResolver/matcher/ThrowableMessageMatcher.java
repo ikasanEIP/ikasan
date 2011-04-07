@@ -38,14 +38,53 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler.action;
+package org.ikasan.exceptionResolver.matcher;
+
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
- * Interface for the Ikasan Exception Action.
+ * Implementation of <code>TypeSafeMatcher</code> for matching instances of
+ * <code>Throwable</code> by considering the message of the
+ * <code>Throwable</code>
+ * 
+ * For now only supports direct matches of a supplied substring within the
+ * Throwable's message In future could be extended to support a more powerful
+ * regular expression match
  * 
  * @author Ikasan Development Team
+ * 
  */
-public interface ExceptionAction
+public class ThrowableMessageMatcher extends TypeSafeMatcher<Throwable>
 {
-    // marker interface
+    /**
+     * substring that may be contained in the Throwable Message
+     */
+    private String substring;
+
+    /**
+     * Constructor
+     * 
+     * @param substring
+     */
+    public ThrowableMessageMatcher(String substring)
+    {
+        this.substring = substring;
+    }
+
+    @Override
+    public boolean matchesSafely(Throwable throwable)
+    {
+        return (throwable.getMessage().indexOf(substring) > -1);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.hamcrest.SelfDescribing#describeTo(org.hamcrest.Description)
+     */
+    public void describeTo(Description description)
+    {
+        description.appendText("throwable with message containing [" + substring + "]");
+    }
 }

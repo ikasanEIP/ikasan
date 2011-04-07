@@ -38,53 +38,84 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exceptionHandler.matcher;
-
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
+package org.ikasan.exceptionResolver.action;
 
 /**
- * Implementation of <code>TypeSafeMatcher</code> for matching instances of
- * <code>Throwable</code> by considering the message of the
- * <code>Throwable</code>
- * 
- * For now only supports direct matches of a supplied substring within the
- * Throwable's message In future could be extended to support a more powerful
- * regular expression match
+ * Exception Action indicating the operation should be retried
  * 
  * @author Ikasan Development Team
- * 
  */
-public class ThrowableMessageMatcher extends TypeSafeMatcher<Throwable>
+public class RetryAction implements ExceptionAction
 {
     /**
-     * substring that may be contained in the Throwable Message
+     * indicator for an infinite retry
      */
-    private String substring;
+    public static final Integer RETRY_INFINITE = -1;
+
+    /**
+     * Length of time in milliseconds between retries
+     */
+    private long delay = 5000l;
+
+    /**
+     * Maximum no of times to retry
+     */
+    private int maxRetries = RETRY_INFINITE;
+
+    /**
+     * Default Constructor
+     */
+    public RetryAction()
+    {
+        // Do Nothing
+    }
 
     /**
      * Constructor
      * 
-     * @param substring
+     * @param delay - The delay in milliseconds before retrying
+     * @param maxRetries - The maximum number of retries to attempt
      */
-    public ThrowableMessageMatcher(String substring)
+    public RetryAction(long delay, int maxRetries)
     {
-        this.substring = substring;
+        super();
+        this.delay = delay;
+        this.maxRetries = maxRetries;
+    }
+
+    /**
+     * Accessor for delay
+     * 
+     * @return delay
+     */
+    public long getDelay()
+    {
+        return delay;
+    }
+
+    /**
+     * Mutator for delay
+     * 
+     * @param delay
+     */
+    public void setDelay(long delay)
+    {
+        this.delay = delay;
+    }
+
+    /**
+     * Accessor for maxRetries
+     * 
+     * @return maxRetries
+     */
+    public int getMaxRetries()
+    {
+        return maxRetries;
     }
 
     @Override
-    public boolean matchesSafely(Throwable throwable)
+    public String toString()
     {
-        return (throwable.getMessage().indexOf(substring) > -1);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.hamcrest.SelfDescribing#describeTo(org.hamcrest.Description)
-     */
-    public void describeTo(Description description)
-    {
-        description.appendText("throwable with message containing [" + substring + "]");
+        return "Retry (delay=" + delay + ", maxRetries=" + maxRetries + ")";
     }
 }
