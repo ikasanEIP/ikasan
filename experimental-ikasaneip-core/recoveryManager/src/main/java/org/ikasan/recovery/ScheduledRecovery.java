@@ -69,6 +69,15 @@ public class ScheduledRecovery implements Recovery<FlowEvent<?>>
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecovery.class);
 
+    /** recovery job name */
+    private static final String RECOVERY_JOB_NAME = "recoveryJob";
+    
+    /** recovery job group */
+    private static final String RECOVERY_JOB_GROUP = "recoveryManager";
+    
+    /** recovery job trigger name */
+    private static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger";
+    
     /** consumer to stop and start for recovery */
     private Consumer<?> consumer;
 
@@ -271,8 +280,8 @@ public class ScheduledRecovery implements Recovery<FlowEvent<?>>
      */
     protected JobDetail newRecoveryJob()
     {
-        return new JobDetail(ScheduledRecoveryManager.RECOVERY_JOB_NAME + this.flowName, 
-            ScheduledRecoveryManager.RECOVERY_JOB_GROUP + this.moduleName, RecoveryJob.class);
+        return new JobDetail(RECOVERY_JOB_NAME + this.flowName, 
+            RECOVERY_JOB_GROUP + this.moduleName, RecoveryJob.class);
     }
     
     /**
@@ -283,7 +292,7 @@ public class ScheduledRecovery implements Recovery<FlowEvent<?>>
      */
     protected Trigger newRecoveryTrigger(int maxRetries, long delay)
     {
-        return TriggerUtils.makeImmediateTrigger(ScheduledRecoveryManager.RECOVERY_JOB_TRIGGER_NAME, maxRetries, delay);
+        return TriggerUtils.makeImmediateTrigger(RECOVERY_JOB_TRIGGER_NAME, maxRetries, delay);
     }
     
     /**
@@ -292,8 +301,8 @@ public class ScheduledRecovery implements Recovery<FlowEvent<?>>
      */
     private void cancelScheduledJob() throws SchedulerException
     {
-        this.scheduler.deleteJob(ScheduledRecoveryManager.RECOVERY_JOB_NAME + this.flowName, 
-            ScheduledRecoveryManager.RECOVERY_JOB_GROUP + this.moduleName);
+        this.scheduler.deleteJob(RECOVERY_JOB_NAME + this.flowName, 
+            RECOVERY_JOB_GROUP + this.moduleName);
     }
 
     /**

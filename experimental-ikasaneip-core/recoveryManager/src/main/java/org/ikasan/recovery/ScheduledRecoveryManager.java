@@ -40,46 +40,21 @@
  */
 package org.ikasan.recovery;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.log4j.Logger;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.recoveryManager.Recovery;
 import org.ikasan.spec.recoveryManager.RecoveryManager;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.StatefulJob;
-import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
 
 /**
- * Scheduled based Recovery Manager implementation.
+ * Scheduled based Recovery Manager implementation essentially provides
+ * a factory for the creation of recovery instances.
  * 
  * @author Ikasan Development Team
  */
 public class ScheduledRecoveryManager implements RecoveryManager<Consumer<?>>
 {
-    /** logger */
-    private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
-
-    /** recovery job name */
-    static final String RECOVERY_JOB_NAME = "recoveryJob";
-    
-    /** recovery job group */
-    static final String RECOVERY_JOB_GROUP = "recoveryManager";
-    
-    /** recovery job trigger name */
-    static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger";
-    
     /** Quartz Scheduler */
     private Scheduler scheduler;
     
