@@ -118,4 +118,39 @@ public class RetryAction implements ExceptionAction
     {
         return "Retry (delay=" + delay + ", maxRetries=" + maxRetries + ")";
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object object)
+    {
+        if(object instanceof RetryAction)
+        {
+            // is same object type
+            RetryAction retryAction = (RetryAction) object;
+            if(this.getDelay() == retryAction.getDelay() && this.getMaxRetries() == retryAction.getMaxRetries())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * HashCode default implementation
+     * 
+     * @return int hashcode
+     */
+    @Override
+    public int hashCode()
+    {
+        int hash = 1;
+        hash = hash * 31 + this.maxRetries;
+        hash = hash * 31 + (int)this.delay;
+        return hash;
+    }
 }

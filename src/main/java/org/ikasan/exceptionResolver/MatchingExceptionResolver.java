@@ -43,8 +43,8 @@ package org.ikasan.exceptionResolver;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.exceptionHandler.action.ExceptionAction;
-import org.ikasan.exceptionHandler.action.StopAction;
+import org.ikasan.exceptionResolver.action.ExceptionAction;
+import org.ikasan.exceptionResolver.action.StopAction;
 
 /**
  * Implementation of <code>IkasanExceptionHandler</code> that relies on a
