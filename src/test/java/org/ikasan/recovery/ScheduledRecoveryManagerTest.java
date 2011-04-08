@@ -10,7 +10,7 @@
  * ====================================================================
  *
  */
-package org.ikasan.recoveryManager;
+package org.ikasan.recovery;
 
 import java.util.Date;
 
@@ -23,7 +23,7 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.recoveryManager.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
