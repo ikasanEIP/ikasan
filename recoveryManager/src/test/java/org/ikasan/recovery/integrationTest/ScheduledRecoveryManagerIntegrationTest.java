@@ -10,7 +10,7 @@
  * ====================================================================
  *
  */
-package org.ikasan.recoveryManager.integrationTest;
+package org.ikasan.recovery.integrationTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.recoveryManager.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;

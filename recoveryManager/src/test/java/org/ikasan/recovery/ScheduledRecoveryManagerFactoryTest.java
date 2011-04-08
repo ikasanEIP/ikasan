@@ -10,7 +10,7 @@
  * ====================================================================
  *
  */
-package org.ikasan.recoveryManager;
+package org.ikasan.recovery;
 
 import junit.framework.Assert;
 
@@ -18,7 +18,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.recoveryManager.RecoveryManagerFactory;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
