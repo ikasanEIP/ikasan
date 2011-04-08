@@ -35,8 +35,7 @@ import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
- * This test class supports the <code>ScheduledRecoveryManagerFactory</code>
- * class.
+ * Integration testing for Recovery Manager implementation.
  * 
  * @author Ikasan Development Team
  */
@@ -108,6 +107,8 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue(e instanceof RuntimeException);
             Assert.assertEquals("stopAction invoked", e.getMessage());
         }
+        
+        //
         // expected results are consumer has been stopped and RM reports
         // unrecoverable
         Assert.assertFalse(consumer.isRunning());
