@@ -42,7 +42,7 @@ package org.ikasan.recovery;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.recoveryManager.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
