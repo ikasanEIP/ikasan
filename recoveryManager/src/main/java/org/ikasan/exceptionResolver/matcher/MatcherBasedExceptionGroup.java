@@ -41,8 +41,8 @@
 package org.ikasan.exceptionResolver.matcher;
 
 import org.hamcrest.Matcher;
-import org.ikasan.exceptionHandler.ExceptionGroup;
-import org.ikasan.exceptionHandler.action.ExceptionAction;
+import org.ikasan.exceptionResolver.ExceptionGroup;
+import org.ikasan.exceptionResolver.action.ExceptionAction;
 
 /**
  * Default implementation of <code>ExceptionGroup</code> uses a
