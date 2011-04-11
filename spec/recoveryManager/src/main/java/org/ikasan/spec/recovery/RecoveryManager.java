@@ -48,10 +48,17 @@ package org.ikasan.spec.recovery;
 public interface RecoveryManager<RESOLVER>
 {
     /**
-     * Start or continue a recovery based on the passed CRITERIA.
-     * @param criteria
+     * Set a resolver which translates the incoming exception and component name
+     * in to an action to be taken by the recovery manager.
+     * @param resolver
      */
     public void setResolver(RESOLVER resolver);
+    
+    /**
+     * Get the resolver for this recovery manager.
+     * @return  resolver
+     */
+    public RESOLVER getResolver();
     
     /**
      * Start or continue a recovery based on the passed CRITERIA.
