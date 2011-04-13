@@ -12,11 +12,10 @@
  */
 package org.ikasan.sample.scheduleDrivenPriceSrc.flow;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Resource;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.consumer.quartz.ScheduledConsumer;
+import org.ikasan.consumer.quartz.ScheduledConsumerConfiguration;
 import org.ikasan.consumer.quartz.ScheduledConsumerJobFactory;
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl;
@@ -30,10 +29,10 @@ import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.sample.scheduleDrivenPriceSrc.component.converter.ScheduleEventConverter;
 import org.ikasan.sample.scheduleDrivenPriceSrc.component.endpoint.PayloadProducer;
-import org.ikasan.sample.scheduleDrivenPriceSrc.component.endpoint.PriceProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.service.ConfigurationService;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
@@ -43,15 +42,27 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 
  * @author Ikasan Development Team
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+//specifies the Spring configuration to load for this test fixture
+@ContextConfiguration(locations={
+      "/hsqldb-config.xml"})
+      
 public class ScheduleDrivenPriceSrcFlowSample
 {
+    @Resource ConfigurationDao staticConfigurationDao;
+    
+    @Resource ConfigurationDao dynamicConfigurationDao;
+    
     FlowEventFactory flowEventFactory = new FlowEventFactory();
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
     
@@ -62,8 +73,7 @@ public class ScheduleDrivenPriceSrcFlowSample
     
     protected ConfigurationService getConfigurationService()
     {
-        ConfigurationDao configurationDao = new ConfigurationHibernateImpl();
-        return new ConfiguredResourceConfigurationService(configurationDao, configurationDao);
+        return new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
     }
     
     @Before
@@ -71,6 +81,9 @@ public class ScheduleDrivenPriceSrcFlowSample
     {
         this.scheduledRecoveryManagerFactory  = 
             new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
+        
+        ConfiguredResource cr = this.getConfigurationService();
+        cr.
     }
 
     @Test
@@ -85,7 +98,14 @@ public class ScheduleDrivenPriceSrcFlowSample
         FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceToStringBuilder", priceToStringBuilderConverter, producerFlowElement);
 
         Consumer consumer = new ScheduledConsumer(StdSchedulerFactory.getDefaultScheduler(), getEventFactory());
-        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("priceConsumer", consumer, converterFlowElement);
+        ScheduledConsumerConfiguration scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
+        scheduledConsumerConfiguration.setJobName("priceSrcFlow");
+        scheduledConsumerConfiguration.setJobName("priceSrcModule");
+        scheduledConsumerConfiguration.setCronExpression("0/5 * * * * ?");
+        ((ConfiguredResource)consumer).setConfiguration(scheduledConsumerConfiguration);
+        ((ConfiguredResource)consumer).setConfiguredResourceId("scheduleDrivenConsumer");
+
+        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("scheduleDrivenConsumer", consumer, converterFlowElement);
 
         // flow configuration wiring
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, getConfigurationService());
