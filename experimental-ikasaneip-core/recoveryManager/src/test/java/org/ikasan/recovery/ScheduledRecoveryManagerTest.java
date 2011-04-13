@@ -107,16 +107,16 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullConsumer()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "modulename", null, null);
+        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", null, null);
     }
 
     /**
-     * Test failed constructor due to null exception resolver.
+     * Test constructor is happy regardless of null exception resolver.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullExceptionResolver()
+    @Test
+    public void test_successful_constructor_evenWithDueToNullExceptionResolver()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "modulename", consumer, null);
+        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, null);
     }
 
     /**
@@ -125,7 +125,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_successful_instantiation()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "modulename", consumer, exceptionResolver);
+        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
     }
 
     /**
@@ -151,7 +151,7 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "modulename", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
         recoveryManager.recover("componentName", exception);
         
         // test aspects we cannot access through the interface
@@ -203,7 +203,7 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "modulename", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
         recoveryManager.recover("componentName", exception);
 
         Assert.assertTrue(recoveryManager.isRecovering());
@@ -243,13 +243,10 @@ public class ScheduledRecoveryManagerTest
 
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
-                will(returnValue(false));
+                will(returnValue(true));
                 
-                // so start the scheduler
-                exactly(1).of(scheduler).start();
-
                 // create the recovery job and associated trigger
-                exactly(1).of(retryAction).getMaxRetries();
+                exactly(3).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
                 exactly(2).of(retryAction).getDelay();
                 will(returnValue(delay));
@@ -293,21 +290,36 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(true));
                 
                 // check we have not exceeded retry limits
-                exactly(4).of(retryAction).getMaxRetries();
+                exactly(2).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
                 
                 // cancel the recovery
-                exactly(1).of(scheduler).deleteJob("recoveryJobflowName", "recoveryManagermoduleName");
+                exactly(1).of(scheduler).deleteJob("recoveryJob_flowName", "recoveryManager_moduleName");
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "modulename", consumer, exceptionResolver);
-        recoveryManager.recover("componentName", exception);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("retryAction invoked", e.getMessage());
+        }
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
 
-        recoveryManager.recover("componentName", exception);
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("retryAction invoked", e.getMessage());
+        }
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
@@ -349,7 +361,7 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "modulename", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
         recoveryManager.recover("componentName", exception);
 
         mockery.assertIsSatisfied();
@@ -365,7 +377,7 @@ public class ScheduledRecoveryManagerTest
 
         public StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer, ExceptionResolver exceptionResolver)
         {
-            super(scheduler, "flowName", "modulename", consumer, exceptionResolver);
+            super(scheduler, flowName, moduleName, consumer, exceptionResolver);
         }
         
         @Override
