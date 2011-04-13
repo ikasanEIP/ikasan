@@ -158,6 +158,15 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
+     * Get the specific exception resolver
+     * @return exceptionResolver
+     */
+    public ExceptionResolver getResolver()
+    {
+        return this.exceptionResolver;
+    }
+
+    /**
      * Are we currently running an active recovery. 
      * @return boolean
      */
@@ -206,7 +215,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                 
             try
             {
-                if(this.previousExceptionAction == null)
+                if(!isRecovering())
                 {
                     startRecovery(retryAction);
                 }

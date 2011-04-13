@@ -70,7 +70,7 @@ public class ScheduledRecoveryManagerJobFactory implements JobFactory
     private static ScheduledRecoveryManagerJobFactory scheduledRecoveryManagerJobFactory;
     
     /** map of recovery jobs */
-    private Map<String,Job> recoveries = new ConcurrentHashMap<String,Job>();
+    private Map<String,Job> recoveries;
     
     /**
      * Singleton instance accessor
@@ -89,9 +89,19 @@ public class ScheduledRecoveryManagerJobFactory implements JobFactory
     /**
      * Constructor
      */
-    private ScheduledRecoveryManagerJobFactory()
+    protected ScheduledRecoveryManagerJobFactory()
     {
-        // nothing to do
+        this.recoveries = getRecoveriesCache();
+    }
+
+    /**
+     * Factory method for creating an initial recoveries cache.
+     * @return
+     */
+    protected Map<String,Job> getRecoveriesCache()
+    {
+        return new ConcurrentHashMap<String,Job>();
+
     }
     
     /**
