@@ -73,7 +73,7 @@ public class ScheduledConsumer
     private Scheduler scheduler;
     
     /** consumer event factory */
-    private EventFactory<FlowEvent<?>> flowEventFactory;
+    private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
     /** consumer event listener */
     private EventListener eventListener;
@@ -92,7 +92,7 @@ public class ScheduledConsumer
      * @param scheduler
      * @param flowEventFactory
      */
-    public ScheduledConsumer(Scheduler scheduler, EventFactory<FlowEvent<?>> flowEventFactory)
+    public ScheduledConsumer(Scheduler scheduler, EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -196,7 +196,7 @@ public class ScheduledConsumer
     public void execute(JobExecutionContext context) throws JobExecutionException
     {
         String uniqueId = context.getJobDetail().getFullName();
-        FlowEvent<?> flowEvent = flowEventFactory.newEvent(uniqueId, context);
+        FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(uniqueId, context);
         this.eventListener.invoke(flowEvent);
     }
 
