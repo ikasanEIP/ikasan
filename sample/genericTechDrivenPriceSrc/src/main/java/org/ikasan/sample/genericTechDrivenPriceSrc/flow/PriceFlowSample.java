@@ -12,10 +12,6 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.flow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
@@ -26,17 +22,19 @@ import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
-import org.ikasan.sample.priceSrc.component.convertor.PriceConverter;
-import org.ikasan.sample.priceSrc.component.endpoint.PriceConsumer;
-import org.ikasan.sample.priceSrc.component.endpoint.PriceProducer;
-import org.ikasan.sample.priceSrc.tech.PriceTechImpl;
+import org.ikasan.sample.genericTechDrivenPriceSrc.component.converter.PriceConverter;
+import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceConsumer;
+import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceProducer;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +56,7 @@ public class PriceFlowSample
         return new PriceTechImpl();
     }
     
-    protected FlowEventFactory getEventFactory()
+    protected EventFactory<FlowEvent<?>> getEventFactory()
     {
         return new FlowEventFactory();
     }

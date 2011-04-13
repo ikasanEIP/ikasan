@@ -10,9 +10,10 @@
  * ====================================================================
  *
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.component.convertor;
+package org.ikasan.sample.genericTechDrivenPriceSrc.component.converter;
 
-import org.ikasan.sample.priceSrc.tech.PriceTechMessage;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 
@@ -33,7 +34,7 @@ public class PriceConverter implements Converter<PriceTechMessage,StringBuilder>
         sb.append(" spread = ");
         sb.append(price.getSpread());
         sb.append(" at = ");
-        sb.append(price.getDate());
+        sb.append(price.getTime());
         
         return sb;
     }
