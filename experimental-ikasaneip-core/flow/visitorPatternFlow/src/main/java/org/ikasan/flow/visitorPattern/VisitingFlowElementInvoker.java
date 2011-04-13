@@ -68,7 +68,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private static final Logger logger = Logger.getLogger(VisitingFlowElementInvoker.class);
 
     /** replication factory - only a requirement of a multi-recipient router */
-    private ReplicationFactory<FlowEvent<?>> replicationFactory;
+    private ReplicationFactory<FlowEvent<?,?>> replicationFactory;
 
     /** The flow event listener */
     private FlowEventListener flowEventListener;
@@ -87,7 +87,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * 
      * @param replicationFactory
      */
-    public VisitingFlowElementInvoker(ReplicationFactory<FlowEvent<?>> replicationFactory)
+    public VisitingFlowElementInvoker(ReplicationFactory<FlowEvent<?,?>> replicationFactory)
     {
         this.replicationFactory = replicationFactory;
     }
