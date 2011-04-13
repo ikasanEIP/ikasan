@@ -99,7 +99,7 @@ public class PriceFlowSampleTest
     @Test
     public void test_flow_consumer_translator_producer() throws SchedulerException
     {
-        PriceFlowFactory priceFlowFactory = new PriceFlowFactory("flowName", "moduleName", configurationService);
+        PriceFlowFactory priceFlowFactory = new PriceFlowFactory("flowName", "moduleName", getConfigurationService());
         Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow();
         priceFlow.start();
         priceFlow.stop();

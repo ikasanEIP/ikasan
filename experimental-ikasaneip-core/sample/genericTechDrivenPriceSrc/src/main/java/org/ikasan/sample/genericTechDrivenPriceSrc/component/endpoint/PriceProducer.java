@@ -27,11 +27,14 @@ public class PriceProducer implements Producer<StringBuilder>
     /** Logger instance */
     private Logger logger = Logger.getLogger(PriceProducer.class);
 
+    /** invocation count */
+    private int invocationCount = 0;
+    
     public void invoke(StringBuilder payload) throws EndpointException 
     {
         logger.info("Producer invoked with [" + payload + "]");
         
         // TODO - remove me
-        System.out.println("Producer invoked with [" + payload + "]");
+        System.out.println("[" + invocationCount++ + "] Producer invoked with [" + payload + "]");
     }
 }
