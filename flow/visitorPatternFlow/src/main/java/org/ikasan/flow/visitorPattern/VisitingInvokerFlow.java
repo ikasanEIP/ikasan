@@ -56,7 +56,7 @@ import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorListener;
-import org.ikasan.spec.recoveryManager.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManager;
 
 /**
  * Default implementation of a Flow
@@ -95,7 +95,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     /** flow monitor implementation */
     private Monitor monitor;
 
-    /** flow recovery manager implementation */
+    /** stateful recovery manager implementation */
     private RecoveryManager<FlowEvent<?>> recoveryManager;
     
     /** startup failure flag */
@@ -220,10 +220,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
             initialiseFlow();
             
             // start the consumer
+            Consumer<EventListener<FlowEvent<?>>> consumer = consumerFlowElement.getFlowComponent();
+            consumer.setListener( (EventListener<FlowEvent<?>>)this );
             try
             {
-                Consumer<EventListener<FlowEvent<?>>> consumer = consumerFlowElement.getFlowComponent();
-                consumer.setListener( (EventListener<FlowEvent<?>>)this );
                 consumer.start();
             }
             catch(RuntimeException e)
@@ -251,7 +251,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
             // stop any active recovery
             if(this.recoveryManager.isRecovering())
             {
-                this.recoveryManager.cancelRecovery();
+                this.recoveryManager.cancel();
             }
 
             // stop consumer and remove the listener
@@ -277,7 +277,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
      */
     public void invoke(FlowEvent<?> event)
     {
-        FlowInvocationContext flowInvocationContext = newFlowInvocationContext();
+        FlowInvocationContext flowInvocationContext = getFlowInvocationContext();
 
         try
         {
@@ -297,7 +297,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
             flowElementInvoker.invoke(flowInvocationContext, event, flowConfiguration.getLeadFlowElement());
             if(this.recoveryManager.isRecovering())
             {
-                this.recoveryManager.cancelRecovery();
+                this.recoveryManager.cancel();
             }
         }
         catch(Throwable throwable)
@@ -318,7 +318,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     {
         try
         {
-            this.recoveryManager.recover(this.flowConfiguration.getConsumerFlowElement().getComponentName(), throwable);
+            this.recoveryManager.recover(getFlowInvocationContext().getLastComponentName(), throwable);
         }
         finally
         {
@@ -373,8 +373,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
      * Factory method for creating a flow invocation context.
      * @return FlowInvocationContext
      */
-    protected FlowInvocationContext newFlowInvocationContext()
+    protected FlowInvocationContext getFlowInvocationContext()
     {
-        return new DefaultFlowInvocationContext();
+        FlowInvocationContext context = new DefaultFlowInvocationContext(this.name, this.moduleName);
+        
+        // consumer is added as default first invoked component
+        context.addInvokedComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
+        return context;
     }
 }
