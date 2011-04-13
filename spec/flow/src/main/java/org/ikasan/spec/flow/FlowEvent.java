@@ -46,13 +46,13 @@ package org.ikasan.spec.flow;
  * @author Ikasan Development Team
  *
  */
-public interface FlowEvent<T>
+public interface FlowEvent<IDENTIFIER,PAYLOAD>
 {
 	/**
 	 * Get immutable flow event identifier.
-	 * @return String - event identifier
+	 * @return IDENTIFIER - event identifier
 	 */
-	public String getIdentifier();
+	public IDENTIFIER getIdentifier();
 
 	/**
 	 * Get the immutable created date/time of the flow event.
@@ -62,13 +62,13 @@ public interface FlowEvent<T>
 
 	/**
 	 * Get the payload of this flow event.
-	 * @return T payload
+	 * @return PAYLOAD payload
 	 */
-	public T getPayload();
+	public PAYLOAD getPayload();
 	
 	/**
 	 * Set the payload of this flow event.
-	 * @param T - payload
+	 * @param PAYLOAD - payload
 	 */
-	public void setPayload(T payload);
+	public void setPayload(PAYLOAD payload);
 }
