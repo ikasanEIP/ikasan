@@ -63,7 +63,7 @@ public class ScheduledRecoveryManagerFactory
     private ExceptionResolver exceptionResolver;
     
     /** quartz job factory for the recovery manager callbacks */
-    private ScheduledRecoveryManagerJobFactory recoveryManagerJobFactory = ScheduledRecoveryManagerJobFactory.getInstance();
+    private ScheduledRecoveryManagerJobFactory scheduledRecoveryManagerJobFactory;
 
     /**
      * Constructor
@@ -78,11 +78,12 @@ public class ScheduledRecoveryManagerFactory
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
         
+        this.scheduledRecoveryManagerJobFactory = getScheduledRecoveryManagerJobFactory();
         this.exceptionResolver = exceptionResolver;
         
         try
         {
-            this.scheduler.setJobFactory(recoveryManagerJobFactory);
+            this.scheduler.setJobFactory(scheduledRecoveryManagerJobFactory);
             this.scheduler.start();
         }
         catch (SchedulerException e)
@@ -113,9 +114,27 @@ public class ScheduledRecoveryManagerFactory
      */
     public RecoveryManager getRecoveryManager(String flowName, String moduleName, Consumer consumer)
     {
-        ScheduledRecoveryManager recoveryManager = new ScheduledRecoveryManager(scheduler, flowName, moduleName, consumer, exceptionResolver);
-        recoveryManagerJobFactory.addJob(flowName, moduleName, (Job)recoveryManager);
+        RecoveryManager recoveryManager = getRecoveryManagerInstance(flowName, moduleName, consumer);
+        scheduledRecoveryManagerJobFactory.addJob(flowName, moduleName, (Job)recoveryManager);
         return recoveryManager;
+    }
+    
+    /**
+     * Factory method for getting a scheduledRecoveryMangerJobFactory instance.
+     * @return ScheduledRecoveryManagerJobFactory
+     */
+    protected RecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
+    {
+        return new ScheduledRecoveryManager(scheduler, flowName, moduleName, consumer, exceptionResolver);
+    }
+    
+    /**
+     * Factory method for getting a scheduledRecoveryMangerJobFactory instance.
+     * @return ScheduledRecoveryManagerJobFactory
+     */
+    protected ScheduledRecoveryManagerJobFactory getScheduledRecoveryManagerJobFactory()
+    {
+       return ScheduledRecoveryManagerJobFactory.getInstance(); 
     }
     
 }
