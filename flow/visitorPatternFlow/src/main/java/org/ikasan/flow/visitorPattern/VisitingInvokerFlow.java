@@ -368,17 +368,27 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
 
         return STOPPED;
     }
+
+    /**
+     * Get an instance of the flow invocation context configured with the 
+     * consumer as the default first component flow.
+     * @return FlowInvocationContext
+     */
+    protected FlowInvocationContext getFlowInvocationContext()
+    {
+        FlowInvocationContext context = createFlowInvocationContext();
+        
+        // consumer is added as default first invoked component
+        context.addInvokedComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
+        return context;
+    }
     
     /**
      * Factory method for creating a flow invocation context.
      * @return FlowInvocationContext
      */
-    protected FlowInvocationContext getFlowInvocationContext()
+    protected FlowInvocationContext createFlowInvocationContext()
     {
-        FlowInvocationContext context = new DefaultFlowInvocationContext();
-        
-        // consumer is added as default first invoked component
-        context.addInvokedComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
-        return context;
+        return new DefaultFlowInvocationContext();
     }
 }

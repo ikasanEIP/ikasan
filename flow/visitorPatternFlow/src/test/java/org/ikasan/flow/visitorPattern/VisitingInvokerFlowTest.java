@@ -1066,6 +1066,13 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // create context
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+                
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1113,6 +1120,13 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // create context
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+                
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1165,6 +1179,13 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // create context
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1217,6 +1238,13 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // create context
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1270,6 +1298,13 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // create context
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(consumerFlowElement).getComponentName();
+                will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1322,13 +1357,16 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // pass the exception to the recovery manager
+                // get the context
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
                 exactly(1).of(flowInvocationContext).getLastComponentName();
                 will(returnValue("consumerName"));
+
+                // pass the exception to the recovery manager
                 one(recoveryManager).recover("consumerName", exception);
             }
         });
@@ -1365,11 +1403,16 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // pass the exception to the recovery manager
+                // get the context
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+                exactly(1).of(flowInvocationContext).getLastComponentName();
+                will(returnValue("consumerName"));
+
+                // pass the exception to the recovery manager
                 one(recoveryManager).recover("consumerName", exception);
             }
         });
@@ -1407,11 +1450,16 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // pass the exception to the recovery manager
+                // get the context
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
+                one(flowInvocationContext).addInvokedComponentName("consumerName");
+                exactly(1).of(flowInvocationContext).getLastComponentName();
+                will(returnValue("consumerName"));
+
+                // pass the exception to the recovery manager
                 one(recoveryManager).recover("consumerName", exception);
             }
         });
@@ -1531,7 +1579,7 @@ public class VisitingInvokerFlowTest
         }
      
         @Override
-        protected FlowInvocationContext getFlowInvocationContext()
+        protected FlowInvocationContext createFlowInvocationContext()
         {
             return flowInvocationContext;
         }
