@@ -48,7 +48,6 @@ import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
