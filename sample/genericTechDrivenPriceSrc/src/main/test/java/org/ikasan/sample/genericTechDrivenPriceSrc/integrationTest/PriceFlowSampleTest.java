@@ -47,7 +47,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * 
  * @author Ikasan Development Team
  */
-public class PriceFlowSample
+public class PriceFlowSampleTest
 {
     /** flow event factory */
     FlowEventFactory flowEventFactory = new FlowEventFactory();

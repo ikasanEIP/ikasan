@@ -10,7 +10,7 @@
  * ====================================================================
  *
  */
-package org.ikasan.sample.scheduleDrivenPriceSrc.flow;
+package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
 import javax.annotation.Resource;
 
@@ -19,6 +19,7 @@ import org.ikasan.consumer.quartz.ScheduledConsumerConfiguration;
 import org.ikasan.consumer.quartz.ScheduledConsumerJobFactory;
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl;
+import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
@@ -81,7 +82,7 @@ public class ScheduleDrivenPriceSrcFlowSample
         this.scheduledRecoveryManagerFactory  = 
             new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
         
-        ConfiguredResource cr = this.getConfigurationService();
+        ConfigurationService cr = this.getConfigurationService();
         cr.
     }
 
