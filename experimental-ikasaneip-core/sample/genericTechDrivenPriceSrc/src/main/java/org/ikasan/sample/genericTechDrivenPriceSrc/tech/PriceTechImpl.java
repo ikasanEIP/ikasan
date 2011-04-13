@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * This test demonstrates a stubbed price tech implementation as
- * such would be provided by any system/application API.
+ * This tech demonstrates a stubbed price tech implementation as
+ * such would be provided by any system/application API for the 
+ * provision of messages from an inbound feed.
  * 
  * @author Ikasan Development Team
  */

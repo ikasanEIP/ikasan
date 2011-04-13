@@ -13,7 +13,7 @@
 package org.ikasan.sample.genericTechDrivenPriceSrc.tech;
 
 /**
- * This test demonstrates a stubbed tech listener as
+ * This demonstrates a stubbed tech listener as
  * such would be utilised to listen to any system/application API.
  * 
  * @author Ikasan Development Team

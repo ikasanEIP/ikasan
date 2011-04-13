@@ -10,7 +10,7 @@
  * ====================================================================
  *
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.flow;
+package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest;
 
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl;
@@ -46,7 +46,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * 
  * @author Ikasan Development Team
  */
-public class PriceFlowFactory
+public class PriceFlowSample
 {
     FlowEventFactory flowEventFactory = new FlowEventFactory();
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
@@ -66,6 +66,24 @@ public class PriceFlowFactory
         ConfigurationDao configurationDao = new ConfigurationHibernateImpl();
         return new ConfiguredResourceConfigurationService(configurationDao, configurationDao);
     }
+    
+//    protected ExceptionHandler getExceptionHandler()
+//    {
+//        // flow exception handler
+//        int delay = 1000;
+//        int retries = 10;
+//        ExceptionAction stopAction = StopAction.instance();
+//          
+//        IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
+//        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, stopAction);
+//          
+//        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+//        matchers.add(matcher);
+//          
+//        ExceptionHandler exceptionHandler = new MatchingExceptionHandler(matchers);
+//
+//        return exceptionHandler;
+//    }
     
     @Before
     public void setup() throws SchedulerException

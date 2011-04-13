@@ -12,13 +12,13 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.component.converter;
 
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 
 /**
- * This test class supports the <code>Translator</code> class.
+ * Implementation of a converter to convert price tech message into a
+ * StringBuilder object.
  * 
  * @author Ikasan Development Team
  */

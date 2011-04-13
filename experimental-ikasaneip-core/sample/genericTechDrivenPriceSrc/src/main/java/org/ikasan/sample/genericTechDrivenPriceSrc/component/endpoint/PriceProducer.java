@@ -17,7 +17,8 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 
 /**
- * This class provides a stubbed example of a producer component.
+ * Implementation of a producer which simply logs the incoming
+ * StribngBuilder payload content.
  * 
  * @author Ikasan Development Team
  */
@@ -29,6 +30,8 @@ public class PriceProducer implements Producer<StringBuilder>
     public void invoke(StringBuilder payload) throws EndpointException 
     {
         logger.info("Producer invoked with [" + payload + "]");
+        
+        // TODO - remove me
         System.out.println("Producer invoked with [" + payload + "]");
     }
 }

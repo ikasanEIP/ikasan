@@ -12,7 +12,6 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint;
 
-import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechListener;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
@@ -22,8 +21,9 @@ import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
 
 /**
- * This test class supports the <code>Translator</code> class.
- * 
+ * Implementation of a consumer which manages the tech and 
+ * receives messages via the tech listener.
+ *
  * @author Ikasan Development Team
  */
 public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
@@ -32,7 +32,7 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
     private PriceTechImpl priceTechImpl;
 
     /** consumer event factory */
-    private EventFactory<FlowEvent<?>> flowEventFactory;
+    private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
     /** consumer event listener */
     private EventListener eventListener;
@@ -45,7 +45,7 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
      * @param stubbedTechImpl
      * @param flowEventFactory
      */
-    public PriceConsumer(PriceTechImpl priceTechImpl, EventFactory<FlowEvent<?>> flowEventFactory)
+    public PriceConsumer(PriceTechImpl priceTechImpl, EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
         this.priceTechImpl = priceTechImpl;
         this.flowEventFactory = flowEventFactory;
@@ -100,7 +100,7 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
     public void onPrice(PriceTechMessage message)
     {
         String uniqueId = message.getIdentifier() + "_" + message.getTime();
-        FlowEvent<?> flowEvent = flowEventFactory.newEvent(uniqueId, message);
+        FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(uniqueId, message);
         this.eventListener.invoke(flowEvent);
     }
 
