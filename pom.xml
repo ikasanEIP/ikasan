@@ -55,7 +55,6 @@
 
     <modules>
        <module>visitorPatternFlow</module>
-       <module>configuration</module>
     </modules>
 
 </project>
