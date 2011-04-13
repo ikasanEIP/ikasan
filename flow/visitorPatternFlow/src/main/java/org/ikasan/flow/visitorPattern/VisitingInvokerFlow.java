@@ -63,7 +63,7 @@ import org.ikasan.spec.recovery.RecoveryManager;
  * 
  * @author Ikasan Development Team
  */
-public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, MonitorListener
+public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorListener
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
@@ -96,7 +96,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     private Monitor monitor;
 
     /** stateful recovery manager implementation */
-    private RecoveryManager<FlowEvent<?>> recoveryManager;
+    private RecoveryManager<FlowEvent<?,?>> recoveryManager;
     
     /** startup failure flag */
     private boolean flowInitialisationFailure = false;
@@ -110,7 +110,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
      * @param recoveryManager
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, 
-            FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?>> recoveryManager)
+            FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?,?>> recoveryManager)
     {
         this.name = name;
         if(name == null)
@@ -220,8 +220,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
             initialiseFlow();
             
             // start the consumer
-            Consumer<EventListener<FlowEvent<?>>> consumer = consumerFlowElement.getFlowComponent();
-            consumer.setListener( (EventListener<FlowEvent<?>>)this );
+            Consumer<EventListener<FlowEvent<?,?>>> consumer = consumerFlowElement.getFlowComponent();
+            consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
             try
             {
                 consumer.start();
@@ -275,7 +275,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
     /**
      * Invoke the flow with a flow event
      */
-    public void invoke(FlowEvent<?> event)
+    public void invoke(FlowEvent<?,?> event)
     {
         FlowInvocationContext flowInvocationContext = getFlowInvocationContext();
 

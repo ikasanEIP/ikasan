@@ -33,7 +33,7 @@ public class FlowEventFactoryTest
     public void test_newEvent()
     {
         long before = System.currentTimeMillis();
-        EventFactory<FlowEvent<?>> eventFactory = new FlowEventFactory();
+        EventFactory<FlowEvent<?,?>> eventFactory = new FlowEventFactory();
         FlowEvent flowEvent = eventFactory.newEvent("identifier", "original payload");
         long after = System.currentTimeMillis();
 

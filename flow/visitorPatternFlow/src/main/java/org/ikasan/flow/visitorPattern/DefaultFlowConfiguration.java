@@ -43,10 +43,10 @@ package org.ikasan.flow.visitorPattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
-import org.ikasan.spec.configuration.service.ConfigurationService;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 

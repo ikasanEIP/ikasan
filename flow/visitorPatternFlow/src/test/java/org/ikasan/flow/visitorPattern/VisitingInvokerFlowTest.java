@@ -91,11 +91,11 @@ public class VisitingInvokerFlowTest
     final ManagedResource managedResource = mockery.mock(ManagedResource.class, "mockManagedResource");
 
     /** Mock consumer flowElement */
-    final FlowElement<Consumer<EventListener<FlowEvent<?>>>> consumerFlowElement 
+    final FlowElement<Consumer<EventListener<FlowEvent<?,?>>>> consumerFlowElement 
         = mockery.mock(FlowElement.class, "mockFlowElement");
 
     /** Mock consumer */
-    final Consumer<EventListener<FlowEvent<?>>> consumer = mockery.mock(Consumer.class, "mockConsumer");
+    final Consumer<EventListener<FlowEvent<?,?>>> consumer = mockery.mock(Consumer.class, "mockConsumer");
     
     /** Mock flow event */
     final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
@@ -1573,7 +1573,7 @@ public class VisitingInvokerFlowTest
     {
 
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, FlowElementInvoker flowElementInvoker,
-                RecoveryManager<FlowEvent<?>> recoveryManager)
+                RecoveryManager<FlowEvent<?,?>> recoveryManager)
         {
             super(name, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
         }
