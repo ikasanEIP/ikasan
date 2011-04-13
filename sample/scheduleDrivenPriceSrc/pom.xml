@@ -68,6 +68,12 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-consumer</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component-transformation</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
@@ -105,6 +111,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-recoveryManager</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-configuration</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>

@@ -49,7 +49,10 @@ import org.quartz.impl.StdSchedulerFactory;
  */
 public class PriceFlowSample
 {
+    /** flow event factory */
     FlowEventFactory flowEventFactory = new FlowEventFactory();
+
+    /** recovery manager factory */
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
     
     protected PriceTechImpl getTechImpl()
