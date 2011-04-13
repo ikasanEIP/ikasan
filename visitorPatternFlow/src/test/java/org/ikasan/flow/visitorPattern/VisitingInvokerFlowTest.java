@@ -28,7 +28,7 @@ import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
-import org.ikasan.spec.recoveryManager.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
@@ -1327,6 +1327,8 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
+                exactly(1).of(flowInvocationContext).getLastComponentName();
+                will(returnValue("consumerName"));
                 one(recoveryManager).recover("consumerName", exception);
             }
         });
@@ -1529,7 +1531,7 @@ public class VisitingInvokerFlowTest
         }
      
         @Override
-        protected FlowInvocationContext newFlowInvocationContext()
+        protected FlowInvocationContext getFlowInvocationContext()
         {
             return flowInvocationContext;
         }
