@@ -55,5 +55,5 @@ public interface EventFactory<EVENT>
      * @param PAYLOAD payload - data content to be transported
      * @return EVENT
      */
-    public <PAYLOAD> EVENT newEvent(String identifier, PAYLOAD payload);
+    public <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, PAYLOAD payload);
 }
