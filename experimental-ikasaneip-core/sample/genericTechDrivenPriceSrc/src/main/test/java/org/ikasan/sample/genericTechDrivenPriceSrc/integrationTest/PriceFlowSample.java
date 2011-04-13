@@ -26,6 +26,7 @@ import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.converter.PriceConverter;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceConsumer;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceProducer;
+import org.ikasan.sample.genericTechDrivenPriceSrc.flow.PriceFlowFactory;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -95,30 +96,10 @@ public class PriceFlowSample
     @Test
     public void test_flow_consumer_translator_producer() throws SchedulerException
     {
-        Producer producer = new PriceProducer();
-        FlowElement producerFlowElement = new FlowElementImpl("priceProducer", producer);
-
-        Converter priceToStringBuilderConverter = new PriceConverter();
-        FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceToStringBuilder", priceToStringBuilderConverter, producerFlowElement);
-
-        Consumer consumer = new PriceConsumer(getTechImpl(), getEventFactory());
-        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("priceConsumer", consumer, converterFlowElement);
-
-        // flow configuration wiring
-        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, getConfigurationService());
-
-        // iterator over each flow element
-        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
-
-        RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer);
-        
-        // container for the complete flow
-        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
-        
-        flow.start();
-
-        flow.stop();
+        PriceFlowFactory priceFlowFactory = new PriceFlowFactory("flowName", "moduleName", configurationService);
+        Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow();
+        priceFlow.start();
+        priceFlow.stop();
     }
 
 }

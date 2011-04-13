@@ -12,10 +12,7 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.flow;
 
-import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl;
 import org.ikasan.flow.configuration.service.ConfigurationService;
-import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowConfiguration;
@@ -30,14 +27,10 @@ import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.junit.Before;
-import org.junit.Test;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -48,34 +41,31 @@ import org.quartz.impl.StdSchedulerFactory;
  */
 public class PriceFlowFactory
 {
+    String flowName;
+    String moduleName;
+    ConfigurationService configurationService;
     FlowEventFactory flowEventFactory = new FlowEventFactory();
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
     
-    protected PriceTechImpl getTechImpl()
+    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService) 
     {
-        return new PriceTechImpl();
-    }
-    
-    protected EventFactory<FlowEvent<?,?>> getEventFactory()
-    {
-        return new FlowEventFactory();
-    }
-    
-    protected ConfigurationService getConfigurationService()
-    {
-        ConfigurationDao configurationDao = new ConfigurationHibernateImpl();
-        return new ConfiguredResourceConfigurationService(configurationDao, configurationDao);
-    }
-    
-    @Before
-    public void setup() throws SchedulerException
-    {
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
-    }
+        this.flowName = flowName;
+        this.moduleName = moduleName;
+        this.configurationService = configurationService;
+        
+        try
+        {
+            this.scheduledRecoveryManagerFactory  = 
+                new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
+        }
+        catch (SchedulerException e)
+        {
+            throw new RuntimeException(e);
+        }
 
-    @Test
-    public void test_flow_consumer_translator_producer() throws SchedulerException
+    }
+    
+    public Flow createGenericTechDrivenFlow()
     {
         Producer producer = new PriceProducer();
         FlowElement producerFlowElement = new FlowElementImpl("priceProducer", producer);
@@ -83,11 +73,11 @@ public class PriceFlowFactory
         Converter priceToStringBuilderConverter = new PriceConverter();
         FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceToStringBuilder", priceToStringBuilderConverter, producerFlowElement);
 
-        Consumer consumer = new PriceConsumer(getTechImpl(), getEventFactory());
+        Consumer consumer = new PriceConsumer(getTechImpl(), this.flowEventFactory);
         FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("priceConsumer", consumer, converterFlowElement);
 
         // flow configuration wiring
-        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, getConfigurationService());
+        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
 
         // iterator over each flow element
         FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
@@ -95,12 +85,16 @@ public class PriceFlowFactory
         RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer);
         
         // container for the complete flow
-        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
-        
-        flow.start();
-
-        flow.stop();
+        return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
     }
 
+    /**
+     * Stubbed tech implementation
+     * @return PriceTechImpl
+     */
+    protected PriceTechImpl getTechImpl()
+    {
+        return new PriceTechImpl();
+    }
+    
 }
