@@ -375,7 +375,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?>>, M
      */
     protected FlowInvocationContext getFlowInvocationContext()
     {
-        FlowInvocationContext context = new DefaultFlowInvocationContext(this.name, this.moduleName);
+        FlowInvocationContext context = new DefaultFlowInvocationContext();
         
         // consumer is added as default first invoked component
         context.addInvokedComponentName(this.flowConfiguration.getConsumerFlowElement().getComponentName());
