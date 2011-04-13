@@ -13,10 +13,11 @@
 package org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint;
 
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.sample.priceSrc.techDriven.tech.PriceTechImpl;
-import org.ikasan.sample.priceSrc.techDriven.tech.PriceTechListener;
-import org.ikasan.sample.priceSrc.techDriven.tech.PriceTechMessage;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechListener;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
 
@@ -31,7 +32,7 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
     private PriceTechImpl priceTechImpl;
 
     /** consumer event factory */
-    private FlowEventFactory flowEventFactory;
+    private EventFactory<FlowEvent<?>> flowEventFactory;
 
     /** consumer event listener */
     private EventListener eventListener;
@@ -44,7 +45,7 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
      * @param stubbedTechImpl
      * @param flowEventFactory
      */
-    public PriceConsumer(PriceTechImpl priceTechImpl, FlowEventFactory flowEventFactory)
+    public PriceConsumer(PriceTechImpl priceTechImpl, EventFactory<FlowEvent<?>> flowEventFactory)
     {
         this.priceTechImpl = priceTechImpl;
         this.flowEventFactory = flowEventFactory;
