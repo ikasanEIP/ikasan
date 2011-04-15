@@ -97,7 +97,7 @@ public class MultiPayloadPerEventProvider implements EventProvider
      * 
      * @see org.ikasan.framework.event.service.FlowEventProvider#getFlowEvents()
      */
-    public List<FlowEvent> getEvents() throws ResourceException
+    public List<FlowEvent<String,?>> getEvents() throws ResourceException
     {
         List<Payload> payloads = this.payloadProvider.getNextRelatedPayloads();
         if (payloads == null || payloads.isEmpty())
@@ -106,8 +106,8 @@ public class MultiPayloadPerEventProvider implements EventProvider
         }
  
 //        FlowEvent event = new FlowEvent(this.moduleName, this.componentName, hashPayloadIds(payloads), payloads);
-        FlowEvent event = eventFactory.newEvent(hashPayloadIds(payloads), payloads);
-        List<FlowEvent> events = new ArrayList<FlowEvent>();
+        FlowEvent<String,?> event = eventFactory.newEvent(hashPayloadIds(payloads), payloads);
+        List<FlowEvent<String,?>> events = new ArrayList<FlowEvent<String,?>>();
         events.add(event);
         return events;
     }

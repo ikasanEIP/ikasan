@@ -102,19 +102,19 @@ public class SinglePayloadPerEventProvider implements EventProvider
      * 
      * @see org.ikasan.framework.event.service.FlowEventProvider#getFlowEvents()
      */
-    public List<FlowEvent> getEvents() throws ResourceException
+    public List<FlowEvent<String,?>> getEvents() throws ResourceException
     {
         List<Payload> payloads = this.payloadProvider.getNextRelatedPayloads();
         if (payloads == null || payloads.isEmpty())
         {
             return null;
         }
-        List<FlowEvent> events = new ArrayList<FlowEvent>();
+        List<FlowEvent<String,?>> events = new ArrayList<FlowEvent<String,?>>();
         for (Payload payload : payloads)
         {
          	
 //            FlowEvent event = new FlowEvent(this.moduleName, this.componentName, payload.getId(),payload);
-            FlowEvent event = eventFactory.newEvent(payload.getId(),payload);
+            FlowEvent<String,?> event = eventFactory.newEvent(payload.getId(),payload);
             events.add(event);
         }
         return events;

@@ -463,7 +463,7 @@ public class QuartzStatefulScheduledDrivenInitiator extends AbstractInitiator im
         
         // invoke flow all the time we have event activity
         // invoke flow
-        List<FlowEvent> events = null;
+        List<FlowEvent<String,?>> events = null;
         try
         {
             events = this.eventProvider.getEvents();

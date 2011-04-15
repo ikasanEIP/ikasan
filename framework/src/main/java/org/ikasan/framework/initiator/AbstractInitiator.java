@@ -272,11 +272,11 @@ public abstract class AbstractInitiator implements Initiator
 	 * 
 	 * @param events
 	 */
-	protected void invokeFlow(List<FlowEvent> events) {
+	protected void invokeFlow(List<FlowEvent<String,?>> events) {
 		IkasanExceptionAction exceptionAction = null;
 		String currentEventId= null;
     	if (events != null && events.size() > 0){
-	        for (FlowEvent event : events)
+	        for (FlowEvent<String,?> event : events)
 	        {
 	        	currentEventId = event.getIdentifier();
 				//check if this event has been noted for exclusion, and if so exclude it
@@ -291,7 +291,7 @@ public abstract class AbstractInitiator implements Initiator
 	        	
 	        	FlowInvocationContext flowInvocationContext = new DefaultFlowInvocationContext();
 				try{
-					flow.invoke(flowInvocationContext, event);
+//					flow.invoke(flowInvocationContext, event);
 					handledFlowEventCount = handledFlowEventCount+1;
 					lastFlowEventTime = new Date();
 				}catch (Throwable throwable){
@@ -350,10 +350,10 @@ public abstract class AbstractInitiator implements Initiator
 	 * 
 	 * @param event
 	 */
-	protected void invokeFlow(FlowEvent event) {
-		List<FlowEvent> events = null;
+	protected void invokeFlow(FlowEvent<String,?> event) {
+		List<FlowEvent<String,?>> events = null;
 		if (event !=null){
-			events = new ArrayList<FlowEvent>();
+			events = new ArrayList<FlowEvent<String,?>>();
 			events.add(event);
 		}
 		invokeFlow(events);
