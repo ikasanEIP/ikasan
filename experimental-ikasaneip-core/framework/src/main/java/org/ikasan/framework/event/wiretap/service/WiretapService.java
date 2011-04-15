@@ -128,7 +128,7 @@ public interface WiretapService
      * @param timeToLive - no of minutes from now until
      *            <code>WiretapFlowEvents</code> should expire
      */
-    public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive);
+    public void tapEvent(FlowEvent<String,?> event, String componentName, String moduleName, String flowName, Long timeToLive);
 
     /**
      * Causes all <code>WiretapFlowEvent</code>s that are past their expiry to be

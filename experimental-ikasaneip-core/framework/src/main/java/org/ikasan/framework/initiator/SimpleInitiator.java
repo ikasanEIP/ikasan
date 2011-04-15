@@ -116,7 +116,7 @@ public class SimpleInitiator extends AbstractInitiator implements Initiator
         
 
 
-        List<FlowEvent>events = new ArrayList<FlowEvent>();
+        List<FlowEvent<String,?>>events = new ArrayList<FlowEvent<String,?>>();
         events.add(eventFactory.newEvent(originationId, singlePayload));
         invokeFlow(events);
         

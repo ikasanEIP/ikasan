@@ -59,5 +59,5 @@ public interface EventProvider
      * @return List of FlowEvents, or null if none available
      * @throws ResourceException Exception if events could not be retrieved
      */
-    public List<FlowEvent> getEvents() throws ResourceException;
+    public List<FlowEvent<String,?>> getEvents() throws ResourceException;
 }

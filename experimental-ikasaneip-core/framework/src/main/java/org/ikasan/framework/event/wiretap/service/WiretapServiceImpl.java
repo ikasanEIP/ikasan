@@ -182,7 +182,7 @@ public class WiretapServiceImpl implements WiretapService
      * @param flowName - The Flow this FlowEvent is currently in
      * @param timeToLive - Time to live for the wiretap
      */
-    public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive)
+    public void tapEvent(FlowEvent<String,?> event, String componentName, String moduleName, String flowName, Long timeToLive)
     {
         String eventId = event.getIdentifier();
         Date expiry = new Date(System.currentTimeMillis() + (timeToLive * 60000));
