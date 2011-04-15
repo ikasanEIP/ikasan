@@ -44,7 +44,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.flow.configuration.service.ConfigurationService;
+import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
@@ -73,6 +79,9 @@ public class DefaultFlowConfiguration implements FlowConfiguration
     private List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredReourceFlowElements = 
         new ArrayList<FlowElement<DynamicConfiguredResource>>();
 
+    /** list of components */
+    List<FlowElement<?>> flowElements = new ArrayList<FlowElement<?>>();
+    
     private ConfigurationService configurationService;
     
     public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService)
@@ -166,5 +175,68 @@ public class DefaultFlowConfiguration implements FlowConfiguration
         }
         return result;
     }
-    
+
+    ////////////// TODO - DEVELOPMENT IN PROGRESS - DONT USE THIS     
+//    public void add(String name, Consumer consumer)
+//    {
+//        if(!this.flowElements.isEmpty())
+//        {
+//            // TODO - maybe use a checked exception ?
+//            throw new InvalidFlowException("Consumer must be the first element in the flow.");
+//        }
+//
+//        FlowElement<Consumer<?>> flowElement = new FlowElementImpl<Consumer<?>>(name, consumer);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public void add(String name, Broker broker)
+//    {
+//        FlowElement<Broker<?,?>> flowElement = new FlowElementImpl<Broker<?,?>>(name, broker);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public void add(String name, Producer producer)
+//    {
+//        FlowElement<Producer<?>> flowElement = new FlowElementImpl<Producer<?>>(name, producer);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public void add(String name, Converter converter)
+//    {
+//        FlowElement<Broker<?,?>> flowElement = new FlowElementImpl<Broker<?,?>>(name, broker);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public void add(String name, Router router)
+//    {
+//        FlowElement<Broker<?,?>> flowElement = new FlowElementImpl<Broker<?,?>>(name, broker);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public void add(String name, Sequencer sequencer)
+//    {
+//        FlowElement<Broker<?,?>> flowElement = new FlowElementImpl<Broker<?,?>>(name, broker);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public void add(String name, Translator translator)
+//    {
+//        FlowElement<Broker<?,?>> flowElement = new FlowElementImpl<Broker<?,?>>(name, broker);
+//        flowElements.add(flowElement);
+//    }
+//
+//    public boolean isValid()
+//    {
+//        return false; // TOOD 
+//    }
+//    
+//    private FlowElement getLastFlowElement()
+//    {
+//        if(this.flowElements.isEmpty())
+//        {
+//            return null;
+//        }
+//        
+//        return this.flowElements.get(this.flowElements.size() -1);
+//    }
 }
