@@ -45,7 +45,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.0-EXPERIMENT-SNAPSHOT</version>
+        <version>0.9.0-EXPERIMENT</version>
     </parent>
     -->
 
