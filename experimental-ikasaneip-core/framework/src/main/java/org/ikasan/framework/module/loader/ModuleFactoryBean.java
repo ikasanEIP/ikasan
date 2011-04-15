@@ -71,7 +71,7 @@ public class ModuleFactoryBean implements FactoryBean, ApplicationContextAware
     private ApplicationContext parentContext;
 
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(ModuleFactoryBean.class);
+    private static final Logger logger = Logger.getLogger(ModuleFactoryBean.class);
 
     /** List of environment bean definitions */
     private List<String> environmentalisationBeanDefinitionFileNameList;
@@ -146,7 +146,7 @@ public class ModuleFactoryBean implements FactoryBean, ApplicationContextAware
         String[] environmentalisationBeanDefinitionPath = new String[environmentalisationBeanDefinitionPathList.size()];
         environmentalisationBeanDefinitionPathList.toArray(environmentalisationBeanDefinitionPath);
         moduleEnvironmentalisation = new FileSystemXmlApplicationContext(environmentalisationBeanDefinitionPath,
-            parentContext);
+            this.parentContext);
         List<String> moduleBeanDefinitionList = new ArrayList<String>();
         for (String moduleBeanDefinitionFileName : moduleBeanDefFileNameList)
         {
@@ -156,7 +156,7 @@ public class ModuleFactoryBean implements FactoryBean, ApplicationContextAware
         moduleBeanDefinitionList.toArray(moduleBeanDefinitionPath);
         ApplicationContext moduleBeanDefintion = new ClassPathXmlApplicationContext(moduleBeanDefinitionPath,
             moduleEnvironmentalisation);
-        module = (Module) moduleBeanDefintion.getBean(beanName);
+        this.module = (Module) moduleBeanDefintion.getBean(beanName);
     }
 
     /*
@@ -166,12 +166,12 @@ public class ModuleFactoryBean implements FactoryBean, ApplicationContextAware
      */
     public Object getObject()
     {
-        if (module == null)
+        if (this.module == null)
         {
-            instantiateModule(environmentalisationBeanDefinitionFileNameList, moduleBeanDefinitionFileNameList,
-                environmentalisationDirectory, moduleBeanName);
+            instantiateModule(this.environmentalisationBeanDefinitionFileNameList, this.moduleBeanDefinitionFileNameList,
+                this.environmentalisationDirectory, this.moduleBeanName);
         }
-        return module;
+        return this.module;
     }
 
     /*
@@ -179,8 +179,7 @@ public class ModuleFactoryBean implements FactoryBean, ApplicationContextAware
      * 
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
-    @SuppressWarnings("unchecked")
-    public Class getObjectType()
+    public Class<?> getObjectType()
     {
         return Module.class;
     }

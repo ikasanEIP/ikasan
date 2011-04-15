@@ -47,7 +47,6 @@ import java.util.Map;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener;
 import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;
@@ -117,7 +116,7 @@ public class TriggerDetailsService
     public List<String> getJobNames()
     {
         List<String> result = new ArrayList<String>();
-        for (String jobName : jobAwareFlowEventListener.getRegisteredJobs().keySet())
+        for (String jobName : this.jobAwareFlowEventListener.getRegisteredJobs().keySet())
         {
             result.add(jobName);
         }
@@ -150,7 +149,7 @@ public class TriggerDetailsService
     public List<String> getParameterNames(String jobName)
     {
         List<String> result = new ArrayList<String>();
-        FlowEventJob flowEventJob = jobAwareFlowEventListener.getRegisteredJobs().get(jobName);
+        FlowEventJob flowEventJob = this.jobAwareFlowEventListener.getRegisteredJobs().get(jobName);
         if (flowEventJob != null)
         {
             result.addAll(flowEventJob.getParameters());
@@ -169,15 +168,12 @@ public class TriggerDetailsService
     public List<String> getFlowElementNames(String moduleName, String flowName)
     {
         List<String> result = new ArrayList<String>();
-        Module module = moduleService.getModule(moduleName);
+        Module module = this.moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
-        if (flow instanceof VisitingInvokerFlow)
+        List<FlowElement<?>> flowElements = flow.getFlowElements();
+        for (FlowElement<?> flowElement : flowElements)
         {
-            List<FlowElement<?>> flowElements = ((VisitingInvokerFlow) flow).getFlowElements();
-            for (FlowElement<?> flowElement : flowElements)
-            {
-                result.add(flowElement.getComponentName());
-            }
+            result.add(flowElement.getComponentName());
         }
         return result;
     }
@@ -193,7 +189,7 @@ public class TriggerDetailsService
     {
         // Find the job from the jobName
         String jobName = triggerDetails.getJobName();
-        FlowEventJob flowEventJob = jobAwareFlowEventListener.getRegisteredJobs().get(jobName);
+        FlowEventJob flowEventJob = this.jobAwareFlowEventListener.getRegisteredJobs().get(jobName);
         MessageContext messageContext = context.getMessageContext();
         // If can't even find the job then thats a big problem
         if (flowEventJob == null)
@@ -218,7 +214,7 @@ public class TriggerDetailsService
         if (!messageContext.hasErrorMessages())
         {
             Trigger trigger = triggerDetails.createTrigger();
-            jobAwareFlowEventListener.addDynamicTrigger(trigger);
+            this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
             return "success";
         }
         return "error";

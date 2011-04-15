@@ -65,12 +65,13 @@ public interface Flow
      */
     public String getModuleName();
 
-//    /**
-//     * Accessor for getting the flow elements
-//     * TODO - is this really needed ?
-//     * @return name of the module this flow exist for
-//     */
-//    public List<FlowElement<?>> getFlowElements();
+    /**
+     * Accessor for getting the flow elements
+     * TODO - is this really needed ?
+     * 
+     * @return list of flow elements
+     */
+     public List<FlowElement<?>> getFlowElements();
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation.

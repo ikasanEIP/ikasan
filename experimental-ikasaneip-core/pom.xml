@@ -75,7 +75,7 @@
         <module>platform</module>
 
         <!-- consoles -->
-        <!-- TODO Omit for now module>webconsole</module-->
+        <module>webconsole</module>
         <module>console</module>
 
         <!-- TODO Omit connectors  -->

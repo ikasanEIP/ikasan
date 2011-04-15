@@ -109,7 +109,7 @@ public class WiretapEventsSearchFormController
     @ModelAttribute("modules")
     public List<Module> getModuleNames()
     {
-        return moduleService.getModules();
+        return this.moduleService.getModules();
     }
 
     /**
@@ -144,7 +144,7 @@ public class WiretapEventsSearchFormController
     public String processSubmit(ModelMap modelMap,
             @ModelAttribute("searchCriteria") WiretapSearchCriteria searchCriteria, BindingResult result)
     {
-        validator.validate(searchCriteria, result);
+        this.validator.validate(searchCriteria, result);
         // ValidationUtils.rejectIfEmpty(result, "modules", "field.required", "You need to select at least one module");
         if (result.hasErrors())
         {
@@ -185,7 +185,7 @@ public class WiretapEventsSearchFormController
         Integer sessionPageNo = (Integer) request.getSession().getAttribute("pageNo");
         if (sessionPageNo != null)
         {
-            pageNo = sessionPageNo;
+            pageNo = sessionPageNo.intValue();
         }
         return pageNo;
     }
@@ -240,8 +240,8 @@ public class WiretapEventsSearchFormController
     @RequestMapping("viewEvent.htm")
     public ModelAndView viewEvent(@RequestParam("eventId") long eventId, ModelMap modelMap)
     {
-        logger.info("inside viewEvent, eventId=[" + eventId + "]");
-        modelMap.addAttribute("wiretapEvent", wiretapService.getWiretapEvent(new Long(eventId)));
+        this.logger.info("inside viewEvent, eventId=[" + eventId + "]");
+        modelMap.addAttribute("wiretapEvent", this.wiretapService.getWiretapEvent(new Long(eventId)));
         return new ModelAndView("events/viewWiretapEvent", modelMap);
     }
 
@@ -255,8 +255,8 @@ public class WiretapEventsSearchFormController
     @RequestMapping("viewPrettyPayloadContent.htm")
     public ModelAndView viewPrettyPayloadContent(@RequestParam("eventId") long eventId, HttpServletResponse response)
     {
-        logger.info("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = wiretapService.getWiretapEvent(new Long(eventId));
+        this.logger.info("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
+        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
         response.setContentType("text/xml");
         try
         {
@@ -264,7 +264,7 @@ public class WiretapEventsSearchFormController
         }
         catch (IOException e)
         {
-            logger.error("Could not render payload content.", e);
+            this.logger.error("Could not render payload content.", e);
         }
         return null;
     }
@@ -273,12 +273,11 @@ public class WiretapEventsSearchFormController
      * Handle the request to execute the housekeeper
      * 
      * @return a redirect to search form
-     * @throws Exception - Catch all
      */
     @RequestMapping(value = "housekeeping.htm", method = RequestMethod.POST)
-    public String housekeepWiretaps() throws Exception
+    public String housekeepWiretaps()
     {
-        wiretapService.housekeep();
+        this.wiretapService.housekeep();
         return "redirect:/events/search.htm";
     }
     
@@ -293,7 +292,7 @@ public class WiretapEventsSearchFormController
     private String displaySearchResults(ModelMap modelMap, WiretapSearchCriteria searchCriteria, int pageNo)
     {
         modelMap.addAttribute("pageNo", pageNo);
-        PagedWiretapSearchResult pagedResult = wiretapService.findWiretapEvents(searchCriteria.getModules(),
+        PagedWiretapSearchResult pagedResult = this.wiretapService.findWiretapEvents(searchCriteria.getModules(),
             null, searchCriteria.getComponentName(), searchCriteria.getEventId(), searchCriteria.getPayloadId(),
             searchCriteria.getFromDateTime(), searchCriteria.getUntilDateTime(), searchCriteria.getPayloadContent(),
             20, pageNo);

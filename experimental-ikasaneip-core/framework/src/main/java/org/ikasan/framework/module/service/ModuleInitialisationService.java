@@ -48,4 +48,5 @@ package org.ikasan.framework.module.service;
  */
 public interface ModuleInitialisationService
 {
+    // This is a market interface
 }
