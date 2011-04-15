@@ -18,7 +18,7 @@ import org.ikasan.consumer.quartz.ScheduledConsumer;
 import org.ikasan.consumer.quartz.ScheduledConsumerConfiguration;
 import org.ikasan.consumer.quartz.ScheduledConsumerJobFactory;
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl;
+import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
@@ -33,12 +33,9 @@ import org.ikasan.sample.scheduleDrivenPriceSrc.component.endpoint.PayloadProduc
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,22 +56,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
       
 public class ScheduleDrivenPriceSrcFlowSample
 {
+    /** Spring DI resource */
     @Resource ConfigurationDao staticConfigurationDao;
     
+    /** Spring DI resource */
     @Resource ConfigurationDao dynamicConfigurationDao;
     
+    /** flow event factory */
     FlowEventFactory flowEventFactory = new FlowEventFactory();
+    
+    /** configuration service */
+    ConfigurationService configurationService;
+    
+    /** configuration management for the scheduled consumer */
+    ConfigurationManagement<Consumer,ScheduledConsumerConfiguration> configurationManagement;
+    
+    /** recovery manager */
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
-    
-    protected EventFactory<FlowEvent<?,?>> getEventFactory()
-    {
-        return new FlowEventFactory();
-    }
-    
-    protected ConfigurationService getConfigurationService()
-    {
-        return new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
-    }
     
     @Before
     public void setup() throws SchedulerException
@@ -82,8 +80,8 @@ public class ScheduleDrivenPriceSrcFlowSample
         this.scheduledRecoveryManagerFactory  = 
             new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
         
-        ConfigurationService cr = this.getConfigurationService();
-        cr.
+        configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
+        configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
     }
 
     @Test
@@ -97,18 +95,14 @@ public class ScheduleDrivenPriceSrcFlowSample
         Converter priceToStringBuilderConverter = new ScheduleEventConverter();
         FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceToStringBuilder", priceToStringBuilderConverter, producerFlowElement);
 
-        Consumer consumer = new ScheduledConsumer(StdSchedulerFactory.getDefaultScheduler(), getEventFactory());
-        ScheduledConsumerConfiguration scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
-        scheduledConsumerConfiguration.setJobName("priceSrcFlow");
-        scheduledConsumerConfiguration.setJobName("priceSrcModule");
-        scheduledConsumerConfiguration.setCronExpression("0/5 * * * * ?");
-        ((ConfiguredResource)consumer).setConfiguration(scheduledConsumerConfiguration);
-        ((ConfiguredResource)consumer).setConfiguredResourceId("scheduleDrivenConsumer");
-
+        // get the consumer
+        
+        Consumer consumer = createConsumer();
         FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("scheduleDrivenConsumer", consumer, converterFlowElement);
+        
 
         // flow configuration wiring
-        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, getConfigurationService());
+        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, configurationService);
 
         // iterator over each flow element
         FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
@@ -124,4 +118,26 @@ public class ScheduleDrivenPriceSrcFlowSample
         flow.stop();
     }
 
+    protected Consumer createConsumer()
+    {
+        try
+        {
+            // create consumer component
+            Consumer consumer = new ScheduledConsumer(StdSchedulerFactory.getDefaultScheduler(), flowEventFactory);
+            
+            // create configuration and configure
+            ScheduledConsumerConfiguration configuration = configurationManagement.createConfiguration(consumer);
+            configuration.setJobName("priceSrcFlow");
+            configuration.setJobName("priceSrcModule");
+            configuration.setCronExpression("0/5 * * * * ?");
+            configurationManagement.saveConfiguration(configuration);
+            
+            return consumer;
+        }
+        catch (SchedulerException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
