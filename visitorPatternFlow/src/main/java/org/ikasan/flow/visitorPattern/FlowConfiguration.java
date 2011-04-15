@@ -42,7 +42,13 @@ package org.ikasan.flow.visitorPattern;
 
 import java.util.List;
 
+import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
@@ -55,6 +61,15 @@ import org.ikasan.spec.management.ManagedResource;
  */
 public interface FlowConfiguration
 {
+//    public void add(String name, Consumer consumer);
+//    public void add(String name, Broker broker);
+//    public void add(String name, Producer producer);
+//    public void add(String name, Converter converter);
+//    public void add(String name, Router router);
+//    public void add(String name, Sequencer sequencer);
+//    public void add(String name, Translator translator);
+//    public boolean isValid();
+    
     public FlowElement<Consumer> getConsumerFlowElement();
     public FlowElement<?> getLeadFlowElement();
     public List<FlowElement<?>> getFlowElements();
