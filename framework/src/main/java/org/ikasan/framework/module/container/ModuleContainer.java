@@ -72,7 +72,7 @@ public interface ModuleContainer
     /**
      * Adds a new <code>Module</code> to the container
      * 
-     * @param module
+     * @param module a new module
      */
     public void add(Module module);
 }

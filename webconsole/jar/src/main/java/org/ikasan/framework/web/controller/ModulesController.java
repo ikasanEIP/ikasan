@@ -42,7 +42,6 @@ package org.ikasan.framework.web.controller;
 
 import java.util.List;
 
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener;
 import org.ikasan.framework.flow.event.model.Trigger;
 import org.ikasan.framework.flow.event.model.TriggerRelationship;
@@ -103,7 +102,7 @@ public class ModulesController
     @RequestMapping("list.htm")
     public String listModules(ModelMap model)
     {
-        model.addAttribute("modules", moduleService.getModules());
+        model.addAttribute("modules", this.moduleService.getModules());
         return "modules/modules";
     }
 
@@ -117,7 +116,7 @@ public class ModulesController
     @RequestMapping("view.htm")
     public String viewModule(@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName, ModelMap model)
     {
-        model.addAttribute("module", moduleService.getModule(moduleName));
+        model.addAttribute("module", this.moduleService.getModule(moduleName));
         // For the navigation bar
         setupNavigationAttributes(moduleName, null, null, model);
         return "modules/viewModule";
@@ -135,12 +134,9 @@ public class ModulesController
     public String viewFlow(@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName, ModelMap model)
     {
-        Module module = moduleService.getModule(moduleName);
+        Module module = this.moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
-        if (flow instanceof VisitingInvokerFlow)
-        {
-            model.addAttribute("flowElements", ((VisitingInvokerFlow) flow).getFlowElements());
-        }
+        model.addAttribute("flowElements", flow.getFlowElements());
         model.addAttribute("flow", flow);
         // For the navigation bar
         setupNavigationAttributes(moduleName, flowName, null, model);
@@ -161,16 +157,16 @@ public class ModulesController
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName,
             @RequestParam(FLOW_ELEMENT_NAME_PARAMETER_NAME) String flowElementName, ModelMap model)
     {
-        Module module = moduleService.getModule(moduleName);
+        Module module = this.moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
-        FlowElement flowElement = resolveFlowElement(flowElementName, (VisitingInvokerFlow) flow);
+        FlowElement<?> flowElement = resolveFlowElement(flowElementName, flow);
         List<Trigger> beforeElementTriggers = null;
         List<Trigger> afterElementTriggers = null;
-        if (jobAwareFlowEventListener != null)
+        if (this.jobAwareFlowEventListener != null)
         {
-            beforeElementTriggers = jobAwareFlowEventListener.getTriggers(module.getName(), flowName,
+            beforeElementTriggers = this.jobAwareFlowEventListener.getTriggers(module.getName(), flowName,
                 TriggerRelationship.BEFORE, flowElementName);
-            afterElementTriggers = jobAwareFlowEventListener.getTriggers(module.getName(), flowName,
+            afterElementTriggers = this.jobAwareFlowEventListener.getTriggers(module.getName(), flowName,
                 TriggerRelationship.AFTER, flowElementName);
         }
         model.addAttribute("flow", flow);
@@ -229,7 +225,7 @@ public class ModulesController
             @RequestParam(FLOW_ELEMENT_NAME_PARAMETER_NAME) String flowElementName,
             @RequestParam(TRIGGER_ID_PARAMETER_NAME) String triggerId, ModelMap model) throws Exception
     {
-        jobAwareFlowEventListener.deleteDynamicTrigger(new Long(triggerId));
+        this.jobAwareFlowEventListener.deleteDynamicTrigger(new Long(triggerId));
         return viewFlowElement(moduleName, flowName, flowElementName, model);
     }
 
@@ -240,10 +236,10 @@ public class ModulesController
      * @param flow - The flow
      * @return The resolve FlowElement
      */
-    private FlowElement resolveFlowElement(String flowElementName, VisitingInvokerFlow flow)
+    private FlowElement<?> resolveFlowElement(String flowElementName, Flow flow)
     {
-        FlowElement flowElement = null;
-        for (FlowElement thisFlowElement : flow.getFlowElements())
+        FlowElement<?> flowElement = null;
+        for (FlowElement<?> thisFlowElement : flow.getFlowElements())
         {
             if (thisFlowElement.getComponentName().equals(flowElementName))
             {

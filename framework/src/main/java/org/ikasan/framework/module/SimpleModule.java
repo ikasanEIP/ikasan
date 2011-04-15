@@ -41,11 +41,10 @@
 package org.ikasan.framework.module;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.spec.flow.Flow;
 
 /**
@@ -56,7 +55,7 @@ import org.ikasan.spec.flow.Flow;
 public class SimpleModule implements Module
 {
     /** Initiators of flows within this module */
-    private List<Initiator> initiators;
+    private List<Flow> flows;
 
     /** Module name */
     protected String name;
@@ -68,22 +67,12 @@ public class SimpleModule implements Module
      * Constructor
      * 
      * @param name The name of the module
-     * @param initiators A list of Initiators for the module
+     * @param flows a set of flows making the module
      */
-    public SimpleModule(String name, List<Initiator> initiators)
-    {
-        this(name);
-        this.initiators = new ArrayList<Initiator>(initiators);
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param name Name of the module
-     */
-    public SimpleModule(String name)
+    public SimpleModule(final String name, final List<Flow> flows)
     {
         this.name = name;
+        this.flows = new ArrayList<Flow>(flows);
     }
 
     /**
@@ -93,46 +82,17 @@ public class SimpleModule implements Module
      */
     public String getName()
     {
-        return name;
+        return this.name;
     }
 
-    /**
-     * Resolve the initiator
-     * 
-     * @param initiatorName The name of the initiator
-     * @return The resolve initiator
-     */
-    public Initiator getInitiator(String initiatorName)
-    {
-        Initiator initiator = null;
-        for (Initiator thisInitiator : initiators)
-        {
-            if (thisInitiator.getName().equals(initiatorName))
-            {
-                initiator = thisInitiator;
-                break;
-            }
-        }
-        return initiator;
-    }
-
-    /**
-     * @return the initiators
-     */
-    public List<Initiator> getInitiators()
-    {
-        return new ArrayList<Initiator>(initiators);
-    }
-
-    /**
+    /* (non-Javadoc)
      * @see org.ikasan.framework.module.Module#getFlows()
      */
     public Map<String, Flow> getFlows()
     {
-        Map<String, Flow> result = new HashMap<String, Flow>();
-        for (Initiator initiator : initiators)
+        Map<String, Flow> result = new LinkedHashMap<String, Flow>();
+        for (Flow flow : this.flows)
         {
-            Flow flow = initiator.getFlow();
             result.put(flow.getName(), flow);
         }
         return result;
@@ -143,7 +103,7 @@ public class SimpleModule implements Module
      */
     public String getDescription()
     {
-        return description;
+        return this.description;
     }
 
     /**
@@ -164,13 +124,13 @@ public class SimpleModule implements Module
     {
         StringBuffer sb = new StringBuffer(getClass().getName() + " [");
         sb.append("name=");
-        sb.append(name);
+        sb.append(this.name);
         sb.append(",");
         sb.append("description=");
-        sb.append(description);
+        sb.append(this.description);
         sb.append(",");
-        sb.append("initiators=");
-        sb.append(initiators);
+        sb.append("flows=");
+        sb.append(this.flows);
         sb.append("]");
         return sb.toString();
     }

@@ -42,8 +42,6 @@ package org.ikasan.framework.module.service;
 
 import java.util.List;
 
-import org.ikasan.framework.initiator.InitiatorStartupControl;
-import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
 import org.ikasan.framework.module.Module;
 
 /**
@@ -65,48 +63,49 @@ public interface ModuleService
     /**
      * Resolves a specified <code>Module</code> by name
      * 
-     * @param moduleName
+     * @param moduleName the module name
      * 
      * @return <code>Module</code> named by moduleName
      */
-    public Module getModule(String moduleName);   
-    
+    public Module getModule(String moduleName);
+
     /**
-     * Attempts to stop an <code>Initiator</code>
+     * Attempts to stop a <code>Flow</code>
      * 
-     * @param moduleName
-     * @param initiatorName
-     * @param actor
+     * @param moduleName 
+     * @param flowName 
+     * @param actor 
+     * 
      */
-    public void stopInitiator(String moduleName, String initiatorName, String actor);
-    
+    public void stopFlow(final String moduleName, final String flowName, final String actor);
+
     /**
      * Attempts to start an <code>Initiator</code>
      * 
      * @param moduleName
-     * @param initiatorName
+     * @param flowName 
      * @param actor
      */
-    public void startInitiator(String moduleName, String initiatorName, String actor);
+    public void startFlow(String moduleName, String flowName, String actor);
         
-    /**
-     * Updates the startup type for the <code>Initiator</code>
-     * 
-     * @param moduleName
-     * @param initiatorName
-     * @param startupType
-     * @param comment
-     * @param actor
-     */
-    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
+//    /**
+//     * Updates the startup type for the <code>Initiator</code>
+//     * 
+//     * @param moduleName
+//     * @param initiatorName
+//     * @param startupType
+//     * @param comment
+//     * @param actor
+//     */
+//    public void updateInitiatorStartupType(String moduleName, String initiatorName, StartupType startupType, String comment, String actor);
 
-	/**
-	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 * 
-	 * @param moduleName
-	 * @param initiatorName
-	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
-	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
+//	/**
+//	 * Allows access to the <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+//	 * 
+//	 * @param moduleName
+//	 * @param initiatorName
+//	 * @return <code>InitiatorStartupControl</code> object for the specified <code>Initiator</code>
+//	 */
+//	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
 
 }

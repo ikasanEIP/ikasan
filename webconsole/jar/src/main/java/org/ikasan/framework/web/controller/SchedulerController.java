@@ -42,7 +42,6 @@ package org.ikasan.framework.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.quartz.Scheduler;

@@ -52,13 +52,11 @@ import org.ikasan.framework.module.Module;
  * 
  * @author Ikasan Development Team
  */
-public class ModuleContainerImpl implements   ModuleContainer
+public class ModuleContainerImpl implements ModuleContainer
 {
 
     /** Map of all loaded modules */
     protected Map<String, Module> modules = new LinkedHashMap<String, Module>();
-
-
 
     /**
      * Exposes all the loaded <code>Module</code>s
@@ -67,7 +65,7 @@ public class ModuleContainerImpl implements   ModuleContainer
      */
     public List<Module> getModules()
     {
-        return new ArrayList<Module>(modules.values());
+        return new ArrayList<Module>(this.modules.values());
     }
 
     /**
@@ -78,12 +76,12 @@ public class ModuleContainerImpl implements   ModuleContainer
      */
     public Module getModule(String moduleName)
     {
-        return modules.get(moduleName);
+        return this.modules.get(moduleName);
     }
 
     public void add(Module module)
     {
-        modules.put(module.getName(), module);
+        this.modules.put(module.getName(), module);
         
     }
 }

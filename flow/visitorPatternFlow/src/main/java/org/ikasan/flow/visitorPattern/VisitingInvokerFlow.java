@@ -103,8 +103,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     
     /**
      * Constructor
-     * @param name
-     * @param moduleName
+     * @param name the flow name
+     * @param moduleName name of module this flow exists for
      * @param flowConfiguration
      * @param flowElementInvoker
      * @param recoveryManager
@@ -171,13 +171,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         try
         {
             // configure resources that are marked as configurable
-            for(FlowElement<ConfiguredResource> flowElement:flowConfiguration.getConfiguredResourceFlowElements())
+            for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
             {
-                flowConfiguration.configureFlowElement(flowElement);
+                this.flowConfiguration.configureFlowElement(flowElement);
             }
 
             // start managed resources (from right to left)
-            List<FlowElement<ManagedResource>> flowElements = flowConfiguration.getManagedResourceFlowElements();
+            List<FlowElement<ManagedResource>> flowElements = this.flowConfiguration.getManagedResourceFlowElements();
             Collections.reverse(flowElements);
             for(FlowElement<ManagedResource> flowElement:flowElements)
             {
@@ -204,7 +204,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public void start()
     {
-        FlowElement<Consumer> consumerFlowElement = flowConfiguration.getConsumerFlowElement();
+        FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
 
         String currentState = this.getState();
         if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
@@ -255,12 +255,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
 
             // stop consumer and remove the listener
-            Consumer<?> consumer = flowConfiguration.getConsumerFlowElement().getFlowComponent();
+            Consumer<?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
             consumer.setListener(null);
             consumer.stop();
 
             // stop all managed resources (left to right)
-            for(FlowElement<ManagedResource> flowElement:flowConfiguration.getManagedResourceFlowElements())
+            for(FlowElement<ManagedResource> flowElement:this.flowConfiguration.getManagedResourceFlowElements())
             {
                 flowElement.getFlowComponent().stopManagedResource();
             }
@@ -294,7 +294,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 }
             }
         
-            flowElementInvoker.invoke(flowInvocationContext, event, flowConfiguration.getLeadFlowElement());
+            this.flowElementInvoker.invoke(flowInvocationContext, event, this.flowConfiguration.getLeadFlowElement());
             if(this.recoveryManager.isRecovering())
             {
                 this.recoveryManager.cancel();
@@ -390,5 +390,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected FlowInvocationContext createFlowInvocationContext()
     {
         return new DefaultFlowInvocationContext();
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.flow.Flow#getFlowElements()
+     */
+    public List<FlowElement<?>> getFlowElements()
+    {
+        return this.flowConfiguration.getFlowElements();
     }
 }

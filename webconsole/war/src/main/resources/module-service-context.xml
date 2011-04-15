@@ -55,22 +55,23 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-
-	<bean id="moduleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+    <bean id="moduleService"
+        class="org.ikasan.framework.module.service.ModuleServiceImpl">
         <constructor-arg ref="moduleContainer" />
-        <constructor-arg ref="initiatorStartupControlDao" />
         <constructor-arg ref="systemEventService" />
     </bean>
     
-    <bean id="moduleInitialisationService" class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
+    <bean id="moduleInitialisationService"
+        class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="userDetailsService"/>
         <constructor-arg ref="initiatorStartupControlDao" />
     </bean>
 
-    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
-	
-	<bean id="initiatorStartupControlDao"
+    <bean id="moduleContainer"
+        class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+    
+    <bean id="initiatorStartupControlDao"
         class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
         <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
     </bean>
@@ -86,5 +87,5 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
     
-	
+    
 </beans>

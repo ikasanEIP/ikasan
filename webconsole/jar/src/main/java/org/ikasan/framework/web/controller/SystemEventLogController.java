@@ -78,7 +78,8 @@ public class SystemEventLogController
     /** Simple date format definition for hours minutes and seconds */
     private static SimpleDateFormat HHmmss;
     
-    static {
+    static
+    {
     	ddMMyyyyFormat = new SimpleDateFormat("dd/MM/yyyy");
         ddMMyyyyFormat.setLenient(false);
         HHmmss = new SimpleDateFormat("HH:mm:ss");

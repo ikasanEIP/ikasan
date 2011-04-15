@@ -60,6 +60,11 @@
     <description>The framework library for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring</artifactId>
+          <version>2.5.6</version>
+        </dependency>
         <!-- TODO - remove common dependency -->
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -128,34 +133,6 @@
         </dependency>
 
         <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-          <version>3.0.5.RELEASE</version>
-          <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-          <version>3.0.5.RELEASE</version>
-          <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-jms</artifactId>
-          <version>3.0.5.RELEASE</version>
-          <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-hibernate3</artifactId>
-          <version>2.0.8</version>
-          <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>2.2</version>
@@ -185,12 +162,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>3.5.4-Final</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

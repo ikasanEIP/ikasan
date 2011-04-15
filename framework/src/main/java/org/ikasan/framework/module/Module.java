@@ -40,14 +40,13 @@
  */
 package org.ikasan.framework.module;
 
-import java.util.List;
 import java.util.Map;
 
-import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.spec.flow.Flow;
 
 /**
  * The concept formerly known as a component group<br>
+ * 
  * TODO Think of a better definition than this!!
  * 
  * @author Ikasan Development Team
@@ -63,25 +62,9 @@ public interface Module
     public String getName();
 
     /**
-     * Resolves an <code>Initiator</code>
+     * Returns a {@link Map} of this module's <code>Flow</code>s
      * 
-     * @param initiatorName name of <code>Initiator</code>
-     * 
-     * @return The Initiator
-     */
-    public Initiator getInitiator(String initiatorName);
-
-    /**
-     * Returns all of this module's <code>Initiator</code>s
-     * 
-     * @return List of Initiator
-     */
-    public List<Initiator> getInitiators();
-
-    /**
-     * Returns a Map of this module's <code>Flow</code>s
-     * 
-     * @return Map of Flows keyed by flowName
+     * @return a map of <code>Flow</code> using the {@link Flow#getName()} as key
      */
     public Map<String, Flow> getFlows();
 
