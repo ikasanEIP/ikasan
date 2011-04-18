@@ -48,33 +48,17 @@ package org.ikasan.consumer.quartz;
  */
 public class ScheduledConsumerConfiguration
 {
-    String jobName;
-    String jobGroup;
-    String cronExpression;
-    public String getJobName()
-    {
-        return jobName;
-    }
-    public void setJobName(String jobName)
-    {
-        this.jobName = jobName;
-    }
-    public String getJobGroup()
-    {
-        return jobGroup;
-    }
-    public void setJobGroup(String jobGroup)
-    {
-        this.jobGroup = jobGroup;
-    }
+    /** cron based expression for this schedule */
+    private String cronExpression;
+
     public String getCronExpression()
     {
         return cronExpression;
     }
+
     public void setCronExpression(String cronExpression)
     {
         this.cronExpression = cronExpression;
     }
-    
     
 }
