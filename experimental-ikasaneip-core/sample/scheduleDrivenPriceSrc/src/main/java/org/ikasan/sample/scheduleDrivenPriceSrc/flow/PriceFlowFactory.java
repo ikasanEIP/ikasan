@@ -120,8 +120,6 @@ public class PriceFlowFactory
     protected Consumer<?> createConsumer(String configuredResourceId)
     {
         ScheduledConsumerConfiguration configuration = new ScheduledConsumerConfiguration();
-        configuration.setJobName("priceSrcFlow");
-        configuration.setJobGroup("priceSrcModule");
         configuration.setCronExpression("0/5 * * * * ?");
         
         // create consumer component
