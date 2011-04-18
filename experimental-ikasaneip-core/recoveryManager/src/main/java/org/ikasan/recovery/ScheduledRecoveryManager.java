@@ -68,8 +68,11 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
 
+    /** recovery job name */
+    protected static final String RECOVERY_JOB_NAME = "recoveryJob_";
+    
     /** recovery job trigger name */
-    private static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger";
+    protected static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger";
     
     /** consumer to stop and start for recovery */
     private Consumer<?> consumer;
@@ -354,8 +357,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected JobDetail newRecoveryJob()
     {
-        return new JobDetail(ScheduledRecoveryManagerJobFactory.RECOVERY_JOB_NAME + this.flowName, 
-            ScheduledRecoveryManagerJobFactory.RECOVERY_JOB_GROUP + this.moduleName, ScheduledRecoveryManager.class);
+        return new JobDetail(RECOVERY_JOB_NAME + this.flowName, this.moduleName, ScheduledRecoveryManager.class);
     }
     
     /**
@@ -375,8 +377,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     private void cancelScheduledJob() throws SchedulerException
     {
-        this.scheduler.deleteJob(ScheduledRecoveryManagerJobFactory.RECOVERY_JOB_NAME + this.flowName, 
-            ScheduledRecoveryManagerJobFactory.RECOVERY_JOB_GROUP + this.moduleName);
+        this.scheduler.deleteJob(RECOVERY_JOB_NAME + this.flowName, this.moduleName);
     }
 
     /**
