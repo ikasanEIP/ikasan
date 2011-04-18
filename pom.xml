@@ -78,17 +78,6 @@
         <module>webconsole</module>
         <module>console</module>
 
-        <!-- TODO Omit connectors  -->
-        <!-- module>connector-base</module>
-        <module>connector-basefiletransfer</module>
-        <module>connector-filetransfer-parent</module>
-        <module>connector-ftp</module>
-        <module>connector-sftp</module-->
-
-        <!-- TODO Omit connector clients -->
-        <!--module>client-connection</module>
-        <module>client-filetransfer</module-->
-
         <!-- filter -->
         <module>filter</module>
 
