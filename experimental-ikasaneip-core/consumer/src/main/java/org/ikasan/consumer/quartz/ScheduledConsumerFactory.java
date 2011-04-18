@@ -41,77 +41,60 @@
 package org.ikasan.consumer.quartz;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.EventFactory;
 import org.quartz.Job;
 import org.quartz.JobDetail;
-import org.quartz.SchedulerException;
-import org.quartz.spi.JobFactory;
-import org.quartz.spi.TriggerFiredBundle;
+import org.quartz.Scheduler;
 
 /**
- * This test class supports the <code>Translator</code> class.
+ * Scheduled based consumer Factory provides
+ * consumer instances using a single scheduler and job factory
+ * for coordination.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerJobFactory implements JobFactory
+public class ScheduledConsumerFactory
 {
-    /** singleton instance */
-    private static ScheduledConsumerJobFactory scheduledConsumerJobFactory;
-    
-    /** map of consumers */
-    private Map<String,Job> consumers;
+    /** Quartz Scheduler */
+    private Scheduler scheduler;
 
-    /**
-     * Singleton instance accessor
-     * @return ScheduledConsumerJobFactory
-     */
-    public static ScheduledConsumerJobFactory getInstance()
-    {
-        if(scheduledConsumerJobFactory == null)
-        {
-            scheduledConsumerJobFactory = new ScheduledConsumerJobFactory();
-        }
-        
-        return scheduledConsumerJobFactory;
-    }
+    /** event factory */
+    private EventFactory eventFactory;
     
     /**
      * Constructor
+     * @param scheduler
+     * @param scheduledConsumerJobFactory
      */
-    protected ScheduledConsumerJobFactory()
+    public ScheduledConsumerFactory(Scheduler scheduler, EventFactory eventFactory)
     {
-        this.consumers = getConsumerCache();
-    }
-    
-    /**
-     * Add consumer to the job factory
-     * @param flowName
-     * @param moduleName
-     * @param job
-     */
-    public void addConsumer(String flowName, String moduleName, Job job)
-    {
-        consumers.put(flowName + moduleName, job);
-    }
-    
-    /**
-     * Callback from Quartz to get the actual job to execute.
-     */
-    public Job newJob(TriggerFiredBundle triggerFiredBundle) throws SchedulerException
-    {
-        JobDetail jobDetail = triggerFiredBundle.getJobDetail();
-        String jobKey = jobDetail.getName() + jobDetail.getGroup();
-        return consumers.get(jobKey);
+        this.scheduler = scheduler;
+        if(scheduler == null)
+        {
+            throw new IllegalArgumentException("scheduler cannot be 'null'");
+        }
+        
+        this.eventFactory = eventFactory;
+        if(eventFactory == null)
+        {
+            throw new IllegalArgumentException("eventFactory cannot be 'null'");
+        }
+        
     }
 
-    /**
-     * Factory method for creating an initial consumers cache.
-     * @return
-     */
-    protected Map<String,Job> getConsumerCache()
+    public Consumer getScheduledConsumer(String flowName, String moduleName)
     {
-        return new ConcurrentHashMap<String,Job>();
+        JobDetail jobDetail = new JobDetail();
+        jobDetail.setJobClass(ScheduledConsumer.class);
+        ScheduledConsumer scheduledConsumer = new ScheduledConsumer(this.scheduler, jobDetail, this.eventFactory);
+
+        // add the new instance to the cached jobs job factory 
+        Map<String,Job> jobs = ScheduledJobFactory.getInstance().getScheduledJobs();
+        jobs.put(flowName + moduleName, (Job)scheduledConsumer);
+
+        return scheduledConsumer;
     }
-    
 }
