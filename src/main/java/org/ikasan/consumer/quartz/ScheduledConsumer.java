@@ -106,7 +106,7 @@ public class ScheduledConsumer
         {
             throw new IllegalArgumentException("jobDetail cannot be 'null'");
         }
-
+        
         this.flowEventFactory = flowEventFactory;
         if(flowEventFactory == null)
         {
@@ -121,16 +121,13 @@ public class ScheduledConsumer
     {
         try
         {
-            this.jobDetail.setName(this.consumerConfiguration.getJobName());
-            this.jobDetail.setGroup(this.consumerConfiguration.getJobGroup());
-            
             // create trigger
             // TODO - allow configuration to support multiple triggers
-            Trigger trigger = getCronTrigger(this.consumerConfiguration.getJobName(), this.consumerConfiguration.getJobGroup(), this.consumerConfiguration.getCronExpression());
+            Trigger trigger = getCronTrigger(jobDetail.getName(), jobDetail.getGroup(), this.consumerConfiguration.getCronExpression());
             Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-            logger.info("Scheduled consumer job name [" 
-                + this.consumerConfiguration.getJobName() 
-                + "] group [" + this.consumerConfiguration.getJobGroup() 
+            logger.info("Scheduled consumer for flow [" 
+                + jobDetail.getName()
+                + "] module [" + jobDetail.getGroup() 
                 + "] starting at [" + scheduledDate + "]");
         }
         catch (SchedulerException e)
@@ -166,8 +163,7 @@ public class ScheduledConsumer
     {
         try
         {
-            JobDetail jobDetail = 
-                this.scheduler.getJobDetail(this.consumerConfiguration.getJobName(), this.consumerConfiguration.getJobGroup());
+            JobDetail jobDetail = this.scheduler.getJobDetail(this.jobDetail.getName(), this.jobDetail.getGroup());
             if(jobDetail == null)
             {
                 return false;

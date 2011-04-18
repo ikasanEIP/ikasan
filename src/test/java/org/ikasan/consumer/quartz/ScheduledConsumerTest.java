@@ -125,18 +125,16 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                // access configuration for details
-                exactly(3).of(consumerConfiguration).getJobName();
+                // get flow and module name from the job
+                exactly(2).of(mockJobDetail).getName();
                 will(returnValue("flowName"));
-                exactly(3).of(consumerConfiguration).getJobGroup();
+                exactly(2).of(mockJobDetail).getGroup();
                 will(returnValue("moduleName"));
+
+                // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
 
-                // set the name of the job detail
-                exactly(1).of(mockJobDetail).setName("flowName");
-                exactly(1).of(mockJobDetail).setGroup("moduleName");
-                
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));
@@ -160,17 +158,15 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                // access configuration for details
-                exactly(3).of(consumerConfiguration).getJobName();
+                // get flow and module name from the job
+                exactly(2).of(mockJobDetail).getName();
                 will(returnValue("flowName"));
-                exactly(3).of(consumerConfiguration).getJobGroup();
+                exactly(2).of(mockJobDetail).getGroup();
                 will(returnValue("moduleName"));
+
+                // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
-
-                // set the name of the job detail
-                exactly(1).of(mockJobDetail).setName("flowName");
-                exactly(1).of(mockJobDetail).setGroup("moduleName");
                 
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
@@ -195,17 +191,15 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                // access configuration for details
-                exactly(3).of(consumerConfiguration).getJobName();
+                // get flow and module name from the job
+                exactly(2).of(mockJobDetail).getName();
                 will(returnValue("flowName"));
-                exactly(3).of(consumerConfiguration).getJobGroup();
+                exactly(2).of(mockJobDetail).getGroup();
                 will(returnValue("moduleName"));
+
+                // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
-
-                // set the name of the job detail
-                exactly(1).of(mockJobDetail).setName("flowName");
-                exactly(1).of(mockJobDetail).setGroup("moduleName");
                 
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
