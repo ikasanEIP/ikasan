@@ -85,14 +85,15 @@ public class ScheduledConsumer
     private ScheduledConsumerConfiguration consumerConfiguration;
     
     /** quartz job detail */
-    protected JobDetail jobDetail;
-    
+    private JobDetail jobDetail;
+
     /**
      * Constructor
      * @param scheduler
+     * @param jobDetail
      * @param flowEventFactory
      */
-    public ScheduledConsumer(Scheduler scheduler, EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public ScheduledConsumer(Scheduler scheduler, JobDetail jobDetail, EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -100,16 +101,16 @@ public class ScheduledConsumer
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
 
+        this.jobDetail = jobDetail;
+        if(jobDetail == null)
+        {
+            throw new IllegalArgumentException("jobDetail cannot be 'null'");
+        }
+
         this.flowEventFactory = flowEventFactory;
         if(flowEventFactory == null)
         {
             throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
-        }
-        
-        this.jobDetail = getJobDetail();
-        if(jobDetail == null)
-        {
-            throw new IllegalArgumentException("Failed to create the jobDetail");
         }
     }
     
@@ -120,8 +121,8 @@ public class ScheduledConsumer
     {
         try
         {
-            jobDetail.setName(this.consumerConfiguration.getJobName());
-            jobDetail.setGroup(this.consumerConfiguration.getJobGroup());
+            this.jobDetail.setName(this.consumerConfiguration.getJobName());
+            this.jobDetail.setGroup(this.consumerConfiguration.getJobGroup());
             
             // create trigger
             // TODO - allow configuration to support multiple triggers
