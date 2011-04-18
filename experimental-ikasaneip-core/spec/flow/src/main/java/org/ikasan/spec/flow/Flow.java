@@ -40,8 +40,6 @@
  */
 package org.ikasan.spec.flow;
 
-import java.util.List;
-
 /**
  * Interface representing a business path for a <code>FlowEvent<code>
  * 
