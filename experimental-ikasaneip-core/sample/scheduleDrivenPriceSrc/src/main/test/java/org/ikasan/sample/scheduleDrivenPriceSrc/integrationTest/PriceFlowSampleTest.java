@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest;
+package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
 import javax.annotation.Resource;
 
@@ -49,30 +49,28 @@ import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
-import org.ikasan.sample.genericTechDrivenPriceSrc.flow.PriceFlowFactory;
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
+import org.ikasan.sample.scheduleDrivenPriceSrc.flow.PriceFlowFactory;
+import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
  * 
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/configuration-dao-config.xml", 
-        "/hsqldb-config.xml"})
-
-    public class PriceFlowSampleTest
+    "/configuration-dao-config.xml", 
+    "/hsqldb-config.xml"})
+      
+public class PriceFlowSampleTest
 {
     /** Spring DI resource */
     @Resource ConfigurationDao staticConfigurationDao;
@@ -82,9 +80,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
     
     /** flow event factory */
     FlowEventFactory flowEventFactory = new FlowEventFactory();
-
-    /** recovery manager factory */
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
     
     /** configuration service */
     ConfigurationService configurationService;
@@ -92,16 +87,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
     /** configuration management for the scheduled consumer */
     ConfigurationManagement<Consumer,ScheduledConsumerConfiguration> configurationManagement;
     
-    protected PriceTechImpl getTechImpl()
-    {
-        return new PriceTechImpl();
-    }
+    /** recovery manager */
+    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
     
     @Before
     public void setup() throws SchedulerException
     {
         this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
+            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        
         configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
         configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
     }
@@ -109,10 +103,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
     @Test
     public void test_flow_consumer_translator_producer() throws SchedulerException
     {
-        PriceFlowFactory priceFlowFactory = new PriceFlowFactory("flowName", "moduleName", this.configurationService);
-        Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow();
+        PriceFlowFactory priceFlowFactory = 
+            new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement);
+        Flow priceFlow = priceFlowFactory.createScheduleDrivenFlow();
         priceFlow.start();
         priceFlow.stop();
     }
-
 }
