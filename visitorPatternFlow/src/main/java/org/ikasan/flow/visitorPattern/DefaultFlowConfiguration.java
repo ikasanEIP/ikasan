@@ -44,13 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.flow.configuration.service.ConfigurationService;
-import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
-import org.ikasan.spec.component.sequencing.Sequencer;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
