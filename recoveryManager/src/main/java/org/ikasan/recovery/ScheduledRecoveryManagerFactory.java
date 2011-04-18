@@ -106,7 +106,7 @@ public class ScheduledRecoveryManagerFactory
         ScheduledRecoveryManager recoveryManager = getRecoveryManagerInstance(flowName, moduleName, consumer);
 
         // add the new instance to the cached jobs job factory 
-        Map<String,Job> jobs = ScheduledJobFactory.getInstance().getScheduledJobs();
+        Map<String,Job> jobs = getScheduledJobFactory().getScheduledJobs();
         jobs.put(recoveryManager.RECOVERY_JOB_NAME + flowName + moduleName, (Job)recoveryManager);
 
         // return new instance to the caller 
@@ -114,12 +114,21 @@ public class ScheduledRecoveryManagerFactory
     }
     
     /**
-     * Factory method for getting a scheduledRecoveryMangerJobFactory instance.
-     * @return ScheduledRecoveryManagerJobFactory
+     * Factory method for getting a ScheduledRecoveryManger instance.
+     * @return ScheduledRecoveryManager
      */
     protected ScheduledRecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
     {
         return new ScheduledRecoveryManager(scheduler, flowName, moduleName, consumer, exceptionResolver);
+    }
+    
+    /**
+     * Factory method for getting a ScheduledJobFactory instance.
+     * @return ScheduledJobFactory
+     */
+    protected ScheduledJobFactory getScheduledJobFactory()
+    {
+        return ScheduledJobFactory.getInstance();
     }
     
 }

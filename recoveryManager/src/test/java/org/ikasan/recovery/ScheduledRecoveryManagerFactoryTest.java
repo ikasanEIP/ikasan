@@ -40,16 +40,19 @@
  */
 package org.ikasan.recovery;
 
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
@@ -79,9 +82,14 @@ public class ScheduledRecoveryManagerFactoryTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
-    /** Mock scheduledRecoveryManagerJobFactory */
-    final ScheduledRecoveryManagerJobFactory scheduledRecoveryManagerJobFactory =
-        mockery.mock(ScheduledRecoveryManagerJobFactory.class, "mockScheduledRecoveryManagerJobFactory");
+    /** Mock scheduledJobFactory */
+    final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
+
+    /** Mock scheduledJobs */
+    final Map<String,Job> scheduledJobs = mockery.mock(Map.class, "mockScheduledJobs");
+
+    /** Mock job */
+    final Job job = mockery.mock(Job.class, "mockJob");
 
     /** Mock schedledRecoveryManager */
     final ScheduledRecoveryManager scheduledRecoveryManager = 
@@ -107,14 +115,11 @@ public class ScheduledRecoveryManagerFactoryTest
         mockery.checking(new Expectations()
         {
             {
-                // set the job factory
-                exactly(1).of(scheduler).setJobFactory(scheduledRecoveryManagerJobFactory);
-
-                // start the scheduler
-                exactly(1).of(scheduler).start();
-                
                 // get the recovery manager instance
-                exactly(1).of(scheduledRecoveryManagerJobFactory).addJob("flowName", "moduleName", scheduledRecoveryManager);
+                exactly(1).of(scheduledJobFactory).getScheduledJobs();
+                will(returnValue(scheduledJobs));
+                
+                exactly(1).of(scheduledJobs).put("recoveryJob_flowNamemoduleName", scheduledRecoveryManager);
             }
         });
 
@@ -135,14 +140,11 @@ public class ScheduledRecoveryManagerFactoryTest
         mockery.checking(new Expectations()
         {
             {
-                // set the job factory
-                exactly(1).of(scheduler).setJobFactory(scheduledRecoveryManagerJobFactory);
-
-                // start the scheduler
-                exactly(1).of(scheduler).start();
-                
                 // get the recovery manager instance
-                exactly(1).of(scheduledRecoveryManagerJobFactory).addJob("flowName", "moduleName", scheduledRecoveryManager);
+                exactly(1).of(scheduledJobFactory).getScheduledJobs();
+                will(returnValue(scheduledJobs));
+                
+                exactly(1).of(scheduledJobs).put("recoveryJob_flowNamemoduleName", scheduledRecoveryManager);
             }
         });
 
@@ -159,21 +161,7 @@ public class ScheduledRecoveryManagerFactoryTest
     @Test(expected = RuntimeException.class)
     public void test_failed_instantiation() throws SchedulerException
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // set the job factory
-                exactly(1).of(scheduler).setJobFactory(scheduledRecoveryManagerJobFactory);
-
-                // start the scheduler
-                exactly(1).of(scheduler).start();
-                will(throwException(new SchedulerException()));
-            }
-        });
-
-        new StubbedScheduledRecoveryManagerFactory(scheduler);
-        mockery.assertIsSatisfied();
+        new StubbedScheduledRecoveryManagerFactory(null);
     }
 
 
@@ -196,15 +184,15 @@ public class ScheduledRecoveryManagerFactoryTest
         }
         
         @Override
-        protected RecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
+        protected ScheduledRecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
         {
             return scheduledRecoveryManager;
         }
 
         @Override
-        protected ScheduledRecoveryManagerJobFactory getScheduledRecoveryManagerJobFactory()
+        protected ScheduledJobFactory getScheduledJobFactory()
         {
-            return scheduledRecoveryManagerJobFactory;
+            return scheduledJobFactory;
         }
     }
 

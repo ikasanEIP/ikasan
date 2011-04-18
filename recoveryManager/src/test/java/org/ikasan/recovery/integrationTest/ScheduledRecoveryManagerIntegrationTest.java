@@ -54,13 +54,13 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * Integration testing for Recovery Manager implementation.
@@ -90,14 +90,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Before
     public void setUp()
     {
-        try
-        {
-            this.scheduler = StdSchedulerFactory.getDefaultScheduler();
-        }
-        catch (SchedulerException e)
-        {
-            Assert.fail(e.getMessage());
-        }
+        this.scheduler = SchedulerFactory.getInstance().getScheduler();
         this.consumer = new StubbedConsumer();
         this.recoveryManagerFactory = new ScheduledRecoveryManagerFactory(scheduler);
     }
@@ -227,7 +220,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
         // wait for scheduler callback to restart the consumer
@@ -248,7 +241,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
         // wait for scheduler callback to restart the consumer
@@ -269,7 +262,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
             Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNull("job should not be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
     }
@@ -321,7 +314,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
         // wait for scheduler callback to restart the consumer
@@ -342,7 +335,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should be not be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
         // wait for scheduler callback to restart the consumer
@@ -363,7 +356,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should be not be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
         // wait for scheduler callback to restart the consumer
@@ -383,7 +376,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
             Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNull("job should not be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
     }
@@ -435,7 +428,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNotNull("job should still be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
 
         // wait for scheduler callback to restart the consumer
@@ -456,7 +449,7 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
             Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNull("job should not be registered with scheduler",
-                this.scheduler.getJobDetail("recoveryJob_"+flowName, "recoveryManager_"+moduleName));
+                this.scheduler.getJobDetail("recoveryJob_"+flowName, moduleName));
         }
     }
 
