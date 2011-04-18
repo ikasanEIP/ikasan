@@ -89,6 +89,8 @@ public class ScheduledConsumerFactory
     {
         JobDetail jobDetail = new JobDetail();
         jobDetail.setJobClass(ScheduledConsumer.class);
+        jobDetail.setName(flowName);
+        jobDetail.setGroup(moduleName);
         ScheduledConsumer scheduledConsumer = new ScheduledConsumer(this.scheduler, jobDetail, this.eventFactory);
 
         // add the new instance to the cached jobs job factory 

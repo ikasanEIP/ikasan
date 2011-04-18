@@ -59,16 +59,10 @@ public class ScheduledConsumerConfigurationTest
     public void test_mutators() throws SchedulerException
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
-        Assert.assertNull("initial jobName should be null", consumerConfiguration.getJobName());
-        Assert.assertNull("initial jobGroup should be null", consumerConfiguration.getJobGroup());
         Assert.assertNull("initial cronExpression should be null", consumerConfiguration.getCronExpression());
 
-        consumerConfiguration.setJobName("jobName");
-        consumerConfiguration.setJobGroup("jobGroup");
         consumerConfiguration.setCronExpression("cronExpression");
         
-        Assert.assertEquals("jobName should be populated with 'jobName'", "jobName", consumerConfiguration.getJobName());
-        Assert.assertEquals("jobGroup should be populated with 'jobGroup'", "jobGroup", consumerConfiguration.getJobGroup());
         Assert.assertEquals("cronExpression should be populated with 'cronExpression'", "cronExpression", consumerConfiguration.getCronExpression());
     }
 
