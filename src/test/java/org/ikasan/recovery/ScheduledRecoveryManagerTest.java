@@ -322,7 +322,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(maxRetries));
                 
                 // cancel the recovery
-                exactly(1).of(scheduler).deleteJob("recoveryJob_flowName", "recoveryManager_moduleName");
+                exactly(1).of(scheduler).deleteJob("recoveryJob_flowName", "moduleName");
             }
         });
 
