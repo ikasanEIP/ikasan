@@ -62,6 +62,9 @@
          -->
         <module>build</module>
 
+        <!-- ikasan scheduler -->
+        <module>scheduler</module>
+ 
         <!-- ikasan core -->
         <module>spec</module>
         <module>flow</module>
