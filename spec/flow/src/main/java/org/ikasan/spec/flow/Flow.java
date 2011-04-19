@@ -85,4 +85,16 @@ public interface Flow
      * For instance, this could include stopping any flow managed resources.
      */
     public void stop();
+
+    /**
+     * Invoke stop on the consumer component only. All other components will remain
+     * initialised and running.
+     */
+    public void pause();
+
+    /**
+     * Invoke start on the consumer component only. All other components will remain
+     * initialised and running.
+     */
+    public void resume();
 }
