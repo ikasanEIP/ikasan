@@ -393,18 +393,6 @@ public class VisitingInvokerFlowTest
         
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // get the consumer flow element for logging its name
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                exactly(1).of(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-            }
-        });
-
         // set the monitor and receive initial state callback
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -413,6 +401,10 @@ public class VisitingInvokerFlowTest
 
         // check state before proceeding with start
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // monitor state updated after start invoked
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
 
         // start will bail out due to flow already running
         flow.start();
@@ -440,17 +432,17 @@ public class VisitingInvokerFlowTest
         
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // get the consumer flow element for logging its name
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                exactly(1).of(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-            }
-        });
+//        // expectations
+//        mockery.checking(new Expectations()
+//        {
+//            {
+//                // get the consumer flow element for logging its name
+//                one(flowConfiguration).getConsumerFlowElement();
+//                will(returnValue(consumerFlowElement));
+//                exactly(1).of(consumerFlowElement).getComponentName();
+//                will(returnValue("consumerName"));
+//            }
+//        });
 
         // set the monitor and receive initial state callback
         isRecovering = true;
@@ -460,6 +452,10 @@ public class VisitingInvokerFlowTest
 
         // check state before proceeding with start
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // monitor state updated after start invoked
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("recovering");
 
         // start will bail out due to flow already running in recovery
         flow.start();
@@ -471,7 +467,7 @@ public class VisitingInvokerFlowTest
     /**
      * Test failed flow start due to configuration failure.
      */
-    @Test
+    @Test(expected = RuntimeException.class)
     public void test_failed_flow_start_due_to_configuration_failure()
     {
         // container for the complete flow

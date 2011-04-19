@@ -80,6 +80,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** stoppedInError state string constant */
     private static String STOPPED_IN_ERROR = "stoppedInError";
     
+    /** paused state string constant */
+    private static String PAUSED = "paused";
+    
     /** Name of this flow */
     private String name;
 
@@ -100,6 +103,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     
     /** startup failure flag */
     private boolean flowInitialisationFailure = false;
+    
+    /** has the consumer been paused */
+    private boolean consumerPaused = false;
     
     /**
      * Constructor
@@ -175,22 +181,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 this.flowConfiguration.configureFlowElement(flowElement);
             }
-
-            // start managed resources (from right to left)
-            List<FlowElement<ManagedResource>> flowElements = this.flowConfiguration.getManagedResourceFlowElements();
-            Collections.reverse(flowElements);
-            for(FlowElement<ManagedResource> flowElement:flowElements)
-            {
-                try
-                {
-                    flowElement.getFlowComponent().startManagedResource();
-                }
-                catch(RuntimeException e)
-                {
-                    logger.warn("Failed to start component [" 
-                            + flowElement.getComponentName() + "] " + e.getMessage(), e);
-                }
-            }
         }
         catch(RuntimeException e)
         {
@@ -204,36 +194,19 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public void start()
     {
-        FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
-
-        String currentState = this.getState();
-        if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
-        {
-            logger.info("consumer [" + consumerFlowElement.getComponentName() 
-                + "] already in a " + currentState + " state. Ignoring start request.");
-            return;
-        }
-        
         try
         {
-            // initialise the flow
+            if(isRunning())
+            {
+                logger.info("flow [" + name + "] module [" 
+                    + moduleName 
+                    + "] is already running. Ignoring start request.");
+                return;
+            }
+
             initialiseFlow();
-            
-            // start the consumer
-            Consumer<EventListener<FlowEvent<?,?>>> consumer = consumerFlowElement.getFlowComponent();
-            consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
-            try
-            {
-                consumer.start();
-            }
-            catch(RuntimeException e)
-            {
-                this.recoveryManager.recover(consumerFlowElement.getComponentName(), e);
-            }
-        }
-        catch(RuntimeException e)
-        {
-            logger.error(e);
+            startManagedResources();
+            startConsumer();
         }
         finally
         {
@@ -241,6 +214,122 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
     }
 
+    public void pause()
+    {
+        try
+        {
+            stopConsumer();
+            this.consumerPaused = true;
+        }
+        finally
+        {
+            this.notifyMonitor();
+        }
+    }
+    
+    public void resume()
+    {
+        try
+        {
+            if(isRunning())
+            {
+                logger.info("flow [" + name + "] module [" 
+                    + moduleName 
+                    + "] is already running. Ignoring resume request.");
+                return;
+            }
+
+            startConsumer();
+        }
+        finally
+        {
+            this.notifyMonitor();
+        }
+    }
+    
+    protected boolean isRunning()
+    {
+        String currentState = this.getState();
+        if(currentState.equals(RECOVERING) || currentState.equals(RUNNING))
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Start the consumer component.
+     */
+    protected void startConsumer()
+    {
+        this.consumerPaused = false;
+        FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
+
+        // start the consumer
+        Consumer<EventListener<FlowEvent<?,?>>> consumer = consumerFlowElement.getFlowComponent();
+        consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
+        try
+        {
+            consumer.start();
+        }
+        catch(RuntimeException e)
+        {
+            this.recoveryManager.recover(consumerFlowElement.getComponentName(), e);
+        }
+    }
+    
+    /**
+     * Stop the consumer component.
+     */
+    protected void stopConsumer()
+    {
+        // stop any active recovery
+        if(this.recoveryManager.isRecovering())
+        {
+            this.recoveryManager.cancel();
+        }
+
+        // stop consumer and remove the listener
+        Consumer<?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
+        consumer.setListener(null);
+        consumer.stop();
+    }
+    
+    /**
+     * Stop all managed resources from left to right.
+     */
+    protected void stopManagedResources()
+    {
+        for(FlowElement<ManagedResource> flowElement:this.flowConfiguration.getManagedResourceFlowElements())
+        {
+            flowElement.getFlowComponent().stopManagedResource();
+        }
+    }
+    
+    /**
+     * Start the components marked as including Managed Resources.
+     * These component are started from right to left in the flow.
+     */
+    protected void startManagedResources()
+    {
+        List<FlowElement<ManagedResource>> flowElements = this.flowConfiguration.getManagedResourceFlowElements();
+        Collections.reverse(flowElements);
+        for(FlowElement<ManagedResource> flowElement:flowElements)
+        {
+            try
+            {
+                flowElement.getFlowComponent().startManagedResource();
+            }
+            catch(RuntimeException e)
+            {
+                // just log any issues as these may get resolved by the recovery manager 
+                logger.warn("Failed to start component [" 
+                        + flowElement.getComponentName() + "] " + e.getMessage(), e);
+            }
+        }
+    }
+    
     /**
      * Stop this flow
      */
@@ -248,22 +337,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     {
         try
         {
-            // stop any active recovery
-            if(this.recoveryManager.isRecovering())
-            {
-                this.recoveryManager.cancel();
-            }
-
-            // stop consumer and remove the listener
-            Consumer<?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
-            consumer.setListener(null);
-            consumer.stop();
-
-            // stop all managed resources (left to right)
-            for(FlowElement<ManagedResource> flowElement:this.flowConfiguration.getManagedResourceFlowElements())
-            {
-                flowElement.getFlowComponent().stopManagedResource();
-            }
+            this.consumerPaused = false;
+            stopConsumer();
+            stopManagedResources();
         }
         finally
         {
@@ -364,6 +440,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         else if(this.flowInitialisationFailure || this.recoveryManager.isUnrecoverable())
         {
             return STOPPED_IN_ERROR;
+        }
+        else if(this.consumerPaused)
+        {
+            return PAUSED;
         }
 
         return STOPPED;
