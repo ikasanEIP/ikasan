@@ -1,6 +1,6 @@
 --
--- $Id:
--- $URL: 
+-- $Id$
+-- $URL$
 --
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -71,28 +71,38 @@ BEGIN
 END
 GO
 
-CREATE TABLE Module(
+CREATE TABLE Module
+(
     Id               NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     Name             VARCHAR(255) NOT NULL,
     Description      VARCHAR(255) NOT NULL,
     DesignDiagramURL VARCHAR(255) NULL,
     UNIQUE (Name)
 )
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
 GO
 
-CREATE TABLE PointToPointFlowProfile(
+CREATE TABLE PointToPointFlowProfile
+(
     Id          NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     Name        VARCHAR(255) NOT NULL
 )
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
 GO
 
 -- No CONSTRAINT on the FromModuleId or ToModuleId as constraints enforce a Not NULL
 -- and we want to allow NULLs
-CREATE TABLE PointToPointFlow(
+CREATE TABLE PointToPointFlow
+(
     Id                        NUMERIC IDENTITY NOT NULL PRIMARY KEY,
     PointToPointFlowProfileId NUMERIC NOT NULL,
     FromModuleId              NUMERIC NULL,
     ToModuleId                NUMERIC NULL,
     CONSTRAINT PTPP_ID_FK FOREIGN KEY(PointToPointFlowProfileId) REFERENCES PointToPointFlowProfile(Id)
 )
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
 GO
+
