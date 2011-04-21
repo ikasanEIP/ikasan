@@ -52,7 +52,6 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
@@ -190,10 +189,10 @@ public class ScheduledConsumer
      * Callback from the scheduler.
      * @param context
      */
-    public void execute(JobExecutionContext context) throws JobExecutionException
+    public void execute(JobExecutionContext context)
     {
         String uniqueId = context.getJobDetail().getFullName();
-        FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(uniqueId, context);
+        FlowEvent<?,?> flowEvent =this.flowEventFactory.newEvent(uniqueId, context);
         this.eventListener.invoke(flowEvent);
     }
 

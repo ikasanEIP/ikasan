@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="priceConsumer"
+        class="org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceConsumer">
+        <constructor-arg>
+            <bean class="org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl" />
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.ikasan.flow.event.FlowEventFactory" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="priceToStringConverter" class="org.ikasan.sample.genericTechDrivenPriceSrc.component.converter.PriceConverter" />
+
+    <bean id="priceProducer" class="org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceProducer" />
+
+</beans>

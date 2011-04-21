@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="flowElementInvoker"
+        class="org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker" />
+    
+    <bean id="recoveryManagerFactory"
+        class="org.ikasan.recovery.ScheduledRecoveryManagerFactory">
+        <!-- The scheduler -->
+        <constructor-arg>
+            <bean class="org.quartz.impl.StdSchedulerFactory" factory-method="getDefaultScheduler" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="flowEventFactory" class="org.ikasan.flow.event.FlowEventFactory" />
+</beans>

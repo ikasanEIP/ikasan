@@ -50,9 +50,11 @@ import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -116,7 +118,9 @@ public class ModulesController
     @RequestMapping("view.htm")
     public String viewModule(@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName, ModelMap model)
     {
-        model.addAttribute("module", this.moduleService.getModule(moduleName));
+        Module module = this.moduleService.getModule(moduleName);
+        model.addAttribute("module", module);
+        model.addAttribute("flows", module.getFlows());
         // For the navigation bar
         setupNavigationAttributes(moduleName, null, null, model);
         return "modules/viewModule";
@@ -141,6 +145,33 @@ public class ModulesController
         // For the navigation bar
         setupNavigationAttributes(moduleName, flowName, null, model);
         return "modules/viewFlow";
+    }
+
+    /**
+     * @param moduleName
+     * @param flowName
+     * @param action 
+     * @return
+     */
+    @RequestMapping(value = "flow.htm", method = RequestMethod.POST)
+    public String controlFlow(@RequestParam("moduleName")String moduleName,
+                            @RequestParam("flowName") String flowName,
+                            @RequestParam("action") String action)
+    {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (action.equalsIgnoreCase("start"))
+        {
+            this.moduleService.startFlow(moduleName, flowName, currentUser);
+        }
+        else if (action.equalsIgnoreCase("stop"))
+        {
+            this.moduleService.stopFlow(moduleName, flowName, currentUser);
+        }
+        else
+        {
+            throw new RuntimeException("Unknown flow action [" + action + "].");
+        }
+        return "redirect:viewFlow.htm?moduleName=" + moduleName + "&flowName=" + flowName;
     }
 
     /**

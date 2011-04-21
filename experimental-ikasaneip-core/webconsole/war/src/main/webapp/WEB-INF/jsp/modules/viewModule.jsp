@@ -64,70 +64,39 @@
             
         </table>
 
-<h3>Initiators</h3>
+<h3>Flows</h3>
 <table id="initiatorsList" class="listTable" >
 	<thead>
 		<tr>
-			<th>Name</th>
-			<th>Type</th>
 			<th>Flow</th>
 			<th>Status</th>
-			<th>&nbsp;</th>
+			<!-- th>&nbsp;</th-->
 		</tr>
 	</thead>
 
 	<tbody>
-		<c:forEach items="${module.initiators}" var="initiator">
+		<c:forEach items="${flows}" var="flow">
 			<tr>
-				<td>
-
-                    <c:url var="viewInitiatorLink" value="viewInitiator.htm">
-                        <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="initiatorName" value="${initiator.name}"/>
-                    </c:url>
-                    <a href="<c:out value="${viewInitiatorLink}" escapeXml="true" />">
-                        <c:out value="${initiator.name}" />
-                    </a>
-
-				
-				
-				</td>
-				<td><c:out value="${initiator.type}" /></td>
 				<td>
 				     <c:url var="viewFlowLink" value="viewFlow.htm">
                         <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${initiator.flow.name}"/>
+                        <c:param name="flowName" value="${flow.key}"/>
                      </c:url>
                     <a href="<c:out value="${viewFlowLink}" escapeXml="true" />">
-						<c:out value="${initiator.flow.name}" />
+						<c:out value="${flow.key}" />
 					</a>
 				</td>
-				<td class="initiatorState-<c:out value="${initiator.state.name}" />">
-					<c:choose>
-						<c:when test="${initiator.running}">
-							<c:choose>
-								<c:when test="${initiator.recovering}">
-									Recovering
-								</c:when>
-								<c:otherwise>
-									Running
-								</c:otherwise>
-							</c:choose>
-						</c:when>
-	
-						<c:otherwise>
-							<c:choose>
-								<c:when test="${initiator.error}">
-									Stopped In Error
-								</c:when>
-								<c:otherwise>
-									Stopped
-								</c:otherwise>
-							</c:choose>
-						</c:otherwise>
-					</c:choose>
+				<td>
+                    <c:url var="controlFlowLink" value="flow.htm">
+                        <c:param name="moduleName" value="${moduleName}"/>
+                        <c:param name="flowName" value="${flow.key}"/>
+                        <c:param name="action" value="start"/>
+                    </c:url>
+                    <form:form action="${controlFlowLink}" method="post">
+                        <input type="submit" value="Start" class="controlButton"/>
+                    </form:form>
 				</td>
-				<td>	
+				<!-- td>	
 					<security:authorize ifAllGranted="ADMIN_${moduleName}">
     	 				<c:choose>
     						<c:when test="${initiator.running}">
@@ -153,7 +122,7 @@
     						</c:otherwise>
     	 				</c:choose>
                     </security:authorize>					
-				</td>
+				</td-->
 			</tr>
 		</c:forEach>
 

@@ -148,7 +148,7 @@
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>
 	</bean>
     
-    <bean id="messageFilterService" lazy-init="true"
+    <!-- bean id="messageFilterService" lazy-init="true"
        class="org.ikasan.filter.duplicate.service.DefaultDuplicateFilterService">
        <constructor-arg ref="messageFilterDao" />
     </bean>
@@ -167,7 +167,7 @@
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
+    </bean-->
 
 	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="ignoreResourceNotFound" value="true"/>

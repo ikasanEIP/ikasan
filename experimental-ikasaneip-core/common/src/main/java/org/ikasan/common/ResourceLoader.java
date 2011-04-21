@@ -149,19 +149,19 @@ public class ResourceLoader
      */
     public static ResourceLoader getInstance()
     {
-        if (instance != null)
-        {
-            return instance;
-        }
-        synchronized (ResourceLoader.class)
-        {
+//        if (instance != null)
+//        {
+//            return instance;
+//        }
+//        synchronized (ResourceLoader.class)
+//        {
             if (instance == null)
             {
                 ResourceLoader.RESOURCE_NAME = "commonResource.xml";
                 instance = new ResourceLoader();
             }
             return instance;
-        }
+//        }
     }
 
     /**

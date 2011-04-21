@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="priceSourceFlow"
+        class="org.ikasan.flow.visitorPattern.VisitingInvokerFlow">
+        <!-- The flow name -->
+        <constructor-arg value="priceSourceFlow" />
+        <!-- The module name -->
+        <constructor-arg ref="moduleName" />
+        <!-- The flow configuration -->
+        <constructor-arg ref="priceSourceFlowConfiguration" />
+        <!-- The flow element invoker -->
+        <constructor-arg ref="flowElementInvoker" />
+        <!-- The recovery manager -->
+        <constructor-arg>
+            <bean factory-bean="recoveryManagerFactory" factory-method="getRecoveryManager">
+                <!-- Constructor arguments here refer to factory method parameter list rather than a constructor parameter list -->
+                <constructor-arg value="priceSourceFlow" /> <!-- flow name -->
+                <constructor-arg ref="moduleName" />
+                <constructor-arg ref="priceConsumer" /> <!-- Ick! -->
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="priceSourceFlowConfiguration"
+        class="org.ikasan.flow.visitorPattern.DefaultFlowConfiguration">
+        <!-- The head element; must always be a Consumer implementation -->
+        <constructor-arg ref="priceConsumerElement" />
+        <!-- A configuration service -->
+        <constructor-arg ref="configurationService" />
+    </bean>
+
+    <bean id="priceConsumerElement"
+        class="org.ikasan.flow.visitorPattern.FlowElementImpl">
+        <!-- Element element name -->
+        <constructor-arg value="priceConsumer" />
+        <!-- The actual component -->
+        <constructor-arg ref="priceConsumer" />
+        <!-- Next hop in flow -->
+        <constructor-arg ref="priceToStringConverterElement" />
+        <property name="description" value="Getting price ticks" />
+    </bean>
+
+    <bean id="priceToStringConverterElement"
+        class="org.ikasan.flow.visitorPattern.FlowElementImpl">
+        <!-- Element element name -->
+        <constructor-arg value="priceToStringConverter" />
+        <!-- The actual component -->
+        <constructor-arg ref="priceToStringConverter" />
+        <!-- Next hop in flow -->
+        <constructor-arg ref="priceProducerElement" />
+        <property name="description" value="Converting the price message to its String representation" />
+    </bean>
+
+    <bean id="priceProducerElement"
+        class="org.ikasan.flow.visitorPattern.FlowElementImpl">
+        <constructor-arg value="priceProducer" />
+        <constructor-arg ref="priceProducer" />
+        <property name="description" value="Sending price ticks" />
+    </bean>
+</beans>
