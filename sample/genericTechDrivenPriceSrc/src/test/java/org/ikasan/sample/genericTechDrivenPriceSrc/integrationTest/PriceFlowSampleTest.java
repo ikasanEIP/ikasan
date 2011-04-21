@@ -106,6 +106,16 @@ public class PriceFlowSampleTest
         PriceFlowFactory priceFlowFactory = new PriceFlowFactory("flowName", "moduleName", this.configurationService);
         Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow();
         priceFlow.start();
+        
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch(InterruptedException e)
+        {
+            // dont care
+        }
+        
         priceFlow.stop();
     }
 
