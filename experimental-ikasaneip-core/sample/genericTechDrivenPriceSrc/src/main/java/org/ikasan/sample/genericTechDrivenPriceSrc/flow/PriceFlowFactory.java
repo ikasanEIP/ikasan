@@ -52,6 +52,7 @@ import org.ikasan.sample.genericTechDrivenPriceSrc.component.converter.PriceConv
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceConsumer;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceProducer;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
+import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
@@ -59,8 +60,6 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
@@ -80,17 +79,8 @@ public class PriceFlowFactory
         this.flowName = flowName;
         this.moduleName = moduleName;
         this.configurationService = configurationService;
-        
-        try
-        {
-            this.scheduledRecoveryManagerFactory  = 
-                new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
-        }
-        catch (SchedulerException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+        this.scheduledRecoveryManagerFactory  = 
+            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
     }
     
     public Flow createGenericTechDrivenFlow()
