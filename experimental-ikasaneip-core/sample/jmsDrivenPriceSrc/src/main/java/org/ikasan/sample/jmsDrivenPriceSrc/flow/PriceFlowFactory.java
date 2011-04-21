@@ -40,6 +40,13 @@
  */
 package org.ikasan.sample.jmsDrivenPriceSrc.flow;
 
+import java.util.Hashtable;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
@@ -49,13 +56,16 @@ import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.sample.jmsDrivenPriceSrc.component.converter.PriceConverter;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.JmsClientConsumerConfiguration;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.JmsClientProducerConfiguration;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceConsumer;
+import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceLoggerProducer;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceProducer;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
@@ -70,41 +80,56 @@ import org.ikasan.spec.recovery.RecoveryManager;
  */
 public class PriceFlowFactory
 {
+    protected static String INITIAL_CONTEXT_FACTORY = "java.naming.factory.initial";
+
+    protected static String PROVIDER_URL = "java.naming.provider.url";
+
+    protected static String FACTORY_URL_PKGS = "java.naming.factory.url.pkgs";
+
+    private String initialContextFactory = "org.jnp.interfaces.NamingContextFactory";
+
+    private String providerUrl = "svc-trade01JMSd:15104";
+
+    private String factoryUrl = "org.jnp.interfaces:org.jboss.naming";
+
     String flowName;
+
     String moduleName;
+
     ConfigurationService configurationService;
+
     ConfigurationManagement configurationManagement;
-    EventFactory<FlowEvent<?,?>> flowEventFactory = new FlowEventFactory();
+
+    EventFactory<FlowEvent<?, ?>> flowEventFactory = new FlowEventFactory();
+
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
 
-    public PriceFlowFactory(String flowName, String moduleName, 
-            ConfigurationService configurationService, ConfigurationManagement configurationManagement) 
+    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService, ConfigurationManagement configurationManagement)
     {
         this.flowName = flowName;
         this.moduleName = moduleName;
         this.configurationService = configurationService;
         this.configurationManagement = configurationManagement;
-        
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.scheduledRecoveryManagerFactory = new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
     }
-    
+
     public Flow createJmsDrivenFlow()
     {
-        Producer producer = createProducer("jmsDrivenProducerId");
+        //Producer producer = createProducer("jmsDrivenProducerId");
+        Producer<?> producer = new PriceLoggerProducer();
+
         FlowElement producerFlowElement = new FlowElementImpl("priceProducer", producer);
 
+        FlowElement converterFlowElement = new FlowElementImpl("priceConverter", new PriceConverter(), producerFlowElement);
+
         Consumer consumer = createConsumer("jmsDrivenConsumerId");
-        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("jmsDrivenConsumer", consumer, producerFlowElement);
+        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("jmsDrivenConsumer", consumer, converterFlowElement);
 
         // flow configuration wiring
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
-
         // iterator over each flow element
         FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
-
         RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
-        
         // container for the complete flow
         return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
     }
@@ -112,30 +137,69 @@ public class PriceFlowFactory
     protected Consumer<?> createConsumer(String configuredResourceId)
     {
         JmsClientConsumerConfiguration configuration = new JmsClientConsumerConfiguration();
-        
         // create consumer component
-        Consumer<?> consumer = new PriceConsumer(flowEventFactory);
-
-        ConfiguredResource configuredResource = (ConfiguredResource)consumer;
+        InitialContext context = createContext();
+        ConnectionFactory connectionFactory = getConnectionFactory(context);
+        Object destination = getDestination(context, "/topic/cmi2.submit.trax.gateway");
+        
+        Consumer<?> consumer = new PriceConsumer((ConnectionFactory)connectionFactory, (Destination)destination, flowEventFactory);
+        ConfiguredResource configuredResource = (ConfiguredResource) consumer;
         configuredResource.setConfiguredResourceId(configuredResourceId);
         configuredResource.setConfiguration(configuration);
-        configurationManagement.saveConfiguration( configurationManagement.createConfiguration(consumer) );
-  
+        configurationManagement.saveConfiguration(configurationManagement.createConfiguration(consumer));
         return consumer;
     }
 
     public Producer<?> createProducer(String configuredResourceId)
     {
         JmsClientProducerConfiguration configuration = new JmsClientProducerConfiguration();
-        
         // create consumer component
         Producer<?> producer = new PriceProducer();
-
-        ConfiguredResource configuredResource = (ConfiguredResource)producer;
+        ConfiguredResource configuredResource = (ConfiguredResource) producer;
         configuredResource.setConfiguredResourceId(configuredResourceId);
         configuredResource.setConfiguration(configuration);
-        configurationManagement.saveConfiguration( configurationManagement.createConfiguration(producer) );
-  
+        configurationManagement.saveConfiguration(configurationManagement.createConfiguration(producer));
         return producer;
+    }
+
+    private InitialContext createContext()
+    {
+        Hashtable<String,String> hashTable = new Hashtable<String,String>();
+        hashTable.put(INITIAL_CONTEXT_FACTORY, initialContextFactory);
+        hashTable.put(PROVIDER_URL, providerUrl);
+        hashTable.put(FACTORY_URL_PKGS, factoryUrl);
+
+        try
+        {
+            return new InitialContext(hashTable);
+        }
+        catch(NamingException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private ConnectionFactory getConnectionFactory(InitialContext context)
+    {
+        try
+        {
+            return (ConnectionFactory)context.lookup("ConnectionFactory");
+        }
+        catch(NamingException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Destination getDestination(InitialContext context, String name)
+    {
+        try
+        {
+            return (Destination)context.lookup(name);
+        }
+        catch(NamingException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

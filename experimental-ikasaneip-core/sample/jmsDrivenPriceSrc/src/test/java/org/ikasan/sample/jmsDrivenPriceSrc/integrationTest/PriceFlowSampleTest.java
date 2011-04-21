@@ -110,7 +110,10 @@ public class PriceFlowSampleTest
         // we need an instance of a producer to poke the first message to the JMS destination
         Producer testProducer = priceFlowFactory.createProducer("testProducerId");
         priceFlow.start();
-        testProducer.invoke(new StringBuilder("testMessage"));
+        testProducer.invoke(new StringBuilder("testMessage1"));
+        testProducer.invoke(new StringBuilder("testMessage2"));
+        testProducer.invoke(new StringBuilder("testMessage3"));
+        testProducer.invoke(new StringBuilder("testMessage4"));
         priceFlow.stop();
     }
 }

@@ -40,52 +40,27 @@
  */
 package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
 
+import org.apache.log4j.Logger;
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.component.endpoint.Producer;
+
 /**
- * Implementation of a consumer which manages the tech and 
- * receives messages via the tech listener.
- *
+ * Implementation of a producer which simply logs the incoming
+ * StribngBuilder payload content.
+ * 
  * @author Ikasan Development Team
  */
-public class JmsClientConsumerConfiguration
+public class PriceLoggerProducer implements Producer<StringBuilder>
 {
-    private String subscriberId;
-    private boolean durable = true;
-    private String username = "defaultJMSAdmin";
-    private String password = "cm12Trade01";
-    
-    
-    public String getSubscriberId()
+    /** Logger instance */
+    private Logger logger = Logger.getLogger(PriceProducer.class);
+
+    /**
+     * Message invocation
+     */
+    public void invoke(StringBuilder payload) throws EndpointException 
     {
-        return subscriberId;
+//        logger.info("Producer invoked with [" + payload + "]");
+        System.out.println("**** payload [" + payload + "] ****");
     }
-    public void setSubscriberId(String subscriberId)
-    {
-        this.subscriberId = subscriberId;
-    }
-    public String getUsername()
-    {
-        return username;
-    }
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-    public String getPassword()
-    {
-        return password;
-    }
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-    public boolean isDurable()
-    {
-        return durable;
-    }
-    public void setDurable(boolean durable)
-    {
-        this.durable = durable;
-    }
-    
-    
 }

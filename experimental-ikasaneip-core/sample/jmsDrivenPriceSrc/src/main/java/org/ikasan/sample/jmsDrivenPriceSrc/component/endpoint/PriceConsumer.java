@@ -43,10 +43,14 @@ package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
 import java.util.Hashtable;
 
 import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
@@ -74,9 +78,21 @@ import org.ikasan.spec.flow.FlowEvent;
  */
 public class PriceConsumer implements Consumer<EventListener>, MessageListener, ConfiguredResource<JmsClientConsumerConfiguration>
 {
-    /** consumer managed stubbed tech */
-    private PriceTechImpl priceTechImpl;
+    /** */
+    private ConnectionFactory connectionFactory;
 
+    /** */
+    private Destination destination;
+
+    /** */
+    private Connection connection;
+
+    /** */
+    private Session session;
+    
+    /** */
+    private MessageConsumer messageConsumer;
+    
     /** consumer event factory */
     private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
@@ -89,16 +105,61 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
     /** configuration */
     private JmsClientConsumerConfiguration configuration;
     
-    private TopicConnection connection;
-    
     /**
      * Constructor
      * @param stubbedTechImpl
      * @param flowEventFactory
      */
-    public PriceConsumer(EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public PriceConsumer(ConnectionFactory connectionFactory, Destination destination, EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
+        this.connectionFactory = connectionFactory;
+        if(connectionFactory == null)
+        {
+            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
+        }
+        
+        this.destination = destination;
+        if(destination == null)
+        {
+            throw new IllegalArgumentException("destination cannot be 'null'");
+        }
+        
         this.flowEventFactory = flowEventFactory;
+        if(flowEventFactory == null)
+        {
+            throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
+        }
+    }
+    
+    protected void handleConsumer(TopicConnectionFactory topicConnectionFactory, Topic topic) throws JMSException
+    {
+        if(this.configuration.getUsername().trim().length() == 0)
+        {
+            connection = topicConnectionFactory.createConnection();
+        }
+        else
+        {
+            connection = topicConnectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
+        }
+
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+//        TopicSession session = ((TopicConnection)connection).createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+        if(this.configuration.isDurable())
+        {
+            messageConsumer = session.createDurableSubscriber(topic, this.configuration.getSubscriberId());
+        }
+        else
+        {
+            messageConsumer = session.createConsumer(topic, this.configuration.getSubscriberId());
+        }
+        
+        messageConsumer.setMessageListener(this);
+        connection.start();
+    }
+    
+    protected void handleConsumer(QueueConnectionFactory queueConnectionFactory, Queue queue)
+    {
+        
     }
     
     /**
@@ -108,23 +169,14 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
     {
         try
         {
-            Context ctx = createContext();
-            Object connectionFactory = ctx.lookup(this.configuration.getConnectionFactory());
-            TopicConnectionFactory tcf = (TopicConnectionFactory)connectionFactory;
-
-            Object destinationName = ctx.lookup(this.configuration.getDestination());
-            Topic destination = (Topic)destinationName;
-
-//            connection = tcf.createTopicConnection();
-            connection = tcf.createTopicConnection(this.configuration.getUsername(), this.configuration.getPassword());
-            TopicSession session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-            TopicSubscriber subscriber = session.createSubscriber(destination);
-            subscriber.setMessageListener(this);
-            connection.start();
-        }
-        catch (NamingException e)
-        {
-            throw new RuntimeException(e);
+            if(destination instanceof Topic)
+            {
+                handleConsumer((TopicConnectionFactory)connectionFactory, (Topic)destination);
+            }
+            else
+            {
+                handleConsumer((QueueConnectionFactory)connectionFactory, (Queue)destination);
+            }
         }
         catch (JMSException e)
         {
@@ -207,16 +259,5 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
     public void setConfiguredResourceId(String configuredResourceId)
     {
         this.configuredResourceId = configuredResourceId;
-    }
-
-    
-    private Context createContext() throws NamingException
-    {
-        Hashtable hashTable = new Hashtable();
-        hashTable.put(this.configuration.INITIAL_CONTEXT_FACTORY, this.configuration.getInitialContextFactory());
-        hashTable.put(this.configuration.PROVIDER_URL, this.configuration.getProviderUrl());
-        hashTable.put(this.configuration.FACTORY_URL_PKGS, this.configuration.getFactoryUrl());
-        
-        return new InitialContext(hashTable);
     }
 }
