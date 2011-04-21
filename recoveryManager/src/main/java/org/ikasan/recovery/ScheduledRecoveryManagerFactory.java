@@ -82,6 +82,9 @@ public class ScheduledRecoveryManagerFactory
 
     /**
      * Constructor
+     * 
+     * TODO if ExceptionResolver is optional user a setter method rather than an alternate constructor
+     * 
      * @param flowElement
      * @param scheduler
      */
