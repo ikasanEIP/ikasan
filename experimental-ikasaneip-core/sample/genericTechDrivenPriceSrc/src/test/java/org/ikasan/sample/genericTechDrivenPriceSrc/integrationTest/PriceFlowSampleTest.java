@@ -50,7 +50,6 @@ import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationServ
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.sample.genericTechDrivenPriceSrc.flow.PriceFlowFactory;
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
 import org.junit.Before;
@@ -72,7 +71,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/configuration-dao-config.xml", 
         "/hsqldb-config.xml"})
 
-    public class PriceFlowSampleTest
+public class PriceFlowSampleTest
 {
     /** Spring DI resource */
     @Resource ConfigurationDao staticConfigurationDao;
@@ -91,11 +90,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
     
     /** configuration management for the scheduled consumer */
     ConfigurationManagement<Consumer,ScheduledConsumerConfiguration> configurationManagement;
-    
-    protected PriceTechImpl getTechImpl()
-    {
-        return new PriceTechImpl();
-    }
     
     @Before
     public void setup() throws SchedulerException
