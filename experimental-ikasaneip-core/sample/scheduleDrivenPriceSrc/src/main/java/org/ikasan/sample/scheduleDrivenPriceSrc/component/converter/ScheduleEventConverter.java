@@ -45,7 +45,7 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.quartz.JobExecutionContext;
 
 /**
- * This test class supports the <code>Translator</code> class.
+ * This class provides a sample implementation of a converter for quartz contexts.
  * 
  * @author Ikasan Development Team
  */

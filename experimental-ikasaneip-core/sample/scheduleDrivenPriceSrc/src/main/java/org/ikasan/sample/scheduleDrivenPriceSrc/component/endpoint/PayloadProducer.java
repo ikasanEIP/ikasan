@@ -56,7 +56,10 @@ public class PayloadProducer implements Producer<StringBuilder>
 
     public void invoke(StringBuilder payload) throws EndpointException 
     {
-        logger.info("Producer invoked with [" + payload + "]");
-        System.out.println("Producer invoked with [" + payload + "]");
+        StringBuilder output = new StringBuilder(1024);
+        output.append("Producer invoked with [");
+        output.append(payload);
+        output.append("]");
+        logger.info(output);
     }
 }
