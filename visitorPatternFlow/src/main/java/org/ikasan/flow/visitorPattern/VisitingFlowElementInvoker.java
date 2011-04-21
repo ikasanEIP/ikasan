@@ -74,6 +74,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private FlowEventListener flowEventListener;
 
     /**
+     * TODO remove this constructor
      * Default constructor
      */
     public VisitingFlowElementInvoker()
