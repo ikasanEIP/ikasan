@@ -61,6 +61,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
+ * Test class for <code>PriceFlowSample</code>.
  * 
  * @author Ikasan Development Team
  */
@@ -107,6 +108,16 @@ public class PriceFlowSampleTest
             new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement);
         Flow priceFlow = priceFlowFactory.createScheduleDrivenFlow();
         priceFlow.start();
+        
+        try
+        {
+            Thread.sleep(5000);
+        }
+        catch(InterruptedException e)
+        {
+            // dont care
+        }
+        
         priceFlow.stop();
     }
 }

@@ -67,7 +67,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.recovery.RecoveryManager;
 
 /**
- * 
+ * Sample price flow factory for a Quartz driven flow
  * @author Ikasan Development Team
  */
 public class PriceFlowFactory
@@ -87,7 +87,6 @@ public class PriceFlowFactory
         this.moduleName = moduleName;
         this.configurationService = configurationService;
         this.configurationManagement = configurationManagement;
-        
         this.scheduledConsumerFactory  = 
             new ScheduledConsumerFactory(SchedulerFactory.getInstance().getScheduler(), flowEventFactory);
         this.scheduledRecoveryManagerFactory  = 
@@ -120,7 +119,7 @@ public class PriceFlowFactory
     protected Consumer<?> createConsumer(String configuredResourceId)
     {
         ScheduledConsumerConfiguration configuration = new ScheduledConsumerConfiguration();
-        configuration.setCronExpression("0/5 * * * * ?");
+        configuration.setCronExpression("0/1 * * * * ?");
         
         // create consumer component
         Consumer<?> consumer = this.scheduledConsumerFactory.getScheduledConsumer(flowName, moduleName);
