@@ -38,54 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
+package org.ikasan.sample.jmsDrivenPriceSrc.component.converter;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
 
 /**
- * Implementation of a consumer which manages the tech and 
- * receives messages via the tech listener.
- *
+ * Implementation of a converter to convert price JMS message into a
+ * StringBuilder object.
+ * 
  * @author Ikasan Development Team
  */
-public class JmsClientConsumerConfiguration
+public class PriceConverter implements Converter<Message,StringBuilder>
 {
-    private String subscriberId;
-    private boolean durable = true;
-    private String username = "defaultJMSAdmin";
-    private String password = "cm12Trade01";
-    
-    
-    public String getSubscriberId()
+    public StringBuilder convert(Message price) throws TransformationException
     {
-        return subscriberId;
+        if(price instanceof TextMessage)
+        {
+            return convert((TextMessage)price);
+        }
+        
+        throw new UnsupportedOperationException("Unsupported message type");
     }
-    public void setSubscriberId(String subscriberId)
+
+    private StringBuilder convert(TextMessage message)
     {
-        this.subscriberId = subscriberId;
+        try
+        {
+            return new StringBuilder(message.getText());
+        }
+        catch (JMSException e)
+        {
+            throw new TransformationException(e);
+        }
     }
-    public String getUsername()
-    {
-        return username;
-    }
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-    public String getPassword()
-    {
-        return password;
-    }
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-    public boolean isDurable()
-    {
-        return durable;
-    }
-    public void setDurable(boolean durable)
-    {
-        this.durable = durable;
-    }
-    
-    
 }

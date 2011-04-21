@@ -109,9 +109,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-consumer</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>1.7.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -133,14 +145,25 @@
           <scope>provided</scope>
         </dependency>
 
-        <!--dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-configuration</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
-            <scope>provided</scope>
-        </dependency-->
-        
         <!-- required for unit tests -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>2.5.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>2.5.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
