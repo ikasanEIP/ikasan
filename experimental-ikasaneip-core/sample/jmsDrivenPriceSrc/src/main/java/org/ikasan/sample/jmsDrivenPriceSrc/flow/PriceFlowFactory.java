@@ -65,7 +65,6 @@ import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceProducer;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
@@ -86,11 +85,13 @@ public class PriceFlowFactory
 
     protected static String FACTORY_URL_PKGS = "java.naming.factory.url.pkgs";
 
-    private String initialContextFactory = "org.jnp.interfaces.NamingContextFactory";
+    private String initialContextFactory = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
+    
+    private String providerUrl = "vm://localhost?broker.persistent=false";
 
-    private String providerUrl = "svc-trade01JMSd:15104";
+    private String factoryUrl = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
 
-    private String factoryUrl = "org.jnp.interfaces:org.jboss.naming";
+    private String destinationName = "dynamicTopics/testTopic";
 
     String flowName;
 
@@ -110,7 +111,8 @@ public class PriceFlowFactory
         this.moduleName = moduleName;
         this.configurationService = configurationService;
         this.configurationManagement = configurationManagement;
-        this.scheduledRecoveryManagerFactory = new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.scheduledRecoveryManagerFactory = 
+            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
     }
 
     public Flow createJmsDrivenFlow()
@@ -140,7 +142,7 @@ public class PriceFlowFactory
         // create consumer component
         InitialContext context = createContext();
         ConnectionFactory connectionFactory = getConnectionFactory(context);
-        Object destination = getDestination(context, "/topic/cmi2.submit.trax.gateway");
+        Object destination = getDestination(context, destinationName);
         
         Consumer<?> consumer = new PriceConsumer((ConnectionFactory)connectionFactory, (Destination)destination, flowEventFactory);
         ConfiguredResource configuredResource = (ConfiguredResource) consumer;

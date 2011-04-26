@@ -40,30 +40,17 @@
  */
 package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
 
-import java.util.Hashtable;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSession;
-import javax.jms.TopicSubscriber;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechListener;
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
@@ -76,23 +63,18 @@ import org.ikasan.spec.flow.FlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class PriceConsumer implements Consumer<EventListener>, MessageListener, ConfiguredResource<JmsClientConsumerConfiguration>
+public class PriceConsumer 
+    implements Consumer<EventListener>, MessageListener, ExceptionListener, ConfiguredResource<JmsClientConsumerConfiguration>
 {
-    /** */
+    /** JMS Connection Factory */
     private ConnectionFactory connectionFactory;
 
-    /** */
+    /** JMS Destination instance */
     private Destination destination;
 
-    /** */
+    /** JMS Connection */
     private Connection connection;
 
-    /** */
-    private Session session;
-    
-    /** */
-    private MessageConsumer messageConsumer;
-    
     /** consumer event factory */
     private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
@@ -102,15 +84,17 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
     /** configured resource id */
     private String configuredResourceId;
     
-    /** configuration */
+    /** JMS consumer configuration */
     private JmsClientConsumerConfiguration configuration;
     
     /**
      * Constructor
-     * @param stubbedTechImpl
+     * @param connectionFactory
+     * @param destination
      * @param flowEventFactory
      */
-    public PriceConsumer(ConnectionFactory connectionFactory, Destination destination, EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public PriceConsumer(ConnectionFactory connectionFactory, Destination destination, 
+            EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
@@ -131,52 +115,40 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
         }
     }
     
-    protected void handleConsumer(TopicConnectionFactory topicConnectionFactory, Topic topic) throws JMSException
-    {
-        if(this.configuration.getUsername().trim().length() == 0)
-        {
-            connection = topicConnectionFactory.createConnection();
-        }
-        else
-        {
-            connection = topicConnectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
-        }
-
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-//        TopicSession session = ((TopicConnection)connection).createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-        if(this.configuration.isDurable())
-        {
-            messageConsumer = session.createDurableSubscriber(topic, this.configuration.getSubscriberId());
-        }
-        else
-        {
-            messageConsumer = session.createConsumer(topic, this.configuration.getSubscriberId());
-        }
-        
-        messageConsumer.setMessageListener(this);
-        connection.start();
-    }
-    
-    protected void handleConsumer(QueueConnectionFactory queueConnectionFactory, Queue queue)
-    {
-        
-    }
-    
     /**
      * Start the underlying tech
      */
     public void start()
     {
+        MessageConsumer messageConsumer;
+
         try
         {
-            if(destination instanceof Topic)
+            if(this.configuration.getUsername().trim().length() == 0)
             {
-                handleConsumer((TopicConnectionFactory)connectionFactory, (Topic)destination);
+                connection = connectionFactory.createConnection();
             }
             else
             {
-                handleConsumer((QueueConnectionFactory)connectionFactory, (Queue)destination);
+                connection = connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
             }
+
+            connection.setClientID(this.configuration.getClientId());
+            connection.setExceptionListener(this);
+
+            Session session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
+
+            if(destination instanceof Topic && this.configuration.isDurable())
+            {
+                messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId());
+            }
+            else
+            {
+                messageConsumer = session.createConsumer(destination, this.configuration.getSubscriberId());
+            }
+            
+            messageConsumer.setMessageListener(this);
+            connection.start();
         }
         catch (JMSException e)
         {
@@ -194,6 +166,7 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
             try
             {
                 connection.stop();
+                connection = null;
             }
             catch (JMSException e)
             {
@@ -203,12 +176,13 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
     }
 
     /**
+     * TODO - better way to ascertain if underlying JMS is running?
      * Is the underlying tech actively running
-     * @return isRunning
+     * @return boolean
      */
     public boolean isRunning()
     {
-        return false;
+        return connection != null;
     }
 
     /**
@@ -241,6 +215,15 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
         this.eventListener.invoke(flowEvent);
     }
 
+    /**
+     * Callback method from the JMS connector for exception reporting.
+     * @param JMSException
+     */
+    public void onException(JMSException jmsException)
+    {
+        this.eventListener.invoke(jmsException);
+    }
+
     public JmsClientConsumerConfiguration getConfiguration()
     {
         return this.configuration;
@@ -260,4 +243,5 @@ public class PriceConsumer implements Consumer<EventListener>, MessageListener, 
     {
         this.configuredResourceId = configuredResourceId;
     }
+
 }
