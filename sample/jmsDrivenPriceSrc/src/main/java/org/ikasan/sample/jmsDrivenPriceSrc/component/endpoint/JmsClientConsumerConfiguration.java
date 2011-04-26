@@ -40,6 +40,8 @@
  */
 package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
 
+import javax.jms.Session;
+
 /**
  * Implementation of a consumer which manages the tech and 
  * receives messages via the tech listener.
@@ -48,12 +50,38 @@ package org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint;
  */
 public class JmsClientConsumerConfiguration
 {
-    private String subscriberId;
+    private String clientId = "clientId";   // TODO 
+    private String subscriberId = "subscriberId";   // TODO 
     private boolean durable = true;
     private String username = "defaultJMSAdmin";
     private String password = "cm12Trade01";
+    private boolean transacted = false;
+    private int acknowledgement = Session.AUTO_ACKNOWLEDGE;
     
-    
+    public boolean isTransacted()
+    {
+        return transacted;
+    }
+    public void setTransacted(boolean transacted)
+    {
+        this.transacted = transacted;
+    }
+    public int getAcknowledgement()
+    {
+        return acknowledgement;
+    }
+    public void setAcknowledgement(int acknowledgement)
+    {
+        this.acknowledgement = acknowledgement;
+    }
+    public String getClientId()
+    {
+        return clientId;
+    }
+    public void setClientId(String clientId)
+    {
+        this.clientId = clientId;
+    }
     public String getSubscriberId()
     {
         return subscriberId;
