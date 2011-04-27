@@ -108,7 +108,7 @@ public class PriceTechImpl implements Runnable
                 while(deliver)
                 {
                     int selectedIdentifier = randomGenerator.nextInt(5);
-                    int bid = randomGenerator.nextInt();
+                    int bid = randomGenerator.nextInt(100);
                     int spread = randomGenerator.nextInt(10);
                     PriceTechMessage price = new PriceTechMessage(identifiers.get(selectedIdentifier), bid, spread);
                     this.priceTechListener.onPrice(price);
