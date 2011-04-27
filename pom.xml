@@ -55,6 +55,7 @@
 
     <modules>
        <module>visitorPatternFlow</module>
+       <module>genericModule</module>
     </modules>
 
 </project>
