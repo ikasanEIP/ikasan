@@ -53,7 +53,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 public class PriceLoggerProducer implements Producer<StringBuilder>
 {
     /** Logger instance */
-    private Logger logger = Logger.getLogger(PriceProducer.class);
+    private Logger logger = Logger.getLogger(PriceLoggerProducer.class);
 
     /**
      * Message invocation

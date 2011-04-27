@@ -44,9 +44,16 @@ import java.util.Hashtable;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.ikasan.consumer.jms.GenericJmsConsumer;
+import org.ikasan.consumer.jms.GenericJmsConsumerConfiguration;
+import org.ikasan.consumer.jms.GenericJmsProducer;
+import org.ikasan.consumer.jms.GenericJmsProducerConfiguration;
 import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
@@ -57,11 +64,7 @@ import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.converter.PriceConverter;
-import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.JmsClientConsumerConfiguration;
-import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.JmsClientProducerConfiguration;
-import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceConsumer;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceLoggerProducer;
-import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceProducer;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -93,17 +96,17 @@ public class PriceFlowFactory
 
     private String destinationName = "dynamicTopics/testTopic";
 
-    String flowName;
+    private String flowName;
 
-    String moduleName;
+    private String moduleName;
 
-    ConfigurationService configurationService;
+    private ConfigurationService configurationService;
 
-    ConfigurationManagement configurationManagement;
+    private ConfigurationManagement configurationManagement;
 
-    EventFactory<FlowEvent<?, ?>> flowEventFactory = new FlowEventFactory();
+    private EventFactory<FlowEvent<?, ?>> flowEventFactory = new FlowEventFactory();
 
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+    private ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
 
     public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService, ConfigurationManagement configurationManagement)
     {
@@ -138,13 +141,13 @@ public class PriceFlowFactory
 
     protected Consumer<?> createConsumer(String configuredResourceId)
     {
-        JmsClientConsumerConfiguration configuration = new JmsClientConsumerConfiguration();
+        GenericJmsConsumerConfiguration configuration = new GenericJmsConsumerConfiguration();
         // create consumer component
         InitialContext context = createContext();
         ConnectionFactory connectionFactory = getConnectionFactory(context);
         Object destination = getDestination(context, destinationName);
         
-        Consumer<?> consumer = new PriceConsumer((ConnectionFactory)connectionFactory, (Destination)destination, flowEventFactory);
+        Consumer<?> consumer = new GenericJmsConsumer((ConnectionFactory)connectionFactory, (Destination)destination, flowEventFactory);
         ConfiguredResource configuredResource = (ConfiguredResource) consumer;
         configuredResource.setConfiguredResourceId(configuredResourceId);
         configuredResource.setConfiguration(configuration);
@@ -154,14 +157,26 @@ public class PriceFlowFactory
 
     public Producer<?> createProducer(String configuredResourceId)
     {
-        JmsClientProducerConfiguration configuration = new JmsClientProducerConfiguration();
-        // create consumer component
-        Producer<?> producer = new PriceProducer();
+        GenericJmsProducerConfiguration configuration = new GenericJmsProducerConfiguration();
+        // create producer component
+        InitialContext context = createContext();
+        ConnectionFactory connectionFactory = getConnectionFactory(context);
+        Object destination = getDestination(context, destinationName);
+        
+        Producer<?> producer = new GenericJmsProducer((ConnectionFactory)connectionFactory, (Destination)destination);
         ConfiguredResource configuredResource = (ConfiguredResource) producer;
         configuredResource.setConfiguredResourceId(configuredResourceId);
         configuredResource.setConfiguration(configuration);
         configurationManagement.saveConfiguration(configurationManagement.createConfiguration(producer));
         return producer;
+    }
+
+    public Message createTextMessage(String content) throws JMSException
+    {
+        InitialContext context = createContext();
+        ConnectionFactory connectionFactory = getConnectionFactory(context);
+        Session session = connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+        return session.createTextMessage(content);
     }
 
     private InitialContext createContext()
