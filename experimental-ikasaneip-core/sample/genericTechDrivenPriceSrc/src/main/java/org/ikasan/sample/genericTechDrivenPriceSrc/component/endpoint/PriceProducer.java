@@ -60,7 +60,7 @@ public class PriceProducer implements Producer<StringBuilder>
     
     public void invoke(StringBuilder payload) throws EndpointException 
     {
-        StringBuilder output = new StringBuilder(1024);
+        StringBuilder output = new StringBuilder();
         output.append("[");
         output.append(invocationCount++);
         output.append("] producer invocation with payload [");
