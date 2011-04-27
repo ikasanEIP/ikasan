@@ -41,14 +41,16 @@
 package org.ikasan.sample.jmsDrivenPriceSrc.integrationTest;
 
 import javax.annotation.Resource;
+import javax.jms.JMSException;
+import javax.jms.Message;
 
+import org.ikasan.consumer.jms.GenericJmsConsumerConfiguration;
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
-import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.JmsClientConsumerConfiguration;
 import org.ikasan.sample.jmsDrivenPriceSrc.flow.PriceFlowFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -85,7 +87,7 @@ public class PriceFlowSampleTest
     ConfigurationService configurationService;
     
     /** configuration management for the scheduled consumer */
-    ConfigurationManagement<Consumer,JmsClientConsumerConfiguration> configurationManagement;
+    ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration> configurationManagement;
     
     /** recovery manager */
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
@@ -97,11 +99,11 @@ public class PriceFlowSampleTest
             new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
         
         configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
-        configurationManagement = (ConfigurationManagement<Consumer,JmsClientConsumerConfiguration>)configurationService;
+        configurationManagement = (ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration>)configurationService;
     }
 
     @Test
-    public void test_flow_consumer_translator_producer()
+    public void test_flow_consumer_translator_producer() throws JMSException
     {
         PriceFlowFactory priceFlowFactory = 
             new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement);
@@ -110,10 +112,11 @@ public class PriceFlowSampleTest
         // we need an instance of a producer to poke the first message to the JMS destination
         Producer testProducer = priceFlowFactory.createProducer("testProducerId");
         priceFlow.start();
-        testProducer.invoke(new StringBuilder("testMessage1"));
-        testProducer.invoke(new StringBuilder("testMessage2"));
-        testProducer.invoke(new StringBuilder("testMessage3"));
-        testProducer.invoke(new StringBuilder("testMessage4"));
+        
+        testProducer.invoke(priceFlowFactory.createTextMessage("text message 1"));
+        testProducer.invoke(priceFlowFactory.createTextMessage("text message 2"));
+        testProducer.invoke(priceFlowFactory.createTextMessage("text message 3"));
+        testProducer.invoke(priceFlowFactory.createTextMessage("text message 4"));
         priceFlow.stop();
     }
 }
