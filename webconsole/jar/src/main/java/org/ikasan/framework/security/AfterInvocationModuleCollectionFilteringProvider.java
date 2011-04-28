@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.module.Module;
+import org.ikasan.spec.module.Module;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthorizationServiceException;

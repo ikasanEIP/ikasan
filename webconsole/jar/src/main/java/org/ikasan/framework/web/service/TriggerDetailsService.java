@@ -47,11 +47,11 @@ import java.util.Map;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener;
-import org.ikasan.framework.flow.event.model.Trigger;
-import org.ikasan.framework.flow.event.model.TriggerRelationship;
-import org.ikasan.framework.flow.event.service.FlowEventJob;
-import org.ikasan.framework.module.Module;
+import org.ikasan.spec.module.Module;
+import org.ikasan.trigger.model.Trigger;
+import org.ikasan.trigger.model.TriggerRelationship;
+import org.ikasan.trigger.service.FlowEventJob;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.web.command.TriggerDetails;
 import org.springframework.binding.message.MessageBuilder;

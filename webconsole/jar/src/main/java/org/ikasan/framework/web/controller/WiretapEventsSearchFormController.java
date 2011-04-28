@@ -47,13 +47,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
-import org.ikasan.framework.event.wiretap.model.WiretapEvent;
-import org.ikasan.framework.event.wiretap.service.WiretapService;
-import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.web.command.WiretapSearchCriteria;
 import org.ikasan.framework.web.command.WiretapSearchCriteriaValidator;
+import org.ikasan.spec.module.Module;
+import org.ikasan.wiretap.model.PagedWiretapSearchResult;
+import org.ikasan.wiretap.model.WiretapEvent;
+import org.ikasan.wiretap.service.WiretapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
