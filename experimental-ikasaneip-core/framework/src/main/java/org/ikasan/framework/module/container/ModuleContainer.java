@@ -42,7 +42,8 @@ package org.ikasan.framework.module.container;
 
 import java.util.List;
 
-import org.ikasan.framework.module.Module;
+import org.ikasan.spec.module.Module;
+
 
 
 /**

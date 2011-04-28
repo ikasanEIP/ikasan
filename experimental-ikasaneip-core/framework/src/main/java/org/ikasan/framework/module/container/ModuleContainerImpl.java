@@ -45,7 +45,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.framework.module.Module;
+import org.ikasan.spec.module.Module;
+
 
 /**
  * Default implementation for Module Container 
