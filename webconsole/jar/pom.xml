@@ -95,6 +95,12 @@
     </dependency>
     <dependency>
       <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-wiretap</artifactId>
+      <version>0.9.0-EXPERIMENT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
       <version>0.9.0-EXPERIMENT</version>
       <scope>provided</scope>
