@@ -42,13 +42,13 @@ package org.ikasan.framework.web.controller;
 
 import java.util.List;
 
-import org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener;
-import org.ikasan.framework.flow.event.model.Trigger;
-import org.ikasan.framework.flow.event.model.TriggerRelationship;
-import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.module.Module;
+import org.ikasan.trigger.model.Trigger;
+import org.ikasan.trigger.model.TriggerRelationship;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;

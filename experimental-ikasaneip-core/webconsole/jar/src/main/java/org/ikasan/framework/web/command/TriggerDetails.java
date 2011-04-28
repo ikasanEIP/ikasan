@@ -44,7 +44,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ikasan.framework.flow.event.model.Trigger;
+import org.ikasan.trigger.model.Trigger;
 
 /**
  * Class representing the details for a trigger
