@@ -52,8 +52,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ikasan.framework.event.wiretap.model.WiretapEvent;
-import org.ikasan.framework.event.wiretap.service.WiretapService;
+import org.ikasan.wiretap.model.WiretapEvent;
+import org.ikasan.wiretap.service.WiretapService;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.console.module.Module;
 import org.ikasan.console.module.service.ModuleService;

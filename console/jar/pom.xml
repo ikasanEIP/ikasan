@@ -26,9 +26,15 @@
             <version>2.5.6</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Break dependency on other Ikasan implementation libs. only use specs -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
             <version>0.9.0-EXPERIMENT</version>
         </dependency>
         <dependency>
