@@ -432,18 +432,6 @@ public class VisitingInvokerFlowTest
         
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
-//        // expectations
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                // get the consumer flow element for logging its name
-//                one(flowConfiguration).getConsumerFlowElement();
-//                will(returnValue(consumerFlowElement));
-//                exactly(1).of(consumerFlowElement).getComponentName();
-//                will(returnValue("consumerName"));
-//            }
-//        });
-
         // set the monitor and receive initial state callback
         isRecovering = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1106,7 +1094,7 @@ public class VisitingInvokerFlowTest
 
                 one(flowConfiguration).getLeadFlowElement();
                 will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
                 
                 // in this test we do not need to cancel recovery
                 one(recoveryManager).isRecovering();
@@ -1220,7 +1208,7 @@ public class VisitingInvokerFlowTest
                 // invoke the flow elements
                 one(flowConfiguration).getLeadFlowElement();
                 will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
                 will(throwException(exception));
                 
                 // pass the exception to the recovery manager
@@ -1279,7 +1267,7 @@ public class VisitingInvokerFlowTest
                 // invoke the flow elements
                 one(flowConfiguration).getLeadFlowElement();
                 will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
                 will(throwException(exception));
                 
                 // pass the exception to the recovery manager
@@ -1339,7 +1327,7 @@ public class VisitingInvokerFlowTest
                 // invoke the flow elements
                 one(flowConfiguration).getLeadFlowElement();
                 will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke(flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
                 will(throwException(exception));
                 
                 // pass the exception to the recovery manager
