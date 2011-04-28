@@ -43,10 +43,10 @@ package org.ikasan.framework.module.service;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.module.Module;
 import org.ikasan.framework.module.container.ModuleContainer;
 import org.ikasan.framework.systemevent.service.SystemEventService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
 
 /**
  * Default implementation of <code>ModuleService</code>

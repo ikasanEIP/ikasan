@@ -42,7 +42,7 @@ package org.ikasan.framework.module.service;
 
 import java.util.List;
 
-import org.ikasan.framework.module.Module;
+import org.ikasan.spec.module.Module;
 
 /**
  * Service Tier interface for providing user access to modules 
