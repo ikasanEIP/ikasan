@@ -46,9 +46,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ikasan.common.Payload;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.framework.event.wiretap.dao.WiretapDao;
-import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
-import org.ikasan.framework.event.wiretap.model.WiretapEvent;
+import org.ikasan.wiretap.dao.WiretapDao;
+import org.ikasan.wiretap.model.PagedWiretapSearchResult;
+import org.ikasan.wiretap.model.WiretapEvent;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.service.ModuleService;
 
@@ -211,4 +211,5 @@ public class WiretapServiceImpl implements WiretapService
         long endTime = System.currentTimeMillis();
         logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
     }
+
 }
