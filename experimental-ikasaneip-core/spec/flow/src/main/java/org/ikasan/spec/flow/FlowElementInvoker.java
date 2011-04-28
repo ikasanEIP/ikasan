@@ -51,11 +51,14 @@ public interface FlowElementInvoker
     /**
      * Invokes the specified <code>FlowElement</code>with the specified <code>FlowEvent</code>
      * 
+     * @param moduleName
+     * @param flowName
      * @param flowInvocationContext
      * @param flowEvent argument for the <code>FlowElement</code>'s component
      * @param flowElement for invocation
      */
-    public void invoke(FlowInvocationContext flowInvocationContext, FlowEvent event, FlowElement flowElement);
+    public void invoke(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, 
+            FlowEvent event, FlowElement flowElement);
     
     public void setFlowEventListener(FlowEventListener flowEventListener);
 }
