@@ -370,7 +370,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 }
             }
         
-            this.flowElementInvoker.invoke(flowInvocationContext, event, this.flowConfiguration.getLeadFlowElement());
+            this.flowElementInvoker.invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getLeadFlowElement());
             if(this.recoveryManager.isRecovering())
             {
                 this.recoveryManager.cancel();
