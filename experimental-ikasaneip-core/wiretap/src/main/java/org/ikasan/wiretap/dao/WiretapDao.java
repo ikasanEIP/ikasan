@@ -43,9 +43,9 @@ package org.ikasan.wiretap.dao;
 import java.util.Date;
 import java.util.Set;
 
-import org.ikasan.framework.event.wiretap.model.PagedWiretapSearchResult;
-import org.ikasan.framework.event.wiretap.model.WiretapEvent;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.wiretap.model.PagedWiretapSearchResult;
+import org.ikasan.wiretap.model.WiretapEvent;
 
 /**
  * Interface for all wiretap event data access.
