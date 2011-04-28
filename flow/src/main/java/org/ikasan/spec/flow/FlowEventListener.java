@@ -47,36 +47,23 @@ package org.ikasan.spec.flow;
  * @author Ikasan Development Team
  *
  */
-public interface FlowEventListener {
+public interface FlowEventListener 
+{
+    /**
+     * Listener callback invoked before a given flow element
+     * @param moduleName
+     * @param flowName
+     * @param flowElement
+     * @param event
+     */
+    public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event);
 
-	/**
-	 * Callback method to be invoked prior to <code>Flow</code> execution
-	 * 
-	 * @param flowEvent - flowEvent with which flow is to be invoked
-	 */
-	public void beforeFlow(FlowEvent event);
-
-	/**
-	 * Callback method to be invoked subsequent to <code>Flow</code> execution
-	 * 
-	 * @param flowEvent - flowEvent with which flow was invoked
-	 */
-	public void afterFlow(FlowEvent event);
-
-	/**
-	 * Callback method to be invoked prior to <code>FlowElement</code> execution
-	 * 
-	 * @param flowElement - FlowElement about to be invoked
-	 * @param flowEvent - flowEvent with which flow element is to be invoked
-	 */
-	public void beforeFlowElement(FlowElement flowElement, FlowEvent event);
-	
-	/**
-	 * Callback method to be called subsequent to <code>FlowElement</code> execution
-	 * 
-	 * @param flowElement - FlowElement which was invoked
-	 * @param flowEvent - flowEvent with which flow element was invoked
-	 */
-	public void afterFlowElement(FlowElement flowElement, FlowEvent event);
-
+    /**
+     * Listener callback invoked after a given flow element
+     * @param moduleName
+     * @param flowName
+     * @param flowElement
+     * @param event
+     */
+	public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event);
 }
