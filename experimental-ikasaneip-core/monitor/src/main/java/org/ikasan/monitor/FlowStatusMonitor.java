@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,50 +38,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.trigger.dao;
+package org.ikasan.monitor;
 
-import java.util.List;
-
-import org.ikasan.trigger.model.Trigger;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.ikasan.spec.monitor.Monitor;
 
 /**
- * Hibernate implementation for the <code>TriggerDao</code> interface
  * 
  * @author Ikasan Development Team
+ *
  */
-public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerDao
+public class FlowStatusMonitor implements Monitor<String>
 {
-    /* (non-Javadoc)
-     * @see org.ikasan.trigger.dao.TriggerDao#delete(org.ikasan.trigger.model.Trigger)
-     */
-    public void delete(Trigger trigger)
-    {
-        getHibernateTemplate().delete(trigger);
-    }
+    private String status = "";
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.event.dao.TriggerDao#findAll()
+     * @see org.ikasan.spec.monitor.Monitor#notifyMonitor(java.lang.Object)
      */
-    @SuppressWarnings("unchecked")
-    public List<Trigger> findAll()
+    public void notifyMonitor(final String notification)
     {
-        return getHibernateTemplate().loadAll(Trigger.class);
+        this.status = notification;
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.flow.event.dao.TriggerDao#findById(java.lang.Long)
+    /**
+     * @return the status
      */
-    public Trigger findById(Long triggerId)
+    public String getStatus()
     {
-        return (Trigger) getHibernateTemplate().get(Trigger.class, triggerId);
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.trigger.dao.TriggerDao#save(org.ikasan.trigger.model.Trigger)
-     */
-    public void save(Trigger trigger)
-    {
-        getHibernateTemplate().saveOrUpdate(trigger);
+        return this.status;
     }
 }

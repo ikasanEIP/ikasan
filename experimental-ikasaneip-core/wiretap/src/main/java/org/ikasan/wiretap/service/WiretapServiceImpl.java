@@ -44,7 +44,6 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.Payload;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;

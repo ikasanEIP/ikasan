@@ -46,6 +46,7 @@ import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
@@ -81,6 +82,9 @@ public class ModulesController
     /** Service facade for module functions */
     private ModuleService moduleService;
 
+    /** Monitoring a module's flows */
+    private Monitor<String> monitor;
+
     /** JobAwareFlowEventListener */
     private JobAwareFlowEventListener jobAwareFlowEventListener;
 
@@ -88,10 +92,12 @@ public class ModulesController
      * Constructor
      * 
      * @param moduleService - The module service
+     * @param monitor - A moitor of module's flows
      */
     @Autowired
-    public ModulesController(ModuleService moduleService)
+    public ModulesController(final ModuleService moduleService, final Monitor<String> monitor)
     {
+        this.monitor = monitor;
         this.moduleService = moduleService;
     }
 
@@ -121,6 +127,7 @@ public class ModulesController
         Module module = this.moduleService.getModule(moduleName);
         model.addAttribute("module", module);
         model.addAttribute("flows", module.getFlows());
+        model.addAttribute("monitor", this.monitor);
         // For the navigation bar
         setupNavigationAttributes(moduleName, null, null, model);
         return "modules/viewModule";

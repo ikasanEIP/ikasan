@@ -107,7 +107,7 @@ public class UsersController
         {
             model.addAttribute("user", new User(null, null, null, true));
         }
-        model.addAttribute("users", userService.getUsers());
+        model.addAttribute("users", this.userService.getUsers());
         return "admin/users/users";
     }
 
@@ -126,7 +126,7 @@ public class UsersController
         ValidationUtils.rejectIfEmpty(result, "username", "field.required", "Username cannot be empty");
         ValidationUtils.rejectIfEmpty(result, "password", "field.required", "Password cannot be empty");
         ValidationUtils.rejectIfEmpty(result, "email", "field.required", "Email Address cannot be empty");
-        if (userService.userExists(user.getUsername()))
+        if (this.userService.userExists(user.getUsername()))
         {
             result.addError(new FieldError("user", "username", "User with this username already exists"));
         }
@@ -134,8 +134,8 @@ public class UsersController
         {
             return listUsers(model);
         }
-        userService.createUser(user);
-        logger.info("Created new user, with id:" + user.getId());
+        this.userService.createUser(user);
+        this.logger.info("Created new user, with id:" + user.getId());
         return viewUser(user.getUsername(), model);
     }
 
@@ -149,7 +149,7 @@ public class UsersController
     @RequestMapping(value = "view.htm", method = RequestMethod.GET)
     public String viewUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
-        User user = userService.loadUserByUsername(username);
+        User user = this.userService.loadUserByUsername(username);
         model.addAttribute("user", user);
         model.addAttribute("nonGrantedAuthorities", getNonGrantedAuthrities(user.getAuthorities()));
         return "admin/users/viewUser";
@@ -190,7 +190,7 @@ public class UsersController
     public String grantAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
             @RequestParam(AUTHORITY_PARAMETER_NAME) String authority, ModelMap model)
     {
-        userService.grantAuthority(username, authority);
+        this.userService.grantAuthority(username, authority);
         return viewUser(username, model);
     }
 
@@ -206,7 +206,7 @@ public class UsersController
     public String revokeAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
             @RequestParam(AUTHORITY_PARAMETER_NAME) String authority, ModelMap model)
     {
-        userService.revokeAuthority(username, authority);
+        this.userService.revokeAuthority(username, authority);
         return viewUser(username, model);
     }
 
@@ -220,7 +220,7 @@ public class UsersController
     @RequestMapping(value="delete.htm", method = RequestMethod.POST)
     public String deleteUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
-        userService.deleteUser(username);
+        this.userService.deleteUser(username);
         return listUsers(model);
     }
 
@@ -234,7 +234,7 @@ public class UsersController
     @RequestMapping(value="disable.htm", method = RequestMethod.POST)
     public String disableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
-        userService.disableUser(username);
+        this.userService.disableUser(username);
         return viewUser(username, model);
     }
 
@@ -248,7 +248,7 @@ public class UsersController
     @RequestMapping(value="enable.htm", method = RequestMethod.POST)
     public String enableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model)
     {
-        userService.enableUser(username);
+        this.userService.enableUser(username);
         return viewUser(username, model);
     }
 
@@ -261,7 +261,7 @@ public class UsersController
     private List<Authority> getNonGrantedAuthrities(GrantedAuthority[] authorities)
     {
         // start with a list of all the authorities
-        List<Authority> nonGrantedAuthorities = new ArrayList<Authority>(userService.getAuthorities());
+        List<Authority> nonGrantedAuthorities = new ArrayList<Authority>(this.userService.getAuthorities());
         // remove all that are granted
         for (GrantedAuthority authority : authorities)
         {

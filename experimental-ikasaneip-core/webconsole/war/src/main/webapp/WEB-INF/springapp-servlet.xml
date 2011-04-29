@@ -132,7 +132,7 @@
 <!-- ************************ -->
 
 	<bean id="triggerDetailsService" class="org.ikasan.framework.web.service.TriggerDetailsService">
-		<constructor-arg ref="flowEventListener"/>
+		<constructor-arg ref="wiretapFlowEventListener"/>
 		<constructor-arg ref="moduleService" />
 	</bean>
 
