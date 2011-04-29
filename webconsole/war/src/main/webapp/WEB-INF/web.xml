@@ -63,6 +63,7 @@
 			/WEB-INF/classes/wiretap-service-context.xml
             /WEB-INF/classes/configurationService-context.xml
             /WEB-INF/classes/flow-context.xml
+            /WEB-INF/classes/monitor-context.xml
             /WEB-INF/applicationContext-security.xml
    </param-value>
 	</context-param>

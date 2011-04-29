@@ -72,18 +72,6 @@
         <constructor-arg ref="userDetailsService"/>
         <constructor-arg ref="initiatorStartupControlDao" />
     </bean>
-
-	<!--  flow invocation beans -->
-	<!--bean id="flowElementInvoker"
-		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
-		<property name="flowEventListener" ref="flowEventListener" />
-	</bean-->
-	
-	<bean id="flowEventListener"
-		class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
-		<constructor-arg ref="jobsMap"/>
-		<constructor-arg ref="triggerDao"/>
-	</bean>
 	
 	<bean id="jobsMap" class="java.util.HashMap">
 		<constructor-arg>
@@ -94,18 +82,12 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="loggingJob" class="org.ikasan.framework.flow.event.service.LoggingEventJob" />
+	<bean id="loggingJob" class="org.ikasan.trigger.service.LoggingEventJob" />
 
-	<bean id="wiretapJob" class="org.ikasan.framework.flow.event.service.WiretapEventJob">
+	<bean id="wiretapJob" class="org.ikasan.trigger.service.WiretapEventJob">
 		<constructor-arg ref="wiretapService" />
 	</bean>
 
-	<bean id="wiretapService"
-		class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
-		<constructor-arg ref="wiretapDao" />
-		<constructor-arg ref="moduleService" />
-	</bean>
-	
 	<bean id="initiatorStartupControlDao"
         class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
         <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
@@ -118,31 +100,12 @@
         <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
     </bean>
 
-	<bean id="wiretapDao"
-		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
-        <constructor-arg value="true"/>
-        <constructor-arg value="100"/>
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
-	</bean>
-
 	<bean id="systemEventHibernateSessionFactory"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasanAdminXaDataSource" />
 		<property name="mappingResources">
 			<list>
 				<value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties"/>
-	</bean>
-
-	<bean id="wiretapHibernateSessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasanAdminXaDataSource" />
-		<property name="mappingResources">
-			<list>
-				<value>WiretapEventImpl.hbm.xml</value>
-				<value>Trigger.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>

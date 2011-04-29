@@ -23,6 +23,7 @@
                 <constructor-arg ref="priceConsumer" /> <!-- Ick! -->
             </bean>
         </constructor-arg>
+        <property name="monitor" ref="monitor" />
     </bean>
 
     <bean id="priceSourceFlowConfiguration"

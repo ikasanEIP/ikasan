@@ -84,6 +84,11 @@
         </jarModule>
         <jarModule>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-monitor</artifactId>
+            <bundleDir>lib</bundleDir>
+        </jarModule>
+        <jarModule>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-recoveryManager</artifactId>
             <bundleDir>lib</bundleDir>
         </jarModule>
@@ -119,7 +124,17 @@
         </jarModule>
         <jarModule>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-module</artifactId>
+            <bundleDir>lib</bundleDir>
+        </jarModule>
+        <jarModule>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
+            <bundleDir>lib</bundleDir>
+        </jarModule>
+        <jarModule>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
             <bundleDir>lib</bundleDir>
         </jarModule>
             <jarModule>
@@ -374,6 +389,12 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-monitor</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-flow-visitorPattern</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
@@ -386,7 +407,19 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-module</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>

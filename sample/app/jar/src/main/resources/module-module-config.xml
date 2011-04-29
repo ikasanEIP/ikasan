@@ -10,7 +10,7 @@
     </bean>
 
     <bean id="module"
-        class="org.ikasan.framework.module.SimpleModule">
+        class="org.ikasan.module.GenericModule">
         <!-- The module name -->
         <constructor-arg ref="moduleName" />
         <!-- List of flows -->

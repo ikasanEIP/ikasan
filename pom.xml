@@ -78,6 +78,7 @@
 
         <!-- Optional Services -->
         <module>wiretap</module>
+        <module>monitor</module>
 
         <module>common</module>
         <module>framework</module>

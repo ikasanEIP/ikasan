@@ -94,7 +94,7 @@ public class TriggerDetails implements Serializable
      */
     public String getFlowElementName()
     {
-        return flowElementName;
+        return this.flowElementName;
     }
 
     /**
@@ -104,7 +104,7 @@ public class TriggerDetails implements Serializable
      */
     public String getFlowName()
     {
-        return flowName;
+        return this.flowName;
     }
 
     /**
@@ -114,7 +114,7 @@ public class TriggerDetails implements Serializable
      */
     public String getJobName()
     {
-        return jobName;
+        return this.jobName;
     }
 
     /**
@@ -124,7 +124,7 @@ public class TriggerDetails implements Serializable
      */
     public String getModuleName()
     {
-        return moduleName;
+        return this.moduleName;
     }
 
     /**
@@ -134,7 +134,7 @@ public class TriggerDetails implements Serializable
      */
     public Map<String, String> getParams()
     {
-        return params;
+        return this.params;
     }
 
     /**
@@ -144,7 +144,7 @@ public class TriggerDetails implements Serializable
      */
     public String getRelationship()
     {
-        return relationship;
+        return this.relationship;
     }
 
     /**
@@ -194,7 +194,7 @@ public class TriggerDetails implements Serializable
      */
     public Trigger createTrigger()
     {
-        Trigger trigger = new Trigger(moduleName, flowName, relationship, jobName, flowElementName, params);
+        Trigger trigger = new Trigger(this.moduleName, this.flowName, this.relationship, this.jobName, this.flowElementName, this.params);
         return trigger;
     }
 }
