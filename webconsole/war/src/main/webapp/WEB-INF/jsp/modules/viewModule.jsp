@@ -86,7 +86,7 @@
                         <c:out value="${flow.key}" />
                     </a>
                 </td>
-                <!-- td>
+                <!-- <td>
                     <c:url var="controlFlowLink" value="flow.htm">
                         <c:param name="moduleName" value="${moduleName}"/>
                         <c:param name="flowName" value="${flow.key}"/>
@@ -95,11 +95,11 @@
                     <form:form action="${controlFlowLink}" method="post">
                         <input type="submit" value="Start" class="controlButton"/>
                     </form:form>
-                </td-->
+                </td>-->
                 <td>    
                     <security:authorize ifAllGranted="ADMIN_${moduleName}">
                          <c:choose>
-                            <c:when test="${monitor}.equalsIgnoreCase('running')">
+                            <c:when test="${monitor.status}.equalsIgnoreCase('running')">
                                 <c:url var="controlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
                                     <c:param name="flowName" value="${flow.key}"/>

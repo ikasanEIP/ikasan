@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-sample-app-jar</artifactId>
+    <artifactId>ikasan-sample-genericTechDrivenPriceSrc-app-jar</artifactId>
     <packaging>jar</packaging>
     <version>0.9.0-EXPERIMENT</version>
 
@@ -26,7 +26,7 @@
         <filters>
             <filter>../module.properties</filter>
         </filters>
-        
+
     </build>
 
 </project>

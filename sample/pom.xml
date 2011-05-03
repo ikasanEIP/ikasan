@@ -56,7 +56,6 @@
     <modules>
        <module>genericTechDrivenPriceSrc</module>
        <module>scheduleDrivenPriceSrc</module>
-       <module>app</module>
     </modules>
 
 </project>
