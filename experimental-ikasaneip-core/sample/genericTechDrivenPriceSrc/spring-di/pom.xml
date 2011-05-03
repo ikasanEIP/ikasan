@@ -3,12 +3,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-sample-app-parent</artifactId>
+    <artifactId>ikasan-sample-genericTechDrivenPriceSrc-app-parent</artifactId>
     <version>0.9.0-EXPERIMENT</version>
     <packaging>pom</packaging>
 
-    <name>sample :: app : Parent Project</name>
-    <description>Demoing Ikky 9</description>
+    <name>sample :: genericTechDrivenPriceSrc : Parent Project</name>
+    <description>Demoing Ikky 9 Using Generic Tech Endpoint</description>
 
     <modules>
         <module>jar</module>
