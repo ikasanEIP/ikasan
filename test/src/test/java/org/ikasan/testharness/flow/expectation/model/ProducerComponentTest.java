@@ -40,22 +40,28 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Router Component type.
- * 
+ * Tests for the <code>ProducerComponent</code> class.
+ *
  * @author Ikasan Development Team
- * 
+ *
  */
-public class RouterComponent extends AbstractComponent
+public class ProducerComponentTest
 {
     /**
-     * Constructor
-     * @param componentName
+     * Sanity test the ProducerComponent.
      */
-    public RouterComponent(String componentName)
+    @Test
+    public void test_successfulProducerComponentInstance() 
     {
-        super(componentName, Router.class);
+        ProducerComponent producerComponent = new ProducerComponent("name");
+        Assert.assertEquals("Failed on name comparison", "name", producerComponent.getName());
+        Assert.assertEquals("Not a producer.class", producerComponent.getType().getName(), Producer.class.getName());
     }
-}
+    
+}    
+

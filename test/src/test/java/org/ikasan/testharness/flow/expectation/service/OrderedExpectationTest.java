@@ -42,14 +42,13 @@ package org.ikasan.testharness.flow.expectation.service;
 
 import junit.framework.Assert;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.transformation.TransformationException;
-import org.ikasan.framework.component.transformation.Transformer;
-import org.ikasan.framework.flow.FlowElement;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.service.ComparatorService;
-import org.ikasan.testharness.flow.expectation.model.TransformerComponent;
+import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -108,13 +107,13 @@ public class OrderedExpectationTest
                 will(returnValue("one"));
 
                 // expected implementation class
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(new TestTransformer()));
+                exactly(2).of(flowElement).getFlowComponent();
+                will(returnValue(new TestTranslator()));
             }
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.expectation(new TransformerComponent("one"));
+        flowExpectation.expectation(new TranslatorComponent("one"));
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -145,13 +144,13 @@ public class OrderedExpectationTest
                 will(returnValue("one"));
 
                 // expected implementation class
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(new TestTransformer()));
+                exactly(2).of(flowElement).getFlowComponent();
+                will(returnValue(new TestTranslator()));
             }
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.expectation(new TransformerComponent("one"), "my test expectation description");
+        flowExpectation.expectation(new TranslatorComponent("one"), "my test expectation description");
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -180,7 +179,7 @@ public class OrderedExpectationTest
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.ignore(new TransformerComponent("one"));
+        flowExpectation.ignore(new TranslatorComponent("one"));
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -209,7 +208,7 @@ public class OrderedExpectationTest
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.ignore(new TransformerComponent("one"), "another description");
+        flowExpectation.ignore(new TranslatorComponent("one"), "another description");
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -332,7 +331,7 @@ public class OrderedExpectationTest
         });
         
         FlowExpectation flowExpectation = new OrderedExpectation();
-        flowExpectation.expectation(new TransformerComponent("one"), new TestComparator());
+        flowExpectation.expectation(new TranslatorComponent("one"), new TestComparator());
         
         // match expectation invocations to actual occurrences
         flowExpectation.isSatisfied(capture);
@@ -348,14 +347,14 @@ public class OrderedExpectationTest
      * @author Ikasan Development Team
      *
      */
-    private class TestTransformer implements Transformer
+    private class TestTranslator implements Translator<StringBuilder>
     {
 
-        public void onEvent(Event event) throws TransformationException
+        public void translate(StringBuilder payload) throws TransformationException
         {
             // do nothing
         }
-        
+
     }
 
     /**

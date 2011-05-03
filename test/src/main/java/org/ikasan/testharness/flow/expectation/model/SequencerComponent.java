@@ -40,7 +40,7 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.sequencing.Sequencer;
+import org.ikasan.spec.component.sequencing.Sequencer;
 
 /**
  * Sequencer Component type.

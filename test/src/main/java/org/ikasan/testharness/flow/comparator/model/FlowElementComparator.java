@@ -64,11 +64,10 @@ public class FlowElementComparator
                 + expectedName + "] actual[" + actualName + "]", expectedName, actualName);
 
         Class<?> expectedClass = expected.getType();
-        FlowComponent actualFlowComponent = actual.getFlowComponent();
         Assert.assertTrue("Component expectation class differs. Expectation[" 
                 + expectedClass.getName() + "] actual["
-                + actualFlowComponent.getClass().getName() + "]",
-                expectedClass.isInstance(actualFlowComponent) );
+                + actual.getFlowComponent().getClass().getName() + "]",
+                expectedClass.isInstance(actual.getFlowComponent()) );
     }
 
 }

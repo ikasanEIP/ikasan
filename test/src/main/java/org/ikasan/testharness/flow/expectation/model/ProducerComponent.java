@@ -40,22 +40,22 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.endpoint.Endpoint;
+import org.ikasan.spec.component.endpoint.Producer;
 
 /**
- * Endpoint Component type.
+ * Producer Component type.
  * 
  * @author Ikasan Development Team
  * 
  */
-public class EndpointComponent extends AbstractComponent
+public class ProducerComponent extends AbstractComponent
 {
     /** 
      * Constructor
      * @param componentName
      */
-    public EndpointComponent(String componentName)
+    public ProducerComponent(String componentName)
     {
-        super(componentName, Endpoint.class);
+        super(componentName, Producer.class);
     }
 }

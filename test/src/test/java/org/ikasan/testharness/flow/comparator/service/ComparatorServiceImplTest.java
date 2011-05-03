@@ -40,11 +40,14 @@
  */
 package org.ikasan.testharness.flow.comparator.service;
 
-import org.ikasan.testharness.flow.expectation.model.EndpointComponent;
+import org.ikasan.testharness.flow.expectation.model.BrokerComponent;
+import org.ikasan.testharness.flow.expectation.model.ConsumerComponent;
+import org.ikasan.testharness.flow.expectation.model.ConverterComponent;
 import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
+import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
 import org.ikasan.testharness.flow.expectation.model.RouterComponent;
 import org.ikasan.testharness.flow.expectation.model.SequencerComponent;
-import org.ikasan.testharness.flow.expectation.model.TransformerComponent;
+import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,14 +69,20 @@ public class ComparatorServiceImplTest
         ComparatorService<Class<?>> comparatorService = new ComparatorServiceImpl();
         Assert.assertNotNull("Ignore comparator retrieval failed",
                 comparatorService.getComparator(IgnoreExpectation.class) );
-        Assert.assertNotNull("TransformerComponent comparator retrieval failed", 
-                comparatorService.getComparator(TransformerComponent.class) );
+        Assert.assertNotNull("TranslatorComponent comparator retrieval failed", 
+                comparatorService.getComparator(TranslatorComponent.class) );
+        Assert.assertNotNull("ConverterComponent comparator retrieval failed", 
+            comparatorService.getComparator(ConverterComponent.class) );
         Assert.assertNotNull("RouterComponent comparator retrieval failed", 
                 comparatorService.getComparator(RouterComponent.class) );
         Assert.assertNotNull("SequencerComponent comparator retrieval failed", 
                 comparatorService.getComparator(SequencerComponent.class) );
-        Assert.assertNotNull("EndpointComponent comparator retrieval failed", 
-                comparatorService.getComparator(EndpointComponent.class) );
+        Assert.assertNotNull("ProducerComponent comparator retrieval failed", 
+            comparatorService.getComparator(ProducerComponent.class) );
+        Assert.assertNotNull("ConsumerComponent comparator retrieval failed", 
+            comparatorService.getComparator(ConsumerComponent.class) );
+        Assert.assertNotNull("BrokerComponent comparator retrieval failed", 
+            comparatorService.getComparator(BrokerComponent.class) );
     }
     
     /**

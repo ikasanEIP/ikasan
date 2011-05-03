@@ -40,22 +40,22 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.transformation.Transformer;
+import org.ikasan.spec.component.endpoint.Broker;
 
 /**
- * Transformer Component type.
+ * Broker Component type.
  * 
  * @author Ikasan Development Team
  * 
  */
-public class TransformerComponent extends AbstractComponent
+public class BrokerComponent extends AbstractComponent
 {
-    /**
+    /** 
      * Constructor
      * @param componentName
      */
-    public TransformerComponent(String componentName)
+    public BrokerComponent(String componentName)
     {
-        super(componentName, Transformer.class);
+        super(componentName, Broker.class);
     }
 }

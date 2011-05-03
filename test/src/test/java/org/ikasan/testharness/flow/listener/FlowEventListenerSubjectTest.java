@@ -42,8 +42,9 @@ package org.ikasan.testharness.flow.listener;
 
 import java.util.List;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.FlowElement;
+import org.ikasan.spec.event.ReplicationFactory;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -74,31 +75,12 @@ public class FlowEventListenerSubjectTest
     /** mocked FlowElement */
     final FlowElement flowElement = mockery.mock(FlowElement.class, "FlowElement");
     
-    /** mocked Event */
-    final Event event = mockery.mock(Event.class, "Event");
+    /** mocked flowEvent */
+    final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "FlowEvent");
     
-    /**
-     * Sanity test the invocation of the before flow results in an 
-     * UnsupportedOperationException.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void test_beforeFlow() 
-    {
-        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject();
-        flowEventListenerSubject.beforeFlow("moduleName", "flowName", event);
-    }
-
-    /**
-     * Sanity test the invocation of the after flow results in an 
-     * UnsupportedOperationException.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void test_afterFlow() 
-    {
-        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject();
-        flowEventListenerSubject.afterFlow("moduleName", "flowName", event);
-    }
-
+    /** mocked replicationFactory */
+    final ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "ReplicationFactory");
+    
     /**
      * Sanity test the invocation of the before flow element to notify flow 
      * observers of a flow element invocation.
@@ -115,64 +97,35 @@ public class FlowEventListenerSubjectTest
             }
         });
         
-        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject();
+        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject(replicationFactory);
         flowEventListenerSubject.addObserver(flowObserver);
-        flowEventListenerSubject.beforeFlowElement("moduleName", "flowName", flowElement, event);
+        flowEventListenerSubject.beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
         mockery.assertIsSatisfied();
     }
 
     /**
      * Sanity test the invocation of the after flow element to notify flow 
      * observers of an event.
-     * @throws CloneNotSupportedException 
      */
     @Test
-    public void test_afterFlowElement() throws CloneNotSupportedException 
+    public void test_afterFlowElement() 
     {
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // check each capture satisfies a flow expectation
-                exactly(1).of(flowObserver).notify(event);
+                exactly(1).of(flowObserver).notify(flowEvent);
 
-                // ensure we havce an independent copy of that event
-                exactly(1).of(event).clone();
-                will(returnValue(event));
+                // ensure we have an independent copy of that event
+                exactly(1).of(replicationFactory).replicate(flowEvent);
+                will(returnValue(flowEvent));
             }
         });
         
-        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject();
+        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject(replicationFactory);
         flowEventListenerSubject.addObserver(flowObserver);
-        flowEventListenerSubject.afterFlowElement("moduleName", "flowName", flowElement, event);
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Sanity test the failure of the after flow element to notify flow 
-     * observers of an event due to errors cloning the event.
-     * @throws CloneNotSupportedException 
-     */
-    @Test
-    public void test_failed_afterFlowElement_CloneNotSupportedException() throws CloneNotSupportedException 
-    {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // fail on the event copy
-                exactly(1).of(event).clone();
-                will(throwException(new CloneNotSupportedException("test Clone failure")));
-                
-                // report this via notification to the listener as a text String
-                exactly(1).of(flowObserver).notify(with(any(String.class)));
-                
-            }
-        });
-        
-        FlowEventListenerSubject flowEventListenerSubject = new FlowEventListenerSubject();
-        flowEventListenerSubject.addObserver(flowObserver);
-        flowEventListenerSubject.afterFlowElement("moduleName", "flowName", flowElement, event);
+        flowEventListenerSubject.afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
         mockery.assertIsSatisfied();
     }
 
@@ -192,7 +145,7 @@ public class FlowEventListenerSubjectTest
             }
         });
         
-        FlowEventListenerSubject flowEventListenerSubject = new TestFlowEventListenerSubject();
+        FlowEventListenerSubject flowEventListenerSubject = new TestFlowEventListenerSubject(replicationFactory);
         flowEventListenerSubject.addObserver(flowObserver);
         flowEventListenerSubject.removeObserver(flowObserver);
         flowEventListenerSubject.removeAllObservers();
@@ -207,6 +160,11 @@ public class FlowEventListenerSubjectTest
      */
     private class TestFlowEventListenerSubject extends FlowEventListenerSubject
     {
+        public TestFlowEventListenerSubject(ReplicationFactory<FlowEvent> replicationFactory)
+        {
+            super(replicationFactory);
+        }
+
         protected List<FlowObserver> initFlowObservers()
         {
             return flowObservers;
