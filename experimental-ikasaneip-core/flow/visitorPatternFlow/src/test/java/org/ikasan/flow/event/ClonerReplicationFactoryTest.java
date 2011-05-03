@@ -44,6 +44,7 @@ import junit.framework.Assert;
 
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.FlowEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,11 +52,11 @@ import org.junit.Test;
 import com.rits.cloning.Cloner;
 
 /**
- * This test class supports the <code>DefaultReplicationFactory</code> class.
+ * This test class supports the <code>ClonerReplicationFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class DefaultReplicationFactoryTest
+public class ClonerReplicationFactoryTest
 {
     /** event factory */
     private EventFactory<FlowEvent<?,?>> eventFactory = new FlowEventFactory();
@@ -65,7 +66,7 @@ public class DefaultReplicationFactoryTest
 
     /** Replication factory on test */
     private ReplicationFactory<FlowEvent> replicationFactory = 
-        new DefaultReplicationFactory(new Cloner());
+        new ClonerReplicationFactory(new Cloner());
 
     private boolean mutablePayload = Boolean.TRUE;
     
