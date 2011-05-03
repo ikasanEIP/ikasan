@@ -43,7 +43,7 @@ package org.ikasan.flow.visitorPattern;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.flow.event.ReplicationFactory;
+import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;

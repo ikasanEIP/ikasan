@@ -50,18 +50,35 @@ import com.rits.cloning.Cloner;
  * @author Ikasan Development Team
  *
  */
-public class DefaultReplicationFactory
+public class ClonerReplicationFactory<T> implements ReplicationFactory<T>
 {
-    private static ReplicationFactory replicationFactory;
+    /** Implementation of the replication class */
+    private Cloner cloner;
     
-    public static ReplicationFactory getInstance()
-    {
-        if(replicationFactory == null)
-        {
-            replicationFactory = new ClonerReplicationFactory(new Cloner());
-        }
-        
-        return replicationFactory;
-    }
-    
+    /**
+     * Constructor
+     * @param cloner
+     */
+	public ClonerReplicationFactory(Cloner cloner)
+	{
+	    this.cloner = cloner;
+	    if(cloner == null)
+	    {
+	        throw new IllegalArgumentException("Cloner cannot be 'null'");
+	    }
+	}
+	
+	/**
+	 * Return a completely independent instance of the incoming object. The
+	 * returned object can be freely mutated without any consequential changes
+	 * being made to the originating object.
+	 * 
+	 * @param object to be replicated
+	 * @return replicated object
+	 */
+	public T replicate(T object)
+	{
+	    return cloner.deepClone(object);
+	}
+
 }
