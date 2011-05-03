@@ -56,6 +56,9 @@ import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.trigger.dao.TriggerDao;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,8 +72,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-    "/configuration-dao-config.xml", 
-    "/hsqldb-config.xml"})
+        "/configuration-dao-config.xml", 
+        "/trigger-dao-config.xml", 
+        "/hsqldb-config.xml"})
       
 public class PriceFlowSampleTest
 {
@@ -79,6 +83,9 @@ public class PriceFlowSampleTest
     
     /** Spring DI resource */
     @Resource ConfigurationDao dynamicConfigurationDao;
+    
+    /** Spring DI resource */
+    @Resource TriggerDao triggerDao;
     
     /** flow event factory */
     FlowEventFactory flowEventFactory = new FlowEventFactory();
@@ -92,21 +99,25 @@ public class PriceFlowSampleTest
     /** recovery manager */
     ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
     
+    /** flow event listener */
+    FlowEventListener flowEventListener;
+    
     @Before
     public void setup() 
     {
         this.scheduledRecoveryManagerFactory  = 
             new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
         
-        configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
+        configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
         configurationManagement = (ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration>)configurationService;
+        flowEventListener = new JobAwareFlowEventListener(null, triggerDao);
     }
 
     @Test
     public void test_flow_consumer_translator_producer() throws JMSException
     {
         PriceFlowFactory priceFlowFactory = 
-            new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement);
+            new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement, flowEventListener);
         Flow priceFlow = priceFlowFactory.createJmsDrivenFlow();
 
         // we need an instance of a producer to poke the first message to the JMS destination
