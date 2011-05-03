@@ -74,7 +74,11 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.trigger.dao.HibernateTriggerDao;
+import org.ikasan.trigger.dao.TriggerDao;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 
 /**
  * 
@@ -108,7 +112,10 @@ public class PriceFlowFactory
 
     private ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
 
-    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService, ConfigurationManagement configurationManagement)
+    private FlowEventListener flowEventListener;
+    
+    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService, 
+            ConfigurationManagement configurationManagement, FlowEventListener flowEventListener)
     {
         this.flowName = flowName;
         this.moduleName = moduleName;
@@ -116,6 +123,7 @@ public class PriceFlowFactory
         this.configurationManagement = configurationManagement;
         this.scheduledRecoveryManagerFactory = 
             new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.flowEventListener = flowEventListener;
     }
 
     public Flow createJmsDrivenFlow()
@@ -132,8 +140,11 @@ public class PriceFlowFactory
 
         // flow configuration wiring
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
+
         // iterator over each flow element
         FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
+        flowElementInvoker.setFlowEventListener(flowEventListener);
+        
         RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
         // container for the complete flow
         return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
