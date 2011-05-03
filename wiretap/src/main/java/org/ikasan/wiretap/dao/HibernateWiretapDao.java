@@ -41,7 +41,6 @@
 package org.ikasan.wiretap.dao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -56,9 +55,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.framework.management.search.ArrayListPagedSearchResult;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;
-import org.ikasan.wiretap.model.WiretapEvent;
-import org.ikasan.wiretap.model.WiretapEventHeader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -131,22 +129,22 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     {
         // get the WiretapFlowEvent
         WiretapEvent wiretapEvent = (WiretapEvent) getHibernateTemplate().get(WiretapEvent.class, id);
-        // find any next or previous by payloadId
-        List<Long> relatedIds = getHibernateTemplate().find(WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID, wiretapEvent.getPayloadId());
-        Collections.sort(relatedIds);
-        int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getId());
-        Long nextEvent = null;
-        Long previousEvent = null;
-        if (thisWiretapsIndex > 0)
-        {
-            previousEvent = relatedIds.get(thisWiretapsIndex - 1);
-        }
-        if (thisWiretapsIndex < relatedIds.size() - 1)
-        {
-            nextEvent = relatedIds.get(thisWiretapsIndex + 1);
-        }
-        wiretapEvent.setNextByPayload(nextEvent);
-        wiretapEvent.setPreviousByPayload(previousEvent);
+//        // find any next or previous by payloadId
+//        List<Long> relatedIds = getHibernateTemplate().find(WIRETAP_EVENT_IDS_FOR_PAYLOAD_ID, wiretapEvent.getPayloadId());
+//        Collections.sort(relatedIds);
+//        int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getIdentifier());
+//        Long nextEvent = null;
+//        Long previousEvent = null;
+//        if (thisWiretapsIndex > 0)
+//        {
+//            previousEvent = relatedIds.get(thisWiretapsIndex - 1);
+//        }
+//        if (thisWiretapsIndex < relatedIds.size() - 1)
+//        {
+//            nextEvent = relatedIds.get(thisWiretapsIndex + 1);
+//        }
+//        wiretapEvent.setNextByPayload(nextEvent);
+//        wiretapEvent.setPreviousByPayload(previousEvent);
         return wiretapEvent;
     }
 
@@ -209,7 +207,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
                 criteria.setMaxResults(maxResults);
                 criteria.setFirstResult(firstResult);
                 criteria.addOrder(Order.desc("id"));
-                List<WiretapEventHeader> wiretapResults = criteria.list();
+                List<WiretapEvent> wiretapResults = criteria.list();
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = new Long(0);
                 List<Long> rowCountList = criteria.list();
@@ -383,7 +381,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	            
 	            for (Object wiretapFlowEventObj : criteria.list()){
 	            	WiretapEvent wiretapFlowEvent = (WiretapEvent)wiretapFlowEventObj;
-	            	ids.add(wiretapFlowEvent.getId());
+	            	ids.add(wiretapFlowEvent.getIdentifier());
 	            }
 	           
 	            return ids;
