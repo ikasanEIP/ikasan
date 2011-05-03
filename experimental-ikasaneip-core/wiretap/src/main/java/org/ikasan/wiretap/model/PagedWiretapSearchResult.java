@@ -43,6 +43,8 @@ package org.ikasan.wiretap.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.ikasan.spec.wiretap.WiretapEvent;
+
 /**
  * Search result Data Transfer Object for WireTapFlowEvents
  * 
@@ -62,16 +64,16 @@ public class PagedWiretapSearchResult implements Serializable
      */
     private static final long serialVersionUID = 7722626010968234606L;
 
-    private List<WiretapEventHeader> wiretapFlowEventHeaders;
+    private List<WiretapEvent> wiretapEvents;
     
     private int firstResult;
     
     private long resultSize;
 
-    public PagedWiretapSearchResult(List<WiretapEventHeader> wiretapFlowEventHeaders, long resultSize, int firstResult)
+    public PagedWiretapSearchResult(List<WiretapEvent> wiretapEvents, long resultSize, int firstResult)
     {
         super();
-        this.wiretapFlowEventHeaders = wiretapFlowEventHeaders;
+        this.wiretapEvents = wiretapEvents;
         this.resultSize = resultSize;
         this.firstResult = firstResult;
     }
@@ -86,9 +88,9 @@ public class PagedWiretapSearchResult implements Serializable
         return resultSize;
     }
 
-    public List<WiretapEventHeader> getWiretapFlowEventHeaders()
+    public List<WiretapEvent> getWiretapEvents()
     {
-        return wiretapFlowEventHeaders;
+        return wiretapEvents;
     }
     
     public int getFirstIndex(){
@@ -96,6 +98,6 @@ public class PagedWiretapSearchResult implements Serializable
     }
     
     public int getLastIndex(){
-        return firstResult + wiretapFlowEventHeaders.size();
+        return firstResult + wiretapEvents.size();
     }
 }

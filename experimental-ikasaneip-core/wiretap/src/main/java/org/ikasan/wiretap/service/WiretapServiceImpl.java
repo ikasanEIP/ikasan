@@ -45,9 +45,11 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;
-import org.ikasan.wiretap.model.WiretapEvent;
+import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.service.ModuleService;
 
@@ -56,7 +58,7 @@ import org.ikasan.framework.module.service.ModuleService;
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
@@ -69,18 +71,34 @@ public class WiretapServiceImpl implements WiretapService
      */
     private ModuleService moduleService;
 
+    /** */
+    private WiretapEventFactory wiretapEventFactory;
+    
     /**
      * Constructor
      * 
      * @param wiretapDao - The wire tap DAO
      * @param moduleService - The module service to use
      */
-    public WiretapServiceImpl(WiretapDao wiretapDao, ModuleService moduleService)
+    public WiretapServiceImpl(WiretapDao wiretapDao, ModuleService moduleService, WiretapEventFactory wiretapEventFactory)
     {
-        super();
         this.wiretapDao = wiretapDao;
+        if(wiretapDao == null)
+        {
+            throw new IllegalArgumentException("wiretapDao cannot be 'null'");
+        }
+        
         this.moduleService = moduleService;
-        logger.info("created");
+        if(moduleService == null)
+        {
+            throw new IllegalArgumentException("moduleService cannot be 'null'");
+        }
+
+        this.wiretapEventFactory = wiretapEventFactory;
+        if(wiretapEventFactory == null)
+        {
+            throw new IllegalArgumentException("wiretapEventFactory cannot be 'null'");
+        }
     }
 
     /**
@@ -183,20 +201,13 @@ public class WiretapServiceImpl implements WiretapService
      */
     public void tapEvent(FlowEvent event, String componentName, String moduleName, String flowName, Long timeToLive)
     {
-        String eventId = (String)event.getIdentifier();
-        Date expiry = new Date(System.currentTimeMillis() + (timeToLive * 60000));
-//        for (Payload payload : event.getPayloads())
-//        {
-//            WiretapEvent wiretapFlowEvent = new WiretapEvent(moduleName, flowName, componentName, eventId, payload.getId(), new String(payload.getContent()),
-            WiretapEvent wiretapEvent = 
-                new WiretapEvent(moduleName, flowName, componentName, eventId, "padyloadId doesnt exist", new String("payload content must go here"),
-                expiry);
-            this.wiretapDao.save(wiretapEvent);
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Created wiretapFlowEvent [" + wiretapEvent.toString() + "]");
-            }
-//        }
+        long expiry = System.currentTimeMillis() + (timeToLive * 60000);
+        WiretapEvent wiretapEvent = wiretapEventFactory.newEvent(moduleName, flowName, componentName, event, expiry);
+        this.wiretapDao.save(wiretapEvent);
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Created wiretapFlowEvent [" + wiretapEvent.toString() + "]");
+        }
     }
 
     /**

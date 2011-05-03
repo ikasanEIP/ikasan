@@ -47,7 +47,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.wiretap.service.WiretapService;
+import org.ikasan.spec.wiretap.WiretapService;
 
 /**
  * <code>FlowEventJob</code> for invoking the WiretapService
