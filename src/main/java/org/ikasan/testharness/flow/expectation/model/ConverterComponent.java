@@ -40,22 +40,22 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.transformation.Converter;
 
 /**
- * Router Component type.
+ * Converter Component type.
  * 
  * @author Ikasan Development Team
  * 
  */
-public class RouterComponent extends AbstractComponent
+public class ConverterComponent extends AbstractComponent
 {
     /**
      * Constructor
      * @param componentName
      */
-    public RouterComponent(String componentName)
+    public ConverterComponent(String componentName)
     {
-        super(componentName, Router.class);
+        super(componentName, Converter.class);
     }
 }

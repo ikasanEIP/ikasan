@@ -38,53 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.testharness.flow.component.plugins;
+package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.plugins.invoker.PluginInvocationException;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.ikasan.spec.component.endpoint.Broker;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for the <code>EventInvocableCap</code> class.
+ * Tests for the <code>BrokerComponent</code> class.
  *
  * @author Ikasan Development Team
  *
  */
-public class EventInvocableCapTest
+public class BrokerComponentTest
 {
-    Mockery mockery = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
-    
-    /** mocked event */
-    final Event event = mockery.mock(Event.class, "Mock Event");
-    
     /**
-     * Sanity test the Event invocable cap class to simply consume the event
-     * without any actions.
-     * @throws PluginInvocationException 
+     * Sanity test the BrokerComponent.
      */
     @Test
-    public void test_successfulConsumeEventWithNoAction() throws PluginInvocationException 
+    public void test_successfulBrokerComponentInstance() 
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // nothing to do
-            }
-        });
-
-        EventInvocableCap eventInvocableCap = new EventInvocableCap();
-        eventInvocableCap.invoke(event);
-        
-        mockery.assertIsSatisfied();
+        BrokerComponent brokerComponent = new BrokerComponent("name");
+        Assert.assertEquals("Failed on name comparison", "name", brokerComponent.getName());
+        Assert.assertEquals("Not a broker.class", brokerComponent.getType().getName(), Broker.class.getName());
     }
     
 }    

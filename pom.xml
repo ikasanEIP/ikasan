@@ -64,7 +64,37 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-core</artifactId>
+            <artifactId>ikasan-spec-flow</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-event</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component-endpoint</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component-transformation</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component-sequencing</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component-routing</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>
