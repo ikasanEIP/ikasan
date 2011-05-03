@@ -43,15 +43,13 @@ package org.ikasan.spec.wiretap;
 import java.util.Date;
 import java.util.Set;
 
-import org.ikasan.framework.management.search.PagedSearchResult;
-
 /**
  * This Service allows <code>FlowEvent</code>s to be dumped out at runtime for later
  * retrieval and inspection
  * 
  * @author Ikasan Development Team
  */
-public interface WiretapService<RUNTIMEEVENT>
+public interface WiretapService<RUNTIMEEVENT,PAGEDRESULT>
 {
     /**
      * Allows previously stored FlowEvents to be searched for.
@@ -74,7 +72,7 @@ public interface WiretapService<RUNTIMEEVENT>
      * @return List of <code>WiretapFlowEventHeader</code> representing the result
      *         of the search
      */
-    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
+    public PAGEDRESULT findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, Set<String> moduleNames,
             String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate, Date untilDate, String payloadContent);
 
     /**
