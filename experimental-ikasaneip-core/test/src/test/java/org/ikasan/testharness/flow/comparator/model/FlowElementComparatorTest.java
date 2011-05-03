@@ -40,12 +40,11 @@
  */
 package org.ikasan.testharness.flow.comparator.model;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.component.transformation.TransformationException;
-import org.ikasan.framework.component.transformation.Transformer;
-import org.ikasan.framework.flow.FlowElement;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.testharness.flow.expectation.model.RouterComponent;
-import org.ikasan.testharness.flow.expectation.model.TransformerComponent;
+import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -76,8 +75,8 @@ public class FlowElementComparatorTest
     @Test
     public void test_successfulFlowElementComparator() 
     {
-        final TransformerComponent transformerComponent = 
-            new TransformerComponent("transformerName");
+        final TranslatorComponent translatorComponent = 
+            new TranslatorComponent("name");
         
         // expectations
         mockery.checking(new Expectations()
@@ -85,16 +84,16 @@ public class FlowElementComparatorTest
             {
                 // compare component name
                 exactly(1).of(flowElement).getComponentName();
-                will(returnValue("transformerName"));
+                will(returnValue("name"));
 
                 // compare component name
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(new TestTransformer()));
+                exactly(2).of(flowElement).getFlowComponent();
+                will(returnValue(new TestTranslator()));
             }
         });
 
         FlowElementComparator flowElementComparator = new FlowElementComparator();
-        flowElementComparator.compare(transformerComponent, flowElement);
+        flowElementComparator.compare(translatorComponent, flowElement);
         
         mockery.assertIsSatisfied();
     }
@@ -106,8 +105,8 @@ public class FlowElementComparatorTest
     @Test(expected = junit.framework.ComparisonFailure.class)
     public void test_failedFlowElementComparatorDueToDifferentNames() 
     {
-        final TransformerComponent transformerComponent = 
-            new TransformerComponent("transformerName");
+        final TranslatorComponent translatorComponent = 
+            new TranslatorComponent("name");
         
         // expectations
         mockery.checking(new Expectations()
@@ -115,12 +114,12 @@ public class FlowElementComparatorTest
             {
                 // compare component name
                 exactly(2).of(flowElement).getComponentName();
-                will(returnValue("different transformerName"));
+                will(returnValue("different name"));
             }
         });
 
         FlowElementComparator flowElementComparator = new FlowElementComparator();
-        flowElementComparator.compare(transformerComponent, flowElement);
+        flowElementComparator.compare(translatorComponent, flowElement);
         
         mockery.assertIsSatisfied();
     }
@@ -144,7 +143,7 @@ public class FlowElementComparatorTest
 
                 // compare component name
                 exactly(2).of(flowElement).getFlowComponent();
-                will(returnValue(new TestTransformer()));
+                will(returnValue(new TestTranslator()));
             }
         });
 
@@ -155,18 +154,17 @@ public class FlowElementComparatorTest
     }
 
     /**
-     * Simple implementation of a Transformer component for testing.
+     * Simple implementation of a TestTranslator component for testing.
      * @author Ikasan Development Team
      *
      */
-    private class TestTransformer implements Transformer
+    private class TestTranslator implements Translator<StringBuffer>
     {
 
-        public void onEvent(Event event) throws TransformationException
+        public void translate(StringBuffer payload) throws TransformationException
         {
             // do nothing
         }
-        
     }
 }    
 

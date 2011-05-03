@@ -40,28 +40,22 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.transformation.Transformer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.ikasan.spec.component.endpoint.Consumer;
 
 /**
- * Tests for the <code>TransformerComponent</code> class.
- *
+ * Consumer Component type.
+ * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public class TransformerComponentTest
+public class ConsumerComponent extends AbstractComponent
 {
-    /**
-     * Sanity test the TransformerComponent.
+    /** 
+     * Constructor
+     * @param componentName
      */
-    @Test
-    public void test_successfulTransformerComponentInstance() 
+    public ConsumerComponent(String componentName)
     {
-        TransformerComponent transformerComponent = new TransformerComponent("name");
-        Assert.assertEquals("Failed on name comparison", "name", transformerComponent.getName());
-        Assert.assertEquals("Not an endpoint.class", transformerComponent.getType().getName(), Transformer.class.getName());
+        super(componentName, Consumer.class);
     }
-    
-}    
-
+}

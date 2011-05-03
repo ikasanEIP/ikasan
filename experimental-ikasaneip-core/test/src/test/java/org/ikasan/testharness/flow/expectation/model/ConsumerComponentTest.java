@@ -40,27 +40,27 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.endpoint.Endpoint;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for the <code>EndpointComponent</code> class.
+ * Tests for the <code>ConsumerComponent</code> class.
  *
  * @author Ikasan Development Team
  *
  */
-public class EndpointComponentTest
+public class ConsumerComponentTest
 {
     /**
-     * Sanity test the EndpointComponent.
+     * Sanity test the ConsumerComponent.
      */
     @Test
-    public void test_successfulEndpointComponentInstance() 
+    public void test_successfulConsumerComponentInstance() 
     {
-        EndpointComponent endpointComponent = new EndpointComponent("name");
-        Assert.assertEquals("Failed on name comparison", "name", endpointComponent.getName());
-        Assert.assertEquals("Not an endpoint.class", endpointComponent.getType().getName(), Endpoint.class.getName());
+        ConsumerComponent consumerComponent = new ConsumerComponent("name");
+        Assert.assertEquals("Failed on name comparison", "name", consumerComponent.getName());
+        Assert.assertEquals("Not a consumer.class", consumerComponent.getType().getName(), Consumer.class.getName());
     }
     
 }    

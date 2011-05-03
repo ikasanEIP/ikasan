@@ -40,22 +40,28 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.transformation.Translator;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Router Component type.
- * 
+ * Tests for the <code>TranslatorComponent</code> class.
+ *
  * @author Ikasan Development Team
- * 
+ *
  */
-public class RouterComponent extends AbstractComponent
+public class TranslatorComponentTest
 {
     /**
-     * Constructor
-     * @param componentName
+     * Sanity test the TranslatorComponent.
      */
-    public RouterComponent(String componentName)
+    @Test
+    public void test_successfulTranslatorComponentInstance() 
     {
-        super(componentName, Router.class);
+        TranslatorComponent translatorComponent = new TranslatorComponent("name");
+        Assert.assertEquals("Failed on name comparison", "name", translatorComponent.getName());
+        Assert.assertEquals("Not a translator.class", translatorComponent.getType().getName(), Translator.class.getName());
     }
-}
+    
+}    
+
