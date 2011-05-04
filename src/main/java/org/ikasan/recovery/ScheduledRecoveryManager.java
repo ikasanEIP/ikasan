@@ -110,19 +110,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     public ScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer<?> consumer)
     {
-        this(scheduler, flowName, moduleName, consumer, null);
-    }
-
-    /**
-     * Constructor
-     * @param scheduler
-     * @param flowName
-     * @param moduleName
-     * @param consumer
-     * @param exceptionResolver
-     */
-    public ScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer<?> consumer, ExceptionResolver exceptionResolver)
-    {
         this.scheduler = scheduler;
         if(scheduler == null)
         {
@@ -146,8 +133,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         {
             throw new IllegalArgumentException("consumer cannot be null");
         }
-
-        this.exceptionResolver = exceptionResolver;
     }
 
     /**
