@@ -40,6 +40,9 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.ikasan.consumer.quartz.ScheduledConsumerConfiguration;
@@ -47,16 +50,31 @@ import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
+import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.sample.genericTechDrivenPriceSrc.flow.PriceFlowFactory;
+import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ConsumerEventComparator;
+import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ConverterEventComparator;
+import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ProducerEventComparator;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
+import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
+import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.testharness.flow.FlowObserver;
+import org.ikasan.testharness.flow.FlowTestHarness;
+import org.ikasan.testharness.flow.FlowTestHarnessImpl;
+import org.ikasan.testharness.flow.expectation.model.ConsumerComponent;
+import org.ikasan.testharness.flow.expectation.model.ConverterComponent;
+import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
+import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
+import org.ikasan.testharness.flow.listener.FlowEventListenerSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -83,7 +101,7 @@ public class PriceFlowSampleTest
     FlowEventFactory flowEventFactory = new FlowEventFactory();
 
     /** recovery manager factory */
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+    RecoveryManagerFactory recoveryManagerFactory;
     
     /** configuration service */
     ConfigurationService configurationService;
@@ -91,25 +109,75 @@ public class PriceFlowSampleTest
     /** configuration management for the scheduled consumer */
     ConfigurationManagement<Consumer,ScheduledConsumerConfiguration> configurationManagement;
     
+    /** Consumer specific event comparator */
+    ConsumerEventComparator consumerEventComparator;
+    
+    /** Converter specific event comparator */
+    ConverterEventComparator converterEventComparator;
+    
+    /** Producer specific event comparator */
+    ProducerEventComparator producerEventComparator;
+    
+    /** Captures the actual components invoked and events created within the flow */
+    FlowEventListenerSubject flowEventListenerSubject;
+
+    ReplicationFactory replicationFactory;
+    
     @Before
     public void setup() throws SchedulerException
     {
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(StdSchedulerFactory.getDefaultScheduler());
-        configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
-        configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
+        this.recoveryManagerFactory  = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
+        this.configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
+        
+        // event listener subject
+        flowEventListenerSubject = new FlowEventListenerSubject( DefaultReplicationFactory.getInstance() );
+        
+        // create the test comparators
+        this.consumerEventComparator = new ConsumerEventComparator();
+        this.converterEventComparator = new ConverterEventComparator();
+        this.producerEventComparator = new ProducerEventComparator();
     }
 
     @Test
     public void test_flow_consumer_translator_producer() throws SchedulerException
     {
-        PriceFlowFactory priceFlowFactory = new PriceFlowFactory("flowName", "moduleName", this.configurationService);
-        Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow();
+        final PriceTechMessage priceTechConsumerMessage = new PriceTechMessage("abc", 10, 10);
+        final StringBuilder priceTechConverterMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
+        final StringBuilder priceTechProducerMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
+
+        // 
+        // setup expectations
+        FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
+        {
+            {
+                expectation(new ConsumerComponent("priceConsumer"), "consumer sourcing prices");
+                expectation(flowEventFactory.newEvent("abc", priceTechConsumerMessage),  consumerEventComparator, "Raw message from the consumer");
+
+                expectation(new ConverterComponent("priceConverter"), "converter for price object into stringBuffer");
+                expectation(flowEventFactory.newEvent("abc", priceTechConverterMessage),  converterEventComparator, "Converted message from the converter");
+
+                expectation(new ProducerComponent("priceProducer"), "producer logging the prices");
+                expectation(flowEventFactory.newEvent("abc", priceTechProducerMessage),  producerEventComparator, "Logged message from the producer");
+            }}
+        );
+        flowEventListenerSubject.addObserver((FlowObserver)flowTestHarness);
+        
+        PriceFlowFactory priceFlowFactory = 
+            new PriceFlowFactory("flowName", "moduleName", this.configurationService, flowEventFactory, recoveryManagerFactory);
+
+        // set a listener to record the events for the test harness
+        priceFlowFactory.setFlowEventListener(flowEventListenerSubject);
+
+        List<PriceTechMessage> priceTechMessages = new ArrayList<PriceTechMessage>();
+        priceTechMessages.add(priceTechConsumerMessage);
+        Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow(new PriceTechImpl(priceTechMessages));
+
         priceFlow.start();
         
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep(100);
         }
         catch(InterruptedException e)
         {
@@ -117,6 +185,9 @@ public class PriceFlowSampleTest
         }
         
         priceFlow.stop();
+        
+        // run flow assertions
+        flowTestHarness.assertIsSatisfied();
     }
 
 }

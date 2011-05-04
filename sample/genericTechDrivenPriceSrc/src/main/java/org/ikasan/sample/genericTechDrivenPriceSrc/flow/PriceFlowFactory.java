@@ -41,24 +41,25 @@
 package org.ikasan.sample.genericTechDrivenPriceSrc.flow;
 
 import org.ikasan.flow.configuration.service.ConfigurationService;
+import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.converter.PriceConverter;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceConsumer;
 import org.ikasan.sample.genericTechDrivenPriceSrc.component.endpoint.PriceProducer;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
-import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.recovery.RecoveryManager;
 
 /**
@@ -68,51 +69,104 @@ import org.ikasan.spec.recovery.RecoveryManager;
  */
 public class PriceFlowFactory
 {
+    /** name of the flow */
     String flowName;
+
+    /** name of the module */
     String moduleName;
+
+    /** configuration service */
     ConfigurationService configurationService;
-    FlowEventFactory flowEventFactory = new FlowEventFactory();
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+
+    /** event factory */
+    FlowEventFactory flowEventFactory;
+
+    /** recovery manager factory */
+    RecoveryManagerFactory recoveryManagerFactory;
     
-    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService) 
+    /** flow event listener */
+    FlowEventListener flowEventListener;
+    
+    /**
+     * Constructor
+     * @param flowName
+     * @param moduleName
+     * @param configurationService
+     * @param flowEventFactory
+     * @param scheduledRecoveryManagerFactory
+     */
+    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService, 
+            FlowEventFactory flowEventFactory, RecoveryManagerFactory recoveryManagerFactory) 
     {
         this.flowName = flowName;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
+
         this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+
         this.configurationService = configurationService;
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        if(configurationService == null)
+        {
+            throw new IllegalArgumentException("configurationService cannot be 'null'");
+        }
+        
+        this.flowEventFactory = flowEventFactory;
+        if(flowEventFactory == null)
+        {
+            throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
+        }
+        
+        this.recoveryManagerFactory  = recoveryManagerFactory;
+        if(recoveryManagerFactory == null)
+        {
+            throw new IllegalArgumentException("recoveryManagerFactory cannot be 'null'");
+        }
     }
     
-    public Flow createGenericTechDrivenFlow()
+    /**
+     * Allow flow event listener to be set.
+     */
+    public void setFlowEventListener(FlowEventListener flowEventListener)
     {
-        Producer producer = new PriceProducer();
-        FlowElement producerFlowElement = new FlowElementImpl("priceProducer", producer);
-
-        Converter priceToStringBuilderConverter = new PriceConverter();
-        FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceToStringBuilder", priceToStringBuilderConverter, producerFlowElement);
-
-        Consumer consumer = new PriceConsumer(getTechImpl(), this.flowEventFactory);
-        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("priceConsumer", consumer, converterFlowElement);
-
-        // flow configuration wiring
-        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
-
-        // iterator over each flow element
-        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
-
-        RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer);
-        
-        // container for the complete flow
-        return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
+        this.flowEventListener = flowEventListener;
     }
 
     /**
-     * Stubbed tech implementation
-     * @return PriceTechImpl
+     * Create the flow. 
+     * @return
      */
-    protected PriceTechImpl getTechImpl()
+    public Flow createGenericTechDrivenFlow(PriceTechImpl priceTechImpl)
     {
-        return new PriceTechImpl();
+        // create producer and element
+        Producer producer = new PriceProducer();
+        FlowElement producerFlowElement = new FlowElementImpl("priceProducer", producer);
+
+        // create converter and element
+        Converter priceToStringBuilderConverter = new PriceConverter();
+        FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceConverter", priceToStringBuilderConverter, producerFlowElement);
+
+        // create consumer and element
+        Consumer consumer = new PriceConsumer(priceTechImpl, this.flowEventFactory);
+        FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("priceConsumer", consumer, converterFlowElement);
+
+        // create flow configuration wiring
+        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
+
+        // create flow element invoker and set the listener (which may be null i.e. no listener)
+        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
+        flowElementInvoker.setFlowEventListener(flowEventListener);
+
+        // get the recovery manager
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer);
+        
+        // create the flow based on previously created objects
+        return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
     }
     
 }
