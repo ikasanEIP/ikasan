@@ -50,7 +50,7 @@ import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.sample.jmsDrivenPriceSrc.flow.PriceFlowFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -97,7 +97,7 @@ public class PriceFlowSampleTest
     ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration> configurationManagement;
     
     /** recovery manager */
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+    RecoveryManagerFactory recoveryManagerFactory;
     
     /** flow event listener */
     FlowEventListener flowEventListener;
@@ -105,8 +105,7 @@ public class PriceFlowSampleTest
     @Before
     public void setup() 
     {
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
         
         configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
         configurationManagement = (ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration>)configurationService;

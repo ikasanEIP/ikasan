@@ -48,7 +48,7 @@ import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.sample.scheduleDrivenPriceSrc.flow.PriceFlowFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -89,14 +89,12 @@ public class PriceFlowSampleTest
     ConfigurationManagement<Consumer,ScheduledConsumerConfiguration> configurationManagement;
     
     /** recovery manager */
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+    RecoveryManagerFactory recoveryManagerFactory;
     
     @Before
     public void setup() throws SchedulerException
     {
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
-        
+        this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
         configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
         configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
     }
