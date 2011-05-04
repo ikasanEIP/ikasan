@@ -53,7 +53,7 @@ import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -76,7 +76,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     private Consumer consumer;
 
     /** recovery manager factory */
-    private ScheduledRecoveryManagerFactory recoveryManagerFactory;
+    private RecoveryManagerFactory recoveryManagerFactory;
 
     /** component name */
     private String componentName = "componentName";
@@ -92,7 +92,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     {
         this.scheduler = SchedulerFactory.getInstance().getScheduler();
         this.consumer = new StubbedConsumer();
-        this.recoveryManagerFactory = new ScheduledRecoveryManagerFactory(scheduler);
+        this.recoveryManagerFactory = new RecoveryManagerFactory(scheduler);
     }
 
     /**

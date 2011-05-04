@@ -108,7 +108,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManager(null, null, null, null, null);
+        new ScheduledRecoveryManager(null, null, null, null);
     }
 
     /**
@@ -117,7 +117,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowName()
     {
-        new ScheduledRecoveryManager(scheduler, null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, null, null, null);
     }
 
     /**
@@ -126,7 +126,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", null, null, null);
+        new ScheduledRecoveryManager(scheduler, "flowName", null, null);
     }
 
     /**
@@ -135,16 +135,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullConsumer()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", null, null);
-    }
-
-    /**
-     * Test constructor is happy regardless of null exception resolver.
-     */
-    @Test
-    public void test_successful_constructor_evenWithDueToNullExceptionResolver()
-    {
-        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, null);
+        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", null);
     }
 
     /**
@@ -153,7 +144,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_successful_instantiation()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
+        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
     }
 
     /**
@@ -179,7 +170,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        recoveryManager.setResolver(exceptionResolver);
         recoveryManager.recover("componentName", exception);
         
         // test aspects we cannot access through the interface
@@ -231,7 +223,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        recoveryManager.setResolver(exceptionResolver);
         recoveryManager.recover("componentName", exception);
 
         Assert.assertTrue(recoveryManager.isRecovering());
@@ -326,7 +319,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        recoveryManager.setResolver(exceptionResolver);
 
         try
         {
@@ -389,7 +383,8 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer, exceptionResolver);
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        recoveryManager.setResolver(exceptionResolver);
         recoveryManager.recover("componentName", exception);
 
         mockery.assertIsSatisfied();
@@ -403,9 +398,9 @@ public class ScheduledRecoveryManagerTest
     private class StubbedScheduledRecoveryManager extends ScheduledRecoveryManager
     {
 
-        public StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer, ExceptionResolver exceptionResolver)
+        public StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer)
         {
-            super(scheduler, flowName, moduleName, consumer, exceptionResolver);
+            super(scheduler, flowName, moduleName, consumer);
         }
         
         @Override
