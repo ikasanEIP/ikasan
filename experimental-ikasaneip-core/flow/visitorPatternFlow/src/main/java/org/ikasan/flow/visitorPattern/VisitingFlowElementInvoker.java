@@ -67,20 +67,11 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /** logger instance */
     private static final Logger logger = Logger.getLogger(VisitingFlowElementInvoker.class);
 
-    /** replication factory - only a requirement of a multi-recipient router */
+    /** replication factory - requirement for flows where event can undergo a number of sequential routes */
     private ReplicationFactory<FlowEvent<?,?>> replicationFactory;
 
     /** The flow event listener */
     private FlowEventListener flowEventListener;
-
-    /**
-     * TODO remove this constructor
-     * Default constructor
-     */
-    public VisitingFlowElementInvoker()
-    {
-        // default constructor
-    }
 
     /**
      * Constructor with a ReplicationFactory for replicating events for specific
@@ -121,8 +112,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             {
                 if (flowComponent instanceof Consumer)
                 {
-                    throw new RuntimeException("Consumer component [" + flowElement.getComponentName()
-                            + "] is not at the head of the flow. Consumers must only exist at the flow head.");
+                    flowElement = handleConsumer(moduleName, flowName, flowEvent, flowElement);
                 }
                 else if (flowComponent instanceof Translator)
                 {
@@ -135,9 +125,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 else if (flowComponent instanceof Producer)
                 {
                     flowElement = handleProducer(moduleName, flowName, flowEvent, flowElement);
-                    // TODO - flowElement should be null so no requirement for
-                    // break
-                    // break;
                 }
                 else if (flowComponent instanceof Broker)
                 {
@@ -146,16 +133,10 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 else if (flowComponent instanceof Router)
                 {
                     flowElement = handleRouter(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
-                    // TODO - flowElement should be null so no requirement for
-                    // break
-                    // break;
                 }
                 else if (flowComponent instanceof Sequencer)
                 {
                     flowElement = handleSequencer(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
-                    // TODO - flowElement should be null so no requirement for
-                    // break
-                    // break;
                 }
                 else
                 {
@@ -317,7 +298,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleProducer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleProducer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
         Producer producer = (Producer) flowElement.getFlowComponent();
         producer.invoke(flowEvent.getPayload());
@@ -326,14 +307,27 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         return null;
     }
 
-    private FlowElement handleBroker(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleBroker(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
         Broker broker = (Broker) flowElement.getFlowComponent();
         flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
         notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
         // we may or may not have a transition out
-        flowElement = getDefaultTransition(flowElement);
-        return flowElement;
+        return getDefaultTransition(flowElement);
+    }
+
+    /**
+     * For consumers we simply want to notify the listeners then get the default transition.
+     * @param moduleName
+     * @param flowName
+     * @param flowEvent
+     * @param flowElement
+     * @return flowElement
+     */
+    private FlowElement<?> handleConsumer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    {
+        notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
+        return getDefaultTransition(flowElement);
     }
 
     /**
@@ -344,7 +338,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleTranslator(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleTranslator(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
         Translator translator = (Translator) flowElement.getFlowComponent();
         translator.translate(flowEvent.getPayload());
