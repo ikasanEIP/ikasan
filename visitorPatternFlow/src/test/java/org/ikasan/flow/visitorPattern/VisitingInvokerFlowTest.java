@@ -112,8 +112,8 @@ public class VisitingInvokerFlowTest
     final FlowElement<ManagedResource> managedResourceFlowElement3
     = mockery.mock(FlowElement.class, "mockFlowElementManagedResource3");
 
-    /** Mock lead flow element */
-    final FlowElement leadFlowElement = mockery.mock(FlowElement.class, "mockLeadFlowElement");
+//    /** Mock lead flow element */
+//    final FlowElement leadFlowElement = mockery.mock(FlowElement.class, "mockLeadFlowElement");
 
     /** mock managed resource */
     final ManagedResource managedResource = mockery.mock(ManagedResource.class, "mockManagedResource");
@@ -1078,13 +1078,6 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // create context
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-                
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1092,9 +1085,9 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
                 exactly(2).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
 
-                one(flowConfiguration).getLeadFlowElement();
-                will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 
                 // in this test we do not need to cancel recovery
                 one(recoveryManager).isRecovering();
@@ -1132,13 +1125,6 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // create context
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-                
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1191,13 +1177,6 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // create context
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1206,9 +1185,9 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
 
                 // invoke the flow elements
-                one(flowConfiguration).getLeadFlowElement();
-                will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
                 
                 // pass the exception to the recovery manager
@@ -1250,13 +1229,6 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // create context
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1265,9 +1237,9 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
 
                 // invoke the flow elements
-                one(flowConfiguration).getLeadFlowElement();
-                will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
                 
                 // pass the exception to the recovery manager
@@ -1310,13 +1282,6 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // create context
-                one(flowConfiguration).getConsumerFlowElement();
-                will(returnValue(consumerFlowElement));
-                one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-
                 // reload any marked dynamic configuration
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
@@ -1325,9 +1290,9 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
 
                 // invoke the flow elements
-                one(flowConfiguration).getLeadFlowElement();
-                will(returnValue(leadFlowElement));
-                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, leadFlowElement);
+                one(flowConfiguration).getConsumerFlowElement();
+                will(returnValue(consumerFlowElement));
+                one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
                 will(throwException(exception));
                 
                 // pass the exception to the recovery manager
@@ -1374,9 +1339,6 @@ public class VisitingInvokerFlowTest
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
                 will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-                exactly(1).of(flowInvocationContext).getLastComponentName();
-                will(returnValue("consumerName"));
 
                 // pass the exception to the recovery manager
                 one(recoveryManager).recover("consumerName", exception);
@@ -1419,9 +1381,6 @@ public class VisitingInvokerFlowTest
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-                exactly(1).of(flowInvocationContext).getLastComponentName();
                 will(returnValue("consumerName"));
 
                 // pass the exception to the recovery manager
@@ -1466,9 +1425,6 @@ public class VisitingInvokerFlowTest
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 one(consumerFlowElement).getComponentName();
-                will(returnValue("consumerName"));
-                one(flowInvocationContext).addInvokedComponentName("consumerName");
-                exactly(1).of(flowInvocationContext).getLastComponentName();
                 will(returnValue("consumerName"));
 
                 // pass the exception to the recovery manager
