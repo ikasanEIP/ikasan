@@ -127,11 +127,6 @@ public class DefaultFlowConfiguration implements FlowConfiguration
         return this.consumerFlowElement;
     }
 
-    public FlowElement<?> getLeadFlowElement()
-    {
-        return this.leadFlowElement;
-    }
-    
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements()
     {
         return this.configuredReourceFlowElements;
