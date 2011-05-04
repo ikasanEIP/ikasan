@@ -45,7 +45,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.jmock.Expectations;
@@ -57,11 +57,11 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
 /**
- * This test class supports the <code>ScheduledRecoveryManagerFactory</code> class.
+ * This test class supports the <code>RecoveryManagerFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRecoveryManagerFactoryTest
+public class RecoveryManagerFactoryTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -101,7 +101,7 @@ public class ScheduledRecoveryManagerFactoryTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManagerFactory(null);
+        new RecoveryManagerFactory(null);
     }
 
     /**
@@ -123,7 +123,7 @@ public class ScheduledRecoveryManagerFactoryTest
             }
         });
 
-        ScheduledRecoveryManagerFactory recoveryManagerFactory = new StubbedScheduledRecoveryManagerFactory(scheduler);
+        RecoveryManagerFactory recoveryManagerFactory = new StubbedRecoveryManagerFactory(scheduler);
         Assert.assertNotNull(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer));
         
         mockery.assertIsSatisfied();
@@ -148,7 +148,7 @@ public class ScheduledRecoveryManagerFactoryTest
             }
         });
 
-        ScheduledRecoveryManagerFactory recoveryManagerFactory = new StubbedScheduledRecoveryManagerFactory(scheduler, exceptionResolver);
+        RecoveryManagerFactory recoveryManagerFactory = new StubbedRecoveryManagerFactory(scheduler);
         Assert.assertNotNull(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer));
         
         mockery.assertIsSatisfied();
@@ -161,7 +161,7 @@ public class ScheduledRecoveryManagerFactoryTest
     @Test(expected = RuntimeException.class)
     public void test_failed_instantiation() throws SchedulerException
     {
-        new StubbedScheduledRecoveryManagerFactory(null);
+        new StubbedRecoveryManagerFactory(null);
     }
 
 
@@ -170,17 +170,12 @@ public class ScheduledRecoveryManagerFactoryTest
      * @author Ikasan Development Team
      *
      */
-    private class StubbedScheduledRecoveryManagerFactory extends ScheduledRecoveryManagerFactory
+    private class StubbedRecoveryManagerFactory extends RecoveryManagerFactory
     {
 
-        public StubbedScheduledRecoveryManagerFactory(Scheduler scheduler)
+        public StubbedRecoveryManagerFactory(Scheduler scheduler)
         {
             super(scheduler);
-        }
-        
-        public StubbedScheduledRecoveryManagerFactory(Scheduler scheduler, ExceptionResolver exceptionResolver)
-        {
-            super(scheduler, exceptionResolver);
         }
         
         @Override

@@ -42,7 +42,6 @@ package org.ikasan.recovery;
 
 import java.util.Map;
 
-import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -61,33 +60,18 @@ public class RecoveryManagerFactory
     /** Quartz Scheduler */
     private Scheduler scheduler;
     
-    /** Exception Resolver */
-    private ExceptionResolver exceptionResolver;
-    
     /**
      * Constructor
      * @param scheduler
      * @param exceptionResolver
      */
-    public RecoveryManagerFactory(Scheduler scheduler, ExceptionResolver exceptionResolver)
+    public RecoveryManagerFactory(Scheduler scheduler)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
         {
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
-        
-        this.exceptionResolver = exceptionResolver;
-    }
-
-    /**
-     * Constructor
-     * @param flowElement
-     * @param scheduler
-     */
-    public RecoveryManagerFactory(Scheduler scheduler)
-    {
-        this(scheduler, null);
     }
 
     /**
@@ -119,7 +103,7 @@ public class RecoveryManagerFactory
      */
     protected ScheduledRecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
     {
-        return new ScheduledRecoveryManager(scheduler, flowName, moduleName, consumer, exceptionResolver);
+        return new ScheduledRecoveryManager(scheduler, flowName, moduleName, consumer);
     }
     
     /**
