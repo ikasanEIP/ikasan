@@ -45,13 +45,14 @@ import org.ikasan.consumer.quartz.ScheduledConsumerFactory;
 import org.ikasan.flow.configuration.model.Configuration;
 import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
+import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.sample.scheduleDrivenPriceSrc.component.converter.ScheduleEventConverter;
 import org.ikasan.sample.scheduleDrivenPriceSrc.component.endpoint.PayloadProducer;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -78,7 +79,7 @@ public class PriceFlowFactory
     ConfigurationManagement<Consumer<?>,Configuration> configurationManagement;
     EventFactory<FlowEvent<?,?>> flowEventFactory = new FlowEventFactory();
     ScheduledConsumerFactory scheduledConsumerFactory;
-    ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+    RecoveryManagerFactory recoveryManagerFactory;
 
     public PriceFlowFactory(String flowName, String moduleName, 
             ConfigurationService configurationService, ConfigurationManagement configurationManagement) 
@@ -89,8 +90,7 @@ public class PriceFlowFactory
         this.configurationManagement = configurationManagement;
         this.scheduledConsumerFactory  = 
             new ScheduledConsumerFactory(SchedulerFactory.getInstance().getScheduler(), flowEventFactory);
-        this.scheduledRecoveryManagerFactory  = 
-            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
     }
     
     public Flow createScheduleDrivenFlow()
@@ -108,9 +108,9 @@ public class PriceFlowFactory
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
 
         // iterator over each flow element
-        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
+        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
 
-        RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
         
         // container for the complete flow
         return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);

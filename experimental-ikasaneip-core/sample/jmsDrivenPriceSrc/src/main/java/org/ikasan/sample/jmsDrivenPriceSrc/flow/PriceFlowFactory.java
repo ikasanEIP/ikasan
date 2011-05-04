@@ -56,13 +56,14 @@ import org.ikasan.consumer.jms.GenericJmsProducer;
 import org.ikasan.consumer.jms.GenericJmsProducerConfiguration;
 import org.ikasan.flow.configuration.service.ConfigurationManagement;
 import org.ikasan.flow.configuration.service.ConfigurationService;
+import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.converter.PriceConverter;
 import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceLoggerProducer;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -110,7 +111,7 @@ public class PriceFlowFactory
 
     private EventFactory<FlowEvent<?, ?>> flowEventFactory = new FlowEventFactory();
 
-    private ScheduledRecoveryManagerFactory scheduledRecoveryManagerFactory;
+    private RecoveryManagerFactory recoveryManagerFactory;
 
     private FlowEventListener flowEventListener;
     
@@ -121,8 +122,7 @@ public class PriceFlowFactory
         this.moduleName = moduleName;
         this.configurationService = configurationService;
         this.configurationManagement = configurationManagement;
-        this.scheduledRecoveryManagerFactory = 
-            new ScheduledRecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
         this.flowEventListener = flowEventListener;
     }
 
@@ -142,10 +142,10 @@ public class PriceFlowFactory
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
 
         // iterator over each flow element
-        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker();
+        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
         flowElementInvoker.setFlowEventListener(flowEventListener);
         
-        RecoveryManager recoveryManager = scheduledRecoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
         // container for the complete flow
         return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
     }
