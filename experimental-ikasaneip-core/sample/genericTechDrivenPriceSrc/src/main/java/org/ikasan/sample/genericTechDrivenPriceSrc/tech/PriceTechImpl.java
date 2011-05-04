@@ -40,9 +40,7 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.tech;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * This tech demonstrates a stubbed price tech implementation as
@@ -56,14 +54,8 @@ public class PriceTechImpl implements Runnable
     /** registered listener on the tech */
     private PriceTechListener priceTechListener;
 
-    /** price generator */
-    private Random randomGenerator = new Random();
-    
     /** time between checking to see if delivery is active */
     private long loop = 1000;
-    
-    /** pause time between price ticks */
-    private long delay = 0;
     
     /** thread controller */
     boolean active = true;
@@ -71,14 +63,19 @@ public class PriceTechImpl implements Runnable
     /** price delivery controller */
     boolean deliver = false;
 
-    /** identifiers */
-    private List<String> identifiers = new ArrayList<String>();
+    /** marker to signify publication has executed */
+    boolean executed = false;
+
+    /** canned data to publish */
+    List<PriceTechMessage> priceTechMessages;
+    
+    public PriceTechImpl(List<PriceTechMessage> priceTechMessages)
     {
-        identifiers.add("abc");
-        identifiers.add("def");
-        identifiers.add("ghi");
-        identifiers.add("jkl");
-        identifiers.add("mno");
+        this.priceTechMessages = priceTechMessages;
+        if(priceTechMessages == null)
+        {
+            throw new IllegalArgumentException("priceTechMessages cannot be 'null'");
+        }
     }
     
     /**
@@ -90,11 +87,6 @@ public class PriceTechImpl implements Runnable
         this.priceTechListener = priceTechListener;
     }
 
-    public void setDelay(long delay)
-    {
-        this.delay = delay;
-    }
-    
     /**
      * Separate thread for invoking the registered listener with a 
      * tech data message.
@@ -105,17 +97,16 @@ public class PriceTechImpl implements Runnable
         {
             try
             {
-                while(deliver)
+                while(deliver & !executed)
                 {
-                    int selectedIdentifier = randomGenerator.nextInt(5);
-                    int bid = randomGenerator.nextInt(100);
-                    int spread = randomGenerator.nextInt(10);
-                    PriceTechMessage price = new PriceTechMessage(identifiers.get(selectedIdentifier), bid, spread);
-                    this.priceTechListener.onPrice(price);
+                    for(PriceTechMessage priceTechMessage:priceTechMessages)
+                    {
+                        this.priceTechListener.onPrice(priceTechMessage);
+                    }
                     
-                    pause(delay);
+                    executed = true;
                 }
-    
+
                 Thread.sleep(loop);
             }
             catch (InterruptedException e)
@@ -128,6 +119,7 @@ public class PriceTechImpl implements Runnable
     public void startDelivery()
     {
         this.deliver = true;
+        this.executed = false;
     }
 
     public void stopDelivery()
