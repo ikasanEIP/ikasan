@@ -55,6 +55,7 @@
 
     <modules>
        <module>genericTechDrivenPriceSrc</module>
+       <module>jmsDrivenPriceSrc</module>
        <module>scheduleDrivenPriceSrc</module>
     </modules>
 
