@@ -45,7 +45,7 @@ package org.ikasan.spec.wiretap;
  * 
  * @author Ikasan Development Team
  */
-public interface WiretapEvent<EVENT>
+public interface WiretapEvent
 {
     /**
      * Get immutable flow event identifier.
@@ -69,7 +69,7 @@ public interface WiretapEvent<EVENT>
      * Get the event within this wiretap.
      * @return EVENT event
      */
-    public EVENT getEvent();
+    public byte[] getEvent();
 
     public long getExpiry();
 }
