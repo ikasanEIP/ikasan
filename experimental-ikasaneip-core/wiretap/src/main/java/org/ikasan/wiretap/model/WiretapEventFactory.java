@@ -41,7 +41,7 @@
 package org.ikasan.wiretap.model;
 
 import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.wiretap.serialiser.WiretapSerialiser;
+import org.ikasan.spec.wiretap.WiretapSerialiser;
 
 /**
  * Implementation of the WiretapEventFactory based on the creation 
