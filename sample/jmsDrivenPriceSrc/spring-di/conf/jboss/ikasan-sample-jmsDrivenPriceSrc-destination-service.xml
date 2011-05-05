@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+    <loader-repository>
+        jboss.messaging:loader=ScopedLoaderRepository
+        <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+    </loader-repository>
+
+  <mbean code="org.jboss.jms.server.destination.TopicService"
+    name="jboss.messaging.destination:service=Topic,name=ikasan.data.sample.priceSrc"
+    xmbean-dd="xmdesc/Topic-xmbean.xml">
+      <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+      <depends>jboss.messaging:service=PostOffice</depends>
+      <attribute name="FullSize">100</attribute>
+      <attribute name="PageSize">99</attribute>
+      <attribute name="DownCacheSize">99</attribute>
+  </mbean>
+
+</server>
