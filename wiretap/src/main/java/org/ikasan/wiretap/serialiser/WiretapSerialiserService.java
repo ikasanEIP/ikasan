@@ -42,6 +42,8 @@ package org.ikasan.wiretap.serialiser;
 
 import java.util.Map;
 
+import org.ikasan.spec.wiretap.WiretapSerialiser;
+
 /**
  * Implementation of the WiretapSerialiser factory.
  * 
