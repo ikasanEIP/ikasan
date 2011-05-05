@@ -41,7 +41,7 @@
 package org.ikasan.sample.genericTechDrivenPriceSrc.serialiser;
 
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
-import org.ikasan.wiretap.serialiser.WiretapSerialiser;
+import org.ikasan.spec.wiretap.WiretapSerialiser;
 
 /**
  * Implementation of the WiretapSerialiser factory.
