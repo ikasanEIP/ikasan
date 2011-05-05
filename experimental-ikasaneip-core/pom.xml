@@ -71,7 +71,7 @@
         <module>recoveryManager</module>
 
         <!-- ikasan test harness -->
-        <!--<module>test</module>-->
+        <module>test</module>
 
         <!-- Component Implementations -->
         <module>consumer</module>
@@ -85,7 +85,7 @@
         <module>platform</module>
 
         <!-- consoles -->
-        <module>webconsole</module>
+        <!--module>webconsole</module-->
         <module>console</module>
 
         <!-- filter -->
