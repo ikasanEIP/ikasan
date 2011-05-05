@@ -86,7 +86,7 @@
 
         <!-- consoles -->
         <!--module>webconsole</module-->
-        <module>console</module>
+        <!--<module>console</module>-->
 
         <!-- filter -->
         <module>filter</module>

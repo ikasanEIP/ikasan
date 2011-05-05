@@ -47,13 +47,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.ikasan.framework.management.search.PagedSearchResult;
 import org.ikasan.framework.module.service.ModuleService;
 import org.ikasan.framework.web.command.WiretapSearchCriteria;
 import org.ikasan.framework.web.command.WiretapSearchCriteriaValidator;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;
-import org.ikasan.wiretap.model.WiretapEvent;
-import org.ikasan.wiretap.service.WiretapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -79,7 +81,7 @@ public class WiretapEventsSearchFormController
     private Logger logger = Logger.getLogger(WiretapEventsSearchFormController.class);
 
     /** The wiretap service */
-    private WiretapService wiretapService;
+    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
 
     /** The module container (effectively holds the DTO) */
     private ModuleService moduleService;
@@ -255,17 +257,17 @@ public class WiretapEventsSearchFormController
     @RequestMapping("viewPrettyPayloadContent.htm")
     public ModelAndView viewPrettyPayloadContent(@RequestParam("eventId") long eventId, HttpServletResponse response)
     {
-        this.logger.info("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
-        response.setContentType("text/xml");
-        try
-        {
-            response.getOutputStream().write(wiretapEvent.getPayloadContent().getBytes());
-        }
-        catch (IOException e)
-        {
-            this.logger.error("Could not render payload content.", e);
-        }
+//        this.logger.info("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
+//        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
+//        response.setContentType("text/xml");
+//        try
+//        {
+//            response.getOutputStream().write(wiretapEvent.getEvent().getBytes());
+//        }
+//        catch (IOException e)
+//        {
+//            this.logger.error("Could not render payload content.", e);
+//        }
         return null;
     }
 
@@ -291,12 +293,13 @@ public class WiretapEventsSearchFormController
      */
     private String displaySearchResults(ModelMap modelMap, WiretapSearchCriteria searchCriteria, int pageNo)
     {
-        modelMap.addAttribute("pageNo", pageNo);
-        PagedWiretapSearchResult pagedResult = this.wiretapService.findWiretapEvents(searchCriteria.getModules(),
-            null, searchCriteria.getComponentName(), searchCriteria.getEventId(), searchCriteria.getPayloadId(),
-            searchCriteria.getFromDateTime(), searchCriteria.getUntilDateTime(), searchCriteria.getPayloadContent(),
-            20, pageNo);
-        modelMap.addAttribute("searchResults", pagedResult);
+//        modelMap.addAttribute("pageNo", pageNo);
+//        this.wiretapService.findWiretapEvents(pageNo, 20, searchCriteria., orderAscending, moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate, payloadContent)
+//        PagedWiretapSearchResult pagedResult = this.wiretapService.findWiretapEvents(searchCriteria.getModules(),
+//            null, searchCriteria.getComponentName(), searchCriteria.getEventId(), searchCriteria.getPayloadId(),
+//            searchCriteria.getFromDateTime(), searchCriteria.getUntilDateTime(), searchCriteria.getPayloadContent(),
+//            20, pageNo);
+//        modelMap.addAttribute("searchResults", pagedResult);
         return "events/wiretapEventResults";
     }
 }
