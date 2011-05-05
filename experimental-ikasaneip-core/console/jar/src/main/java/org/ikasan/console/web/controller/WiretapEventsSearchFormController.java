@@ -52,9 +52,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ikasan.wiretap.model.WiretapEvent;
-import org.ikasan.wiretap.service.WiretapService;
 import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.console.module.Module;
 import org.ikasan.console.module.service.ModuleService;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
@@ -267,8 +267,9 @@ public class WiretapEventsSearchFormController
         if (noErrors)
         {
             Set<String> moduleNames = this.moduleService.getModuleNames(moduleIdsToSearchOn);
-            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, moduleFlow, componentName, eventId,
-                payloadId, fromDate, untilDate, payloadContent);
+// TODO - sort this mess out          
+//            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, moduleFlow, componentName, eventId,
+//                payloadId, fromDate, untilDate, payloadContent);
         }
         // Store the search parameters used
         Map<String, Object> searchParams = new HashMap<String, Object>();
@@ -321,7 +322,7 @@ public class WiretapEventsSearchFormController
     {
         this.logger.debug("inside viewEvent, wiretapEventId=[" + wiretapEventId + "]");
         WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(wiretapEventId));
-        String payloadContent = wiretapEvent.getPayloadContent();
+        String payloadContent = new String(wiretapEvent.getEvent());
         String prettyXMLContent = "";
         if (payloadContentIsXML(payloadContent))
         {
@@ -369,7 +370,7 @@ public class WiretapEventsSearchFormController
         response.setContentType("text/xml");
         try
         {
-            response.getOutputStream().write(wiretapEvent.getPayloadContent().getBytes());
+            response.getOutputStream().write(wiretapEvent.getEvent());
         }
         catch (IOException e)
         {
@@ -424,13 +425,13 @@ public class WiretapEventsSearchFormController
     {
         this.logger.debug("inside downloadPayloadContent, wiretapEventId=[" + wiretapEventId + "]");
         WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(wiretapEventId));
-        String outgoingFileName = wiretapEvent.getEventId();
+        String outgoingFileName = String.valueOf(wiretapEvent.getIdentifier());
         response.setContentType("application/download");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + outgoingFileName + "\"");
         try
         {
             ServletOutputStream op = response.getOutputStream();
-            op.write(wiretapEvent.getPayloadContent().getBytes());
+            op.write(wiretapEvent.getEvent());
             op.flush();
         }
         catch (IOException e)
