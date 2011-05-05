@@ -41,6 +41,7 @@
 package org.ikasan.wiretap.model;
 
 import org.ikasan.spec.wiretap.WiretapEvent;
+import org.ikasan.wiretap.serialiser.WiretapSerialiser;
 
 /**
  * Implementation of the WiretapEventFactory based on the creation 
@@ -51,15 +52,30 @@ import org.ikasan.spec.wiretap.WiretapEvent;
  */
 public class WiretapEventFactory
 {
+    private WiretapSerialiser serialiser;
+    
+    /**
+     * Constructor
+     * @param serialiser
+     */
+    public WiretapEventFactory(WiretapSerialiser serialiser)
+    {
+        this.serialiser = serialiser;
+        if(serialiser == null)
+        {
+            throw new IllegalArgumentException("serialiser cannot be 'null'");
+        }
+    }
+    
     /**
      * Factory method to create a new FlowEvent instance.
      * @param immutable identifier
      * @param mutable payload
      */
-    public <RUNTIMEEVENT> WiretapEvent<RUNTIMEEVENT> newEvent(final String moduleName, final String flowName, final String componentName,
-            final RUNTIMEEVENT event, final long expiry)
+    public <T> WiretapEvent newEvent(final String moduleName, final String flowName, final String componentName,
+            final T event, final long expiry)
     {
-        return new GenericWiretapEvent<RUNTIMEEVENT>(moduleName, flowName, componentName, event, expiry);
+        return new GenericWiretapEvent(moduleName, flowName, componentName, serialiser.serialise(event), expiry);
     }
 
 	/**
@@ -68,7 +84,7 @@ public class WiretapEventFactory
 	 * @author Ikasan Development Team
 	 *
 	 */
-	private class GenericWiretapEvent<RUNTIMEEVENT> implements WiretapEvent<RUNTIMEEVENT>
+	private class GenericWiretapEvent implements WiretapEvent
 	{
 		/** immutable identifier */
 		private long identifier;
@@ -86,7 +102,7 @@ public class WiretapEventFactory
         private String componentName;
 
 	    /** tapped event */
-	    private RUNTIMEEVENT event;
+	    private byte[] event;
 
 	    /** expiry time in millis */
 	    private long expiry;
@@ -96,7 +112,7 @@ public class WiretapEventFactory
          * @param identifier2
          */
         protected GenericWiretapEvent(final String moduleName, final String flowName, final String componentName,
-                final RUNTIMEEVENT event, final Long expiry)
+                final byte[] event, final Long expiry)
         {
             this.moduleName = moduleName;
             this.flowName = flowName;
@@ -131,7 +147,7 @@ public class WiretapEventFactory
             return componentName;
         }
 
-        public RUNTIMEEVENT getEvent()
+        public byte[] getEvent()
         {
             return event;
         }
