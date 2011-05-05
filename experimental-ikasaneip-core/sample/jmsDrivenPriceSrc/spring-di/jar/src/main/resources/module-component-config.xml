@@ -29,7 +29,7 @@
         </property>
     </bean>
 
-    <bean id="priceToStringConverter" class="org.ikasan.sample.genericTechDrivenPriceSrc.component.converter.PriceConverter" />
+    <bean id="priceToStringConverter" class="org.ikasan.sample.jmsDrivenPriceSrc.component.converter.PriceConverter" />
 
     <bean id="priceProducer" class="org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceLoggerProducer" />
 
