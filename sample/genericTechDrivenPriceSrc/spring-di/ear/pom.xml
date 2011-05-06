@@ -103,6 +103,16 @@
             <bundleDir>lib</bundleDir>
         </jarModule>
         <jarModule>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <bundleDir>lib</bundleDir>
+        </jarModule>
+        <jarModule>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <bundleDir>lib</bundleDir>
+        </jarModule>
+        <jarModule>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
             <bundleDir>lib</bundleDir>
@@ -538,6 +548,13 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>1.5.11</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.objenesis</groupId>
+        <artifactId>objenesis</artifactId>
+        <version>1.2</version>
         <scope>provided</scope>
     </dependency>
 
