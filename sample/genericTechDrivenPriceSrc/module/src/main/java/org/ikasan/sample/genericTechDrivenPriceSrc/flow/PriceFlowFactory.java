@@ -55,7 +55,7 @@ import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
