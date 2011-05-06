@@ -44,8 +44,9 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.flow.configuration.model.Configuration;
 import org.ikasan.flow.configuration.model.ConfigurationParameter;
+import org.ikasan.spec.configuration.model.Configuration;
+import org.ikasan.spec.configuration.dao.ConfigurationDao;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
@@ -55,7 +56,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  * @author Ikasan Development Team
  */
 public class ConfigurationHibernateImpl extends HibernateDaoSupport 
-    implements ConfigurationDao
+    implements ConfigurationDao<List<ConfigurationParameter>>
 {
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
@@ -77,7 +78,7 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#saveConfiguration(org.ikasan.framework.configuration.model.Configuration)
      */
-    public void save(Configuration configuration)
+    public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
         // work-around for Sybase issue where it converts empty strings to single spaces.
         // See http://open.jira.com/browse/IKASAN-520
@@ -87,7 +88,7 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         {
             configuration.setDescription(null);
         }
-        for(ConfigurationParameter configurationParameter:configuration.getConfigurationParameters())
+        for(ConfigurationParameter configurationParameter:configuration.getParameters())
         {
             if("".equals(configurationParameter.getValue()))
             {
@@ -106,9 +107,8 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
      */
-    public void delete(Configuration configuration)
+    public void delete(Configuration<List<ConfigurationParameter>> configuration)
     {
         getHibernateTemplate().delete(configuration);
     }
-
 }

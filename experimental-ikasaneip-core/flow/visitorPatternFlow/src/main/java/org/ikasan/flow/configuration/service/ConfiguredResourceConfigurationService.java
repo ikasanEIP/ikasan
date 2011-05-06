@@ -48,11 +48,14 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
+import org.ikasan.spec.configuration.model.Configuration;
 import org.ikasan.spec.configuration.ConfigurationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.model.Configuration;
+import org.ikasan.spec.configuration.service.ConfigurationManagement;
+import org.ikasan.spec.configuration.service.ConfigurationService;
+import org.ikasan.spec.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.model.ConfigurationParameter;
+import org.ikasan.flow.configuration.model.DefaultConfiguration;
 
 /**
  * Implementation of the Configuration Service based on a ConfiguredResource.
@@ -68,10 +71,10 @@ public class ConfiguredResourceConfigurationService
     private static Logger logger = Logger.getLogger(ConfiguredResourceConfigurationService.class);
 
     /** configuration DAO used for accessing the configuration outside a transaction */
-    private ConfigurationDao staticConfigurationDao;
+    private ConfigurationDao<List<ConfigurationParameter>> staticConfigurationDao;
     
     /** configuration DAO used for accessing the configuration transactionally at runtime */
-    private ConfigurationDao dynamicConfigurationDao;
+    private ConfigurationDao<List<ConfigurationParameter>> dynamicConfigurationDao;
     
     /**
      * Constructor
@@ -98,7 +101,7 @@ public class ConfiguredResourceConfigurationService
      */
     public void configure(ConfiguredResource configuredResource)
     {
-        Configuration configuration = this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
+        Configuration<List<ConfigurationParameter>> configuration = this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
         if(configuration == null)
         {
             throw new ConfigurationException("Failed to configure configuredResource [" 
@@ -111,7 +114,7 @@ public class ConfiguredResourceConfigurationService
         {
             try
             {
-                for(ConfigurationParameter configurationParameter:configuration.getConfigurationParameters())
+                for(ConfigurationParameter configurationParameter:configuration.getParameters())
                 {
                     BeanUtils.setProperty(configurationObject, configurationParameter.getName(), configurationParameter.getValue());
                 }
@@ -154,9 +157,10 @@ public class ConfiguredResourceConfigurationService
                     + "] returned a 'null' configuration instance. ");
         }
         
-        Configuration configuration = new Configuration(configuredResource.getConfiguredResourceId());
-        List<ConfigurationParameter> configurationParameters = new ArrayList<ConfigurationParameter>();
-        configuration.setConfigurationParameters(configurationParameters);
+        Configuration<List<ConfigurationParameter>> configuration = 
+            new DefaultConfiguration(configuredResource.getConfiguredResourceId(), new ArrayList<ConfigurationParameter>());
+//        List<ConfigurationParameter> configurationParameters = new ArrayList<ConfigurationParameter>();
+//        configuration.setParameters(configurationParameters);
 
         try
         {
@@ -170,7 +174,7 @@ public class ConfiguredResourceConfigurationService
                 // TODO - is there a cleaner way of ignoring the class property ?
                 if(!"class".equals(name))
                 {
-                    configurationParameters.add(new ConfigurationParameter(name, value));
+                    configuration.getParameters().add(new ConfigurationParameter(name, value));
                 }
              }
         }
@@ -189,8 +193,8 @@ public class ConfiguredResourceConfigurationService
     {
         boolean configurationUpdated = false;
         Object runtimeConfiguration = configuredResource.getConfiguration();
-        Configuration configuration = this.dynamicConfigurationDao.findById(configuredResource.getConfiguredResourceId());
-        for(ConfigurationParameter configurationParameter:configuration.getConfigurationParameters())
+        Configuration<List<ConfigurationParameter>> configuration = this.dynamicConfigurationDao.findById(configuredResource.getConfiguredResourceId());
+        for(ConfigurationParameter configurationParameter:configuration.getParameters())
         {
             String runtimeParameterValue;
             try
