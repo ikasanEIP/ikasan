@@ -18,7 +18,7 @@
     </bean>
 
     <bean id="recoveryManagerFactory"
-        class="org.ikasan.recovery.ScheduledRecoveryManagerFactory">
+        class="org.ikasan.recovery.RecoveryManagerFactory">
         <!-- The scheduler -->
         <constructor-arg>
             <bean class="org.quartz.impl.StdSchedulerFactory" factory-method="getDefaultScheduler" />
