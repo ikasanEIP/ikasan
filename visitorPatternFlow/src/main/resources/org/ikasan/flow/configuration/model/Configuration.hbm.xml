@@ -50,17 +50,17 @@
 
 <hibernate-mapping>
 
-	<class name="org.ikasan.flow.configuration.model.Configuration"
+	<class name="org.ikasan.flow.configuration.model.DefaultConfiguration"
 		table="Configuration">
 
-        <id name="configurationId" type="java.lang.String" column="ConfigurationId">
+        <id name="id" type="java.lang.String" column="ConfigurationId">
             <generator class="assigned" />
         </id>
 
         <property name="description"    type="java.lang.String" 
                   column="Description"  not-null="false" />
 
-        <list name="configurationParameters" cascade="all" inverse="false" lazy="false" table="ConfigurationParameter" >
+        <list name="parameters" cascade="all" inverse="false" lazy="false" table="ConfigurationParameter" >
             <key column="ConfigurationIdentifier" not-null="true"/>
             <list-index column="PositionRef"/>
             <composite-element class="org.ikasan.flow.configuration.model.ConfigurationParameter">

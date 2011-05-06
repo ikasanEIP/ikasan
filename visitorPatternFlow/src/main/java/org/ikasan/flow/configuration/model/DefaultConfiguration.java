@@ -62,16 +62,16 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
     protected String description;
     
     /** configuration parameters within this configuration */
-    protected List<ConfigurationParameter> configurationParameters;
+    protected List<ConfigurationParameter> parameters;
     
     /**
      * Constructor
      * @param configurationId
      * @param configurationParameters
      */
-    public DefaultConfiguration(String configurationId)
+    public DefaultConfiguration(String id)
     {
-        this(configurationId, null, new ArrayList<ConfigurationParameter>());
+        this(id, null, new ArrayList<ConfigurationParameter>());
     }
 
     /**
@@ -79,9 +79,9 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
      * @param configurationId
      * @param configurationParameters
      */
-    public DefaultConfiguration(String configurationId, List<ConfigurationParameter> configurationParameters)
+    public DefaultConfiguration(String id, List<ConfigurationParameter> parameters)
     {
-        this(configurationId, null, configurationParameters);
+        this(id, null, parameters);
     }
 
     /**
@@ -90,7 +90,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
      * @param description
      * @param configurationParameters
      */
-    public DefaultConfiguration(String configurationId, String description, List<ConfigurationParameter> configurationParameters)
+    public DefaultConfiguration(String id, String description, List<ConfigurationParameter> parameters)
     {
         this.id = id;
         if(id == null)
@@ -100,10 +100,10 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
         
         this.description = description;
         
-        this.configurationParameters = configurationParameters;
-        if(configurationParameters == null)
+        this.parameters = parameters;
+        if(parameters == null)
         {
-            throw new IllegalArgumentException("configurationParameters cannot be 'null'");
+            throw new IllegalArgumentException("parameters cannot be 'null'");
         }
     }
 
@@ -127,12 +127,12 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
 
     public List<ConfigurationParameter> getParameters()
     {
-        return configurationParameters;
+        return parameters;
     }
 
-    public void setParameters(List<ConfigurationParameter> configurationParameters)
+    public void setParameters(List<ConfigurationParameter> parameters)
     {
-        this.configurationParameters = configurationParameters;
+        this.parameters = parameters;
     }
 
     public String getDescription()
@@ -169,8 +169,8 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
         DefaultConfiguration configuration = (DefaultConfiguration) object;
         if(this.id.equals(configuration.getId()) &&
            equalsOrNull(this.description, configuration.getDescription()) &&
-           this.configurationParameters.size() == configuration.getParameters().size() &&
-           this.configurationParameters.containsAll(configuration.getParameters()))
+           this.parameters.size() == configuration.getParameters().size() &&
+           this.parameters.containsAll(configuration.getParameters()))
         {
             return true;
         }
@@ -210,7 +210,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
         int hash = 1;
         hash = hash * 31 + this.id.hashCode();
         hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
-        for(ConfigurationParameter configurationParameter:this.configurationParameters)
+        for(ConfigurationParameter configurationParameter:this.parameters)
         {
             hash = hash * 31 + (configurationParameter == null ? 0 : configurationParameter.hashCode());
         }
