@@ -40,7 +40,6 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.flow;
 
-import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
@@ -56,6 +55,7 @@ import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.configuration.service.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
