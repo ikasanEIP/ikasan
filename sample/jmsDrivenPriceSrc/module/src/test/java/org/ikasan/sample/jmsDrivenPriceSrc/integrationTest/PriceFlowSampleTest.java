@@ -46,8 +46,6 @@ import javax.jms.Message;
 
 import org.ikasan.consumer.jms.GenericJmsConsumerConfiguration;
 import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.service.ConfigurationManagement;
-import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.recovery.RecoveryManagerFactory;
@@ -55,6 +53,8 @@ import org.ikasan.sample.jmsDrivenPriceSrc.flow.PriceFlowFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.trigger.dao.TriggerDao;

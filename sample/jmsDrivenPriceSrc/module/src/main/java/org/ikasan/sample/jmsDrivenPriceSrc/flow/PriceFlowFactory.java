@@ -54,8 +54,6 @@ import org.ikasan.consumer.jms.GenericJmsConsumer;
 import org.ikasan.consumer.jms.GenericJmsConsumerConfiguration;
 import org.ikasan.consumer.jms.GenericJmsProducer;
 import org.ikasan.consumer.jms.GenericJmsProducerConfiguration;
-import org.ikasan.flow.configuration.service.ConfigurationManagement;
-import org.ikasan.flow.configuration.service.ConfigurationService;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
@@ -69,6 +67,7 @@ import org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceLoggerProduce
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
@@ -77,6 +76,7 @@ import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.configuration.ConfigurationService;
 
 /**
  * 

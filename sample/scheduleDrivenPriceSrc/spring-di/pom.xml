@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-sample-jmsDrivenPriceSrc-app-parent</artifactId>
+    <artifactId>ikasan-sample-scheduleDrivenPriceSrc-app-parent</artifactId>
     <version>0.9.0-EXPERIMENT</version>
     <packaging>pom</packaging>
 
