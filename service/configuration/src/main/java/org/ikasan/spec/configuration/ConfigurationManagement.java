@@ -38,37 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration.model;
+package org.ikasan.spec.configuration;
 
 /**
- * Configuration data model supporting the runtime attributes 
- * of any resource marked as a ConfiguredResource.
+ * ConfigurationService defines the operational contract of any configuration
+ * service in Ikasan.
  * 
  * @author Ikasan Development Team
  */
-public interface Configuration<CONFIGURATION_PARAMS>
+public interface ConfigurationManagement<RESOURCE,MODEL>
 {
     /**
-     * Each configuration must have a unique immutable identifier
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
      * @return
      */
-    public String getId();
+    public MODEL getConfiguration(RESOURCE configuredResource);
 
     /**
-     * A configuration has collections of parameters
+     * Create a configuration instance for the given configured resource.
+     * @param configuredResource
      * @return
      */
-    public CONFIGURATION_PARAMS getParameters();
+    public MODEL createConfiguration(RESOURCE configuredResource);
 
     /**
-     * Description of the configuration
-     * @return
+     * Save the given configuration.
+     * @param configuredResource
      */
-    public String getDescription();
+    public void saveConfiguration(MODEL configuration);
 
     /**
-     * Description of the configuration
-     * @param description
+     * Delete the given configuration.
+     * @param configuredResource
      */
-    public void setDescription(String description);
+    public void deleteConfiguration(MODEL configuration);
 }

@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration.service;
+package org.ikasan.spec.configuration;
 
 /**
  * ConfigurationService defines the operational contract of any configuration
