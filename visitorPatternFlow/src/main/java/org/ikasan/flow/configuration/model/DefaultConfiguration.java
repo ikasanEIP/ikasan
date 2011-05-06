@@ -44,6 +44,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ikasan.spec.configuration.model.Configuration;
+
 /**
  * Configuration data model supporting the runtime attributes 
  * of any resource marked as a ConfiguredResource.
@@ -51,10 +53,10 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("serial")
-public class Configuration implements Serializable
+public class DefaultConfiguration implements Configuration<List<ConfigurationParameter>>, Serializable
 {
     /** runtime configuration identifier */
-    protected String configurationId;
+    protected String id;
     
     /** runtime configuration description */
     protected String description;
@@ -67,7 +69,7 @@ public class Configuration implements Serializable
      * @param configurationId
      * @param configurationParameters
      */
-    public Configuration(String configurationId)
+    public DefaultConfiguration(String configurationId)
     {
         this(configurationId, null, new ArrayList<ConfigurationParameter>());
     }
@@ -77,7 +79,7 @@ public class Configuration implements Serializable
      * @param configurationId
      * @param configurationParameters
      */
-    public Configuration(String configurationId, List<ConfigurationParameter> configurationParameters)
+    public DefaultConfiguration(String configurationId, List<ConfigurationParameter> configurationParameters)
     {
         this(configurationId, null, configurationParameters);
     }
@@ -88,12 +90,12 @@ public class Configuration implements Serializable
      * @param description
      * @param configurationParameters
      */
-    public Configuration(String configurationId, String description, List<ConfigurationParameter> configurationParameters)
+    public DefaultConfiguration(String configurationId, String description, List<ConfigurationParameter> configurationParameters)
     {
-        this.configurationId = configurationId;
-        if(configurationId == null)
+        this.id = id;
+        if(id == null)
         {
-            throw new IllegalArgumentException("configurationId cannot be 'null'");
+            throw new IllegalArgumentException("id cannot be 'null'");
         }
         
         this.description = description;
@@ -108,27 +110,27 @@ public class Configuration implements Serializable
     /**
      * Constructor
      */
-    protected Configuration()
+    protected DefaultConfiguration()
     {
         // required by ORM
     }
 
-    protected void setConfigurationId(String configurationId)
+    protected void setId(String id)
     {
-        this.configurationId = configurationId;
+        this.id = id;
     }
 
-    public String getConfigurationId()
+    public String getId()
     {
-        return configurationId;
+        return id;
     }
 
-    public List<ConfigurationParameter> getConfigurationParameters()
+    public List<ConfigurationParameter> getParameters()
     {
         return configurationParameters;
     }
 
-    public void setConfigurationParameters(List<ConfigurationParameter> configurationParameters)
+    public void setParameters(List<ConfigurationParameter> configurationParameters)
     {
         this.configurationParameters = configurationParameters;
     }
@@ -158,17 +160,17 @@ public class Configuration implements Serializable
         }
 
         // is an instanceof
-        if(object == null || !(object instanceof Configuration))
+        if(object == null || !(object instanceof DefaultConfiguration))
         {
             return false;
         }
 
         // is same object type
-        Configuration configuration = (Configuration) object;
-        if(this.configurationId.equals(configuration.configurationId) &&
-           equalsOrNull(this.description, configuration.description) &&
-           this.configurationParameters.size() == configuration.configurationParameters.size() &&
-           this.configurationParameters.containsAll(configuration.configurationParameters))
+        DefaultConfiguration configuration = (DefaultConfiguration) object;
+        if(this.id.equals(configuration.getId()) &&
+           equalsOrNull(this.description, configuration.getDescription()) &&
+           this.configurationParameters.size() == configuration.getParameters().size() &&
+           this.configurationParameters.containsAll(configuration.getParameters()))
         {
             return true;
         }
@@ -206,7 +208,7 @@ public class Configuration implements Serializable
     public int hashCode()
     {
         int hash = 1;
-        hash = hash * 31 + this.configurationId.hashCode();
+        hash = hash * 31 + this.id.hashCode();
         hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
         for(ConfigurationParameter configurationParameter:this.configurationParameters)
         {
