@@ -40,6 +40,7 @@
  */
 package org.ikasan.sample.genericTechDrivenPriceSrc.tech;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,7 +69,20 @@ public class PriceTechImpl implements Runnable
 
     /** canned data to publish */
     List<PriceTechMessage> priceTechMessages;
-    
+
+    /**
+     * Constructor with default canned data
+     */
+    public PriceTechImpl()
+    {
+        this.priceTechMessages = new ArrayList<PriceTechMessage>();
+        this.priceTechMessages.add(new PriceTechMessage("sample", 10, 10));
+    }
+
+    /**
+     * Constructor
+     * @param priceTechMessages
+     */
     public PriceTechImpl(List<PriceTechMessage> priceTechMessages)
     {
         this.priceTechMessages = priceTechMessages;
