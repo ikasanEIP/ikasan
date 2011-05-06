@@ -74,6 +74,11 @@
         </jarModule>
         <jarModule>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-wiretap</artifactId>
+            <bundleDir>lib</bundleDir>
+        </jarModule>
+        <jarModule>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-event</artifactId>
             <bundleDir>lib</bundleDir>
         </jarModule>
@@ -377,6 +382,12 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-wiretap</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-sample-genericTechDrivenPriceSrc</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
@@ -505,7 +516,7 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-            <version>1.7.3</version>
+            <version>1.8.5</version>
             <scope>provided</scope>
         </dependency>
 
