@@ -58,10 +58,10 @@ public class WiretapSerialiserService<SOURCE> implements WiretapSerialiser<SOURC
     {
         this.serialisers = serialisers;
     }
-    
+
     public byte[] serialise(SOURCE source)
     {
-        WiretapSerialiser serialiser = serialisers.get(source.getClass());
+        WiretapSerialiser serialiser = this.serialisers.get(source.getClass());
         if(serialiser == null)
         {
             return null;    // TODO - is this the best option ?

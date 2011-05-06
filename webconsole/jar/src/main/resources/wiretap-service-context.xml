@@ -65,6 +65,19 @@
 		class="org.ikasan.wiretap.service.WiretapServiceImpl">
 		<constructor-arg ref="wiretapDao" />
 		<constructor-arg ref="moduleService" />
+		<constructor-arg>
+		    <!-- wiretap factory -->
+		    <bean class="org.ikasan.wiretap.model.WiretapEventFactory">
+		        <!-- serializer -->
+		        <constructor-arg>
+		          <bean class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+                      <constructor-arg>
+                          <bean class="java.util.HashMap" />
+                      </constructor-arg>
+		          </bean>
+		        </constructor-arg>
+		    </bean>
+		</constructor-arg>
 	</bean>
 	
 	<bean id="wiretapDao"
