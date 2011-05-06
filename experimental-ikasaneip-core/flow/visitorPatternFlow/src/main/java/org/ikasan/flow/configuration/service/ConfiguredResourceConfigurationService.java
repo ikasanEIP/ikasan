@@ -48,12 +48,12 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
-import org.ikasan.spec.configuration.model.Configuration;
+import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationException;
+import org.ikasan.spec.configuration.ConfigurationManagement;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.service.ConfigurationManagement;
-import org.ikasan.spec.configuration.service.ConfigurationService;
-import org.ikasan.spec.configuration.dao.ConfigurationDao;
+import org.ikasan.flow.configuration.dao.ConfigurationDao;
 import org.ikasan.flow.configuration.model.ConfigurationParameter;
 import org.ikasan.flow.configuration.model.DefaultConfiguration;
 

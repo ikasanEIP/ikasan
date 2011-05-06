@@ -45,8 +45,7 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.flow.configuration.model.ConfigurationParameter;
-import org.ikasan.spec.configuration.model.Configuration;
-import org.ikasan.spec.configuration.dao.ConfigurationDao;
+import org.ikasan.spec.configuration.Configuration;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**

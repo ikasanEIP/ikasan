@@ -44,7 +44,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.spec.configuration.model.Configuration;
+import org.ikasan.spec.configuration.Configuration;
 
 /**
  * Configuration data model supporting the runtime attributes 
