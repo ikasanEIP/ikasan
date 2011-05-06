@@ -17,13 +17,5 @@
         <property name="flowEventListener" ref="wiretapFlowEventListener" />
     </bean>
 
-    <bean id="recoveryManagerFactory"
-        class="org.ikasan.recovery.ScheduledRecoveryManagerFactory">
-        <!-- The scheduler -->
-        <constructor-arg>
-            <bean class="org.quartz.impl.StdSchedulerFactory" factory-method="getDefaultScheduler" />
-        </constructor-arg>
-    </bean>
-
     <bean id="flowEventFactory" class="org.ikasan.flow.event.FlowEventFactory" />
 </beans>

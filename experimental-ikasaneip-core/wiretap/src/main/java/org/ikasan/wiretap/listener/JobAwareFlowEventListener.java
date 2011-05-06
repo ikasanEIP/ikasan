@@ -145,7 +145,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
      */
     public void addDynamicTrigger(Trigger trigger)
     {
-        triggerDao.save(trigger);
+        this.triggerDao.save(trigger);
         mapTrigger(trigger);
     }
 
@@ -158,11 +158,11 @@ public class JobAwareFlowEventListener implements FlowEventListener
     private void mapTrigger(Trigger trigger)
     {
         String key = generateKey(trigger);
-        List<Trigger> list = triggers.get(key);
+        List<Trigger> list = this.triggers.get(key);
         if (list == null)
         {
             list = new ArrayList<Trigger>();
-            triggers.put(key, list);
+            this.triggers.put(key, list);
         }
         list.add(trigger);
     }
@@ -196,7 +196,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
     {
         String flowElementName = flowElement.getComponentName();
         String key = moduleName + flowName + TriggerRelationship.BEFORE.getDescription() + flowElementName;
-        List<Trigger> beforeElementTriggers = triggers.get(key);
+        List<Trigger> beforeElementTriggers = this.triggers.get(key);
         if(beforeElementTriggers != null && beforeElementTriggers.size() > 0)
         {
             fireTriggers(moduleName, flowName, event, beforeElementTriggers, BEFORE_LOCATION_PREFIX + " " + flowElementName);
@@ -216,7 +216,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
     {
         String flowElementName = flowElement.getComponentName();
         String key = moduleName + flowName + TriggerRelationship.AFTER.getDescription() + flowElementName;
-        List<Trigger> afterElementTriggers = triggers.get(key);
+        List<Trigger> afterElementTriggers = this.triggers.get(key);
         if(afterElementTriggers != null && afterElementTriggers.size() > 0)
         {
             fireTriggers(moduleName, flowName, event, afterElementTriggers, AFTER_LOCATION_PREFIX + " " + flowElementName);
@@ -238,7 +238,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
         for (Trigger associatedTrigger : associatedTriggers)
         {
             String jobName = associatedTrigger.getJobName();
-            FlowEventJob flowEventAgent = flowEventJobs.get(jobName);
+            FlowEventJob flowEventAgent = this.flowEventJobs.get(jobName);
             if (flowEventAgent == null)
             {
                 logger.warn("unknown job [" + jobName + "]");
@@ -264,7 +264,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
     {
         List<Trigger> result = new ArrayList<Trigger>();
         String key = moduleName + flowName + relationship.getDescription() + flowElementName;
-        List<Trigger> mappedTriggers = triggers.get(key);
+        List<Trigger> mappedTriggers = this.triggers.get(key);
         if (mappedTriggers != null)
         {
             result.addAll(mappedTriggers);
@@ -282,7 +282,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
      */
     public void deleteDynamicTrigger(Long triggerId)
     {
-        Trigger trigger = triggerDao.findById(triggerId);
+        Trigger trigger = this.triggerDao.findById(triggerId);
         if (trigger == null)
         {
             logger.warn("could not find trigger with id [" + triggerId + "]");
@@ -290,7 +290,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
         else
         {
             unmapTrigger(trigger);
-            triggerDao.delete(trigger);
+            this.triggerDao.delete(trigger);
         }
     }
 
@@ -302,7 +302,7 @@ public class JobAwareFlowEventListener implements FlowEventListener
     private void unmapTrigger(Trigger trigger)
     {
         String key = generateKey(trigger);
-        List<Trigger> list = triggers.get(key);
+        List<Trigger> list = this.triggers.get(key);
         if (list != null)
         {
             Trigger mappedTriggerToDelete = null;
@@ -327,6 +327,6 @@ public class JobAwareFlowEventListener implements FlowEventListener
      */
     public Map<String, FlowEventJob> getRegisteredJobs()
     {
-        return new HashMap<String, FlowEventJob>(flowEventJobs);
+        return new HashMap<String, FlowEventJob>(this.flowEventJobs);
     }
 }
