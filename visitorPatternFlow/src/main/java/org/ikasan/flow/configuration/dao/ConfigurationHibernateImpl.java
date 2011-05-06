@@ -63,7 +63,7 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
     public Configuration findById(String configurationId)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
-        criteria.add(Restrictions.eq("configurationId", configurationId));
+        criteria.add(Restrictions.eq("id", configurationId));
 
         List<Configuration> configuration = getHibernateTemplate().findByCriteria(criteria);
         if(configuration == null || configuration.size() == 0)
