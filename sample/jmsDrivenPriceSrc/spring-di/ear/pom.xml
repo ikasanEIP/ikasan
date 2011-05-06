@@ -33,7 +33,7 @@
             <webModule>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-sample-jmsDrivenPriceSrc-app-war</artifactId>
-                <contextRoot>/ikky9-sampleApp</contextRoot>
+                <contextRoot>/ikasan-sample-jmsDrivenPriceSrc</contextRoot>
             </webModule>
 
             <!-- libraries -->
