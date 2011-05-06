@@ -168,14 +168,14 @@
             <version>3.11.0.GA</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- required for unit tests -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
             <version>0.9.0-EXPERIMENT</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
+
+        <!-- required for unit tests -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
