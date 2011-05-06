@@ -38,35 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.configuration.dao;
-
-import org.ikasan.spec.configuration.model.Configuration;
+package org.ikasan.spec.configuration;
 
 /**
- * Configuration DAO interface defining the operations for interacting with
- * a runtime configuration.
- *
+ * Configuration data model supporting the runtime attributes 
+ * of any resource marked as a ConfiguredResource.
+ * 
  * @author Ikasan Development Team
  */
-public interface ConfigurationDao<CONFIGURATION_PARAMS>
+public interface Configuration<CONFIGURATION_PARAMS>
 {
     /**
-     * Find and return the configuration entry instance for this configurationId.
-     * If not found then 'null' is returned.
-     * @param configurationId
-     * @return Configuration
+     * Each configuration must have a unique immutable identifier
+     * @return
      */
-    public Configuration<CONFIGURATION_PARAMS> findById(String id);
+    public String getId();
 
     /**
-     * Create/update a configuration entry.
-     * @param Configuration
+     * A configuration has collections of parameters
+     * @return
      */
-    public void save(Configuration<CONFIGURATION_PARAMS> configuration);
+    public CONFIGURATION_PARAMS getParameters();
 
     /**
-     * Delete a configuration entry.
-     * @param Configuration
+     * Description of the configuration
+     * @return
      */
-    public void delete(Configuration<CONFIGURATION_PARAMS> configuration);
+    public String getDescription();
+
+    /**
+     * Description of the configuration
+     * @param description
+     */
+    public void setDescription(String description);
 }
