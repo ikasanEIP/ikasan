@@ -137,7 +137,13 @@
       <version>2.0.5.RELEASE</version>
       <scope>provided</scope>
     </dependency>
-
+        <!-- trial a cloning library -->        
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.7.1</version>
+            <scope>provided</scope>
+        </dependency>
   </dependencies>
 
 </project>

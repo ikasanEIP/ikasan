@@ -77,9 +77,6 @@ import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.ikasan.trigger.dao.HibernateTriggerDao;
-import org.ikasan.trigger.dao.TriggerDao;
-import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 
 /**
  * 

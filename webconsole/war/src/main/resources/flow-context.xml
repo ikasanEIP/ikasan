@@ -6,7 +6,14 @@
 
     <bean id="flowElementInvoker"
         class="org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker">
-        <!-- implementation specific. What if another FlowEventListener impl is to be used? -->
+        <constructor-arg>
+            <bean class="org.ikasan.flow.event.ClonerReplicationFactory">
+                <constructor-arg>
+                    <bean class="com.rits.cloning.Cloner" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <!-- Implementation specific. What if another FlowEventListener impl is to be used? -->
         <property name="flowEventListener" ref="wiretapFlowEventListener" />
     </bean>
 

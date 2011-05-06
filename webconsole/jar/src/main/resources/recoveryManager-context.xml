@@ -4,9 +4,6 @@
     xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="flowElementInvoker"
-        class="org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker" />
-    
     <bean id="recoveryManagerFactory"
         class="org.ikasan.recovery.ScheduledRecoveryManagerFactory">
         <!-- The scheduler -->
