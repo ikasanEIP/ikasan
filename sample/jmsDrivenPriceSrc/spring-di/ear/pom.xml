@@ -257,6 +257,11 @@
                 <artifactId>cloning</artifactId>
                 <bundleDir>lib</bundleDir>
             </jarModule>
+            <jarModule>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <bundleDir>lib</bundleDir>
+            </jarModule>
           </modules>
         </configuration>
       </plugin>
@@ -566,6 +571,12 @@
         <version>1.7.1</version>
         <scope>provided</scope>
     </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
   </dependencies>
 
 </project>
