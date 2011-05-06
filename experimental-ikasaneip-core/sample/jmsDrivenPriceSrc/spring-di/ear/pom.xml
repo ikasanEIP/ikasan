@@ -252,6 +252,11 @@
                 <artifactId>hamcrest-all</artifactId>
                 <bundleDir>lib</bundleDir>
             </jarModule>
+            <jarModule>
+                <groupId>uk.com.robust-it</groupId>
+                <artifactId>cloning</artifactId>
+                <bundleDir>lib</bundleDir>
+            </jarModule>
           </modules>
         </configuration>
       </plugin>
@@ -554,7 +559,13 @@
         <version>3.11.0.GA</version>
         <scope>provided</scope>
     </dependency>
-
+    <!-- trial a cloning library -->        
+    <dependency>
+        <groupId>uk.com.robust-it</groupId>
+        <artifactId>cloning</artifactId>
+        <version>1.7.1</version>
+        <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 </project>

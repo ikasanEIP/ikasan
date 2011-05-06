@@ -109,7 +109,7 @@
         </jarModule>
         <jarModule>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-sample-genericDrivenTechPriceSrc</artifactId>
+            <artifactId>ikasan-sample-genericTechDrivenPriceSrc</artifactId>
             <bundleDir>lib</bundleDir>
         </jarModule>
         <jarModule>
@@ -377,7 +377,7 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-sample-genericDrivenTechPriceSrc</artifactId>
+            <artifactId>ikasan-sample-genericTechDrivenPriceSrc</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>
