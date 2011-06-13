@@ -57,6 +57,7 @@
        <module>component</module>
        <module>event</module>
        <module>flow</module>
+       <module>module</module>
        <module>recoveryManager</module>
        <module>monitor</module>
        <module>service</module>
