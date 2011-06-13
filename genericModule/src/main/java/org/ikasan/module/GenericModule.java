@@ -53,7 +53,7 @@ import org.ikasan.spec.module.Module;
  * 
  * @author Ikasan Development Team
  */
-public class GenericModule implements Module
+public class GenericModule implements Module<Flow>
 {
     /** Initiators of flows within this module */
     private List<Flow> flows;
