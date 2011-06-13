@@ -177,8 +177,8 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
             session = startSession();
             String xidParam = "xidParam";
             Query query = session.createQuery("from AbstractTransactionalResourceCommand c where c.xid.id = :"
-                    + xidParam);
-            logger.debug("Executing from AbstractTransactionalResourceCommand c where c.xid.id = :" + xidImpl.getId());
+                + xidParam + " order by c.xid.id");
+            logger.debug("Executing from AbstractTransactionalResourceCommand c where c.xid.id = :" + xidImpl.getId() + " order by c.xid.id");
             query.setParameter(xidParam, xidImpl.getId());
             result = query.list();
             session.getTransaction().commit();
