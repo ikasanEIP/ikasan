@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: Module.java 3665 2011-04-27 09:09:41Z mitcje $
+ * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/spec/flow/src/main/java/org/ikasan/spec/module/Module.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,92 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.spec.module;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-
 /**
- * A generic representation of a Module
+ * Ikasan module contracts.
  * 
  * @author Ikasan Development Team
  */
-public class GenericModule implements Module<Flow>
+public interface Module<FLOW>
 {
-    /** Initiators of flows within this module */
-    private List<Flow> flows;
-
-    /** Module name */
-    protected String name;
-
-    /** Human readable description of this module */
-    private String description;
-
     /**
-     * Constructor
+     * Returns the name of the module
      * 
-     * @param name The name of the module
-     * @param flows a set of flows making the module
+     * @return name of the module
      */
-    public GenericModule(final String name, final List<Flow> flows)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
-
-        if(flows == null)
-        {
-            throw new IllegalArgumentException("flows cannot be 'null'");
-        }
-        
-        this.flows = new ArrayList<Flow>(flows);
-    }
+    public String getName();
 
     /**
-     * Accessor for name
+     * Returns a {@link Map} of this module's <code>Flow</code>s
      * 
-     * @return module name
+     * @return a map of <code>Flow</code> using the {@link Flow#getName()} as key
      */
-    public String getName()
-    {
-        return this.name;
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.module.Module#getFlows()
-     */
-    public Map<String, Flow> getFlows()
-    {
-        Map<String, Flow> result = new LinkedHashMap<String, Flow>();
-        for (Flow flow : this.flows)
-        {
-            result.put(flow.getName(), flow);
-        }
-        return result;
-    }
+    public Map<String, FLOW> getFlows();
 
     /**
-     * @see org.ikasan.framework.module.Module#getDescription()
-     */
-    public String getDescription()
-    {
-        return this.description;
-    }
-
-    /**
-     * Set the description. 
+     * Returns a human readable description of this module
      * 
-     * @param description - description to set
+     * @return String description
      */
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+    public String getDescription();
 }

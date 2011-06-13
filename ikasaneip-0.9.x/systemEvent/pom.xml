@@ -1,8 +1,8 @@
 <!--
 # //
 # //
-# // $Id$
-# // $URL$
+# // $Id: pom.xml 3681 2011-04-29 10:36:27Z summer_h $
+# // $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/monitor/pom.xml $
 # //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
@@ -53,23 +53,30 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-module</artifactId>
+    <artifactId>ikasan-systemEvent</artifactId>
     <packaging>jar</packaging>
     <version>0.9.0-EXPERIMENT</version>
 
     <dependencies>
-        <dependency>
+       <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-module</artifactId>
+            <artifactId>ikasan-spec-search</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.5.4-Final</version>
             <scope>provided</scope>
         </dependency>
-    </dependencies>
+        
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring</artifactId>
+          <version>2.5.6</version>
+        </dependency>
 
+    </dependencies>
 </project>

@@ -51,9 +51,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ikasan.framework.management.search.PagedSearchResult;
-import org.ikasan.framework.systemevent.model.SystemEvent;
-import org.ikasan.framework.systemevent.service.SystemEventService;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.systemevent.model.SystemEvent;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

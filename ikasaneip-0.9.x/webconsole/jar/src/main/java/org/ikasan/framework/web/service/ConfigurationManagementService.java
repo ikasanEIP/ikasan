@@ -42,8 +42,8 @@ package org.ikasan.framework.web.service;
 
 import java.util.List;
 
-import org.ikasan.framework.module.service.ModuleService;
-import org.ikasan.framework.systemevent.service.SystemEventService;
+import org.ikasan.spec.module.ModuleService;
+import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -242,7 +242,7 @@ public class ConfigurationManagementService
      */
     private Object getFlowComponent(String moduleName, String flowName, String flowElementName)
     {
-        Module module = moduleService.getModule(moduleName);
+        Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         for (FlowElement flowElement : flowElements)

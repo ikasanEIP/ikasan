@@ -52,7 +52,7 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.trigger.service.FlowEventJob;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.framework.web.command.TriggerDetails;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
@@ -168,7 +168,7 @@ public class TriggerDetailsService
     public List<String> getFlowElementNames(String moduleName, String flowName)
     {
         List<String> result = new ArrayList<String>();
-        Module module = this.moduleService.getModule(moduleName);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         for (FlowElement<?> flowElement : flowElements)
