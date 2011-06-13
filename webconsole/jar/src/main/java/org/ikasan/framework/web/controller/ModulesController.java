@@ -42,7 +42,7 @@ package org.ikasan.framework.web.controller;
 
 import java.util.List;
 
-import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
@@ -124,7 +124,7 @@ public class ModulesController
     @RequestMapping("view.htm")
     public String viewModule(@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName, ModelMap model)
     {
-        Module module = this.moduleService.getModule(moduleName);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
         model.addAttribute("module", module);
         model.addAttribute("flows", module.getFlows());
         model.addAttribute("monitor", this.monitor);
@@ -145,7 +145,7 @@ public class ModulesController
     public String viewFlow(@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName, ModelMap model)
     {
-        Module module = this.moduleService.getModule(moduleName);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
         model.addAttribute("flowElements", flow.getFlowElements());
         model.addAttribute("flow", flow);
@@ -195,7 +195,7 @@ public class ModulesController
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName,
             @RequestParam(FLOW_ELEMENT_NAME_PARAMETER_NAME) String flowElementName, ModelMap model)
     {
-        Module module = this.moduleService.getModule(moduleName);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
         Flow flow = module.getFlows().get(flowName);
         FlowElement<?> flowElement = resolveFlowElement(flowElementName, flow);
         List<Trigger> beforeElementTriggers = null;

@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: ModuleService.java 3676 2011-04-28 12:27:38Z mitcje $
+ * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/module/service/ModuleService.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,92 +38,51 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.spec.module;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
 
 /**
- * A generic representation of a Module
+ * Service Tier interface for providing user access to modules 
  * 
  * @author Ikasan Development Team
+ *
  */
-public class GenericModule implements Module<Flow>
+public interface ModuleService
 {
-    /** Initiators of flows within this module */
-    private List<Flow> flows;
-
-    /** Module name */
-    protected String name;
-
-    /** Human readable description of this module */
-    private String description;
-
+	
     /**
-     * Constructor
+     * Returns all available <code>Module</code>s
      * 
-     * @param name The name of the module
-     * @param flows a set of flows making the module
+     * @return List of all accessible <code>Module</code>s
      */
-    public GenericModule(final String name, final List<Flow> flows)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
-
-        if(flows == null)
-        {
-            throw new IllegalArgumentException("flows cannot be 'null'");
-        }
-        
-        this.flows = new ArrayList<Flow>(flows);
-    }
+    public List<Module> getModules();
 
     /**
-     * Accessor for name
+     * Resolves a specified <code>Module</code> by name
      * 
-     * @return module name
-     */
-    public String getName()
-    {
-        return this.name;
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.module.Module#getFlows()
-     */
-    public Map<String, Flow> getFlows()
-    {
-        Map<String, Flow> result = new LinkedHashMap<String, Flow>();
-        for (Flow flow : this.flows)
-        {
-            result.put(flow.getName(), flow);
-        }
-        return result;
-    }
-
-    /**
-     * @see org.ikasan.framework.module.Module#getDescription()
-     */
-    public String getDescription()
-    {
-        return this.description;
-    }
-
-    /**
-     * Set the description. 
+     * @param moduleName the module name
      * 
-     * @param description - description to set
+     * @return <code>Module</code> named by moduleName
      */
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+    public Module getModule(String moduleName);
+
+    /**
+     * Attempts to stop a <code>Flow</code>
+     * 
+     * @param moduleName 
+     * @param flowName 
+     * @param actor 
+     * 
+     */
+    public void stopFlow(final String moduleName, final String flowName, final String actor);
+
+    /**
+     * Attempts to start an <code>Initiator</code>
+     * 
+     * @param moduleName
+     * @param flowName 
+     * @param actor
+     */
+    public void startFlow(String moduleName, String flowName, String actor);
 }

@@ -43,7 +43,7 @@ package org.ikasan.wiretap.dao;
 import java.util.Date;
 import java.util.Set;
 
-import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;
 

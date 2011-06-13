@@ -69,49 +69,48 @@ import org.ikasan.spec.recovery.RecoveryManager;
 
 /**
  * Sample price flow factory for a Quartz driven flow
+ * 
  * @author Ikasan Development Team
  */
 public class PriceFlowFactory
 {
     String flowName;
+
     String moduleName;
+
     ConfigurationService configurationService;
-    ConfigurationManagement<Consumer<?>,Configuration> configurationManagement;
-    EventFactory<FlowEvent<?,?>> flowEventFactory = new FlowEventFactory();
+
+    ConfigurationManagement<Consumer<?>, Configuration> configurationManagement;
+
+    EventFactory<FlowEvent<?, ?>> flowEventFactory = new FlowEventFactory();
+
     ScheduledConsumerFactory scheduledConsumerFactory;
+
     RecoveryManagerFactory recoveryManagerFactory;
 
-    public PriceFlowFactory(String flowName, String moduleName, 
-            ConfigurationService configurationService, ConfigurationManagement configurationManagement) 
+    public PriceFlowFactory(String flowName, String moduleName, ConfigurationService configurationService, ConfigurationManagement configurationManagement)
     {
         this.flowName = flowName;
         this.moduleName = moduleName;
         this.configurationService = configurationService;
         this.configurationManagement = configurationManagement;
-        this.scheduledConsumerFactory  = 
-            new ScheduledConsumerFactory(SchedulerFactory.getInstance().getScheduler(), flowEventFactory);
+        this.scheduledConsumerFactory = new ScheduledConsumerFactory(SchedulerFactory.getInstance().getScheduler(), flowEventFactory);
         this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
     }
-    
+
     public Flow createScheduleDrivenFlow()
     {
         Producer producer = new PayloadProducer();
         FlowElement producerFlowElement = new FlowElementImpl("payloadProducer", producer);
-
         Converter priceToStringBuilderConverter = new ScheduleEventConverter();
         FlowElement<Converter> converterFlowElement = new FlowElementImpl("priceToStringBuilder", priceToStringBuilderConverter, producerFlowElement);
-
         Consumer consumer = createConsumer("scheduleDrivenConsumerId");
         FlowElement<Consumer> consumerFlowElement = new FlowElementImpl("scheduleDrivenConsumer", consumer, converterFlowElement);
-
         // flow configuration wiring
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumerFlowElement, this.configurationService);
-
         // iterator over each flow element
         FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
-
         RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
-        
         // container for the complete flow
         return new VisitingInvokerFlow(flowName, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
     }
@@ -120,15 +119,12 @@ public class PriceFlowFactory
     {
         ScheduledConsumerConfiguration configuration = new ScheduledConsumerConfiguration();
         configuration.setCronExpression("0/1 * * * * ?");
-        
         // create consumer component
         Consumer<?> consumer = this.scheduledConsumerFactory.getScheduledConsumer(flowName, moduleName);
-
-        ConfiguredResource configuredResource = (ConfiguredResource)consumer;
+        ConfiguredResource configuredResource = (ConfiguredResource) consumer;
         configuredResource.setConfiguredResourceId(configuredResourceId);
         configuredResource.setConfiguration(configuration);
-        configurationManagement.saveConfiguration( configurationManagement.createConfiguration(consumer) );
-  
+        configurationManagement.saveConfiguration(configurationManagement.createConfiguration(consumer));
         return consumer;
     }
 }

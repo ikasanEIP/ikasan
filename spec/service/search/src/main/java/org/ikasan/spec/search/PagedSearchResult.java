@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$ 
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,92 +38,43 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.spec.search;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
 
 /**
- * A generic representation of a Module
+ * This class is intended to be used as a DTO for transporting a subset of search results for
+ * some domain object <T> from a larger set of searched results. This is intended to support
+ * paging.
+ * 
+ * For example we may be performing a search for some domain entities that would return 1000 results
+ * if not paged. For performance and usability reasons, a search result of 1000 entries may not be
+ * desired. This class allows for sub result set to be returned, including enough information to
+ * establish its position within the superset, as well as the size of the super set
+ * 
  * 
  * @author Ikasan Development Team
+ *
  */
-public class GenericModule implements Module<Flow>
-{
-    /** Initiators of flows within this module */
-    private List<Flow> flows;
+public interface PagedSearchResult<T> extends List<T> {
 
-    /** Module name */
-    protected String name;
 
-    /** Human readable description of this module */
-    private String description;
+	/**
+	 * Accessor for first result index
+	 * 
+	 * @return index of the first result shown here into the larger super set of results
+	 */
+	public int getFirstResultIndex();
 
-    /**
-     * Constructor
-     * 
-     * @param name The name of the module
-     * @param flows a set of flows making the module
-     */
-    public GenericModule(final String name, final List<Flow> flows)
-    {
-        this.name = name;
-        if(name == null)
-        {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
+	/** 
+	 * @return true if this represents the last page in the super result set
+	 */
+	public boolean isLastPage();
 
-        if(flows == null)
-        {
-            throw new IllegalArgumentException("flows cannot be 'null'");
-        }
-        
-        this.flows = new ArrayList<Flow>(flows);
-    }
-
-    /**
-     * Accessor for name
-     * 
-     * @return module name
-     */
-    public String getName()
-    {
-        return this.name;
-    }
-
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.module.Module#getFlows()
-     */
-    public Map<String, Flow> getFlows()
-    {
-        Map<String, Flow> result = new LinkedHashMap<String, Flow>();
-        for (Flow flow : this.flows)
-        {
-            result.put(flow.getName(), flow);
-        }
-        return result;
-    }
-
-    /**
-     * @see org.ikasan.framework.module.Module#getDescription()
-     */
-    public String getDescription()
-    {
-        return this.description;
-    }
-
-    /**
-     * Set the description. 
-     * 
-     * @param description - description to set
-     */
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+	/**
+	 * Accessor for resultSize
+	 * 
+	 * @return size of the larger super result set
+	 */
+	public long getResultSize();
 }

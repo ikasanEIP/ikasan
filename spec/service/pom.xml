@@ -59,6 +59,7 @@
        <module>configuration</module>
        <module>management</module>
        <module>wiretap</module>
+       <module>search</module>
     </modules>
 
 </project>

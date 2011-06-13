@@ -50,8 +50,8 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;
 import org.ikasan.wiretap.model.WiretapEventFactory;
-import org.ikasan.framework.management.search.PagedSearchResult;
-import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.module.ModuleService;
 
 /**
  * Default implementation of the <code>WiretapService</code>

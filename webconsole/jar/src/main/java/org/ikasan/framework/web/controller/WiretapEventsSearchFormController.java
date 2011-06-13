@@ -47,8 +47,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.management.search.PagedSearchResult;
-import org.ikasan.framework.module.service.ModuleService;
+import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.framework.web.command.WiretapSearchCriteria;
 import org.ikasan.framework.web.command.WiretapSearchCriteriaValidator;
 import org.ikasan.spec.flow.FlowEvent;
