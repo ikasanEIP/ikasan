@@ -1,3 +1,10 @@
+Release Notes - Ikasan - Version 0.8.3
+
+** Bug
+    * [IKASAN-582] - (S)FTP endpoint factories must validate the incoming configuration objects
+    * [IKASAN-595] - (S)FTP connector renaming files in incorrect order on commit, even when delivering files in correct order
+    * [IKASAN-599] - HibernateErrorOccurrenceDao is to verbose in its logging
+
 Release Notes - Ikasan - Version 0.8.2
 
 ** Improvement
