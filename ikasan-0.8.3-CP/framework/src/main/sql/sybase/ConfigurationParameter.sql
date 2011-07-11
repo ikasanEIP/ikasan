@@ -55,7 +55,7 @@ CREATE TABLE ConfigurationParameter
     ConfigurationIdentifier     VARCHAR(256) NOT NULL,
     PositionRef                 NUMERIC,
     Name                        VARCHAR(128) NOT NULL,
-    Value                       VARCHAR(256) DEFAULT NULL NULL,
+    Value                       TEXT         DEFAULT NULL NULL,
     Description                 VARCHAR(256) DEFAULT NULL NULL
 )
 LOCK DATAROWS
