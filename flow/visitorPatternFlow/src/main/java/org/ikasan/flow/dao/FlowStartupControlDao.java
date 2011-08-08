@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: InitiatorStartupControlDao.java 2821 2010-02-12 14:01:56Z magicduncan $
+ * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/flow/initiator/dao/InitiatorStartupControlDao.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,33 +38,33 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow.initiator.dao;
+package org.ikasan.flow.dao;
 
-import org.ikasan.framework.initiator.InitiatorStartupControl;
+import org.ikasan.flow.FlowStartupControl;
 
 /**
- * Data Access interface for the persistence of <code>InitiatorStartupControl</code>s
+ * Data Access interface for the persistence of <code>FlowStartupControl</code>s
  * 
  * @author Ikasan Development Team
  *
  */
-public interface InitiatorStartupControlDao
+public interface FlowStartupControlDao
 {
     
     /**
-     * Retrieves the <code>InitiatorStartupControl</code> for the specified <code>Initiator</code>
+     * Retrieves the <code>FlowStartupControl</code> for the specified <code>Initiator</code>
      * 
      * @param moduleName
-     * @param initiatorName
+     * @param flowName
      * 
-     * @return the <code>InitiatorStartupControl</code> for the specified <code>Initiator</code>
+     * @return the <code>FlowStartupControl</code> for the specified <code>Flow</code>
      */
-    public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName);
+    public FlowStartupControl getFlowStartupControl(String moduleName, String initiatorName);
     
     /**
-     * Persists the <code>InitiatorStartupControl</code>
+     * Persists the <code>FlowStartupControl</code>
      * 
-     * @param initiatorStartupControl to persist
+     * @param FlowStartupControl to persist
      */
-    public void save(InitiatorStartupControl initiatorStartupControl);
+    public void save(FlowStartupControl flowStartupControl);
 }

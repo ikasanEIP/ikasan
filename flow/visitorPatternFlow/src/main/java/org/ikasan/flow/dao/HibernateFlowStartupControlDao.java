@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: HibernateInitiatorStartupControlDao.java 2821 2010-02-12 14:01:56Z magicduncan $
+ * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/flow/initiator/dao/HibernateInitiatorStartupControlDao.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,46 +38,53 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.flow.initiator.dao;
+package org.ikasan.flow.dao;
 
 import java.util.List;
 
-import org.ikasan.framework.initiator.InitiatorStartupControl;
+import org.ikasan.flow.FlowStartupControl;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Hibernate implementation of <code>InitiatorStartupControlDao</code>
+ * Hibernate implementation of <code>FlowStartupControlDao</code>
  * 
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public class HibernateInitiatorStartupControlDao extends HibernateDaoSupport implements InitiatorStartupControlDao
+public class HibernateFlowStartupControlDao extends HibernateDaoSupport implements FlowStartupControlDao
 {
     /**
-     * General query for finding existing InitiatorCommands for a given Initiator
+     * General query for finding existing InitiatorCommands for a given
+     * Initiator
      */
-    private static final String initiatorStartupControlQuery = "from InitiatorStartupControl i where i.moduleName = ? and i.initiatorName = ?";
+    private static final String flowStartupControlQuery = "from FlowStartupControl i where i.moduleName = ? and i.flowName = ?";
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao#getInitiatorStartupControl(java.lang.String, java.lang.String)
-	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName,
-			String initiatorName) {
-		List results = getHibernateTemplate().find(initiatorStartupControlQuery, new Object[]{moduleName,initiatorName});
-		if (!results.isEmpty()){
-			return (InitiatorStartupControl)results.get(0);
-		}
-		return new InitiatorStartupControl(moduleName, initiatorName);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.flow.initiator.dao.FlowStartupControlDao#
+     * getFlowStartupControl(java.lang.String, java.lang.String)
+     */
+    public FlowStartupControl getFlowStartupControl(String moduleName, String flowName)
+    {
+        List results = getHibernateTemplate().find(flowStartupControlQuery, new Object[] { moduleName, flowName });
+        if (!results.isEmpty())
+        {
+            return (FlowStartupControl) results.get(0);
+        }
+        return new FlowStartupControl(moduleName, flowName);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao#save(org.ikasan.framework.initiator.InitiatorStartupControl)
-	 */
-	public void save(InitiatorStartupControl initiatorStartupControl) {
-		getHibernateTemplate().saveOrUpdate(initiatorStartupControl);
-		
-	}
-   
-    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.flow.initiator.dao.FlowStartupControlDao#save
+     * (org.ikasan.framework.initiator.FlowStartupControl)
+     */
+    public void save(FlowStartupControl flowStartupControl)
+    {
+        getHibernateTemplate().saveOrUpdate(flowStartupControl);
+    }
 }
