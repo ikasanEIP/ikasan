@@ -33,12 +33,31 @@
 -- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
-DROP TABLE IF EXISTS `ikasan01`.`InitiatorStartupControl`;
-CREATE TABLE  `ikasan01`.`InitiatorStartupControl` (
-  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ModuleName` varchar(255) NOT NULL,
-  `InitiatorName` varchar(255) NOT NULL,
-  `StartupType` varchar(16) NOT NULL,
-  `Comment` varchar(255)  NULL,
-  PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+IF OBJECT_ID('FlowStartupControl') IS NOT NULL
+BEGIN
+    DROP TABLE FlowStartupControl
+    IF OBJECT_ID('FlowStartupControl') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FlowStartupControl >>>'
+    ELSE
+        PRINT '<<< DROPPED TABLE FlowStartupControl >>>'
+END
+GO
+CREATE TABLE FlowStartupControl
+(
+    Id                  NUMERIC IDENTITY NOT NULL,
+    ModuleName          VARCHAR(128)  NOT NULL,
+    FlowName            VARCHAR(128)  NOT NULL,
+    StartupType         VARCHAR(16)   NOT NULL,
+    Comment             VARCHAR(256)  NULL
+)
+LOCK DATAROWS
+WITH IDENTITY_GAP=1
+
+CREATE UNIQUE INDEX FlowStartupControl01u ON FlowStartupControl(Id)
+
+IF OBJECT_ID('FlowStartupControl') IS NOT NULL
+    PRINT '<<< CREATED TABLE FlowStartupControl >>>'
+ELSE
+    PRINT '<<< FAILED CREATING TABLE FlowStartupControl >>>'
+    
+

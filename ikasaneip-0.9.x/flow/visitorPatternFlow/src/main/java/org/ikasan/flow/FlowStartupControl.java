@@ -1,6 +1,6 @@
 /* 
- * $Id$
- * $URL$
+ * $Id: InitiatorStartupControl.java 2821 2010-02-12 14:01:56Z magicduncan $
+ * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/initiator/InitiatorStartupControl.java $
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,77 +38,75 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.initiator;
-
+package org.ikasan.flow;
 
 /**
  * JavaBean encapsulating startup control information for Initiators
  * 
  * The following start types are defined:
  * 
- * 		AUTOMATIC: Initiator will be started by its container when the container is initialised
- * 		MANUAL: Initiator will not be started by its container when container is started/initialised, but will be manually startable at a later stage
- * 		DISABLED: Initiator will not be started by its container when container is started/initialised, and will not be manually startable at a later stage	
+ * AUTOMATIC: Initiator will be started by its container when the container is
+ * initialised MANUAL: Initiator will not be started by its container when
+ * container is started/initialised, but will be manually startable at a later
+ * stage DISABLED: Initiator will not be started by its container when container
+ * is started/initialised, and will not be manually startable at a later stage
  * 
  * @author The Ikasan Development Team
- *
+ * 
  */
-public class InitiatorStartupControl
+public class FlowStartupControl
 {
-	
-	public enum StartupType { 
-		DISABLED, MANUAL, AUTOMATIC;
-	}
+    public enum StartupType
+    {
+        DISABLED, MANUAL, AUTOMATIC;
+    }
 
     /**
      * Name of the module with which the target Initiator is associated
      */
     private String moduleName;
-    
+
     /**
      * Name of the target Initiator
      */
     private String initiatorName;
-    
+
     /**
      * Startup type
      */
     private StartupType startupType;
-    
+
     /**
      * Comment
      */
     private String comment;
-    
-   
 
-	/**
+    /**
      * Identity key
      */
     private Long id;
-    
-    
+
     /**
      * No args constructor, as required by ceratin ORM tools
      */
     @SuppressWarnings("unused")
-    private InitiatorStartupControl(){}
-    
+    private FlowStartupControl()
+    {
+    }
 
-
- 
     /**
      * Constructor
      * 
-     * @param moduleName - Name of the module with which the target Initiator is associated
+     * @param moduleName - Name of the module with which the target Initiator is
+     *            associated
      * @param initiatorName - Name of the target Initiator
      */
-    public InitiatorStartupControl(String moduleName, String initiatorName){
+    public FlowStartupControl(String moduleName, String initiatorName)
+    {
         this.moduleName = moduleName;
         this.initiatorName = initiatorName;
         this.startupType = StartupType.MANUAL;
     }
-    
 
     /**
      * Accessor for moduleName
@@ -119,7 +117,6 @@ public class InitiatorStartupControl
     {
         return moduleName;
     }
-
 
     /**
      * Setter for moduleName
@@ -142,8 +139,6 @@ public class InitiatorStartupControl
         return initiatorName;
     }
 
-
-
     /**
      * Setter for initiatorName
      * 
@@ -165,7 +160,6 @@ public class InitiatorStartupControl
         return startupType;
     }
 
-
     /**
      * Setter for startupType
      * 
@@ -177,64 +171,70 @@ public class InitiatorStartupControl
     }
 
     @SuppressWarnings("unused")
-	private String getStartupTypeString(){
-    	return startupType.toString();
+    private String getStartupTypeString()
+    {
+        return startupType.toString();
     }
-    
+
     @SuppressWarnings("unused")
-	private void setStartupTypeString(String startupTypeString){
-    	this.startupType = StartupType.valueOf(startupTypeString);
+    private void setStartupTypeString(String startupTypeString)
+    {
+        this.startupType = StartupType.valueOf(startupTypeString);
     }
+
     /**
      * Accessor for id
      * 
      * @return id
      */
-    public Long getId(){
+    public Long getId()
+    {
         return id;
     }
-    
+
     /**
      * Setter for id
      * 
      * @param id
      */
     @SuppressWarnings("unused")
-    private void setId(Long id){
+    private void setId(Long id)
+    {
         this.id = id;
     }
-    
-    public boolean isAutomatic(){
-    	return startupType!=null && startupType.equals(StartupType.AUTOMATIC);
+
+    public boolean isAutomatic()
+    {
+        return startupType != null && startupType.equals(StartupType.AUTOMATIC);
     }
-    
-    public boolean isManual(){
-    	return startupType!=null && startupType.equals(StartupType.MANUAL);
+
+    public boolean isManual()
+    {
+        return startupType != null && startupType.equals(StartupType.MANUAL);
     }
-    
-    public boolean isDisabled(){
-    	return startupType!=null && startupType.equals(StartupType.DISABLED);
+
+    public boolean isDisabled()
+    {
+        return startupType != null && startupType.equals(StartupType.DISABLED);
     }
-    
+
     /**
      * Accessor for comment
      * 
      * @return comment
      */
-    public String getComment() {
-		return comment;
-	}
+    public String getComment()
+    {
+        return comment;
+    }
 
-
-	/**
-	 * Mutator for comment
-	 * 
-	 * @param comment
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-    
-    
-    
+    /**
+     * Mutator for comment
+     * 
+     * @param comment
+     */
+    public void setComment(String comment)
+    {
+        this.comment = comment;
+    }
 }
