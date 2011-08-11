@@ -49,6 +49,7 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -66,7 +67,7 @@ import static org.quartz.SimpleScheduleBuilder.*;
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>
+public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, Job
 //, StatefulJob
 {
     /** logger */
