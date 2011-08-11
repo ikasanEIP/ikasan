@@ -49,6 +49,8 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.Job;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.TriggerFiredBundle;
 
@@ -81,6 +83,9 @@ public class ScheduledJobFactoryTest
     /** Mock jobDetail */
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
+    /** Mock scheduler */
+    final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
+
     /**
      * Test successful new of a job.
      * @throws SchedulerException 
@@ -88,6 +93,8 @@ public class ScheduledJobFactoryTest
     @Test
     public void test_successful_newJob() throws SchedulerException
     {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
+        
         // expectations
         mockery.checking(new Expectations()
         {
@@ -97,17 +104,20 @@ public class ScheduledJobFactoryTest
                 will(returnValue(jobDetail));
 
                 // get the job detail name and group for cache lookup
-                exactly(1).of(jobDetail).getName();
-                will(returnValue("recoveryJob_flowName"));
-                exactly(1).of(jobDetail).getGroup();
-                will(returnValue("moduleName"));
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+                // TODO - find a better test for this
+//                exactly(1).of(jobKey).getName();
+//                will(returnValue("recoveryJob_flowName"));
+//                exactly(1).of(jobKey).getGroup();
+//                will(returnValue("moduleName"));
                 exactly(1).of(mockScheduledJobs).get("recoveryJob_flowNamemoduleName");
                 will(returnValue(job));
             }
         });
 
         ScheduledJobFactory scheduledJobFactory = new StubbedScheduledJobFactory();
-        scheduledJobFactory.newJob(triggerFiredBundle);
+        scheduledJobFactory.newJob(triggerFiredBundle, scheduler);
         mockery.assertIsSatisfied();
     }
     
