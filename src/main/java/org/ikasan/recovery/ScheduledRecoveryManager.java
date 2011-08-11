@@ -52,18 +52,22 @@ import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.StatefulJob;
+// TODO - check if deprecated is replaced with anything import org.quartz.StatefulJob;
 import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
+import static org.quartz.TriggerBuilder.*;
+import static org.quartz.TriggerKey.triggerKey;
+import static org.quartz.SimpleScheduleBuilder.*;
 
 /**
  * Scheduled based stateful Recovery implementation.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, StatefulJob
+public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>
+//, StatefulJob
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
@@ -267,7 +271,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         JobDetail recoveryJobDetail = newRecoveryJob();
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getMaxRetries(), retryAction.getDelay());
-        recoveryJobTrigger.setStartTime( new Date(System.currentTimeMillis() + retryAction.getDelay()) );
+   // jeff     recoveryJobTrigger..setStartTime( new Date(System.currentTimeMillis() + retryAction.getDelay()) );
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
         recoveryAttempts = 1;
@@ -342,7 +346,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected JobDetail newRecoveryJob()
     {
-        return new JobDetail(RECOVERY_JOB_NAME + this.flowName, this.moduleName, ScheduledRecoveryManager.class);
+// jeff        return new JobDetail(RECOVERY_JOB_NAME + this.flowName, this.moduleName, ScheduledRecoveryManager.class);
+        return null;
     }
     
     /**
@@ -353,7 +358,14 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected Trigger newRecoveryTrigger(int maxRetries, long delay)
     {
-        return TriggerUtils.makeImmediateTrigger(RECOVERY_JOB_TRIGGER_NAME, maxRetries, delay);
+        return newTrigger()
+        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME))
+        .withSchedule(simpleSchedule()
+            .withIntervalInMilliseconds(delay)
+            .repeatSecondlyForTotalCount(maxRetries, (int)(delay / 1000) ) ) 
+        .startNow()
+        .build();
+        //return TriggerUtils.makeImmediateTrigger(RECOVERY_JOB_TRIGGER_NAME, maxRetries, delay);
     }
     
     /**
@@ -362,7 +374,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     private void cancelScheduledJob() throws SchedulerException
     {
-        this.scheduler.deleteJob(RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobKey jobKey = new JobKey(RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        this.scheduler.deleteJob(jobKey);
     }
 
     /**
