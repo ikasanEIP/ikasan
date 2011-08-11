@@ -45,6 +45,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
@@ -100,11 +102,16 @@ public class ScheduledJobFactory implements JobFactory
     /**
      * Callback from the JobFactory.
      * @param triggerFiredBundle
+     * @param scheduler
      */
-    public Job newJob(TriggerFiredBundle triggerFiredBundle) throws SchedulerException
+    public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException
     {
         JobDetail jobDetail = triggerFiredBundle.getJobDetail();
-        String jobKey = jobDetail.getName() + jobDetail.getGroup();
-        return scheduledJobs.get(jobKey);
+        
+        // TODO - check changes between 1.8.5 -> 2.0.2
+//        String jobKey = jobDetail.getName() + jobDetail.getGroup();
+        JobKey jobKey = jobDetail.getKey();
+        return scheduledJobs.get( jobKey.getName() + jobKey.getGroup() );
     }
+
 }
