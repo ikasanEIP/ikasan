@@ -281,17 +281,6 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
-        <!-- TODO - Reviewing functional usage of this reposiory (required for cloning libs) -->        
-        <!--repository>
-            <id>central</id>
-            <url>http://oss.sonatype.org/service/local/repositories/ukcomrobust-it-049/content</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository-->
         
         <!-- TODO - Reviewing functional usage of this reposiory -->        
         <repository>
@@ -610,6 +599,13 @@
             <version>1.2.16</version>
             <scope>provided</scope>
         </dependency>
+
+		<dependency>
+		    <groupId>javax.transaction</groupId>
+		    <artifactId>jta</artifactId>
+		    <version>1.1</version>
+		</dependency>
+
         <!-- TODO: Update to 4.8.2 when we move to Spring 3, Used for Unit testing -->
         <dependency>
             <groupId>junit</groupId>
