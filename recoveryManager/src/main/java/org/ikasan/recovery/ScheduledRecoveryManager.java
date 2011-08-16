@@ -56,6 +56,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import static org.quartz.JobBuilder.*;
 // TODO - check if deprecated is replaced with anything import org.quartz.StatefulJob;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.*;
@@ -347,8 +348,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected JobDetail newRecoveryJob()
     {
-// jeff        return new JobDetail(RECOVERY_JOB_NAME + this.flowName, this.moduleName, ScheduledRecoveryManager.class);
-        return null;
+     //   return new JobDetail(RECOVERY_JOB_NAME + this.flowName, this.moduleName, ScheduledRecoveryManager.class);
+        return newJob(ScheduledRecoveryManager.class)
+        .withIdentity(RECOVERY_JOB_NAME + this.flowName, this.moduleName)
+        .build();    
     }
     
     /**
@@ -364,7 +367,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         .withSchedule(simpleSchedule()
             .withIntervalInMilliseconds(delay)
             .repeatSecondlyForTotalCount(maxRetries, (int)(delay / 1000) ) ) 
-        .startNow()
+        .startAt(new Date(System.currentTimeMillis() + delay))
         .build();
         //return TriggerUtils.makeImmediateTrigger(RECOVERY_JOB_TRIGGER_NAME, maxRetries, delay);
     }
