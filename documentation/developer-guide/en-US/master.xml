@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
  ====================================================================
@@ -37,26 +38,20 @@
  ====================================================================
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<book xml:id="IkasanReferenceGuide" xmlns="http://docbook.org/ns/docbook" version="5.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+    <info>
+      <title>Ikasan Enterprise Integration Platform</title>
+      <subtitle>Robust and adaptable Enterprise Integration</subtitle>
+      <releaseinfo>0.8</releaseinfo>
+    </info>
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
-    </parent>
+    <toc/>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>documentation</artifactId>
-    <version>0.8.4-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Documentation</name>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="Introduction.xml" />
 
-    <modules>
-       <module>ArchitectureGuide</module>
-       <module>ReferenceGuide</module>
-       <module>developer-guide</module>
-    </modules>
+    <index/>
 
-</project>
+</book>
