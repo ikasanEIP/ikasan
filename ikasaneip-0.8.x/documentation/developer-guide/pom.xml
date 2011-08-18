@@ -46,9 +46,9 @@
         <artifactId>documentation</artifactId>
         <version>0.8.4-SNAPSHOT</version>
     </parent>
-    <artifactId>architecture-guide</artifactId>
+    <artifactId>developer-guide</artifactId>
     <packaging>jdocbook</packaging>
-    <name>Ikasan Enterprise Integration Architecture Guide</name>
+    <name>Ikasan Enterprise Integration Developer Guide</name>
 
     <build>
         <plugins>
@@ -58,9 +58,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <sourceDocumentName>master.xml</sourceDocumentName>
-                    <sourceDirectory>${basedir}/architecture</sourceDirectory>
+                    <sourceDirectory>${basedir}</sourceDirectory>
                     <imageResource>
-                       <directory>${basedir}/architecture/</directory>
+                       <directory>${basedir}</directory>
                        <includes>
                            <include>images/*</include>
                        </includes>
@@ -76,7 +76,7 @@
                         </format>
                         <format>
                             <formatName>pdf</formatName>
-                            <finalName>Ikasan_EIP_Architecture_Guide.pdf</finalName>
+                            <finalName>Ikasan_EIP_Developer_Guide.pdf</finalName>
                         </format>
                     </formats>
                     <options>
