@@ -40,48 +40,12 @@
 -->
 <chapter version="5.0"
          xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
-         xml:id="Introduction" xmlns="http://docbook.org/ns/docbook"
+         xml:id="WriteComponents" xmlns="http://docbook.org/ns/docbook"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns:xs="http://www.w3.org/2001/XMLSchema"
          xmlns:xlink="http://www.w3.org/1999/xlink"
          xmlns:ns2="http://www.w3.org/1998/Math/MathML"
          xmlns:ns="http://docbook.org/ns/docbook">
-  <title>Introduction</title>
-
-  <para>This guide will take you through the development process of creating an
-  Ikasan EIP solution. The demonstration application we are using is a Pricing
-  Service. The source code for this application can be found under
-  <emphasis>${basedir}/samples/TODO</emphasis></para>
-
-  <para>From a business perspective, the pricing application will pick up a .csv
-  file that contains price data for currency exchange, and then based on some
-  routing rules will split the data in that [pricing file and send it off to
-  different destinations</para>
-
-  <para>The typical order of development for each module is as follows:</para>
-
-  <orderedlist>
-    <listitem>
-      <para>Draw up a logical flow design diagram</para>
-    </listitem>
-    <listitem>
-      <para>Create Maven project structure</para>
-    </listitem>
-    <listitem>
-      <para>Write flow integration tests</para>
-    </listitem>
-    <listitem>
-      <para>Wire up Spring beans in order for flow integration tests to
-      pass</para>
-    </listitem>
-    <listitem>
-      <para>Write unit tests for any custom components</para>
-    </listitem>
-    <listitem>
-      <para>Write custom components</para>
-    </listitem>
-    <listitem>
-      <para>Package and deploy the module</para>
-    </listitem>
-  </orderedlist>
+  <title>Write Components</title>
+  <para>TODO</para>
 </chapter>
