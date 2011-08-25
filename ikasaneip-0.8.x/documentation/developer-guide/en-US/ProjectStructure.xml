@@ -48,64 +48,69 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Project Structure</title>
 
+  <para>
+    Ikasan EIP adheres to the recommended Maven project structure and we
+    strongly suggest that your <emphasis>Modules</emphasis> do the same. 
+    If you are not familiar with Maven, then we recommend 
+    <link xlink:href="http://www.sonatype.com/books/mvnref-book/reference/">Maven: The Complete Reference</link>
+  </para>
+
   <section>
-    <title>Directory Structure</title>
+    <title>Pricing Service Directory Structure</title>
 
-    <para>Ikasan adheres to the recommended Maven project structure and we
-    strongly suggest that your <emphasis>Modules</emphasis> do the same.</para>
+    <para>
+      The project structure of the Pricing Service is as the following layout:
+    </para>
 
-    <para>The project structure of the Pricing Service is as the following
-    diagram:</para>
-
-    <para><literallayout>
-            forexApp
-            |
-            +- config/
-            |  +- jboss/
-            |
-            +- ear/
-            |  +- pom.xml
-            |  +- src/
-            |     +- main/
-            |        +- application/
-            |
-            +- environment/
-            |  +- dev/
-            |  +- nft/
-            |  +- systest/
-            |  +- uat/
-            |  +- prd/
-            |
-            +- jar/
-            |  +- pom.xml
-            |  +- src/
-            |     +- main/
-            |     |  +- java/
-            |     |  +- resources/
-            |     +- test/
-            |     |  +- java/
-            |     |  +- resources/
-            |
-            +- pom.xml
-            |
-            +- sql/
-            |  +- mysql/
-            |
-            +- war/
-            |  +- pom.xml
-            |  +- src/
-            |     +- main/
-            |        +- resources/
-            </literallayout></para>
+    <para>
+      <literallayout>
+          forexApp
+          |
+          +- config/
+          |  +- jboss/
+          |
+          +- ear/
+          |  +- pom.xml
+          |  +- src/
+          |     +- main/
+          |        +- application/
+          |
+          +- environment/
+          |  +- dev/
+          |  +- nft/
+          |  +- systest/
+          |  +- uat/
+          |  +- prd/
+          |
+          +- jar/
+          |  +- pom.xml
+          |  +- src/
+          |     +- main/
+          |     |  +- java/
+          |     |  +- resources/
+          |     +- test/
+          |     |  +- java/
+          |     |  +- resources/
+          |
+          +- pom.xml
+          |
+          +- sql/
+          |  +- mysql/
+          |
+          +- war/
+          |  +- pom.xml
+          |  +- src/
+          |     +- main/
+          |        +- resources/
+      </literallayout>
+    </para>
 
     <section>
       <title>config</title>
-
       <para></para>
 
       <section>
         <title>jboss</title>
-
         <para></para>
       </section>
     </section>
@@ -113,35 +118,50 @@
     <section>
       <title>ear</title>
 
-        <section>
-            <title>pom.xml</title>
-            <para></para>
-        </section>
+      <section>
+        <title>pom.xml</title>
+        <para></para>
+      </section>
 
-        <section>
-            <title>ear/src/main/application/</title>
-            <para>You may wish to specify an application.xml file that defines the
-            layout of your EAR as per the J2EE/JEE specification. This is especially
-            important if you are looking to deploy the module to application servers
-            that are created by different vendors.</para>
-        </section>
+      <section>
+        <title>ear/src/main/application/</title>
+        <para>
+          You may wish to specify an application.xml file that defines the
+          layout of your EAR as per the J2EE/JEE specification. This is especially
+          important if you are looking to deploy the module to application servers
+          that are created by different vendors.
+        </para>
+      </section>
     </section>
 
     <section>
       <title>environment</title>
-
       <para></para>
 
       <section>
         <title>dev</title>
-
+        <para></para>
+      </section>
+      <section>
+        <title>sys</title>
+        <para></para>
+      </section>
+      <section>
+        <title>uat</title>
+        <para></para>
+      </section>
+      <section>
+        <title>nft</title>
+        <para></para>
+      </section>
+      <section>
+        <title>prd</title>
         <para></para>
       </section>
     </section>
 
     <section>
       <title>jar</title>
-
       <para></para>
     </section>
 
@@ -164,5 +184,5 @@
         </section>
     </section>
 
-    </section>
+  </section>
 </chapter>

@@ -48,9 +48,11 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Design Diagram</title>
 
-  <para>The logical design diagram is the first step in creating a <emphasis>Module</emphasis>. It
-  doesn't have to be perfect or complete (sometimes extra details come out as
-  you think more deeply about components) but it should always include:</para>
+  <para>
+    The logical design diagram is the first step in creating a <emphasis>Module</emphasis>. 
+    It doesn't have to be perfect or complete (sometimes extra details come out as
+    you think more deeply about components) but it should always include:
+  </para>
 
   <itemizedlist>
     <listitem>
@@ -70,16 +72,25 @@
     </listitem>
   </itemizedlist>
 
-  <para><emphasis role="bold">Notation is very important with these
-  diagrams.</emphasis> You should always attempt to use the notation provided by
-  the industry standard book - Enterprise Integration Patterns by Gregor Hohpe
-  and Bobby Woolf (ISBN-10: 0321200683, ISBN-13: 978-0321200686). In fact, if
-  you do not own this book then do yourself a favour and get it! You'll find
-  that a vast majority of IT professionals involved in the EIP space use the
-  terminology and patterns found there.</para>
+  <section>
+    <title>EIP Notation</title>
 
-  <para>For the Pricing Service project, we have one <emphasis>Module</emphasis> and the annotated
-  logical design diagram for it is as follows:</para>
+    <para>
+      <emphasis role="bold">Notation is very important with these diagrams.</emphasis> 
+      You should always attempt to use the notation provided by the industry standard book 
+      - <emphasis>Enterprise Integration Patterns</emphasis> by Gregor Hohpe and Bobby Woolf 
+      (ISBN-10: 0321200683, ISBN-13: 978-0321200686). In fact, if you do not own this book 
+      then do yourself a favour and get it! You'll find that a vast majority of IT professionals 
+      involved in the EIP space use the terminology and patterns found within.
+    </para>
+  </section>
 
-  <para>TODO Insert image</para>
+  <section>
+    <title>Pricing Service Logical Design Diagram</title>
+
+    <para>For the Pricing Service <emphasis>Module</emphasis>, the (annotated)
+    logical design diagram is as follows:</para>
+  
+    <para>TODO Insert image</para>
+  </section>
 </chapter>
