@@ -48,40 +48,66 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Introduction</title>
 
-  <para>This guide will take you through the development process of creating an
-  Ikasan EIP solution. The demonstration application we are using is a Pricing
-  Service. The source code for this application can be found under
-  <emphasis>${basedir}/samples/TODO</emphasis></para>
+  <para>This guide will take you through the development process of creating
+  an Ikasan EIP <emphasis>Module</emphasis>. The demonstration
+  <emphasis>Module</emphasis> we are building is a Pricing Service and its
+  source code can be found under <filename
+  class="directory">${basedir}/samples/TODO</filename></para>
 
-  <para>From a business perspective, the pricing application will pick up a .csv
-  file that contains price data for currency exchange, and then based on some
-  routing rules will split the data in that [pricing file and send it off to
-  different destinations</para>
+  <section>
+    <title>High Level Business Logic</title>
 
-  <para>The typical order of development for each module is as follows:</para>
+    <para>From a business perspective, the Pricing Service will: <orderedlist>
+        <listitem>
+          <para>Pick up a <filename>prices.csv</filename> file that contains
+          price data for currency exchange.</para>
+        </listitem>
 
-  <orderedlist>
-    <listitem>
-      <para>Draw up a logical flow design diagram</para>
-    </listitem>
-    <listitem>
-      <para>Create Maven project structure</para>
-    </listitem>
-    <listitem>
-      <para>Write flow integration tests</para>
-    </listitem>
-    <listitem>
-      <para>Wire up Spring beans in order for flow integration tests to
-      pass</para>
-    </listitem>
-    <listitem>
-      <para>Write unit tests for any custom components</para>
-    </listitem>
-    <listitem>
-      <para>Write custom components</para>
-    </listitem>
-    <listitem>
-      <para>Package and deploy the module</para>
-    </listitem>
-  </orderedlist>
+        <listitem>
+          <para>Route the data contained in that CSV file based on TODO to
+          different destinations for processing.</para>
+        </listitem>
+      </orderedlist></para>
+  </section>
+
+  <section>
+    <title>Order of Development</title>
+
+    <para>In short, the best way to build an Ikasan EIP
+    <emphasis>Module</emphasis> is from a <emphasis role="bold">top down,
+    Test-driven approach</emphasis>. The typical order of development for a
+    <emphasis>Module</emphasis> is as follows:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Draw up a logical flow design diagram</para>
+      </listitem>
+
+      <listitem>
+        <para>Create the Maven project structure</para>
+      </listitem>
+
+      <listitem>
+        <para>Write the <emphasis>Flow</emphasis> Integration Tests</para>
+      </listitem>
+
+      <listitem>
+        <para>Wire up Spring beans in order for the <emphasis>Flow</emphasis>
+        integration tests to pass</para>
+      </listitem>
+
+      <listitem>
+        <para>Write unit tests for any custom
+        <emphasis>Components</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para>Write custom <emphasis>Components</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para>Package and deploy the <emphasis>Module</emphasis></para>
+      </listitem>
+    </orderedlist>
+  </section>
 </chapter>
