@@ -43,8 +43,9 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>compatibility</artifactId>
         <version>0.8.4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
