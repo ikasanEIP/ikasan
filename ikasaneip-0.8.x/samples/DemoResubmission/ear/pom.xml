@@ -44,9 +44,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-build</artifactId>
-      <version>0.8.4-SNAPSHOT</version>
+       <groupId>org.ikasan.demo</groupId>
+       <artifactId>demoResubmission-parent</artifactId>
+       <version>0.8.4-SNAPSHOT</version>
+       <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>org.ikasan.demo</groupId>
