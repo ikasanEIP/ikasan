@@ -48,11 +48,7 @@
 <c:out value="${initiator.exceptionHandler}"/>
 </p>
 
-
-
 </div>
-
-
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
 

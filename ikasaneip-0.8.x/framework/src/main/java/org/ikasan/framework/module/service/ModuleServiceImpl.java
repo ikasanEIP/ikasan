@@ -71,33 +71,30 @@ public class ModuleServiceImpl implements ModuleService
     private InitiatorStartupControlDao initiatorStartupControlDao;
     
     /**
-     * constant for logging an incomming initiator start request
+     * constant for logging an incoming initiator start request
      */
     public static final String INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION = "Initiator start requested";
+
     /**
-     * constant for logging an incomming initiator stop request
+     * constant for logging an incoming initiator stop request
      */
-	public static final String INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION = "Initiator stop requested";
+    public static final String INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION = "Initiator stop requested";
+
     /**
      * constant for logging a request to change initiator startup type
      */
-	public static final String INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION = "Initiator StartupType set to: ";
+    public static final String INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION = "Initiator StartupType set to: ";
 
-    
     /**
      * Logger instance
      */
     private Logger logger = Logger.getLogger(ModuleServiceImpl.class);
-  
-    
+
     /**
-     * runtime conatiner for holding modules
+     * runtime container for holding modules
      */
     private ModuleContainer moduleContainer; 
     
-
-
-
     /**
      * Constructor
      * 
@@ -109,7 +106,6 @@ public class ModuleServiceImpl implements ModuleService
         this.moduleContainer=moduleContainer;
         this.initiatorStartupControlDao = initiatorStartupControlDao;
         this.systemEventService = systemEventService;
-
     }
 
     /* (non-Javadoc)
@@ -132,8 +128,9 @@ public class ModuleServiceImpl implements ModuleService
     /* (non-Javadoc)
      * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void stopInitiator(String moduleName, String initiatorName, String actor){
-    	logger.info("stopInitiator : "+moduleName+"."+initiatorName+" requested by ["+actor+"]");
+    public void stopInitiator(String moduleName, String initiatorName, String actor)
+    {
+        logger.info("stopInitiator : " + moduleName + "." + initiatorName + " requested by [" + actor + "]");
         Initiator initiator = resolveInitiator(moduleName, initiatorName);
         
         //log the request
@@ -147,17 +144,17 @@ public class ModuleServiceImpl implements ModuleService
     /* (non-Javadoc)
      * @see org.ikasan.framework.module.service.ModuleService#startInitiator(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void startInitiator(String moduleName, String initiatorName, String actor){
-    	logger.info("startInitiator : "+moduleName+"."+initiatorName+" requested by ["+actor+"]");
-    	Initiator initiator = resolveInitiator(moduleName, initiatorName);
+    public void startInitiator(String moduleName, String initiatorName, String actor)
+    {
+        logger.info("startInitiator : " + moduleName + "." + initiatorName + " requested by [" + actor + "]");
+        Initiator initiator = resolveInitiator(moduleName, initiatorName);
         
         //check if its not disabled
         InitiatorStartupControl initiatorStartupControl = initiatorStartupControlDao.getInitiatorStartupControl(moduleName, initiatorName);
-        if (initiatorStartupControl.isDisabled()){
-        	throw new IllegalStateException("Cannot start a disabled Initiator");
+        if (initiatorStartupControl.isDisabled())
+        {
+            throw new IllegalStateException("Cannot start a disabled Initiator");
         }
-        
-        
         
         //log the request
         systemEventService.logSystemEvent(moduleName+"."+initiatorName, INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION,  actor);
@@ -180,38 +177,31 @@ public class ModuleServiceImpl implements ModuleService
         return initiator;
     }
 
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.module.service.ModuleService#updateInitiatorStartupType(java.lang.String, java.lang.String, org.ikasan.framework.initiator.InitiatorStartupControl.StartupType, java.lang.String, java.lang.String)
-	 */
-	public void updateInitiatorStartupType(String moduleName,
-			String initiatorName, StartupType startupType, String comment,
-			String actor) {
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.module.service.ModuleService#updateInitiatorStartupType(java.lang.String, java.lang.String, org.ikasan.framework.initiator.InitiatorStartupControl.StartupType, java.lang.String, java.lang.String)
+     */
+    public void updateInitiatorStartupType(String moduleName,
+            String initiatorName, 
+            StartupType startupType, 
+            String comment,
+            String actor) 
+    {
         //log the request
         systemEventService.logSystemEvent(moduleName+"."+initiatorName, INITIATOR_SET_STARTUP_TYPE_EVENT_ACTION+startupType.toString(), actor);
 
         InitiatorStartupControl initiatorStartupControl = initiatorStartupControlDao.getInitiatorStartupControl(moduleName, initiatorName);
-		initiatorStartupControl.setStartupType(startupType);
-		initiatorStartupControl.setComment(comment);
-		
-		//save the control
-		initiatorStartupControlDao.save(initiatorStartupControl);
-	}
+        initiatorStartupControl.setStartupType(startupType);
+        initiatorStartupControl.setComment(comment);
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.module.service.ModuleService#getInitiatorStartupControl(java.lang.String, java.lang.String)
-	 */
-	public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName) {
-		return initiatorStartupControlDao.getInitiatorStartupControl(moduleName, initiatorName);
-	}
-    
-    
-    
-    
+        //save the control
+        initiatorStartupControlDao.save(initiatorStartupControl);
+    }
 
-
-    
-
-
-
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.module.service.ModuleService#getInitiatorStartupControl(java.lang.String, java.lang.String)
+     */
+    public InitiatorStartupControl getInitiatorStartupControl(String moduleName, String initiatorName) 
+    {
+        return initiatorStartupControlDao.getInitiatorStartupControl(moduleName, initiatorName);
+    }
 }
