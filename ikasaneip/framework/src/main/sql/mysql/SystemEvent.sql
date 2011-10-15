@@ -33,8 +33,8 @@
 -- OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
-DROP TABLE IF EXISTS `ikasan01`.`SystemEvent`;
-CREATE TABLE  `ikasan01`.`SystemEvent` (
+DROP TABLE IF EXISTS `Ikasan01`.`SystemEvent`;
+CREATE TABLE  `Ikasan01`.`SystemEvent` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Subject` varchar(128) NOT NULL,
   `Action` varchar(512) NOT NULL,
