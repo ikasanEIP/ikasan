@@ -107,9 +107,6 @@ public class ScheduledJobFactory implements JobFactory
     public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException
     {
         JobDetail jobDetail = triggerFiredBundle.getJobDetail();
-        
-        // TODO - check changes between 1.8.5 -> 2.0.2
-//        String jobKey = jobDetail.getName() + jobDetail.getGroup();
         JobKey jobKey = jobDetail.getKey();
         return scheduledJobs.get( jobKey.getName() + jobKey.getGroup() );
     }

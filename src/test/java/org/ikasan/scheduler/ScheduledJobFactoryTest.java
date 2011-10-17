@@ -106,11 +106,6 @@ public class ScheduledJobFactoryTest
                 // get the job detail name and group for cache lookup
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
-                // TODO - find a better test for this
-//                exactly(1).of(jobKey).getName();
-//                will(returnValue("recoveryJob_flowName"));
-//                exactly(1).of(jobKey).getGroup();
-//                will(returnValue("moduleName"));
                 exactly(1).of(mockScheduledJobs).get("recoveryJob_flowNamemoduleName");
                 will(returnValue(job));
             }
