@@ -54,7 +54,7 @@ public class SchedulerFactory
     /** singleton instance */
     private static SchedulerFactory schedulerFactory;
     
-    /** map of scheduled jobs */
+    /** scheduler */
     private Scheduler scheduler;
     
     /**
