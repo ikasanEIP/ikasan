@@ -113,7 +113,7 @@ public class SchedulerFactoryTest
     
     /**
      * Test class extends SchedulerFactory to provide a mock scheduler instance.
-     * @author Ikasan Development Team
+     * @author Jeff Mitchell
      *
      */
     private class StubbedSchedulerFactory extends SchedulerFactory

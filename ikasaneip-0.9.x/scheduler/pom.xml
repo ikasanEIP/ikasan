@@ -49,13 +49,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-EXPERIMENT</version>
+        <version>0.9.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-scheduler</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Ikasan Scheduler Implementation</name>
     <description>Ikasan EIP scheduler implementation</description>
 

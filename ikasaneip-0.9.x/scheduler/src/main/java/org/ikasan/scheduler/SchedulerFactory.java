@@ -79,7 +79,7 @@ public class SchedulerFactory
         try
         {
             this.scheduler = newScheduler();
-            this.scheduler.setJobFactory(ScheduledJobFactory.getInstance());
+            this.scheduler.setJobFactory(CachingScheduledJobFactory.getInstance());
             this.scheduler.start();
         }
         catch(SchedulerException e)
