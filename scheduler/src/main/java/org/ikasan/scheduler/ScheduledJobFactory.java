@@ -40,75 +40,24 @@
  */
 package org.ikasan.scheduler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.quartz.Job;
 import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
-import org.quartz.spi.TriggerFiredBundle;
 
 /**
- * Scheduled job factory implementation.
- * This allows multiple different job instances to be handled 
- * through one scheduler instance.
- * Each job instance is cached and passed back as the invokable job
- * based on the job name and group on newJob call back.
+ * Contract for creating scheduled jobs.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledJobFactory implements JobFactory
+public interface ScheduledJobFactory extends JobFactory
 {
-    /** singleton instance */
-    private static ScheduledJobFactory scheduledJobFactory;
-    
-    /** map of scheduled jobs */
-    protected Map<String,Job> scheduledJobs;
-    
     /**
-     * Singleton instance accessor
-     * @return
+     * Create a new jobDetail based on the given job implementation, name, 
+     * and group name.
+     * @param job
+     * @param name
+     * @param group
+     * @return JobDetail
      */
-    public static ScheduledJobFactory getInstance()
-    {
-        if(scheduledJobFactory == null)
-        {
-            scheduledJobFactory = new ScheduledJobFactory();
-        }
-        
-        return scheduledJobFactory;
-    }
-    
-    /**
-     * Constructor
-     */
-    protected ScheduledJobFactory()
-    {
-        this.scheduledJobs = new ConcurrentHashMap<String,Job>();
-    }
-
-    /**
-     * Getter for the map of scheduled jobs
-     * @return
-     */
-    public Map<String,Job> getScheduledJobs()
-    {
-        return this.scheduledJobs;
-    }
-    
-    /**
-     * Callback from the JobFactory.
-     * @param triggerFiredBundle
-     * @param scheduler
-     */
-    public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException
-    {
-        JobDetail jobDetail = triggerFiredBundle.getJobDetail();
-        JobKey jobKey = jobDetail.getKey();
-        return scheduledJobs.get( jobKey.getName() + jobKey.getGroup() );
-    }
-
+    public JobDetail createJobDetail(Job job, String name, String group);
 }
