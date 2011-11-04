@@ -49,7 +49,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec</artifactId>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 

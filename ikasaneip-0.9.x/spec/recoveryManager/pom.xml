@@ -55,7 +55,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec-recoveryManager</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Ikasan Specification Recovery Manager Contracts</name>
     <description>The specification recovery manager contracts for the Ikasan Enterprise Integration Platform</description>
 
