@@ -247,7 +247,7 @@
     <!-- 
          SCM details
          TODO: Not sure if this is strictly required here, either this or <distributionManagement> is needed 
-         Figure this out when 0.8.1 rolls around
+         Figure this out when 0.8.4 rolls around
      -->
     <scm>
       <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.3-SNAPSHOT</connection>
@@ -255,6 +255,21 @@
       <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.3-SNAPSHOT</url>
     </scm>
     <!-- sonatype parent sets the source encoding to UTF-8 -->
+    <!-- TODO Remove once in Maven central - For jboss-jta & jts & jdocbook -->
+    <repositories>
+        <repository>
+            <id>JBoss Repo</id>
+            <name>JBoss Repo</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </repository>   
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>JBoss Repo</id>
+            <name>JBoss Repo</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </pluginRepository>   
+    </pluginRepositories>
     <!-- Distribution for releases -->
     <distributionManagement>
         <repository>

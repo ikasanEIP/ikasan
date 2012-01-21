@@ -131,6 +131,7 @@
             <version>4.2.3.SP7</version>
             <scope>provided</scope>
         </dependency>
+                
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-jta</artifactId>

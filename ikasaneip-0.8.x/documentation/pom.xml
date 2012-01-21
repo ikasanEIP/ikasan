@@ -55,9 +55,9 @@
     <name>Ikasan Enterprise Integration Documentation</name>
 
     <modules>
-       <module>ArchitectureGuide</module>
-       <module>ReferenceGuide</module>
-       <module>developer-guide</module>
+        <module>ArchitectureGuide</module>
+        <module>ReferenceGuide</module>
+        <module>developer-guide</module>
     </modules>
 
 </project>
