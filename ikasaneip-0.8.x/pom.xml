@@ -49,6 +49,9 @@
       <!-- TODO Fix post maven 3.0.3 -->
       <relativePath></relativePath>
     </parent>
+    <prerequisites>
+      <maven>2.2.1</maven>
+    </prerequisites>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-parent</artifactId>
     <version>0.8.4-SNAPSHOT</version>
@@ -268,7 +271,12 @@
             <id>JBoss Repo</id>
             <name>JBoss Repo</name>
             <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
-        </pluginRepository>   
+        </pluginRepository>
+        <pluginRepository>
+            <id>il</id>
+            <name>Insightful Logic</name>
+            <url>http://maven.insightfullogic.com:8080/content/groups/public/</url>
+        </pluginRepository>        
     </pluginRepositories>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -334,41 +342,46 @@
     <build>
         <pluginManagement>
             <plugins>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.9.0</version>
-                <configuration>
-                    <header>LICENSE2.txt</header>
-                    <encoding>UTF-8</encoding>
-                    <aggregate>true</aggregate>
-                    <!-- We can set this to true if we remove hte SVN info from the source header -->
-                    <strictCheck>false</strictCheck>
-                    <skipExistingHeaders>true</skipExistingHeaders>
-                    <mapping>
-                        <tld>XML_STYLE</tld>
-                        <application>XML_STYLE</application>
-                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
-                    </mapping>
-                    <excludes>
-                        <exclude>license/**</exclude>
-                        <exclude>*LICENSE.txt</exclude>
-                        <exclude>*LICENSE2.txt</exclude>
-                        <exclude>*ReleaseNotes.txt</exclude>
-                        <exclude>*ReleaseNotes.html</exclude>
-                        <exclude>**/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
-                        <exclude>**/src/main/webapp/js/DD_belatedPNG.js</exclude>
-                        <exclude>**/src/main/webapp/js/jquery-1.4.2.min.js</exclude>
-                        <exclude>**/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
-                        <exclude>**/src/main/webapp/js/jquery.hovertip-1.0.js</exclude>
-                        <exclude>**/src/main/webapp/js/jquery.simpleautogrow.js</exclude>
-                        <exclude>**/src/test/resources/data/TEST.TXT</exclude>
-                        <exclude>**/src/test/resources/firstTxt.txt</exclude>
-                        <exclude>**/src/test/resources/secondTxt.txt</exclude>
-                        <exclude>eclipse_bin/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+	            <plugin>
+	                <groupId>com.mycila.maven-license-plugin</groupId>
+	                <artifactId>maven-license-plugin</artifactId>
+	                <version>1.9.0</version>
+	                <configuration>
+	                    <header>LICENSE2.txt</header>
+	                    <encoding>UTF-8</encoding>
+	                    <aggregate>true</aggregate>
+	                    <!-- We can set this to true if we remove hte SVN info from the source header -->
+	                    <strictCheck>false</strictCheck>
+	                    <skipExistingHeaders>true</skipExistingHeaders>
+	                    <mapping>
+	                        <tld>XML_STYLE</tld>
+	                        <application>XML_STYLE</application>
+	                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
+	                    </mapping>
+	                    <excludes>
+	                        <exclude>license/**</exclude>
+	                        <exclude>*LICENSE.txt</exclude>
+	                        <exclude>*LICENSE2.txt</exclude>
+	                        <exclude>*ReleaseNotes.txt</exclude>
+	                        <exclude>*ReleaseNotes.html</exclude>
+	                        <exclude>**/src/main/webapp/css/jquery/redmond/jquery-ui-1.7.2.custom.css</exclude>
+	                        <exclude>**/src/main/webapp/js/DD_belatedPNG.js</exclude>
+	                        <exclude>**/src/main/webapp/js/jquery-1.4.2.min.js</exclude>
+	                        <exclude>**/src/main/webapp/js/jquery-ui-1.7.2.custom.min.js</exclude>
+	                        <exclude>**/src/main/webapp/js/jquery.hovertip-1.0.js</exclude>
+	                        <exclude>**/src/main/webapp/js/jquery.simpleautogrow.js</exclude>
+	                        <exclude>**/src/test/resources/data/TEST.TXT</exclude>
+	                        <exclude>**/src/test/resources/firstTxt.txt</exclude>
+	                        <exclude>**/src/test/resources/secondTxt.txt</exclude>
+	                        <exclude>eclipse_bin/**</exclude>
+	                    </excludes>
+	                </configuration>
+	            </plugin>
+	            <plugin> 
+		            <groupId>com.insightfullogic</groupId> 
+		            <artifactId>impact-maven-plugin</artifactId>
+		            <version>1.51</version>
+		        </plugin>             
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
@@ -490,7 +503,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>1.2</version>
+                    <version>1.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
