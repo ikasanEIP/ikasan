@@ -42,14 +42,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>console-parent</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
+        <version>0.8.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>console-jar</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.4-SNAPSHOT</version>
+    <version>0.8.4</version>
     <name>Ikasan Console</name>
     <description>The core functionality for the end user console of the Ikasan Enterprise Integration Platform</description>
 
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
