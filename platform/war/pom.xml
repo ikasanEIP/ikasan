@@ -49,26 +49,26 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>platform</artifactId>
-        <version>0.8.4</version>
+        <version>0.8.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-platform</artifactId>
     <packaging>war</packaging>
-    <version>0.8.4</version>
+    <version>0.8.4-SNAPSHOT</version>
     <name>ikasan :: platform :: war</name>
 
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-platform-jar</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
