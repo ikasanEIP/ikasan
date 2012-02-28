@@ -49,13 +49,13 @@
   <parent>
       <groupId>org.ikasan</groupId>
       <artifactId>filter</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.5-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.4</version>
+  <version>0.8.5-SNAPSHOT</version>
   <name>Ikasan Filter Core</name>
   <description>The core functional filter module for the Ikasan Enterprise Integration Platform</description>
   <dependencies>
