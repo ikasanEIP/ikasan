@@ -45,7 +45,7 @@
     <parent>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-parent</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.4-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
     </parent>
     <!-- 
@@ -54,7 +54,7 @@
     -->
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.8.4</version>
+    <version>0.8.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Build Project</name>
 </project>
