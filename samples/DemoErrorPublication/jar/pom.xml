@@ -47,13 +47,13 @@
     <parent>
        <groupId>org.ikasan.demo</groupId>
        <artifactId>demoErrorPublication-parent</artifactId>
-       <version>0.8.4</version>
+       <version>0.8.4-SNAPSHOT</version>
        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan.demo</groupId>
     <artifactId>demoErrorPublication-errorManagerTarget-jar</artifactId>
-    <version>0.8.4</version>    
+    <version>0.8.4-SNAPSHOT</version>    
     <packaging>jar</packaging>
 
     <name>demoErrorPublication :: errorManagerTarget : jar</name>

@@ -49,14 +49,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.4</version>
+        <version>0.8.4-SNAPSHOT</version>
         <relativePath>../../build/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-client-sftp-endpoint</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.4</version>
+    <version>0.8.4-SNAPSHOT</version>
     <name>Ikasan Client Endpoint for SFTP</name>
     <description>The client endpoint for SFTP within the Ikasan Enterprise Integration Platform</description>
 
@@ -65,31 +65,31 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-endpoint</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-filetransfer</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-client-connection</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-sftp-classes</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
