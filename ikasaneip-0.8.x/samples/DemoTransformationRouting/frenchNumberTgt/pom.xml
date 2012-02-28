@@ -43,12 +43,12 @@
     <parent>
        <groupId>org.ikasan.demo</groupId>
        <artifactId>demoTransformationRouting-parent</artifactId>
-       <version>0.8.4-SNAPSHOT</version>
+       <version>0.8.4</version>
        <relativePath>../pom.xml</relativePath>
     </parent>
 	<groupId>org.ikasan.demo</groupId>
 	<artifactId>demoTransformationRouting-frenchNumberTgt-jar</artifactId>
-	<version>0.8.4-SNAPSHOT</version>
+	<version>0.8.4</version>
 	<packaging>jar</packaging>
 	<name>demoTransformationRouting :: frenchNumberTgt : jar</name>
 

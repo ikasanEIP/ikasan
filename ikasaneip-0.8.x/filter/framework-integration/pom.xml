@@ -49,13 +49,13 @@
   <parent>
       <groupId>org.ikasan</groupId>
       <artifactId>filter</artifactId>
-      <version>0.8.4-SNAPSHOT</version>
+      <version>0.8.4</version>
       <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter-framework-integration</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.4-SNAPSHOT</version>
+  <version>0.8.4</version>
   <name>Ikasan Filter Framework Integration</name>
   <description>The filter-framework integration library for the Ikasan Enterprise Integration Platform</description>
   
@@ -64,19 +64,19 @@
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-filter</artifactId>
-          <version>0.8.4-SNAPSHOT</version>
+          <version>0.8.4</version>
         </dependency>
 
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-common</artifactId>
-          <version>0.8.4-SNAPSHOT</version>
+          <version>0.8.4</version>
         </dependency>
 
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-framework</artifactId>
-          <version>0.8.4-SNAPSHOT</version>
+          <version>0.8.4</version>
         </dependency>
 
         <!-- Test dependencies -->
