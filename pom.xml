@@ -47,14 +47,14 @@
       <artifactId>oss-parent</artifactId>
       <version>7</version>
       <!-- TODO Fix post maven 3.0.3 -->
-      <relativePath></relativePath>
+      <relativePath />
     </parent>
     <prerequisites>
       <maven>2.2.1</maven>
     </prerequisites>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-parent</artifactId>
-    <version>0.8.4-SNAPSHOT</version>
+    <version>0.8.4</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
@@ -253,9 +253,9 @@
          Figure this out when 0.8.4 rolls around
      -->
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.8.x</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.8.x</developerConnection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.8.x</url>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.4</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.4</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.4</url>
     </scm>
     <!-- sonatype parent sets the source encoding to UTF-8 -->
     <!-- TODO Remove once in Maven central - For jboss-jta & jts & jdocbook -->
