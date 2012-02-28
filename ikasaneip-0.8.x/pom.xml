@@ -47,14 +47,14 @@
       <artifactId>oss-parent</artifactId>
       <version>7</version>
       <!-- TODO Fix post maven 3.0.3 -->
-      <relativePath />
+      <relativePath></relativePath>
     </parent>
     <prerequisites>
       <maven>2.2.1</maven>
     </prerequisites>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-parent</artifactId>
-    <version>0.8.5-SNAPSHOT</version>
+    <version>0.8.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
