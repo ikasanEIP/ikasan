@@ -43,12 +43,12 @@
     <parent>
        <groupId>org.ikasan.demo</groupId>
        <artifactId>demoTransformationRouting-parent</artifactId>
-       <version>0.8.5-SNAPSHOT</version>
+       <version>0.8.4-SNAPSHOT</version>
        <relativePath>../pom.xml</relativePath>
     </parent>
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoTransformationRouting-englishWordRouter-jar</artifactId>
-  <version>0.8.5-SNAPSHOT</version>
+  <version>0.8.4-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>demoTransformationRouting :: englishWordRouter : jar</name>
 
