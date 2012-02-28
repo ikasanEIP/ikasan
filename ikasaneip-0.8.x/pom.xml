@@ -253,9 +253,9 @@
          Figure this out when 0.8.4 rolls around
      -->
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.3-SNAPSHOT</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.8.3-SNAPSHOT</developerConnection>
-      <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.8.3-SNAPSHOT</url>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags</developerConnection>
+      <url>scm:svn:http://open.jira.com/svn/IKASAN</url>
     </scm>
     <!-- sonatype parent sets the source encoding to UTF-8 -->
     <!-- TODO Remove once in Maven central - For jboss-jta & jts & jdocbook -->
