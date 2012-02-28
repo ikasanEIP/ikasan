@@ -50,14 +50,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
+        <version>0.8.4</version>
         <relativePath>../build/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-test</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.4-SNAPSHOT</version>
+    <version>0.8.4</version>
     <name>Ikasan Test Harness</name>
     <description>The test library for the Ikasan Enterprise Integration Platform</description>
 
@@ -66,14 +66,14 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
             <scope>test</scope>
         </dependency>
 

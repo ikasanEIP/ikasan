@@ -49,14 +49,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>compatibility-0.7.10</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
+        <version>0.8.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-framework-0.7.10-compatibility</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.4-SNAPSHOT</version>
+    <version>0.8.4</version>
     <name>Ikasan Framework 0.7.10 Runtime Compatibility</name>
     <description>The framework compatibility library for the Ikasan Enterprise Integration Platform allowing interaction with 0.7.10 modules</description>
 
@@ -65,13 +65,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-common</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-framework</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
             <scope>provided</scope>
         </dependency>
 
