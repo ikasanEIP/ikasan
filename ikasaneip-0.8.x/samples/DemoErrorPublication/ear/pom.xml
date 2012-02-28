@@ -46,13 +46,13 @@
   <parent>
        <groupId>org.ikasan.demo</groupId>
        <artifactId>demoErrorPublication-parent</artifactId>
-       <version>0.8.4</version>
+       <version>0.8.5-SNAPSHOT</version>
        <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>org.ikasan.demo</groupId>
   <artifactId>demoErrorPublication-app</artifactId>
-  <version>0.8.4</version>
+  <version>0.8.5-SNAPSHOT</version>
   <packaging>ear</packaging>
 
   <name>demoErrorPublication :: demoErrorPublication : ear</name>
@@ -211,7 +211,7 @@
     <dependency>
       <groupId>org.ikasan.demo</groupId>
       <artifactId>demoErrorPublication-war</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.5-SNAPSHOT</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
@@ -238,13 +238,13 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-framework</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.5-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-errorpub</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.5-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -293,7 +293,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-common</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.5-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -352,7 +352,7 @@
     <dependency>
       <groupId>org.ikasan.demo</groupId>
       <artifactId>demoErrorPublication-errorManagerTarget-jar</artifactId>
-      <version>0.8.4</version>
+      <version>0.8.5-SNAPSHOT</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
