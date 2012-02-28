@@ -49,14 +49,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.8.4</version>
+        <version>0.8.4-SNAPSHOT</version>
         <relativePath>../build/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-client-connection</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.4</version>
+    <version>0.8.4-SNAPSHOT</version>
     <name>Connector Client</name>
     <description>A client library for a JCA connector that allows safe usage of a Connection, ensuring that it is always closed afterwards.</description>
 
