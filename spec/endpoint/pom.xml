@@ -49,14 +49,14 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-spec</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
+        <version>0.8.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec-endpoint</artifactId>
     <packaging>jar</packaging>
-    <version>0.8.4-SNAPSHOT</version>
+    <version>0.8.4</version>
     <name>Ikasan Specification Endpoint Resource Contracts</name>
     <description>The specification endpoint contracts for the Ikasan Enterprise Integration Platform</description>
 
