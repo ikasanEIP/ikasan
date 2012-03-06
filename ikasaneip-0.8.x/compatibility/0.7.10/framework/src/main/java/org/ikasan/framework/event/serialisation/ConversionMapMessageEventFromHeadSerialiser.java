@@ -40,6 +40,7 @@
  */
 package org.ikasan.framework.event.serialisation;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +81,9 @@ public class ConversionMapMessageEventFromHeadSerialiser extends DefaultMapMessa
     /** Number of payloads in a map message key */
     protected final static String OLD_PAYLOAD_COUNT_PROPERTY = "payloadCount";
 
+    /** Formatter for string representation of Date the event was created */
+    private final static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+
     /* (non-Javadoc)
      * @see org.ikasan.framework.event.serialisation.DefaultMapMessageEventSerialiser#toMessage(org.ikasan.framework.component.Event, javax.jms.Session)
      */
@@ -102,6 +106,9 @@ public class ConversionMapMessageEventFromHeadSerialiser extends DefaultMapMessa
         }
         mapMessage.setInt(OLD_PAYLOAD_COUNT_PROPERTY, payloadCounter);
         mapMessage.setJMSPriority(event.getPriority());
+        mapMessage.setString(EVENT_FIELD_ID, event.getId());
+        mapMessage.setString(EVENT_FIELD_TIMESTAMP, event.getFormattedTimestamp(DATE_FORMATTER));
+        mapMessage.setInt(EVENT_FIELD_PRIORITY, event.getPriority());
         return mapMessage;
     }
 }

@@ -40,6 +40,7 @@
  */
 package org.ikasan.framework.event.serialisation;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -127,6 +128,16 @@ public class ConversionMapMessageEventFromHeadSerialiserTest
 
                 // Priority
                 one(mockMapMessage).setJMSPriority(an080Event.getPriority());
+
+                // Event id
+                one(mockMapMessage).setString("EVENT_ID", an080Event.getId());
+
+                // Event creation time stamp
+                one(mockMapMessage).setString("EVENT_TIMESTAMP", an080Event.getFormattedTimestamp(new SimpleDateFormat("yyyyMMddHHmmssSSS")));
+
+                // Event priority
+                one(mockMapMessage).setInt("EVENT_PRIORITY", an080Event.getPriority());
+
             }
         });
 
