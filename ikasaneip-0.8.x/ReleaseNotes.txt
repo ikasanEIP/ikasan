@@ -10,7 +10,9 @@ Release Notes - Ikasan - Version 0.8.4
     * [IKASAN-361] - Console dumps stackTrace when trying to start a disabled initiator. 
 
 ** Task
-    * [IKASAN-617] - Compile Ikasan with JDK 6Release Notes - Ikasan - Version 0.8.3
+    * [IKASAN-617] - Compile Ikasan with JDK 6
+
+Release Notes - Ikasan - Version 0.8.3
 
 ** Bug
     * [IKASAN-582] - (S)FTP endpoint factories must validate the incoming configuration objects
