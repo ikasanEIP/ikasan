@@ -44,14 +44,6 @@
 --%>
 <%@ include file="/WEB-INF/jsp/modules/initiators/initiatorTop.jsp"%>
 
-
-
-
-
-
-
-
-
 <h3>Scheduler</h3>
 
         <table id="schedulerDetails" class="keyValueTable">
@@ -127,7 +119,6 @@
             
         </table>
 
-
         <h3>Jobs</h3>
         <table id="schedulerJobsList" class="listTable">
             <thead>
@@ -156,17 +147,10 @@
                         </td>
                     </tr>
                 </c:forEach>
-        
+
             </tbody>
-        
-        
-        </table>    
 
-
-
-
-
-
+        </table>
 
         <h3>Triggers</h3>
         <table id="schedulerTriggersList" class="listTable">
@@ -202,12 +186,10 @@
                         </td>
                     </tr>
                 </c:forEach>
-        
-            </tbody>
-        
-        
-        </table>    
 
+            </tbody>
+
+        </table>
 
 
 <%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>

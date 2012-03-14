@@ -50,6 +50,7 @@
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-connector-filetransfer-parent</artifactId>
         <version>0.9.0-SNAPSHOT</version>
+        <relativePath>../connector-filetransfer-parent/pom.xml</relativePath>
     </parent>
     <artifactId>ikasan-connector-ftp-parent</artifactId>
     <version>0.9.0-SNAPSHOT</version>  

@@ -42,6 +42,7 @@ package org.ikasan.endpoint.sftp.consumer.type;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
+import javax.resource.spi.InvalidPropertyException;
 
 import junit.framework.Assert;
 
@@ -112,6 +113,8 @@ public class PayloadBasedSftpConsumerFactoryTest
         this.mockery.checking(new Expectations()
         {
             {
+                one(sftpConfiguration).validate();
+
                 one(sftpConfiguration).setSourceDirectoryURLFactory(null);
 
                 one(sftpConfiguration).getClientID(); will(returnValue("clientID"));
@@ -152,6 +155,32 @@ public class PayloadBasedSftpConsumerFactoryTest
     }
 
     /**
+     * Creating consumer instance fails as incoming {@link SftpConsumerConfiguration} object
+     * is invalid
+     * 
+     * @throws ResourceException if error creating endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void test_createConsumer_fails_invalid_configuration() throws ResourceException
+    {
+        final InvalidPropertyException exception = new InvalidPropertyException();
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(sftpConfiguration).validate(); will(throwException(exception));
+            }
+        });
+
+        // Test
+        Consumer<?> createdConsumer = this.payloadBasedSftpConsumerFactory.createEndpoint(this.sftpConfiguration);
+        Assert.assertTrue(createdConsumer instanceof PayloadBasedSftpConsumer);
+        Assert.assertNull(((PayloadBasedSftpConsumer)createdConsumer).getAlternateFileTransferConnectionTemplate());
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
      * Test create consumer invocation.
      * @throws ResourceException if error creating endpoint
      */
@@ -162,6 +191,8 @@ public class PayloadBasedSftpConsumerFactoryTest
         this.mockery.checking(new Expectations()
         {
             {
+                one(sftpConfiguration).validate();
+
                 one(sftpConfiguration).setSourceDirectoryURLFactory(directoryURLFactory);
 
                 one(sftpConfiguration).getClientID(); will(returnValue("clientID"));
@@ -215,6 +246,8 @@ public class PayloadBasedSftpConsumerFactoryTest
         this.mockery.checking(new Expectations()
         {
             {
+                one(mockAlternateConfig).validate();
+
                 one(mockAlternateConfig).setSourceDirectoryURLFactory(null);
 
                 exactly(2).of(mockAlternateConfig).getClientID(); will(returnValue("clientID"));

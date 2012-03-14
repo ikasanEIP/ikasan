@@ -42,6 +42,7 @@ package org.ikasan.endpoint.ftp.consumer.type;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
+import javax.resource.spi.InvalidPropertyException;
 
 import junit.framework.Assert;
 
@@ -112,6 +113,8 @@ public class PayloadBasedFtpConsumerFactoryTest
         this.mockery.checking(new Expectations()
         {
             {
+                one(ftpConfiguration).validate();
+
                 one(ftpConfiguration).setSourceDirectoryURLFactory(null);
 
                 one(ftpConfiguration).getClientID(); will(returnValue("clientID"));
@@ -160,6 +163,30 @@ public class PayloadBasedFtpConsumerFactoryTest
     }
 
     /**
+     * Creating a consumer endpoint fails as {@link FtpConsumerConfiguration} instance
+     * was invalid
+     * 
+     * @throws ResourceException if error creating endpoint
+     */
+    @Test(expected=ResourceException.class)
+    public void test_createConsumer_fails_invalid_configuration() throws ResourceException
+    {
+        final InvalidPropertyException exception = new InvalidPropertyException();
+
+        // Expectations
+        this.mockery.checking(new Expectations()
+        {
+            {
+                one(ftpConfiguration).validate();will(throwException(exception));
+            }
+        });
+
+        // Test
+        this.payloadBasedFtpConsumerFactory.createEndpoint(this.ftpConfiguration);
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
      * Test create consumer invocation.
      * @throws ResourceException if error creating endpoint
      */
@@ -170,6 +197,8 @@ public class PayloadBasedFtpConsumerFactoryTest
         this.mockery.checking(new Expectations()
         {
             {
+                one(ftpConfiguration).validate();
+
                 one(ftpConfiguration).setSourceDirectoryURLFactory(directoryURLFactory);
 
                 one(ftpConfiguration).getClientID(); will(returnValue("clientID"));
@@ -232,6 +261,8 @@ public class PayloadBasedFtpConsumerFactoryTest
         this.mockery.checking(new Expectations()
         {
             {
+                one(mockAlternateConfig).validate();
+
                 one(mockAlternateConfig).setSourceDirectoryURLFactory(null);
 
                 exactly(2).of(mockAlternateConfig).getClientID(); will(returnValue("clientID"));

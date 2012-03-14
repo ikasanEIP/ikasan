@@ -49,6 +49,7 @@
 
 <h3>Container</h3>
 
+
         <table id="messageEndpointDetails" class="keyValueTable">
             <tr>
                 <th>
@@ -61,8 +62,6 @@
         </table>
 
 </div>
-
-
 
 <%@ include file="/WEB-INF/jsp/bottom.jsp"%>
 

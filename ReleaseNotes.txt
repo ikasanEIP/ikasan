@@ -1,3 +1,24 @@
+Release Notes - Ikasan - Version 0.8.4
+
+** Bug
+    * [IKASAN-606] - Console PointToPointProfile tests have different expectations under Java 7
+    * [IKASAN-607] - platform-environment-context.xml has incorrectly configured baseUrl bean
+    * [IKASAN-608] - error-logging-service-context.xml has incorrectly configured ErrorLoggingService bean, one too many constructor arguments
+    * [IKASAN-612] - mySQL scripts in Framework do not have consistent 'I' case for the Ikasan database
+
+** Improvement
+    * [IKASAN-361] - Console dumps stackTrace when trying to start a disabled initiator. 
+
+** Task
+    * [IKASAN-617] - Compile Ikasan with JDK 6
+
+Release Notes - Ikasan - Version 0.8.3
+
+** Bug
+    * [IKASAN-582] - (S)FTP endpoint factories must validate the incoming configuration objects
+    * [IKASAN-595] - (S)FTP connector renaming files in incorrect order on commit, even when delivering files in correct order
+    * [IKASAN-599] - HibernateErrorOccurrenceDao is to verbose in its logging
+
 Release Notes - Ikasan - Version 0.8.2
 
 ** Improvement
