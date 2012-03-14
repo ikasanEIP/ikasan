@@ -50,6 +50,7 @@
       <groupId>org.ikasan</groupId>
       <artifactId>filter</artifactId>
       <version>0.9.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.ikasan</groupId>
   <artifactId>ikasan-filter-framework-integration</artifactId>

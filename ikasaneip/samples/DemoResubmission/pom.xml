@@ -45,16 +45,17 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>samples</artifactId>
         <version>0.9.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-  <groupId>org.ikasan.demo</groupId>
-  <artifactId>demoResubmission-parent</artifactId>
-  <packaging>pom</packaging>
-  <version>0.9.0-SNAPSHOT</version>
+    <groupId>org.ikasan.demo</groupId>
+    <artifactId>demoResubmission-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.9.0-SNAPSHOT</version>
 
-    <name>demoResubmission :: Parent Project</name>
+	<name>demoResubmission :: Parent Project</name>
 
      <modules>
        <module>demoResubmission</module>

@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.component.Spec;
 import org.ikasan.framework.initiator.Initiator;
 import org.ikasan.framework.initiator.SimpleInitiator;
 import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
@@ -97,6 +96,7 @@ public class InitiatorsController
     /** Service facade for module functions */
     private ModuleService moduleService;
     
+    // Log4j Logger for this class
     private Logger logger = Logger.getLogger(InitiatorsController.class);
 
     /**
@@ -146,7 +146,7 @@ public class InitiatorsController
         else if (initiator.getType().equals(
             QuartzStatefulScheduledDrivenInitiator.QUARTZ_SCHEDULE_DRIVEN_INITIATOR_TYPE))
         {
-        	QuartzDrivenInitiator quartzStatefulScheduledDrivenInitiator = (QuartzDrivenInitiator) initiator;
+            QuartzDrivenInitiator quartzStatefulScheduledDrivenInitiator = (QuartzDrivenInitiator) initiator;
             Map<org.quartz.Trigger, String> triggers = new HashMap<org.quartz.Trigger, String>();
             Scheduler scheduler = quartzStatefulScheduledDrivenInitiator.getScheduler();
             for (String triggerGroupName : scheduler.getTriggerGroupNames())
@@ -284,53 +284,70 @@ public class InitiatorsController
      * @param initiatorName - The name of the initiator
      * @param initiatorAction - The controlling action for the initiator
      * @return "modules/viewModule"
-     * @throws Exception - Exception if we cannot control the initiator
+     * @throws SchedulerException - Exception if we cannot view the initiator in case of failure
      */
     @RequestMapping(value = "/modules/initiator.htm", method = RequestMethod.POST)
     public String controlInitiator(
-    		@RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
+            @RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
             @RequestParam(INITIATOR_NAME_PARAMETER_NAME) String initiatorName,
             @RequestParam(value=INITIATOR_ACTION_PARAMETER_NAME, required=false) String initiatorAction,
             @RequestParam(value=STARTUP_TYPE_PARAMETER_NAME,required=false) String startupType,
-            @RequestParam(value=STARTUP_COMMENT_PARAMETER_NAME, required=false) String startupComment)
+            @RequestParam(value=STARTUP_COMMENT_PARAMETER_NAME, required=false) String startupComment, 
+            ModelMap model) throws SchedulerException
     {
+        List<String> errors = new ArrayList<String>();
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         if (initiatorAction!=null){
-	        if (initiatorAction.equalsIgnoreCase("start"))
-	        {
-	            moduleService.startInitiator(moduleName, initiatorName, currentUser);
-	        }
-	        else if (initiatorAction.equalsIgnoreCase("stop"))
-	        {
-	            moduleService.stopInitiator(moduleName, initiatorName, currentUser);
-	        }else
-	        {
-	            throw new RuntimeException("Unknown initiator action:" + initiatorAction);
-	        }
-        } else if (startupType!=null){
+            if (initiatorAction.equalsIgnoreCase("start"))
+            {
+                try 
+                {
+                    moduleService.startInitiator(moduleName, initiatorName, currentUser);
+                }
+                catch (IllegalStateException e)
+                {
+                    errors.add(e.getMessage());
+                    model.addAttribute("errors", errors);
+                    return viewInitiator(moduleName, initiatorName, model);
+                }
+            }
+            else if (initiatorAction.equalsIgnoreCase("stop"))
+            {
+                moduleService.stopInitiator(moduleName, initiatorName, currentUser);
+            }
+            else
+            {
+                throw new RuntimeException("Unknown initiator action:" + initiatorAction);
+            }
+        }
+        else if (startupType != null)
+        {
             if (startupType.equalsIgnoreCase("manual")||startupType.equalsIgnoreCase("automatic")||startupType.equalsIgnoreCase("disabled"))
-            {       	
-            	//crude check to ensure comment is supplied when disabling
-            	if (startupType.equalsIgnoreCase("disabled")){
-            		logger.info("about to disable initiator, comment is["+startupComment+"]");
-            		if (startupComment==null ||"".equals(startupComment.trim())){
-            			throw new IllegalArgumentException("must supply comment when disabling Initiator");
-            		}
-            	}
+            {
+                // Crude check to ensure comment is supplied when disabling
+                if (startupType.equalsIgnoreCase("disabled"))
+                {
+                    if (startupComment == null || "".equals(startupComment.trim()))
+                    {
+                        errors.add("Must supply comment when disabling Initiator");
+                        model.addAttribute("errors", errors);
+                        return viewInitiator(moduleName, initiatorName, model);
+                    }
+                }
+                logger.info("About to disable initiator, comment is [" + startupComment +"]");
                 moduleService.updateInitiatorStartupType(moduleName, initiatorName, StartupType.valueOf(startupType), startupComment, currentUser);
             }
             else
             {
                 throw new RuntimeException("Unknown startupType:" + startupType);
-            }       	
-        }else{
-        	throw new RuntimeException("Either initiatorAction, or startupType must be specified");
+            }
+        }
+        else
+        {
+            throw new RuntimeException("Either initiatorAction, or startupType must be specified");
         }
         return redirectViewInitiator(moduleName, initiatorName);
     }
-    
-    
-    
 
     /**
      * Helper method to perform a redirect to an initiator view

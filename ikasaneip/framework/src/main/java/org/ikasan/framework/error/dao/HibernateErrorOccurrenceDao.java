@@ -57,63 +57,70 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
+ * Hibernate implementation of the DAO for the ErrorOccurence object
+ * 
  * @author Ikasan Development Team
- *
  */
 public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements ErrorOccurrenceDao {
 
-    /** Query used for housekeeping */
+    // Query used for housekeeping
     private static final String HOUSEKEEP_QUERY = "delete ErrorOccurrence e where e.expiry <= ?";
-    
-    /** Query used for finding all ErrorOccurrences for the specifiend event */
+
+    // Query used for finding all ErrorOccurrences for the specified event
     private static final String FOR_EVENT_QUERY = "from ErrorOccurrence e where e.eventId = ?";
-	
+
+    // Logger
     private static final Logger logger = Logger.getLogger(HibernateErrorOccurrenceDao.class);
-    /* (non-Javadoc)
-	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#save(org.ikasan.framework.error.model.ErrorOccurrence)
-	 */
-	public void save(ErrorOccurrence errorOccurrence) {
-		logger.info("saving ["+errorOccurrence+"]");
-		getHibernateTemplate().save(errorOccurrence);
-		
-	}
+    
+    /* 
+     * (non-Javadoc)
+     * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#save(org.ikasan.framework.error.model.ErrorOccurrence)
+     */
+    public void save(ErrorOccurrence errorOccurrence)
+    {
+        logger.info("Summary of ErrorOccurence we are saving [" + errorOccurrence.getErrorSummary() + "]");
+        getHibernateTemplate().save(errorOccurrence);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#getErrorOccurrence(java.lang.Long)
-	 */
-	public ErrorOccurrence getErrorOccurrence(Long id) {
-		return (ErrorOccurrence) getHibernateTemplate().get(ErrorOccurrence.class, id);
-	}
+    /* 
+     * (non-Javadoc)
+     * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#getErrorOccurrence(java.lang.Long)
+     */
+    public ErrorOccurrence getErrorOccurrence(Long id)
+    {
+        return (ErrorOccurrence) getHibernateTemplate().get(ErrorOccurrence.class, id);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#findErrorOccurrences()
-	 */
-	@SuppressWarnings("unchecked")
-	public PagedSearchResult<ErrorOccurrence> findErrorOccurrences(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,final String moduleName, final String flowName) {
-		
-        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback()
+    /* 
+     * (non-Javadoc)
+     * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#findErrorOccurrences()
+     * 
+     * We suppress the warning because Hibernate doesn't generics, but we know what we're returning
+     */
+    @SuppressWarnings("unchecked")
+    public PagedSearchResult<ErrorOccurrence> findErrorOccurrences(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,final String moduleName, final String flowName) {
+        
+        return (PagedSearchResult<ErrorOccurrence>) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
                 Criteria criteria = session.createCriteria(ErrorOccurrence.class);
-
- 
                 criteria.setMaxResults(pageSize);
                 int firstResult = (pageNo*pageSize);
-				criteria.setFirstResult(firstResult);
-				if (orderBy!=null){
-					if(orderAscending){
-						criteria.addOrder(Order.asc(orderBy));
-					} else{
-						 criteria.addOrder(Order.desc(orderBy));
-					}
-				}
-				if (moduleName!=null){
-					criteria.add(Restrictions.eq("moduleName", moduleName));
-				}
-				if (flowName!=null){
-					criteria.add(Restrictions.eq("flowName", flowName));
-				}
+                criteria.setFirstResult(firstResult);
+                if (orderBy!=null){
+                    if(orderAscending){
+                        criteria.addOrder(Order.asc(orderBy));
+                    } else{
+                         criteria.addOrder(Order.desc(orderBy));
+                    }
+                }
+                if (moduleName!=null){
+                    criteria.add(Restrictions.eq("moduleName", moduleName));
+                }
+                if (flowName!=null){
+                    criteria.add(Restrictions.eq("flowName", flowName));
+                }
                 List<ErrorOccurrence> wiretapResults = criteria.list();
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = new Long(0);
@@ -125,9 +132,10 @@ public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements 
                 return new ArrayListPagedSearchResult<ErrorOccurrence>(wiretapResults, firstResult, rowCount);
             }
         });
-	}
+    }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#deleteAllExpired()
      */
     public void deleteAllExpired()
@@ -135,12 +143,16 @@ public class HibernateErrorOccurrenceDao extends HibernateDaoSupport implements 
         getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
     }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#getErrorOccurrences(java.lang.String)
-	 */
-	public List<ErrorOccurrence> getErrorOccurrences(String eventId) {
-		return getHibernateTemplate().find(FOR_EVENT_QUERY, eventId);
-	}
-
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.framework.error.dao.ErrorOccurrenceDao#getErrorOccurrences(java.lang.String)
+     * 
+     * We suppress the warning because Hibernate doesn't generics, but we know what we're returning
+     */
+    @SuppressWarnings("unchecked")
+    public List<ErrorOccurrence> getErrorOccurrences(String eventId)
+    {
+        return getHibernateTemplate().find(FOR_EVENT_QUERY, eventId);
+    }
 
 }

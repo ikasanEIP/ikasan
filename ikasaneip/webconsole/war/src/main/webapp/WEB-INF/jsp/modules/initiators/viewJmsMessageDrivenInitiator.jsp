@@ -69,7 +69,4 @@
 
         </table>
 
-
 <%@ include file="/WEB-INF/jsp/modules/initiators/initiatorBottom.jsp"%>
-
-

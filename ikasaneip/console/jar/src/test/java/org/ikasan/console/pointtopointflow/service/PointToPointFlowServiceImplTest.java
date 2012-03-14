@@ -119,15 +119,19 @@ public class PointToPointFlowServiceImplTest
     {
         // Setup
         final Set<PointToPointFlowProfile> returnedPointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
-        final PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class);
+        //final PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class);
+        final PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class, "pointToPointFlowProfile1");
         returnedPointToPointFlowProfiles.add(pointToPointFlowProfile1);
-        final PointToPointFlowProfile pointToPointFlowProfile2 = context.mock(PointToPointFlowProfile.class);
+        final PointToPointFlowProfile pointToPointFlowProfile2 = context.mock(PointToPointFlowProfile.class, "pointToPointFlowProfile2");
         returnedPointToPointFlowProfiles.add(pointToPointFlowProfile2);
 
+        
+        
+        
         final Set<PointToPointFlow> pointToPointFlows1 = new LinkedHashSet<PointToPointFlow>();
-        final PointToPointFlow pointToPointFlow1 = context.mock(PointToPointFlow.class);
+        final PointToPointFlow pointToPointFlow1 = context.mock(PointToPointFlow.class, "pointToPointFlow1");
         final Set<PointToPointFlow> pointToPointFlows2 = new LinkedHashSet<PointToPointFlow>();
-        final PointToPointFlow pointToPointFlow2 = context.mock(PointToPointFlow.class);
+        final PointToPointFlow pointToPointFlow2 = context.mock(PointToPointFlow.class, "pointToPointFlow2");
         pointToPointFlows1.add(pointToPointFlow1);
         pointToPointFlows2.add(pointToPointFlow2);
         
@@ -142,9 +146,23 @@ public class PointToPointFlowServiceImplTest
                 will(returnValue(pointToPointFlows1));
                 one(pointToPointFlowProfile1).setPointToPointFlows(pointToPointFlows1);
                 
+                allowing(pointToPointFlow1).getPointToPointFlowProfile();
+                allowing(pointToPointFlow1).getFromModule();
+                allowing(pointToPointFlow1).getToModule();
+                allowing(pointToPointFlow1).getPointToPointFlowProfile();
+                allowing(pointToPointFlow1).getFromModule();
+                allowing(pointToPointFlow1).getToModule();
+                
                 one(pointToPointFlowProfile2).getPointToPointFlows();
                 will(returnValue(pointToPointFlows2));
                 one(pointToPointFlowProfile2).setPointToPointFlows(pointToPointFlows2);
+
+                allowing(pointToPointFlow2).getPointToPointFlowProfile();
+                allowing(pointToPointFlow2).getFromModule();
+                allowing(pointToPointFlow2).getToModule();
+                allowing(pointToPointFlow2).getPointToPointFlowProfile();
+                allowing(pointToPointFlow2).getFromModule();
+                allowing(pointToPointFlow2).getToModule();
             }
         });
         // Test
@@ -233,11 +251,25 @@ public class PointToPointFlowServiceImplTest
                 one(pointToPointFlowProfile1).getId();
                 will(returnValue(new Long(1)));
                 
+                allowing(pointToPointFlow1).getPointToPointFlowProfile();
+                allowing(pointToPointFlow1).getFromModule();
+                allowing(pointToPointFlow1).getToModule();
+                allowing(pointToPointFlow1).getPointToPointFlowProfile();
+                allowing(pointToPointFlow1).getFromModule();
+                allowing(pointToPointFlow1).getToModule();
+                
                 one(pointToPointFlowProfile2).getPointToPointFlows();
                 will(returnValue(pointToPointFlows2));
                 one(pointToPointFlowProfile2).setPointToPointFlows(pointToPointFlows2);
                 one(pointToPointFlowProfile2).getId();
                 will(returnValue(new Long(2)));
+
+                allowing(pointToPointFlow2).getPointToPointFlowProfile();
+                allowing(pointToPointFlow2).getFromModule();
+                allowing(pointToPointFlow2).getToModule();
+                allowing(pointToPointFlow2).getPointToPointFlowProfile();
+                allowing(pointToPointFlow2).getFromModule();
+                allowing(pointToPointFlow2).getToModule();
             }
         });
         // Test
