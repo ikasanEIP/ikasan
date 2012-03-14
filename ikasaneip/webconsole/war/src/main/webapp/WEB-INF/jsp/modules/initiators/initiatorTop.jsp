@@ -44,21 +44,14 @@
 --%>
 <%@ include file="/WEB-INF/jsp/modules/modulesTop.jsp"%>
 
-
 <div class="middle">
 
-
 <h2><c:out value="${initiator.name}" /></h2>
-
 
 <div id="initiatorControlBar">
 
 
-
-
-
 <div id="initiatorControl">
-
 
 <p>Current status is:</p>
 <span id="initiatorStateControl" class="initiatorState-<c:out value="${initiator.state.name}" />"><c:out value="${initiator.state.name}" /></span>
@@ -84,18 +77,11 @@
                 <form:form action="${initiatorLink}" method="post">
                     <input type="submit" value="Start" class="controlButton"/>
                 </form:form>
-
             </c:otherwise>
         </c:choose>
     </security:authorize>  
 
 </div>
-
-
-
-
-
-
 
 
 <p>
@@ -105,6 +91,7 @@
                 <c:param name="moduleName" value="${moduleName}"/>
                 <c:param name="initiatorName" value="${initiator.name}"/>
               </c:url>
+
 <form action="${initiatorLink}" method="post">
 	Startup Type : <select name="startupType">
 		<option value="MANUAL" <c:if test="${startupControl.manual}">selected="selected" </c:if>  >Manual</option>
@@ -124,10 +111,10 @@ Startup Type : ${startupControl.startupType}
 </p>
 </form>
     
-
-
 </div> 
 
-
-
-
+        <c:if test="${errors != ''}">
+            <c:forEach items="${errors}" var="error">
+                <span class="errorMessages"><c:out value="${error}" /></span><br />
+            </c:forEach>
+        </c:if>

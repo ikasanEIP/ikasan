@@ -65,7 +65,6 @@
 		<constructor-arg ref="errorOccurrenceDao" />
 		<constructor-arg ref="excludedEventDao" />
 		<constructor-arg ref="baseUrl"/>
-		<constructor-arg ref="errorOccurrenceTextMessagePublisher" />
 	</bean>
 	
 	<bean id="errorOccurrenceDao"
