@@ -40,18 +40,15 @@
  */
 package org.ikasan.recovery;
 
-import java.util.Map;
-
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.quartz.Job;
 import org.quartz.Scheduler;
 
 /**
- * Scheduled based Recovery Manager Factory provides
- * recovery manager instances using a single scheduler and job factory
- * for coordination.
+ * Recovery Manager Factory provides recovery manager instances 
+ * currently only based on a the Ikasan Quartz scheduler for scheduled recovery 
+ * management.
  * 
  * @author Ikasan Development Team
  */
@@ -60,59 +57,40 @@ public class RecoveryManagerFactory
     /** Quartz Scheduler */
     private Scheduler scheduler;
     
+    /** Ikasan extended Quartz job factory */
+    private ScheduledJobFactory scheduledJobFactory;
+    
     /**
      * Constructor
      * @param scheduler
-     * @param exceptionResolver
+     * @param scheduledJobFactory
      */
-    public RecoveryManagerFactory(Scheduler scheduler)
+    public RecoveryManagerFactory(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
         {
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
+
+        this.scheduledJobFactory = scheduledJobFactory;
+        if(scheduledJobFactory == null)
+        {
+            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
+        }
     }
 
     /**
      * Create a new recovery manager instance based on the incoming parameters.
-     * This new recovery manager will utilise a single factory configured 
-     * scheduler for call back coordination.
      * 
      * @param flowName
      * @param moduleName
      * @param consumer
-     * @return
+     * @return RecoveryManager
      */
     public RecoveryManager getRecoveryManager(String flowName, String moduleName, Consumer consumer)
     {
-        // get a new instance of recovery manager
-        ScheduledRecoveryManager recoveryManager = getRecoveryManagerInstance(flowName, moduleName, consumer);
-
-        // add the new instance to the cached jobs job factory 
-        Map<String,Job> jobs = getScheduledJobFactory().getScheduledJobs();
-        jobs.put(recoveryManager.RECOVERY_JOB_NAME + flowName + moduleName, (Job)recoveryManager);
-
-        // return new instance to the caller 
-        return recoveryManager;
-    }
-    
-    /**
-     * Factory method for getting a ScheduledRecoveryManger instance.
-     * @return ScheduledRecoveryManager
-     */
-    protected ScheduledRecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
-    {
-        return new ScheduledRecoveryManager(scheduler, flowName, moduleName, consumer);
-    }
-    
-    /**
-     * Factory method for getting a ScheduledJobFactory instance.
-     * @return ScheduledJobFactory
-     */
-    protected ScheduledJobFactory getScheduledJobFactory()
-    {
-        return ScheduledJobFactory.getInstance();
+        return new ScheduledRecoveryManager(scheduler, scheduledJobFactory, flowName, moduleName, consumer);
     }
     
 }

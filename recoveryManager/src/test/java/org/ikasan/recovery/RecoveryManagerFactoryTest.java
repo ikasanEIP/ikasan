@@ -48,7 +48,6 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -101,7 +100,16 @@ public class RecoveryManagerFactoryTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new RecoveryManagerFactory(null);
+        new RecoveryManagerFactory(null, null);
+    }
+
+    /**
+     * Test failed constructor due to null scheduledJobFactory.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullScheduledJobFactory()
+    {
+        new RecoveryManagerFactory(scheduler, null);
     }
 
     /**
@@ -111,20 +119,8 @@ public class RecoveryManagerFactoryTest
     @Test
     public void test_successful_getRecovery_instance() throws SchedulerException
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // get the recovery manager instance
-                exactly(1).of(scheduledJobFactory).getScheduledJobs();
-                will(returnValue(scheduledJobs));
-                
-                exactly(1).of(scheduledJobs).put("recoveryJob_flowNamemoduleName", scheduledRecoveryManager);
-            }
-        });
-
-        RecoveryManagerFactory recoveryManagerFactory = new StubbedRecoveryManagerFactory(scheduler);
-        Assert.assertNotNull(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer));
+        RecoveryManagerFactory recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
+        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer) instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }
@@ -136,59 +132,10 @@ public class RecoveryManagerFactoryTest
     @Test
     public void test_successful_getRecovery_instance_with_resolver() throws SchedulerException
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // get the recovery manager instance
-                exactly(1).of(scheduledJobFactory).getScheduledJobs();
-                will(returnValue(scheduledJobs));
-                
-                exactly(1).of(scheduledJobs).put("recoveryJob_flowNamemoduleName", scheduledRecoveryManager);
-            }
-        });
-
-        RecoveryManagerFactory recoveryManagerFactory = new StubbedRecoveryManagerFactory(scheduler);
-        Assert.assertNotNull(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer));
+        RecoveryManagerFactory recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
+        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer) instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test failed recovery manager factory instantiation
-     * @throws SchedulerException 
-     */
-    @Test(expected = RuntimeException.class)
-    public void test_failed_instantiation() throws SchedulerException
-    {
-        new StubbedRecoveryManagerFactory(null);
-    }
-
-
-    /**
-     * Extended ScheduledRecoveryManagerFactory for testing with replacement mocks.
-     * @author Ikasan Development Team
-     *
-     */
-    private class StubbedRecoveryManagerFactory extends RecoveryManagerFactory
-    {
-
-        public StubbedRecoveryManagerFactory(Scheduler scheduler)
-        {
-            super(scheduler);
-        }
-        
-        @Override
-        protected ScheduledRecoveryManager getRecoveryManagerInstance(String flowName, String moduleName, Consumer consumer)
-        {
-            return scheduledRecoveryManager;
-        }
-
-        @Override
-        protected ScheduledJobFactory getScheduledJobFactory()
-        {
-            return scheduledJobFactory;
-        }
     }
 
 }

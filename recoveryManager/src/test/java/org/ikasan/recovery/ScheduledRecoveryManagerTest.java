@@ -48,12 +48,14 @@ import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.recovery.ScheduledRecoveryManager;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -86,6 +88,12 @@ public class ScheduledRecoveryManagerTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
+    /** Mock scheduledJobFactory */
+    final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
+
+    /** Mock job */
+    final Job job = mockery.mock(Job.class, "mockJob");
+
     /** Mock recovery job detail */
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
@@ -107,7 +115,16 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManager(null, null, null, null);
+        new ScheduledRecoveryManager(null, null, null, null, null);
+    }
+
+    /**
+     * Test failed constructor due to null scheduled job factory.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullScheduledJobFactory()
+    {
+        new ScheduledRecoveryManager(scheduler, null, null, null, null);
     }
 
     /**
@@ -116,7 +133,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowName()
     {
-        new ScheduledRecoveryManager(scheduler, null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null, null);
     }
 
     /**
@@ -125,7 +142,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null, null);
     }
 
     /**
@@ -134,7 +151,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullConsumer()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", null);
     }
 
     /**
@@ -143,7 +160,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_successful_instantiation()
     {
-        new ScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer);
     }
 
     /**
@@ -188,6 +205,8 @@ public class ScheduledRecoveryManagerTest
     {
         final Exception exception = new Exception();
         
+        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -207,6 +226,10 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).start();
 
                 // create the recovery job and associated trigger
+//                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+                
                 exactly(1).of(retryAction).getMaxRetries();
                 will(returnValue(2));
                 exactly(2).of(retryAction).getDelay();
@@ -222,7 +245,6 @@ public class ScheduledRecoveryManagerTest
             }
         });
 
-        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
         recoveryManager.setResolver(exceptionResolver);
         recoveryManager.recover("componentName", exception);
 
@@ -262,16 +284,18 @@ public class ScheduledRecoveryManagerTest
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
-                // for this test we are not already in a recovery
+                // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
+                
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
                 
                 // create the recovery job and associated trigger
                 exactly(3).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
                 exactly(1).of(retryAction).getDelay();
                 will(returnValue(delay));
-//                exactly(1).of(trigger).setStartTime(with(any(Date.class)));
                 
                 // schedule the recovery job with its trigger
                 exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
@@ -400,13 +424,7 @@ public class ScheduledRecoveryManagerTest
 
         public StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer)
         {
-            super(scheduler, flowName, moduleName, consumer);
-        }
-        
-        @Override
-        protected JobDetail newRecoveryJob()
-        {
-            return jobDetail;
+            super(scheduler, scheduledJobFactory, flowName, moduleName, consumer);
         }
         
         @Override

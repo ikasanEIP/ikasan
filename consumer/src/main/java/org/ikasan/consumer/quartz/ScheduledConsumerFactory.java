@@ -45,7 +45,6 @@ import java.util.Map;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.EventFactory;
-import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
@@ -61,6 +60,9 @@ public class ScheduledConsumerFactory
     /** Quartz Scheduler */
     private Scheduler scheduler;
 
+    /** job factory */
+    private ScheduledJobFactory scheduledJobFactory;
+    
     /** event factory */
     private EventFactory eventFactory;
     
@@ -69,7 +71,7 @@ public class ScheduledConsumerFactory
      * @param scheduler
      * @param scheduledConsumerJobFactory
      */
-    public ScheduledConsumerFactory(Scheduler scheduler, EventFactory eventFactory)
+    public ScheduledConsumerFactory(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, EventFactory eventFactory)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -77,26 +79,25 @@ public class ScheduledConsumerFactory
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
         
+        this.scheduledJobFactory = scheduledJobFactory;
+        if(eventFactory == null)
+        {
+            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
+        }
+        
         this.eventFactory = eventFactory;
         if(eventFactory == null)
         {
             throw new IllegalArgumentException("eventFactory cannot be 'null'");
         }
-        
     }
 
     public Consumer getScheduledConsumer(String flowName, String moduleName)
     {
-        JobDetail jobDetail = new JobDetail();
-        jobDetail.setJobClass(ScheduledConsumer.class);
-        jobDetail.setName(flowName);
-        jobDetail.setGroup(moduleName);
-        ScheduledConsumer scheduledConsumer = new ScheduledConsumer(this.scheduler, jobDetail, this.eventFactory);
-
-        // add the new instance to the cached jobs job factory 
-        Map<String,Job> jobs = ScheduledJobFactory.getInstance().getScheduledJobs();
-        jobs.put(flowName + moduleName, (Job)scheduledConsumer);
-
+        ScheduledConsumer scheduledConsumer = new ScheduledConsumer(this.scheduler, this.eventFactory);
+        JobDetail jobDetail = this.scheduledJobFactory.createJobDetail(scheduledConsumer, flowName, moduleName);
+        scheduledConsumer.setJobDetail(jobDetail);
+        
         return scheduledConsumer;
     }
 }

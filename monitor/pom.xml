@@ -55,13 +55,13 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-monitor</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-monitor</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
