@@ -47,6 +47,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.Job;
@@ -56,7 +57,6 @@ import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import static org.quartz.JobBuilder.*;
 // TODO - check if deprecated is replaced with anything import org.quartz.StatefulJob;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.*;
@@ -69,7 +69,6 @@ import static org.quartz.SimpleScheduleBuilder.*;
  * @author Ikasan Development Team
  */
 public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, Job
-//, StatefulJob
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
@@ -85,6 +84,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
     /** scheduler */
     private Scheduler scheduler;
+    
+    /** scheduled job factory for creating Quartz specific jobs */
+    private ScheduledJobFactory scheduledJobFactory;
     
     /** flow name */
     private String flowName;
@@ -110,16 +112,23 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /**
      * Constructor
      * @param scheduler
+     * @param scheduledJobFactory
      * @param flowName
      * @param moduleName
      * @param consumer
      */
-    public ScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer<?> consumer)
+    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName, Consumer<?> consumer)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
         {
             throw new IllegalArgumentException("scheduler cannot be null");
+        }
+
+        this.scheduledJobFactory = scheduledJobFactory;
+        if(scheduledJobFactory == null)
+        {
+            throw new IllegalArgumentException("scheduledJobFactory cannot be null");
         }
 
         this.flowName = flowName;
@@ -271,9 +280,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     private void startRecovery(RetryAction retryAction)
         throws SchedulerException
     {
-        JobDetail recoveryJobDetail = newRecoveryJob();
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getMaxRetries(), retryAction.getDelay());
-   // jeff     recoveryJobTrigger..setStartTime( new Date(System.currentTimeMillis() + retryAction.getDelay()) );
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
         recoveryAttempts = 1;
@@ -343,18 +351,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
     
     /**
-     * Factory method for creating a new recovery job
-     * @return JobDetail
-     */
-    protected JobDetail newRecoveryJob()
-    {
-     //   return new JobDetail(RECOVERY_JOB_NAME + this.flowName, this.moduleName, ScheduledRecoveryManager.class);
-        return newJob(ScheduledRecoveryManager.class)
-        .withIdentity(RECOVERY_JOB_NAME + this.flowName, this.moduleName)
-        .build();    
-    }
-    
-    /**
      * Factory method for creating a new recovery trigger.
      * @param maxRetries
      * @param delay
@@ -369,7 +365,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             .repeatSecondlyForTotalCount(maxRetries, (int)(delay / 1000) ) ) 
         .startAt(new Date(System.currentTimeMillis() + delay))
         .build();
-        //return TriggerUtils.makeImmediateTrigger(RECOVERY_JOB_TRIGGER_NAME, maxRetries, delay);
     }
     
     /**
