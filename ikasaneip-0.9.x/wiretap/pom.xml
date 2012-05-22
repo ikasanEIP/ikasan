@@ -55,7 +55,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-wiretap</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Ikasan Wiretap Implementation</name>
     <description>Ikasan EIP Flow wiretap</description>
 
@@ -64,13 +64,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-module</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -82,18 +82,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-search</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-common</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-framework</artifactId>
             <version>0.9.0-EXPERIMENT</version>
             <scope>provided</scope>
         </dependency>
@@ -145,13 +133,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>2.5.6</version>
+            <version>3.0.5.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>2.5.6</version>
+            <version>3.0.5.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -55,7 +55,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-recoveryManager</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Ikasan Recovery Manager</name>
     <description>Ikasan Recovery Manager Implementation based on a scheduled driven recovery manager</description>
 
@@ -64,28 +64,28 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-recoveryManager</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-event</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-component-endpoint</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <artifactId>ikasan-spec-component</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

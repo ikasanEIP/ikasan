@@ -40,6 +40,9 @@
  */
 package org.ikasan.consumer.quartz;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.text.ParseException;
 import java.util.Date;
 
@@ -49,12 +52,12 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
-import org.quartz.CronTrigger;
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.StatefulJob;
 import org.quartz.Trigger;
 
 /**
@@ -63,7 +66,7 @@ import org.quartz.Trigger;
  * @author Ikasan Development Team
  */
 public class ScheduledConsumer 
-    implements Consumer<EventListener>, ConfiguredResource<ScheduledConsumerConfiguration>, StatefulJob
+    implements Consumer<EventListener>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledConsumer.class);
@@ -92,7 +95,7 @@ public class ScheduledConsumer
      * @param jobDetail
      * @param flowEventFactory
      */
-    public ScheduledConsumer(Scheduler scheduler, JobDetail jobDetail, EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public ScheduledConsumer(Scheduler scheduler, EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -100,17 +103,16 @@ public class ScheduledConsumer
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
 
-        this.jobDetail = jobDetail;
-        if(jobDetail == null)
-        {
-            throw new IllegalArgumentException("jobDetail cannot be 'null'");
-        }
-        
         this.flowEventFactory = flowEventFactory;
         if(flowEventFactory == null)
         {
             throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
         }
+    }
+    
+    public void setJobDetail(JobDetail jobDetail)
+    {
+        this.jobDetail = jobDetail;
     }
     
     /**
@@ -122,11 +124,13 @@ public class ScheduledConsumer
         {
             // create trigger
             // TODO - allow configuration to support multiple triggers
-            Trigger trigger = getCronTrigger(jobDetail.getName(), jobDetail.getGroup(), this.consumerConfiguration.getCronExpression());
+            JobKey jobkey = jobDetail.getKey();
+
+            Trigger trigger = getCronTrigger(jobkey, this.consumerConfiguration.getCronExpression());
             Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
             logger.info("Scheduled consumer for flow [" 
-                + jobDetail.getName()
-                + "] module [" + jobDetail.getGroup() 
+                + jobkey.getName()
+                + "] module [" + jobkey.getGroup() 
                 + "] starting at [" + scheduledDate + "]");
         }
         catch (SchedulerException e)
@@ -146,7 +150,7 @@ public class ScheduledConsumer
     {
         try
         {
-            this.scheduler.deleteJob(jobDetail.getName(), jobDetail.getGroup());
+            this.scheduler.deleteJob(this.jobDetail.getKey());
         }
         catch (SchedulerException e)
         {
@@ -162,7 +166,7 @@ public class ScheduledConsumer
     {
         try
         {
-            JobDetail jobDetail = this.scheduler.getJobDetail(this.jobDetail.getName(), this.jobDetail.getGroup());
+            JobDetail jobDetail = this.scheduler.getJobDetail(this.jobDetail.getKey());
             if(jobDetail == null)
             {
                 return false;
@@ -191,7 +195,8 @@ public class ScheduledConsumer
      */
     public void execute(JobExecutionContext context)
     {
-        String uniqueId = context.getJobDetail().getFullName();
+        JobKey jobkey = context.getJobDetail().getKey();
+        String uniqueId = jobkey.getName() + jobkey.getGroup();
         FlowEvent<?,?> flowEvent =this.flowEventFactory.newEvent(uniqueId, context);
         this.eventListener.invoke(flowEvent);
     }
@@ -215,24 +220,15 @@ public class ScheduledConsumer
     {
         this.configuredResourceId = configuredResourceId;
     }
-
-    /**
-     * Method factory for creating a new job detail
-     * @return jobDetail
-     */
-    protected JobDetail getJobDetail()
-    {
-        return new JobDetail();
-    }
     
     /**
      * Method factory for creating a cron trigger
      * @return jobDetail
      * @throws ParseException 
      */
-    protected Trigger getCronTrigger(String name, String group, String cronExpression) throws ParseException
+    protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
     {
-        return new CronTrigger(name, group, cronExpression);
+        return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression)).build();
     }
     
 }

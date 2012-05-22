@@ -50,6 +50,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -93,16 +94,7 @@ public class ScheduledConsumerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledConsumer(null, null, null);
-    }
-
-    /**
-     * Test failed constructor for scheduled consumer due to null flowEventFactory.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullJobDetail()
-    {
-        new ScheduledConsumer(scheduler, null, null);
+        new ScheduledConsumer(null, null);
     }
 
     /**
@@ -111,7 +103,7 @@ public class ScheduledConsumerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowEventFactory()
     {
-        new ScheduledConsumer(scheduler, mockJobDetail, null);
+        new ScheduledConsumer(scheduler, null);
     }
 
     /**
@@ -121,15 +113,15 @@ public class ScheduledConsumerTest
     @Test
     public void test_successful_start() throws SchedulerException
     {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // get flow and module name from the job
-                exactly(2).of(mockJobDetail).getName();
-                will(returnValue("flowName"));
-                exactly(2).of(mockJobDetail).getGroup();
-                will(returnValue("moduleName"));
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
@@ -142,6 +134,7 @@ public class ScheduledConsumerTest
         });
 
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, flowEventFactory);
+        scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -154,15 +147,15 @@ public class ScheduledConsumerTest
     @Test(expected = RuntimeException.class)
     public void test_failed_start_due_to_schedulerException() throws SchedulerException
     {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // get flow and module name from the job
-                exactly(2).of(mockJobDetail).getName();
-                will(returnValue("flowName"));
-                exactly(2).of(mockJobDetail).getGroup();
-                will(returnValue("moduleName"));
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
@@ -176,6 +169,7 @@ public class ScheduledConsumerTest
 
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, flowEventFactory);
         scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -187,15 +181,15 @@ public class ScheduledConsumerTest
     @Test(expected = RuntimeException.class)
     public void test_failed_start_due_to_parserException() throws SchedulerException
     {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // get flow and module name from the job
-                exactly(2).of(mockJobDetail).getName();
-                will(returnValue("flowName"));
-                exactly(2).of(mockJobDetail).getGroup();
-                will(returnValue("moduleName"));
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
@@ -220,23 +214,24 @@ public class ScheduledConsumerTest
     @Test
     public void test_successful_stop() throws SchedulerException
     {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // access configuration for details
-                exactly(1).of(mockJobDetail).getName();
-                will(returnValue("flowName"));
-                exactly(1).of(mockJobDetail).getGroup();
-                will(returnValue("moduleName"));
+                // get flow and module name from the job
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
 
                 // unschedule the job
-                exactly(1).of(scheduler).deleteJob("flowName", "moduleName");
+                exactly(1).of(scheduler).deleteJob(jobKey);
             }
         });
 
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, flowEventFactory);
         scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.stop();
         mockery.assertIsSatisfied();
     }
@@ -248,18 +243,18 @@ public class ScheduledConsumerTest
     @Test(expected = RuntimeException.class)
     public void test_failed_stop_due_to_schedulerException() throws SchedulerException
     {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // access configuration for details
-                exactly(1).of(mockJobDetail).getName();
-                will(returnValue("flowName"));
-                exactly(1).of(mockJobDetail).getGroup();
-                will(returnValue("moduleName"));
+                // get flow and module name from the job
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
 
                 // unschedule the job
-                exactly(1).of(scheduler).deleteJob("flowName", "moduleName");
+                exactly(1).of(scheduler).deleteJob(jobKey);
                 will(throwException(new SchedulerException()));
             }
         });
@@ -279,11 +274,11 @@ public class ScheduledConsumerTest
     {
         protected StubbedScheduledConsumer(Scheduler scheduler, EventFactory flowEventFactory)
         {
-            super(scheduler, mockJobDetail, flowEventFactory);
+            super(scheduler, flowEventFactory);
         }
         
         @Override
-        protected Trigger getCronTrigger(String name, String group, String cronExpression)
+        protected Trigger getCronTrigger(JobKey jobkey, String cronExpression)
         {
             return trigger;
         }
