@@ -47,13 +47,13 @@ package org.ikasan.spec.component.endpoint;
  *
  * @author Ikasan Development Teams
  */
-public interface Broker<TARGET,SOURCE>
+public interface Broker<SEND,RECEIVE>
 {
     /**
-     * Consume payload from a source protocol endpoint
-     * @param <TARGET>
-     * @return <SOURCE>
+     * Synchronous Request/response based contract with an endpoint.
+     * @param <SEND>
+     * @return <RECEIVE>
      * @throws EndpointException
      */
-    public SOURCE invoke(TARGET target) throws EndpointException;
+    public RECEIVE invoke(SEND send) throws EndpointException;
 }

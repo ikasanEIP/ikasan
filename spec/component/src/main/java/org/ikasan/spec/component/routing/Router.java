@@ -43,10 +43,7 @@ package org.ikasan.spec.component.routing;
 import java.util.List;
 
 /**
- * Interface for all FlowComponents that perform a Routing function. These are characterised by a dynamic evaluation of
- * business path. The resultant path or paths for the given <code>
- * Event</code> are identified by the values in the resultant
- * <code>List<String</code>
+ * Contract for a Routing operation.
  * 
  * @author Ikasan Development Team
  * @param <T> message to route
@@ -57,8 +54,8 @@ public interface Router<T>
     public static final String DEFAULT_RESULT = "default";
 
     /**
-     * Handles the <code>Event<code> in a read-only fashion, returning an ordered List of 
-     * paths/routes for this <code>Event</code> to take next
+     * Handles the <code>messageToRoute<code> in a read-only fashion, returning an ordered List of 
+     * paths/routes for this <code>messageToRoute</code> to take next.
      * 
      * @param messageToRoute Event to handle
      * @return List<String> of paths/routes for this <code>Event</code> to take next

@@ -43,10 +43,10 @@ package org.ikasan.spec.component.sequencing;
 import java.util.List;
 
 /**
- * Interface for all FlowComponents that perform a Sequencing function.
+ * Contract to perform Sequencing.
  * 
- * These are characterised by a variable number of <code>Event<code>s being routed downstream
- * based on the incoming <code>Event<code>.
+ * These are characterised by a variable number of <code>payloads<code>s being routed downstream
+ * based on the incoming <code>payload<code>.
  * 
  * @author Ikasan Development Team
  * @param <T> message to split or aggregate
@@ -54,10 +54,10 @@ import java.util.List;
 public interface Sequencer<T>
 {
     /**
-     * Returns an ordered List<Event> for forwarding downstream
+     * Returns an ordered List<T> for forwarding downstream
      * 
      * @param event The event to perform sequencing on
-     * @return List<Event> for forwarding downstream in order
+     * @return List<T> for forwarding downstream in order
      * @throws SequencerException Exception if we could not sequence
      */
     public List<T> sequence(final T event) throws SequencerException;
