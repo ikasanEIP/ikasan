@@ -61,6 +61,7 @@
        <module>recoveryManager</module>
        <module>monitor</module>
        <module>service</module>
+       <module>uber</module>
     </modules>
 
 </project>
