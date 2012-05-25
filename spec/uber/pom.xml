@@ -52,11 +52,73 @@
         <version>0.9.0-EXPERIMENT</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-spec-management</artifactId>
-    <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
-    <name>Ikasan Specification Managed Resource Contracts</name>
-    <description>The specification management contracts for the Ikasan Enterprise Integration Platform</description>
+	<groupId>org.ikasan</groupId>
+	<artifactId>ikasan-uber-spec</artifactId>
+	<packaging>jar</packaging>
+	<version>0.9.0-SNAPSHOT</version>
+	<name>Ikasan Specification Component Contracts</name>
+	<description>The specification component contracts for the Ikasan Enterprise Integration Platform</description>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>org.ikasan:ikasan-spec-*:jar:</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+  
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-event</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-module</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-recoveryManager</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-monitor</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-configuration</artifactId>
+            <version>0.9.0-EXPERIMENT</version>
+        </dependency>
+    </dependencies>  
 </project>
