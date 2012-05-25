@@ -52,9 +52,9 @@ package org.ikasan.spec.component.endpoint;
 public interface Producer<T>
 {
     /**
-     * Push payload to a protocol endpioint
-     * @param payload
-     * @throws TransformationException if error converting S to T
+     * Push payload to a protocol endpoint
+     * @param <T> payload
+     * @throws EndpointException
      */
     public void invoke(final T payload) throws EndpointException;
 }
