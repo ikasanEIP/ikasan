@@ -40,7 +40,7 @@
  */
 package org.ikasan.spec.module;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Ikasan module contracts.
@@ -61,7 +61,7 @@ public interface Module<FLOW>
      * 
      * @return a map of <code>Flow</code> using the {@link Flow#getName()} as key
      */
-    public Map<String, FLOW> getFlows();
+    public List<FLOW> getFlows();
 
     /**
      * Returns a human readable description of this module
