@@ -4,10 +4,13 @@
 	<h1>Modules</h1>
 	
     <c:forEach items="${moduleMap}" var="module">
-        <b>Module</b> [${module.key}] <br/>
+        <b>${module.key}</b><br/>
+        <table border="1">
+        <tr><th>Flow</th><th>State</th></tr>
         <c:forEach items="${module.value}" var="flow">
-            <&nbsp/><&nbsp/><&nbsp/><i>Flow<i/> [${flow.key}] [$flow.value}] <br/>
+            <tr><td>${flow.key}</td><td>${flow.value}</td></tr>
         </c:forEach>
+        </table>
     </c:forEach>
 </body>
 </html>
