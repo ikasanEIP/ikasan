@@ -1,4 +1,4 @@
- /* 
+/* 
  * $Id$
  * $URL$
  *
@@ -38,42 +38,91 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module.container;
+package org.ikasan.module;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
-
-
 /**
- * Container class for holding references to all available <code>Module</code>s
+ * A simple representation of a Module
  * 
  * @author Ikasan Development Team
  */
-public interface ModuleContainer
+public class SimpleModule implements Module
 {
-    
-    /**
-     * Returns the module named by moduleName or null if it does not exist
-     * 
-     * @param moduleName - The name of the module to get
-     * @return Module or null
-     */
-    public Module getModule(String moduleName);
-    
-    /**
-     * Exposes all the loaded <code>Module</code>s
-     * 
-     * @return List of all loaded <code>Module</code>s 
-     */
-    public List<Module> getModules();
+    /** Flows within this module */
+    private List<Flow> flows;
 
-    
+    /** Module name */
+    protected String name;
+
+    /** Human readable description of this module */
+    private String description;
+
     /**
-     * Adds a new <code>Module</code> to the container
+     * Constructor
      * 
-     * @param module a new module
+     * @param name The name of the module
+     * @param flows A list of Flows for the module
      */
-    public void add(Module module);
+    public SimpleModule(String name, List<Flow> flows)
+    {
+        this(name);
+        this.flows = new ArrayList<Flow>(flows);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param name Name of the module
+     */
+    public SimpleModule(String name)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+    }
+
+    /**
+     * Accessor for name
+     * 
+     * @return module name
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * @return the flows
+     */
+    public List<Flow> getFlows()
+    {
+        return new ArrayList<Flow>(this.flows);
+    }
+
+    /**
+     * @see org.ikasan.framework.module.Module#getDescription()
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * Set the description. 
+     * 
+     * @param description - description to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
 }
