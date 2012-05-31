@@ -43,8 +43,8 @@ package org.ikasan.module.service;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.module.container.ModuleContainer;
-import org.ikasan.systemevent.service.SystemEventService;
+import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 
@@ -56,10 +56,10 @@ import org.ikasan.spec.module.Module;
  */
 public class ModuleServiceImpl implements ModuleService
 {
-    /**
-     * service to log significant system happenings
-     */
-    private SystemEventService systemEventService;
+//    /**
+//     * service to log significant system happenings
+//     */
+//    private SystemEventService systemEventService;
 
     
     /**
@@ -93,12 +93,11 @@ public class ModuleServiceImpl implements ModuleService
      * @param moduleContainer
      * @param systemEventService 
      */
-    public ModuleServiceImpl(ModuleContainer moduleContainer, SystemEventService systemEventService)
+//    public ModuleServiceImpl(ModuleContainer moduleContainer, SystemEventService systemEventService)
+    public ModuleServiceImpl(ModuleContainer moduleContainer)
     {
         super();
         this.moduleContainer = moduleContainer;
-        this.systemEventService = systemEventService;
-
     }
 
     /* (non-Javadoc)
@@ -123,14 +122,22 @@ public class ModuleServiceImpl implements ModuleService
      */
     public void stopFlow(String moduleName, String flowName, String actor)
     {
-    	this.logger.info("stopInitiator : "+moduleName+"."+flowName+" requested by ["+actor+"]");
-        Flow flow = this.resolveInitiator(moduleName, flowName);
+    	this.logger.info("stopFlow : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+        Flow flow = this.resolveFlow(moduleName, flowName);
+        if(flow == null)
+        {
+            // TODO - throw exception ?
+            logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+        }
+        else
+        {
+            flow.stop();
+        }
         
-        //log the request
-        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+//        //log the request
+//        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION,  actor);
         
         //now stop the Initiator
-        flow.stop();
     }
 
     
@@ -139,25 +146,40 @@ public class ModuleServiceImpl implements ModuleService
      */
     public void startFlow(String moduleName, String flowName, String actor)
     {
-    	this.logger.info("startInitiator : "+moduleName+"."+flowName+" requested by ["+actor+"]");
-    	Flow flow = this.resolveInitiator(moduleName, flowName);
-
-        //log the request
-        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+    	this.logger.info("startFlow : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+    	Flow flow = this.resolveFlow(moduleName, flowName);
+    	if(flow == null)
+    	{
+    	    // TODO - throw exception ?
+    	    logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+    	}
+    	else
+    	{
+            flow.start();
+    	}
+//        //log the request
+//        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION,  actor);
 
         //now start the Initiator
-        flow.start();
     }
 
-    private Flow resolveInitiator(String moduleName, String flowName)
+    private Flow resolveFlow(String moduleName, String flowName)
     {
-        Module module = this.getModule(moduleName);
+        Module<Flow> module = this.getModule(moduleName);
         if (module == null)
         {
             throw new IllegalArgumentException("no such Module ["+moduleName+"]");
         }
 
-        return  module.getFlows().get(flowName);
+        for(Flow flow:module.getFlows())
+        {
+            if(flow.getName().equals(flowName))
+            {
+                return flow;
+            }
+        }
+
+        return null;
     }
 
 }

@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ikasan.spec.module.Module;
-
+import org.ikasan.spec.module.ModuleContainer;
 
 /**
  * Default implementation for Module Container 

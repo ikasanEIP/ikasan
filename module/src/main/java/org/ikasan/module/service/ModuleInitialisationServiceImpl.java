@@ -45,14 +45,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.flow.initiator.dao.InitiatorStartupControlDao;
-import org.ikasan.framework.initiator.InitiatorStartupControl;
-import org.ikasan.framework.initiator.InitiatorStartupControl.StartupType;
-import org.ikasan.module.container.ModuleContainer;
-import org.ikasan.framework.security.model.Authority;
-import org.ikasan.framework.security.service.UserService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.module.ModuleInitialisationService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -73,10 +69,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     /** Runtime container for holding modules */
     private ModuleContainer moduleContainer;
     
+    /** loader configuration */
+    private String loaderConfiguration;
+
     /**
      * Data Access object for retrieving any existing stop/start information
      */
-    private InitiatorStartupControlDao initiatorStartupControlDao;
+//    private StartupControlDao startupControlDao;
 
     /**
      * platform level application context to be used to parent each of the module's contexts
@@ -84,7 +83,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     private ApplicationContext platformContext;
 
     /** UserService provides access to users and authorities */
-    private UserService userService;
+//    private UserService userService;
 
     /**
      * Constructor
@@ -93,12 +92,11 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * @param userService - The user service
      * @param initiatorStartupControlDao - DAO for supplying InitiatorStartupControl instances
      */
-    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, UserService userService, InitiatorStartupControlDao initiatorStartupControlDao)
+//    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, UserService userService, StartupControlDao startupControlDao)
+    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer)
     {
         super();
         this.moduleContainer = moduleContainer;
-        this.userService = userService;
-        this.initiatorStartupControlDao = initiatorStartupControlDao;
     }
 
     /*
@@ -112,6 +110,11 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         this.platformContext = applicationContext;
     }
 
+    public void setLoaderConfiguration(String loaderConfiguration)
+    {
+        this.loaderConfiguration = loaderConfiguration;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -120,68 +123,79 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     @SuppressWarnings("unchecked")
     public void afterPropertiesSet() throws Exception
     {
-        // Get a listing of all the module loader files that may contain loadable modules
-        ApplicationContext moduleLoadingContext = new ClassPathXmlApplicationContext("moduleLoading.xml");
-        List<String> moduleLoaderFiles = (List<String>) moduleLoadingContext.getBean("moduleLoader-config-files");
-        // For each module loader file that needs to be loaded
-        for (String moduleLoaderFile : moduleLoaderFiles)
-        {
-            loadModule(moduleLoaderFile);
-        }
-    }
+        // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
+        ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
+        List<String> loaderResources = loaderContext.getBean(List.class);
+        String[] loaderResourcesArray = new String[loaderResources.size()];
+        loaderResources.toArray(loaderResourcesArray);
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(loaderResourcesArray, platformContext);
 
-    /**
-     * Load the module
-     * 
-     * @param moduleLoaderFile - The module loader file
-     */
-    @SuppressWarnings("unchecked")
-    private void loadModule(String moduleLoaderFile)
-    {
-        logger.info("loading module from file["+moduleLoaderFile+"]");
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] { moduleLoaderFile },
-            this.platformContext);
+        // load all modules in this context
+        // TODO - should multiple modules share the same application context ?
         Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-        for (Module module : moduleBeans.values())
+        for (Module<Flow> module : moduleBeans.values())
         {
-            this.initialiseModuleSecurity(module);
-            
-            //start the module's flow if configured to
-            for (Entry<String, Flow> flowEntry: module.getFlows().entrySet())
+            for(Flow flow:module.getFlows())
             {
-                InitiatorStartupControl initiatorStartupControl = this.initiatorStartupControlDao.getInitiatorStartupControl(module.getName(), flowEntry.getKey());
-                if (StartupType.AUTOMATIC.equals(initiatorStartupControl.getStartupType()))
-                {
-                    flowEntry.getValue().start();
-                }
+                flow.start();
             }
-            
-            this.moduleContainer.add(module);
         }
+        
+        this.moduleContainer.add(module);
     }
 
-    /**
-     * Creates the authorities for the module if they do not already exist
-     * 
-     * @param module - The module to secure
-     */
-    private void initialiseModuleSecurity(Module module)
-    {
-        List<Authority> existingAuthorities = this.userService.getAuthorities();
-        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
-                + module.getName() + " module. This is typically assigned to business users");
-        if (!existingAuthorities.contains(moduleUserAuthority))
-        {
-            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleUserAuthority);
-        }
-        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
-            "Allows administrator access to the " + module.getName()
-                    + " module. This is typically assigned to business administrators");
-        if (!existingAuthorities.contains(moduleAdminAuthority))
-        {
-            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
-            this.userService.createAuthority(moduleAdminAuthority);
-        }
-    }
+//    /**
+//     * Load the module
+//     * 
+//     * @param moduleLoaderFile - The module loader file
+//     */
+//    @SuppressWarnings("unchecked")
+//    private void loadModule(String moduleLoaderFile)
+//    {
+//        logger.info("loading module from file["+moduleLoaderFile+"]");
+//        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] { moduleLoaderFile },
+//            this.platformContext);
+//        Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
+//        for (Module<Flow> module : moduleBeans.values())
+//        {
+////            this.initialiseModuleSecurity(module);
+//            
+//            //start the module's flow if configured to
+//            for (Flow flow: module.getFlows())
+//            {
+////                InitiatorStartupControl initiatorStartupControl = this.initiatorStartupControlDao.getInitiatorStartupControl(module.getName(), flowEntry.getKey());
+////                if (StartupType.AUTOMATIC.equals(startupControl.getStartupType()))
+////                {
+////                    flowEntry.getValue().start();
+////                }
+//                flow.start();
+//            }
+//            
+//        }
+//    }
+
+//    /**
+//     * Creates the authorities for the module if they do not already exist
+//     * 
+//     * @param module - The module to secure
+//     */
+//    private void initialiseModuleSecurity(Module module)
+//    {
+//        List<Authority> existingAuthorities = this.userService.getAuthorities();
+//        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
+//                + module.getName() + " module. This is typically assigned to business users");
+//        if (!existingAuthorities.contains(moduleUserAuthority))
+//        {
+//            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
+//            this.userService.createAuthority(moduleUserAuthority);
+//        }
+//        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
+//            "Allows administrator access to the " + module.getName()
+//                    + " module. This is typically assigned to business administrators");
+//        if (!existingAuthorities.contains(moduleAdminAuthority))
+//        {
+//            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
+//            this.userService.createAuthority(moduleAdminAuthority);
+//        }
+//    }
 }
