@@ -41,9 +41,7 @@
 package org.ikasan.module;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -99,14 +97,15 @@ public class GenericModule implements Module<Flow>
     /* (non-Javadoc)
      * @see org.ikasan.framework.module.Module#getFlows()
      */
-    public Map<String, Flow> getFlows()
+    public List<Flow> getFlows()
     {
-        Map<String, Flow> result = new LinkedHashMap<String, Flow>();
-        for (Flow flow : this.flows)
-        {
-            result.put(flow.getName(), flow);
-        }
-        return result;
+        return this.flows;
+//        Map<String, Flow> result = new LinkedHashMap<String, Flow>();
+//        for (Flow flow : this.flows)
+//        {
+//            result.put(flow.getName(), flow);
+//        }
+//        return result;
     }
 
     /**
