@@ -69,6 +69,7 @@
         <module>spec</module>
         <module>recoveryManager</module>
         <module>flow</module>
+        <module>bootstrap</module>
 
         <!-- ikasan test harness -->
         <module>test</module>
