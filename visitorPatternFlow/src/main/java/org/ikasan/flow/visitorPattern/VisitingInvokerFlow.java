@@ -427,7 +427,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * Resolve the state of this flow into a string representation
      * @return
      */
-    protected String getState()
+    public String getState()
     {
         if(this.recoveryManager.isRecovering())
         {
