@@ -97,4 +97,10 @@ public interface Flow
      * initialised and running.
      */
     public void resume();
+
+    /**
+     * Returns the current runtmie state of this flow.
+     * String - runtime state
+     */
+    public String getState();
 }
