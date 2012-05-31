@@ -139,9 +139,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             {
                 flow.start();
             }
+
+            this.moduleContainer.add(module);
         }
         
-        this.moduleContainer.add(module);
     }
 
 //    /**
