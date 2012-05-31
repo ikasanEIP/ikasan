@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <bean id="moduleService" class="org.ikasan.module.service.ModuleServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+    </bean>
+    
+    <!-- bootstraps the module based on the loader configuration -->
+    <bean id="moduleLoader" class="org.ikasan.module.service.ModuleInitialisationServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <property name="loaderConfiguration" value="loader-conf.xml" />
+    </bean>
+
+    <bean id="moduleContainer" class="org.ikasan.module.container.ModuleContainerImpl"/>
+    
+</beans>
