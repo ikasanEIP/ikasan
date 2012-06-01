@@ -70,4 +70,50 @@ public class ModuleController
         model.addAttribute("moduleMap", moduleMap);
         return "moduleList";
     }
+
+    @RequestMapping(value="/stop/{moduleName}/{flowName}", method = RequestMethod.GET)
+    public String stopFlow(@PathVariable String moduleName, @PathVariable String flowName, Model model) 
+    {
+        List<Module> modules = this.moduleContainer.getModules();
+        for(Module<Flow> module:modules)
+        {
+            if(module.getName().equals(moduleName))
+            {
+                for(Flow flow:module.getFlows())
+                {
+                    if(flow.getName().equals(flowName))
+                    {
+                        flow.stop();
+                    }
+                }
+            }
+        }
+        
+        // refresh modules status and return list
+        getModules(model);
+        return "moduleList";
+    }
+
+    @RequestMapping(value="/start/{moduleName}/{flowName}", method = RequestMethod.GET)
+    public String startFlow(@PathVariable String moduleName, @PathVariable String flowName, Model model) 
+    {
+        List<Module> modules = this.moduleContainer.getModules();
+        for(Module<Flow> module:modules)
+        {
+            if(module.getName().equals(moduleName))
+            {
+                for(Flow flow:module.getFlows())
+                {
+                    if(flow.getName().equals(flowName))
+                    {
+                        flow.start();
+                    }
+                }
+            }
+        }
+        
+        // refresh modules status and return list
+        getModules(model);
+        return "moduleList";
+    }
 }
