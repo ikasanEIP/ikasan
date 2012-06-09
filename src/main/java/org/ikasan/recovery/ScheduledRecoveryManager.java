@@ -196,6 +196,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     public void recover(String componentName, Throwable throwable)
     {
+        logger.info("RecoveryManager invoked", throwable);
         ExceptionAction action = resolveAction(componentName, throwable);
         if(action instanceof StopAction)
         {
