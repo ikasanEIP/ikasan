@@ -167,7 +167,7 @@ public class ScheduledRecoveryManagerTest
      * Test successful stop action on recovery.
      * @throws SchedulerException 
      */
-    @Test(expected = RuntimeException.class)
+    @Test
     public void test_successful_recover_to_stopAction_with_no_previousAction() throws SchedulerException
     {
         final Exception exception = new Exception();
@@ -200,7 +200,7 @@ public class ScheduledRecoveryManagerTest
      * Test successful retry action on recovery.
      * @throws SchedulerException 
      */
-    @Test(expected = RuntimeException.class)
+    @Test
     public void test_successful_recover_to_retryAction_with_no_previousAction() throws SchedulerException
     {
         final Exception exception = new Exception();
@@ -222,18 +222,18 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
                 
-                // so start the scheduler
-                exactly(1).of(scheduler).start();
+//                // so start the scheduler
+//                exactly(1).of(scheduler).start();
 
                 // create the recovery job and associated trigger
 //                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
-                exactly(1).of(retryAction).getMaxRetries();
+                exactly(3).of(retryAction).getMaxRetries();
                 will(returnValue(2));
-                exactly(2).of(retryAction).getDelay();
-                will(returnValue(2000));
+                exactly(1).of(retryAction).getDelay();
+                will(returnValue(2000L));
 //                exactly(1).of(trigger).setStartTime(with(any(Date.class)));
                 
                 // schedule the recovery job with its trigger
