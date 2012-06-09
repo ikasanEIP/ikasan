@@ -29,6 +29,8 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/mvc-dispatcher-servlet.xml
+            /WEB-INF/classes/transactionManager-conf.xml 
+            /WEB-INF/classes/transactionAdvice-conf.xml 
             /WEB-INF/classes/platform-conf.xml 
             /WEB-INF/classes/module-service-conf.xml
         </param-value>
