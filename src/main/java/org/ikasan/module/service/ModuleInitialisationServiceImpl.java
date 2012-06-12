@@ -50,6 +50,7 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -61,7 +62,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Ikasan Development Team
  */
 public class ModuleInitialisationServiceImpl implements ModuleInitialisationService, ApplicationContextAware,
-        InitializingBean
+        InitializingBean, DisposableBean
 {
     /** logger instance */
     private final static Logger logger = Logger.getLogger(ModuleInitialisationServiceImpl.class);
@@ -143,6 +144,22 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             this.moduleContainer.add(module);
         }
         
+    }
+
+    /**
+     * Callback fom the container to gracefully stop flows and modules.
+     */
+    public void destroy() throws Exception
+    {
+        // shutdown all modules
+        for(Module<Flow> module:this.moduleContainer.getModules())
+        {
+            // TODO - do we need to reverse the order of shudown?
+            for(Flow flow:module.getFlows())
+            {
+                flow.stop();
+            }
+        }
     }
 
 //    /**
