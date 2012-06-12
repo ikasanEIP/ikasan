@@ -49,6 +49,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
+import org.quartz.Scheduler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -160,6 +161,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
                 flow.stop();
             }
         }
+
+        // TODO - find a more generic way of managing this for platform resources
+        Scheduler scheduler = this.platformContext.getBean(Scheduler.class);
+        scheduler.shutdown();
     }
 
 //    /**
