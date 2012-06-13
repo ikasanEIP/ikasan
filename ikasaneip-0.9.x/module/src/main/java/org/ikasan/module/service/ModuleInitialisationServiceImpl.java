@@ -164,7 +164,10 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
         // TODO - find a more generic way of managing this for platform resources
         Scheduler scheduler = this.platformContext.getBean(Scheduler.class);
-        scheduler.shutdown();
+        if(scheduler != null)
+        {
+            scheduler.shutdown();
+        }
     }
 
 //    /**
