@@ -40,7 +40,8 @@
  */
 package org.ikasan.filter.duplicate.model;
 
-import org.ikasan.filter.FilterException;
+import org.ikasan.spec.component.filter.FilterException;
+
 
 /**
  * FilterEntryConvertorException defines the exception on the 

@@ -40,13 +40,13 @@
  */
 package org.ikasan.filter.duplicate;
 
-import org.ikasan.filter.FilterException;
-import org.ikasan.filter.FilterRule;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.model.FilterEntryConverterException;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+import org.ikasan.spec.component.filter.FilterException;
+import org.ikasan.spec.component.filter.FilterRule;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
