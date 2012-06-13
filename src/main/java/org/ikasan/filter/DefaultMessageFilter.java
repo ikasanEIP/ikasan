@@ -47,7 +47,7 @@ package org.ikasan.filter;
  * @author Ikasan Development Team
  *
  */
-public class DefaultMessageFilter<T> implements MessageFilter<T>
+public class DefaultMessageFilter<T> implements Filter<T>
 {
     /** The {@link FilterRule} evaluating the incoming message */
     private final FilterRule<T> filterRule;
