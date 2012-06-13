@@ -40,9 +40,10 @@
  */
 package org.ikasan.filter;
 
-import org.ikasan.filter.FilterRule;
-import org.ikasan.filter.MessageFilter;
 import org.ikasan.filter.DefaultMessageFilter;
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterException;
+import org.ikasan.spec.component.filter.FilterRule;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
@@ -64,14 +65,14 @@ public class DefaultMessageFilterTest
     private final FilterRule<String> filterRule = this.mockery.mock(FilterRule.class, "filterRule");
 
     /** The {@link MessageFilter} implementation to test*/
-    private MessageFilter<String> filterToTest = new DefaultMessageFilter<String>(this.filterRule);
+    private Filter<String> filterToTest = new DefaultMessageFilter<String>(this.filterRule);
 
     /**
      * Test case: if filtering rule returns false (message was not accepted), filter
      * must return null.
      * @throws FilterException 
      */
-    @Test public void filter_discards_message() throws FilterException
+    @Test public void filter_discards_message()
     {
         final String messageToFilter = "somemessage";
         this.mockery.checking(new Expectations()
