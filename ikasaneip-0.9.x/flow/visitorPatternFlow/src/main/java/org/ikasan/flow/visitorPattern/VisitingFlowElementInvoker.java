@@ -47,6 +47,7 @@ import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
@@ -140,7 +141,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 }
                 else if (flowComponent instanceof Filter)
                 {
-                    flowElement = handleFilter(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                    flowElement = handleFilter(moduleName, flowName, flowEvent, flowElement);
                 }
                 else
                 {
