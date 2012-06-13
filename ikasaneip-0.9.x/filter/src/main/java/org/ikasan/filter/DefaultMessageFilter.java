@@ -41,7 +41,6 @@
 package org.ikasan.filter;
 
 import org.ikasan.spec.component.filter.Filter;
-import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.component.filter.FilterRule;
 
 /**
