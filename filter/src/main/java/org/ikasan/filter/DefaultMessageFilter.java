@@ -40,6 +40,10 @@
  */
 package org.ikasan.filter;
 
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterException;
+import org.ikasan.spec.component.filter.FilterRule;
+
 /**
  * Default implementation of {@link MessageFilter} that delegates to a
  * {@link FilterRule} to evaluate the incoming message.
@@ -52,13 +56,6 @@ public class DefaultMessageFilter<T> implements Filter<T>
     /** The {@link FilterRule} evaluating the incoming message */
     private final FilterRule<T> filterRule;
 
-    /*
-     * optimistic place holder for future time where we can
-     * specify a discarded message channel as part of MessageFilter
-     * creation.
-     */
-    //DiscaredMessageChannel
-
     /**
      * Constructor
      * @param filterRule The {@link FilterRule} instance evaluating incoming message.
@@ -66,13 +63,17 @@ public class DefaultMessageFilter<T> implements Filter<T>
     public DefaultMessageFilter(final FilterRule<T> filterRule)
     {
         this.filterRule = filterRule;
+        if(filterRule == null)
+        {
+            throw new IllegalArgumentException("filterRule cannot be 'null'");
+        }
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.filter.MessageFilter#filter(java.lang.String)
      */
-    public T filter(T message) throws FilterException
+    public T filter(T message)
     {
         if (this.filterRule.accept(message))
         {
