@@ -48,7 +48,7 @@ package org.ikasan.spec.component.filter;
  *
  */
 @SuppressWarnings("serial")
-public class FilterException extends Exception 
+public class FilterException extends RuntimeException 
 {
     /**
      * Constructor
