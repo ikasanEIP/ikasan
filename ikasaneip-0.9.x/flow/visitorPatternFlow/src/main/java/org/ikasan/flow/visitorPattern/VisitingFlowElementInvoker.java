@@ -138,6 +138,10 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 {
                     flowElement = handleSequencer(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
                 }
+                else if (flowComponent instanceof Filter)
+                {
+                    flowElement = handleFilter(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                }
                 else
                 {
                     throw new RuntimeException("Unknown FlowComponent type[" + flowComponent.getClass() + "]");
@@ -374,6 +378,35 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         {
             throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
                     + "] contains a Converter, but it has no default transition! " + "Converters should never be the last component in a flow");
+        }
+        return flowElement;
+    }
+
+    /**
+     * The behaviour for visiting a <code>Filter</code>
+     * 
+     * @param event The event we're passing on
+     * @param moduleName The name of the module
+     * @param flowName The name of the flow
+     * @param flowElement The flow element we're dealing with
+     */
+    private FlowElement handleFilter(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    {
+        Filter filter = (Filter) flowElement.getFlowComponent();
+        if(filter.filter(flowEvent.getPayload()) == null)
+        {
+            return null;
+        }
+        
+        notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
+
+        // sort out the next element
+        FlowElement previousFlowElement = flowElement;
+        flowElement = getDefaultTransition(flowElement);
+        if (flowElement == null)
+        {
+            throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
+                    + "] contains a Filter, but it has no default transition! " + "Filters should never be the last component in a flow");
         }
         return flowElement;
     }
