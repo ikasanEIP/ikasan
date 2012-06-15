@@ -74,6 +74,9 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
     /** JMS consumer configuration */
     private GenericJmsProducerConfiguration configuration;
     
+    /** session has to be closed prior to connection being closed */
+    private Session session;
+
     /**
      * Constructor
      * @param connectionFactory
@@ -108,7 +111,7 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
                 connection = connectionFactory.createConnection();
             }
 
-            Session session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
+            this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
             MessageProducer messageProducer = session.createProducer(destination);
             messageProducer.send(message);
         }
@@ -118,6 +121,19 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
         }
         finally
         {
+            if(session != null)
+            {
+                try
+                {
+                    session.close();
+                    session = null;
+                }
+                catch (JMSException e)
+                {
+                    logger.error("Failed to close session", e);
+                }
+            }
+
             if(connection != null)
             {
                 try
