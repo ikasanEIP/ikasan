@@ -111,9 +111,24 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>3.1.1.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
             <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
             <scope>provided</scope>
         </dependency>
 
