@@ -53,7 +53,6 @@ import javax.jms.Topic;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
@@ -64,7 +63,7 @@ import org.ikasan.spec.flow.FlowEvent;
  * @author Ikasan Development Team
  */
 public class GenericJmsConsumer 
-    implements Consumer<EventListener<?>>, MessageListener, ExceptionListener, ConfiguredResource<GenericJmsConsumerConfiguration>
+    implements Consumer<EventListener<?>>, MessageListener, ExceptionListener
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
