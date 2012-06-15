@@ -77,6 +77,9 @@ public class GenericJmsConsumer
     /** consumer event factory */
     private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
+    /** session has to be closed prior to connection being closed */
+    private Session session;
+
     /** consumer event listener */
     private EventListener eventListener;
 
@@ -135,7 +138,7 @@ public class GenericJmsConsumer
             connection.setClientID(this.configuration.getClientId());
             connection.setExceptionListener(this);
 
-            Session session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
+            this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
 
             if(destination instanceof Topic && this.configuration.isDurable())
             {
@@ -160,6 +163,19 @@ public class GenericJmsConsumer
      */
     public void stop()
     {
+        if(session != null)
+        {
+            try
+            {
+                session.close();
+                session = null;
+            }
+            catch (JMSException e)
+            {
+                logger.error("Failed to close session", e);
+            }
+        }
+
         if(connection != null)
         {
             try
