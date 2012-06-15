@@ -48,17 +48,21 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.springframework.jms.support.converter.MessageConverter;
 
 /**
  * Implementation of a consumer based on the JMS specification.
  *
  * @author Ikasan Development Team
  */
-public class GenericJmsProducer implements Producer<Message>, ConfiguredResource<GenericJmsProducerConfiguration>
+public class GenericJmsProducer<T> implements Producer<T>
 {
+    /** class logger */
+    private static Logger logger = Logger.getLogger(GenericJmsProducer.class);
+    
     /** JMS Connection Factory */
     private ConnectionFactory connectionFactory;
 
@@ -77,6 +81,10 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
     /** session has to be closed prior to connection being closed */
     private Session session;
 
+    // TODO - remove Spring dependency
+    /** message converter */
+    private MessageConverter messageConverter;
+    
     /**
      * Constructor
      * @param connectionFactory
@@ -98,7 +106,7 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
         }
     }
     
-    public void invoke(Message message) throws EndpointException
+    public void invoke(T message) throws EndpointException
     {
         try
         {
@@ -113,7 +121,23 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
 
             this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
             MessageProducer messageProducer = session.createProducer(destination);
-            messageProducer.send(message);
+            
+            if(message instanceof Message)
+            {
+                messageProducer.send((Message)message);
+            }
+            else
+            {
+                if(this.messageConverter == null)
+                {
+                    throw new EndpointException("Cannot publish message of type[" 
+                        + message.getClass().getName() 
+                        + " to JMS without a converter!");
+                }
+
+                Message jmsMessage = this.messageConverter.toMessage(message, session);
+                messageProducer.send(jmsMessage);
+            }
         }
         catch(JMSException e)
         {
@@ -146,6 +170,11 @@ public class GenericJmsProducer implements Producer<Message>, ConfiguredResource
                 }
             }
         }
+    }
+    
+    public void setMessageConverter(MessageConverter messageConverter)
+    {
+        this.messageConverter = messageConverter;
     }
     
     public GenericJmsProducerConfiguration getConfiguration()
