@@ -67,29 +67,34 @@ public class GenericJmsProducer<T> implements Producer<T>
     private ConnectionFactory connectionFactory;
 
     /** JMS Destination instance */
-    private Destination destination;
+    protected Destination destination;
 
     /** JMS Connection */
-    private Connection connection;
+    protected Connection connection;
 
     /** configured resource id */
-    private String configuredResourceId;
+    protected String configuredResourceId;
     
-    /** JMS consumer configuration */
-    private GenericJmsProducerConfiguration configuration;
+    /** JMS consumer configuration - default to vanilla instance */
+    protected GenericJmsProducerConfiguration configuration = new GenericJmsProducerConfiguration();
     
     /** session has to be closed prior to connection being closed */
-    private Session session;
+    protected Session session;
 
     // TODO - remove Spring dependency
     /** message converter */
-    private MessageConverter messageConverter;
+    protected MessageConverter messageConverter;
     
     /**
-     * Constructor
+     * Constructor where connectionFactory can be created and injected for 
+     * use within this class. This is the use case for scenarios where the
+     * connectionFactory does not need to be pinned to the executing 
+     * thread.
+     * Sometimes we need to pin the connectioNFactory to the executing thread
+     * for instance, WebLogic security authentication for JMS is a use case for 
+     * this requirement.
      * @param connectionFactory
      * @param destination
-     * @param flowEventFactory
      */
     public GenericJmsProducer(ConnectionFactory connectionFactory, Destination destination)
     {
@@ -105,7 +110,7 @@ public class GenericJmsProducer<T> implements Producer<T>
             throw new IllegalArgumentException("destination cannot be 'null'");
         }
     }
-    
+
     public void invoke(T message) throws EndpointException
     {
         try
