@@ -55,7 +55,7 @@
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec-wiretap</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-EXPERIMENT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Ikasan Specification Wiretap Resource Contracts</name>
     <description>The specification wiretap contracts for the Ikasan Enterprise Integration Platform</description>
 
