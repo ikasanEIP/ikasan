@@ -58,7 +58,7 @@ import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
 
 /**
- * Implementation of a consumer based on the JMS specifiation.
+ * Implementation of a consumer based on the JMS specification.
  *
  * @author Ikasan Development Team
  */
@@ -69,28 +69,28 @@ public class GenericJmsConsumer
     private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
 
     /** JMS Connection Factory */
-    private ConnectionFactory connectionFactory;
+    protected ConnectionFactory connectionFactory;
 
     /** JMS Destination instance */
-    private Destination destination;
+    protected Destination destination;
 
     /** JMS Connection */
-    private Connection connection;
+    protected Connection connection;
 
     /** consumer event factory */
-    private EventFactory<FlowEvent<?,?>> flowEventFactory;
+    protected EventFactory<FlowEvent<?,?>> flowEventFactory;
 
     /** session has to be closed prior to connection being closed */
-    private Session session;
+    protected Session session;
 
     /** consumer event listener */
-    private EventListener eventListener;
+    protected EventListener eventListener;
 
     /** configured resource id */
-    private String configuredResourceId;
+    protected String configuredResourceId;
     
-    /** JMS consumer configuration */
-    private GenericJmsConsumerConfiguration configuration;
+    /** JMS consumer configuration - default to vanilla instance */
+    protected GenericJmsConsumerConfiguration configuration = new GenericJmsConsumerConfiguration();
     
     /**
      * Constructor
