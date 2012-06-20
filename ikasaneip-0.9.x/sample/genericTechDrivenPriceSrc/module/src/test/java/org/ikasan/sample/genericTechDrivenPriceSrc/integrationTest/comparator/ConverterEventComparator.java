@@ -42,7 +42,6 @@ package org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator;
 
 import junit.framework.Assert;
 
-import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 

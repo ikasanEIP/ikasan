@@ -46,8 +46,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.ikasan.consumer.quartz.ScheduledConsumerConfiguration;
-import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.recovery.RecoveryManagerFactory;
@@ -57,6 +55,7 @@ import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.Co
 import org.ikasan.sample.genericTechDrivenPriceSrc.integrationTest.comparator.ProducerEventComparator;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechImpl;
 import org.ikasan.sample.genericTechDrivenPriceSrc.tech.PriceTechMessage;
+import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -77,6 +76,8 @@ import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.ikasan.configurationService.dao.ConfigurationDao;
+import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
@@ -126,7 +127,7 @@ public class PriceFlowSampleTest
     @Before
     public void setup() throws SchedulerException
     {
-        this.recoveryManagerFactory  = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
+        this.recoveryManagerFactory  = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler(), CachingScheduledJobFactory.getInstance());
         this.configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
         this.configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
         
