@@ -54,13 +54,13 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-    <bean id="staticConfigurationDao" class="org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl">
+    <bean id="staticConfigurationDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
         <property name="sessionFactory">
             <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
                 <property name="dataSource" ref="datasource" />
                 <property name="mappingResources">
                     <list>
-                        <value>org/ikasan/flow/configuration/model/Configuration.hbm.xml</value>
+                        <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
                     </list>
                 </property>
                 <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -68,13 +68,13 @@
         </property>
     </bean>
 
-    <bean id="dynamicConfigurationDao" class="org.ikasan.flow.configuration.dao.ConfigurationHibernateImpl">
+    <bean id="dynamicConfigurationDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
         <property name="sessionFactory">
             <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
                 <property name="dataSource" ref="datasource" />
                 <property name="mappingResources">
                     <list>
-                        <value>org/ikasan/flow/configuration/model/Configuration.hbm.xml</value>
+                        <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
                     </list>
                 </property>
                 <property name="hibernateProperties" ref="platformHibernateProperties"/>
