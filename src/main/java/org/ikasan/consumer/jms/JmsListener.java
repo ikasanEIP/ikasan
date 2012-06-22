@@ -40,7 +40,10 @@
  */
 package org.ikasan.consumer.jms;
 
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.endpoint.EndpointListener;
@@ -55,7 +58,7 @@ import org.ikasan.spec.endpoint.EndpointListener;
  *
  * @author Ikasan Development Team
  */
-public class ConsumerProxy implements EndpointListener<Message>
+public class JmsListener implements MessageListener, ExceptionListener
 {
     /** Actual endpointListener being proxied */
     private EndpointListener endpointListener;
@@ -76,7 +79,7 @@ public class ConsumerProxy implements EndpointListener<Message>
     /* (non-Javadoc)
      * @see org.ikasan.spec.component.endpoint.EndpointListener#onException(java.lang.Throwable)
      */
-    public void onException(Throwable throwable)
+    public void onException(JMSException throwable)
     {
         endpointListener.onException(throwable);
     }
