@@ -10,12 +10,12 @@
 
     <!-- cache based configuration service -->
     <bean id="configurationService"
-        class="org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService">
+        class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
         <constructor-arg>
-            <bean class="org.ikasan.flow.configuration.dao.ConfigurationCacheImpl" />
+            <bean class="org.ikasan.configurationService.dao.ConfigurationCacheImpl" />
         </constructor-arg>
         <constructor-arg>
-            <bean class="org.ikasan.flow.configuration.dao.ConfigurationCacheImpl" />
+            <bean class="org.ikasan.configurationService.dao.ConfigurationCacheImpl" />
         </constructor-arg>
     </bean>
 
