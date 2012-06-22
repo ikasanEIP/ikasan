@@ -45,8 +45,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.apache.log4j.Logger;
-import org.ikasan.spec.endpoint.EndpointListener;
+import org.ikasan.consumer.EndpointListener;
+
 
 /**
  * Implementation of an endpoint listener which acts as a proxy for the real 
@@ -58,7 +58,7 @@ import org.ikasan.spec.endpoint.EndpointListener;
  *
  * @author Ikasan Development Team
  */
-public class JmsListener implements MessageListener, ExceptionListener
+public class JmsEndpointListener implements MessageListener, ExceptionListener
 {
     /** Actual endpointListener being proxied */
     private EndpointListener endpointListener;
@@ -67,13 +67,9 @@ public class JmsListener implements MessageListener, ExceptionListener
      * Constructor
      * @param endpointListener
      */
-    public void setConsumer(EndpointListener endpointListener)
+    public void setEndpointListener(EndpointListener endpointListener)
     {
         this.endpointListener = endpointListener;
-        if(endpointListener == null)
-        {
-            throw new IllegalArgumentException("endpointListener cannot be 'null'");
-        }
     }
     
     /* (non-Javadoc)
