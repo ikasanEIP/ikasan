@@ -56,7 +56,6 @@
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 
     <modules>
-       <module>endpoint</module>
        <module>configuration</module>
        <module>management</module>
        <module>wiretap</module>
