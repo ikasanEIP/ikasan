@@ -52,9 +52,9 @@ import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.log4j.Logger;
+import org.ikasan.consumer.EndpointListener;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.endpoint.EndpointListener;
-import org.ikasan.spec.endpoint.ManagedEndpoint;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
@@ -66,9 +66,10 @@ import org.ikasan.spec.flow.FlowEvent;
  */
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>>, EndpointListener<Message>
+    //TODO , ConfiguredResource<GenericJmsConsumerConfiguration>
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(GenericConsumer.class);
+    private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
 
     /** JMS Connection Factory */
     protected ConnectionFactory connectionFactory;
@@ -94,9 +95,6 @@ public class GenericJmsConsumer
     /** JMS consumer configuration - default to vanilla instance */
     protected GenericJmsConsumerConfiguration configuration = new GenericJmsConsumerConfiguration();
     
-    /** actual tech endpoint being managed */
-    private ManagedEndpoint managedEndpoint;
-
     /** tech endpoint listener for callbacks from the endpoint */
     private MessageListener messageListener;
     
@@ -106,7 +104,7 @@ public class GenericJmsConsumer
      * @param destination
      * @param flowEventFactory
      */
-    public GenericConsumer(ConnectionFactory connectionFactory, Destination destination,
+    public GenericJmsConsumer(ConnectionFactory connectionFactory, Destination destination,
             EventFactory<FlowEvent<?,?>> flowEventFactory)
     {
         this.connectionFactory = connectionFactory;
