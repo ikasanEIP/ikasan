@@ -208,8 +208,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             this.consumer.stop();
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
-            // TODO should we be throwing an exception here ?!?!
-//            throw new RuntimeException("stopAction invoked");
+            
+            // throw a RuntimeException to ensure any transactional resources are rolledback
+            throw new RuntimeException("stopAction runtimeException to rollback transaction");
         }
         else if(action instanceof RetryAction)
         {
@@ -245,8 +246,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                 throw new RuntimeException(e);
             }
             
-            // TODO should we be throwing an exception here ?!?!
-            // throw new RuntimeException("retryAction invoked");
+            // throw a RuntimeException to ensure any transactional resources are rolledback
+            throw new RuntimeException("retryAction runtimeException to rollback transaction");
         }
         else
         {
