@@ -188,8 +188,15 @@ public class ScheduledRecoveryManagerTest
 
         RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
         recoveryManager.setResolver(exceptionResolver);
-        recoveryManager.recover("componentName", exception);
         
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("stopAction runtimeException to rollback transaction", e.getMessage());
+        }
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
 
@@ -246,7 +253,15 @@ public class ScheduledRecoveryManagerTest
         });
 
         recoveryManager.setResolver(exceptionResolver);
-        recoveryManager.recover("componentName", exception);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+        }
 
         Assert.assertTrue(recoveryManager.isRecovering());
         
@@ -352,7 +367,7 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("retryAction invoked", e.getMessage());
+            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
@@ -364,7 +379,7 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("retryAction invoked", e.getMessage());
+            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
