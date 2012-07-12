@@ -42,7 +42,6 @@ package org.ikasan.module.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.Flow;
@@ -144,7 +143,6 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
             this.moduleContainer.add(module);
         }
-        
     }
 
     /**
