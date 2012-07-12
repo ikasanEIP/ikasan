@@ -51,18 +51,4 @@
         </property>
     </bean>
 
-    <bean id="flowElementInvoker" class="org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker">
-        <constructor-arg>
-		    <bean id="replicationFactory"
-		        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		        <property name="targetClass">
-		            <value>org.ikasan.flow.event.DefaultReplicationFactory</value>
-		        </property>
-		        <property name="targetMethod">
-		            <value>getInstance</value>
-		        </property>
-		    </bean>
-        </constructor-arg>
-    </bean>
-
 </beans>
