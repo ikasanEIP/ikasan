@@ -12,7 +12,7 @@
 -->
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-        <display-name>Ikasan Bootstrap Application</display-name>
+    <display-name>Ikasan Bootstrap Application</display-name>
 
     <servlet>
         <servlet-name>mvc-dispatcher</servlet-name>
@@ -32,6 +32,7 @@
             /WEB-INF/classes/transactionManager-conf.xml 
             /WEB-INF/classes/transactionAdvice-conf.xml 
             /WEB-INF/classes/platform-conf.xml 
+            /WEB-INF/classes/flow-conf.xml 
             /WEB-INF/classes/module-service-conf.xml
         </param-value>
     </context-param>
