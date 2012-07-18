@@ -45,7 +45,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.ikasan.deploymentInfo.model.DeploymentInfo;
+import org.ikasan.deployment.dao.DeploymentInfoDAO;
+import org.ikasan.deployment.dao.DeploymentInfoDAOHibernateImpl;
+import org.ikasan.deployment.model.DeploymentInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
