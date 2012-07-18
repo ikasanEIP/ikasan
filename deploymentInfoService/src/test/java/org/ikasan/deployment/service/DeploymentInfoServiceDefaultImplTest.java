@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.deploymentInfo.service;
+package org.ikasan.deployment.service;
 
 import javax.annotation.Resource;
 

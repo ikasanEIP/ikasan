@@ -8,13 +8,13 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
         
-    <bean id="deploymentInfoService" class="org.ikasan.deploymentInfo.service.DeploymentInfoServiceDefaultImpl">
+    <bean id="deploymentInfoService" class="org.ikasan.deployment.service.DeploymentInfoServiceDefaultImpl">
         <constructor-arg value="clusterName" />
         <constructor-arg value="moduleName" />
         <constructor-arg ref="deploymentInfoDAO" />
     </bean>
 
-    <bean id="deploymentInfoDAO" class="org.ikasan.deploymentInfo.dao.DeploymentInfoDAOHibernateImpl" >
+    <bean id="deploymentInfoDAO" class="org.ikasan.deployment.dao.DeploymentInfoDAOHibernateImpl" >
         <property name="sessionFactory" ref="deploymentInfoSessionFactory" />
     </bean>
 
@@ -29,7 +29,7 @@
     <bean id="deploymentInfoResources" class="java.util.ArrayList">
         <constructor-arg>
             <list>
-                <value>org/ikasan/deploymentInfo/model/DeploymentInfo.hbm.xml</value>
+                <value>org/ikasan/deployment/model/DeploymentInfo.hbm.xml</value>
             </list>
         </constructor-arg>
     </bean>

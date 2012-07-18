@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.deploymentInfo.dao;
+package org.ikasan.deployment.dao;
 
 import java.util.ArrayList;
 import java.util.List;
