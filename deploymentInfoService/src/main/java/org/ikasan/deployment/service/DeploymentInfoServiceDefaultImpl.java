@@ -45,6 +45,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.deployment.dao.DeploymentInfoDAO;
 import org.ikasan.deployment.model.DeploymentInfo;
+import org.ikasan.spec.deployment.DeploymentInfoService;
 
 /**
  * Implementation of the DeploymentInfoService. 
