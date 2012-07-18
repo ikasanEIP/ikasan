@@ -57,6 +57,7 @@
 
     <modules>
        <module>configuration</module>
+       <module>deployment</module>
        <module>management</module>
        <module>wiretap</module>
        <module>search</module>
