@@ -45,6 +45,7 @@ import javax.annotation.Resource;
 import org.ikasan.deployment.dao.DeploymentInfoDAO;
 import org.ikasan.deployment.model.DeploymentInfo;
 import org.ikasan.deployment.service.DeploymentInfoServiceDefaultImpl;
+import org.ikasan.spec.deployment.DeploymentInfoService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
