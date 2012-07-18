@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.deployment.service;
+package org.ikasan.spec.deployment;
 
 /**
  * Contract for managing the information detailing which is the active
