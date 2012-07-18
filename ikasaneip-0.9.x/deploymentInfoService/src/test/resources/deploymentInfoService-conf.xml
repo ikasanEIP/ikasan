@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <bean id="deploymentInfoService" class="org.ikasan.deploymentInfo.service.DeploymentInfoServiceDefaultImpl">
+        <constructor-arg value="clusterName" />
+        <constructor-arg value="moduleName" />
+        <constructor-arg ref="deploymentInfoDAO" />
+    </bean>
+
+    <bean id="deploymentInfoDAO" class="org.ikasan.deploymentInfo.dao.DeploymentInfoDAOHibernateImpl" >
+        <property name="sessionFactory" ref="deploymentInfoSessionFactory" />
+    </bean>
+
+    <!-- the persistence session factory -->
+    <bean id="deploymentInfoSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources" ref="deploymentInfoResources" />
+        <property name="hibernateProperties" ref="platformHibernateProperties" />
+    </bean>
+
+    <bean id="deploymentInfoResources" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <value>org/ikasan/deploymentInfo/model/DeploymentInfo.hbm.xml</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>
