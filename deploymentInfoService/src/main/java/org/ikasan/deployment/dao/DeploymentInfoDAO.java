@@ -38,11 +38,11 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.deploymentInfo.dao;
+package org.ikasan.deployment.dao;
 
 import java.util.List;
 
-import org.ikasan.deploymentInfo.model.DeploymentInfo;
+import org.ikasan.deployment.model.DeploymentInfo;
 
 /**
  * DAO contract for the deployment info persitence which is used to record Ikasan 

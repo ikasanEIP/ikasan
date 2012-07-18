@@ -40,7 +40,7 @@
  */
 package org.ikasan.deploymentInfo.model;
 
-import org.ikasan.deploymentInfo.model.DeploymentInfo;
+import org.ikasan.deployment.model.DeploymentInfo;
 import org.junit.Assert;
 import org.junit.Test;
 

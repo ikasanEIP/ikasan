@@ -38,13 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.deploymentInfo.dao;
+package org.ikasan.deployment.dao;
 
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.deploymentInfo.model.DeploymentInfo;
+import org.ikasan.deployment.model.DeploymentInfo;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**

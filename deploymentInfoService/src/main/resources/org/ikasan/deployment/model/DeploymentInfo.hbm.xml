@@ -43,7 +43,7 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-  <class name="org.ikasan.deploymentInfo.model.DeploymentInfo" table="DeploymentInfo">
+  <class name="org.ikasan.deployment.model.DeploymentInfo" table="DeploymentInfo">
 
     <composite-id>
 	    <key-property name="clusterName" type="java.lang.String" column="ClusterName"/>

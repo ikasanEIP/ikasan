@@ -38,13 +38,13 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.deploymentInfo.service;
+package org.ikasan.deployment.service;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.deploymentInfo.dao.DeploymentInfoDAO;
-import org.ikasan.deploymentInfo.model.DeploymentInfo;
+import org.ikasan.deployment.dao.DeploymentInfoDAO;
+import org.ikasan.deployment.model.DeploymentInfo;
 
 /**
  * Implementation of the DeploymentInfoService. 
