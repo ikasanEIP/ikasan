@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        <entry key="hibernate.show_sql" value="true"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+    </util:map>
+    
+    <bean id="dataSource" name="ikasan.xads" 
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:mem:testdb" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+    
+</beans>
