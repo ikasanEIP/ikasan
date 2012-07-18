@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.deploymentInfo.model;
+package org.ikasan.deployment.model;
 
 import org.ikasan.deployment.model.DeploymentInfo;
 import org.junit.Assert;
