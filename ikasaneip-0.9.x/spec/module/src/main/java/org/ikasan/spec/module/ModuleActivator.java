@@ -43,14 +43,22 @@ package org.ikasan.spec.module;
 import org.ikasan.spec.module.Module;
 
 /**
- * Provide a contract allowing for different implementations of a modules 
+ * Provide a contract allowing for different implementations of a module's 
  * activation and deactivation at runtime.
  * @author Ikasan Development Team
  *
  */
 public interface ModuleActivator<T>
 {
+    /**
+     * Active the specified module
+     * @param module
+     */
     public void activate(Module<T> module);
     
+    /**
+     * Deactive the specified module
+     * @param module
+     */
     public void deactivate(Module<T> module);
 }
