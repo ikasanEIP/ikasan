@@ -17,6 +17,9 @@
     <!-- bootstraps the module based on the loader configuration -->
     <bean id="moduleLoader" class="org.ikasan.module.service.ModuleInitialisationServiceImpl">
         <constructor-arg ref="moduleContainer" />
+        <constructor-arg>
+            <bean class="org.ikasan.module.service.ModuleActivatorDefaultImpl" />
+        </constructor-arg>
         <property name="loaderConfiguration" value="loader-conf.xml" />
     </bean>
 
