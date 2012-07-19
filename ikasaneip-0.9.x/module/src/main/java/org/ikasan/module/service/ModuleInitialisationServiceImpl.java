@@ -46,12 +46,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.quartz.Scheduler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -70,6 +72,9 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     /** Runtime container for holding modules */
     private ModuleContainer moduleContainer;
     
+    /** module activation mechanism */
+    private ModuleActivator moduleActivator;
+
     /** loader configuration */
     private String loaderConfiguration;
 
@@ -94,10 +99,20 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
      * @param initiatorStartupControlDao - DAO for supplying InitiatorStartupControl instances
      */
 //    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, UserService userService, StartupControlDao startupControlDao)
-    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer)
+    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator)
     {
         super();
         this.moduleContainer = moduleContainer;
+        if(moduleContainer == null)
+        {
+            throw new IllegalArgumentException("moduleContainer cannot be 'null'");
+        }
+
+        this.moduleActivator = moduleActivator;
+        if(moduleActivator == null)
+        {
+            throw new IllegalArgumentException("moduleActivator cannot be 'null'");
+        }
     }
 
     /*
@@ -131,17 +146,24 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         loaderResources.toArray(loaderResourcesArray);
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(loaderResourcesArray, platformContext);
 
+        // check for moduleActivator overrides
+        try
+        {
+            this.moduleActivator = applicationContext.getBean(ModuleActivator.class);
+            logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
+        }
+        catch(NoSuchBeanDefinitionException e)
+        {
+            // nothing of issue here, move on
+        }
+        
         // load all modules in this context
         // TODO - should multiple modules share the same application context ?
         Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
         for (Module<Flow> module : moduleBeans.values())
         {
-            for(Flow flow:module.getFlows())
-            {
-                flow.start();
-            }
-
             this.moduleContainer.add(module);
+            this.moduleActivator.activate(module);
         }
     }
 
@@ -153,11 +175,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         // shutdown all modules
         for(Module<Flow> module:this.moduleContainer.getModules())
         {
-            // TODO - do we need to reverse the order of shudown?
-            for(Flow flow:module.getFlows())
-            {
-                flow.stop();
-            }
+            this.moduleActivator.deactivate(module);
         }
 
         // TODO - find a more generic way of managing this for platform resources
