@@ -50,7 +50,7 @@ CREATE TABLE [DeploymentInfo]
     [Url]                   [varchar](256) NULL,
     [CreateDateTime]        [numeric](18),
     [UpdateDateTime]        [numeric](18),
-    CONSTRAINT              [PK_IonMarketDataSrc_TradeCache_Identifier] PRIMARY KEY CLUSTERED 
+    CONSTRAINT              [PK_DeploymentInfo_1] PRIMARY KEY CLUSTERED 
     (
         [ClusterName], [ModuleName], [ServerName] ASC
     )    
