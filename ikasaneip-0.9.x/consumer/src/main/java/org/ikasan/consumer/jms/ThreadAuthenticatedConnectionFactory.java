@@ -70,6 +70,9 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
     /** stash the connectionFactory for the executing thread */
     private ThreadLocal<ConnectionFactory> threadLocal = new ThreadLocal<ConnectionFactory>();
 
+    /** allow for default properties */
+    private Properties properties;
+    
     /**
      * Constructor
      * @param connectionFactory
@@ -85,6 +88,23 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
         }
     }
 
+    /**
+     * Constructor
+     * @param connectionFactory
+     * @param destination
+     * @param flowEventFactory
+     */
+    public ThreadAuthenticatedConnectionFactory(String connectionFactoryName, Properties properties)
+    {
+        this.connectionFactoryName = connectionFactoryName;
+        if(connectionFactoryName == null)
+        {
+            throw new IllegalArgumentException("connectionFactoryName cannot be 'null'");
+        }
+        
+        this.properties = properties;
+    }
+
     /* (non-Javadoc)
      * @see javax.jms.ConnectionFactory#createConnection()
      */
@@ -93,7 +113,13 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
         ConnectionFactory pinnedConnectionFactory = this.threadLocal.get();
         if(pinnedConnectionFactory == null)
         {
-            throw new JMSException("No Authenticated connectionFactory available on this thread! Create one using createConnection(username,password)");
+            if(this.properties == null)
+            {
+                throw new EndpointException("No Authenticated connectionFactory available on this thread and no properties available to create one!");
+            }
+            
+            pinnedConnectionFactory = this.getConnectionFactory(this.properties);
+            this.threadLocal.set(pinnedConnectionFactory);
         }
         
         return pinnedConnectionFactory.createConnection();
@@ -107,27 +133,57 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
         ConnectionFactory pinnedConnectionFactory = this.threadLocal.get();
         if(pinnedConnectionFactory == null)
         {
-            Properties props = new Properties();
+            Properties props = getProperties();
+            if(this.properties != null)
+            {
+                props.putAll(this.properties);
+            }
             props.put("java.naming.security.principal", username);
             props.put("java.naming.security.credentials", password);
 
-            try
-            {
-                InitialContext initialContext = new InitialContext(props);
-                pinnedConnectionFactory = (ConnectionFactory) initialContext.lookup(connectionFactoryName);
-                if (pinnedConnectionFactory == null)
-                {
-                    throw new NamingException("Cannot find connectionFactory " + connectionFactoryName);
-                }
-            }
-            catch (NamingException e)
-            {
-                throw new EndpointException(e);
-            }
-
+            pinnedConnectionFactory = this.getConnectionFactory(props);
             this.threadLocal.set(pinnedConnectionFactory);
         }
 
         return pinnedConnectionFactory.createConnection();
+    }
+
+    protected ConnectionFactory getConnectionFactory(Properties properties)
+    {
+        try
+        {
+            InitialContext initialContext = getInitialContext(properties);
+            ConnectionFactory connectionFactory = (ConnectionFactory) initialContext.lookup(connectionFactoryName);
+            if (connectionFactory == null)
+            {
+                throw new NamingException("Cannot find connectionFactory " + connectionFactoryName);
+            }
+            
+            return connectionFactory;
+        }
+        catch (NamingException e)
+        {
+            throw new EndpointException(e);
+        }
+    }
+    
+    /**
+     * Factory method (for convenience of testing) for getting the initial context
+     * @param properties
+     * @return
+     * @throws NamingException
+     */
+    protected InitialContext getInitialContext(Properties properties) throws NamingException
+    {
+        return new InitialContext(properties);
+    }
+
+    /**
+     * Factory method (for convenience of testing) for getting the properties
+     * @return
+     */
+    protected Properties getProperties()
+    {
+        return new Properties();
     }
 }
