@@ -55,11 +55,11 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
 /**
- * This test class supports the <code>ThreadAuthenticatedConnectionFactory</code> class.
+ * This test class supports the <code>AuthenticatedConnectionFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ThreadAuthenticatedConnectionFactoryTest
+public class AuthenticatedConnectionFactoryTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -89,7 +89,16 @@ public class ThreadAuthenticatedConnectionFactoryTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_due_to_null_connectionFactoryName()
     {
-        new ThreadAuthenticatedConnectionFactory(null);
+        new AuthenticatedConnectionFactory(null);
+    }
+
+    /**
+     * Test happy constructor.
+     */
+    @Test
+    public void test_happy_constructor()
+    {
+        new AuthenticatedConnectionFactory("connectionFactoryName", properties);
     }
 
     /**
@@ -111,7 +120,7 @@ public class ThreadAuthenticatedConnectionFactoryTest
             }
         });
 
-        ConnectionFactory connectionFactory = new StubbedThreadAuthenticatedConnectionFactory("connectionFactoryName", properties);
+        ConnectionFactory connectionFactory = new StubbedAuthenticatedConnectionFactory("connectionFactoryName", properties);
         connectionFactory.createConnection();
         
         mockery.assertIsSatisfied();
@@ -138,7 +147,7 @@ public class ThreadAuthenticatedConnectionFactoryTest
             }
         });
 
-        ConnectionFactory connectionFactory = new StubbedThreadAuthenticatedConnectionFactory("connectionFactoryName");
+        ConnectionFactory connectionFactory = new StubbedAuthenticatedConnectionFactory("connectionFactoryName");
         connectionFactory.createConnection("username", "password");
         
         mockery.assertIsSatisfied();
@@ -161,18 +170,18 @@ public class ThreadAuthenticatedConnectionFactoryTest
             }
         });
 
-        ConnectionFactory connectionFactory = new StubbedThreadAuthenticatedConnectionFactory("connectionFactoryName", properties);
+        ConnectionFactory connectionFactory = new StubbedAuthenticatedConnectionFactory("connectionFactoryName", properties);
         connectionFactory.createConnection();
         
         mockery.assertIsSatisfied();
     }
 
-    private class StubbedThreadAuthenticatedConnectionFactory extends ThreadAuthenticatedConnectionFactory
+    private class StubbedAuthenticatedConnectionFactory extends AuthenticatedConnectionFactory
     {
         /**
          * @param connectionFactoryName
          */
-        public StubbedThreadAuthenticatedConnectionFactory(String connectionFactoryName)
+        public StubbedAuthenticatedConnectionFactory(String connectionFactoryName)
         {
             super(connectionFactoryName);
         }
@@ -180,12 +189,17 @@ public class ThreadAuthenticatedConnectionFactoryTest
         /**
          * @param connectionFactoryName
          */
-        public StubbedThreadAuthenticatedConnectionFactory(String connectionFactoryName, Properties properties)
+        public StubbedAuthenticatedConnectionFactory(String connectionFactoryName, Properties properties)
         {
             super(connectionFactoryName, properties);
         }
         
         protected InitialContext getInitialContext(Properties properties) throws NamingException
+        {
+            return initialContext;
+        }
+        
+        protected InitialContext getInitialContext() throws NamingException
         {
             return initialContext;
         }
