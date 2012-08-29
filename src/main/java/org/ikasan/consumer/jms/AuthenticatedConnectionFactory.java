@@ -52,34 +52,27 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.EndpointException;
 
 /**
- * Implementation of an authenticated ConnectionFactory pinned to the 
- * executing thread. The connectionFactory has to be accessed on the fly
- * as the executing thread is not known until we receive a message.
+ * Implementation of an authenticated ConnectionFactory.
  * Use Cases for this are primarily around WebLogic's JMS authentication.
  *  
  * @author Ikasan Development Team
  */
-public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
+public class AuthenticatedConnectionFactory implements ConnectionFactory
 {
     /** class logger */
-    private static Logger logger = Logger.getLogger(ThreadAuthenticatedConnectionFactory.class);
+    private static Logger logger = Logger.getLogger(AuthenticatedConnectionFactory.class);
 
     /** JMS Connection Factory */
     protected String connectionFactoryName;
     
-    /** stash the connectionFactory for the executing thread */
-    private ThreadLocal<ConnectionFactory> threadLocal = new ThreadLocal<ConnectionFactory>();
-
     /** allow for default properties */
     private Properties properties;
     
     /**
      * Constructor
-     * @param connectionFactory
-     * @param destination
-     * @param flowEventFactory
+     * @param connectionFactoryName
      */
-    public ThreadAuthenticatedConnectionFactory(String connectionFactoryName)
+    public AuthenticatedConnectionFactory(String connectionFactoryName)
     {
         this.connectionFactoryName = connectionFactoryName;
         if(connectionFactoryName == null)
@@ -90,11 +83,10 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
 
     /**
      * Constructor
-     * @param connectionFactory
-     * @param destination
-     * @param flowEventFactory
+     * @param connectionFactoryName
+     * @param properties
      */
-    public ThreadAuthenticatedConnectionFactory(String connectionFactoryName, Properties properties)
+    public AuthenticatedConnectionFactory(String connectionFactoryName, Properties properties)
     {
         this.connectionFactoryName = connectionFactoryName;
         if(connectionFactoryName == null)
@@ -110,19 +102,8 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
      */
     public Connection createConnection() throws JMSException
     {
-        ConnectionFactory pinnedConnectionFactory = this.threadLocal.get();
-        if(pinnedConnectionFactory == null)
-        {
-            if(this.properties == null)
-            {
-                throw new EndpointException("No Authenticated connectionFactory available on this thread and no properties available to create one!");
-            }
-            
-            pinnedConnectionFactory = this.getConnectionFactory(this.properties);
-            this.threadLocal.set(pinnedConnectionFactory);
-        }
-        
-        return pinnedConnectionFactory.createConnection();
+        ConnectionFactory connectionFactory = this.getConnectionFactory(this.properties);
+        return connectionFactory.createConnection();
     }
 
     /* (non-Javadoc)
@@ -130,29 +111,23 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
      */
     public Connection createConnection(String username, String password) throws JMSException
     {
-        ConnectionFactory pinnedConnectionFactory = this.threadLocal.get();
-        if(pinnedConnectionFactory == null)
+        Properties props = getProperties();
+        if(this.properties != null)
         {
-            Properties props = getProperties();
-            if(this.properties != null)
-            {
-                props.putAll(this.properties);
-            }
-            props.put("java.naming.security.principal", username);
-            props.put("java.naming.security.credentials", password);
-
-            pinnedConnectionFactory = this.getConnectionFactory(props);
-            this.threadLocal.set(pinnedConnectionFactory);
+            props.putAll(this.properties);
         }
+        props.put("java.naming.security.principal", username);
+        props.put("java.naming.security.credentials", password);
 
-        return pinnedConnectionFactory.createConnection();
+        ConnectionFactory connectionFactory = this.getConnectionFactory(props);
+        return connectionFactory.createConnection();
     }
 
     protected ConnectionFactory getConnectionFactory(Properties properties)
     {
         try
         {
-            InitialContext initialContext = getInitialContext(properties);
+            InitialContext initialContext = (this.properties == null ? getInitialContext() : getInitialContext(properties));
             ConnectionFactory connectionFactory = (ConnectionFactory) initialContext.lookup(connectionFactoryName);
             if (connectionFactory == null)
             {
@@ -167,6 +142,16 @@ public class ThreadAuthenticatedConnectionFactory implements ConnectionFactory
         }
     }
     
+    /**
+     * Factory method (for convenience of testing) for getting the initial context
+     * @return
+     * @throws NamingException
+     */
+    protected InitialContext getInitialContext() throws NamingException
+    {
+        return new InitialContext();
+    }
+
     /**
      * Factory method (for convenience of testing) for getting the initial context
      * @param properties
