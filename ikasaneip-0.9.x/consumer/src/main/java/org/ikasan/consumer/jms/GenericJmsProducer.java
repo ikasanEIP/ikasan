@@ -51,6 +51,7 @@ import javax.jms.Session;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.management.ManagedResource;
 import org.springframework.jms.support.converter.MessageConverter;
 
 /**
@@ -58,7 +59,8 @@ import org.springframework.jms.support.converter.MessageConverter;
  *
  * @author Ikasan Development Team
  */
-public class GenericJmsProducer<T> implements Producer<T>
+public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
+    //TODO , ConfiguredResource<GenericJmsProducerConfiguration>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsProducer.class);
@@ -113,19 +115,11 @@ public class GenericJmsProducer<T> implements Producer<T>
 
     public void invoke(T message) throws EndpointException
     {
+        MessageProducer messageProducer = null;
+        
         try
         {
-            if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
-            {
-                connection = connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
-            }
-            else
-            {
-                connection = connectionFactory.createConnection();
-            }
-
-            this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
-            MessageProducer messageProducer = session.createProducer(destination);
+            messageProducer = session.createProducer(destination);
             
             if(message instanceof Message)
             {
@@ -150,28 +144,16 @@ public class GenericJmsProducer<T> implements Producer<T>
         }
         finally
         {
-            if(session != null)
+            if(messageProducer != null)
             {
                 try
                 {
-                    session.close();
-                    session = null;
+                    messageProducer.close();
+                    messageProducer = null;
                 }
                 catch (JMSException e)
                 {
                     logger.error("Failed to close session", e);
-                }
-            }
-
-            if(connection != null)
-            {
-                try
-                {
-                    connection.close();
-                }
-                catch (JMSException e)
-                {
-                    throw new EndpointException(e);
                 }
             }
         }
@@ -200,6 +182,61 @@ public class GenericJmsProducer<T> implements Producer<T>
     public void setConfiguredResourceId(String configuredResourceId)
     {
         this.configuredResourceId = configuredResourceId;
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.management.ManagedResource#startManagedResource()
+     */
+    public void startManagedResource()
+    {
+        try
+        {
+            if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
+            {
+                connection = connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
+            }
+            else
+            {
+                connection = connectionFactory.createConnection();
+            }
+
+            this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
+        }
+        catch(JMSException e)
+        {
+            throw new EndpointException(e);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.management.ManagedResource#stopManagedResource()
+     */
+    public void stopManagedResource()
+    {
+        if(session != null)
+        {
+            try
+            {
+                session.close();
+                session = null;
+            }
+            catch (JMSException e)
+            {
+                logger.error("Failed to close session", e);
+            }
+        }
+
+        if(connection != null)
+        {
+            try
+            {
+                connection.close();
+            }
+            catch (JMSException e)
+            {
+                throw new EndpointException(e);
+            }
+        }
     }
 
 }
