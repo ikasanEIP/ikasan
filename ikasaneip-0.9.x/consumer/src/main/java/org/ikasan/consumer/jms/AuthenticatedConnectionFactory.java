@@ -127,7 +127,7 @@ public class AuthenticatedConnectionFactory implements ConnectionFactory
     {
         try
         {
-            InitialContext initialContext = (this.properties == null ? getInitialContext() : getInitialContext(properties));
+            InitialContext initialContext = (properties == null ? getInitialContext() : getInitialContext(properties));
             ConnectionFactory connectionFactory = (ConnectionFactory) initialContext.lookup(connectionFactoryName);
             if (connectionFactory == null)
             {
