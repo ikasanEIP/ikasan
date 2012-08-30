@@ -69,4 +69,15 @@ public class TransformationException extends RuntimeException
     {
         super(message);
     }
+
+    /**
+     * Constructor
+     * 
+     * @param message - The exception message
+     * @param cause - The cause
+     */
+    public TransformationException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 }
