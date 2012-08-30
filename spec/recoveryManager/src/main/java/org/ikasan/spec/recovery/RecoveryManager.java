@@ -88,4 +88,10 @@ public interface RecoveryManager<RESOLVER>
      * Cancel any recovery currently running in the recovery manager.
      */
     public void cancel();
+
+    /**
+     * Initialize the state of the recovery manager clearing down any previously
+     * held states resulting from previous executions.
+     */
+    public void initialise();
 }
