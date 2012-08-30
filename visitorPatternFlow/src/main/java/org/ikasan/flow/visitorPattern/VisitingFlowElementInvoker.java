@@ -150,8 +150,10 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             }
             catch (ClassCastException e)
             {
-                throw new RuntimeException("Unable to find method signature on component [" + flowElement.getComponentName() + "] for payload class ["
-                        + flowEvent.getPayload().getClass().getName() + "]", e);
+                throw new RuntimeException("Unable to find method signature in module[" 
+                    + moduleName + "] flow[" + flowName + "] on component [" 
+                    + flowElement.getComponentName() + "] for payload class ["
+                    + flowEvent.getPayload().getClass().getName() + "]", e);
             }
         }
     }

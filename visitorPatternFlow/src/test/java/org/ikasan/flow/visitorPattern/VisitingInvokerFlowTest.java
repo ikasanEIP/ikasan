@@ -241,6 +241,9 @@ public class VisitingInvokerFlowTest
                 one(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
                 // start each managed resource from right to left (reverse order) in flow order
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
@@ -324,6 +327,9 @@ public class VisitingInvokerFlowTest
                 one(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
                 // start each managed resource from right to left (reverse order) in flow order
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
@@ -468,6 +474,9 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
                 // get consumer flow element
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -522,6 +531,9 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
@@ -600,6 +612,9 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
@@ -691,6 +706,9 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));

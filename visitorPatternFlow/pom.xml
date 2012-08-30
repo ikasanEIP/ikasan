@@ -115,12 +115,12 @@
 			<version>2.0.8</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.8.3</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency-->
 
 		<!-- required for unit tests -->
 		<dependency>
