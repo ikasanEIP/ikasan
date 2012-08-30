@@ -173,12 +173,19 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected void initialiseFlow()
     {
         this.flowInitialisationFailure = false;
+        this.recoveryManager.initialise();
         
         try
         {
             // configure resources that are marked as configurable
             for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
             {
+                // set the default configured resource id if none previously set.
+//                if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
+//                {
+//                    flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
+//                }
+                
                 this.flowConfiguration.configureFlowElement(flowElement);
             }
         }
@@ -207,6 +214,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             initialiseFlow();
             startManagedResources();
             startConsumer();
+            logger.info("Started Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
         {
@@ -220,6 +228,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             stopConsumer();
             this.consumerPaused = true;
+            logger.info("Paused Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
         {
@@ -240,6 +249,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
 
             startConsumer();
+            logger.info("Resumed Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
         {
@@ -340,6 +350,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             this.consumerPaused = false;
             stopConsumer();
             stopManagedResources();
+            logger.info("Stopped Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
         {
