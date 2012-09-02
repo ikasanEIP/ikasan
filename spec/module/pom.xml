@@ -56,7 +56,7 @@
     <artifactId>ikasan-spec-module</artifactId>
     <packaging>jar</packaging>
     <version>0.9.0-SNAPSHOT</version>
-    <name>Ikasan Specification Flow Contracts</name>
-    <description>The specification flow contracts for the Ikasan Enterprise Integration Platform</description>
+    <name>Ikasan Specification Module Contracts</name>
+    <description>The specification module contracts for the Ikasan Enterprise Integration Platform</description>
 
 </project>
