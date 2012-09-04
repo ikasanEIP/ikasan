@@ -210,7 +210,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
             
             // throw a RuntimeException to ensure any transactional resources are rolledback
-            throw new RuntimeException("stopAction runtimeException to rollback transaction");
+            throw new RuntimeException("stopAction runtimeException to rollback transaction", throwable);
         }
         else if(action instanceof RetryAction)
         {
@@ -247,7 +247,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             }
             
             // throw a RuntimeException to ensure any transactional resources are rolledback
-            throw new RuntimeException("retryAction runtimeException to rollback transaction");
+            throw new RuntimeException("retryAction runtimeException to rollback transaction", throwable);
         }
         else
         {
@@ -335,6 +335,14 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         {
             throw new RuntimeException(e);
         }
+    }
+    
+    public void initialise()
+    {
+        this.isUnrecoverable = false;
+        this.recoveryAttempts = 0;
+        this.previousComponentName = null;
+        this.previousExceptionAction = null;
     }
     
     /**
