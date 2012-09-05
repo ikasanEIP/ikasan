@@ -370,6 +370,17 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected Trigger newRecoveryTrigger(int maxRetries, long delay)
     {
+        if(maxRetries < 0)
+        {
+            return newTrigger()
+            .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME))
+            .withSchedule(simpleSchedule()
+                .withIntervalInMilliseconds(delay)
+                .repeatForever() ) 
+            .startAt(new Date(System.currentTimeMillis() + delay))
+            .build();
+        }
+        
         return newTrigger()
         .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME))
         .withSchedule(simpleSchedule()
