@@ -85,7 +85,16 @@ public class JmsEndpointListener implements MessageListener, ExceptionListener
      */
     public void onMessage(Message message)
     {
-        endpointListener.onMessage(message);
+        try
+        {
+            endpointListener.onMessage(message);
+        }
+        catch(RuntimeException e)
+        {
+            // ignore as anything thrown from the endpointListener is already 
+            // dealt with. We do not want to rethrow as this would cause JMS 
+            // to callback to us on the onException.
+        }
     }
 
 }
