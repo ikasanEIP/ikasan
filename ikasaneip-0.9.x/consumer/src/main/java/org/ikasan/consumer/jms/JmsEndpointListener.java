@@ -45,7 +45,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.apache.log4j.Logger;
 import org.ikasan.consumer.EndpointListener;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 
 
 /**
@@ -60,6 +62,9 @@ import org.ikasan.consumer.EndpointListener;
  */
 public class JmsEndpointListener implements MessageListener, ExceptionListener
 {
+    /** class logger */
+    private static Logger logger = Logger.getLogger(JmsEndpointListener.class);
+
     /** Actual endpointListener being proxied */
     private EndpointListener endpointListener;
     
@@ -89,11 +94,13 @@ public class JmsEndpointListener implements MessageListener, ExceptionListener
         {
             endpointListener.onMessage(message);
         }
+        catch(ForceTransactionRollbackException e)
+        {
+            // ignore as this was simply thrown to rollback any in progress transaction 
+        }
         catch(RuntimeException e)
         {
-            // ignore as anything thrown from the endpointListener is already 
-            // dealt with. We do not want to rethrow as this would cause JMS 
-            // to callback to us on the onException.
+            logger.error("Unhandled exception occurred", e);
         }
     }
 
