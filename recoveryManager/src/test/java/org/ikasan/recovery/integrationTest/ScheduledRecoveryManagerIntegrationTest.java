@@ -133,7 +133,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("stopAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Stop", e.getMessage());
         }
         
         //
@@ -176,7 +176,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("stopAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Stop", e.getMessage());
         }
         
         //
@@ -224,7 +224,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -245,7 +245,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -320,7 +320,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -341,7 +341,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry (delay=1000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("Consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should be not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -362,7 +362,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry (delay=1000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("Consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should be not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -436,7 +436,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
             Assert.assertFalse("consumer should not be running", consumer.isRunning());
             Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
             Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
@@ -457,7 +457,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         catch (Exception e)
         {
             Assert.assertTrue(e instanceof RuntimeException);
-            Assert.assertEquals("stopAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Stop", e.getMessage());
             Assert.assertFalse("Consumer should not be running", consumer.isRunning());
             Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
             Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());

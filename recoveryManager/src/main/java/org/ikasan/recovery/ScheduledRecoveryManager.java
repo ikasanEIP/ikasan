@@ -45,10 +45,12 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
+import org.ikasan.exceptionResolver.action.IgnoreAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -198,7 +200,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         logger.info("RecoveryManager invoked", throwable);
         ExceptionAction action = resolveAction(componentName, throwable);
-        if(action instanceof StopAction)
+        if(action instanceof IgnoreAction)
+        {
+            logger.info("No action taken for exception " + throwable.toString());
+            return;
+        }
+        else if(action instanceof StopAction)
         {
             if(isRecovering())
             {
@@ -209,8 +216,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
             
-            // throw a RuntimeException to ensure any transactional resources are rolledback
-            throw new RuntimeException("stopAction runtimeException to rollback transaction", throwable);
+            throw new ForceTransactionRollbackException(action.toString());
         }
         else if(action instanceof RetryAction)
         {
@@ -246,8 +252,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                 throw new RuntimeException(e);
             }
             
-            // throw a RuntimeException to ensure any transactional resources are rolledback
-            throw new RuntimeException("retryAction runtimeException to rollback transaction", throwable);
+            throw new ForceTransactionRollbackException(action.toString());
         }
         else
         {
