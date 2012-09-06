@@ -45,6 +45,7 @@ import junit.framework.Assert;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
+import org.ikasan.exceptionResolver.action.IgnoreAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.recovery.ScheduledRecoveryManager;
@@ -101,13 +102,16 @@ public class ScheduledRecoveryManagerTest
     final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
 
     /** Mock stopAction */
-    final StopAction stopAction = mockery.mock(StopAction.class, "mockStopAction");
+    final StopAction stopAction = mockery.mock(StopAction.class, "Stop");
     
     /** Mock retryAction */
-    final RetryAction retryAction = mockery.mock(RetryAction.class, "mockRetryAction");
+    final RetryAction retryAction = mockery.mock(RetryAction.class, "Retry");
     
     /** Mock excludeEventAction */
-    final ExcludeEventAction excludeEventAction = mockery.mock(ExcludeEventAction.class, "mockExcludeEventAction");
+    final ExcludeEventAction excludeEventAction = mockery.mock(ExcludeEventAction.class, "ExcludeEvent");
+    
+    /** Mock ignoreAction */
+    final IgnoreAction ignoreAction = mockery.mock(IgnoreAction.class, "Ignore");
     
     /**
      * Test failed constructor due to null scheduler.
@@ -195,10 +199,37 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("stopAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Stop", e.getMessage());
         }
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful ignore action on recovery.
+     * @throws SchedulerException 
+     */
+    @Test
+    public void test_successful_recover_to_ignoreAction_with_no_previousAction() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(ignoreAction));
+            }
+        });
+
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        recoveryManager.setResolver(exceptionResolver);
+        
+        recoveryManager.recover("componentName", exception);
 
         mockery.assertIsSatisfied();
     }
@@ -260,7 +291,7 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry", e.getMessage());
         }
 
         Assert.assertTrue(recoveryManager.isRecovering());
@@ -367,7 +398,7 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
@@ -379,7 +410,7 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("retryAction runtimeException to rollback transaction", e.getMessage());
+            Assert.assertEquals("Retry", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
