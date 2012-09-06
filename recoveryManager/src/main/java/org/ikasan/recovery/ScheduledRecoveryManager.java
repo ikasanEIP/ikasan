@@ -81,7 +81,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     protected static final String RECOVERY_JOB_NAME = "recoveryJob_";
     
     /** recovery job trigger name */
-    protected static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger";
+    protected static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger_";
     
     /** consumer to stop and start for recovery */
     private Consumer<?> consumer;
@@ -380,7 +380,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         if(maxRetries < 0)
         {
             return newTrigger()
-            .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME))
+            .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
             .withSchedule(simpleSchedule()
                 .withIntervalInMilliseconds(delay)
                 .repeatForever() ) 
@@ -389,7 +389,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         }
         
         return newTrigger()
-        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME))
+        .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
         .withSchedule(simpleSchedule()
             .withIntervalInMilliseconds(delay)
             .repeatSecondlyForTotalCount(maxRetries, (int)(delay / 1000) ) ) 
@@ -413,7 +413,17 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     public void execute(JobExecutionContext context) throws JobExecutionException
     {
-        this.consumer.start();
+        try
+        {
+            this.consumer.start();
+        }
+        catch(Throwable throwable)
+        {
+            // this situation only occurs on failure of a retry of a consumer
+            // so we should be good using the previousComponentName which 
+            // will be equal to the consumer name
+            this.recover(this.previousComponentName, throwable);
+        }
     }
 
 }
