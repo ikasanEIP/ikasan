@@ -52,13 +52,14 @@ import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.quartz.Job;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.StatefulJob;
 // TODO - check if deprecated is replaced with anything import org.quartz.StatefulJob;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.*;
@@ -70,7 +71,8 @@ import static org.quartz.SimpleScheduleBuilder.*;
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, Job
+@DisallowConcurrentExecution
+public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, StatefulJob
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
@@ -202,7 +204,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         ExceptionAction action = resolveAction(componentName, throwable);
         if(action instanceof IgnoreAction)
         {
-            logger.info("No action taken for exception " + throwable.toString());
+            logger.info("No action taken for exception ", throwable);
             return;
         }
         else if(action instanceof StopAction)
