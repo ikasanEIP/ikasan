@@ -83,6 +83,9 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
     /** session has to be closed prior to connection being closed */
     protected Session session;
 
+    /** determines whether this managed resource failure will fail the startup of the flow */
+    protected boolean isCriticalOnStartup = true;
+    
     // TODO - remove Spring dependency
     /** message converter */
     protected MessageConverter messageConverter;
@@ -237,6 +240,16 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
                 throw new EndpointException(e);
             }
         }
+    }
+
+    public boolean isCriticalOnStartup()
+    {
+        return this.isCriticalOnStartup;
+    }
+
+    public void setCriticalOnStartup(boolean isCriticalOnStartup)
+    {
+        this.isCriticalOnStartup = isCriticalOnStartup;
     }
 
 }
