@@ -172,27 +172,18 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     protected void initialiseFlow()
     {
-        this.flowInitialisationFailure = false;
         this.recoveryManager.initialise();
         
-        try
+        // configure resources that are marked as configurable
+        for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
         {
-            // configure resources that are marked as configurable
-            for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
-            {
                 // set the default configured resource id if none previously set.
 //                if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
 //                {
 //                    flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
 //                }
                 
-                this.flowConfiguration.configureFlowElement(flowElement);
-            }
-        }
-        catch(RuntimeException e)
-        {
-            this.flowInitialisationFailure = true;
-            throw e;
+            this.flowConfiguration.configureFlowElement(flowElement);
         }
     }
     
@@ -201,6 +192,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public void start()
     {
+        this.flowInitialisationFailure = false;
+
         try
         {
             if(isRunning())
@@ -211,8 +204,27 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 return;
             }
 
-            initialiseFlow();
-            startManagedResources();
+            try
+            {
+                initialiseFlow();
+            }
+            catch(RuntimeException e)
+            {
+                this.flowInitialisationFailure = true;
+                throw e;
+            }
+            
+            try
+            {
+                startManagedResources();
+            }
+            catch(RuntimeException e)
+            {
+                this.flowInitialisationFailure = true;
+                this.stopManagedResources();
+                throw e;
+            }
+            
             startConsumer();
             logger.info("Started Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
@@ -333,9 +345,16 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
             catch(RuntimeException e)
             {
-                // just log any issues as these may get resolved by the recovery manager 
-                logger.warn("Failed to start component [" 
-                        + flowElement.getComponentName() + "] " + e.getMessage(), e);
+                if(flowElement.getFlowComponent().isCriticalOnStartup())
+                {
+                    throw e;
+                }
+                else
+                {
+                    // just log any issues as these may get resolved by the recovery manager 
+                    logger.warn("Failed to start component [" 
+                            + flowElement.getComponentName() + "] " + e.getMessage(), e);
+                }
             }
         }
     }
