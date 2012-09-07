@@ -516,7 +516,7 @@ public class VisitingInvokerFlowTest
      * resolve themselves later in the flow invocation.
      */
     @Test
-    public void test_success_flow_start_even_with_managedResource_start_failure()
+    public void test_success_flow_start_even_with_managedResource_start_failure_non_critical_resource()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
@@ -553,6 +553,10 @@ public class VisitingInvokerFlowTest
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 will(throwException(new RuntimeException("test managed resource start failure")));
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                one(managedResource).isCriticalOnStartup();
+                will(returnValue(false));
                 one(managedResourceFlowElement1).getComponentName();
                 will(returnValue("managedResourceFlowElementName"));
                 inSequence(reverseOrder);
@@ -568,6 +572,81 @@ public class VisitingInvokerFlowTest
                 
                 // start the consumer
                 exactly(1).of(consumer).start();
+            }
+        });
+
+        // set the monitor and receive initial state callback
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("stopped");
+        flow.setMonitor(monitor);
+
+        // check state before proceeding with start
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+
+        // start will result in the monitor being updated to running
+        isRunning = true;
+        setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
+        setMonitorExpectations("running");
+        flow.start();
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful flow start regardless of a managed resource successfully
+     * starting. We don't ignore managed resource start failures if they are marked as critical.
+     */
+    @Test(expected = RuntimeException.class)
+    public void test_success_flow_start_even_with_managedResource_start_failure_critical_resource()
+    {
+        // container for the complete flow
+        final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+        managedResourceFlowElements.add(managedResourceFlowElement1);
+        
+        final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // clear recovery manager states
+                one(recoveryManager).initialise();
+
+                // get the two flow element configured resources
+                one(flowConfiguration).getConfiguredResourceFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+                one(configuredResourceFlowElements).iterator();
+                will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
+
+                // load configuration
+                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                
+                // get the the flow element managed resource
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                
+                // start each managed resource from right to left (reverse order) in flow order
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).startManagedResource();
+                will(throwException(new RuntimeException("test managed resource start failure")));
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                one(managedResource).isCriticalOnStartup();
+                will(returnValue(true));
+
+                // stop each managed resource
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
+                one(managedResourceFlowElement1).getFlowComponent();
+                will(returnValue(managedResource));
+                inSequence(reverseOrder);
+                one(managedResource).stopManagedResource();
             }
         });
 
