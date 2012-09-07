@@ -61,4 +61,14 @@ public interface ManagedResource
      * Provision for stopping a managed resource.
      */
     public void stopManagedResource();
+
+    /**
+     * Is this resource critical to the startup.
+     */
+    public boolean isCriticalOnStartup();
+
+    /**
+     * set whether this resource is critical to the startup of the flow.
+     */
+    public void setCriticalOnStartup(boolean criticalOnStartup);
 }
