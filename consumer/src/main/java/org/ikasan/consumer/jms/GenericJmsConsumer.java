@@ -96,7 +96,10 @@ public class GenericJmsConsumer
     protected GenericJmsConsumerConfiguration configuration = new GenericJmsConsumerConfiguration();
     
     /** tech endpoint listener for callbacks from the endpoint */
-    private MessageListener messageListener;
+    protected MessageListener messageListener;
+    
+    /** destination resolver for locating and returning the configured destination instance */
+    protected DestinationResolver destinationResolver;
     
     /**
      * Constructor
@@ -117,6 +120,34 @@ public class GenericJmsConsumer
         if(destination == null)
         {
             throw new IllegalArgumentException("destination cannot be 'null'");
+        }
+
+        this.flowEventFactory = flowEventFactory;
+        if(flowEventFactory == null)
+        {
+            throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
+        }
+    }
+
+    /**
+     * Constructor
+     * @param connectionFactory
+     * @param destination
+     * @param flowEventFactory
+     */
+    public GenericJmsConsumer(ConnectionFactory connectionFactory, DestinationResolver destinationResolver,
+            EventFactory<FlowEvent<?,?>> flowEventFactory)
+    {
+        this.connectionFactory = connectionFactory;
+        if(connectionFactory == null)
+        {
+            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
+        }
+        
+        this.destinationResolver = destinationResolver;
+        if(destinationResolver == null)
+        {
+            throw new IllegalArgumentException("destinationResolver cannot be 'null'");
         }
 
         this.flowEventFactory = flowEventFactory;
@@ -157,6 +188,11 @@ public class GenericJmsConsumer
 
             this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
 
+            if(destination == null)
+            {
+                destination = destinationResolver.getDestination();
+            }
+            
             if(destination instanceof Topic && this.configuration.isDurable())
             {
                 messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId());
@@ -204,6 +240,12 @@ public class GenericJmsConsumer
             {
                 throw new RuntimeException(e);
             }
+        }
+
+		// clear the destination if the resolver is available
+        if(destinationResolver != null)
+        {
+            destination = null;
         }
     }
 

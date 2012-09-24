@@ -66,7 +66,7 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
     private static Logger logger = Logger.getLogger(GenericJmsProducer.class);
     
     /** JMS Connection Factory */
-    private ConnectionFactory connectionFactory;
+    protected ConnectionFactory connectionFactory;
 
     /** JMS Destination instance */
     protected Destination destination;
@@ -90,14 +90,11 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
     /** message converter */
     protected MessageConverter messageConverter;
     
+    /** destination resolver for locating and returning the configured destination instance */
+    protected DestinationResolver destinationResolver;
+    
     /**
-     * Constructor where connectionFactory can be created and injected for 
-     * use within this class. This is the use case for scenarios where the
-     * connectionFactory does not need to be pinned to the executing 
-     * thread.
-     * Sometimes we need to pin the connectioNFactory to the executing thread
-     * for instance, WebLogic security authentication for JMS is a use case for 
-     * this requirement.
+     * Constructor.
      * @param connectionFactory
      * @param destination
      */
@@ -113,6 +110,26 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
         if(destination == null)
         {
             throw new IllegalArgumentException("destination cannot be 'null'");
+        }
+    }
+
+    /**
+     * Constructor.
+     * @param connectionFactory
+     * @param destinationResolver
+     */
+    public GenericJmsProducer(ConnectionFactory connectionFactory, DestinationResolver destinationResolver)
+    {
+        this.connectionFactory = connectionFactory;
+        if(connectionFactory == null)
+        {
+            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
+        }
+        
+        this.destinationResolver = destinationResolver;
+        if(destinationResolver == null)
+        {
+            throw new IllegalArgumentException("destinationResolver cannot be 'null'");
         }
     }
 
@@ -204,6 +221,10 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
             }
 
             this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
+            if(this.destination == null)
+            {
+                this.destination = this.destinationResolver.getDestination();
+            }
         }
         catch(JMSException e)
         {
@@ -239,6 +260,12 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
             {
                 throw new EndpointException(e);
             }
+        }
+        
+        // if we are using a destinationResolver then clear the destination instance
+        if(this.destinationResolver != null)
+        {
+            this.destination = null;
         }
     }
 
