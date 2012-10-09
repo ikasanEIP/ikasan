@@ -131,6 +131,6 @@ public class CachingScheduledJobFactory implements ScheduledJobFactory
     {
         JobKey jobKey = new JobKey(name, group);
         this.cachedJobs.put(jobKey, job);
-        return org.quartz.JobBuilder.newJob().withIdentity(name,group).build(); 
+        return org.quartz.JobBuilder.newJob( job.getClass() ).withIdentity(name,group).build(); 
     }
 }
