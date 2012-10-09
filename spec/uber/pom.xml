@@ -56,7 +56,7 @@
 	<artifactId>ikasan-uber-spec</artifactId>
 	<packaging>jar</packaging>
 	<version>0.9.0-SNAPSHOT</version>
-	<name>Ikasan Specification Uber Jar</name>
+	<name>Ikasan Specification Uber Packaging</name>
 
 	<description>All specifications packaged up in a single uber jar for convenience of use in the Enterprise Integration Platform</description>
 	<build>
