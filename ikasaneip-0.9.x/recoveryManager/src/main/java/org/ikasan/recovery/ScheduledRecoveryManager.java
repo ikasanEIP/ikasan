@@ -53,14 +53,13 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.DisallowConcurrentExecution;
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.StatefulJob;
-// TODO - check if deprecated is replaced with anything import org.quartz.StatefulJob;
 import org.quartz.Trigger;
 import static org.quartz.TriggerBuilder.*;
 import static org.quartz.TriggerKey.triggerKey;
@@ -72,7 +71,7 @@ import static org.quartz.SimpleScheduleBuilder.*;
  * @author Ikasan Development Team
  */
 @DisallowConcurrentExecution
-public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, StatefulJob
+public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolver>, Job
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledRecoveryManager.class);
