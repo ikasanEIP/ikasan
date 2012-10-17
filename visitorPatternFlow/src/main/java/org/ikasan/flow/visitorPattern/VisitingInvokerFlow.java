@@ -439,7 +439,16 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     {
         if(this.monitor != null)
         {
-            this.monitor.notifyMonitor(this.getState());
+            try
+            {
+                this.monitor.notifyMonitor(this.getState());
+            }
+            catch(RuntimeException e)
+            {
+                // don't let the failure of the monitor interfere with
+                // the operation of the business flow
+                logger.error("Failed to notify the registered monitor", e);
+            }
         }
     }
 
