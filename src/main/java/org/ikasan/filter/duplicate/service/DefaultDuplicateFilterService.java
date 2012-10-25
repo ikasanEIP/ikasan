@@ -63,6 +63,10 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService
     public DefaultDuplicateFilterService(final FilteredMessageDao dao)
     {
         this.dao = dao;
+        if(dao == null)
+        {
+            throw new IllegalArgumentException("dao cannot be 'null'");
+        }
     }
 
     /*
