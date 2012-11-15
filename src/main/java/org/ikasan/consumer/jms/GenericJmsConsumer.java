@@ -101,6 +101,9 @@ public class GenericJmsConsumer
     /** destination resolver for locating and returning the configured destination instance */
     protected DestinationResolver destinationResolver;
     
+    /** session message consumer */
+    protected MessageConsumer messageConsumer;
+
     /**
      * Constructor
      * @param connectionFactory
@@ -167,8 +170,6 @@ public class GenericJmsConsumer
      */
     public void start()
     {
-        MessageConsumer messageConsumer;
-
         try
         {
             if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
@@ -216,6 +217,19 @@ public class GenericJmsConsumer
      */
     public void stop()
     {
+        if(messageConsumer != null)
+        {
+            try
+            {
+                messageConsumer.close();
+                messageConsumer = null;
+            }
+            catch (JMSException e)
+            {
+                logger.error("Failed to close session", e);
+            }
+        }
+        
         if(session != null)
         {
             try
