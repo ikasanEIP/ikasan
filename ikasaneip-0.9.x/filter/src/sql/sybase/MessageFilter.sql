@@ -54,10 +54,11 @@ go
 -- Create new table
 CREATE TABLE dbo.MessageFilter
 (
-    Criteria        numeric(18,0) NOT NULL,
-    ClientId        varchar(255)  NOT NULL,
-    CreatedDateTime datetime      NOT NULL,
-    Expiry          datetime      NOT NULL,
+    Criteria			numeric(18,0) NOT NULL,
+    ClientId			varchar(255)  NOT NULL,
+    CriteriaDescription	varchar(255)  NULL,
+    CreatedDateTime		datetime      NOT NULL,
+    Expiry				datetime      NOT NULL,
     PRIMARY KEY     (Criteria, ClientId)
 )
 LOCK DATAROWS
