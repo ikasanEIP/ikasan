@@ -45,6 +45,7 @@ CREATE TABLE [MessageFilter]
 (
     [Criteria]              [numeric](18) NOT NULL,
     [ClientId]              [varchar](256) NOT NULL,
+    [CriteriaDescription]   [varchar](256) NULL,
     [CreatedDateTime]       [datetime] NOT NULL,
     [Expiry]                [datetime] NOT NULL,
     CONSTRAINT              [PK_ClientId_Criteria] PRIMARY KEY CLUSTERED 

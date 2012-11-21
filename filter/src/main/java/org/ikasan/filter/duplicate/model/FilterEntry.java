@@ -84,6 +84,16 @@ public interface FilterEntry
      */
     public Integer getCriteria();
 
+    /** Getter for a criteriaDescription variable: object description of the criteria
+     * used to aid support of the filter as the criteria itself is an integer.
+     * Usually this would be a String form of the criteria itself, or part thereof.
+     * For instance, this is very useful for identifying specific filter entries
+     * for removal as part of supporting the runtime environment.
+     * 
+     * @return criteriaDescription object whatever it might be.
+     */
+    public String getCriteriaDescription();
+
     /**
      * Getter for {@link Date} object representing the date/time a {@link FilterEntry}
      * was persisted.
