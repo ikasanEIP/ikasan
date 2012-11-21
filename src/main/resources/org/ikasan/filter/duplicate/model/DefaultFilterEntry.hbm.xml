@@ -61,6 +61,11 @@
                           column="ClientId" />
         </composite-id>
 
+        <property name="criteriaDescription"
+                  type="java.lang.String"
+                  column="CriteriaDescription"
+                  not-null="false" />
+
         <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"

@@ -68,6 +68,9 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     /** The client id */
     private String clientId;
 
+    /** string form of the criteria to aid support should entries need cherry pick removal */
+    private String criteriaDescription;
+
     /** {@link Date} of insertion */
     private Date createdDateTime;
 
@@ -84,7 +87,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
      * Constructor
      * @param criteria
      * @param clientId
-     * @param timeToLive Time in <b>days</b> to keep keep {@link FilterEntry} persistend before
+     * @param timeToLive Time in <b>days</b> to keep keep {@link FilterEntry} persisted before
      *                   it is removed.
      */
     public DefaultFilterEntry(Integer criteria, String clientId, int timeToLive)
@@ -94,7 +97,24 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
         this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000));
+    }
 
+    /**
+     * Constructor
+     * @param criteria
+     * @param clientId
+     * @param criteriaDescription
+     * @param timeToLive Time in <b>days</b> to keep keep {@link FilterEntry} persisted before
+     *                   it is removed.
+     */
+    public DefaultFilterEntry(Integer criteria, String clientId, String criteriaDescription, int timeToLive)
+    {
+        this.criteria = criteria;
+        this.clientId = clientId;
+        this.criteriaDescription = criteriaDescription;
+        long now = System.currentTimeMillis();
+        this.createdDateTime = new Date(now);
+        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000));
     }
 
     /**
@@ -129,6 +149,23 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     public Integer getCriteria()
     {
         return this.criteria;
+    }
+
+    /**
+     * Setter for {@link #criteriaDescription}
+     * @param criteriaDescription
+     */
+    public void setCriteriaDescription(String criteriaDescription)
+    {
+        this.criteriaDescription = criteriaDescription;
+    }
+
+    /**
+     * Getter for {@link #criteriaDescription}
+     */
+    public String getCriteriaDescription()
+    {
+        return this.criteriaDescription;
     }
 
     /**
