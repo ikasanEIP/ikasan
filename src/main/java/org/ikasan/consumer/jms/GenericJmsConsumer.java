@@ -289,6 +289,11 @@ public class GenericJmsConsumer
      */
     public void onMessage(Message message)
     {
+        if(this.eventListener == null)
+        {
+            throw new RuntimeException("No active eventListeners registered!");
+        }
+        
         String uniqueId = null;
         try
         {
