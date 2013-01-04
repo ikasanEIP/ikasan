@@ -154,6 +154,11 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
                         + " to JMS without a converter!");
                 }
 
+                if(logger.isDebugEnabled())
+                {
+                    logger.debug("Published [" + message.toString() + "]");
+                }
+
                 Message jmsMessage = this.messageConverter.toMessage(message, session);
                 messageProducer.send(jmsMessage);
             }
