@@ -61,9 +61,10 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+
 import static org.quartz.TriggerBuilder.*;
 import static org.quartz.TriggerKey.triggerKey;
-import static org.quartz.SimpleScheduleBuilder.*;
 
 /**
  * Scheduled based stateful Recovery implementation.
@@ -291,7 +292,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         throws SchedulerException
     {
         JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
-        Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getMaxRetries(), retryAction.getDelay());
+        Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
         recoveryAttempts = 1;
@@ -305,7 +306,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * Continue an in progress recovery based on the retry action.
      * @param retryAction
      */
-    private void continueRecovery(RetryAction retryAction)
+    private void continueRecovery(RetryAction retryAction) throws SchedulerException
     {
         recoveryAttempts++;
 
@@ -318,9 +319,14 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             throw new RuntimeException("Exhausted maximum retries.");
         }
 
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
+        Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
+
         logger.info("Recovery [" + recoveryAttempts + "/" 
             + ((retryAction.getMaxRetries() < 0) ? "unlimited" : retryAction.getMaxRetries()) 
-            + "] flow [" + flowName + "] module [" + moduleName + "]");
+            + "] flow [" + flowName + "] module [" + moduleName + "] rescheduled at ["
+            + scheduled + "]");
     }
 
     /**
@@ -374,24 +380,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * @param delay
      * @return Trigger
      */
-    protected Trigger newRecoveryTrigger(int maxRetries, long delay)
+    protected Trigger newRecoveryTrigger(long delay)
     {
-        if(maxRetries < 0)
-        {
-            return newTrigger()
-            .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
-            .withSchedule(simpleSchedule()
-                .withIntervalInMilliseconds(delay)
-                .repeatForever() ) 
-            .startAt(new Date(System.currentTimeMillis() + delay))
-            .build();
-        }
-        
         return newTrigger()
         .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
-        .withSchedule(simpleSchedule()
-            .withIntervalInMilliseconds(delay)
-            .repeatSecondlyForTotalCount(maxRetries, (int)(delay / 1000) ) ) 
         .startAt(new Date(System.currentTimeMillis() + delay))
         .build();
     }

@@ -62,6 +62,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 /**
  * This test class supports the <code>ScheduledRecoveryManager</code> class.
@@ -268,7 +269,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
-                exactly(3).of(retryAction).getMaxRetries();
+                exactly(2).of(retryAction).getMaxRetries();
                 will(returnValue(2));
                 exactly(1).of(retryAction).getDelay();
                 will(returnValue(2000L));
@@ -334,17 +335,17 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
                 
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 // create the recovery job and associated trigger
                 exactly(3).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
-                exactly(1).of(retryAction).getDelay();
+                exactly(2).of(retryAction).getDelay();
                 will(returnValue(delay));
                 
                 // schedule the recovery job with its trigger
-                exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
+                exactly(2).of(scheduler).scheduleJob(jobDetail, trigger);
 
                 //
                 // second time retry action is invoked
@@ -381,7 +382,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(true));
                 
                 // check we have not exceeded retry limits
-                exactly(2).of(retryAction).getMaxRetries();
+                exactly(1).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
                 
                 // cancel the recovery
@@ -474,7 +475,7 @@ public class ScheduledRecoveryManagerTest
         }
         
         @Override
-        protected Trigger newRecoveryTrigger(int maxRetries, long delay)
+        protected Trigger newRecoveryTrigger(long delay)
         {
             return trigger;
         }
