@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="priceConsumer"
+        class="org.ikasan.consumer.jms.GenericJmsConsumer">
+        <!-- Connection Factory -->
+        <constructor-arg> <!-- Hmm, what about JMS security? -->
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName" value="java:/JmsXA" />
+            </bean>
+        </constructor-arg>
+        <!-- Destination -->
+        <constructor-arg>
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiTemplate" ref="jmsJndiTemplate" />
+                <property name="jndiName" value="/topic/ikasan.data.sample.priceSrc" />
+            </bean>
+        </constructor-arg>
+        <!-- Event factory -->
+        <constructor-arg>
+            <bean class="org.ikasan.flow.event.FlowEventFactory" />
+        </constructor-arg>
+        <property name="configuredResourceId" value="${module.name}-priceConsumer" />
+        <property name="configuration">
+            <bean class="org.ikasan.consumer.jms.GenericJmsConsumerConfiguration" />
+        </property>
+    </bean>
+
+    <bean id="priceToStringConverter" class="org.ikasan.sample.jmsDrivenPriceSrc.component.converter.PriceConverter" />
+
+    <bean id="priceProducer" class="org.ikasan.sample.jmsDrivenPriceSrc.component.endpoint.PriceLoggerProducer" />
+
+</beans>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="${module.name}-module"
+        class="org.ikasan.framework.module.loader.ModuleFactoryBean">
+        <constructor-arg>
+            <list>
+                <value>${module.name}-environmentalisation.xml</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <value>module-module-config.xml</value>
+                <value>module-flow-config.xml</value>
+                <value>module-component-config.xml</value>
+
+                <value>module-transaction-config.xml</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <bean factory-bean="resourceLoader" factory-method="getIkasanConfigurationDirectory" />
+        </constructor-arg>
+        <constructor-arg value="module" />
+    </bean>
+
+    <bean id="resourceLoader" class="org.ikasan.common.ResourceLoader"
+        factory-method="getInstance" />
+</beans>

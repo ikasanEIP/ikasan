@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // 
+# // Distributed under the Modified BSD License.
+# // Copyright notice: The copyright for this software and a full listing 
+# // of individual contributors are as shown in the packaged copyright.txt 
+# // file. 
+# // 
+# // All rights reserved.
+# //
+# // Redistribution and use in source and binary forms, with or without 
+# // modification, are permitted provided that the following conditions are met:
+# //
+# //  - Redistributions of source code must retain the above copyright notice, 
+# //    this list of conditions and the following disclaimer.
+# //
+# //  - Redistributions in binary form must reproduce the above copyright notice, 
+# //    this list of conditions and the following disclaimer in the documentation 
+# //    and/or other materials provided with the distribution.
+# //
+# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
+# //    be used to endorse or promote products derived from this software without 
+# //    specific prior written permission.
+# //
+# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <!-- The console specific Module Service -->
+    <bean id="moduleService" class="org.ikasan.console.module.service.ConsoleModuleService" >
+        <constructor-arg ref="moduleDao" />
+    </bean> 
+
+    <!-- The framework specific Module Service -->
+    <bean id="frameworkModuleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="initiatorCommandDao" />
+    </bean>
+
+    <!-- The module container for the framework module service -->
+    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+
+    <!-- The PointToPointFlowProfile Service -->
+    <bean id="pointToPointFlowProfileService" class="org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileServiceImpl" >
+        <constructor-arg ref="pointToPointFlowProfileDao" />
+    </bean> 
+    
+    <!-- The Wiretap Service -->
+    <!-- TODO - might have a problem as we're not giving the wiretap service the module service it's expecting... -->
+	<bean id="wiretapService" class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
+		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="frameworkModuleService" />
+	</bean>
+	
+  	<!-- ###################################### -->
+  	<!-- Common transaction services start here -->
+    <!-- ###################################### -->  	
+  	
+  	<!-- Transaction advice requiring a new transaction on entry -->
+    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <!-- Transaction advice requiring a transaction on entry -->
+    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+     
+    <!-- Transaction Manager definition for user transactions -->
+    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+       <property name="transactionManagerName" value="java:/TransactionManager"/>
+       <property name="userTransactionName" value="UserTransaction"/>
+    </bean>
+  
+    <!-- #################################### -->
+    <!-- Common transaction services end here -->
+    <!-- #################################### -->
+    
+</beans>

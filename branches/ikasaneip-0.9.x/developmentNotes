@@ -1,0 +1,49 @@
+ikasan-0.9.x Status
+===================
+
+build
+================================================================================
+
+Overview
+--------
+Overhang from i8, we may want to continue this abstraction for i9. Not sure yet,
+so leaving as is as a centralised build module
+
+Current Status
+--------------
+Leaving to be revamped as part of the build/maven 3 revamping
+
+
+scheduler
+================================================================================
+
+Overview
+--------
+New for i9 - Ikasan must have its own scheduler for scheduling of internal operations
+such as recovery of a flow rather than the crappy Thread.sleep used in i8. Basically a couple
+of factories to control the instantiation of schedulers within the platform.
+
+Current Status
+--------------
+Implemented using Quartz
+TODO: Not currently behind an interface - not sure if this will be an issue.
+
+spec
+================================================================================
+
+Overview
+--------
+New for i9
+
+Current Status
+--------------
+
+flow
+=========
+
+Overview
+--------
+
+Current Status
+==============
+

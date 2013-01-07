@@ -1,0 +1,34 @@
+IKASAN ENTERPRISE INTEGRATION PLATFORM COPYRIGHT NOTICE
+-------------------------------------------------------
+
+Organisation
+------------
+Copyright (c) 2003-2010 Mizuho International plc.
+
+
+Project Administrators
+----------------------
+Jeff Mitchell
+Junichi Suetake
+Martijn Verburg
+Ross Duncan
+Summer Hasani
+
+Project Contributors
+--------------------
+Alex Oppong
+Arun Rajaraman
+Balaji Ramanujam
+Cae Fernandes
+Chia-Hung Lin
+Edward Bowles
+Giridhar Teklur
+Ioannis Mavroukakis
+Jaikiran Pai
+Janos Lele
+Kamlesh Bhatt
+Kerry Kenneally
+Marc Andreu Fernandez
+Matthew Potter
+Prasad Saya
+Vijitha Kumara

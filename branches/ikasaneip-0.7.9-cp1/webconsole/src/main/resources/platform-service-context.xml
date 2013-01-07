@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+    <bean id="moduleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="initiatorStartupControlDao" />
+        <constructor-arg ref="systemEventService" />
+    </bean>
+    
+    <bean id="systemEventService" class="org.ikasan.framework.systemevent.service.SystemEventServiceImpl">
+        <constructor-arg ref="systemEventDao" />
+        <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
+    </bean>
+    
+    <bean id="moduleInitialisationService" class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
+        <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="userDetailsService"/>
+        <constructor-arg ref="initiatorStartupControlDao" />
+    </bean>
+
+    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+
+
+	<bean id="flowEventListener"
+		class="org.ikasan.framework.flow.event.listener.JobAwareFlowEventListener">
+		<constructor-arg ref="jobsMap"/>
+		<constructor-arg ref="triggerDao"/>
+	</bean>
+
+	<bean id="jobsMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="loggingJob" value-ref="loggingJob" />
+				<entry key="wiretapJob" value-ref="wiretapJob" />
+			</map>
+		</constructor-arg>
+		</bean>
+
+	<bean id="loggingJob" class="org.ikasan.framework.flow.event.service.LoggingEventJob" />
+
+	<bean id="wiretapJob" class="org.ikasan.framework.flow.event.service.WiretapEventJob">
+		<constructor-arg ref="wiretapService" />
+	</bean>
+
+	<bean id="wiretapService"
+		class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
+		<constructor-arg ref="wiretapDao" />
+		<constructor-arg ref="moduleService" />
+	</bean>
+	
+	<bean id="initiatorStartupControlDao"
+        class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
+        <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
+    </bean>
+    
+    <bean id="systemEventDao"
+        class="org.ikasan.framework.systemevent.dao.HibernateSystemEventDao">
+        <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
+        
+        <constructor-arg value="true"/>
+        <constructor-arg value="100"/>
+        
+    </bean>
+
+	<bean id="wiretapDao"
+		class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+		
+		<constructor-arg value="true"/>
+        <constructor-arg value="100"/>
+	</bean>
+
+	<bean id="triggerDao"
+		class="org.ikasan.framework.flow.event.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+	</bean>
+
+	
+
+
+	<bean id="systemEventHibernateSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasanAdminXaDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
+
+
+	<bean id="wiretapHibernateSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasanAdminXaDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>WiretapEventImpl.hbm.xml</value>
+				<value>Trigger.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties"/>
+	</bean>
+	
+	<bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="ignoreResourceNotFound" value="true"/>
+		<property name="location" value="classpath:ikasan-hibernate.properties"/>
+	</bean>
+	
+	<bean id="initiatorStartupControlHibernateSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasanAdminXaDataSource" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/framework/initiator/InitiatorStartupControl.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+    
+	<bean id="platformScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="schedulerName" value="platformScheduler"/>
+		<!-- 
+        <property name="triggers">
+			<list>
+				<ref bean="wiretapEventHousekeepingTrigger" />
+			</list>
+		</property>
+        -->
+        <property name="autoStartup" value="false" />
+	</bean>
+
+    <!--
+	<bean id="wiretapEventHousekeepingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean
+				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="wiretapService" />
+				<property name="targetMethod" value="housekeep" />
+				<property name="concurrent" value="false" />
+				<property name="name" value="WiretapEvent Housekeeping" />
+			</bean>
+		</property>
+		<property name="name" value="WiretapEvent Housekeeping Trigger" />
+        <property name="cronExpression" value="0 0/2 * * * ?" />
+	</bean>
+    -->
+
+	<!-- default non validating document builder factory -->
+	<bean id="documentBuilderFactory" lazy-init="true"
+		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="namespaceAware" value="true" />
+	</bean>
+
+	<!-- dtd validating document builder factory -->
+	<bean id="dtdValidatingDocumentFactory" lazy-init="true"
+		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="validating" value="true"/>
+		<property name="namespaceAware" value="true" />
+	</bean>
+
+	<!-- xsd validating document builder factory -->
+	<bean id="xsdValidatingDocumentFactory" lazy-init="true"
+		class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="validating" value="true"/>
+		<property name="namespaceAware" value="true" />
+	</bean>
+
+	<!-- configure the document builder factory to use xsd -->
+  	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+     	<property name="targetObject" ref="xsdValidatingDocumentFactory"/>
+     	<property name="targetMethod" value="setAttribute"/>
+     	<property name="arguments">
+			<list>
+				<util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.JAXP_SCHEMA_LANGUAGE" />
+				<util:constant static-field="org.apache.xerces.jaxp.JAXPConstants.W3C_XML_SCHEMA" />
+			</list>
+     	</property>
+  	</bean>
+  	
+  	
+  	
+  	<!-- default payloadFactory -->
+  	<bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl">
+        <constructor-arg value="org.ikasan.common.component.DefaultPayload" />
+        <constructor-arg ref="documentBuilderFactory" />
+    </bean>
+  	
+  	
+     	
+  	<bean id="jmsMessageEventSerialiser" 
+      class="org.ikasan.framework.event.serialisation.JmsMessageEventSerialiserEnvelopeImpl">
+        <constructor-arg ref="envelopeFactory"/>
+        <constructor-arg ref="jmsMessageFactory"/>
+    </bean>
+
+    <bean id="envelopeFactory" class="org.ikasan.common.factory.EnvelopeFactoryImpl">
+        <constructor-arg value="org.ikasan.common.component.DefaultEnvelope" />
+        <constructor-arg ref="jmsMessageFactory" />
+    </bean>
+
+    <bean id="jmsMessageFactory" class="org.ikasan.common.factory.JMSMessageFactoryImpl">
+      <constructor-arg ref="payloadFactory"/>
+    </bean>
+  	<!-- ###################################### -->
+  	<!-- common transaction services start here -->
+    <!-- ###################################### -->  	
+  	
+  	
+  	<!-- transaction advice requiring a new transaction on entry -->
+    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    
+
+
+    
+  <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+    <property name="transactionManagerName" value="java:/TransactionManager"/>
+    <property name="userTransactionName" value="UserTransaction"/>
+  </bean>
+
+    <!-- ###################################### -->
+    <!-- common transaction services end here   -->
+    <!-- ###################################### -->
+    
+	
+</beans>

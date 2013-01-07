@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+ 
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing 
+ of individual contributors are as shown in the packaged copyright.txt 
+ file. 
+ 
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without 
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+-->
+<chapter version="5.0"
+         xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
+         xml:id="Introduction" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:ns2="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Introduction</title>
+
+  <para>This guide will take you through the development process of creating
+  an Ikasan EIP <emphasis>Module</emphasis>. The demonstration
+  <emphasis>Module</emphasis> we are building is a Pricing Service and its
+  source code can be found under <filename
+  class="directory">${basedir}/samples/TODO</filename></para>
+
+  <section>
+    <title>High Level Business Logic</title>
+
+    <para>From a business perspective, the Pricing Service will: <orderedlist>
+        <listitem>
+          <para>Pick up a <filename>prices.csv</filename> file that contains
+          price data for currency exchange.</para>
+        </listitem>
+
+        <listitem>
+          <para>Route the data contained in that CSV file based on TODO to
+          different destinations for processing.</para>
+        </listitem>
+      </orderedlist></para>
+  </section>
+
+  <section>
+    <title>Order of Development</title>
+
+    <para>In short, the best way to build an Ikasan EIP
+    <emphasis>Module</emphasis> is from a <emphasis role="bold">top down,
+    Test-driven approach</emphasis>. The typical order of development for a
+    <emphasis>Module</emphasis> is as follows:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Draw up a logical flow design diagram</para>
+      </listitem>
+
+      <listitem>
+        <para>Create the Maven project structure</para>
+      </listitem>
+
+      <listitem>
+        <para>Write the <emphasis>Flow</emphasis> Integration Tests</para>
+      </listitem>
+
+      <listitem>
+        <para>Wire up Spring beans in order for the <emphasis>Flow</emphasis>
+        integration tests to pass</para>
+      </listitem>
+
+      <listitem>
+        <para>Write unit tests for any custom
+        <emphasis>Components</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para>Write custom <emphasis>Components</emphasis></para>
+      </listitem>
+
+      <listitem>
+        <para>Package and deploy the <emphasis>Module</emphasis></para>
+      </listitem>
+    </orderedlist>
+  </section>
+</chapter>
