@@ -46,11 +46,10 @@
       <groupId>org.sonatype.oss</groupId>
       <artifactId>oss-parent</artifactId>
       <version>7</version>
-      <relativePath />
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.9.0-RC2-SNAPSHOT</version>
+    <version>0.9.0-RC1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
