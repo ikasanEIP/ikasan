@@ -45,7 +45,7 @@
     <parent>
       <groupId>org.sonatype.oss</groupId>
       <artifactId>oss-parent</artifactId>
-      <version>5</version>
+      <version>7</version>
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
@@ -57,6 +57,11 @@
     </organization>
     <inceptionYear>2007</inceptionYear>
     <name>Ikasan Build Project</name>
+	<scm>
+	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches</connection>
+	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches</developerConnection>
+	  <url>https://open.jira.com/svn/IKASAN/branches</url>
+	</scm>
     <!-- List the core committers -->
     <developers>
       <developer>
