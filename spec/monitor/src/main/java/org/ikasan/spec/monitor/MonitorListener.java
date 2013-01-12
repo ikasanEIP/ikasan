@@ -41,7 +41,7 @@
 package org.ikasan.spec.monitor;
 
 /**
- * Default implementation of a Flow
+ * Monitor contract for subjects being monitored
  * 
  * @author Ikasan Development Team
  */
