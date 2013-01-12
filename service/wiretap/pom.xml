@@ -49,13 +49,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-EXPERIMENT</version>
+        <version>0.9.0-RC1</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec-wiretap</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0-RC1-SNAPSHOT</version>
     <name>Ikasan Specification Wiretap Resource Contracts</name>
     <description>The specification wiretap contracts for the Ikasan Enterprise Integration Platform</description>
 
