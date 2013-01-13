@@ -56,32 +56,12 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-uber-spec</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.0-RC2-SNAPSHOT</version>
+	<version>0.9.0-RC1-SNAPSHOT</version>
 	<name>Ikasan Specification Uber Packaging</name>
 
 	<description>All specifications packaged up in a single uber jar for convenience of use in the Enterprise Integration Platform</description>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<artifactSet>
-								<includes>
-									<include>org.ikasan:ikasan-spec-*:jar:</include>
-								</includes>
-							</artifactSet>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
               <plugin>
                      <groupId>org.apache.maven.plugins</groupId>
                      <artifactId>maven-javadoc-plugin</artifactId>
@@ -108,6 +88,26 @@
                            </execution>
                      </executions>
               </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>org.ikasan:ikasan-spec-*:jar:</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
   
@@ -115,52 +115,52 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-event</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-module</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-recoveryManager</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-monitor</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-deployment</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-wiretap</artifactId>
-            <version>0.9.0-RC2-SNAPSHOT</version>
+            <version>0.9.0-RC1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
