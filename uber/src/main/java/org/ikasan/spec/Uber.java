@@ -38,9 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.search;
-
-import java.util.List;
+package org.ikasan.spec;
 
 /**
  * Dummy class to force the quick creation of -javadoc.jar and -sources.jar on deployment as
