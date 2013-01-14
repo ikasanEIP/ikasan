@@ -61,7 +61,6 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.TriggerKey;
 
 import static org.quartz.TriggerBuilder.*;
 import static org.quartz.TriggerKey.triggerKey;
