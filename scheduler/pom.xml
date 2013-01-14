@@ -49,15 +49,52 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-EXPERIMENT</version>
+        <version>0.9.0-RC1</version>
+        <relativePath></relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-scheduler</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0-RC1-SNAPSHOT</version>
     <name>Ikasan Scheduler Implementation</name>
     <description>Ikasan EIP scheduler implementation</description>
+	<scm>
+	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler</connection>
+	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler</developerConnection>
+	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/scheduler</url>
+	</scm>
+
+    <build>
+        <plugins>
+              <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-javadoc-plugin</artifactId>
+                     <version>2.8.1</version>
+                     <executions>
+                           <execution>
+                                  <id>attach-javadocs</id>
+                                  <goals>
+                                         <goal>jar</goal>
+                                  </goals>
+                           </execution>
+                     </executions>
+              </plugin>
+              <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-source-plugin</artifactId>
+                     <version>2.1.2</version>
+                     <executions>
+                           <execution>
+                                  <id>attach-sources</id>
+                                  <goals>
+                                         <goal>jar</goal>
+                                  </goals>
+                           </execution>
+                     </executions>
+              </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
 		<dependency>
