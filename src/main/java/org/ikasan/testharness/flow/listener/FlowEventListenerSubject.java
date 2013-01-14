@@ -87,16 +87,6 @@ public class FlowEventListenerSubject
         return new ArrayList<FlowObserver>();
     }
     
-//    /**
-//     * Utility method for initialising the replication factory implemented 
-//     * for ease of testing.
-//     * @return
-//     */
-//    protected ReplicationFactory initReplicationFactory()
-//    {
-//        return DefaultReplicationFactory.getInstance();
-//    }
-    
     /**
      * Does nothing in this implementation as we are only interested in the
      * afterFlowElement operations for event capture.
