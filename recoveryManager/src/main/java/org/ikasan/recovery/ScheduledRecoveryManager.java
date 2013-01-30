@@ -320,12 +320,26 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
         JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
-        Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
+        
+        // Only schedule a new recovery if we don't have one in-progress.
+        // This can be the case on very high volume feeds where 
+        // multiple recoveries are created by in-flight messages 
+        // between stop/start of the flow
+        if(this.scheduler.checkExists(recoveryJobDetail.getKey()))
+        {
+            logger.info("Recovery in progress flow [" 
+                + flowName + "] module [" + moduleName 
+                + "]. No additional recoveries will be scheduled!");
+        }
+        else
+        {
+            Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
+            logger.info("Recovery [" + recoveryAttempts + "/" 
+                + ((retryAction.getMaxRetries() < 0) ? "unlimited" : retryAction.getMaxRetries()) 
+                + "] flow [" + flowName + "] module [" + moduleName + "] rescheduled at ["
+                + scheduled + "]");
+        }
 
-        logger.info("Recovery [" + recoveryAttempts + "/" 
-            + ((retryAction.getMaxRetries() < 0) ? "unlimited" : retryAction.getMaxRetries()) 
-            + "] flow [" + flowName + "] module [" + moduleName + "] rescheduled at ["
-            + scheduled + "]");
     }
 
     /**

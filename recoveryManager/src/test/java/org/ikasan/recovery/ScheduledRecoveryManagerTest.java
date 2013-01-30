@@ -381,6 +381,12 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
                 
+                // is recovery job already scheduled
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(Boolean.FALSE));
+
                 // check we have not exceeded retry limits
                 exactly(1).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
