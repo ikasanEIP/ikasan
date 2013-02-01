@@ -64,6 +64,14 @@ public interface Module<FLOW>
     public List<FLOW> getFlows();
 
     /**
+     * Returns a <code>Flow</code> with this name.
+     * If no flow of this name exists then it returns null.
+     * 
+     * @return a the <code>Flow</code> corresponding to the given name
+     */
+    public FLOW getFlow(String name);
+
+    /**
      * Returns a human readable description of this module
      * 
      * @return String description

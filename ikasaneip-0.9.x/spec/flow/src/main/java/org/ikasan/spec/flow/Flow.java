@@ -73,6 +73,16 @@ public interface Flow
      */
      public List<FlowElement<?>> getFlowElements();
 
+     /**
+      * Accessor for getting the flow element by its given name.
+      * If the name does not exist then null is returned.
+      * If more than one element exists with this name then the first one 
+      * encountered is returned.
+      * 
+      * @return list of flow elements
+      */
+      public FlowElement<?> getFlowElement(String name);
+
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation.
      * For instance, this could include setting any flow component configurations,
