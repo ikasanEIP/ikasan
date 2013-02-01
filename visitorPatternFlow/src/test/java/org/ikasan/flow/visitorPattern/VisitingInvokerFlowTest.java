@@ -112,9 +112,6 @@ public class VisitingInvokerFlowTest
     final FlowElement<ManagedResource> managedResourceFlowElement3
     = mockery.mock(FlowElement.class, "mockFlowElementManagedResource3");
 
-//    /** Mock lead flow element */
-//    final FlowElement leadFlowElement = mockery.mock(FlowElement.class, "mockLeadFlowElement");
-
     /** mock managed resource */
     final ManagedResource managedResource = mockery.mock(ManagedResource.class, "mockManagedResource");
 
@@ -249,16 +246,23 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+                
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
                 inSequence(reverseOrder);
                 
                 // get the consumer
@@ -335,16 +339,22 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
                 inSequence(reverseOrder);
                 
                 // get the consumer
@@ -637,6 +647,8 @@ public class VisitingInvokerFlowTest
                 will(throwException(new RuntimeException("test managed resource start failure")));
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
+                one((FlowElement)managedResource).getFlowComponent();
+                will(returnValue("name"));
                 one(managedResource).isCriticalOnStartup();
                 will(returnValue(true));
 
@@ -712,16 +724,24 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+                
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
+
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
                 inSequence(reverseOrder);
                 
                 // get the consumer
@@ -806,16 +826,25 @@ public class VisitingInvokerFlowTest
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
+
                 inSequence(reverseOrder);
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
+                one(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+
                 inSequence(reverseOrder);
                 
                 // get the consumer
