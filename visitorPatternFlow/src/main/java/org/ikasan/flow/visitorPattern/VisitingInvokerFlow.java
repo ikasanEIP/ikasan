@@ -505,4 +505,21 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     {
         return this.flowConfiguration.getFlowElements();
     }
+
+    /**
+     * Return the flow element matching this name.
+     * @return flowElement
+     */
+    public FlowElement<?> getFlowElement(String name)
+    {
+        for(FlowElement flowElement:this.flowConfiguration.getFlowElements())
+        {
+            if(flowElement.getComponentName().equals(name))
+            {
+                return flowElement;
+            }
+        }
+
+        return null;
+    }
 }
