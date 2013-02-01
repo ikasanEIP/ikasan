@@ -108,6 +108,22 @@ public class SimpleModule implements Module
     }
 
     /**
+     * @return the flow matching the given name
+     */
+    public Flow getFlow(String name)
+    {
+        for(Flow flow:this.flows)
+        {
+            if(flow.getName().equals(name))
+            {
+                return flow;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @see org.ikasan.framework.module.Module#getDescription()
      */
     public String getDescription()
