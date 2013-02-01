@@ -343,17 +343,22 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             try
             {
                 flowElement.getFlowComponent().startManagedResource();
+                logger.info("Started managed component [" 
+                    + flowElement.getComponentName() + "]");
             }
             catch(RuntimeException e)
             {
                 if(flowElement.getFlowComponent().isCriticalOnStartup())
                 {
+                    // log issues as these may get resolved by the recovery manager 
+                    logger.warn("Failed to start critical component [" 
+                            + flowElement.getComponentName() + "] " + e.getMessage(), e);
                     throw e;
                 }
                 else
                 {
                     // just log any issues as these may get resolved by the recovery manager 
-                    logger.warn("Failed to start component [" 
+                    logger.warn("Failed to start managed component [" 
                             + flowElement.getComponentName() + "] " + e.getMessage(), e);
                 }
             }
