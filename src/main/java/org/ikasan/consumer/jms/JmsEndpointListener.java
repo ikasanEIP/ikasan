@@ -47,8 +47,6 @@ import javax.jms.MessageListener;
 
 import org.apache.log4j.Logger;
 import org.ikasan.consumer.EndpointListener;
-import org.ikasan.spec.event.ForceTransactionRollbackException;
-
 
 /**
  * Implementation of an endpoint listener which acts as a proxy for the real 
@@ -90,18 +88,6 @@ public class JmsEndpointListener implements MessageListener, ExceptionListener
      */
     public void onMessage(Message message)
     {
-        try
-        {
-            endpointListener.onMessage(message);
-        }
-        catch(ForceTransactionRollbackException e)
-        {
-            // ignore as this was simply thrown to rollback any in progress transaction 
-        }
-        catch(RuntimeException e)
-        {
-            logger.error("Unhandled exception occurred", e);
-        }
+        endpointListener.onMessage(message);
     }
-
 }
