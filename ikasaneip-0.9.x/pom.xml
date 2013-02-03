@@ -67,6 +67,7 @@
  
         <!-- ikasan core -->
         <module>spec</module>
+        <module>platform</module>
         <module>recoveryManager</module>
         <module>flow</module>
         <module>bootstrap</module>
@@ -92,7 +93,7 @@
         <!--<module>console</module>-->
 
         <!-- filter -->
-        <module>filter</module>
+        <!--module>filter</module-->
 
         <!-- version compatibility glue -->
         <!--module>compatibility</module-->
