@@ -77,4 +77,11 @@ public interface Module<FLOW>
      * @return String description
      */
     public String getDescription();
+
+    /**
+     * Sets a human readable description of this module
+     * 
+     * @param String description
+     */
+    public void setDescription(String description);
 }
