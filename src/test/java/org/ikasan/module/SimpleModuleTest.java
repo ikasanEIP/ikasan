@@ -43,101 +43,80 @@ package org.ikasan.module;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.spec.flow.Flow;
+import junit.framework.Assert;
+
+import org.ikasan.module.SimpleModule;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.flow.Flow;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Test;
 
 /**
- * A simple representation of a Module
+ * This test class supports the <code>SimpleModule</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class SimpleModule implements Module
+public class SimpleModuleTest
 {
-    /** Flows within this module */
-    private List<Flow> flows;
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery();
 
-    /** Module name */
-    protected String name;
-
-    /** Human readable description of this module */
-    private String description;
+    /** Mock flow */
+    final Flow flow = mockery.mock(Flow.class, "mockFlow");
 
     /**
-     * Constructor
-     * 
-     * @param name The name of the module
-     * @param flows A list of Flows for the module
+     * Test failed constructor due to null flow name.
      */
-    public SimpleModule(String name, List<Flow> flows)
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullName()
     {
-        this(name);
-        this.flows = new ArrayList<Flow>(flows);
+        new SimpleModule(null);
     }
 
     /**
-     * Constructor
-     * 
-     * @param name Name of the module
+     * Test successful getters/setters.
      */
-    public SimpleModule(String name)
+    @Test
+    public void test_successful_mutators()
     {
-        this.name = name;
-        if(name == null)
+        Module<Flow> module = new SimpleModule("testModule");
+        Assert.assertNull("description should be null", module.getDescription() );
+        Assert.assertTrue("name should be 'testModule'", "testModule".equals( module.getName() ) );
+        
+        module.setDescription("description");
+        Assert.assertTrue("description should be 'description", "description".equals( module.getDescription() ) );
+    }
+
+    /**
+     * Test successful flow accessors.
+     */
+    @Test
+    public void test_successful_flow_accessor()
+    {
+        List<Flow> flows = new ArrayList<Flow>();
+        flows.add(flow);
+        flows.add(flow);
+        flows.add(flow);
+        
+        // expectations
+        mockery.checking(new Expectations()
         {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
-    }
-
-    /**
-     * Accessor for name
-     * 
-     * @return module name
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * @return the flows
-     */
-    public List<Flow> getFlows()
-    {
-        return new ArrayList<Flow>(this.flows);
-    }
-
-    /**
-     * @return the flow matching the given name
-     */
-    public Flow getFlow(String name)
-    {
-        for(Flow flow:this.flows)
-        {
-            if(flow.getName().equals(name))
             {
-                return flow;
+                // get each flow name
+                one(flow).getName();
+                will(returnValue("flowName1"));
+
+                // get each flow name
+                one(flow).getName();
+                will(returnValue("flowName2"));
             }
-        }
+        });
 
-        return null;
+        Module<Flow> module = new SimpleModule("testModule", flows);
+        Assert.assertTrue("number of flows on module should be 3", module.getFlows().size() == 3 );
+        Assert.assertNotNull("Should have returned flowName2", module.getFlow("flowName2"));
     }
-
-    /**
-     * @see org.ikasan.framework.module.Module#getDescription()
-     */
-    public String getDescription()
-    {
-        return description;
-    }
-
-    /**
-     * Set the description. 
-     * 
-     * @param description - description to set
-     */
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
 }
