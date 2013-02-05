@@ -48,7 +48,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
-    <version>0.9.0-RC1-SNAPSHOT</version>
+    <version>0.9.0-RC2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent Project</name>
 
@@ -67,7 +67,7 @@
  
         <!-- ikasan core -->
         <module>spec</module>
-        <module>platform</module>
+        <!--module>platform</module-->
         <module>recoveryManager</module>
         <module>flow</module>
         <module>bootstrap</module>
