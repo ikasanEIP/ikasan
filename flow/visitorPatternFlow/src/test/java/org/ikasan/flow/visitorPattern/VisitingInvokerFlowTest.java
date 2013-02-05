@@ -1579,6 +1579,34 @@ public class VisitingInvokerFlowTest
     }
 
     /**
+     * Test getter for named flowElements
+     */
+    @Test
+    public void test_accessor_for_named_flow_elements()
+    {
+        final RuntimeException exception = new RuntimeException("invoked with exception test");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get all flow elements
+                one(flowConfiguration).getFlowElements();
+                will(returnValue(configuredResourceFlowElements));
+            }
+        });
+
+        // container for the complete flow
+        VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
+            flowConfiguration, flowElementInvoker, recoveryManager);
+
+        Assert.assertNotNull("there should be one flow elements on this flow", flow.getFlowElements());
+
+        // test assertions
+        mockery.assertIsSatisfied();
+    }
+
+    /**
      * Set the getState expectations based on the incoming parameters.
      * @param isRecovering
      * @param isRunning
