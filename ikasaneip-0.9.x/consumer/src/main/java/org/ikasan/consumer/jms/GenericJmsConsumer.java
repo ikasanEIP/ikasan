@@ -1,6 +1,6 @@
 /* 
- * $Id: GenericJMSConsumer.java 3922 2012-06-22 16:55:28Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/consumer/src/main/java/org/ikasan/consumer/jms/GenericJMSConsumer.java $
+ * $Id$
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
