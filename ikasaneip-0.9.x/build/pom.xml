@@ -253,7 +253,8 @@
         <!-- Ikasan snapshot repo -->
         <repository>
             <id>ikasaneip-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <!--url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url-->
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -307,7 +308,8 @@
         <!-- Ikasan snapshot repo for plugins -->
         <pluginRepository>
             <id>ikasaneip-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <!--url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url-->
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -355,7 +357,8 @@
         <snapshotRepository>
             <id>ikasaneip-snapshots</id>
             <name>Ikasan EIP Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <!--url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url-->
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <build>
