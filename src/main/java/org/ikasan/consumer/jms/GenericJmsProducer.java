@@ -260,6 +260,7 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
             try
             {
                 connection.close();
+                connection = null;
             }
             catch (JMSException e)
             {
