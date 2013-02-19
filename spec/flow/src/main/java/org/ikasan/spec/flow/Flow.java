@@ -83,6 +83,12 @@ public interface Flow
       */
       public FlowElement<?> getFlowElement(String name);
 
+      /**
+       * Setter for a listener for flow events
+       * @param flowEventListener
+       */
+       public void setFlowListener(FlowEventListener flowEventListener);
+
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation.
      * For instance, this could include setting any flow component configurations,
