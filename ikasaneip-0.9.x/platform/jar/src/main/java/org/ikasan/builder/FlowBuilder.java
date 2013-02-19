@@ -67,6 +67,7 @@ import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.recovery.RecoveryManager;
 
 /**
@@ -84,6 +85,9 @@ public class FlowBuilder
 
 	/** optional module description */
 	String description;
+
+	/** flow event listener */
+	FlowEventListener flowEventListener;
 
 	/** flow recovery manager instance */
 	RecoveryManager recoveryManager;
@@ -135,6 +139,18 @@ public class FlowBuilder
 	public FlowBuilder withDescription(String description) 
 	{
 		this.description = description;
+		return this;
+	}
+
+	/**
+	 * Add a flow description
+	 * 
+	 * @param description
+	 * @return
+	 */
+	public FlowBuilder withFlowListener(FlowEventListener flowEventListener) 
+	{
+		this.flowEventListener = flowEventListener;
 		return this;
 	}
 
@@ -485,6 +501,7 @@ public class FlowBuilder
 				}
 
 				FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
+				flowElementInvoker.setFlowEventListener(flowEventListener);
 				FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService);
 				return new VisitingInvokerFlow(name, moduleName,flowConfiguration, flowElementInvoker, recoveryManager);
 			}
