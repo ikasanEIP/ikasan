@@ -52,6 +52,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.monitor.Monitor;
@@ -527,4 +528,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         return null;
     }
+
+    /**
+     * Set the flow event listener
+     * @param flowEventListener
+     */
+	public void setFlowListener(FlowEventListener flowEventListener) 
+	{
+		this.flowElementInvoker.setFlowEventListener(flowEventListener);
+	}
 }
