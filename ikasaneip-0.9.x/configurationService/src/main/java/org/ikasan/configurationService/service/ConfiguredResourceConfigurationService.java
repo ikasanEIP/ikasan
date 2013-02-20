@@ -48,6 +48,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
+import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.model.ConfigurationParameter;
 import org.ikasan.configurationService.model.DefaultConfiguration;
@@ -75,6 +76,16 @@ public class ConfiguredResourceConfigurationService
     
     /** configuration DAO used for accessing the configuration transactionally at runtime */
     private ConfigurationDao<List<ConfigurationParameter>> dynamicConfigurationDao;
+    
+    /**
+     * Default configuration service returns a cached based instance.
+     * @return
+     */
+    public static ConfigurationService getDefaultConfigurationService()
+    {
+    	return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl());
+    	
+    }
     
     /**
      * Constructor
