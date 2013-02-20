@@ -130,7 +130,8 @@
         <snapshotRepository>
             <id>ikasaneip-snapshots</id>
             <name>Ikasan EIP Snapshot Repository</name>
-            <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+            <!--url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url-->
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>            
         </snapshotRepository>
     </distributionManagement>
 
