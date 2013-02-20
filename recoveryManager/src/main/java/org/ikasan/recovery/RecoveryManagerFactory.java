@@ -40,7 +40,9 @@
  */
 package org.ikasan.recovery;
 
+import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.Scheduler;
@@ -59,6 +61,15 @@ public class RecoveryManagerFactory
     
     /** Ikasan extended Quartz job factory */
     private ScheduledJobFactory scheduledJobFactory;
+    
+    /**
+     * Default implementation of a RecoveryManagerFactory instance.
+     * @return RecoveryManagerFactory
+     */
+    public static RecoveryManagerFactory getInstance()
+    {
+    	return new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler(), CachingScheduledJobFactory.getInstance());
+    }
     
     /**
      * Constructor
