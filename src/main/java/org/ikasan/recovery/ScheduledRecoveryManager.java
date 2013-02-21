@@ -216,7 +216,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
             
-            throw new ForceTransactionRollbackException(action.toString());
+            throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
         else if(action instanceof RetryAction)
         {
@@ -252,7 +252,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                 throw new RuntimeException(e);
             }
             
-            throw new ForceTransactionRollbackException(action.toString());
+            throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
         else
         {
