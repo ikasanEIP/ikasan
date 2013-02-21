@@ -59,4 +59,15 @@ public class ForceTransactionRollbackException extends RuntimeException
     {
         super(message);
     }
+
+    /**
+     * Constructor
+     * 
+     * @param message - The exception message
+     * @param throwable - exception that caused the rollback
+     */
+    public ForceTransactionRollbackException(String message, Throwable throwable)
+    {
+        super(message, throwable);
+    }
 }
