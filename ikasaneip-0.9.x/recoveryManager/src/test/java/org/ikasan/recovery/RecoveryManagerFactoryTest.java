@@ -73,7 +73,7 @@ public class RecoveryManagerFactoryTest
     };
     
     /** Mock consumer flowElement */
-    final Consumer<?> consumer = mockery.mock(Consumer.class, "mockConsumer");
+    final Consumer<?,?> consumer = mockery.mock(Consumer.class, "mockConsumer");
 
     /** Mock exception resolver */
     final ExceptionResolver exceptionResolver = mockery.mock(ExceptionResolver.class, "mockExceptionResolver");

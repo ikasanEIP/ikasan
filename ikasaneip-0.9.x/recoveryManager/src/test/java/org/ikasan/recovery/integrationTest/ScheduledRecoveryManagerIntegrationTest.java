@@ -496,6 +496,11 @@ public class ScheduledRecoveryManagerIntegrationTest
         {
             this.isRunning = false;
         }
+
+		public void setEventFactory(Object arg0) 
+		{
+            // do not care about this method for the purpose of these tests
+		}
     }
 
     /**
