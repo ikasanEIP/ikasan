@@ -49,13 +49,19 @@ package org.ikasan.spec.component.endpoint;
  *
  * @author Ikasan Development Teams
  */
-public interface Consumer<LISTENER>
+public interface Consumer<LISTENER,EVENT_FACTORY>
 {
     /**
      * Set a listener on the underlying tech of this consumer
      * @param listener
      */
     public void setListener(LISTENER listener);
+
+    /**
+     * Set event factory for this consumer
+     * @param eventFactory
+     */
+    public void setEventFactory(EVENT_FACTORY eventFactory);
 
     /**
      * Start the consumer and any underlying tech
