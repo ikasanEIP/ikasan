@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
@@ -291,7 +292,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
 
         // start the consumer
-        Consumer<EventListener<FlowEvent<?,?>>> consumer = consumerFlowElement.getFlowComponent();
+        Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = consumerFlowElement.getFlowComponent();
         consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
         try
         {
@@ -315,7 +316,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
 
         // stop consumer and remove the listener
-        Consumer<?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
+        Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
         consumer.setListener(null);
         consumer.stop();
     }
