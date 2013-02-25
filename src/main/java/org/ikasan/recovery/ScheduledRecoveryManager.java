@@ -83,7 +83,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     protected static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger_";
     
     /** consumer to stop and start for recovery */
-    private Consumer<?> consumer;
+    private Consumer<?,?> consumer;
 
     /** scheduler */
     private Scheduler scheduler;
@@ -120,7 +120,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * @param moduleName
      * @param consumer
      */
-    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName, Consumer<?> consumer)
+    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName, Consumer<?,?> consumer)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
