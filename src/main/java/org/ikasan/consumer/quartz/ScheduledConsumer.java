@@ -66,7 +66,7 @@ import org.quartz.Trigger;
  * @author Ikasan Development Team
  */
 public class ScheduledConsumer 
-    implements Consumer<EventListener>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
+    implements Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
 {
     /** logger */
     private static Logger logger = Logger.getLogger(ScheduledConsumer.class);
@@ -108,6 +108,11 @@ public class ScheduledConsumer
         {
             throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
         }
+    }
+    
+    public void setEventFactory(EventFactory flowEventFactory)
+    {
+    	this.flowEventFactory = flowEventFactory;
     }
     
     public void setJobDetail(JobDetail jobDetail)

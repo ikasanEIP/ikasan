@@ -65,7 +65,7 @@ import org.ikasan.spec.flow.FlowEvent;
  * @author Ikasan Development Team
  */
 public class GenericJmsConsumer 
-    implements Consumer<EventListener<?>>, EndpointListener<Message>
+    implements Consumer<EventListener<?>,EventFactory>, EndpointListener<Message>
     //TODO , ConfiguredResource<GenericJmsConsumerConfiguration>
 {
     /** class logger */
@@ -163,6 +163,11 @@ public class GenericJmsConsumer
     public void setMessageListener(MessageListener messageListener)
     {
         this.messageListener = messageListener;
+    }
+    
+    public void setEventFactory(EventFactory flowEventFactory)
+    {
+        this.flowEventFactory = flowEventFactory;
     }
     
     /**
