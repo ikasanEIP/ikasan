@@ -49,6 +49,7 @@ import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
@@ -116,11 +117,11 @@ public class VisitingInvokerFlowTest
     final ManagedResource managedResource = mockery.mock(ManagedResource.class, "mockManagedResource");
 
     /** Mock consumer flowElement */
-    final FlowElement<Consumer<EventListener<FlowEvent<?,?>>>> consumerFlowElement 
+    final FlowElement<Consumer<EventListener<FlowEvent<?,?>>,EventFactory>> consumerFlowElement 
         = mockery.mock(FlowElement.class, "mockFlowElement");
 
     /** Mock consumer */
-    final Consumer<EventListener<FlowEvent<?,?>>> consumer = mockery.mock(Consumer.class, "mockConsumer");
+    final Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = mockery.mock(Consumer.class, "mockConsumer");
     
     /** Mock flow event */
     final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
