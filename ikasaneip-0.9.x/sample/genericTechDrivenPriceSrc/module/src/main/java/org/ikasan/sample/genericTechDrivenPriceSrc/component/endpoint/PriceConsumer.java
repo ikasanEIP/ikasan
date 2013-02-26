@@ -54,7 +54,7 @@ import org.ikasan.spec.flow.FlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
+public class PriceConsumer implements Consumer<EventListener,EventFactory<FlowEvent<?,?>>>, PriceTechListener
 {
     /** consumer managed stubbed tech */
     private PriceTechImpl priceTechImpl;
@@ -73,10 +73,9 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
      * @param stubbedTechImpl
      * @param flowEventFactory
      */
-    public PriceConsumer(PriceTechImpl priceTechImpl, EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public PriceConsumer(PriceTechImpl priceTechImpl)
     {
         this.priceTechImpl = priceTechImpl;
-        this.flowEventFactory = flowEventFactory;
         this.priceTechImpl.setListener(this);
     }
     
@@ -131,5 +130,10 @@ public class PriceConsumer implements Consumer<EventListener>, PriceTechListener
         FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(uniqueId, message);
         this.eventListener.invoke(flowEvent);
     }
+
+	public void setEventFactory(EventFactory<FlowEvent<?, ?>> flowEventFactory)
+	{
+		this.flowEventFactory = flowEventFactory;
+	}
 
 }
