@@ -191,4 +191,55 @@ public class PriceFlowSampleTest
         flowTestHarness.assertIsSatisfied();
     }
 
+    @Test
+    public void test_flow() throws SchedulerException
+    {
+        final PriceTechMessage priceTechConsumerMessage = new PriceTechMessage("abc", 10, 10);
+        final StringBuilder priceTechConverterMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
+        final StringBuilder priceTechProducerMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
+
+        // 
+        // setup expectations
+        FlowTestHarness flowTestHarness = new FlowTestHarnessImpl(new OrderedExpectation()
+        {
+            {
+                expectation(new ConsumerComponent("priceConsumer"), "consumer sourcing prices");
+                expectation(flowEventFactory.newEvent("abc", priceTechConsumerMessage),  consumerEventComparator, "Raw message from the consumer");
+
+                expectation(new ConverterComponent("priceConverter"), "converter for price object into stringBuffer");
+                expectation(flowEventFactory.newEvent("abc", priceTechConverterMessage),  converterEventComparator, "Converted message from the converter");
+
+                expectation(new ProducerComponent("priceProducer"), "producer logging the prices");
+                expectation(flowEventFactory.newEvent("abc", priceTechProducerMessage),  producerEventComparator, "Logged message from the producer");
+            }}
+        );
+        flowEventListenerSubject.addObserver((FlowObserver)flowTestHarness);
+        
+        
+        PriceFlowFactory priceFlowFactory = 
+            new PriceFlowFactory("flowName", "moduleName", this.configurationService, flowEventFactory, recoveryManagerFactory);
+
+        // set a listener to record the events for the test harness
+        priceFlowFactory.setFlowEventListener(flowEventListenerSubject);
+
+        List<PriceTechMessage> priceTechMessages = new ArrayList<PriceTechMessage>();
+        priceTechMessages.add(priceTechConsumerMessage);
+        Flow priceFlow = priceFlowFactory.createGenericTechDrivenFlow(new PriceTechImpl(priceTechMessages));
+
+        priceFlow.start();
+        
+        try
+        {
+            Thread.sleep(100);
+        }
+        catch(InterruptedException e)
+        {
+            // dont care
+        }
+        
+        priceFlow.stop();
+        
+        // run flow assertions
+        flowTestHarness.assertIsSatisfied();
+    }
 }
