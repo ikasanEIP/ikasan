@@ -64,6 +64,7 @@ import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -97,6 +98,9 @@ public class FlowBuilder
 
 	/** flow element wiriing */
 	FlowConfigurationBuilder flowConfigurationBuilder;
+
+	/** default event factory */
+	EventFactory eventFactory;
 
 	/**
 	 * Constructor
@@ -175,6 +179,18 @@ public class FlowBuilder
 	public FlowBuilder withRecoveryManager(RecoveryManager recoveryManager) 
 	{
 		this.recoveryManager = recoveryManager;
+		return this;
+	}
+
+	/**
+	 * Override the default event factory
+	 * 
+	 * @param eventFactory
+	 * @return
+	 */
+	public FlowBuilder withEventFactory(EventFactory eventFactory) 
+	{
+		this.eventFactory = eventFactory;
 		return this;
 	}
 
@@ -445,6 +461,7 @@ public class FlowBuilder
 					FlowElement flowElement = flowElements.get(--count);
 					if (flowElement.getFlowComponent() instanceof Producer) 
 					{
+						((Consumer)flowElement).setEventFactory(eventFactory);
 						nextFlowElement = flowElement;
 					}
 					else if (flowElement.getFlowComponent() instanceof When)
