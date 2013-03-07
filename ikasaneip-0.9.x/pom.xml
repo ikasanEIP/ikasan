@@ -62,23 +62,25 @@
          -->
         <module>build</module>
 
-        <!-- ikasan scheduler -->
-        <module>scheduler</module>
- 
         <!-- ikasan core -->
         <module>spec</module>
-        <!--module>platform</module-->
+        <module>module</module>
+        <module>bootstrap</module>
+        <module>scheduler</module>
         <module>recoveryManager</module>
         <module>flow</module>
-        <module>configurationService</module>
-        <module>bootstrap</module>
-        <module>module</module>
 
         <!-- ikasan test harness -->
         <module>test</module>
-
+        <module>filter</module>
+ 
         <!-- Component Implementations -->
         <module>consumer</module>
+
+        <module>configurationService</module>
+
+        <!--module>platform</module-->
+
 
         <!-- Optional Services -->
         <!--module>wiretap</module-->
@@ -93,8 +95,6 @@
         <!--module>webconsole</module-->
         <!--<module>console</module>-->
 
-        <!-- filter -->
-        <!--module>filter</module-->
 
         <!-- version compatibility glue -->
         <!--module>compatibility</module-->
