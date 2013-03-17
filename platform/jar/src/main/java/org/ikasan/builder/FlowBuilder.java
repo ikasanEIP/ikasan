@@ -50,6 +50,7 @@ import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterConfigurati
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerConfigurationBuilder.Sequence;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.DefaultReplicationFactory;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowConfiguration;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
@@ -100,7 +101,7 @@ public class FlowBuilder
 	FlowConfigurationBuilder flowConfigurationBuilder;
 
 	/** default event factory */
-	EventFactory eventFactory;
+	EventFactory eventFactory = new FlowEventFactory();
 
 	/**
 	 * Constructor
@@ -459,10 +460,12 @@ public class FlowBuilder
 				while (count > 0) 
 				{
 					FlowElement flowElement = flowElements.get(--count);
-					if (flowElement.getFlowComponent() instanceof Producer) 
+					if (flowElement.getFlowComponent() instanceof Consumer) 
 					{
-						((Consumer)flowElement).setEventFactory(eventFactory);
-						nextFlowElement = flowElement;
+						((Consumer)flowElement.getFlowComponent()).setEventFactory(eventFactory);
+						nextFlowElement = new FlowElementImpl(
+								flowElement.getComponentName(),
+								flowElement.getFlowComponent(), nextFlowElement);
 					}
 					else if (flowElement.getFlowComponent() instanceof When)
 					{
@@ -493,7 +496,13 @@ public class FlowBuilder
 								flowElement.getFlowComponent(), new HashMap<String,FlowElement>(transitions) );
 						transitions.clear();
 					}
-					else if (!(flowElement.getFlowComponent() instanceof Producer)) 
+					else if (flowElement.getFlowComponent() instanceof Producer) 
+					{
+						nextFlowElement = new FlowElementImpl(
+								flowElement.getComponentName(),
+								flowElement.getFlowComponent());
+					}
+					else 
 					{
 						nextFlowElement = new FlowElementImpl(
 								flowElement.getComponentName(),
