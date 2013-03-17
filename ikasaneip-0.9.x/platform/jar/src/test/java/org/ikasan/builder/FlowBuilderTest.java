@@ -53,10 +53,13 @@ import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -97,12 +100,28 @@ public class FlowBuilderTest
     // Sequencers
     /** Mock Sequencer */
     final Sequencer sequencer = mockery.mock(Sequencer.class, "mockSequencingRouter");
+
+    /** Event Factory */
+    final EventFactory eventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
+
+    @Before
+    public void setup()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory
+                one(consumer).setEventFactory(with(any(EventFactory.class)));
+            }
+        });
+    }
     
     /**
      * Test successful flow creation.
      */
     @Test
-    public void test_successful_flowCreation_with_simple_transitions() 
+    public void test_successful_simple_transitions() 
     {
     	Flow flow = FlowBuilder.newFlow("flowName", "moduleName")
     	.withDescription("flowDescription")

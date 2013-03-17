@@ -44,10 +44,13 @@ import junit.framework.Assert;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
 import org.junit.Test;
 import static org.ikasan.builder.FlowBuilder.newFlow;
 
@@ -74,6 +77,19 @@ public class ModuleBuilderTest
     /** Mock Producer */
     final Producer producer = mockery.mock(Producer.class, "mockProducer");
 
+    @Before
+    public void setup()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // set event factory per consumer
+                exactly(2).of(consumer).setEventFactory(with(any(EventFactory.class)));
+            }
+        });
+    }
+    
     /**
      * Test successful flow creation.
      */
