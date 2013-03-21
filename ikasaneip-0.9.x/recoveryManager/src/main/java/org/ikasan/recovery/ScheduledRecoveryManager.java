@@ -41,6 +41,7 @@
 package org.ikasan.recovery;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.exceptionResolver.ExceptionResolver;
@@ -51,6 +52,8 @@ import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -112,6 +115,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /** unrecoverable status */
     private boolean isUnrecoverable = false;
 
+    /** optional managed resources to stop/start on recovery */
+    private List<FlowElement<ManagedResource>> managedResources;
+    
     /**
      * Constructor
      * @param scheduler
@@ -213,6 +219,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             }
             
             this.consumer.stop();
+            stopManagedResources();
+
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
             
@@ -221,8 +229,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         else if(action instanceof RetryAction)
         {
             RetryAction retryAction = (RetryAction)action;
-            
             this.consumer.stop();
+            stopManagedResources();
                 
             try
             {
@@ -418,15 +426,73 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         try
         {
+            startManagedResources();
             this.consumer.start();
         }
         catch(Throwable throwable)
         {
-            // this situation only occurs on failure of a retry of a consumer
+            // this situation only occurs on failure of a retry of a 
+            // critical managed resource or a consumer
             // so we should be good using the previousComponentName which 
             // will be equal to the consumer name
             this.recover(this.previousComponentName, throwable);
         }
     }
 
+    protected void stopManagedResources()
+    {
+        if(this.managedResources != null)
+        {
+            for(FlowElement<ManagedResource> flowElement:this.managedResources)
+            {
+                flowElement.getFlowComponent().stopManagedResource();
+            }
+        }
+    }
+
+    /**
+     * Start the components marked as including Managed Resources.
+     * These component are started from right to left in the flow.
+     */
+    protected void startManagedResources()
+    {
+    	if(this.managedResources != null)
+    	{
+            List<FlowElement<ManagedResource>> flowElements = this.managedResources;
+            for(int index=flowElements.size()-1; index >= 0; index--)
+            {
+                FlowElement<ManagedResource> flowElement = flowElements.get(index);
+                try
+                {
+                    flowElement.getFlowComponent().startManagedResource();
+                    logger.info("Started managed component [" 
+                        + flowElement.getComponentName() + "]");
+                }
+                catch(RuntimeException e)
+                {
+                    if(flowElement.getFlowComponent().isCriticalOnStartup())
+                    {
+                        // log issues as these may get resolved by the recovery manager 
+                        logger.warn("Failed to start critical component [" 
+                                + flowElement.getComponentName() + "] " + e.getMessage(), e);
+                        throw e;
+                    }
+                    else
+                    {
+                        // just log any issues as these may get resolved by the recovery manager 
+                        logger.warn("Failed to start managed component [" 
+                                + flowElement.getComponentName() + "] " + e.getMessage(), e);
+                    }
+                }
+            }
+    	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.recovery.RecoveryManager#setManagedResources(java.lang.Object)
+     */
+    public <List> void setManagedResources(List managedResources)
+    {
+        this.managedResources = (java.util.List) managedResources;
+    }
 }
