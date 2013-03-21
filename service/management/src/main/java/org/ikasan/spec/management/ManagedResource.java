@@ -63,6 +63,12 @@ public interface ManagedResource
     public void stopManagedResource();
 
     /**
+     * Provision for a ManagedResource recovery manager to be set
+     * for the management of non-data driven exception management.
+     */
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager);
+
+    /**
      * Is this resource critical to the startup.
      */
     public boolean isCriticalOnStartup();

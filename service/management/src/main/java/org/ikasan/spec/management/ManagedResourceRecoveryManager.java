@@ -1,4 +1,4 @@
-/*
+/* 
  * $Id$
  * $URL$
  *
@@ -38,69 +38,28 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.recovery;
-
-import java.util.List;
+package org.ikasan.spec.management;
 
 /**
- * Recovery Manager contract.
+ * Contract for a Managed Resource specific Recovery Manager.
  * 
- * @author Ikasan Development Teams
+ * @author Ikasan Development Team
  */
-public interface RecoveryManager<RESOLVER>
+public interface ManagedResourceRecoveryManager
 {
     /**
-     * Set a resolver which translates the incoming exception and component name
-     * in to an action to be taken by the recovery manager.
-     * @param resolver
+     * Invoke the recovery for the given exception.
+     * @param throwable
      */
-    public void setResolver(RESOLVER resolver);
-    
-    /**
-     * Set a resolver which translates the incoming exception and component name
-     * in to an action to be taken by the recovery manager.
-     * @param resolver
-     */
-    public <MANAGED_RESOURCES> void setManagedResources(MANAGED_RESOURCES managedResources);
-    
-    /**
-     * Get the resolver for this recovery manager.
-     * @return  resolver
-     */
-    public RESOLVER getResolver();
-    
-    /**
-     * Start or continue a recovery based on the passed CRITERIA.
-     * @param criteria
-     */
-    public <EVENT> void recover(String component, Throwable throwable, EVENT event);
-    
-    /**
-     * Start or continue a recovery based on the passed CRITERIA.
-     * @param criteria
-     */
-    public void recover(String component, Throwable throwable);
-    
-    /**
-     * Is the recovery manager currently running a recovery.
-     * @return
-     */
-    public boolean isRecovering();
-    
-    /**
-     * Is the recovery manager in an unrecoverable state.
-     * @return
-     */
-    public boolean isUnrecoverable();
-    
-    /**
-     * Cancel any recovery currently running in the recovery manager.
-     */
-    public void cancel();
+    public void recover(Throwable throwable);
 
     /**
-     * Initialize the state of the recovery manager clearing down any previously
-     * held states resulting from previous executions.
+     * Is this ManagedResource Recovery Manager currently running a recovery.
      */
-    public void initialise();
+    public boolean isRecovering();
+
+    /**
+     * Cancel the current running recovery.
+     */
+    public void cancel();
 }
