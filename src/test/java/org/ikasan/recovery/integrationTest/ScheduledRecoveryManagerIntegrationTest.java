@@ -45,6 +45,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
 import org.ikasan.exceptionResolver.ExceptionResolver;
@@ -54,6 +55,7 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
 import org.ikasan.recovery.RecoveryManagerFactory;
+import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -72,6 +74,9 @@ import org.quartz.SchedulerException;
  */
 public class ScheduledRecoveryManagerIntegrationTest
 {
+    /** logger */
+    private static Logger logger = Logger.getLogger(ScheduledRecoveryManagerIntegrationTest.class);
+
     /** scheduler for recovery manager */
     private Scheduler scheduler;
 
@@ -233,7 +238,11 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         // wait for scheduler callback to restart the consumer
-        while(!consumer.isRunning()){pause(100);};
+        while(!consumer.isRunning())
+        {
+            logger.info("Waiting for consumer to be started...");
+            pause(100);
+        }
         
         //
         // second retry action
