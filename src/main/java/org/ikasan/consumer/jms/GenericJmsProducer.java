@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.support.converter.MessageConverter;
 
 /**
@@ -285,4 +286,8 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
         this.isCriticalOnStartup = isCriticalOnStartup;
     }
 
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    {
+        // dont check this by default
+    }
 }
