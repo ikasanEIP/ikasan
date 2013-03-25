@@ -40,8 +40,9 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -56,6 +57,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorListener;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -109,6 +111,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** has the consumer been paused */
     private boolean consumerPaused = false;
     
+    private ManagedResourceRecoveryManagerFactory managedResourceRecoveryManagerFactory = new ManagedResourceRecoveryManagerFactory();
+
     /**
      * Constructor
      * @param name the flow name
@@ -170,24 +174,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     }
 
     /**
-     * Initialise the flow elements for startup
+     * Allow override of the managed resource recovery manager within this class.
+     * Mainly for testability.
+     * @param managedResourceRecoveryManagerFactory
      */
-    protected void initialiseFlow()
+    public void setManagedResourceRecoveryManagerFactory (ManagedResourceRecoveryManagerFactory managedResourceRecoveryManagerFactory)
     {
-        this.recoveryManager.initialise();
-        
-        // configure resources that are marked as configurable
-        for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
-        {
-            // TODO - put this back in
-                // set the default configured resource id if none previously set.
-//                if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
-//                {
-//                    flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
-//                }
-                
-            this.flowConfiguration.configureFlowElement(flowElement);
-        }
+        this.managedResourceRecoveryManagerFactory = managedResourceRecoveryManagerFactory;
     }
     
     /**
@@ -209,7 +202,20 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             try
             {
-                initialiseFlow();
+		        this.recoveryManager.initialise();
+
+                // configure resources that are marked as configurable
+                for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
+                {
+                    // TODO - put this back in
+                        // set the default configured resource id if none previously set.
+//                        if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
+//                        {
+//                            flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
+//                        }
+                        
+                    this.flowConfiguration.configureFlowElement(flowElement);
+                }
             }
             catch(RuntimeException e)
             {
@@ -339,12 +345,15 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected void startManagedResources()
     {
         List<FlowElement<ManagedResource>> flowElements = this.flowConfiguration.getManagedResourceFlowElements();
-        Collections.reverse(flowElements);
-        for(FlowElement<ManagedResource> flowElement:flowElements)
+        this.recoveryManager.setManagedResources(flowElements);
+        for(int index=flowElements.size()-1; index >= 0; index--)
         {
+            FlowElement<ManagedResource> flowElement = flowElements.get(index);
             try
             {
-                flowElement.getFlowComponent().startManagedResource();
+                ManagedResource managedResource = flowElement.getFlowComponent();
+                managedResource.setManagedResourceRecoveryManager( managedResourceRecoveryManagerFactory.getManagedResourceRecoveryManager(flowElement.getComponentName()) );
+                managedResource.startManagedResource();
                 logger.info("Started managed component [" 
                     + flowElement.getComponentName() + "]");
             }
@@ -538,4 +547,99 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	{
 		this.flowElementInvoker.setFlowEventListener(flowEventListener);
 	}
+
+    /**
+     * Managed Resource Recovery Manager factory used to create MR recovery manager 
+     * instances per named managed resource.
+     * @author Ikasan Development Team
+     *
+     */
+    protected class ManagedResourceRecoveryManagerFactory
+    {
+        // cache of managed resource recovery managers
+        private Map<String,ManagedResourceRecoveryManager> managedResourceRecoveryManagers = new HashMap<String,ManagedResourceRecoveryManager>();
+        
+        /**
+         * Get the named managed resource recovery manager
+         * @param name
+         * @return ManagedResourceRecoveryManager
+         */
+        public ManagedResourceRecoveryManager getManagedResourceRecoveryManager(String name)
+        {
+            ManagedResourceRecoveryManager managedResourceRecoveryManager = managedResourceRecoveryManagers.get(name);
+            if(managedResourceRecoveryManager == null)
+            {
+                managedResourceRecoveryManager = new ManagedResourceRecoveryManagerImpl(name);
+                managedResourceRecoveryManagers.put(name, managedResourceRecoveryManager);
+            }
+            
+            return managedResourceRecoveryManager;
+        }
+
+        /**
+         * Managed Resource Recovery Manager implementation
+         * @author Ikasan Development Team
+         *
+         */
+        protected class ManagedResourceRecoveryManagerImpl implements ManagedResourceRecoveryManager
+        {
+            /** name of this managed resource recovery manager */
+            private String name;
+            
+            /**
+             * Constructor
+             * @param name
+             */
+            public ManagedResourceRecoveryManagerImpl(String name)
+            {
+                this.name = name;
+                if(name == null)
+                {
+                    throw new IllegalArgumentException("name cannot be 'null'");
+                }
+            }
+            
+            /*
+             * (non-Javadoc)
+             * @see org.ikasan.spec.management.ManagedResourceRecoveryManager#recover(java.lang.Throwable)
+             */
+            public void recover(Throwable throwable)
+            {
+                try
+                {
+                    recoveryManager.recover(name, throwable);
+                }
+                finally
+                {
+                    notifyMonitor();
+                }
+            }
+
+            /*
+             * (non-Javadoc)
+             * @see org.ikasan.spec.management.ManagedResourceRecoveryManager#isRecovering()
+             */
+            public boolean isRecovering()
+            {
+                return recoveryManager.isRecovering();
+            }
+
+            /*
+             * (non-Javadoc)
+             * @see org.ikasan.spec.management.ManagedResourceRecoveryManager#cancel()
+             */
+            public void cancel()
+            {
+                try
+                {
+                    recoveryManager.cancel();
+                }
+                finally
+                {
+                    notifyMonitor();
+                }
+            }
+        }
+    }
+
 }
