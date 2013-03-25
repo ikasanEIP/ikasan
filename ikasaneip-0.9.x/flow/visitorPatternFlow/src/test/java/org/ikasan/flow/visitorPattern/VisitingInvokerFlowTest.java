@@ -45,6 +45,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -57,10 +58,12 @@ import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,7 +77,10 @@ public class VisitingInvokerFlowTest
     /**
      * Mockery for mocking concrete classes
      */
-    private Mockery mockery = new Mockery();
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
 
     /** Mock flowConfiguration */
     final FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class, "mockFlowConfiguration");
@@ -84,6 +90,12 @@ public class VisitingInvokerFlowTest
 
     /** Mock recoveryManager */
     final RecoveryManager recoveryManager = mockery.mock(RecoveryManager.class, "mockRecoveryManager");
+
+    /** Mock managedResourceRecoveryManagerFactory */
+    final ManagedResourceRecoveryManagerFactory managedResourceRecoveryManagerFactory = mockery.mock(ManagedResourceRecoveryManagerFactory.class, "mockManagedResourceRecoveryManagerFactory");
+
+    /** Mock managedResourceRecoveryManager */
+    final ManagedResourceRecoveryManager managedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class, "mockManagedResourceRecoveryManager");
 
     /** Mock list of configured resource flow elements */
     final List<FlowElement<ConfiguredResource>> configuredResourceFlowElements
@@ -214,6 +226,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -236,35 +249,58 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
-                one(flowConfiguration).getManagedResourceFlowElements();
+                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
                 // clear recovery manager states
                 one(recoveryManager).initialise();
+                // pass any managed resources to the recovery manager
+                one(recoveryManager).setManagedResources(with(any(List.class)));
 
-                // start each managed resource from right to left (reverse order) in flow order
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 
-                inSequence(reverseOrder);
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-                inSequence(reverseOrder);
+                
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-                inSequence(reverseOrder);
                 
                 // get the consumer
                 one(flowConfiguration).getConsumerFlowElement();
@@ -307,6 +343,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -329,34 +366,58 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
-                one(flowConfiguration).getManagedResourceFlowElements();
+                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
                 // clear recovery manager states
                 one(recoveryManager).initialise();
+                // pass any managed resources to the recovery manager
+                one(recoveryManager).setManagedResources(with(any(List.class)));
 
-                // start each managed resource from right to left (reverse order) in flow order
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
-                inSequence(reverseOrder);
+                
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-                inSequence(reverseOrder);
+                
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-                inSequence(reverseOrder);
                 
                 // get the consumer
                 one(flowConfiguration).getConsumerFlowElement();
@@ -400,6 +461,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -481,12 +543,18 @@ public class VisitingInvokerFlowTest
 
         final RuntimeException exception = new RuntimeException("test configuration failing");
         
+        final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
+
         // expectations
         mockery.checking(new Expectations()
         {
             {
                 // clear recovery manager states
                 one(recoveryManager).initialise();
+                // pass any managed resources to the recovery manager
+                one(recoveryManager).setManagedResources(with(any(List.class)));
+                one(flowConfiguration).getManagedResourceFlowElements();
+                will(returnValue(managedResourceFlowElements));
 
                 // get consumer flow element
                 one(flowConfiguration).getConsumerFlowElement();
@@ -532,6 +600,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -544,6 +613,8 @@ public class VisitingInvokerFlowTest
             {
                 // clear recovery manager states
                 one(recoveryManager).initialise();
+                // pass any managed resources to the recovery manager
+                one(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
@@ -555,12 +626,19 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the the flow element managed resource
-                one(flowConfiguration).getManagedResourceFlowElements();
+                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
-                // start each managed resource from right to left (reverse order) in flow order
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 will(throwException(new RuntimeException("test managed resource start failure")));
@@ -690,6 +768,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -706,6 +785,8 @@ public class VisitingInvokerFlowTest
             {
                 // clear recovery manager states
                 one(recoveryManager).initialise();
+                // pass any managed resources to the recovery manager
+                one(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
@@ -717,33 +798,53 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
-                one(flowConfiguration).getManagedResourceFlowElements();
+                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
-                // start each managed resource from right to left in flow order
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
                 
-                inSequence(reverseOrder);
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-
-                inSequence(reverseOrder);
+                
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-                inSequence(reverseOrder);
                 
                 // get the consumer
                 one(flowConfiguration).getConsumerFlowElement();
@@ -792,6 +893,7 @@ public class VisitingInvokerFlowTest
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
             flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -808,6 +910,8 @@ public class VisitingInvokerFlowTest
             {
                 // clear recovery manager states
                 one(recoveryManager).initialise();
+                // pass any managed resources to the recovery manager
+                one(recoveryManager).setManagedResources(with(any(List.class)));
 
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
@@ -819,35 +923,54 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
-                one(flowConfiguration).getManagedResourceFlowElements();
+                exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
                 will(returnValue(managedResourceFlowElements));
                 
-                // start each managed resource from right to left in flow order
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement3).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement3).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement3).getComponentName();
                 will(returnValue("component name"));
-
-                inSequence(reverseOrder);
+                
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement2).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement2).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement2).getComponentName();
                 will(returnValue("component name"));
-
-                inSequence(reverseOrder);
+                
+                // set the managed resource recovery manager instance on each managed resource
                 one(managedResourceFlowElement1).getFlowComponent();
                 will(returnValue(managedResource));
+                exactly(1).of(managedResourceFlowElement1).getComponentName();
+                will(returnValue("component name"));
+                exactly(1).of(managedResourceRecoveryManagerFactory).getManagedResourceRecoveryManager("component name");
+                will(returnValue(managedResourceRecoveryManager));
+                exactly(1).of(managedResource).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+
+                // start each managed resource from right to left (reverse order) in flow order
                 inSequence(reverseOrder);
                 one(managedResource).startManagedResource();
                 one(managedResourceFlowElement1).getComponentName();
                 will(returnValue("component name"));
-
-                inSequence(reverseOrder);
-                
+                                
                 // get the consumer
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
