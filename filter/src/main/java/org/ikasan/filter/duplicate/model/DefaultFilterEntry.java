@@ -96,7 +96,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         this.clientId = clientId;
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
-        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000));
+        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000L));
     }
 
     /**
@@ -114,7 +114,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         this.criteriaDescription = criteriaDescription;
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
-        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000));
+        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000L));
     }
 
     /**

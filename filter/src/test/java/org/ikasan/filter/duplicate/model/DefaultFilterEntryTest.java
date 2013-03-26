@@ -191,4 +191,33 @@ public class DefaultFilterEntryTest
         entry.equals(new String("I am not an instance of DefaultFilterEntry"));
         Assert.fail("If the object reference with which to compare was not an instance of DefaultFilterEntry, ClassCastExpcetion should've been thrown.");
     }
+
+    /**
+     * Test case: Test large timeToLive numbers {@link DefaultFilterEntry}.<br>
+     * This test was introduced after the expiry calc was producing an expiry 
+     * earlier than the create date due to underflow on the calc which is
+     * based on an int rather than a long!
+     */
+    @Test public void test_large_timeToLive_numbers_filterEntry_constructor_1()
+    {
+        DefaultFilterEntry filterEntry = new DefaultFilterEntry("firstEntry".hashCode(), "test-1", 30);
+
+        Assert.assertTrue("CreateDate must be smaller than Expiry date",
+                filterEntry.getCreatedDateTime().getTime() < filterEntry.getExpiry().getTime());
+    }
+
+    /**
+     * Test case: Test large timeToLive numbers {@link DefaultFilterEntry}.<br>
+     * This test was introduced after the expiry calc was producing an expiry 
+     * earlier than the create date due to underflow on the calc which is
+     * based on an int rather than a long!
+     */
+    @Test public void test_large_timeToLive_numbers_filterEntry_constructor_2()
+    {
+        DefaultFilterEntry filterEntry = new DefaultFilterEntry("firstEntry".hashCode(), "test-1", "test-1", 30);
+
+        Assert.assertTrue("CreateDate must be smaller than Expiry date",
+                filterEntry.getCreatedDateTime().getTime() < filterEntry.getExpiry().getTime());
+    }
+
 }
