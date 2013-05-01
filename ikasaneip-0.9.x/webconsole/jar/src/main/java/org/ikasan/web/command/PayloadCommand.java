@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$ 
  * $URL$
  * 
  * ====================================================================
@@ -38,33 +38,89 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.controller;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+package org.ikasan.web.command;
 
 /**
- * Controller for the home page for the web console
- * 
+ * A Wrapper class that can contain a payload along with the module name and initiator 
+ * name to deliver that payload to.
+ *  
  * @author Ikasan Development Team
  */
-@Controller
-@RequestMapping("/home.htm")
-public class HomeController
+public class PayloadCommand
 {
+    /** The content of the payload */
+    private String payloadContent;
+    
+    /** The name of the module */
+    private String moduleName;
+    
+    /** The name of the initiator */
+    private String initiatorName;
+
     /**
-     * Handle the request
-     * @param request - Standard Request object
-     * @param response - Standard response object
-     * @return a key to the home view
+     * Constructor
+     * 
+     * @param moduleName - The name of the module
+     * @param initiatorName - The name of the initiator
      */
-    @RequestMapping(method = RequestMethod.GET)
-    public String handleRequest(HttpServletRequest request, HttpServletResponse response)
+    public PayloadCommand(String moduleName, String initiatorName)
     {
-        return "home";
+        super();
+        this.moduleName = moduleName;
+        this.initiatorName = initiatorName;
+    }
+
+    /**
+     * Get the initiator name
+     * @return the initiator name
+     */
+    public String getInitiatorName()
+    {
+        return initiatorName;
+    }
+
+    /**
+     * Get the module name
+     * @return the module name
+     */
+    public String getModuleName()
+    {
+        return moduleName;
+    }
+
+    /**
+     * Get the payload content
+     * @return the payload content
+     */
+    public String getPayloadContent()
+    {
+        return payloadContent;
+    }
+
+    /**
+     * Set the initiator name
+     * @param initiatorName - the initiator name
+     */
+    public void setInitiatorName(String initiatorName)
+    {
+        this.initiatorName = initiatorName;
+    }
+
+    /**
+     * Set the module name
+     * @param moduleName - the module name
+     */
+    public void setModuleName(String moduleName)
+    {
+        this.moduleName = moduleName;
+    }
+
+    /**
+     * Set the payload content name
+     * @param payloadContent - the payload content
+     */
+    public void setPayloadContent(String payloadContent)
+    {
+        this.payloadContent = payloadContent;
     }
 }

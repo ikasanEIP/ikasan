@@ -35,7 +35,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.framework.web.controller;
+package org.ikasan.web.controller;
 
 import java.util.Map;
 

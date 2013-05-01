@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.command;
+package org.ikasan.web.command;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

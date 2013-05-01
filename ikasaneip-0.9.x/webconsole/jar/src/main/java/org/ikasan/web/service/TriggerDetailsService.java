@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.service;
+package org.ikasan.web.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,9 +51,9 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.trigger.service.FlowEventJob;
+import org.ikasan.web.command.TriggerDetails;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.ikasan.spec.module.ModuleService;
-import org.ikasan.framework.web.command.TriggerDetails;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -169,7 +169,7 @@ public class TriggerDetailsService
     {
         List<String> result = new ArrayList<String>();
         Module<Flow> module = this.moduleService.getModule(moduleName);
-        Flow flow = module.getFlows().get(flowName);
+        Flow flow = module.getFlow(flowName);
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         for (FlowElement<?> flowElement : flowElements)
         {

@@ -38,15 +38,15 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.controller;
+package org.ikasan.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.security.model.Authority;
-import org.ikasan.framework.security.model.User;
-import org.ikasan.framework.security.service.UserService;
+import org.ikasan.security.model.Authority;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.stereotype.Controller;

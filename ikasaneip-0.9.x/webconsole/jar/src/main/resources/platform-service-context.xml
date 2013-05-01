@@ -55,19 +55,19 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="moduleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+    <bean id="moduleService" class="org.ikasan.module.service.ModuleServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="initiatorStartupControlDao" />
         <constructor-arg ref="systemEventService" />
     </bean>
     
-    <bean id="systemEventService" class="org.ikasan.framework.systemevent.service.SystemEventServiceImpl">
+    <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
         <constructor-arg ref="systemEventDao" />
         <!-- system events expire after 1 week -->
         <constructor-arg value="10080" />
     </bean>
     
-    <bean id="moduleInitialisationService" class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
+    <bean id="moduleInitialisationService" class="org.ikasan.module.service.ModuleInitialisationServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="userDetailsService"/>
         <constructor-arg ref="initiatorStartupControlDao" />
@@ -89,12 +89,12 @@
 	</bean>
 
 	<bean id="initiatorStartupControlDao"
-        class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
+        class="org.ikasan.flow.initiator.dao.HibernateInitiatorStartupControlDao">
         <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
     </bean>
     
     <bean id="systemEventDao"
-        class="org.ikasan.framework.systemevent.dao.HibernateSystemEventDao">
+        class="org.ikasan.systemevent.dao.HibernateSystemEventDao">
         <constructor-arg value="true"/>
         <constructor-arg value="100"/>
         <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
@@ -105,7 +105,7 @@
 		<property name="dataSource" ref="ikasanAdminXaDataSource" />
 		<property name="mappingResources">
 			<list>
-				<value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
+				<value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -142,7 +142,7 @@
         <property name="dataSource" ref="ikasanAdminXaDataSource" />
         <property name="mappingResources">
             <list>
-                <value>org/ikasan/framework/initiator/InitiatorStartupControl.hbm.xml</value>
+                <value>org/ikasan/initiator/InitiatorStartupControl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -213,7 +213,7 @@
   	<bean id="payloadFactory" class="org.ikasan.common.factory.PayloadFactoryImpl"/>
 
   	<bean id="jmsMessageEventSerialiser" 
-      class="org.ikasan.framework.event.serialisation.DefaultMapMessageEventSerialiser">
+      class="org.ikasan.event.serialisation.DefaultMapMessageEventSerialiser">
         <property name="payloadFactory" ref="payloadFactory"/>
     </bean>
 

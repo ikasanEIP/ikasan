@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.controller;
+package org.ikasan.web.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,12 +49,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.module.ModuleService;
-import org.ikasan.framework.web.command.WiretapSearchCriteria;
-import org.ikasan.framework.web.command.WiretapSearchCriteriaValidator;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.web.command.WiretapSearchCriteria;
+import org.ikasan.web.command.WiretapSearchCriteriaValidator;
 import org.ikasan.wiretap.model.PagedWiretapSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

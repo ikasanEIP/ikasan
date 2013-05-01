@@ -1,7 +1,4 @@
 /*
- * $Id$
- * $URL$
- * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,73 +35,76 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.security;
+
+package org.ikasan.security;
 
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.ikasan.spec.module.Module;
-import org.springframework.security.AccessDeniedException;
+import org.springframework.aop.framework.ReflectiveMethodInvocation;
 import org.springframework.security.Authentication;
 import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.vote.AccessDecisionVoter;
 
 /**
- * Class for determining access/configuration rights
+ * Votes if any {@link ConfigAttribute#getAttribute()} matches MODULE_ADMIN
  * 
- * @author Ikasan Development Team
+ * If it is called to vote, this voter will only vote yes, if the user has
+ * the admin role for the specified module.
+ * 
+ * Note that the moduleName must be the first argument to the called method
+ * 
+
  */
-public class ModuleAfterInvocationProvider extends AbstractModuleAfterInvocationProvider
-{
-    /** AFTER_MODULE_READ configuration attribute */
-    private static final String AFTER_MODULE_READ = "AFTER_MODULE_READ";
+public class ModuleAdminVoter implements AccessDecisionVoter {
+ 
+    public static final String MODULE_ADMIN_ATTRIBUTE = "MODULE_ADMIN";
 
     /** Logger for this class */
-    private Logger logger = Logger.getLogger(ModuleAfterInvocationProvider.class);
+    private Logger logger = Logger.getLogger(ModuleAdminVoter.class);
 
-    /** Constructor */
-    public ModuleAfterInvocationProvider()
-    {
-        super(AFTER_MODULE_READ);
+
+    public boolean supports(ConfigAttribute attribute) {
+    	boolean result = attribute.getAttribute().equals(MODULE_ADMIN_ATTRIBUTE);
+
+        return result;
     }
 
-    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config,
-            Object returnedObject) throws AccessDeniedException
-    {
-        Iterator<?> iter = config.getConfigAttributes().iterator();
-        if (returnedObject == null)
-        {
-            // AclManager interface contract prohibits nulls
-            // As they have permission to null/nothing, grant access
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Return object is null, skipping");
-            }
-            return null;
-        }
-        if (!Module.class.isAssignableFrom(returnedObject.getClass()))
-        {
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Return object is not a Module, skipping");
-            }
-            return returnedObject;
-        }
-        while (iter.hasNext())
-        {
-            ConfigAttribute attr = (ConfigAttribute) iter.next();
-            if (!this.supports(attr))
-            {
-                continue;
-            }
-            // Need to make an access decision on this invocation
-            if (mayReadModule(authentication, (Module) returnedObject))
-            {
-                return returnedObject;
-            }
-            throw new AccessDeniedException("user[" + authentication + "] does not have access to module ["
-                    + ((Module) returnedObject).getName() + "]");
-        }
-        return returnedObject;
+
+    public boolean supports(Class clazz) {
+    	//TODO this should only return true if the clazz is type castable to ReflectiveMethodInvocation
+        return true;
     }
+
+    public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
+        int result = ACCESS_ABSTAIN;
+        Iterator iter = config.getConfigAttributes().iterator();
+        GrantedAuthority[] authorities = authentication.getAuthorities();       
+
+        while (iter.hasNext()) {
+            ConfigAttribute attribute = (ConfigAttribute) iter.next();
+
+            if (this.supports(attribute)) {
+                result = ACCESS_DENIED;
+
+                // Attempt to find a granted authority matching the admin role for this module
+                ReflectiveMethodInvocation methodInvocation = (ReflectiveMethodInvocation)object;
+            	
+                //we assume that the moduleName is the first argument.
+                String moduleName = (String)methodInvocation.getArguments()[0];
+                
+                String moduleAdminRole = "ADMIN_"+moduleName;
+                for (int i = 0; i < authorities.length; i++) {
+                    if (moduleAdminRole.equals(authorities[i].getAuthority())) {
+                        
+                    	return ACCESS_GRANTED;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    
 }
