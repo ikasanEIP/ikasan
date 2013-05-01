@@ -57,12 +57,14 @@
 
     <!-- The Ikasan console No Tx datasource -->
     <bean id="ikasanAdminNoTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ikasan/admin/ds" />
+        <!--property name="jndiName" value="java:/ikasan/admin/ds" /-->
+        <property name="jndiName" value="/ikasan/admin/ds" />
     </bean>
 
     <!-- The Ikasan console Local Tx datasource (used by security) -->
     <bean id="ikasanAdminLocalTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ikasan/admin/localds" />
+        <!--property name="jndiName" value="java:/ikasan/admin/localds" /-->
+        <property name="jndiName" value="/ikasan/admin/localds" />
     </bean>
 
     <!-- The Ikasan console XA Tx datasource -->

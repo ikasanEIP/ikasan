@@ -76,19 +76,19 @@
     <beans:bean id="sha1PasswordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
     <!-- The user details service -->
-	<beans:bean id="userDetailsService" class="org.ikasan.framework.security.service.UserServiceImpl">
+	<beans:bean id="userDetailsService" class="org.ikasan.security.service.UserServiceImpl">
 		<beans:constructor-arg ref="userDao"/>
 		<beans:constructor-arg ref="authorityDao"/>
 		<beans:constructor-arg ref="sha1PasswordEncoder"/>
 	</beans:bean>
 
     <!-- The User DAO -->
-	<beans:bean id="userDao" class="org.ikasan.framework.security.dao.HibernateUserDao">
+	<beans:bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
         <beans:property name="sessionFactory" ref="securitySessionFactory"/>
     </beans:bean>
 
     <!-- The Authority DAO -->
-    <beans:bean id="authorityDao" class="org.ikasan.framework.security.dao.HibernateAuthorityDao">
+    <beans:bean id="authorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
         <beans:property name="sessionFactory" ref="securitySessionFactory"/>
     </beans:bean>
 
@@ -97,8 +97,8 @@
         <beans:property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
         <beans:property name="mappingResources">
             <beans:list>
-                <beans:value>org/ikasan/framework/security/model/User.hbm.xml</beans:value>
-                <beans:value>org/ikasan/framework/security/model/Authority.hbm.xml</beans:value>
+                <beans:value>org/ikasan/security/model/User.hbm.xml</beans:value>
+                <beans:value>org/ikasan/security/model/Authority.hbm.xml</beans:value>
             </beans:list>
         </beans:property>
         <beans:property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -126,10 +126,10 @@
             expression="execution(* org.ikasan.console.web.controller.UsersController.changePassword(..))"
             access="ROLE_ADMIN" />
         <protect-pointcut
-            expression="execution(* org.ikasan.framework.security.service.UserService.grantAuthority(..))"
+            expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..))"
             access="ROLE_ADMIN" />
         <protect-pointcut
-            expression="execution(* org.ikasan.framework.security.service.UserService.revokeAuthority(..))"
+            expression="execution(* org.ikasan.security.service.UserService.revokeAuthority(..))"
             access="ROLE_ADMIN" />
 	    <!-- Gaining access to a Module requires security check -->
         <!--

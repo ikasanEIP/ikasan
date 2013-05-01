@@ -68,7 +68,7 @@
     <div id="container">
         <!-- TODO This will need to be altered somewhat -->
         <div id="header">
-           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" /></a>
            <h2>Enterprise Integration Platform - Console</h2>
         </div>
         <div id="content">Oops, you don't have authorisation to view this.</div>
