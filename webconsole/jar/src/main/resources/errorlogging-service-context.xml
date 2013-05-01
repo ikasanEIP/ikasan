@@ -61,7 +61,7 @@
         <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorLoggingInvocation" />
     </aop:config>
     
-	<bean id="errorLoggingService" class="org.ikasan.framework.error.service.DefaultErrorLoggingServiceImpl">
+	<bean id="errorLoggingService" class="org.ikasan.error.service.DefaultErrorLoggingServiceImpl">
 		<constructor-arg ref="errorOccurrenceDao" />
 		<constructor-arg ref="excludedEventDao" />
 		<constructor-arg ref="baseUrl"/>
@@ -69,7 +69,7 @@
 	</bean>
 	
 	<bean id="errorOccurrenceDao"
-		class="org.ikasan.framework.error.dao.HibernateErrorOccurrenceDao">
+		class="org.ikasan.error.dao.HibernateErrorOccurrenceDao">
 		<property name="sessionFactory" ref="errorLoggingHibernateSessionFactory" />
 	</bean>
 	
@@ -84,13 +84,13 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
     
-    <bean id="errorOccurrenceTextMessagePublisher" class="org.ikasan.framework.error.service.ErrorOccurrenceTextMessagePublisher">
+    <bean id="errorOccurrenceTextMessagePublisher" class="org.ikasan.error.service.ErrorOccurrenceTextMessagePublisher">
     	<constructor-arg ref="jmsConnectionFactory"/>
     	<constructor-arg ref="errorsChannel"/>
     	<constructor-arg ref="errorOccurrenceXmlConverter"/>
     </bean>
     
-    <bean id="errorOccurrenceXmlConverter" class="org.ikasan.framework.error.serialisation.DefaultErrorOccurrenceXmlConverter"/>
+    <bean id="errorOccurrenceXmlConverter" class="org.ikasan.error.serialisation.DefaultErrorOccurrenceXmlConverter"/>
     
     <bean id="errorsChannel" class="org.springframework.jndi.JndiObjectFactoryBean">
     	<property name="jndiName" value="/topic/ikasan.errors"/>

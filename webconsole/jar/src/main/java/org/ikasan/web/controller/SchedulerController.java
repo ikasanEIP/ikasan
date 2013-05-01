@@ -38,14 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.controller;
+package org.ikasan.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -152,16 +155,17 @@ public class SchedulerController
         List<Trigger> triggers = new ArrayList<Trigger>();
         if (!platformScheduler.isShutdown())
         {
-            String[] triggerGroupNames = platformScheduler.getTriggerGroupNames();
-            logger.info("found triggerGroupNames:" + triggerGroupNames.length);
+            List<String> triggerGroupNames = platformScheduler.getTriggerGroupNames();
+            logger.info("found triggerGroupNames:" + triggerGroupNames.size());
             for (String triggerGroupName : triggerGroupNames)
             {
-                String[] triggerNames = platformScheduler.getTriggerNames(triggerGroupName);
-                logger.info("found triggerNames:" + triggerNames.length + ", for triggerGroupName:" + triggerGroupName);
-                for (String triggerName : triggerNames)
+                GroupMatcher<TriggerKey> groupMatcher = GroupMatcher.groupEquals(triggerGroupName);
+                Set<TriggerKey> keys = platformScheduler.getTriggerKeys(groupMatcher);
+                logger.info("found triggerNames:" + keys.size() + ", for triggerGroupName:" + triggerGroupName);
+                for (TriggerKey key : keys) 
                 {
-                    triggers.add(platformScheduler.getTrigger(triggerName, triggerGroupName));
-                }
+                    triggers.add(platformScheduler.getTrigger(key));
+                }            
             }
         }
         return triggers;

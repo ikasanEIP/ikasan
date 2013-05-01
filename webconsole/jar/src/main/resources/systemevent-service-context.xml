@@ -55,13 +55,13 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="systemEventService" class="org.ikasan.framework.systemevent.service.SystemEventServiceImpl">
+    <bean id="systemEventService" class="org.ikasan.systemevent.service.SystemEventServiceImpl">
         <constructor-arg ref="systemEventDao" />
         <constructor-arg value="10080" /> <!-- system events expire after 1 week -->
     </bean>
     
     <bean id="systemEventDao"
-        class="org.ikasan.framework.systemevent.dao.HibernateSystemEventDao">
+        class="org.ikasan.systemevent.dao.HibernateSystemEventDao">
         <property name="sessionFactory" ref="systemEventHibernateSessionFactory" />
         
         <constructor-arg value="true"/>
@@ -74,7 +74,7 @@
 		<property name="dataSource" ref="ikasanAdminXaDataSource" />
 		<property name="mappingResources">
 			<list>
-				<value>org/ikasan/framework/systemevent/model/SystemEvent.hbm.xml</value>
+				<value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>

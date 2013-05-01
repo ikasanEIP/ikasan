@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.controller;
+package org.ikasan.web.controller;
 
 import java.util.List;
 
@@ -146,7 +146,7 @@ public class ModulesController
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName, ModelMap model)
     {
         Module<Flow> module = this.moduleService.getModule(moduleName);
-        Flow flow = module.getFlows().get(flowName);
+        Flow flow = module.getFlow(flowName);
         model.addAttribute("flowElements", flow.getFlowElements());
         model.addAttribute("flow", flow);
         // For the navigation bar
@@ -196,7 +196,7 @@ public class ModulesController
             @RequestParam(FLOW_ELEMENT_NAME_PARAMETER_NAME) String flowElementName, ModelMap model)
     {
         Module<Flow> module = this.moduleService.getModule(moduleName);
-        Flow flow = module.getFlows().get(flowName);
+        Flow flow = module.getFlow(flowName);
         FlowElement<?> flowElement = resolveFlowElement(flowElementName, flow);
         List<Trigger> beforeElementTriggers = null;
         List<Trigger> afterElementTriggers = null;

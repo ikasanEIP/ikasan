@@ -56,23 +56,23 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
     <bean id="moduleService"
-        class="org.ikasan.framework.module.service.ModuleServiceImpl">
+        class="org.ikasan.module.service.ModuleServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="systemEventService" />
     </bean>
     
     <bean id="moduleInitialisationService"
-        class="org.ikasan.framework.module.service.ModuleInitialisationServiceImpl">
+        class="org.ikasan.module.service.ModuleInitialisationServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <constructor-arg ref="userDetailsService"/>
         <constructor-arg ref="initiatorStartupControlDao" />
     </bean>
 
     <bean id="moduleContainer"
-        class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+        class="org.ikasan.module.container.ModuleContainerImpl"/>
     
     <bean id="initiatorStartupControlDao"
-        class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
+        class="org.ikasan.flow.initiator.dao.HibernateInitiatorStartupControlDao">
         <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
     </bean>
     
@@ -81,7 +81,7 @@
         <property name="dataSource" ref="ikasanAdminXaDataSource" />
         <property name="mappingResources">
             <list>
-                <value>org/ikasan/framework/initiator/InitiatorStartupControl.hbm.xml</value>
+                <value>org/ikasan/initiator/InitiatorStartupControl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

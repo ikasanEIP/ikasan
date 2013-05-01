@@ -38,82 +38,73 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.security;
+package org.ikasan.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.module.Module;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.Authentication;
-import org.springframework.security.AuthorizationServiceException;
 import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
 
 /**
- * Class for determining access/configuration rights for collection of configuration
- *  
+ * Class for determining access/configuration rights
+ * 
  * @author Ikasan Development Team
  */
-public class AfterInvocationModuleCollectionFilteringProvider extends AbstractModuleAfterInvocationProvider
+public class ModuleAfterInvocationProvider extends AbstractModuleAfterInvocationProvider
 {
-    /** AFTER_MODULE_COLLECTION_READ */
-    private static final String AFTER_MODULE_COLLECTION_READ = "AFTER_MODULE_COLLECTION_READ";
-
-    /** Constructor */
-    public AfterInvocationModuleCollectionFilteringProvider()
-    {
-        super(AFTER_MODULE_COLLECTION_READ);
-    }
+    /** AFTER_MODULE_READ configuration attribute */
+    private static final String AFTER_MODULE_READ = "AFTER_MODULE_READ";
 
     /** Logger for this class */
-    Logger logger = Logger.getLogger(AfterInvocationModuleCollectionFilteringProvider.class);
+    private Logger logger = Logger.getLogger(ModuleAfterInvocationProvider.class);
+
+    /** Constructor */
+    public ModuleAfterInvocationProvider()
+    {
+        super(AFTER_MODULE_READ);
+    }
 
     public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config,
             Object returnedObject) throws AccessDeniedException
     {
-        // TODO Would be nice to enforce <ConfigAttribute> generic
         Iterator<?> iter = config.getConfigAttributes().iterator();
+        if (returnedObject == null)
+        {
+            // AclManager interface contract prohibits nulls
+            // As they have permission to null/nothing, grant access
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Return object is null, skipping");
+            }
+            return null;
+        }
+        if (!Module.class.isAssignableFrom(returnedObject.getClass()))
+        {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Return object is not a Module, skipping");
+            }
+            return returnedObject;
+        }
         while (iter.hasNext())
         {
-            ConfigAttribute attr = (ConfigAttribute)iter.next();
+            ConfigAttribute attr = (ConfigAttribute) iter.next();
             if (!this.supports(attr))
             {
                 continue;
             }
-            // Need to process the Collection for this invocation
-            if (!(returnedObject instanceof Collection))
+            // Need to make an access decision on this invocation
+            if (mayReadModule(authentication, (Module) returnedObject))
             {
-                throw new AuthorizationServiceException("A Collection was required as the "
-                        + "returnedObject, but the returnedObject was [" + returnedObject + "]");
+                return returnedObject;
             }
-            // Locate unauthorised Collection elements
-            Collection<Module> authorisedModules = new ArrayList<Module>();
-            Iterator<?> collectionIter = ((Collection<?>) returnedObject).iterator();
-            while (collectionIter.hasNext())
-            {
-                Object domainObject = collectionIter.next();
-                // Ignore nulls or entries which aren't instances of the configured domain object class
-                if (domainObject == null || !Module.class.isAssignableFrom(domainObject.getClass()))
-                {
-                    continue;
-                }
-                Module thisModule = (Module) domainObject;
-                if (mayReadModule(authentication, thisModule))
-                {
-                    authorisedModules.add(thisModule);
-                }
-            }
-            return authorisedModules;
+            throw new AccessDeniedException("user[" + authentication + "] does not have access to module ["
+                    + ((Module) returnedObject).getName() + "]");
         }
         return returnedObject;
-    }
-
-    @Override
-    public boolean supports(ConfigAttribute configAttribute)
-    {
-        return configAttribute.getAttribute().equalsIgnoreCase(AFTER_MODULE_COLLECTION_READ);
     }
 }

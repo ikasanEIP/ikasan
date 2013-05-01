@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.framework.web.service;
+package org.ikasan.web.service;
 
 import java.util.List;
 
@@ -243,7 +243,7 @@ public class ConfigurationManagementService
     private Object getFlowComponent(String moduleName, String flowName, String flowElementName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
-        Flow flow = module.getFlows().get(flowName);
+        Flow flow = module.getFlow(flowName);
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         for (FlowElement flowElement : flowElements)
         {
