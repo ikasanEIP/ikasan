@@ -41,7 +41,7 @@
 package org.ikasan.console.service;
 
 import org.apache.log4j.Logger;
-import org.ikasan.framework.security.model.User;
+import org.ikasan.security.model.User;
 
 /**
  * Default implementation of <code>ConsoleService</code>

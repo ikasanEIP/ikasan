@@ -41,7 +41,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.ikasan.framework.management.search.PagedSearchResult;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.springframework.ui.ModelMap;
 
 /**
