@@ -64,7 +64,7 @@
 
     <!-- This is to fix transparent PNG files in IE6 -->
     <!--[if IE 6]>
-    <script src="/console/js/DD_belatedPNG.js"></script>
+    <script src="/js/DD_belatedPNG.js"></script>
     <script>
       /* EXAMPLE */
       DD_belatedPNG.fix('img');
@@ -84,7 +84,7 @@
 
         <!-- The header section -->
         <div id="header">
-           <img id="logo" src="/console/images/Ikasan_Logo_Transp.png" alt="logo" />
+           <img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" />
            <h2>Enterprise Integration Platform - Console</h2>
         </div>
 
@@ -109,7 +109,7 @@
                 </p>
             </div>
             <div id="rightContent">
-                <div id="arrow"><img class="arrowImage" src="/console/images/Icon_Arrow.png" alt="Arrow"/></div>
+                <div id="arrow"><img class="arrowImage" src="images/Icon_Arrow.png" alt="Arrow"/></div>
                 <div id="loginBox">
                     <h1>Login</h1>
                     <form id="loginForm" action="<c:url value='j_spring_security_check'/>" method="post">
@@ -128,7 +128,7 @@
                                 <td class="loginCell"><input class="button" name="submit" type="submit" value="Login"/></td>
                             </tr>
                             <tr>
-                                <td class="loginCell formLabel">I'm a new user <span title="Please contact your System Administrator" id="loginHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span></td>
+                                <td class="loginCell formLabel">I'm a new user <span title="Please contact your System Administrator" id="loginHelp"><img class="helpIcon" src="images/Icon_Help_sml.png" alt="?" /></span></td>
                                 <td class="loginCell">&nbsp;</td>
                             </tr>
                         </table>
@@ -136,7 +136,7 @@
                     <form id="forgotPasswordForm" action="<c:url value='/users/forgotPassword.htm'/>" method="get">
                         <table class="loginTable">
                             <tr>
-                                <td class="loginCell formLabel">Forgot Password<!-- <span title="In the next page a new password will be sent to the email address associated with the Username" id="forgotPasswordHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span> --></td>
+                                <td class="loginCell formLabel">Forgot Password<!-- <span title="In the next page a new password will be sent to the email address associated with the Username" id="forgotPasswordHelp"><img class="helpIcon" src="images/Icon_Help_sml.png" alt="?" /></span> --></td>
                                 <td class="loginCell"><input class="largeButton" name="submit" type="submit" value="Forgot Password"/></td>
                             </tr>
                         </table>
