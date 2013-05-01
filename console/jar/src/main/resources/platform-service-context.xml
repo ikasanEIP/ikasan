@@ -75,15 +75,15 @@
     </bean> 
 
     <!-- The framework specific Module Service -->
-    <bean id="frameworkModuleService" class="org.ikasan.framework.module.service.ModuleServiceImpl">
+    <bean id="frameworkModuleService" class="org.ikasan.module.service.ModuleServiceImpl">
         <constructor-arg ref="moduleContainer" />
         <!-- <constructor-arg ref="initiatorCommandDao" /> -->
-        <constructor-arg ref="initiatorStartupControlDao" />
-        <constructor-arg ref="systemEventService" />
+        <!--constructor-arg ref="initiatorStartupControlDao" /-->
+        <!--constructor-arg ref="systemEventService" /-->
     </bean>
 
     <!-- The module container for the framework module service -->
-    <bean id="moduleContainer" class="org.ikasan.framework.module.container.ModuleContainerImpl"/>
+    <bean id="moduleContainer" class="org.ikasan.module.container.ModuleContainerImpl"/>
 
     <!-- The PointToPointFlowProfile Service -->
     <bean id="pointToPointFlowProfileService" class="org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileServiceImpl" >
@@ -92,11 +92,21 @@
     
     <!-- The Wiretap Service -->
     <!-- TODO - might have a problem as we're not giving the wiretap service the module service it's expecting... -->
-	<bean id="wiretapService" class="org.ikasan.framework.event.wiretap.service.WiretapServiceImpl">
+	<bean id="wiretapService" class="org.ikasan.wiretap.service.WiretapServiceImpl">
 		<constructor-arg ref="wiretapDao" />
-		<constructor-arg ref="frameworkModuleService" />
+        <constructor-arg ref="frameworkModuleService" />
+        <constructor-arg ref="wiretapeEventFactory" />
 	</bean>
 
+    <bean id="wiretapeEventFactory" class="org.ikasan.wiretap.model.WiretapEventFactory" >
+        <constructor-arg ref="wiretapSerialiser"/>
+    </bean>
+    
+    <!-- TODO FIXME -->
+    <bean id="wiretapSerialiser" class="org.ikasan.wiretap.serialiser.WiretapSerialiserService">
+        <constructor-arg><null/></constructor-arg>
+    </bean>
+    
     <!-- The email notifier for the Send New Password functionality -->
     <bean id="consoleEmailNotifier" class="org.ikasan.console.service.ConsoleEmailNotifier">
         <constructor-arg index="0">
@@ -133,24 +143,24 @@
     <!-- ###################################### -->  	
   	
   	<!-- Transaction advice requiring a new transaction on entry -->
-    <tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
+    <!--tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRES_NEW"/>
         </tx:attributes>
-    </tx:advice>
+    </tx:advice-->
     
     <!-- Transaction advice requiring a transaction on entry -->
-    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
+    <!--tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
-    </tx:advice>
+    </tx:advice-->
      
     <!-- Transaction Manager definition for user transactions -->
-    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+    <!--bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
        <property name="transactionManagerName" value="java:/TransactionManager"/>
        <property name="userTransactionName" value="UserTransaction"/>
-    </bean>
+    </bean-->
   
     <!-- #################################### -->
     <!-- Common transaction services end here -->

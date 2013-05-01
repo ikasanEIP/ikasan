@@ -56,7 +56,7 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
     <!-- The wiretapDao definition for the Ikasan console -->
-    <bean id="wiretapDao" class="org.ikasan.framework.event.wiretap.dao.HibernateWiretapDao">
+    <bean id="wiretapDao" class="org.ikasan.wiretap.dao.HibernateWiretapDao">
         <property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
     </bean>
 
@@ -77,7 +77,7 @@
     </bean>
     -->
     <!-- The initiatorStartupControlDao definition for the Ikasan framework -->
-    <bean id="initiatorStartupControlDao" class="org.ikasan.framework.flow.initiator.dao.HibernateInitiatorStartupControlDao">
+    <bean id="initiatorStartupControlDao" class="org.ikasan.flow.startup.dao.HibernateFlowStartupControlDao">
         <property name="sessionFactory" ref="initiatorStartupControlHibernateSessionFactory" />
     </bean>
 
@@ -87,7 +87,7 @@
         <property name="dataSource" ref="ikasanAdminNoTxDataSource" />
         <property name="mappingResources">
             <list>
-                <value>WiretapEventImpl.hbm.xml</value>
+                <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -127,7 +127,7 @@
         <property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
         <property name="mappingResources">
             <list>
-                <value>org/ikasan/framework/initiator/InitiatorStartupControl.hbm.xml</value>
+                <value>org/ikasan/flow/startup/FlowStartupControl.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

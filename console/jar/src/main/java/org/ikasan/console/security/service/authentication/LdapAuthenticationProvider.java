@@ -44,8 +44,8 @@ import java.util.Arrays;
 
 import javax.naming.ldap.InitialLdapContext;
 
-import org.ikasan.framework.security.model.User;
-import org.ikasan.framework.security.service.UserService;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.UserService;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;

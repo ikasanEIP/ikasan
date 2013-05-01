@@ -48,8 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ikasan.console.service.ConsoleService;
-import org.ikasan.framework.security.model.User;
-import org.ikasan.framework.security.service.UserService;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.userdetails.UsernameNotFoundException;
