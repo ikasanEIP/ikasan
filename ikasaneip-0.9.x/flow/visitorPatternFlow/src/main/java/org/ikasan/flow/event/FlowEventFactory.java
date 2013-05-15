@@ -40,6 +40,8 @@
  */
 package org.ikasan.flow.event;
 
+import java.io.Serializable;
+
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.FlowEvent;
 
@@ -68,9 +70,12 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 	 * @author Ikasan Development Team
 	 *
 	 */
-	private class GenericFlowEvent<String,PAYLOAD> implements FlowEvent<String,PAYLOAD>
+	private class GenericFlowEvent<String,PAYLOAD> implements FlowEvent<String,PAYLOAD>, Serializable
 	{
-		/** immutable identifier */
+		/** default serial id */
+        private static final long serialVersionUID = 1L;
+
+        /** immutable identifier */
 		private String identifier;
 
 		/** immutable event creation timestamp */
@@ -125,6 +130,22 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 		{
 		    this.payload = payload;
 		}
+
+        @Override
+        public java.lang.String toString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.append("GenericFlowEvent [identifier=");
+            builder.append(identifier);
+            builder.append(", timestamp=");
+            builder.append(timestamp);
+            builder.append(", payload=");
+            builder.append(payload);
+            builder.append("]");
+            return builder.toString();
+        }
+		
+		
 	}
 
 }
