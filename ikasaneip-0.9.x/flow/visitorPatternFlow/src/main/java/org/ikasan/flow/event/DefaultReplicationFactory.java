@@ -52,15 +52,10 @@ import com.rits.cloning.Cloner;
  */
 public class DefaultReplicationFactory
 {
-    private static ReplicationFactory replicationFactory;
+    private static ReplicationFactory replicationFactory = new ClonerReplicationFactory(new Cloner());
     
     public static ReplicationFactory getInstance()
     {
-        if(replicationFactory == null)
-        {
-            replicationFactory = new ClonerReplicationFactory(new Cloner());
-        }
-        
         return replicationFactory;
     }
     
