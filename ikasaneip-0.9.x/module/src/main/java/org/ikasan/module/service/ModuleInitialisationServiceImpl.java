@@ -141,29 +141,42 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     {
         // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
         ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
-        List<String> loaderResources = loaderContext.getBean(List.class);
-        String[] loaderResourcesArray = new String[loaderResources.size()];
-        loaderResources.toArray(loaderResourcesArray);
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(loaderResourcesArray, platformContext);
-
-        // check for moduleActivator overrides
-        try
-        {
-            this.moduleActivator = applicationContext.getBean(ModuleActivator.class);
-            logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
-        }
-        catch(NoSuchBeanDefinitionException e)
-        {
-            // nothing of issue here, move on
-        }
+        Map<String,List> loaderResources = loaderContext.getBeansOfType(List.class);
         
-        // load all modules in this context
-        // TODO - should multiple modules share the same application context ?
-        Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-        for (Module<Flow> module : moduleBeans.values())
+        for(List<String> loaderResource : loaderResources.values())
         {
-            this.moduleContainer.add(module);
-            this.moduleActivator.activate(module);
+            String[] resourcesArray = new String[loaderResource.size()];
+            loaderResource.toArray(resourcesArray);
+
+            ApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
+    
+            // check for moduleActivator overrides and use the first one found
+            try
+            {
+                Map<String,ModuleActivator> activators = applicationContext.getBeansOfType(ModuleActivator.class);
+                if(activators != null && activators.size() > 0)
+                {
+                    for(ModuleActivator activator : activators.values())
+                    {
+                        this.moduleActivator = activator;
+                        logger.info("Overridding default moduleActivator with [" + this.moduleActivator.getClass().getName() + "]");
+                        break;  // just use the first one we find
+                    }
+                }
+            }
+            catch(NoSuchBeanDefinitionException e)
+            {
+                // nothing of issue here, move on
+            }
+            
+            // load all modules in this context
+            // TODO - should multiple modules share the same application context ?
+            Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
+            for (Module<Flow> module : moduleBeans.values())
+            {
+                this.moduleContainer.add(module);
+                this.moduleActivator.activate(module);
+            }
         }
     }
 
@@ -179,10 +192,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
 
         // TODO - find a more generic way of managing this for platform resources
-        Scheduler scheduler = this.platformContext.getBean(Scheduler.class);
-        if(scheduler != null)
+        Map<String,Scheduler> schedulers = this.platformContext.getBeansOfType(Scheduler.class);
+        if(schedulers != null)
         {
-            scheduler.shutdown();
+            for(Scheduler scheduler:schedulers.values())
+            {
+                scheduler.shutdown();
+            }
         }
     }
 
