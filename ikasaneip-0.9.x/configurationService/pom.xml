@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-RC3</version>
+        <version>0.9.0-RC4-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-            <version>0.9.0-RC3</version>
+            <version>0.9.0-RC4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -118,10 +118,16 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-hibernate3</artifactId>
             <version>2.0.8</version>
+            <scope>provided</scope>
+        </dependency-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
