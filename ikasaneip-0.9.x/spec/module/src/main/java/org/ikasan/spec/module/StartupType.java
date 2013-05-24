@@ -1,6 +1,6 @@
 /* 
- * $Id: ModuleService.java 3676 2011-04-28 12:27:38Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/module/service/ModuleService.java $
+ * $Id$
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -40,68 +40,12 @@
  */
 package org.ikasan.spec.module;
 
-import java.util.List;
-
 /**
- * Service Tier interface for providing user access to modules 
+ * Ikasan module startup types.
  * 
  * @author Ikasan Development Team
- *
  */
-public interface ModuleService
+public enum StartupType
 {
-	
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public List<Module> getModules();
-
-    /**
-     * Resolves a specified <code>Module</code> by name
-     * 
-     * @param moduleName the module name
-     * 
-     * @return <code>Module</code> named by moduleName
-     */
-    public Module getModule(String moduleName);
-
-    /**
-     * Attempts to stop a <code>Flow</code>
-     * 
-     * @param moduleName 
-     * @param flowName 
-     * @param actor 
-     * 
-     */
-    public void stopFlow(final String moduleName, final String flowName, final String actor);
-
-    /**
-     * Attempts to start a <code>Flow</code>
-     * 
-     * @param moduleName
-     * @param flowName 
-     * @param actor
-     */
-    public void startFlow(String moduleName, String flowName, String actor);
-
-    /**
-     * Set the startup type for the given module and flow
-     * 
-     * @param moduleName
-     * @param flowName
-     * @param startupType 
-     * @param comment
-     * @param actor
-     */
-    public void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
-
-    /**
-     * Get the startup type for the given module and flow
-     * 
-     * @param moduleName
-     * @param flowName 
-     */
-    public StartupType getStartupType(String moduleName, String flowName);
+    DISABLED, MANUAL, AUTOMATIC;
 }

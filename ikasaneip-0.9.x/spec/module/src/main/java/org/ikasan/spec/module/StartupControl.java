@@ -1,6 +1,6 @@
 /* 
- * $Id: ModuleService.java 3676 2011-04-28 12:27:38Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/module/service/ModuleService.java $
+ * $Id$
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -40,68 +40,65 @@
  */
 package org.ikasan.spec.module;
 
-import java.util.List;
-
 /**
- * Service Tier interface for providing user access to modules 
+ * JavaBean encapsulating startup control information for Flows
  * 
- * @author Ikasan Development Team
- *
+ * The following start types are defined:
+ * 
+ * AUTOMATIC: flow will be started by its container when the container is
+ * initialised MANUAL: Flow will not be started by its container when
+ * container is started/initialised, but will be manually startable at a later
+ * stage DISABLED: Flow will not be started by its container when container
+ * is started/initialised, and will not be manually startable at a later stage
+ * 
+ * @author The Ikasan Development Team
+ * 
  */
-public interface ModuleService
+public interface StartupControl
 {
-	
-    /**
-     * Returns all available <code>Module</code>s
+     /**
+     * Accessor for moduleName
      * 
-     * @return List of all accessible <code>Module</code>s
+     * @return moduleName
      */
-    public List<Module> getModules();
+    public String getModuleName();
+    /**
+     * Accessor for flowName
+     * 
+     * @return flowName
+     */
+    public String getFlowName();
+    /**
+     * Accessor for startupType
+     * 
+     * @return startupType
+     */
+    public StartupType getStartupType();
 
     /**
-     * Resolves a specified <code>Module</code> by name
+     * Setter for startupType
      * 
-     * @param moduleName the module name
-     * 
-     * @return <code>Module</code> named by moduleName
+     * @param action
      */
-    public Module getModule(String moduleName);
+    public void setStartupType(StartupType startupType);
+
+    public boolean isAutomatic();
+
+    public boolean isManual();
+
+    public boolean isDisabled();
 
     /**
-     * Attempts to stop a <code>Flow</code>
+     * Accessor for comment
      * 
-     * @param moduleName 
-     * @param flowName 
-     * @param actor 
-     * 
+     * @return comment
      */
-    public void stopFlow(final String moduleName, final String flowName, final String actor);
+    public String getComment();
 
     /**
-     * Attempts to start a <code>Flow</code>
+     * Mutator for comment
      * 
-     * @param moduleName
-     * @param flowName 
-     * @param actor
-     */
-    public void startFlow(String moduleName, String flowName, String actor);
-
-    /**
-     * Set the startup type for the given module and flow
-     * 
-     * @param moduleName
-     * @param flowName
-     * @param startupType 
      * @param comment
-     * @param actor
      */
-    public void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
-
-    /**
-     * Get the startup type for the given module and flow
-     * 
-     * @param moduleName
-     * @param flowName 
-     */
-    public StartupType getStartupType(String moduleName, String flowName);
+    public void setComment(String comment);
 }
