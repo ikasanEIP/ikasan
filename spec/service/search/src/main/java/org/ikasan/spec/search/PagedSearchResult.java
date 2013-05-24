@@ -56,9 +56,15 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface PagedSearchResult<T> extends List<T> {
+public interface PagedSearchResult<T>
+{
 
-
+    /**
+     * Accessor for the current page content
+     * @return List<T>
+     */
+    public List<T> getPagedResults();
+    
 	/**
 	 * Accessor for first result index
 	 * 
