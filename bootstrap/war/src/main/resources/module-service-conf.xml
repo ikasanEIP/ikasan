@@ -12,6 +12,8 @@
 
     <bean id="moduleService" class="org.ikasan.module.service.ModuleServiceImpl">
         <constructor-arg ref="moduleContainer" />
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="startupControlDao" />
     </bean>
     
     <!-- bootstraps the module based on the loader configuration -->

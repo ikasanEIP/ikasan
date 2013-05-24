@@ -19,6 +19,41 @@
         </constructor-arg>
     </bean>
 
+    <!-- system event service -->
+    <bean id="systemEventService"
+        class="org.ikasan.systemevent.service.SystemEventServiceImpl">
+        <constructor-arg>
+            <bean class="org.ikasan.systemevent.dao.HibernateSystemEventDao">
+                <constructor-arg value="true"/> <!-- batch delete -->
+                <constructor-arg value="100"/>  <!-- batch size of 100 -->
+                <property name="sessionFactory" ref="sessionFactory" />
+            </bean>    
+        </constructor-arg>
+        <constructor-arg value="144000"/><!-- 100 days event history -->
+    </bean>
+
+    <!-- the persistence session factory -->
+    <bean id="sessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="eai.xads" />
+        <property name="mappingResources">
+            <bean class="java.util.ArrayList">
+                <constructor-arg>
+                    <list>
+                        <value>org/ikasan/systemEvent/model/SystemEvent.hbm.xml</value>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties" />
+    </bean>
+    
+    <!-- startup control dao -->
+    <bean id="startupControlDao"
+        class="org.ikasan.module.startup.dao.HibernateStartupControlDao">
+        <!-- TODO -->
+    </bean>
+
     <!-- cache based configuration service -->
     <bean id="recoveryManagerFactory" class="org.ikasan.recovery.RecoveryManagerFactory">
         <constructor-arg ref="scheduler" />
