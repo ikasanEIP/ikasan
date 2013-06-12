@@ -49,50 +49,43 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-EXPERIMENT</version>
+        <version>0.9.0-RC4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-wiretap</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0-RC4-SNAPSHOT</version>
     <name>Ikasan Wiretap Implementation</name>
     <description>Ikasan EIP Flow wiretap</description>
 
     <dependencies>
-        <!-- TODO break this dependency -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.0-SNAPSHOT</version>
+            <version>0.9.0-RC4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-module</artifactId>
-            <version>0.9.0-SNAPSHOT</version>
+            <version>0.9.0-RC4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-wiretap</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-RC4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-search</artifactId>
-            <version>0.9.0-EXPERIMENT</version>
+            <version>0.9.0-RC4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         
         <!-- required for unit tests -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>1.1</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -114,8 +107,8 @@
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>
-          <artifactId>spring</artifactId>
-          <version>2.5.6</version>
+          <artifactId>spring-orm</artifactId>
+          <version>3.1.1.RELEASE</version>
           <scope>provided</scope>
         </dependency>
         <dependency>

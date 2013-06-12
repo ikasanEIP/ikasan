@@ -48,7 +48,6 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.WiretapDao;
-import org.ikasan.wiretap.model.PagedWiretapSearchResult;
 import org.ikasan.wiretap.model.WiretapEventFactory;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.module.ModuleService;
@@ -135,37 +134,6 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         }
         return wiretapDao.findWiretapEvents(pageNo, pageSize, orderBy, orderAscending, moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate,
             payloadContent);
-    }
-
-    /**
-     * Allows previously stored FlowEvents to be searched for.
-     * 
-     * @deprecated Use other findWiretapFlowEvents method
-     * 
-     * @param pageNo - page index into the greater result set
-     * @param pageSize - how many results to return in the result
-     * @param moduleNames - Set of names of modules to include in search - must
-     *            contain at least one moduleName
-     * @param moduleFlow - The name of Flow internal to the Module
-     * @param componentName - The name of the component
-     * @param eventId - The FlowEvent Id
-     * @param payloadId - The Payload Id
-     * @param fromDate - Include only events after fromDate
-     * @param untilDate - Include only events before untilDate
-     * @param payloadContent - The Payload content
-     * 
-     * @throws IllegalArgumentException - if moduleNames is null or empty
-     * @return List of <code>WiretapFlowEventHeader</code> representing the result
-     *         of the search
-     */
-    public PagedWiretapSearchResult findWiretapEvents(Set<String> moduleNames, String moduleFlow, String componentName, String eventId, String payloadId, Date fromDate,
-            Date untilDate, String payloadContent, int pageSize, int pageNo)
-    {
-        if (moduleNames == null || moduleNames.isEmpty())
-        {
-            throw new IllegalArgumentException("moduleNames must be nonEmpty");
-        }
-        return wiretapDao.findPaging(moduleNames, moduleFlow, componentName, eventId, payloadId, fromDate, untilDate, payloadContent, pageSize, (pageSize * (pageNo - 1)));
     }
 
     /**
