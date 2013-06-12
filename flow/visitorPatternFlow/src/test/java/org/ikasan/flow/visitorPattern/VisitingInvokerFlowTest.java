@@ -128,6 +128,9 @@ public class VisitingInvokerFlowTest
     /** mock managed resource */
     final ManagedResource managedResource = mockery.mock(ManagedResource.class, "mockManagedResource");
 
+    /** mock managed resource */
+    final ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockConfiguredResource");
+
     /** Mock consumer flowElement */
     final FlowElement<Consumer<EventListener<FlowEvent<?,?>>,EventFactory>> consumerFlowElement 
         = mockery.mock(FlowElement.class, "mockFlowElement");
@@ -246,6 +249,12 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                
+                exactly(2).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
@@ -363,6 +372,12 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                
+                exactly(2).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
@@ -567,6 +582,12 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement));
 
                 // load configuration
+                exactly(1).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                
+                exactly(1).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
                 exactly(1).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 will(throwException(exception));
             }
@@ -623,6 +644,12 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                
+                exactly(2).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the the flow element managed resource
@@ -795,6 +822,12 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                
+                exactly(2).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources
@@ -920,6 +953,12 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+                
+                exactly(2).of(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+                
                 exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
                 
                 // get the three flow element managed resources

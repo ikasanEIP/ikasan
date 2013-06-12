@@ -207,12 +207,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 // configure resources that are marked as configurable
                 for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
                 {
-                    // TODO - put this back in
-                        // set the default configured resource id if none previously set.
-//                        if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
-//                        {
-//                            flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
-//                        }
+                    // set the default configured resource id if none previously set.
+                    if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
+                    {
+                        flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
+                    }
                         
                     this.flowConfiguration.configureFlowElement(flowElement);
                 }
