@@ -1,6 +1,6 @@
 /* 
- * $Id: ModuleService.java 3676 2011-04-28 12:27:38Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/module/service/ModuleService.java $
+ * $Id$
+ * $URL$ 
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,70 +38,70 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.module;
+package org.ikasan.spec.exclusion;
 
-import java.util.List;
+import org.ikasan.spec.exclusion.ExcludedEvent;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * @author The Ikasan Development Team
  * 
- * @author Ikasan Development Team
- *
  */
-public interface ModuleService
+public interface ExcludedEventService<EVENT,PAGEDRESULT>
 {
-	
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public List<Module> getModules();
 
     /**
-     * Resolves a specified <code>Module</code> by name
+     * Exclude and Event from a specified flow
      * 
-     * @param moduleName the module name
-     * 
-     * @return <code>Module</code> named by moduleName
-     */
-    public Module getModule(String moduleName);
-
-    /**
-     * Attempts to stop a <code>Flow</code>
-     * 
-     * @param moduleName 
-     * @param flowName 
-     * @param actor 
-     * 
-     */
-    public void stopFlow(final String moduleName, final String flowName, final String actor);
-
-    /**
-     * Attempts to start a <code>Flow</code>
-     * 
-     * @param moduleName
-     * @param flowName 
-     * @param actor
-     */
-    public void startFlow(String moduleName, String flowName, String actor);
-
-    /**
-     * Set the startup type for the given module and flow
-     * 
+     * @param event
      * @param moduleName
      * @param flowName
-     * @param startupType 
-     * @param comment
-     * @param actor
      */
-    public void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
+    public void excludeEvent(EVENT event, String moduleName, String flowName);
 
     /**
-     * Get the startup control for the given module and flow
+     * Returns a paged listing of ExcludedEvent
      * 
-     * @param moduleName
-     * @param flowName 
+     * @param pageNo - 0 or greater, index into the list of all possible results
+     * @param pageSize - 0 or greater, no of excludedEvents to return on a page
+     * @param orderBy - field to order by
+     * @param orderAscending - in ascending order?
+     * @param flowName - restrict by flowName if supplied
+     * @param moduleName - restrict by moduleName if supplied
+     * 
+     * @return PagedSearchResult<ExcludedEvent>
      */
-    public StartupControl getStartupControl(String moduleName, String flowName);
+    public PAGEDRESULT getExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
+
+    /**
+     * Retrieve an ExcludedEvent specified by its event Id
+     * 
+     * @param eventId
+     * @return ExcludedEvent
+     */
+    public ExcludedEvent getExcludedEvent(String eventId);
+
+    /**
+     * Synchronously attempts to resubmit an ExcludedEvent specified by id
+     * 
+     * 
+     * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if
+     *             referenced module or flow are not available
+     * 
+     * @param eventId
+     * @param resubmitter
+     */
+    public void resubmit(String eventId, String resubmitter);
+
+    /**
+     * attempts to resolve an ExcludedEvent specified by id as cancelled
+     * 
+     * 
+     * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if
+     *             referenced module or flow are not available
+     * 
+     * @param eventId
+     * @param canceller
+     */
+    public void cancel(String eventId, String canceller);
+
 }

@@ -46,7 +46,7 @@ package org.ikasan.spec.wiretap;
  * @author Ikasan Development Team
  *
  */
-public interface WiretapSerialiser<S>
+public interface WiretapSerialiser<SOURCE,TARGET>
 {
-    public byte[] serialise(S source);
+    public TARGET serialise(SOURCE source);
 }

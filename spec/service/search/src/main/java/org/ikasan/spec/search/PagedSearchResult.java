@@ -65,12 +65,19 @@ public interface PagedSearchResult<T>
      */
     public List<T> getPagedResults();
     
-	/**
-	 * Accessor for first result index
-	 * 
-	 * @return index of the first result shown here into the larger super set of results
-	 */
-	public int getFirstResultIndex();
+    /**
+     * Accessor for first result index
+     * 
+     * @return index of the first result of the paged results
+     */
+    public int getFirstResultIndex();
+
+    /**
+     * Accessor for last result index
+     * 
+     * @return index of the last result of the paged results
+     */
+    public long getLastResultIndex();
 
 	/** 
 	 * @return true if this represents the last page in the super result set
@@ -78,7 +85,7 @@ public interface PagedSearchResult<T>
 	public boolean isLastPage();
 
 	/**
-	 * Accessor for resultSize
+	 * Accessor for complete resultSize
 	 * 
 	 * @return size of the larger super result set
 	 */

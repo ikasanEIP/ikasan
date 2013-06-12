@@ -91,5 +91,6 @@
        <module>management</module>
        <module>wiretap</module>
        <module>search</module>
+       <module>error</module>
     </modules>
 </project>
