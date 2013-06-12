@@ -1,8 +1,8 @@
-/* 
- * $Id: ModuleService.java 3676 2011-04-28 12:27:38Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/module/service/ModuleService.java $
- *
- * ====================================================================
+/*
+ * $Id$
+ * $URL$
+ * 
+ * =============================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,72 +36,54 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ * =============================================================================
  */
-package org.ikasan.spec.module;
+package org.ikasan.spec.management;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * Contract that represents a PointToPointFlowProfile in Ikasan.
+ * 
+ * A PointToPointFlowProfile can be see as owning a list of PointToPointFlows.
  * 
  * @author Ikasan Development Team
- *
  */
-public interface ModuleService
+public interface PointToPointFlowProfile
 {
-	
     /**
-     * Returns all available <code>Module</code>s
+     * Get the unique id
      * 
-     * @return List of all accessible <code>Module</code>s
+     * @return id
      */
-    public List<Module> getModules();
+    public long getId();
+        
+    /**
+     * Get the set of PointToPointFlows
+     * 
+     * @return set of PointToPointFlows for this Profile
+     */
+    public Set<PointToPointFlow> getPointToPointFlows();
 
     /**
-     * Resolves a specified <code>Module</code> by name
+     * Set the PointToPointFlows for this profile
      * 
-     * @param moduleName the module name
-     * 
-     * @return <code>Module</code> named by moduleName
+     * @param pointToPointFlows - PointToPointFlows for this profile
      */
-    public Module getModule(String moduleName);
+    public void setPointToPointFlows(Set<PointToPointFlow> pointToPointFlows);
 
     /**
-     * Attempts to stop a <code>Flow</code>
+     * Get the name for this PointToPointFlow
      * 
-     * @param moduleName 
-     * @param flowName 
-     * @param actor 
-     * 
+     * @return The name for this PointToPointFlow
      */
-    public void stopFlow(final String moduleName, final String flowName, final String actor);
+    public String getName();
 
     /**
-     * Attempts to start a <code>Flow</code>
+     * Set the name for this PointToPointFlow
      * 
-     * @param moduleName
-     * @param flowName 
-     * @param actor
+     * @param name - The name for this PointToPointFlow
      */
-    public void startFlow(String moduleName, String flowName, String actor);
-
-    /**
-     * Set the startup type for the given module and flow
-     * 
-     * @param moduleName
-     * @param flowName
-     * @param startupType 
-     * @param comment
-     * @param actor
-     */
-    public void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
-
-    /**
-     * Get the startup control for the given module and flow
-     * 
-     * @param moduleName
-     * @param flowName 
-     */
-    public StartupControl getStartupControl(String moduleName, String flowName);
+    public void setName(String name);
 }

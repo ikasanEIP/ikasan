@@ -45,7 +45,7 @@ package org.ikasan.spec.wiretap;
  * 
  * @author Ikasan Development Team
  */
-public interface WiretapEvent
+public interface WiretapEvent<TAPPED_EVENT>
 {
     /**
      * Get immutable flow event identifier.
@@ -53,10 +53,22 @@ public interface WiretapEvent
      */
     public long getIdentifier();
 
+    /**
+     * Get the module name from where this event is tapped
+     * @return String
+     */
     public String getModuleName();
 
+    /**
+     * Get the flow name from where this event is tapped
+     * @return String 
+     */
     public String getFlowName();
 
+    /**
+     * Get the component name from where this event is tapped
+     * @return
+     */
     public String getComponentName();
 
     /**
@@ -69,7 +81,11 @@ public interface WiretapEvent
      * Get the event within this wiretap.
      * @return EVENT event
      */
-    public byte[] getEvent();
+    public TAPPED_EVENT getEvent();
 
+    /**
+     * Get the expiry time of this event
+     * @return long
+     */
     public long getExpiry();
 }

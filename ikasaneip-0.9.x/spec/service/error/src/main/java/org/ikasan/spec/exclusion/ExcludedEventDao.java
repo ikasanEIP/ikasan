@@ -1,6 +1,6 @@
 /* 
- * $Id: ModuleService.java 3676 2011-04-28 12:27:38Z mitcje $
- * $URL: https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/framework/src/main/java/org/ikasan/framework/module/service/ModuleService.java $
+ * $Id$
+ * $URL$ 
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,70 +38,56 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.module;
-
-import java.util.List;
+package org.ikasan.spec.exclusion;
 
 /**
- * Service Tier interface for providing user access to modules 
+ * @author The Ikasan Development Team
  * 
- * @author Ikasan Development Team
- *
  */
-public interface ModuleService
+public interface ExcludedEventDao<PAGEDRESULT>
 {
-	
-    /**
-     * Returns all available <code>Module</code>s
-     * 
-     * @return List of all accessible <code>Module</code>s
-     */
-    public List<Module> getModules();
 
     /**
-     * Resolves a specified <code>Module</code> by name
+     * Saves an <code>ExcludedEvent</code> to persistent storage
      * 
-     * @param moduleName the module name
-     * 
-     * @return <code>Module</code> named by moduleName
+     * @param excludedEvent
      */
-    public Module getModule(String moduleName);
+    public void save(ExcludedEvent excludedEvent);
 
     /**
-     * Attempts to stop a <code>Flow</code>
+     * Loads an <code>ExcludedEvent</code> to persistent storage
      * 
-     * @param moduleName 
-     * @param flowName 
-     * @param actor 
-     * 
+     * @param excludedEventId
      */
-    public void stopFlow(final String moduleName, final String flowName, final String actor);
+    public ExcludedEvent load(Long excludedEventId);
 
     /**
-     * Attempts to start a <code>Flow</code>
+     * Perform a paged search for <code>ExcludedEvent</code>s
      * 
-     * @param moduleName
-     * @param flowName 
-     * @param actor
-     */
-    public void startFlow(String moduleName, String flowName, String actor);
-
-    /**
-     * Set the startup type for the given module and flow
-     * 
-     * @param moduleName
+     * @param pageNo
+     * @param pageSize
+     * @param orderBy
+     * @param orderAscending
      * @param flowName
-     * @param startupType 
-     * @param comment
-     * @param actor
+     * @param moduleName
+     * 
+     * @return PagedSearchResult
      */
-    public void setStartupType(String moduleName, String flowName, StartupType startupType, String comment, String actor);
+    public PAGEDRESULT findExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
 
     /**
-     * Get the startup control for the given module and flow
+     * Retrieves an ExcludedEvent by event Id
      * 
-     * @param moduleName
-     * @param flowName 
+     * @param eventId
+     * @return ExcludedEvent
      */
-    public StartupControl getStartupControl(String moduleName, String flowName);
+    public ExcludedEvent getExcludedEvent(String eventId, boolean mutable);
+
+    /**
+     * Deletes excluded event
+     * 
+     * @param excludedEvent
+     */
+    public void delete(ExcludedEvent excludedEvent);
+
 }

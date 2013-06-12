@@ -48,6 +48,9 @@ package org.ikasan.spec.flow;
  */
 public interface FlowEvent<IDENTIFIER,PAYLOAD>
 {
+    /** Each flow event can have an identifier for life to allow tracking throughout the platform */
+    public static final String LIFE_ID = "IkasanFlowEventLifeId";
+    
 	/**
 	 * Get immutable flow event identifier.
 	 * @return IDENTIFIER - event identifier
