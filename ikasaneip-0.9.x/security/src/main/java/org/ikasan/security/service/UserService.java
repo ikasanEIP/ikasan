@@ -45,8 +45,8 @@ import java.util.List;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.model.User;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.userdetails.UserDetailsManager;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 /**
  * User and Authority service interface

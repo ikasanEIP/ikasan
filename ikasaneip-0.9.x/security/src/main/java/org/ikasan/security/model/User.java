@@ -40,11 +40,11 @@
  */
 package org.ikasan.security.model;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Implementation of <code>UserDetails</code> suitable for ORM
@@ -126,9 +126,9 @@ public class User implements UserDetails
      * 
      * @see org.springframework.security.userdetails.UserDetails#getAuthorities()
      */
-    public GrantedAuthority[] getAuthorities()
+    public Collection<? extends org.springframework.security.core.GrantedAuthority> getAuthorities()
     {
-        return grantedAuthorities.toArray(new GrantedAuthority[0]);
+        return grantedAuthorities;
     }
 
     /*
