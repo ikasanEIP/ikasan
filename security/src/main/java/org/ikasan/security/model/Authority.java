@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.model;
 
-import org.springframework.security.GrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Implementation of <code>GrantedAuthority</code> adding a description field
