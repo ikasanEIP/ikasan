@@ -47,68 +47,86 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.dao.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEvent;
 
-
-
 /**
  * SystemFlowEvent service implementation
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
 public class SystemEventServiceImpl implements SystemEventService
 {
-	private Logger logger = Logger.getLogger(SystemEventServiceImpl.class);
-	
-	/**
-	 * Underlying data access object
-	 */
-	private SystemEventDao systemEventDao;
-	
-	/**
-	 * no of minutes for this event to be kept until eligible for housekeep
-	 * If null, then no expiry
-	 */
-	private Long eventExpiryMinutes;
-	
-	/**
-	 * Constructor
-	 * @param systemFlowEventDao
-	 * @param eventExpiryMinutes - no of minutes for this event to be kept until eligible for housekeep
-	 */
-	public SystemEventServiceImpl(SystemEventDao systemEventDao, Long eventExpiryMinutes) {
-		this.systemEventDao = systemEventDao;
-		this.eventExpiryMinutes = eventExpiryMinutes;
-	}
+    private Logger logger = Logger.getLogger(SystemEventServiceImpl.class);
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#logSystemFlowEvent(java.lang.String, java.lang.String, java.util.Date, java.lang.String)
-	 */
-	public void logSystemEvent(String subject, String action, String actor){
-		Date now = new Date();
-		Date expiry = null;
-		if (eventExpiryMinutes!=null){
-			expiry = new Date(now.getTime()+(60000*eventExpiryMinutes));	
-		}
-		systemEventDao.save(new SystemEvent(subject, action, now, actor,expiry));
-	}
+    /**
+     * Underlying data access object
+     */
+    private SystemEventDao systemEventDao;
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#listSystemFlowEvents(java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
-	 */
-	public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,String subject, String action, Date timestampFrom, Date timestampTo, String actor) {
+    /**
+     * no of minutes for this event to be kept until eligible for housekeep If
+     * null, then no expiry
+     */
+    private Long eventExpiryMinutes;
 
-		return systemEventDao.find(pageNo, pageSize, orderBy, orderAscending, subject,action, timestampFrom, timestampTo, actor);
+    /**
+     * Constructor
+     * 
+     * @param systemFlowEventDao
+     * @param eventExpiryMinutes - no of minutes for this event to be kept until
+     *            eligible for housekeep
+     */
+    public SystemEventServiceImpl(SystemEventDao systemEventDao, Long eventExpiryMinutes)
+    {
+        this.systemEventDao = systemEventDao;
+        this.eventExpiryMinutes = eventExpiryMinutes;
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#
+     * logSystemFlowEvent(java.lang.String, java.lang.String, java.util.Date,
+     * java.lang.String)
+     */
+    public void logSystemEvent(String subject, String action, String actor)
+    {
+        Date now = new Date();
+        Date expiry = null;
+        if (eventExpiryMinutes != null)
+        {
+            expiry = new Date(now.getTime() + (60000 * eventExpiryMinutes));
+        }
+        systemEventDao.save(new SystemEvent(subject, action, now, actor, expiry));
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#housekeep()
-	 */
-	public void housekeep() {
-		long before = System.currentTimeMillis();
-		systemEventDao.deleteExpired();
-		long after = System.currentTimeMillis();
-		logger.info("housekeep completed in ["+(after-before)+"]ms");
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.systemevent.service.SystemFlowEventService#
+     * listSystemFlowEvents(java.lang.String, java.lang.String, java.util.Date,
+     * java.util.Date, java.lang.String)
+     */
+    public PagedSearchResult<SystemEvent> listSystemEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String subject, String action, Date timestampFrom, Date timestampTo,
+            String actor)
+    {
+
+        return systemEventDao.find(pageNo, pageSize, orderBy, orderAscending, subject, action, timestampFrom, timestampTo, actor);
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.systemevent.service.SystemFlowEventService#housekeep
+     * ()
+     */
+    public void housekeep()
+    {
+        long before = System.currentTimeMillis();
+        systemEventDao.deleteExpired();
+        long after = System.currentTimeMillis();
+        logger.info("housekeep completed in [" + (after - before) + "]ms");
+
+    }
 }

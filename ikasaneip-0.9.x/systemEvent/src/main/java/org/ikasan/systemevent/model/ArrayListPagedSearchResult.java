@@ -108,6 +108,14 @@ public class ArrayListPagedSearchResult<T> implements PagedSearchResult<T>, Seri
         return firstResultIndex;
     }
 
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.search.PagedSearchResult#getLastResultIndex()
+     */
+    public long getLastResultIndex()
+    {
+        return firstResultIndex + this.pagedResults.size();
+    }
+
     /**
      * Accessor for resultSize
      * 
