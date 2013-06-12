@@ -64,70 +64,102 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  * Note that can be configured to housekeep either simply, or in batches.
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public class HibernateSystemEventDao extends HibernateDaoSupport implements SystemEventDao{
+public class HibernateSystemEventDao extends HibernateDaoSupport implements SystemEventDao
+{
 
     /** Query used for housekeeping expired system events */
-    private static final String HOUSEKEEP_QUERY = "delete SystemFlowEvent w where w.expiry <= ?";
-    
+    private static final String HOUSEKEEP_QUERY = "delete SystemEvent w where w.expiry <= ?";
+
     /** Batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete SystemFlowEvent s where s.id in (:event_ids)";
-    
+    private static final String BATCHED_HOUSEKEEP_QUERY = "delete SystemEvent s where s.id in (:event_ids)";
+
     /** Use batch housekeeping mode? */
     private boolean batchHousekeepDelete = false;
-    
-    /** Batch size used when in batching housekeep */    
-	private Integer housekeepingBatchSize = null;
-    
+
+    /** Batch size used when in batching housekeep */
+    private Integer housekeepingBatchSize = null;
+
     /** logger instance */
     private static final Logger logger = Logger.getLogger(HibernateSystemEventDao.class);
-    
+
     /**
      * Constructor
      * 
      * @param batchHousekeepDelete - pass true if you want to use batch deleting
-     * @param housekeepingBatchSize - batch size, only respected if set to use batching
+     * @param housekeepingBatchSize - batch size, only respected if set to use
+     *            batching
      */
-    public HibernateSystemEventDao(boolean batchHousekeepDelete,
-			Integer housekeepingBatchSize) {
-		this();
-		this.batchHousekeepDelete = batchHousekeepDelete;
-		this.housekeepingBatchSize = housekeepingBatchSize;
-	}
+    public HibernateSystemEventDao(boolean batchHousekeepDelete, Integer housekeepingBatchSize)
+    {
+        this();
+        this.batchHousekeepDelete = batchHousekeepDelete;
+        this.housekeepingBatchSize = housekeepingBatchSize;
+    }
 
-	/**
-	 * Constructor
-	 */
-	public HibernateSystemEventDao() {
-		super();
-	}
+    /**
+     * Constructor
+     */
+    public HibernateSystemEventDao()
+    {
+        super();
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.systemevent.dao.SystemFlowEventDao#save(org.ikasan
+     * .framework.systemevent.model.SystemFlowEvent)
+     */
+    public void save(SystemEvent systemEvent)
+    {
+        getHibernateTemplate().save(systemEvent);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#save(org.ikasan.framework.systemevent.model.SystemFlowEvent)
-	 */
-	public void save(SystemEvent systemEvent){
-		getHibernateTemplate().save(systemEvent);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#find(int, int, java.lang.String, boolean, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,final String subject, final String action,
-			final Date timestampFrom, final Date timestampTo, final String actor){
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#find(int,
+     * int, java.lang.String, boolean, java.lang.String, java.lang.String,
+     * java.util.Date, java.util.Date, java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    public PagedSearchResult<SystemEvent> find(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending, final String subject, final String action,
+            final Date timestampFrom, final Date timestampTo, final String actor)
+    {
 
-		return (PagedSearchResult<SystemEvent>) getHibernateTemplate().execute(new HibernateCallback()
+        return (PagedSearchResult<SystemEvent>) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(SystemEvent.class, "event");
-                
-                criteria.setMaxResults(pageSize);
+                Criteria resultCriteria = getCriteria(session);
+                resultCriteria.setMaxResults(pageSize);
                 int firstResult = (pageNo * pageSize);
-                criteria.setFirstResult(firstResult);
-                criteria.addOrder(Order.desc("id"));
+                resultCriteria.setFirstResult(firstResult);
+                resultCriteria.addOrder(Order.desc("id"));
+                List<SystemEvent> systemEventResults = resultCriteria.list();
+
+                Criteria metaDataCriteria = getCriteria(session);
+                metaDataCriteria.setProjection(Projections.rowCount());
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = metaDataCriteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+                return new ArrayListPagedSearchResult<SystemEvent>(systemEventResults, firstResult, rowCount);
+            }
+            
+            /**
+             * Create a consistent criteria instance for both result and metadata
+             * @param session
+             * @return
+             */
+            private Criteria getCriteria(Session session)
+            {
+                Criteria criteria = session.createCriteria(SystemEvent.class, "event");
                 if (restrictionExists(subject))
                 {
                     criteria.add(Restrictions.eq("subject", subject));
@@ -148,23 +180,13 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
                 {
                     criteria.add(Restrictions.lt("timestamp", timestampTo));
                 }
-                List<SystemEvent> systemEventResults = criteria.list();
+                return criteria;
                 
-                criteria.setProjection(Projections.rowCount());
-                Long rowCount = new Long(0);
-                List<Long> rowCountList = criteria.list();
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-                return new ArrayListPagedSearchResult<SystemEvent>(systemEventResults, firstResult, rowCount);
             }
         });
-		
-		
-	
-	}
-	
+
+    }
+
     /**
      * Check to see if the restriction exists
      * 
@@ -180,102 +202,112 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             return true;
         }
         return false;
-    }	
+    }
 
-	/* (non-Javadoc)
-	 * @see org.ikasan.framework.systemevent.dao.SystemFlowEventDao#deleteExpired()
-	 */
-	public void deleteExpired() {
-		if (!batchHousekeepDelete){
-			getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
-		} else {
-			batchHousekeepDelete();
-		}
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.systemevent.dao.SystemFlowEventDao#deleteExpired()
+     */
+    public void deleteExpired()
+    {
+        if (!batchHousekeepDelete)
+        {
+            getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
+        }
+        else
+        {
+            batchHousekeepDelete();
+        }
 
-	/**
-	 * Housekeep using batching.
-	 * 
-	 *  Loops, checking for housekeepable items. If they exist, it identifies a batch
-	 *  and attempts to delete that batch
-	 */
-	private void batchHousekeepDelete() {
-		logger.info("called");
-		while(housekeepablesExist()){
-			final List<Long> housekeepableBatch = getHousekeepableBatch();
-			
-			getHibernateTemplate().execute(new HibernateCallback()
-	        {
-	            public Object doInHibernate(Session session) throws HibernateException
-	            {
-	            	
-	                Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
-	                query.setParameterList("event_ids", housekeepableBatch);
-	            	query.executeUpdate();
+    }
 
-	                
-	                return null;
-	            }
-	        });
-		}
-		
-	}
+    /**
+     * Housekeep using batching.
+     * 
+     * Loops, checking for housekeepable items. If they exist, it identifies a
+     * batch and attempts to delete that batch
+     */
+    private void batchHousekeepDelete()
+    {
+        logger.info("called");
+        while (housekeepablesExist())
+        {
+            final List<Long> housekeepableBatch = getHousekeepableBatch();
 
-	/**
-	 * Identifies a batch (List of Ids) of housekeepable items
-	 * 
-	 * @return List of ids for SystemFlowEvents
-	 */
-	@SuppressWarnings("unchecked")
-	private List<Long> getHousekeepableBatch() {
-		return (List<Long>) getHibernateTemplate().execute(new HibernateCallback()
+            getHibernateTemplate().execute(new HibernateCallback()
+            {
+                public Object doInHibernate(Session session) throws HibernateException
+                {
+
+                    Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
+                    query.setParameterList("event_ids", housekeepableBatch);
+                    query.executeUpdate();
+
+                    return null;
+                }
+            });
+        }
+
+    }
+
+    /**
+     * Identifies a batch (List of Ids) of housekeepable items
+     * 
+     * @return List of ids for SystemFlowEvents
+     */
+    @SuppressWarnings("unchecked")
+    private List<Long> getHousekeepableBatch()
+    {
+        return (List<Long>) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-            	List<Long> ids = new ArrayList<Long>();
-            	
-	            Criteria criteria = session.createCriteria(SystemEvent.class);
-	            criteria.add(Restrictions.lt("expiry", new Date()));
-	            criteria.setMaxResults(housekeepingBatchSize);
-	            
-	            for (Object systemEventObj : criteria.list()){
-	            	SystemEvent systemFlowEvent = (SystemEvent)systemEventObj;
-	            	ids.add(systemFlowEvent.getId());
-	            }
-	           
-	            return ids;
-            
+                List<Long> ids = new ArrayList<Long>();
+
+                Criteria criteria = session.createCriteria(SystemEvent.class);
+                criteria.add(Restrictions.lt("expiry", new Date()));
+                criteria.setMaxResults(housekeepingBatchSize);
+
+                for (Object systemEventObj : criteria.list())
+                {
+                    SystemEvent systemFlowEvent = (SystemEvent) systemEventObj;
+                    ids.add(systemFlowEvent.getId());
+                }
+
+                return ids;
+
             }
         });
-	}
+    }
 
-	/**
-	 * Checks if there are housekeepable items in existance, ie expired SystemFlowEvents
-	 * 
-	 * @return true if there is at least 1 expired SystemFlowEvent 
-	 */
-	private boolean housekeepablesExist() {
-		return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
+    /**
+     * Checks if there are housekeepable items in existance, ie expired
+     * SystemFlowEvents
+     * 
+     * @return true if there is at least 1 expired SystemFlowEvent
+     */
+    private boolean housekeepablesExist()
+    {
+        return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-            Criteria criteria = session.createCriteria(SystemEvent.class);
-            criteria.add(Restrictions.lt("expiry", new Date()));
-            criteria.setProjection(Projections.rowCount());
-            Long rowCount = new Long(0);
-            List<Long> rowCountList = criteria.list();
-            if (!rowCountList.isEmpty())
-            {
-                rowCount = rowCountList.get(0);
-            }
-            logger.info(rowCount+", housekeepables exist");
-            return new Boolean(rowCount>0);
-            
+                Criteria criteria = session.createCriteria(SystemEvent.class);
+                criteria.add(Restrictions.lt("expiry", new Date()));
+                criteria.setProjection(Projections.rowCount());
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = criteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+                logger.info(rowCount + ", housekeepables exist");
+                return new Boolean(rowCount > 0);
+
             }
         });
-            
-            
 
-	}
+    }
 }
