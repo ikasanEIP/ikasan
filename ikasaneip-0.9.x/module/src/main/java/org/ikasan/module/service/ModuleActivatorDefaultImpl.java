@@ -40,9 +40,13 @@
  */
 package org.ikasan.module.service;
 
+import org.apache.log4j.Logger;
+import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 
 /**
  * Simple implementation of the default activation of a module.
@@ -51,7 +55,25 @@ import org.ikasan.spec.module.ModuleActivator;
  */
 public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
 {
+    /** logger instance */
+    private final static Logger logger = Logger.getLogger(ModuleActivatorDefaultImpl.class);
 
+    /** startup flow control DAO */
+    private StartupControlDao startupControlDao;
+
+    /**
+     * Constructor
+     * @param startupControlDao
+     */
+    public ModuleActivatorDefaultImpl(StartupControlDao startupControlDao)
+    {
+        this.startupControlDao = startupControlDao;
+        if(startupControlDao == null)
+        {
+            throw new IllegalArgumentException("startupControlDao cannot be 'null'");
+        }
+    }
+    
     /* (non-Javadoc)
      * @see org.ikasan.module.service.ModuleActivation#activate(org.ikasan.spec.module.Module)
      */
@@ -59,7 +81,15 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     {
         for(Flow flow:module.getFlows())
         {
-            flow.start();
+            StartupControl flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
+            if(StartupType.AUTOMATIC.equals(flowStartupControl.getStartupType()))
+            {
+                flow.start();
+            }
+            else 
+            {
+                logger.info("Module [" + module.getName() + "] Flow ["+ flow.getName() + "] startup is set to [" + flowStartupControl.getStartupType().name() + "]. Not automatically started!");
+            }
         }
     }
 
