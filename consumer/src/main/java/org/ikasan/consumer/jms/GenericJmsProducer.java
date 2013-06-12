@@ -49,19 +49,21 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.log4j.Logger;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.ikasan.spec.configuration.ConfiguredResource;
 
 /**
  * Implementation of a consumer based on the JMS specification.
  *
  * @author Ikasan Development Team
  */
-public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
-    //TODO , ConfiguredResource<GenericJmsProducerConfiguration>
+public class GenericJmsProducer<T> implements Producer<T>, ManagedResource,
+    ConfiguredResource<GenericJmsProducerConfiguration>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsProducer.class);
@@ -161,6 +163,13 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
                 }
 
                 Message jmsMessage = this.messageConverter.toMessage(message, session);
+                
+                // carry the event identifier if available
+                if(message instanceof FlowEvent)
+                {
+                    setLifeIdentifier( (FlowEvent)message, jmsMessage);
+                }
+
                 messageProducer.send(jmsMessage);
             }
         }
@@ -182,6 +191,20 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource
                     logger.error("Failed to close session", e);
                 }
             }
+        }
+    }
+
+    /**
+     * Default implementation for the population of the life identifier on JMS serialisation
+     * @param message
+     * @return
+     */
+    public void setLifeIdentifier(FlowEvent<String,?> message, Message jmsMessage) throws JMSException
+    {
+        Object lifeId = message.getIdentifier();
+        if(lifeId instanceof String)
+        {
+            jmsMessage.setStringProperty(FlowEvent.LIFE_ID, message.getIdentifier() );
         }
     }
     

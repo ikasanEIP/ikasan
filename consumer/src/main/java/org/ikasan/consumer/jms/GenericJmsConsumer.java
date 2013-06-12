@@ -40,6 +40,8 @@
  */
 package org.ikasan.consumer.jms;
 
+import java.util.Enumeration;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -65,8 +67,8 @@ import org.ikasan.spec.flow.FlowEvent;
  * @author Ikasan Development Team
  */
 public class GenericJmsConsumer 
-    implements Consumer<EventListener<?>,EventFactory>, EndpointListener<Message>
-    //TODO , ConfiguredResource<GenericJmsConsumerConfiguration>
+    implements Consumer<EventListener<?>,EventFactory>, EndpointListener<Message>,
+    ConfiguredResource<GenericJmsConsumerConfiguration>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
@@ -299,17 +301,36 @@ public class GenericJmsConsumer
             throw new RuntimeException("No active eventListeners registered!");
         }
         
-        String uniqueId = null;
         try
         {
-            uniqueId = message.getJMSMessageID();
-            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(uniqueId, message);
+            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( getLifeIdentifier(message), message);
             this.eventListener.invoke(flowEvent);
         }
         catch (JMSException e)
         {
             this.eventListener.invoke(e);
         }
+    }
+
+    /**
+     * Default implementation for the population of the life identifier on JMS serialisation
+     * @param message
+     * @return
+     */
+    public Object getLifeIdentifier(Message message) throws JMSException
+    {
+        Enumeration<String> enumeration = message.getPropertyNames();
+        while (enumeration.hasMoreElements()) 
+        {
+            Object property = enumeration.nextElement();
+            if(FlowEvent.LIFE_ID.equals(property))
+            {
+                return property;
+            }
+        }
+        
+        // use JMS id if none other available
+        return message.getJMSMessageID();
     }
 
     /**
