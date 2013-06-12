@@ -201,15 +201,15 @@ public class ModuleServiceImpl implements ModuleService
     /* (non-Javadoc)
      * @see org.ikasan.spec.module.ModuleService#getStartupType(java.lang.String, java.lang.String)
      */
-    public StartupType getStartupType(String moduleName, String flowName)
+    public StartupControl getStartupControl(String moduleName, String flowName)
     {
         StartupControl startupControl = this.startupControlDao.getStartupControl(moduleName, flowName);
         if(startupControl != null)
         {
-            return startupControl.getStartupType();
+            return startupControl;
         }
         
-        return StartupType.MANUAL;
+        return new StartupControlImpl(moduleName, flowName);
     }
 
     /* (non-Javadoc)

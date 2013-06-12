@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ikasan.security.model.Authority;
+import org.ikasan.security.service.UserService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
@@ -79,27 +81,20 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     private String loaderConfiguration;
 
     /**
-     * Data Access object for retrieving any existing stop/start information
-     */
-//    private StartupControlDao startupControlDao;
-
-    /**
      * platform level application context to be used to parent each of the module's contexts
      */
     private ApplicationContext platformContext;
 
     /** UserService provides access to users and authorities */
-//    private UserService userService;
+    private UserService userService;
 
     /**
      * Constructor
-     * 
-     * @param moduleContainer - The pre built module container
-     * @param userService - The user service
-     * @param initiatorStartupControlDao - DAO for supplying InitiatorStartupControl instances
+     * @param moduleContainer
+     * @param moduleActivator
+     * @param userService
      */
-//    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, UserService userService, StartupControlDao startupControlDao)
-    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator)
+    public ModuleInitialisationServiceImpl(ModuleContainer moduleContainer, ModuleActivator moduleActivator, UserService userService)
     {
         super();
         this.moduleContainer = moduleContainer;
@@ -112,6 +107,12 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         if(moduleActivator == null)
         {
             throw new IllegalArgumentException("moduleActivator cannot be 'null'");
+        }
+
+        this.userService = userService;
+        if(userService == null)
+        {
+            throw new IllegalArgumentException("userService cannot be 'null'");
         }
     }
 
@@ -174,6 +175,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
             for (Module<Flow> module : moduleBeans.values())
             {
+                this.initialiseModuleSecurity(module);
                 this.moduleContainer.add(module);
                 this.moduleActivator.activate(module);
             }
@@ -202,58 +204,28 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
     }
 
-//    /**
-//     * Load the module
-//     * 
-//     * @param moduleLoaderFile - The module loader file
-//     */
-//    @SuppressWarnings("unchecked")
-//    private void loadModule(String moduleLoaderFile)
-//    {
-//        logger.info("loading module from file["+moduleLoaderFile+"]");
-//        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[] { moduleLoaderFile },
-//            this.platformContext);
-//        Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
-//        for (Module<Flow> module : moduleBeans.values())
-//        {
-////            this.initialiseModuleSecurity(module);
-//            
-//            //start the module's flow if configured to
-//            for (Flow flow: module.getFlows())
-//            {
-////                InitiatorStartupControl initiatorStartupControl = this.initiatorStartupControlDao.getInitiatorStartupControl(module.getName(), flowEntry.getKey());
-////                if (StartupType.AUTOMATIC.equals(startupControl.getStartupType()))
-////                {
-////                    flowEntry.getValue().start();
-////                }
-//                flow.start();
-//            }
-//            
-//        }
-//    }
-
-//    /**
-//     * Creates the authorities for the module if they do not already exist
-//     * 
-//     * @param module - The module to secure
-//     */
-//    private void initialiseModuleSecurity(Module module)
-//    {
-//        List<Authority> existingAuthorities = this.userService.getAuthorities();
-//        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
-//                + module.getName() + " module. This is typically assigned to business users");
-//        if (!existingAuthorities.contains(moduleUserAuthority))
-//        {
-//            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
-//            this.userService.createAuthority(moduleUserAuthority);
-//        }
-//        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
-//            "Allows administrator access to the " + module.getName()
-//                    + " module. This is typically assigned to business administrators");
-//        if (!existingAuthorities.contains(moduleAdminAuthority))
-//        {
-//            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
-//            this.userService.createAuthority(moduleAdminAuthority);
-//        }
-//    }
+    /**
+     * Creates the authorities for the module if they do not already exist
+     * 
+     * @param module - The module to secure
+     */
+    private void initialiseModuleSecurity(Module module)
+    {
+        List<Authority> existingAuthorities = this.userService.getAuthorities();
+        Authority moduleUserAuthority = new Authority("USER_" + module.getName(), "Allows user access to the "
+                + module.getName() + " module. This is typically assigned to business users");
+        if (!existingAuthorities.contains(moduleUserAuthority))
+        {
+            logger.info("module user authority does not exist for module [" + module.getName() + "], creating...");
+            this.userService.createAuthority(moduleUserAuthority);
+        }
+        Authority moduleAdminAuthority = new Authority("ADMIN_" + module.getName(),
+            "Allows administrator access to the " + module.getName()
+                    + " module. This is typically assigned to business administrators");
+        if (!existingAuthorities.contains(moduleAdminAuthority))
+        {
+            logger.info("module admin authority does not exist for module [" + module.getName() + "], creating...");
+            this.userService.createAuthority(moduleAdminAuthority);
+        }
+    }
 }
