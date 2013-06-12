@@ -115,9 +115,9 @@ public class ConfiguredResourceConfigurationService
         Configuration<List<ConfigurationParameter>> configuration = this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
         if(configuration == null)
         {
-            throw new ConfigurationException("Failed to configure configuredResource [" 
-                    + configuredResource.getConfiguredResourceId() 
-                    + "]. Configuration not found!");
+            logger.warn("No persisted configuration for configuredResource [" 
+                    + configuredResource.getConfiguredResourceId() + "]. Default programmatic configuration will be used.");
+            return;
         }
 
         Object configurationObject = configuredResource.getConfiguration();
@@ -170,8 +170,6 @@ public class ConfiguredResourceConfigurationService
         
         Configuration<List<ConfigurationParameter>> configuration = 
             new DefaultConfiguration(configuredResource.getConfiguredResourceId(), new ArrayList<ConfigurationParameter>());
-//        List<ConfigurationParameter> configurationParameters = new ArrayList<ConfigurationParameter>();
-//        configuration.setParameters(configurationParameters);
 
         try
         {
