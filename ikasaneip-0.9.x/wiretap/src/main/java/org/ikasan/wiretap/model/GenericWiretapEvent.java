@@ -48,7 +48,7 @@ import org.ikasan.spec.wiretap.WiretapEvent;
  * @author Ikasan Development Team
  *
  */
-public class GenericWiretapEvent implements WiretapEvent
+public class GenericWiretapEvent implements WiretapEvent<String>
 {
     /** immutable identifier */
     private long identifier;
@@ -66,16 +66,22 @@ public class GenericWiretapEvent implements WiretapEvent
     private String componentName;
 
     /** tapped event */
-    private byte[] event;
+    private String event;
 
     /** expiry time in millis */
     private long expiry;
+
+    /** Next GenericWiretapEvent (if any) for this event */
+    private transient Long nextByEventId;
+
+    /** Previous GenericWiretapEvent (if any) for this event */
+    private transient Long previousByEventId;
 
     /**
      * Silly requirement from the ORM-that-shall-not-be-named!!
      */
     @SuppressWarnings("unused")
-    private GenericWiretapEvent()
+    protected GenericWiretapEvent()
     {
         // No implementation
     }
@@ -85,7 +91,7 @@ public class GenericWiretapEvent implements WiretapEvent
      * @param identifier2
      */
     public GenericWiretapEvent(final String moduleName, final String flowName, final String componentName,
-            final byte[] event, final Long expiry)
+            final String event, final Long expiry)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
@@ -120,7 +126,7 @@ public class GenericWiretapEvent implements WiretapEvent
         return this.componentName;
     }
 
-    public byte[] getEvent()
+    public String getEvent()
     {
         return this.event;
     }
@@ -133,7 +139,7 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param identifier the identifier to set
      */
-    private void setIdentifier(long identifier)
+    protected void setIdentifier(long identifier)
     {
         this.identifier = identifier;
     }
@@ -141,7 +147,7 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param timestamp the timestamp to set
      */
-    private void setTimestamp(long timestamp)
+    protected void setTimestamp(long timestamp)
     {
         this.timestamp = timestamp;
     }
@@ -149,7 +155,7 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param moduleName the moduleName to set
      */
-    private void setModuleName(String moduleName)
+    protected void setModuleName(String moduleName)
     {
         this.moduleName = moduleName;
     }
@@ -157,7 +163,7 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param flowName the flowName to set
      */
-    private void setFlowName(String flowName)
+    protected void setFlowName(String flowName)
     {
         this.flowName = flowName;
     }
@@ -165,7 +171,7 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param componentName the componentName to set
      */
-    private void setComponentName(String componentName)
+    protected void setComponentName(String componentName)
     {
         this.componentName = componentName;
     }
@@ -173,7 +179,7 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param event the event to set
      */
-    private void setEvent(byte[] event)
+    protected void setEvent(String event)
     {
         this.event = event;
     }
@@ -181,10 +187,56 @@ public class GenericWiretapEvent implements WiretapEvent
     /**
      * @param expiry the expiry to set
      */
-    private void setExpiry(long expiry)
+    protected void setExpiry(long expiry)
     {
         this.expiry = expiry;
     }
 
+    public void setPreviousByEventId(Long previousByEventId)
+    {
+        this.previousByEventId = previousByEventId;
+    }
+
+    public void setNextByEventId(Long nextByEventId)
+    {
+        this.nextByEventId = nextByEventId;
+    }
+
+    public Long getPreviousByEventId()
+    {
+        return previousByEventId;
+    }
+
+    public Long getNextByEventId()
+    {
+        return nextByEventId;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("GenericWiretapEvent [identifier=");
+        builder.append(identifier);
+        builder.append(", timestamp=");
+        builder.append(timestamp);
+        builder.append(", moduleName=");
+        builder.append(moduleName);
+        builder.append(", flowName=");
+        builder.append(flowName);
+        builder.append(", componentName=");
+        builder.append(componentName);
+        builder.append(", event=");
+        builder.append(event);
+        builder.append(", expiry=");
+        builder.append(expiry);
+        builder.append(", nextByEventId=");
+        builder.append(nextByEventId);
+        builder.append(", previousByEventId=");
+        builder.append(previousByEventId);
+        builder.append("]");
+        return builder.toString();
+    }
+    
     //TODO Do we need to override equals contract?
 }

@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -40,64 +40,46 @@
  */
 package org.ikasan.wiretap.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.ikasan.spec.wiretap.WiretapEvent;
 
 /**
- * Search result Data Transfer Object for WireTapFlowEvents
- * 
- * This DTO object contains:
- *  + a List of WiretapFlowEventHeaders (lightweight references to the heavy weight WiretapFlowEvent)
- *      these are the page contents
- *  + resultSize - referring to the total size of the search results being paged
- *  + firstResult - the position in the greater result set where the first element of this page exists
+ * Implementation of a flowEvent based on payload being of any generic type.
  * 
  * @author Ikasan Development Team
  *
  */
-public class PagedWiretapSearchResult implements Serializable
+public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>
 {
+    /** event id */
+    private String eventId;
+    
     /**
-     * serialVersionUID
+     * Silly requirement from the ORM-that-shall-not-be-named!!
      */
-    private static final long serialVersionUID = 7722626010968234606L;
-
-    private List<WiretapEvent> wiretapEvents;
-    
-    private int firstResult;
-    
-    private long resultSize;
-
-    public PagedWiretapSearchResult(List<WiretapEvent> wiretapEvents, long resultSize, int firstResult)
+    @SuppressWarnings("unused")
+    protected WiretapFlowEvent()
     {
-        super();
-        this.wiretapEvents = wiretapEvents;
-        this.resultSize = resultSize;
-        this.firstResult = firstResult;
+        // No implementation
     }
 
-    public int getFirstResult()
+    /**
+     * Constructor
+     * @param identifier2
+     */
+    public WiretapFlowEvent(final String moduleName, final String flowName, final String componentName,
+            final String eventId, final String event, final Long expiry)
     {
-        return firstResult;
+        super(moduleName, flowName, componentName, event, expiry);
+        this.eventId = eventId;
     }
 
-    public long getResultSize()
+    public String getEventId()
     {
-        return resultSize;
+        return eventId;
     }
 
-    public List<WiretapEvent> getWiretapEvents()
+    protected void setEventId(String eventId)
     {
-        return wiretapEvents;
-    }
-    
-    public int getFirstIndex(){
-        return firstResult+1;
-    }
-    
-    public int getLastIndex(){
-        return firstResult + wiretapEvents.size();
+        this.eventId = eventId;
     }
 }

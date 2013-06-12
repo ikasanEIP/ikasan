@@ -60,7 +60,7 @@ public class WiretapSerialiserServiceTest
     private Map serialisers;
     
     /** serialiser service instance */
-    private WiretapSerialiser serialiserService;
+    private WiretapSerialiser<Object,String> serialiserService;
 
     @Before 
     public void setup()
@@ -83,7 +83,7 @@ public class WiretapSerialiserServiceTest
         Integer integer = new Integer(10);
         
         // test the serialiser service
-        Assert.assertTrue("10".equals( new String(serialiserService.serialise(integer)) ) );
+        Assert.assertTrue("10".equals( serialiserService.serialise(integer) ) );
     }
 
     /**
@@ -91,13 +91,29 @@ public class WiretapSerialiserServiceTest
      * not in the supported serialisers map. Null should be returned
      */
     @Test
-    public void test_failed_serialiser_due_to_serialiser_not_found_so_null_returned()
+    public void test_serialiser_not_found_so_default_serialiser_invoked()
     {
         // create example object for serialisation
         StringBuilder stringBuilder = new StringBuilder(10);
         
         // test the serialiser service
-        Assert.assertNull(serialiserService.serialise(stringBuilder));
+        String result = serialiserService.serialise(stringBuilder);
+        Assert.assertNotNull(result);
+    }
+    
+    /**
+     * Test failed serialiser invocation as the serialiser for StringBuilder is 
+     * not in the supported serialisers map. Null should be returned
+     */
+    @Test
+    public void test_failed_serialiser_due_to_serialiser_not_found_so_default_toString_bytes_returned()
+    {
+        // create example object for serialisation
+        NotSerialisable notSerialisable = new NotSerialisable("a value");
+        
+        // test the serialiser service
+        String result = serialiserService.serialise(notSerialisable);
+        Assert.assertNotNull(result);
     }
     
     /**
@@ -106,7 +122,7 @@ public class WiretapSerialiserServiceTest
      * @author Ikasan Development Team
      *
      */
-    private static class IntegerSerialiser implements WiretapSerialiser<Integer>
+    private static class IntegerSerialiser implements WiretapSerialiser<Integer,String>
     {
         /** singleton */
         private static IntegerSerialiser integerSerialiser;
@@ -137,11 +153,20 @@ public class WiretapSerialiserServiceTest
          * @param Integer
          * @return byte[] 
          */
-        public byte[] serialise(Integer source)
+        public String serialise(Integer source)
         {
-            return source.toString().getBytes();
+            return source.toString();
         }
         
     }
-    
+  
+    private class NotSerialisable
+    {
+        String aValue;
+        
+        public NotSerialisable(String aValue)
+        {
+            this.aValue = aValue;
+        }
+    }
 }

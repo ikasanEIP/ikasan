@@ -44,28 +44,41 @@ import java.util.Map;
 
 import org.ikasan.spec.wiretap.WiretapSerialiser;
 
+import org.apache.log4j.Logger;
+
 /**
  * Implementation of the WiretapSerialiser factory.
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public class WiretapSerialiserService<SOURCE> implements WiretapSerialiser<SOURCE>
+public class WiretapSerialiserService<SOURCE> implements WiretapSerialiser<SOURCE, String>
 {
-    private Map<Class<?>,WiretapSerialiser<?>> serialisers;
+    private static Logger logger = Logger.getLogger(WiretapSerialiserService.class);
 
-    public WiretapSerialiserService(Map<Class<?>,WiretapSerialiser<?>> serialisers)
+    private Map<Class<?>, WiretapSerialiser<?,String>> serialisers;
+
+    public WiretapSerialiserService(Map<Class<?>, WiretapSerialiser<?,String>> serialisers)
     {
         this.serialisers = serialisers;
     }
 
-    public byte[] serialise(SOURCE source)
+    public String serialise(SOURCE source)
     {
-        WiretapSerialiser serialiser = this.serialisers.get(source.getClass());
-        if(serialiser == null)
+        WiretapSerialiser<?,String> serialiser = this.serialisers.get(source.getClass());
+        if (serialiser == null)
         {
-            return null;    // TODO - is this the best option ?
+            // TODO - there are some other options to try ie. readObject/writeObject
+            
+            // last resort - toString
+            if(source instanceof byte[])
+            {
+                return new String( (byte[])source );
+            }
+            return source.toString();
         }
-        return serialiser.serialise(source);
+
+        return source.toString();
+// FIXME        return serialiser.serialise(source);
     }
 }
