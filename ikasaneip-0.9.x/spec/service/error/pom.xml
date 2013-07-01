@@ -53,10 +53,8 @@
         <relativePath />
     </parent>
 
-    <groupId>org.ikasan</groupId>
     <artifactId>ikasan-spec-error</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.0-RC4-SNAPSHOT</version>
     <name>Ikasan Specification Event Error/Exclusion Management Contracts</name>
     <description>The specification management contracts for the Ikasan Enterprise Integration Platform event error/exclusions</description>
 </project>
