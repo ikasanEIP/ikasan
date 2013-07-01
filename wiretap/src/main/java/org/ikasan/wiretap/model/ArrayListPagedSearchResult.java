@@ -105,7 +105,8 @@ public class ArrayListPagedSearchResult<T> implements PagedSearchResult<T>, Seri
      */
     public int getFirstResultIndex()
     {
-        return firstResultIndex+1;
+        return firstResultIndex;
+// FIXME        return firstResultIndex+1;
     }
 
     /*
