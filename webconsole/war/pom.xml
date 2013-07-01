@@ -57,30 +57,12 @@
   <packaging>war</packaging>
   <name>ikasan :: webconsole : war</name>
 
-  <!-- Almost all dependencies are provided by the EAR that this webconsole should run inside of -->
   <dependencies>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>3.1.1.RELEASE</version>
-    </dependency>
 
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
         <version>3.1.1.RELEASE</version>
-    </dependency>
-
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>3.1.1.RELEASE</version>
-        <exclusions>
-            <exclusion>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-            </exclusion>
-        </exclusions>
     </dependency>
 
     <dependency>
@@ -97,13 +79,7 @@
 
     <dependency>
       <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-security</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-platform</artifactId>
+      <artifactId>ikasan-eip</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
     </dependency>
 
@@ -114,88 +90,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-uber-spec</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-module</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-wiretap</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-systemEvent</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-scheduler</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-recoveryManager</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-flow-visitorPattern</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-configuration-service</artifactId>
-      <version>0.9.0-RC4-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>3.5.4-Final</version>
-        <exclusions>
-            <exclusion>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-
-    <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjweaver</artifactId>
-        <version>1.5.4</version>
-    </dependency>
-
-    <dependency>
       <groupId>geronimo-spec</groupId>
       <artifactId>geronimo-spec-j2ee</artifactId>
       <version>1.4-rc3</version>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz</artifactId>
-        <version>2.0.2</version>
-    </dependency>
-
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>3.1.1.RELEASE</version>
     </dependency>
 
     <dependency>
@@ -205,16 +103,21 @@
     </dependency>
 
     <dependency>
-        <groupId>org.springframework.webflow</groupId>
-        <artifactId>spring-binding</artifactId>
-        <version>2.3.2.RELEASE</version>
-      <scope>provided</scope>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-taglibs</artifactId>
+        <version>3.1.1.RELEASE</version>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <version>3.1.3.RELEASE</version>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-binding</artifactId>
+        <version>2.3.2.RELEASE</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-js</artifactId>
+        <version>2.3.2.RELEASE</version>
     </dependency>
 
     <dependency>
@@ -229,12 +132,6 @@
       <version>3.1.3.RELEASE</version>
     </dependency>
 
-    <!-- trial a cloning library -->        
-    <dependency>
-        <groupId>uk.com.robust-it</groupId>
-        <artifactId>cloning</artifactId>
-        <version>1.7.4</version>
-    </dependency>
   </dependencies>
 
 </project>
