@@ -187,7 +187,7 @@
 		</thead>
 	
 		<tbody>
-			<c:forEach items="${results}" var="event">
+			<c:forEach items="${results.pagedResults}" var="event">
 				<tr>
 					<td><c:out value="${event.id}" /></td>
 					<td><c:out value="${event.subject}" /></td>

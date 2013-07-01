@@ -44,9 +44,9 @@
 --%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core_rt' %>
 
-<%@ page import="org.springframework.security.ui.AbstractProcessingFilter" %>
-<%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter" %>
-<%@ page import="org.springframework.security.AuthenticationException" %>
+<%@ page import="org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter" %>
+<%@ page import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter" %>
+<%@ page import="org.springframework.security.core.AuthenticationException" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -79,7 +79,7 @@
     <c:if test="${not empty param.login_error}">
       <font color="red">
         Your login attempt was not successful, try again.<BR><BR>
-        Reason: <%= ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage() %>
+        Reason: <%= ((AuthenticationException) session.getAttribute(org.springframework.security.web.WebAttributes.AUTHENTICATION_EXCEPTION)).getMessage() %>
       </font>
     </c:if>
 
@@ -92,7 +92,7 @@
             <ol>
                 <li>
     				<label for="j_username">User</label>
-				    <input type='text' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
+				    <input type='text' name='j_username' <c:if test="${not empty param.login_error}">value='<%= session.getAttribute(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>'</c:if>/>
 			    </li>
                 <li>
                     <label for="j_password">Password</label>
