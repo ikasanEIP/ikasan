@@ -64,14 +64,14 @@ public interface PointToPointFlowProfile
      * 
      * @return set of PointToPointFlows for this Profile
      */
-    public Set<PointToPointFlow> getPointToPointFlows();
+    public Set<? extends PointToPointFlow> getPointToPointFlows();
 
     /**
      * Set the PointToPointFlows for this profile
      * 
      * @param pointToPointFlows - PointToPointFlows for this profile
      */
-    public void setPointToPointFlows(Set<PointToPointFlow> pointToPointFlows);
+    public void setPointToPointFlows(Set<? extends PointToPointFlow> pointToPointFlows);
 
     /**
      * Get the name for this PointToPointFlow
