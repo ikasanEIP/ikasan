@@ -40,7 +40,9 @@
  */
 package org.ikasan.console.web.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -201,13 +203,16 @@ public class MasterDetailControllerUtilTest extends TestCase
         assertEquals("", model.get("searchResultsUrl"));
 
         final HttpServletRequest request2 = context.mock(HttpServletRequest.class);
+        final StringBuffer url = new StringBuffer("http://www.ikasan.org");
         final PagedSearchResult<?> pagedResult2 = context.mock(PagedSearchResult.class);
-
+        final List<String> results = new ArrayList();
+        results.add("result");
+        
         context.checking(new Expectations()
         {
             {
                 one(request2).getRequestURL();
-                will(returnValue(new StringBuffer("http://www.ikasan.org")));
+                will(returnValue(url));
                 one(request2).getQueryString();
                 will(returnValue("?key=value"));
                 one(pagedResult2).getFirstResultIndex();
@@ -218,8 +223,8 @@ public class MasterDetailControllerUtilTest extends TestCase
                 will(returnValue(true));
                 one(pagedResult2).getResultSize();
                 will(returnValue(new Long(1)));
-                one(pagedResult2).size();
-                will(returnValue(1));
+                one(pagedResult2).getPagedResults();
+                will(returnValue(results));
             }
         });
 

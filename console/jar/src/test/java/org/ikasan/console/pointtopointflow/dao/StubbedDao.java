@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,49 +36,43 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
 package org.ikasan.console.pointtopointflow.dao;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl;
 import org.ikasan.spec.management.PointToPointFlowProfile;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Hibernate implementation of the <code>PointToPointFlowDao</code>
+ * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
  * @author Ikasan Development Team
  */
-public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport implements PointToPointFlowProfileDao
+/**
+ * Implementation of the contract for adding test data
+ * @author Ikasan Development Team
+ *
+ */
+public class StubbedDao extends HibernatePointToPointFlowProfileDao 
 {
-
-    /** Query for finding all point to point flow profiles based on id */
-    private static final String POINT_TO_POINT_FLOW_PROFILES_BY_ID = "from PointToPointFlowProfileImpl p where p.id in (:ids) order by name";
-    
     /**
-     * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findAllPointToPointFlowProfiles()
+     * Save the given profile
+     * @param pointToPointFlowProfile
      */
-    @SuppressWarnings("unchecked")
-    public Set<PointToPointFlowProfile> findAllPointToPointFlowProfiles()
+    public void save(PointToPointFlowProfile pointToPointFlowProfile)
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
-        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(PointToPointFlowProfileImpl.class).addOrder(Order.asc("name"))));
-        return pointToPointFlowProfiles;
+        this.getHibernateTemplate().saveOrUpdate(pointToPointFlowProfile);
     }
 
     /**
-     * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findPointToPointFlowProfiles(Set)
+     * Clearout all profiles
      */
-    public Set<PointToPointFlowProfile> findPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds)
+    public void deleteAll()
     {
-        Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
-        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByNamedParam(POINT_TO_POINT_FLOW_PROFILES_BY_ID, "ids", pointToPointFlowProfileIds));
-        return pointToPointFlowProfiles;
+        DetachedCriteria criteria = DetachedCriteria.forClass(PointToPointFlowProfile.class);
+        List<PointToPointFlowProfile> events = this.getHibernateTemplate().findByCriteria(criteria);
+        this.getHibernateTemplate().deleteAll(events);
     }
-    
 }

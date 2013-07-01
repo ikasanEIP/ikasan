@@ -1,11 +1,8 @@
 <?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!--
 /*
- * $Id$
- * $URL$ 
+ * $Id:
+ * $URL: 
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -46,23 +43,25 @@
  * Author:  Ikasan Development Team
  * 
 -->
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	 
-	<class
-		name="org.ikasan.console.pointtopointflow.PointToPointFlowProfile"
-		table="PointToPointFlowProfile">
+    <class
+        name="org.ikasan.console.module.Module"
+        table="Module">
 
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity" />
         </id>
 
         <property name="name" column="Name" type="string" />
-        		
-        <set name="pointToPointFlows" table="PointToPointFlow" lazy="false">
-            <key column="PointToPointFlowProfileId" />
-            <one-to-many class="org.ikasan.console.pointtopointflow.PointToPointFlow" not-found="exception" />            
-        </set>
-
-	</class>
+        
+        <property name="description" column="Description" type="string" />
+        
+        <property name="designDiagramURL" column="DesignDiagramURL" type="string" />
+        
+    </class>
 	
 </hibernate-mapping>

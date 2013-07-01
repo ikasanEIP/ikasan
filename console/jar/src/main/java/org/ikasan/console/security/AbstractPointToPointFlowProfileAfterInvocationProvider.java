@@ -40,14 +40,16 @@
  */
 package org.ikasan.console.security;
 
+import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.ikasan.console.module.Module;
-import org.ikasan.console.pointtopointflow.PointToPointFlow;
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
-import org.springframework.security.Authentication;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.afterinvocation.AfterInvocationProvider;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
+import org.springframework.security.access.AfterInvocationProvider;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Abstract class that provides functionality for determining access/configuration rights
@@ -82,14 +84,14 @@ public abstract class AbstractPointToPointFlowProfileAfterInvocationProvider imp
      */
     protected boolean mayReadPointToPointFlowProfile(Authentication authentication, PointToPointFlowProfile pointToPointFlowProfile)
     {
-        GrantedAuthority[] authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Module fromModule;
         Module toModule;
         boolean fromModuleAuthorised;
         boolean toModuleAuthorised;
 
         // TODO Slightly inefficient algorithm?  Perhaps use less code
-        for (PointToPointFlow pointToPointFlow : pointToPointFlowProfile.getPointToPointFlows())
+        for (PointToPointFlow<Module> pointToPointFlow : pointToPointFlowProfile.getPointToPointFlows())
         {
             fromModuleAuthorised = false;
             toModuleAuthorised = false;

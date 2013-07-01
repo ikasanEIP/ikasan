@@ -50,34 +50,14 @@
   xmlns:aop="http://www.springframework.org/schema/aop"
   xmlns:tx="http://www.springframework.org/schema/tx"
   xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
-    <!-- The Ikasan console No Tx datasource -->
-    <bean id="ikasanAdminNoTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <!--property name="jndiName" value="java:/ikasan/admin/ds" /-->
-        <property name="jndiName" value="/ikasan/admin/ds" />
+    <!-- The pointToPointFlowProfileDao definition for the Ikasan console -->
+    <bean id="stubbedDao" class="org.ikasan.console.pointtopointflow.dao.StubbedDao">
+        <property name="sessionFactory" ref="pointToPointFlowProfileHibernateSessionFactory" />    
     </bean>
 
-    <!-- The Ikasan console Local Tx datasource (used by security) -->
-    <bean id="ikasanAdminLocalTxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <!--property name="jndiName" value="java:/ikasan/admin/localds" /-->
-        <property name="jndiName" value="/ikasan/admin/localds" />
-    </bean>
-
-    <!-- The Ikasan console XA Tx datasource -->
-    <!-- 
-    <bean id="ikasanAdminXaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ikasan/admin/xads" />
-    </bean>
-    -->
-
-    <!-- The hibernate properties to use for this platform -->
-    <bean id="platformHibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="ignoreResourceNotFound" value="true"/>
-        <property name="location" value="classpath:ikasan-hibernate.properties"/>
-    </bean>
-  
 </beans>

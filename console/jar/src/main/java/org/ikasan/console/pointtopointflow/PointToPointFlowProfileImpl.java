@@ -43,6 +43,10 @@ package org.ikasan.console.pointtopointflow;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.ikasan.console.module.Module;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
+
 /**
  * Object that represents a PointToPointFlowProfile in Ikasan.
  * 
@@ -50,7 +54,7 @@ import java.util.Set;
  * 
  * @author Ikasan Development Team
  */
-public class PointToPointFlowProfile
+public class PointToPointFlowProfileImpl implements PointToPointFlowProfile
 {
     
     /** Unique Id */
@@ -60,7 +64,7 @@ public class PointToPointFlowProfile
     private String name;
 
     /** The set of PointToPointFlow objects that make up this profile */
-    private Set<PointToPointFlow> pointToPointFlows = new LinkedHashSet<PointToPointFlow>();
+    private Set<? extends PointToPointFlow> pointToPointFlows = new LinkedHashSet<PointToPointFlow<Module>>();
     
     /**
      * Get the unique id
@@ -89,7 +93,7 @@ public class PointToPointFlowProfile
      * 
      * @return set of PointToPointFlows for this Profile
      */
-    public Set<PointToPointFlow> getPointToPointFlows()
+    public Set<? extends PointToPointFlow> getPointToPointFlows()
     {
         return pointToPointFlows;
     }
@@ -99,7 +103,7 @@ public class PointToPointFlowProfile
      * 
      * @param pointToPointFlows - PointToPointFlows for this profile
      */
-    public void setPointToPointFlows(Set<PointToPointFlow> pointToPointFlows)
+    public void setPointToPointFlows(Set<? extends PointToPointFlow> pointToPointFlows)
     {
         this.pointToPointFlows = pointToPointFlows;
     }
@@ -123,4 +127,5 @@ public class PointToPointFlowProfile
     {
         this.name = name;
     }
+
 }

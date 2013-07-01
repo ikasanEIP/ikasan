@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,12 +53,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.console.module.Module;
 import org.ikasan.console.module.service.ModuleService;
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService;
 import org.ikasan.console.web.command.WiretapSearchCriteria;
 import org.ikasan.console.web.command.WiretapSearchCriteriaValidator;
@@ -77,14 +79,14 @@ import org.apache.log4j.Logger;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/events/*.htm")
+@RequestMapping("/events")
 public class WiretapEventsSearchFormController
 {
     /** The logger */
     private Logger logger = Logger.getLogger(WiretapEventsSearchFormController.class);
 
     /** The wiretap service */
-    private WiretapService wiretapService;
+    private WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>> wiretapService;
 
     /** The module service */
     private ModuleService moduleService;
@@ -267,7 +269,8 @@ public class WiretapEventsSearchFormController
         if (noErrors)
         {
             Set<String> moduleNames = this.moduleService.getModuleNames(moduleIdsToSearchOn);
-// TODO - sort this mess out          
+            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames,
+                moduleFlow, componentName, eventId, payloadId, fromDate, untilDate, payloadContent);
 //            pagedResult = this.wiretapService.findWiretapEvents(pageNo, pageSizeToReturn, orderByField, orderAscending, moduleNames, moduleFlow, componentName, eventId,
 //                payloadId, fromDate, untilDate, payloadContent);
         }
@@ -322,7 +325,7 @@ public class WiretapEventsSearchFormController
     {
         this.logger.debug("inside viewEvent, wiretapEventId=[" + wiretapEventId + "]");
         WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(wiretapEventId));
-        String payloadContent = new String(wiretapEvent.getEvent());
+        String payloadContent = wiretapEvent.getEvent().toString();
         String prettyXMLContent = "";
         if (payloadContentIsXML(payloadContent))
         {
@@ -370,7 +373,7 @@ public class WiretapEventsSearchFormController
         response.setContentType("text/xml");
         try
         {
-            response.getOutputStream().write(wiretapEvent.getEvent());
+            response.getOutputStream().write(wiretapEvent.getEvent().toString().getBytes());
         }
         catch (IOException e)
         {
@@ -397,7 +400,14 @@ public class WiretapEventsSearchFormController
         {
             if (module != null)
             {
-                response.sendRedirect(module.getDesignDiagramURL());
+                if(module.getDesignDiagramURL() != null)
+                {
+                    response.sendRedirect(module.getDesignDiagramURL());
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -431,7 +441,7 @@ public class WiretapEventsSearchFormController
         try
         {
             ServletOutputStream op = response.getOutputStream();
-            op.write(wiretapEvent.getEvent());
+            op.write(wiretapEvent.getEvent().toString().getBytes());
             op.flush();
         }
         catch (IOException e)

@@ -41,6 +41,8 @@
 package org.ikasan.console.pointtopointflow;
 
 import org.ikasan.console.module.Module;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 
 /**
  * Object that represents a PointToPointFlow in Ikasan.  A PointToPointFlow 
@@ -48,7 +50,7 @@ import org.ikasan.console.module.Module;
  * 
  * @author Ikasan Development Team
  */
-public class PointToPointFlow
+public class PointToPointFlowImpl implements PointToPointFlow<Module>
 {
     /** Unique Id */
     private long id;
@@ -143,5 +145,4 @@ public class PointToPointFlow
     {
         return fromModule;
     }
-    
 }

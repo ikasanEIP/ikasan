@@ -45,12 +45,11 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.apache.log4j.Logger;
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthorizationServiceException;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.ConfigAttributeDefinition;
+import org.ikasan.spec.management.PointToPointFlowProfile;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
 
 /**
  * Class for determining access/configuration rights for collection of
@@ -82,13 +81,13 @@ public class AfterInvocationPointToPointFlowProfileCollectionFilteringProvider e
      * @return TODO A list of authorised objects or
      * @throws AccessDeniedException - Access was denied
      */
-    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config, Object returnedObject)
+    public Object decide(Authentication authentication, Object object, Collection<ConfigAttribute> config, Object returnedObject)
             throws AccessDeniedException
     {
-        Iterator<?> iter = config.getConfigAttributes().iterator();
+        Iterator<ConfigAttribute> iter = config.iterator();
         while (iter.hasNext())
         {
-            ConfigAttribute attr = (ConfigAttribute) iter.next();
+            ConfigAttribute attr = iter.next();
             if (!this.supports(attr))
             {
                 continue;

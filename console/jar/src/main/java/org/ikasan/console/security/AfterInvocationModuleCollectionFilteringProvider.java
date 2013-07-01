@@ -46,15 +46,14 @@ import java.util.LinkedHashSet;
 
 import org.apache.log4j.Logger;
 import org.ikasan.console.module.Module;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthorizationServiceException;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
 
 /**
- * Class for determining access/configuration rights for collection of Modules
- * 
+ * Class for determining access/configuration rights for collection of configuration
+ *  
  * @author Ikasan Development Team
  */
 public class AfterInvocationModuleCollectionFilteringProvider extends AbstractModuleAfterInvocationProvider
@@ -71,32 +70,22 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
     /** Logger for this class */
     Logger logger = Logger.getLogger(AfterInvocationModuleCollectionFilteringProvider.class);
 
-    /**
-     * Decide if the user has rights to invoke actions on a Module
-     * 
-     * @param authentication - The authentication scheme
-     * @param object - Not used!
-     * @param config - The configuration attribute to check
-     * @param returnedObject - The return object to seed
-     * @return A list of authorised objects or
-     * @throws AccessDeniedException - Access was denied
-     */
-    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config, Object returnedObject)
-            throws AccessDeniedException
+    public Object decide(Authentication authentication, Object object, Collection<ConfigAttribute> config,
+            Object returnedObject) throws AccessDeniedException
     {
-        Iterator<?> iter = config.getConfigAttributes().iterator();
+        Iterator<ConfigAttribute> iter = config.iterator();
         while (iter.hasNext())
         {
-            ConfigAttribute attr = (ConfigAttribute) iter.next();
+            ConfigAttribute attr = iter.next();
             if (!this.supports(attr))
             {
                 continue;
             }
             // Need to process the Collection for this invocation
-            if (!(returnedObject instanceof Collection<?>))
+            if (!(returnedObject instanceof Collection))
             {
-                throw new AuthorizationServiceException("A Collection was required as the " + "returnedObject, but the returnedObject was [" + returnedObject
-                        + "]");
+                throw new AuthorizationServiceException("A Collection was required as the "
+                        + "returnedObject, but the returnedObject was [" + returnedObject + "]");
             }
             // Locate unauthorised Collection elements
             Collection<Module> authorisedModules = new LinkedHashSet<Module>();
@@ -104,8 +93,7 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
             while (collectionIter.hasNext())
             {
                 Object domainObject = collectionIter.next();
-                // Ignore nulls or entries which aren't instances of the
-                // configured domain object class
+                // Ignore nulls or entries which aren't instances of the configured domain object class
                 if (domainObject == null || !Module.class.isAssignableFrom(domainObject.getClass()))
                 {
                     continue;
@@ -121,15 +109,10 @@ public class AfterInvocationModuleCollectionFilteringProvider extends AbstractMo
         return returnedObject;
     }
 
-    /**
-     * Returns true if the configuration attribute is supported by this provider
-     * 
-     * @param configAttribute configuration attribute to test
-     * @return true if the configuration attribute is supported by this provider
-     */
     @Override
     public boolean supports(ConfigAttribute configAttribute)
     {
         return configAttribute.getAttribute().equalsIgnoreCase(AFTER_MODULE_COLLECTION_READ);
     }
+
 }

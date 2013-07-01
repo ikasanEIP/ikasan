@@ -41,6 +41,8 @@
 package org.ikasan.console.pointtopointflow;
 
 import org.ikasan.console.module.Module;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -79,16 +81,16 @@ public class PointToPointFlowComparatorTest
     private Module toModule2;
 
     /** First point to point flow for comparison */
-    private PointToPointFlow pointToPointFlow1 = new PointToPointFlow();
+    private PointToPointFlow pointToPointFlow1 = new PointToPointFlowImpl();
     
     /** Second point to point flow for comparison */
-    private PointToPointFlow pointToPointFlow2 = new PointToPointFlow();
+    private PointToPointFlow pointToPointFlow2 = new PointToPointFlowImpl();
 
     /** First point to point flow profile for comparison */
-    PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class);
+    PointToPointFlowProfile pointToPointFlowProfile1 = context.mock(PointToPointFlowProfile.class, "mockPointToPointFlowProfile1");
     
     /** Second point to point flow profile for comparison */
-    PointToPointFlowProfile pointToPointFlowProfile2 = context.mock(PointToPointFlowProfile.class);
+    PointToPointFlowProfile pointToPointFlowProfile2 = context.mock(PointToPointFlowProfile.class, "mockPointToPointFlowProfile2");
     
     /** The comparator to use */
     private PointToPointFlowComparator comparator = new PointToPointFlowComparator();
@@ -200,16 +202,18 @@ public class PointToPointFlowComparatorTest
     public void testCompareWithDifferentProfiles()
     {
         // Setup
+        final long id1 = 1;
+        final long id2 = 2;
         this.setModules(new Module(), new Module(), new Module(), new Module());
 
-    	// Expectations
+        // Expectations
     	context.checking(new Expectations()
         {
             {
                 one(pointToPointFlowProfile1).getId();
-                will(returnValue(new Long(1)));
+                will(returnValue(id1));
                 one(pointToPointFlowProfile2).getId();
-                will(returnValue(new Long(2)));
+                will(returnValue(id2));
             }
         });
     	
@@ -620,13 +624,16 @@ public class PointToPointFlowComparatorTest
      */
     private void pointToPointFlowProfileIdExpectations()
     {
-	    context.checking(new Expectations()
+        final long id1 = 1;
+        final long id2 = 1;
+
+        context.checking(new Expectations()
 	    {
 	        {
 	            one(pointToPointFlowProfile1).getId();
-	            will(returnValue(new Long(1)));
+	            will(returnValue(id1));
 	            one(pointToPointFlowProfile2).getId();
-	            will(returnValue(new Long(1)));
+	            will(returnValue(id2));
 	        }
 	    });
     }

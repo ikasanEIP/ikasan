@@ -44,6 +44,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.ikasan.console.module.Module;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -74,16 +76,16 @@ public class PointToPointFlowTest
     public void testPointToPointFlowProfileGettersAndSetters()
     {
         // Setup
-        PointToPointFlow pointToPointFlow = new PointToPointFlow();
+        PointToPointFlow pointToPointFlow = new PointToPointFlowImpl();
         PointToPointFlowProfile pointToPointFlowProfile = context.mock(PointToPointFlowProfile.class);
-        Module fromModule = context.mock(Module.class);
-        Module toModule = context.mock(Module.class);
+        Module fromModule = context.mock(Module.class, "mockFromModule");
+        Module toModule = context.mock(Module.class, "mockToModule");
         
         // Test (including the private setter via Reflection)
         Class<?> cls = null;
         try
         {
-            cls = Class.forName("org.ikasan.console.pointtopointflow.PointToPointFlow");
+            cls = Class.forName("org.ikasan.console.pointtopointflow.PointToPointFlowImpl");
         }
         catch (ClassNotFoundException e)
         {
