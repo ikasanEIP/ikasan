@@ -108,6 +108,13 @@
 			</exclusions>
 		</dependency>
 
+        <!-- trial a cloning library -->
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.7.4</version>
+        </dependency>
+
 		<!-- required for unit tests -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
@@ -128,14 +135,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- trial a cloning library -->
-		<dependency>
-			<groupId>uk.com.robust-it</groupId>
-			<artifactId>cloning</artifactId>
-			<version>1.7.4</version>
-            <scope>provided</scope>
 		</dependency>
 
 		<dependency>
