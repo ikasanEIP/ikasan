@@ -52,8 +52,8 @@
             <!-- Navigation section -->
             <div id="wiretapNavigation">
                 <c:choose>
-                <c:when test="${wiretapEvent.previousByPayload != null}">
-                <a class="active" href="viewEvent.htm?wiretapEventId=<c:out value="${wiretapEvent.previousByPayload}" />"><img class="smallIcon" src="/console/images/Previous_On.png" alt="&lt;" /><fmt:message key="wiretap_event_previous"/></a>
+                <c:when test="${wiretapEvent.previousByEventId != null}">
+                <a class="active" href="viewEvent.htm?wiretapEventId=<c:out value="${wiretapEvent.previousByEventId}" />"><img class="smallIcon" src="/console/images/Previous_On.png" alt="&lt;" /><fmt:message key="wiretap_event_previous"/></a>
                 </c:when>
                 <c:otherwise>
                 <img class="smallIcon" src="/console/images/Previous.png" alt="&lt;" /><fmt:message key="wiretap_event_previous"/>
@@ -61,8 +61,8 @@
                 </c:choose>
                 &nbsp;
                 <c:choose>
-                <c:when test="${wiretapEvent.nextByPayload != null}">
-                <a class="active" href="viewEvent.htm?wiretapEventId=<c:out value="${wiretapEvent.nextByPayload}" />"><fmt:message key="wiretap_event_next"/><img class="smallIcon" src="/console/images/Next_On.png" alt="&gt;" /></a>
+                <c:when test="${wiretapEvent.nextByEventId != null}">
+                <a class="active" href="viewEvent.htm?wiretapEventId=<c:out value="${wiretapEvent.nextByEventId}" />"><fmt:message key="wiretap_event_next"/><img class="smallIcon" src="/console/images/Next_On.png" alt="&gt;" /></a>
                 </c:when>
                 <c:otherwise>
                 <fmt:message key="wiretap_event_next"/><img class="smallIcon" src="/console/images/Next.png" alt="&gt;" />
@@ -87,7 +87,7 @@
                              <fmt:message key="wiretap_id" />
                         </td>
                         <td class="searchCell">
-                             <c:out value="${wiretapEvent.id}" />
+                             <c:out value="${wiretapEvent.identifier}" />
                         </td>
                     </tr>
                     <tr>
@@ -119,7 +119,9 @@
                             <fmt:message key="wiretap_created_date_time" />
                         </td>
                         <td class="searchCell">
-                            <fmt:formatDate value="${wiretapEvent.created}" pattern="dd/MM/yyyy h:mma" />
+                            <jsp:useBean id="dateCreated" class="java.util.Date" />
+                            <jsp:setProperty name="dateCreated" property="time" value="${wiretapEvent.timestamp}" />
+                            <fmt:formatDate value="${dateCreated}" pattern="dd/MM/yyyy h:mm:ss:SSSa" /></p>
                         </td>
                     </tr>
                     <tr>
@@ -127,7 +129,9 @@
                             <fmt:message key="wiretap_expiry_date_time" />
                         </td>
                         <td class="searchCell">
-                            <fmt:formatDate value="${wiretapEvent.expiry}" pattern="dd/MM/yyyy h:mma" />
+                            <jsp:useBean id="dateExpiry" class="java.util.Date" />
+                            <jsp:setProperty name="dateExpiry" property="time" value="${wiretapEvent.expiry}" />
+                            <fmt:formatDate value="${dateExpiry}" pattern="dd/MM/yyyy h:mm:ss:SSSa" /></p>
                         </td>
                     </tr>
                 </table>
@@ -149,17 +153,17 @@
                              <fmt:message key="wiretap_event_event_id" />
                         </td>
                         <td class="searchCell">
-                             <c:out value="${wiretapEvent.eventId}" />
+                             <c:out value="${wiretapEvent.identifier}" />
                         </td>
                     </tr>
-                    <tr>
+                    <!--tr>
                         <td class="searchCell formLabel">
                             <fmt:message key="wiretap_event_payload_id" />
                         </td>
                         <td class="searchCell">
-                            <c:out value="${wiretapEvent.payloadId}" />
+                            <c:out value="${wiretapEvent.eventId}" />
                         </td>
-                    </tr>
+                    </tr-->
                     <tr>
                         <td class="searchCell formLabel">
                             <fmt:message key="wiretap_event_payload_content_native" />
@@ -168,9 +172,9 @@
                         <td class="searchCell">
                         <!-- TODO:  To be enhanced with not just a XML check -->
                         <c:choose>
-                        <c:when test='${fn:startsWith(wiretapEvent.payloadContent, "<?xml")}'>
+                        <c:when test='${fn:startsWith(wiretapEvent.event, "<?xml")}'>
                             <!-- TODO The color won't take hold in a class, investigate -->
-                            <a style="color: #99141B" href="viewPrettyPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.id}" />" class="new-window">
+                            <a style="color: #99141B" href="viewPrettyPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.identifier}" />" class="new-window">
                                 <fmt:message key="wiretap_event_formatted_content_native"/>
                             </a>
                             </c:when>
@@ -186,7 +190,7 @@
                             <span title="<fmt:message key="wiretap_event_download_help"/>" id="wiretapEventDownloadHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
                         </td>
                         <td class="searchCell">
-                            <a href="downloadPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.id}" />">
+                            <a href="downloadPayloadContent.htm?wiretapEventId=<c:out value="${wiretapEvent.identifier}" />">
                                 <img src="/console/images/Btn_Download.png" alt="download" id="downloadButton" />
                             </a>
                         </td>
@@ -196,7 +200,7 @@
                             <fmt:message key="wiretap_event_payload_content" />
                         </td>
                         <td class="searchCell">
-                            <textarea id="payloadContentTextArea" readonly="readonly"><c:out value="${wiretapEvent.payloadContent}" /></textarea>
+                            <textarea id="payloadContentTextArea" readonly="readonly"><c:out value="${wiretapEvent.event}" /></textarea>
                         </td>
                     </tr>
                 </table>
