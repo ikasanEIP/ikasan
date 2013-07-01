@@ -1,5 +1,5 @@
 /*
- * $Id$ 
+ * $Id$
  * $URL$
  * 
  * ====================================================================
@@ -38,89 +38,74 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.web.command;
+package org.ikasan.web.security;
+
+import java.util.Collection;
+
+import org.apache.log4j.Logger;
+import org.ikasan.spec.module.Module;
+import org.springframework.security.access.AfterInvocationProvider;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * A Wrapper class that can contain a payload along with the module name and initiator 
- * name to deliver that payload to.
- *  
+ * Abstract class that provides functionality for determining access/configuration rights
+ * 
  * @author Ikasan Development Team
  */
-public class PayloadCommand
+public abstract class AbstractModuleAfterInvocationProvider implements AfterInvocationProvider
 {
-    /** The content of the payload */
-    private String payloadContent;
-    
-    /** The name of the module */
-    private String moduleName;
-    
-    /** The name of the initiator */
-    private String initiatorName;
+    /** Configuration attribute to check */
+    private String responsiveConfigAttribute;
+
+    /** Logger for this class */
+    private Logger logger = Logger.getLogger(AbstractModuleAfterInvocationProvider.class);
 
     /**
      * Constructor
      * 
-     * @param moduleName - The name of the module
-     * @param initiatorName - The name of the initiator
+     * @param responsiveConfigAttribute - The configuration to check 
      */
-    public PayloadCommand(String moduleName, String initiatorName)
+    public AbstractModuleAfterInvocationProvider(String responsiveConfigAttribute)
     {
         super();
-        this.moduleName = moduleName;
-        this.initiatorName = initiatorName;
+        this.responsiveConfigAttribute = responsiveConfigAttribute;
     }
 
     /**
-     * Get the initiator name
-     * @return the initiator name
+     * Determines if the specified module should be accessible to the currently logged in user
+     * 
+     * @param authentication - The authentication to use
+     * @param module - The module to check against
+     * @return true if user should be allowed to read module
      */
-    public String getInitiatorName()
+    protected boolean mayReadModule(Authentication authentication, Module module)
     {
-        return initiatorName;
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        for (GrantedAuthority grantedAuthority : authorities)
+        {
+            if (grantedAuthority.getAuthority().equals("USER_" + module.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    /**
-     * Get the module name
-     * @return the module name
-     */
-    public String getModuleName()
+    public boolean supports(ConfigAttribute configAttribute)
     {
-        return moduleName;
+        return configAttribute.getAttribute().equalsIgnoreCase(responsiveConfigAttribute);
     }
 
-    /**
-     * Get the payload content
-     * @return the payload content
+    /*
+     * Warning is suppressed as this method implements an interface that does not 
+     * support generics
      */
-    public String getPayloadContent()
+    @SuppressWarnings("unchecked")
+    public boolean supports(Class clazz)
     {
-        return payloadContent;
-    }
-
-    /**
-     * Set the initiator name
-     * @param initiatorName - the initiator name
-     */
-    public void setInitiatorName(String initiatorName)
-    {
-        this.initiatorName = initiatorName;
-    }
-
-    /**
-     * Set the module name
-     * @param moduleName - the module name
-     */
-    public void setModuleName(String moduleName)
-    {
-        this.moduleName = moduleName;
-    }
-
-    /**
-     * Set the payload content name
-     * @param payloadContent - the payload content
-     */
-    public void setPayloadContent(String payloadContent)
-    {
-        this.payloadContent = payloadContent;
+        logger.info("called with  clazz [" + clazz + "]");
+        return true;
     }
 }

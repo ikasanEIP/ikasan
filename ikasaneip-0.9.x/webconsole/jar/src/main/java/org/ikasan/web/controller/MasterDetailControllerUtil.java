@@ -97,7 +97,7 @@ public class MasterDetailControllerUtil {
 				.getFirstResultIndex());
 		model.addAttribute("lastPage", pagedResult.isLastPage());
 		model.addAttribute("resultSize", pagedResult.getResultSize());
-		model.addAttribute("size", pagedResult.size());
+		model.addAttribute("size", pagedResult.getPagedResults().size());
 		model.addAttribute("searchResultsUrl", requestUrl);
 	}
 	
