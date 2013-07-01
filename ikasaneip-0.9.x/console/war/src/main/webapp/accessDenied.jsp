@@ -43,9 +43,9 @@
  
 --%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core_rt' %>
-<%@ page import="org.springframework.security.ui.AbstractProcessingFilter" %>
-<%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter" %>
-<%@ page import="org.springframework.security.AuthenticationException" %>
+<%@ page import="org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter" %>
+<%@ page import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter" %>
+<%@ page import="org.springframework.security.core.AuthenticationException" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
