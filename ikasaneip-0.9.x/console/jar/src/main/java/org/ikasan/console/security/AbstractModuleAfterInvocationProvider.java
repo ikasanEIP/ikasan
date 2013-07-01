@@ -40,12 +40,14 @@
  */
 package org.ikasan.console.security;
 
+import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.ikasan.console.module.Module;
-import org.springframework.security.Authentication;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.afterinvocation.AfterInvocationProvider;
+import org.springframework.security.access.AfterInvocationProvider;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Abstract class that provides functionality for determining access/configuration rights
@@ -80,7 +82,7 @@ public abstract class AbstractModuleAfterInvocationProvider implements AfterInvo
      */
     protected boolean mayReadModule(Authentication authentication, Module module)
     {
-        GrantedAuthority[] authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority grantedAuthority : authorities)
         {
             if (grantedAuthority.getAuthority().equals("USER_" + module.getName()))
@@ -91,30 +93,19 @@ public abstract class AbstractModuleAfterInvocationProvider implements AfterInvo
         return false;
     }
 
-    /**
-     * Returns true if the configuration attribute is supported by this provider
-     *  
-     * @param configAttribute configuration attribute to test 
-     * @return true if the configuration attribute is supported by this provider
-     */
     public boolean supports(ConfigAttribute configAttribute)
     {
-        return configAttribute.getAttribute().equalsIgnoreCase(this.responsiveConfigAttribute);
+        return configAttribute.getAttribute().equalsIgnoreCase(responsiveConfigAttribute);
     }
 
-    /**
-     * Returns true if the class is supported by this provider
-     * 
-     * @param clazz - class to check support for
-     * @return true if the class is supported by this provider
-     * 
+    /*
      * Warning is suppressed as this method implements an interface that does not 
      * support generics
      */
     @SuppressWarnings("unchecked")
     public boolean supports(Class clazz)
     {
-        this.logger.info("called with  clazz [" + clazz + "]");
+        logger.info("called with  clazz [" + clazz + "]");
         return true;
     }
 }

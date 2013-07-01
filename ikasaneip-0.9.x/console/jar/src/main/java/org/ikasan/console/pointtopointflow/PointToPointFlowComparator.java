@@ -44,6 +44,8 @@ import java.util.Comparator;
 
 import org.apache.log4j.Logger;
 import org.ikasan.console.module.Module;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 
 /**
  * <code>PointToPointFlowComparator</code> is an implementation of
@@ -72,7 +74,7 @@ import org.ikasan.console.module.Module;
  * 
  * @author Ikasan Development Team 
  */
-public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
+public class PointToPointFlowComparator implements Comparator<PointToPointFlow<Module>>
 {
     /** Magic -1 number, represents the 'NULL' */
     private final static long NULL = -1;
@@ -87,7 +89,7 @@ public class PointToPointFlowComparator implements Comparator<PointToPointFlow>
      * @param ptpf2 - The second PointToPointFlow to compare 
      * @return comparison result
      */
-    public int compare(PointToPointFlow ptpf1, PointToPointFlow ptpf2)
+    public int compare(PointToPointFlow<Module> ptpf1, PointToPointFlow<Module> ptpf2)
     {
     	// Deal with NULL flows
         if (ptpf1 == null && ptpf2 == null)

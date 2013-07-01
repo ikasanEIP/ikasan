@@ -49,14 +49,14 @@
 <hibernate-mapping>
  
     <class
-        name="org.ikasan.console.pointtopointflow.PointToPointFlow"
+        name="org.ikasan.console.pointtopointflow.PointToPointFlowImpl"
         table="PointToPointFlow">
 
         <id name="id" type="java.lang.Long" column="Id">
             <generator class="identity" />
         </id>
 
-        <many-to-one name="pointToPointFlowProfile" column="PointToPointFlowProfileId" />
+        <many-to-one name="pointToPointFlowProfile" class="org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl" column="PointToPointFlowProfileId" />
         
         <many-to-one name="fromModule" class="org.ikasan.console.module.Module" lazy="false" column="FromModuleId" />
 

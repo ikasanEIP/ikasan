@@ -45,6 +45,8 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -75,7 +77,7 @@ public class PointToPointFlowProfileTest
     public void testPointToPointFlowProfileGettersAndSetters()
     {
         // Setup
-        PointToPointFlowProfile pointToPointFlowProfile = new PointToPointFlowProfile();
+        PointToPointFlowProfile pointToPointFlowProfile = new PointToPointFlowProfileImpl();
         Set<PointToPointFlow> pointToPointFlows = new LinkedHashSet<PointToPointFlow>();
         PointToPointFlow pointToPointFlow = context.mock(PointToPointFlow.class);
         pointToPointFlows.add(pointToPointFlow);
@@ -84,7 +86,7 @@ public class PointToPointFlowProfileTest
         Class<?> cls = null;
         try
         {
-            cls = Class.forName("org.ikasan.console.pointtopointflow.PointToPointFlowProfile");
+            cls = Class.forName("org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl");
         }
         catch (ClassNotFoundException e)
         {

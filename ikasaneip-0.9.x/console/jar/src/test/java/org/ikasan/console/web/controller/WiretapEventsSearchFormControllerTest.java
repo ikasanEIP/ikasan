@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,43 +36,50 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-package org.ikasan.console.pointtopointflow.service;
+package org.ikasan.console.web.controller;
 
 import java.util.Set;
 
-import org.ikasan.spec.management.PointToPointFlowProfile;
+import org.ikasan.console.module.Module;
+import org.ikasan.console.module.service.ModuleService;
+import org.ikasan.console.pointtopointflow.service.PointToPointFlowProfileService;
+import org.ikasan.spec.wiretap.WiretapService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 
 /**
- * Service layer for PointToPointFlowProfiles
+ * Test class for the WiretapEventsSearchFormController
  * 
  * @author Ikasan Development Team
  */
-public interface PointToPointFlowProfileService
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/hsqldb-datasource-conf.xml", "/console-service-conf.xml", "/wiretap-service-conf.xml", "/module-service-conf.xml", "/systemevent-service-conf.xml", "/test-service-conf.xml"})
+public class WiretapEventsSearchFormControllerTest
 {
-
-    /**
-     * Get a Set of PointToPointFlowProfiles
-     * 
-     * @return Set of all of the PointToPointFlowProfiles or an empty Set
-     */
-    public Set<PointToPointFlowProfile> getAllPointToPointFlowProfiles();
-
-    /**
-     * Get a Set of all of the ids for all of the PointToPointFlowProfiles or an empty Set
-     * 
-     * @return Set of all of the PointToPointFlowProfile ids or an empty Set
-     */
-    public Set<Long> getAllPointToPointFlowProfileIds();
-
-    /**
-     * Get a Set of all of the module ids for the given PointToPointFlowProfile Ids or an empty Set
-     * 
-     * @param pointToPointFlowProfileIds - The point to point profile ids to search on 
-     * @return Set of all of the module ids or an empty Set
-     */
-    public Set<Long> getModuleIdsFromPointToPointFlowProfiles(Set<Long> pointToPointFlowProfileIds);
+    @Resource
+    WiretapService wiretapService;
     
+    @Resource
+    ModuleService consoleModuleService;
+
+    @Resource
+    PointToPointFlowProfileService pointToPointFlowProfileService;
+    
+    /**
+     * Test the handleRequest method
+     * 
+     * @throws Exception - General Exception
+     */
+    @Test
+    public void test_getModulesRequestView()
+    {
+        WiretapEventsSearchFormController controller = new WiretapEventsSearchFormController(wiretapService, consoleModuleService, pointToPointFlowProfileService);
+        Set<Module> modules = controller.getModules();
+    }
 }

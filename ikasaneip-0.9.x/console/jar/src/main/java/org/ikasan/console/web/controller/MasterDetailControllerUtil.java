@@ -120,7 +120,7 @@ public class MasterDetailControllerUtil
             model.addAttribute("isLastPage", pagedResult.isLastPage());
             model.addAttribute("lastPage", lastPage);
             model.addAttribute("resultSize", pagedResult.getResultSize());
-            model.addAttribute("size", pagedResult.size());
+            model.addAttribute("size", pagedResult.getPagedResults().size());
         }
         // Set a default value for the JSP to cleanly deal with errors coming
         // back

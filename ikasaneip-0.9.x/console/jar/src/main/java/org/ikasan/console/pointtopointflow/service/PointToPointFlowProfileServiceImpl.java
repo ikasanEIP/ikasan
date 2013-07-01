@@ -45,10 +45,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.ikasan.console.module.Module;
-import org.ikasan.console.pointtopointflow.PointToPointFlow;
 import org.ikasan.console.pointtopointflow.PointToPointFlowComparator;
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
 import org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao;
+import org.ikasan.spec.management.PointToPointFlow;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 
 /**
  * Console implementation of <code>PointToPointFlowProfileService</code>
@@ -98,7 +98,8 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
         for (PointToPointFlowProfile pointToPointFlowProfile : pointToPointFlowProfiles)
         {
             // By using a TreeSet implementation, we can order the flows
-            TreeSet<PointToPointFlow> pointToPointFlows = new TreeSet<PointToPointFlow>(new PointToPointFlowComparator());
+// FIXME            TreeSet<PointToPointFlow> pointToPointFlows = new TreeSet<PointToPointFlow>(new PointToPointFlowComparator());
+            TreeSet<PointToPointFlow> pointToPointFlows = new TreeSet(new PointToPointFlowComparator());
             pointToPointFlows.addAll(pointToPointFlowProfile.getPointToPointFlows());
             pointToPointFlowProfile.setPointToPointFlows(pointToPointFlows);
         }
@@ -141,7 +142,7 @@ public class PointToPointFlowProfileServiceImpl implements PointToPointFlowProfi
         Set<Module> modules = new LinkedHashSet<Module>();
         for (PointToPointFlowProfile profile : pointToPointFlowProfiles)
         {
-            for (PointToPointFlow pointToPointFlow : profile.getPointToPointFlows())
+            for (PointToPointFlow<Module> pointToPointFlow : profile.getPointToPointFlows())
             {
                 Module fromModule = pointToPointFlow.getFromModule();
                 if (fromModule != null)
