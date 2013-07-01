@@ -9,7 +9,7 @@
         <relativePath />
     </parent>
 
-	<artifactId>weblogic-console-ear</artifactId>
+	<artifactId>weblogic-ikasan-console-ear</artifactId>
 	<packaging>ear</packaging>
 	<name>Weblogic specific configuration packaging of the Console as an EAR</name>
 
