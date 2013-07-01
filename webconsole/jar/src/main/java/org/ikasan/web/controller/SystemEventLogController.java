@@ -67,7 +67,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/admin/systemEvents/*.htm")
+@RequestMapping("/admin/systemEvents")
 public class SystemEventLogController
 {
 	private SystemEventService systemEventService;
@@ -131,10 +131,7 @@ public class SystemEventLogController
         
      // Perform the paged search
         PagedSearchResult<SystemEvent> pagedResult = null;
-        //if (noErrors)
-        //{
-            pagedResult = systemEventService.listSystemEvents(pageNo, pageSize, orderBy, orderAscending, subject, action, timestampFrom, timestampTo, actor);
-       // }
+        pagedResult = systemEventService.listSystemEvents(pageNo, pageSize, orderByField, orderAscending, subject, action, timestampFrom, timestampTo, actor);
 
         // Store the search parameters used
         Map<String, Object> searchParams = new HashMap<String, Object>();
@@ -157,7 +154,7 @@ public class SystemEventLogController
             model.addAttribute("firstResultIndex", pagedResult.getFirstResultIndex());
             model.addAttribute("lastPage", pagedResult.isLastPage());
             model.addAttribute("resultSize", pagedResult.getResultSize());
-            model.addAttribute("size", pagedResult.size());
+            model.addAttribute("size", pagedResult.getPagedResults().size());
         }
         // Set a default value for the JSP to cleanly deal with errors coming back
         else

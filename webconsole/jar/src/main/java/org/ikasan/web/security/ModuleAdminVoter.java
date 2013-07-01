@@ -35,18 +35,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
+package org.ikasan.web.security;
 
-package org.ikasan.security;
-
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.springframework.aop.framework.ReflectiveMethodInvocation;
-import org.springframework.security.Authentication;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.vote.AccessDecisionVoter;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Votes if any {@link ConfigAttribute#getAttribute()} matches MODULE_ADMIN
@@ -78,10 +77,10 @@ public class ModuleAdminVoter implements AccessDecisionVoter {
         return true;
     }
 
-    public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
+    public int vote(Authentication authentication, Object object, Collection config) {
         int result = ACCESS_ABSTAIN;
-        Iterator iter = config.getConfigAttributes().iterator();
-        GrantedAuthority[] authorities = authentication.getAuthorities();       
+        Iterator iter = config.iterator();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();       
 
         while (iter.hasNext()) {
             ConfigAttribute attribute = (ConfigAttribute) iter.next();
@@ -96,10 +95,11 @@ public class ModuleAdminVoter implements AccessDecisionVoter {
                 String moduleName = (String)methodInvocation.getArguments()[0];
                 
                 String moduleAdminRole = "ADMIN_"+moduleName;
-                for (int i = 0; i < authorities.length; i++) {
-                    if (moduleAdminRole.equals(authorities[i].getAuthority())) {
+                for(GrantedAuthority authority:authorities)
+                {
+                    if (moduleAdminRole.equals(authority.getAuthority())) {
                         
-                    	return ACCESS_GRANTED;
+                        return ACCESS_GRANTED;
                     }
                 }
             }

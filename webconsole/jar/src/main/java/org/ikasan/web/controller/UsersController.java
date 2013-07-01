@@ -41,6 +41,7 @@
 package org.ikasan.web.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -48,7 +49,7 @@ import org.ikasan.security.model.Authority;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.GrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -66,7 +67,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/admin/users/*.htm")
+@RequestMapping("/admin/users")
 @SessionAttributes("user")
 public class UsersController
 {
@@ -258,7 +259,7 @@ public class UsersController
      * @param authorities - Full list of authorities
      * @return list of non granted authorities
      */
-    private List<Authority> getNonGrantedAuthrities(GrantedAuthority[] authorities)
+    private List<Authority> getNonGrantedAuthrities(Collection<? extends GrantedAuthority> authorities)
     {
         // start with a list of all the authorities
         List<Authority> nonGrantedAuthorities = new ArrayList<Authority>(this.userService.getAuthorities());

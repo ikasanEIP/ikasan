@@ -49,132 +49,155 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0-RC3</version>
+        <version>0.9.0-RC4-SNAPSHOT</version>
         <relativePath />
     </parent>
 
-  <groupId>org.ikasan</groupId>
   <artifactId>ikasan-webconsole-jar</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.0-RC4-SNAPSHOT</version>
   <name>ikasan :: webconsole : jar</name>
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>3.1.1.RELEASE</version>
+        <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-spec-flow</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-spec-error</artifactId>
+      <version>0.9.0-RC4-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-flow-visitorPattern</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-spec-monitor</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-spec-configuration</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-spec-wiretap</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-spec-module</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-security</artifactId>
         <version>0.9.0-RC4-SNAPSHOT</version>
         <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-spec-search</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-wiretap</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-systemEvent</artifactId>
       <version>0.9.0-RC4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <!--dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-framework</artifactId>
-      <version>0.9.0-EXPERIMENT</version>
-      <scope>provided</scope>
-    </dependency-->
-    <!--dependency>
-      <groupId>org.ikasan</groupId>
-      <artifactId>ikasan-common</artifactId>
-      <version>0.9.0-EXPERIMENT</version>
-      <scope>provided</scope>
-    </dependency-->
+
     <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>1.8.3</version>
         <scope>provided</scope>
     </dependency>
+
     <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz</artifactId>
         <version>2.0.2</version>
         <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.webflow</artifactId>
-      <version>2.0.5.RELEASE</version>
+      <artifactId>spring-js</artifactId>
+      <version>2.3.2.RELEASE</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core-tiger</artifactId>
-      <version>2.0.5.RELEASE</version>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>3.1.1.RELEASE</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-webflow</artifactId>
+        <version>2.3.2.RELEASE</version>
       <scope>provided</scope>
     </dependency>
-        <!-- trial a cloning library -->        
-        <dependency>
-            <groupId>uk.com.robust-it</groupId>
-            <artifactId>cloning</artifactId>
-            <version>1.7.4</version>
-            <scope>provided</scope>
-        </dependency>
+
+    <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-binding</artifactId>
+        <version>2.3.2.RELEASE</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- trial a cloning library -->        
+    <dependency>
+        <groupId>uk.com.robust-it</groupId>
+        <artifactId>cloning</artifactId>
+        <version>1.7.4</version>
+        <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 </project>

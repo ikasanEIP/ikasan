@@ -38,16 +38,16 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security;
+package org.ikasan.web.security;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.module.Module;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.Authentication;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.core.Authentication;
 
 /**
  * Class for determining access/configuration rights
@@ -68,10 +68,10 @@ public class ModuleAfterInvocationProvider extends AbstractModuleAfterInvocation
         super(AFTER_MODULE_READ);
     }
 
-    public Object decide(Authentication authentication, Object object, ConfigAttributeDefinition config,
+    public Object decide(Authentication authentication, Object object, Collection<ConfigAttribute> config,
             Object returnedObject) throws AccessDeniedException
     {
-        Iterator<?> iter = config.getConfigAttributes().iterator();
+        Iterator<?> iter = config.iterator();
         if (returnedObject == null)
         {
             // AclManager interface contract prohibits nulls
@@ -107,4 +107,5 @@ public class ModuleAfterInvocationProvider extends AbstractModuleAfterInvocation
         }
         return returnedObject;
     }
+
 }

@@ -43,6 +43,7 @@ package org.ikasan.web.controller;
 import java.util.List;
 
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
@@ -51,7 +52,7 @@ import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,7 +65,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/modules/*.htm")
+@RequestMapping("/modules")
 public class ModulesController
 {
     /** The module name parameter name */
@@ -79,11 +80,14 @@ public class ModulesController
     /** The trigger id parameter name */
     private static final String TRIGGER_ID_PARAMETER_NAME = "triggerId";
 
+    /** The flow startupType parameter name */
+    private static final String STARTUP_TYPE_PARAMETER_NAME = "startupType";
+    
+    /** The flow startup comment parameter name */
+    private static final String STARTUP_COMMENT_PARAMETER_NAME = "startupComment";
+
     /** Service facade for module functions */
     private ModuleService moduleService;
-
-    /** Monitoring a module's flows */
-    private Monitor<String> monitor;
 
     /** JobAwareFlowEventListener */
     private JobAwareFlowEventListener jobAwareFlowEventListener;
@@ -95,9 +99,8 @@ public class ModulesController
      * @param monitor - A moitor of module's flows
      */
     @Autowired
-    public ModulesController(final ModuleService moduleService, final Monitor<String> monitor)
+    public ModulesController(final ModuleService moduleService)
     {
-        this.monitor = monitor;
         this.moduleService = moduleService;
     }
 
@@ -127,7 +130,6 @@ public class ModulesController
         Module<Flow> module = this.moduleService.getModule(moduleName);
         model.addAttribute("module", module);
         model.addAttribute("flows", module.getFlows());
-        model.addAttribute("monitor", this.monitor);
         // For the navigation bar
         setupNavigationAttributes(moduleName, null, null, model);
         return "modules/viewModule";
@@ -149,11 +151,54 @@ public class ModulesController
         Flow flow = module.getFlow(flowName);
         model.addAttribute("flowElements", flow.getFlowElements());
         model.addAttribute("flow", flow);
+        model.addAttribute("startupControl", this.moduleService.getStartupControl(moduleName, flowName) );
+
         // For the navigation bar
         setupNavigationAttributes(moduleName, flowName, null, model);
         return "modules/viewFlow";
     }
 
+    /**
+     * Control the initiator (stop, start etc)
+     * 
+     * @param moduleName The name of the module
+     * @param initiatorName - The name of the initiator
+     * @param initiatorAction - The controlling action for the initiator
+     * @return "modules/viewModule"
+     * @throws Exception - Exception if we cannot control the initiator
+     */
+    @RequestMapping(value = "flowStartupControl.htm", method = RequestMethod.POST)
+    public String controlInitiator(
+            @RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
+            @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName,
+            @RequestParam(value=STARTUP_TYPE_PARAMETER_NAME,required=false) String startupType,
+            @RequestParam(value=STARTUP_COMMENT_PARAMETER_NAME, required=false) String startupComment)
+    {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (startupType!=null)
+        {
+            if (startupType.equalsIgnoreCase("manual")||startupType.equalsIgnoreCase("automatic")||startupType.equalsIgnoreCase("disabled"))
+            {           
+                //crude check to ensure comment is supplied when disabling
+                if (startupType.equalsIgnoreCase("disabled"))
+                {
+                    if (startupComment==null ||"".equals(startupComment.trim()))
+                    {
+                        throw new IllegalArgumentException("must supply comment when disabling Initiator");
+                    }
+                }
+                
+                moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, currentUser);
+            }
+            else
+            {
+                throw new RuntimeException("Unknown startupType:" + startupType);
+            }           
+        }
+        
+        return "redirect:view.htm?moduleName=" + moduleName;
+    }
+    
     /**
      * @param moduleName
      * @param flowName
@@ -178,7 +223,7 @@ public class ModulesController
         {
             throw new RuntimeException("Unknown flow action [" + action + "].");
         }
-        return "redirect:viewFlow.htm?moduleName=" + moduleName + "&flowName=" + flowName;
+        return "redirect:view.htm?moduleName=" + moduleName;
     }
 
     /**
@@ -293,7 +338,7 @@ public class ModulesController
      * 
      * @param jobAwareFlowEventListener - The job aware flow event listener to set
      */
-//    @Autowired - dont autowire this for the generics re-write
+    @Autowired 
     public void setJobAwareFlowEventListener(JobAwareFlowEventListener jobAwareFlowEventListener)
     {
         this.jobAwareFlowEventListener = jobAwareFlowEventListener;
