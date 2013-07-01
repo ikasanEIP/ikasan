@@ -115,6 +115,13 @@
             <version>1.7.4</version>
         </dependency>
 
+        <!-- used by replication factory -->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>1.2</version>
+        </dependency>
+
 		<!-- required for unit tests -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
