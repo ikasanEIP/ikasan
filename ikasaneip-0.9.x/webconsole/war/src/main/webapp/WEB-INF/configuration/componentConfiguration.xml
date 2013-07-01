@@ -100,7 +100,7 @@
         <transition on="error" to="viewComponentConfiguration" />
     </action-state>
     
-    <end-state id="configurationConfirmed"  view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=${moduleName}&amp;flowName=${flowName}&amp;flowElementName=${flowElementName}" />
-    <end-state id="cancelled"  view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=${moduleName}&amp;flowName=${flowName}&amp;flowElementName=${flowElementName}" />
+    <end-state id="configurationConfirmed"  view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=#{moduleName}&amp;flowName=#{flowName}&amp;flowElementName=#{flowElementName}" />
+    <end-state id="cancelled"  view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=#{moduleName}&amp;flowName=#{flowName}&amp;flowElementName=#{flowElementName}" />
 
 </flow>

@@ -49,28 +49,22 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
 
-
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			/WEB-INF/classes/platform-environment-context.xml
-            /WEB-INF/classes/platform-datasource-context.xml
-			/WEB-INF/classes/platform-service-context.xml
-			/WEB-INF/classes/systemevent-service-context.xml
-			<!-- /WEB-INF/classes/errorlogging-service-context.xml -->
-			<!-- /WEB-INF/classes/excludedevent-service-context.xml -->
-			/WEB-INF/classes/module-service-context.xml
-			/WEB-INF/classes/wiretap-service-context.xml
-            /WEB-INF/classes/configurationService-context.xml
-            /WEB-INF/classes/flow-context.xml
-            /WEB-INF/classes/recoveryManager-context.xml
-            /WEB-INF/classes/monitor-context.xml
-            /WEB-INF/applicationContext-security.xml
-   </param-value>
+            classpath:ikasan-datasource-conf.xml
+            classpath:platform-service-conf.xml
+            classpath:scheduler-service-conf.xml
+            classpath:recoveryManager-service-conf.xml
+            classpath:module-service-conf.xml
+            classpath:ikasan-module-bootstrap-conf.xml
+            classpath:wiretap-service-conf.xml
+            classpath:systemevent-service-conf.xml
+            classpath:flow-service-conf.xml
+            classpath:configuration-service-conf.xml
+            /WEB-INF/security-service-conf.xml
+        </param-value>
 	</context-param>
-
-
-
 
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -82,20 +76,14 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-
-	<servlet>
-		<servlet-name>context</servlet-name>
-		<servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
 	<servlet>
 		<servlet-name>springapp</servlet-name>
-		<servlet-class>
-			org.springframework.web.servlet.DispatcherServlet
-		</servlet-class>
-		<load-on-startup>3</load-on-startup>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
@@ -123,6 +111,5 @@
 			<taglib-location>/WEB-INF/spring-form.tld</taglib-location>
 		</taglib>
 	</jsp-config>
-
 
 </web-app>

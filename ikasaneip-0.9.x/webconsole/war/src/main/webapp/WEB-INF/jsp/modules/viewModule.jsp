@@ -68,9 +68,10 @@
 <table id="initiatorsList" class="listTable" >
     <thead>
         <tr>
-            <th>Flow</th>
+            <th>Flow Name</th>
+            <th>Type</th>
             <th>Status</th>
-            <!-- th>&nbsp;</th-->
+            <th>&nbsp;</th>
         </tr>
     </thead>
 
@@ -80,29 +81,28 @@
                 <td>
                      <c:url var="viewFlowLink" value="viewFlow.htm">
                         <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${flow.key}"/>
+                        <c:param name="flowName" value="${flow.name}"/>
                      </c:url>
                     <a href="<c:out value="${viewFlowLink}" escapeXml="true" />">
-                        <c:out value="${flow.key}" />
+                        <c:out value="${flow.name}" />
                     </a>
                 </td>
-                <!-- <td>
-                    <c:url var="controlFlowLink" value="flow.htm">
-                        <c:param name="moduleName" value="${moduleName}"/>
-                        <c:param name="flowName" value="${flow.key}"/>
-                        <c:param name="action" value="start"/>
-                    </c:url>
-                    <form:form action="${controlFlowLink}" method="post">
-                        <input type="submit" value="Start" class="controlButton"/>
-                    </form:form>
-                </td>-->
+                
+                <td>
+                     <c:out value="${flow.flowElements[0].flowComponent.class.simpleName}" />
+                </td>
+
+                <td class="initiatorState-<c:out value="${flow.state}" />">
+                    <c:out value="${flow.state}" />
+                </td>
+                
                 <td>    
-                    <security:authorize ifAllGranted="ADMIN_${moduleName}">
+                    <!-- FIXME security:authorize ifAllGranted="ADMIN_${moduleName}"-->
                          <c:choose>
-                            <c:when test="${monitor.status}.equalsIgnoreCase('running')">
+                            <c:when test="${flow.state.equalsIgnoreCase('running')}">
                                 <c:url var="controlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
-                                    <c:param name="flowName" value="${flow.key}"/>
+                                    <c:param name="flowName" value="${flow.name}"/>
                                     <c:param name="action" value="stop"/>
                                 </c:url>
                                 <form:form action="${controlFlowLink}" method="post">
@@ -112,7 +112,7 @@
                             <c:otherwise>
                                 <c:url var="controlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
-                                    <c:param name="flowName" value="${flow.key}"/>
+                                    <c:param name="flowName" value="${flow.name}"/>
                                     <c:param name="action" value="start"/>
                                 </c:url>
                                 <form:form action="${controlFlowLink}" method="post">
@@ -120,7 +120,7 @@
                                 </form:form>
                             </c:otherwise>
                          </c:choose>
-                    </security:authorize>
+                    <!--/security:authorize-->
                 </td>
             </tr>
         </c:forEach>
