@@ -52,6 +52,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -65,6 +66,7 @@ import org.quartz.Trigger;
  * 
  * @author Ikasan Development Team
  */
+@DisallowConcurrentExecution
 public class ScheduledConsumer 
     implements Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
 {
