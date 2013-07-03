@@ -40,38 +40,83 @@
  */
 package org.ikasan.builder;
 
+import java.util.Map;
+
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.spec.flow.FlowElement;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
+ * Spring based Factory Bean for the creation of FlowElements.
+ * 
  * @author Ikasan Development Team
  * 
  */
-public class FlowElementFactory<COMPONENT> implements FactoryBean<FlowElement>
+public class FlowElementFactory<COMPONENT> implements FactoryBean<FlowElement<?>>
 {
     /** name of the flow element being instantiated */
     String name;
 
-    /** POJO being wrapped */
+    /** POJO component being wrapped */
     COMPONENT component;
 
+    /** flow element multiple transitions */
+    Map<String,FlowElement<?>> transitions;
+    
+    /** flow element single transition */
+    FlowElement<?> transition;
+    
+    /**
+     * Setter for name
+     * @param name
+     */
     public void setName(String name)
     {
         this.name = name;
     }
 
+    /**
+     * Setter for component.
+     * @param component
+     */
     public void setComponent(COMPONENT component)
     {
         this.component = component;
+    }
+
+    /**
+     * Setter for transitions.
+     * @param transitions
+     */
+    public void setTransitions(Map<String,FlowElement<?>> transitions)
+    {
+        this.transitions = transitions;
+    }
+
+    /**
+     * Setter for transition.
+     * @param transition
+     */
+    public void setTransition(FlowElement<?> transition)
+    {
+        this.transition = transition;
     }
 
     /*
      * (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
-    public FlowElement getObject()
+    public FlowElement<?> getObject()
     {
+        if(transitions != null)
+        {
+            return new FlowElementImpl(name, component, transitions);
+        }
+        else if(transition != null)
+        {
+            return new FlowElementImpl(name, component, transition);
+        }
+        
         return new FlowElementImpl(name, component);
     }
 

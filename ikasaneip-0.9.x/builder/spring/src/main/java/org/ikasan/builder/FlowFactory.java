@@ -40,29 +40,39 @@
  */
 package org.ikasan.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder;
+import org.apache.log4j.Logger;
+import org.ikasan.exceptionResolver.ExceptionResolver;
+import org.ikasan.flow.event.DefaultReplicationFactory;
+import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
+import org.ikasan.flow.visitorPattern.FlowConfiguration;
+import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
+import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.MonitorListener;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.springframework.beans.factory.FactoryBean;
 
+import javax.annotation.Resource;
+
 /**
+ * Spring based FactoryBean for the creation of Ikasan Flows.
  * @author Ikasan Development Team
  * 
  */
 public class FlowFactory implements FactoryBean<Flow>
 {
-    /** name of the flow module owner */
+    /** logger */
+    private static Logger logger = Logger.getLogger(FlowFactory.class);
+    
+    /** name of the flow's module owner */
     String moduleName;
 
     /** name of the flow being instantiated */
@@ -71,25 +81,28 @@ public class FlowFactory implements FactoryBean<Flow>
     /** optional module description */
     String description;
 
-    /** flow event listener */
+    /** default flow event listener which can be overridden */
+    @Resource
     FlowEventListener flowEventListener;
 
-    /** flow recovery manager instance */
+    /** recovery manager factory for getting a default recoveryManager instance */
+    @Resource
+    RecoveryManagerFactory recoveryManagerFactory;
+
+    /** allow override of recovery manager instance */
     RecoveryManager recoveryManager;
 
-    /** configuration service */
+    /** exception resolver to be registered with recovery manager */
+    ExceptionResolver exceptionResolver;
+
+    /** default configuration service which can be overridden */
+    @Resource
     ConfigurationService configurationService;
 
-    /** flow element wiring */
-    FlowConfigurationBuilder flowConfigurationBuilder;
+    /** flow monitor */
+    Monitor monitor;
 
-    /** event factory */
-    EventFactory eventFactory;
-
-    /** track the order of defined flow elements until we need to build the flow */
-    List<FlowElement> flowElements;
-    
-    /** consumer is always head of a flow configuration */
+    /** consumer is the only flow element we need a handle on */
     FlowElement<Consumer> consumer;
     
     /**
@@ -129,21 +142,12 @@ public class FlowFactory implements FactoryBean<Flow>
     }
 
     /**
-     * Allow overrideof default configurationService
+     * Allow override of default configurationService
      * @param configurationService
      */
     public void setConfigurationService(ConfigurationService configurationService)
     {
         this.configurationService = configurationService;
-    }
-
-    /**
-     * Allow override of default event factory
-     * @param eventFactory
-     */
-    public void setEventFactory(EventFactory eventFactory)
-    {
-        this.eventFactory = eventFactory;
     }
 
     /**
@@ -155,61 +159,67 @@ public class FlowFactory implements FactoryBean<Flow>
         this.description = description;
     }
 
+    /**
+     * Setter for consumer flow element
+     * @param consumer
+     */
     public void setConsumer(FlowElement<Consumer> consumer)
     {
-        this.flowElements = new ArrayList<FlowElement>();
         this.consumer = consumer;
     }
-    
-    public void setTranslator(FlowElement<Translator> translator)
+
+    /**
+     * Setter for monitor
+     * @param monitor
+     */
+    public void setMonitor(Monitor monitor)
     {
-        this.flowElements.add(translator);
+        this.monitor = monitor;
     }
-    
-    public void setPublisher(FlowElement<Producer> producer)
+
+    /**
+     * Setter for exception resolver to be registered with the recovery manager.
+     * @param exceptionResolver
+     */
+    public void setExceptionResolver(ExceptionResolver exceptionResolver)
     {
-        this.flowElements.add(producer);
+        this.exceptionResolver = exceptionResolver;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
     public Flow getObject()
     {
-        FlowBuilder flowBuilder = FlowBuilder.newFlow(name, moduleName);
-        flowBuilder.withDescription(description);
-        
-        // override defaults if specified
-        if(flowEventListener != null)
+        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
+        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumer, configurationService);
+
+        if(recoveryManager == null)
         {
-            flowBuilder.withFlowListener(flowEventListener);
-        }
-        if(recoveryManager != null)
-        {
-            flowBuilder.withRecoveryManager(recoveryManager);
-        }
-        if(configurationService != null)
-        {
-            flowBuilder.withConfigurationService(configurationService);
-        }
-        if(eventFactory != null)
-        {
-            flowBuilder.withEventFactory(eventFactory);
+            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName,  consumer.getFlowComponent());
         }
 
-        FlowConfigurationBuilder flowConfigurationBuilder = flowBuilder.consumer(consumer);
-        
-        // wire the flow together
-        for(FlowElement flowElement: flowElements)
+        if(exceptionResolver != null)
         {
-            if(flowElement.flowBuilder.
+            recoveryManager.setResolver(exceptionResolver);
+        }
+
+        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
+        flow.setFlowListener(flowEventListener);
+
+        if(monitor != null && flow instanceof MonitorListener)
+        {
+            ((MonitorListener)flow).setMonitor(monitor);
         }
         
-        return flowBuilder
-            .consumer("consumerName", null)
-            .publisher("producerName", null)
-            .build();
+        logger.info("Instantiated flow - name[" + name + "] module[" + moduleName 
+            + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName() 
+            + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none") 
+            + "]; Monitor[" + ((monitor != null && flow instanceof MonitorListener) ? monitor.getClass().getSimpleName() : "none") 
+            + "]");
+        
+        return flow;
     }
 
     /*
@@ -229,4 +239,5 @@ public class FlowFactory implements FactoryBean<Flow>
     {
         return false;
     }
+
 }
