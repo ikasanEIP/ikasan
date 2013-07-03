@@ -40,50 +40,22 @@
  */
 package org.ikasan.builder;
 
-import junit.framework.Assert;
-
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
+import org.ikasan.spec.monitor.Monitor;
 
 /**
- * This test class supports the <code>ModuleFactory</code> class.
- * 
+ * Sample monitor implementation for testing.
  * @author Ikasan Development Team
+ * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = { 
-        "/module-conf.xml", 
-        "/flow-conf.xml", 
-        "/component-conf.xml",  
-        "/recoveryManager-service-conf.xml", 
-        "/scheduler-service-conf.xml", 
-        "/configuration-service-conf.xml",
-        "/systemevent-service-conf.xml",
-        "/module-service-conf.xml",
-        "/wiretap-service-conf.xml",
-        "/exception-conf.xml",
-        "/hsqldb-datasource-conf.xml"
-        })
-public class ModuleFactoryTest
+public class SampleMonitor implements Monitor
 {
-    @Resource
-    Module<Flow> module;
-    
-    /**
-     * Test successful flow creation.
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.monitor.Monitor#notifyMonitor(java.lang.Object)
      */
-    @Test
-    public void test_successful_moduleCreation() 
+    public void notifyMonitor(Object arg0)
     {
-    	Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
-    	Assert.assertTrue("module description should be 'moduleDescription'", "moduleDescription".equals(module.getDescription()));
-    	Assert.assertNotNull("module should contain a flow named 'flowName''", module.getFlow("flowName"));
+        // TODO Auto-generated method stub
+        
     }
 }

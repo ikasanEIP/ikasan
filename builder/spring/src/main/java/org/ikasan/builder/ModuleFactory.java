@@ -47,6 +47,7 @@ import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
+ * Spring based FactoryBean for the creation of Ikasan Modules.
  * @author Ikasan Development Team
  * 
  */
@@ -79,14 +80,24 @@ public class ModuleFactory implements FactoryBean<Module>
         this.description = description;
     }
 
+    /**
+     * Setter for flows.
+     * @param flows
+     */
+    public void setFlows(List<Flow> flows)
+    {
+        this.flows = flows;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
     public Module getObject()
     {
-        ModuleBuilder moduleBuilder = ModuleBuilder.newModule(name).withDescription(description);
-        return moduleBuilder.build();
+        Module module = new org.ikasan.module.SimpleModule(name, flows);
+        module.setDescription(description);
+        return module;
     }
 
     /*
