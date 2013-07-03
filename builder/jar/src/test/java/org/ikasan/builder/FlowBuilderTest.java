@@ -40,9 +40,7 @@
  */
 package org.ikasan.builder;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Assert;
 

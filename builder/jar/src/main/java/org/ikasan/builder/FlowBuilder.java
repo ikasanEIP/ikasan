@@ -45,9 +45,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterConfigurationBuilder.Otherwise;
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterConfigurationBuilder.When;
-import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerConfigurationBuilder.Sequence;
+import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.Otherwise;
+import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.When;
+import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerRootConfigurationBuilder.Sequence;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
@@ -207,18 +207,6 @@ public class FlowBuilder
 		return new FlowConfigurationBuilder(this, name, consumer);
 	}
 
-    /**
-     * Add a consumer
-     * 
-     * @param name
-     * @param consumer
-     * @return
-     */
-    public FlowConfigurationBuilder consumer(FlowElement<Consumer> consumer) 
-    {
-        return new FlowConfigurationBuilder(this, flowElement);
-    }
-
 	/**
 	 * /////////////////////////////////////////////////////////////////////////
 	 * ////////////////////////////////////// Class for wiring the components
@@ -227,7 +215,7 @@ public class FlowBuilder
 	 * @author Ikasan Development Team
 	 * 
 	 */
-	public class FlowConfigurationBuilder 
+	public class FlowConfigurationBuilder
 	{
 		// keep hold of the flowBuilder isntance
 		FlowBuilder flowBuilder;
@@ -256,17 +244,6 @@ public class FlowBuilder
             this.flowElements.add(new FlowElementImpl(name, consumer));
         }
 
-        private FlowConfigurationBuilder(FlowBuilder flowBuilder, FlowElement<Consumer> flowElement) 
-        {
-            this.flowBuilder = flowBuilder;
-            if(flowBuilder == null)
-            {
-                throw new IllegalArgumentException("flowBuilder cannot be 'null'");
-            }
-            
-            this.flowElements.add(flowElement));
-        }
-
 		public FlowConfigurationBuilder broker(String name, Broker broker) 
 		{
 			this.flowElements.add(new FlowElementImpl(name, broker));
@@ -285,32 +262,32 @@ public class FlowBuilder
 			return this;
 		}
 
-		public FlowConfigurationBuilder converter(String name, Converter converter) 
-		{
-			this.flowElements.add(new FlowElementImpl(name, converter));
-			return this;
-		}
+        public FlowConfigurationBuilder converter(String name, Converter converter) 
+        {
+            this.flowElements.add(new FlowElementImpl(name, converter));
+            return this;
+        }
 
-		public SequencerConfigurationBuilder sequencer(String name, Sequencer sequencer) 
+		public SequencerRootConfigurationBuilder sequencer(String name, Sequencer sequencer) 
 		{
 			this.flowElements.add(new FlowElementImpl(name, sequencer));
-			return new SequencerConfigurationBuilder(this);
+			return new SequencerRootConfigurationBuilder(this);
 		}
 
-		public RouterConfigurationBuilder router(String name, Router router) 
+		public RouterRootConfigurationBuilder router(String name, Router router) 
 		{
 			this.flowElements.add(new FlowElementImpl(name, router));
-			return new RouterConfigurationBuilder(this);
+			return new RouterRootConfigurationBuilder(this);
 		}
 
 		/**
 		 * /////////////////////////////////////////////////////////////////////
 		 * /////////////////////////////////////////////////// Sequencer wiring
 		 * 
-		 * @author Ikasan Developmnet Team
+		 * @author Ikasan Development Team
 		 * 
 		 */
-		public class SequencerConfigurationBuilder 
+		public class SequencerRootConfigurationBuilder 
 		{
 			// keep a handle on the flowConfigurationBuilder
 			FlowConfigurationBuilder flowConfigurationBuilder;
@@ -319,7 +296,7 @@ public class FlowBuilder
 			 * Constructor
 			 * @param flowConfigurationBuilder
 			 */
-			public SequencerConfigurationBuilder(FlowConfigurationBuilder flowConfigurationBuilder) 
+			public SequencerRootConfigurationBuilder(FlowConfigurationBuilder flowConfigurationBuilder) 
 			{
 				this.flowConfigurationBuilder = flowConfigurationBuilder;
 			}
@@ -327,49 +304,13 @@ public class FlowBuilder
 			public SequencerConfigurationBuilder sequence(String sequenceName) 
 			{
 				flowElements.add(new FlowElementImpl(sequenceName, new Sequence()));
-				return this;
+				return new SequencerConfigurationBuilder(this, flowConfigurationBuilder);
 			}
 
 			public SequencerConfigurationBuilder sequence() 
 			{
 				flowElements.add(new FlowElementImpl("sequence-"  + flowElements.size(), new Sequence()));
-				return this;
-			}
-
-			public SequencerProducerTerminator publisher(String name, Producer producer) 
-			{
-				flowElements.add(new FlowElementImpl(name, producer));
-				return new SequencerProducerTerminator(this);
-			}
-
-			public SequencerConfigurationBuilder broker(String name, Broker broker) 
-			{
-				flowElements.add(new FlowElementImpl(name, broker));
-				return this;
-			}
-
-			public SequencerConfigurationBuilder translater(String name, Translator translator) 
-			{
-				flowElements.add(new FlowElementImpl(name, translator));
-				return this;
-			}
-
-			public SequencerConfigurationBuilder converter(String name, Converter converter) 
-			{
-				flowElements.add(new FlowElementImpl(name, converter));
-				return this;
-			}
-
-			public SequencerConfigurationBuilder sequencer(String name, Sequencer sequencer) 
-			{
-				flowElements.add(new FlowElementImpl(name, sequencer));
-				return this;
-			}
-
-			public RouterConfigurationBuilder router(String name, Router router) 
-			{
-				flowElements.add(new FlowElementImpl(name, router));
-				return new RouterConfigurationBuilder(flowConfigurationBuilder);
+                return new SequencerConfigurationBuilder(this, flowConfigurationBuilder);
 			}
 
 			public class Sequence 
@@ -378,21 +319,83 @@ public class FlowBuilder
 
 		}
 
+        /**
+         * /////////////////////////////////////////////////////////////////////
+         * /////////////////////////////////////////////////// Sequencer wiring
+         * 
+         * @author Ikasan Development Team
+         * 
+         */
+        public class SequencerConfigurationBuilder
+        {
+            SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder;
+            
+            // keep a handle on the flowConfigurationBuilder
+            FlowConfigurationBuilder flowConfigurationBuilder;
+
+            /**
+             * Constructor
+             * @param flowConfigurationBuilder
+             */
+            public SequencerConfigurationBuilder(SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder, FlowConfigurationBuilder flowConfigurationBuilder) 
+            {
+                this.sequencerRootConfigurationBuilder = sequencerRootConfigurationBuilder;
+                this.flowConfigurationBuilder = flowConfigurationBuilder;
+            }
+
+            public SequencerProducerTerminator publisher(String name, Producer producer) 
+            {
+                flowElements.add(new FlowElementImpl(name, producer));
+                return new SequencerProducerTerminator(sequencerRootConfigurationBuilder);
+            }
+
+            public SequencerConfigurationBuilder broker(String name, Broker broker) 
+            {
+                flowElements.add(new FlowElementImpl(name, broker));
+                return this;
+            }
+
+            public SequencerConfigurationBuilder translater(String name, Translator translator) 
+            {
+                flowElements.add(new FlowElementImpl(name, translator));
+                return this;
+            }
+
+            public SequencerConfigurationBuilder converter(String name, Converter converter) 
+            {
+                flowElements.add(new FlowElementImpl(name, converter));
+                return this;
+            }
+
+            public SequencerConfigurationBuilder sequencer(String name, Sequencer sequencer) 
+            {
+                flowElements.add(new FlowElementImpl(name, sequencer));
+                return this;
+            }
+
+            public RouterRootConfigurationBuilder router(String name, Router router) 
+            {
+                flowElements.add(new FlowElementImpl(name, router));
+                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
+            }
+
+        }
+
 		/**
 		 * /////////////////////////////////////////////////////////////////////
-		 * /////////////////////////////////////////////////// Sequencer wiring
+		 * /////////////////////////////////////////////////// router wiring
 		 * 
-		 * @author Ikasan Developmnet Team
+		 * @author Ikasan Development Team
 		 * 
 		 */
-		public class RouterConfigurationBuilder 
+		public class RouterRootConfigurationBuilder 
 		{
 			// keep a handle on the flowConfigurationBuilder
 			FlowConfigurationBuilder flowConfigurationBuilder;
 
 			FlowElement routerFlowElement;
 
-			public RouterConfigurationBuilder(FlowConfigurationBuilder flowConfigurationBuilder) 
+			public RouterRootConfigurationBuilder(FlowConfigurationBuilder flowConfigurationBuilder) 
 			{
 				this.flowConfigurationBuilder = flowConfigurationBuilder;
 			}
@@ -400,49 +403,13 @@ public class FlowBuilder
 			public RouterConfigurationBuilder when(String value) 
 			{
 				flowElements.add(new FlowElementImpl("when", new When(value)));
-				return this;
+				return new RouterConfigurationBuilder(this, flowConfigurationBuilder);
 			}
 
 			public FlowConfigurationBuilder otherise() 
 			{
 				flowElements.add(new FlowElementImpl("otherwise", new Otherwise()));
-				return this.flowConfigurationBuilder;
-			}
-
-			public RouterConfigurationBuilder publisher(String name, Producer producer) 
-			{
-				flowElements.add(new FlowElementImpl(name, producer));
-				return this;
-			}
-
-			public RouterConfigurationBuilder broker(String name, Broker broker) 
-			{
-				flowElements.add(new FlowElementImpl(name, broker));
-				return this;
-			}
-
-			public RouterConfigurationBuilder translater(String name, Translator translator) 
-			{
-				flowElements.add(new FlowElementImpl(name, translator));
-				return this;
-			}
-
-			public RouterConfigurationBuilder converter(String name, Converter converter) 
-			{
-				flowElements.add(new FlowElementImpl(name, converter));
-				return this;
-			}
-
-			public SequencerConfigurationBuilder sequencer(String name, Sequencer sequencer) 
-			{
-				flowElements.add(new FlowElementImpl(name, sequencer));
-				return new SequencerConfigurationBuilder(flowConfigurationBuilder);
-			}
-
-			public RouterConfigurationBuilder router(String name, Router router) 
-			{
-				flowElements.add(new FlowElementImpl(name, router));
-				return new RouterConfigurationBuilder(flowConfigurationBuilder);
+                return flowConfigurationBuilder;
 			}
 
 			public class When 
@@ -470,6 +437,58 @@ public class FlowBuilder
 				}
 			}
 		}
+
+        public class RouterConfigurationBuilder 
+        {
+            RouterRootConfigurationBuilder routerRootConfigurationBuilder;
+            
+            // keep a handle on the flowConfigurationBuilder
+            FlowConfigurationBuilder flowConfigurationBuilder;
+
+            FlowElement routerFlowElement;
+
+            public RouterConfigurationBuilder(RouterRootConfigurationBuilder routerRootConfigurationBuilder, FlowConfigurationBuilder flowConfigurationBuilder) 
+            {
+                this.routerRootConfigurationBuilder = routerRootConfigurationBuilder;
+                this.flowConfigurationBuilder = flowConfigurationBuilder;
+            }
+
+            public RouterRootConfigurationBuilder publisher(String name, Producer producer) 
+            {
+                flowElements.add(new FlowElementImpl(name, producer));
+                return this.routerRootConfigurationBuilder;
+            }
+
+            public RouterConfigurationBuilder broker(String name, Broker broker) 
+            {
+                flowElements.add(new FlowElementImpl(name, broker));
+                return this;
+            }
+
+            public RouterConfigurationBuilder translater(String name, Translator translator) 
+            {
+                flowElements.add(new FlowElementImpl(name, translator));
+                return this;
+            }
+
+            public RouterConfigurationBuilder converter(String name, Converter converter) 
+            {
+                flowElements.add(new FlowElementImpl(name, converter));
+                return this;
+            }
+
+            public SequencerRootConfigurationBuilder sequencer(String name, Sequencer sequencer)
+            {
+                flowElements.add(new FlowElementImpl(name, sequencer));
+                return new SequencerRootConfigurationBuilder(flowConfigurationBuilder);
+            }
+
+            public RouterRootConfigurationBuilder router(String name, Router router) 
+            {
+                flowElements.add(new FlowElementImpl(name, router));
+                return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
+            }
+        }
 
 		public class FlowProducerTerminator 
 		{
@@ -558,11 +577,11 @@ public class FlowBuilder
 
 		public class SequencerProducerTerminator extends FlowProducerTerminator
 		{
-			SequencerConfigurationBuilder sequencerConfigurationBuilder;
+		    SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder;
 			
-			public SequencerProducerTerminator(SequencerConfigurationBuilder sequencerConfigurationBuilder)
+			public SequencerProducerTerminator(SequencerRootConfigurationBuilder sequencerRootConfigurationBuilder)
 			{
-				this.sequencerConfigurationBuilder = sequencerConfigurationBuilder;
+				this.sequencerRootConfigurationBuilder = sequencerRootConfigurationBuilder;
 			}
 			
 			public Flow build()
@@ -572,12 +591,12 @@ public class FlowBuilder
 			
 			public SequencerConfigurationBuilder sequence()
 			{
-				return this.sequencerConfigurationBuilder.sequence();
+				return this.sequencerRootConfigurationBuilder.sequence();
 			}
 
 			public SequencerConfigurationBuilder sequence(String sequenceName)
 			{
-				return this.sequencerConfigurationBuilder.sequence(sequenceName);
+				return this.sequencerRootConfigurationBuilder.sequence(sequenceName);
 			}
 		}
 	}
