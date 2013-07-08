@@ -64,6 +64,12 @@ public interface Consumer<LISTENER,EVENT_FACTORY>
     public void setEventFactory(EVENT_FACTORY eventFactory);
 
     /**
+     * Does this consumer have an event factory already registered
+     * @return boolean
+     */
+    public EVENT_FACTORY getEventFactory();
+
+    /**
      * Start the consumer and any underlying tech
      */
     public void start();
