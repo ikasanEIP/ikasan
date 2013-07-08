@@ -55,7 +55,6 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
 import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
@@ -510,6 +509,12 @@ public class ScheduledRecoveryManagerIntegrationTest
 		{
             // do not care about this method for the purpose of these tests
 		}
+
+        public Object getEventFactory()
+        {
+            // do not care about this method for the purpose of these tests
+            return null;
+        }
     }
 
     /**
