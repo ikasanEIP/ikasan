@@ -237,5 +237,13 @@ public class ScheduledConsumer
     {
         return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression)).build();
     }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
+     */
+    public EventFactory getEventFactory()
+    {
+        return this.flowEventFactory;
+    }
     
 }

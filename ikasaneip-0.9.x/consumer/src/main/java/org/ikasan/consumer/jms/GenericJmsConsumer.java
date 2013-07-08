@@ -362,4 +362,12 @@ public class GenericJmsConsumer
         this.configuredResourceId = configuredResourceId;
     }
 
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
+     */
+    public EventFactory getEventFactory()
+    {
+        return this.flowEventFactory;
+    }
+
 }
