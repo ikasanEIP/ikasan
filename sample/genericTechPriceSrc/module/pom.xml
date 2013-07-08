@@ -53,7 +53,7 @@
         <relativePath></relativePath>
     </parent>
 
-    <artifactId>ikasan-sample-genericTech</artifactId>
+    <artifactId>sample-genericTechPriceSrc</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Sample Implementation for a generic tech consumer</name>
     <description>Ikasan EIP sample demonstrating implementation of a flow for any tech consumer</description>
@@ -143,6 +143,7 @@
             <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
