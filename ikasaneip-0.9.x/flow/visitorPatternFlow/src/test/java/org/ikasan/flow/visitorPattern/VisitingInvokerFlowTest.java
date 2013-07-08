@@ -45,6 +45,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -146,6 +147,9 @@ public class VisitingInvokerFlowTest
     
     /** Mock flow invocation context */
     final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "mockFlowInvocationContext");
+
+    /** Mock flow event factory */
+    final FlowEventFactory flowEventFactory = mockery.mock(FlowEventFactory.class, "mockFlowEventFactory");
 
     /** is recovering status */
     boolean isRecovering = false;
@@ -320,6 +324,10 @@ public class VisitingInvokerFlowTest
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
                 
+                // check eventFactory for consumer
+                exactly(1).of(consumer).getEventFactory();
+                will(returnValue(flowEventFactory));
+                
                 // start the consumer
                 exactly(1).of(consumer).start();
             }
@@ -442,6 +450,10 @@ public class VisitingInvokerFlowTest
                 
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
+                
+                // check eventFactory for consumer
+                exactly(1).of(consumer).getEventFactory();
+                will(returnValue(flowEventFactory));
                 
                 // start the consumer
                 exactly(1).of(consumer).start();
@@ -686,6 +698,10 @@ public class VisitingInvokerFlowTest
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
                 
+                // check eventFactory for consumer
+                exactly(1).of(consumer).getEventFactory();
+                will(returnValue(flowEventFactory));
+                
                 // start the consumer
                 exactly(1).of(consumer).start();
             }
@@ -888,6 +904,10 @@ public class VisitingInvokerFlowTest
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
                 
+                // check eventFactory for consumer
+                exactly(1).of(consumer).getEventFactory();
+                will(returnValue(flowEventFactory));
+                
                 // start the consumer
                 exactly(1).of(consumer).start();
                 will(throwException(exception));
@@ -1018,6 +1038,10 @@ public class VisitingInvokerFlowTest
                 
                 // set listener for tech callbacks
                 exactly(1).of(consumer).setListener(flow);
+                
+                // check eventFactory for consumer
+                exactly(1).of(consumer).getEventFactory();
+                will(returnValue(flowEventFactory));
                 
                 // start the consumer
                 exactly(1).of(consumer).start();

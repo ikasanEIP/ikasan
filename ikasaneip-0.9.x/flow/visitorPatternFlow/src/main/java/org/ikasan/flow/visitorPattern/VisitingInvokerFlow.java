@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
@@ -61,6 +62,7 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorListener;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.event.EventFactory;
 
 /**
  * Default implementation of a Flow
@@ -110,8 +112,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     
     /** has the consumer been paused */
     private boolean consumerPaused = false;
-    
+
+    /** default managed resource recovery manager factory */
     private ManagedResourceRecoveryManagerFactory managedResourceRecoveryManagerFactory = new ManagedResourceRecoveryManagerFactory();
+
+    /** default event factory */
+    private EventFactory eventFactory = new FlowEventFactory();
 
     /**
      * Constructor
@@ -299,6 +305,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         // start the consumer
         Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = consumerFlowElement.getFlowComponent();
         consumer.setListener( (EventListener<FlowEvent<?,?>>)this );
+
+        // if event factory has not been set on the consumer then set the default
+        if(consumer.getEventFactory() == null)
+        {
+            consumer.setEventFactory(eventFactory);
+        }
+
         try
         {
             consumer.start();
