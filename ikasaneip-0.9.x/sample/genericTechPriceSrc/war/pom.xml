@@ -23,9 +23,9 @@
       <relativePath />
   </parent>
 
-  <artifactId>ikasan-sample-genericTech-war</artifactId>
+  <artifactId>sample-genericTechPriceSrc-war</artifactId>
   <packaging>war</packaging>
-  <name>sample-genericTech</name>
+  <name>Sample Generic Tech Price Src packaged as a war</name>
 
   <dependencies>
 

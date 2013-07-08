@@ -9,9 +9,9 @@
         <relativePath />
     </parent>
 
-	<artifactId>sample-wls-genericTechPriceSrc-ear</artifactId>
+	<artifactId>sample-genericTechPriceSrc-ear</artifactId>
 	<packaging>ear</packaging>
-	<name>Sample generic Tech Weblogic configured EAR</name>
+	<name>Sample generic Tech configured EAR</name>
 
 	<build>
 		<plugins>
