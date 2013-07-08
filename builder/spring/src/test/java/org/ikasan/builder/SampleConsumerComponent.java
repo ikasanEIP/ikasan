@@ -69,6 +69,14 @@ public class SampleConsumerComponent implements Consumer
     }
 
     /* (non-Javadoc)
+     * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
+     */
+    public Object getEventFactory()
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
      * @see org.ikasan.spec.component.endpoint.Consumer#setListener(java.lang.Object)
      */
     public void setListener(Object arg0)
