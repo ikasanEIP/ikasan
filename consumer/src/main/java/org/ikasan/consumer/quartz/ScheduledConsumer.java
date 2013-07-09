@@ -47,6 +47,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
@@ -76,6 +77,9 @@ public class ScheduledConsumer
     /** Scheduler */
     private Scheduler scheduler;
     
+    /** scheduled job factory */
+    private ScheduledJobFactory scheduledJobFactory;
+    
     /** consumer event factory */
     private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
@@ -88,16 +92,19 @@ public class ScheduledConsumer
     /** consumer configuration */
     private ScheduledConsumerConfiguration consumerConfiguration;
     
-    /** quartz job detail */
-    private JobDetail jobDetail;
-
+    /** job identifying name */
+    private String name;
+    
+    /** job identifying group */
+    private String group;
+    
     /**
      * Constructor
      * @param scheduler
      * @param jobDetail
      * @param flowEventFactory
      */
-    public ScheduledConsumer(Scheduler scheduler, EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public ScheduledConsumer(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String name, String group)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -105,21 +112,28 @@ public class ScheduledConsumer
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
 
-        this.flowEventFactory = flowEventFactory;
-        if(flowEventFactory == null)
+        this.scheduledJobFactory = scheduledJobFactory;
+        if(scheduledJobFactory == null)
         {
-            throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
+            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
+        }
+        
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.group = group;
+        if(group == null)
+        {
+            throw new IllegalArgumentException("group cannot be 'null'");
         }
     }
     
     public void setEventFactory(EventFactory flowEventFactory)
     {
     	this.flowEventFactory = flowEventFactory;
-    }
-    
-    public void setJobDetail(JobDetail jobDetail)
-    {
-        this.jobDetail = jobDetail;
     }
     
     /**
@@ -129,6 +143,8 @@ public class ScheduledConsumer
     {
         try
         {
+            JobDetail jobDetail = scheduledJobFactory.createJobDetail(this, this.name, this.group);
+            
             // create trigger
             // TODO - allow configuration to support multiple triggers
             JobKey jobkey = jobDetail.getKey();
@@ -157,7 +173,11 @@ public class ScheduledConsumer
     {
         try
         {
-            this.scheduler.deleteJob(this.jobDetail.getKey());
+            JobKey jobKey = new JobKey(name, group);
+            if(this.scheduler.checkExists(jobKey))
+            {
+                this.scheduler.deleteJob(jobKey);
+            }
         }
         catch (SchedulerException e)
         {
@@ -173,13 +193,18 @@ public class ScheduledConsumer
     {
         try
         {
-            JobDetail jobDetail = this.scheduler.getJobDetail(this.jobDetail.getKey());
-            if(jobDetail == null)
+            if(this.scheduler.isShutdown() || this.scheduler.isInStandbyMode())
             {
                 return false;
             }
+
+            JobKey jobKey = new JobKey(this.name, this.group);
+            if(this.scheduler.checkExists(jobKey))
+            {
+                return true;
+            }
             
-            return this.scheduler.isStarted();
+            return false;
         }
         catch(SchedulerException e)
         {
@@ -204,7 +229,7 @@ public class ScheduledConsumer
     {
         JobKey jobkey = context.getJobDetail().getKey();
         String uniqueId = jobkey.getName() + jobkey.getGroup();
-        FlowEvent<?,?> flowEvent =this.flowEventFactory.newEvent(uniqueId, context);
+        FlowEvent<?,?> flowEvent = this.flowEventFactory.newEvent(uniqueId, context);
         this.eventListener.invoke(flowEvent);
     }
 
