@@ -19,7 +19,7 @@
         <value>transaction-conf.xml</value>
 
         <!-- configured at runtime by loading from runtime file system -->
-        <value>file:conf/sample-jmsPriceSrc/transactionManager-conf.xml</value>
+        <value>file:conf/sample-jmsDrivenPriceSrc/transactionManager-conf.xml</value>
     </util:list>
 
 </beans>
