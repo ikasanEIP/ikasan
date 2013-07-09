@@ -60,7 +60,6 @@ public class PriceLoggerProducer implements Producer<StringBuilder>
      */
     public void invoke(StringBuilder payload) throws EndpointException 
     {
-//        logger.info("Producer invoked with [" + payload + "]");
-        System.out.println("**** payload [" + payload + "] ****");
+        logger.info("Producer invoked with [" + payload + "]");
     }
 }
