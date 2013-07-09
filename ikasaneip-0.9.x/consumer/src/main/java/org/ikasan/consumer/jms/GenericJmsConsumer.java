@@ -112,8 +112,7 @@ public class GenericJmsConsumer
      * @param destination
      * @param flowEventFactory
      */
-    public GenericJmsConsumer(ConnectionFactory connectionFactory, Destination destination,
-            EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public GenericJmsConsumer(ConnectionFactory connectionFactory, Destination destination)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
@@ -126,12 +125,6 @@ public class GenericJmsConsumer
         {
             throw new IllegalArgumentException("destination cannot be 'null'");
         }
-
-        this.flowEventFactory = flowEventFactory;
-        if(flowEventFactory == null)
-        {
-            throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
-        }
     }
 
     /**
@@ -140,8 +133,7 @@ public class GenericJmsConsumer
      * @param destination
      * @param flowEventFactory
      */
-    public GenericJmsConsumer(ConnectionFactory connectionFactory, DestinationResolver destinationResolver,
-            EventFactory<FlowEvent<?,?>> flowEventFactory)
+    public GenericJmsConsumer(ConnectionFactory connectionFactory, DestinationResolver destinationResolver)
     {
         this.connectionFactory = connectionFactory;
         if(connectionFactory == null)
@@ -153,12 +145,6 @@ public class GenericJmsConsumer
         if(destinationResolver == null)
         {
             throw new IllegalArgumentException("destinationResolver cannot be 'null'");
-        }
-
-        this.flowEventFactory = flowEventFactory;
-        if(flowEventFactory == null)
-        {
-            throw new IllegalArgumentException("flowEventFactory cannot be 'null'");
         }
     }
 
