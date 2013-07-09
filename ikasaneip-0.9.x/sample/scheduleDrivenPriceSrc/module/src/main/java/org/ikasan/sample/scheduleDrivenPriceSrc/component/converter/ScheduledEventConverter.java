@@ -38,28 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.scheduleDrivenPriceSrc.component.endpoint;
+package org.ikasan.sample.scheduleDrivenPriceSrc.component.converter;
 
-import org.apache.log4j.Logger;
-import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.quartz.JobExecutionContext;
 
 /**
- * This class provides a stubbed example of a producer component.
+ * This class provides a sample implementation of a converter for quartz contexts.
  * 
  * @author Ikasan Development Team
  */
-public class PayloadProducer implements Producer<StringBuilder>
+public class ScheduledEventConverter implements Converter<JobExecutionContext,StringBuilder>
 {
-    /** Logger instance */
-    private Logger logger = Logger.getLogger(PayloadProducer.class);
-
-    public void invoke(StringBuilder payload) throws EndpointException 
+    public StringBuilder convert(JobExecutionContext context) throws TransformationException
     {
-        StringBuilder output = new StringBuilder(1024);
-        output.append("Producer invoked with [");
-        output.append(payload);
-        output.append("]");
-        logger.info(output);
+        StringBuilder sb = new StringBuilder();
+        sb.append("schedule executed at = ");
+        sb.append(context.getFireTime());
+        sb.append(" name = ");
+        sb.append(context.getJobDetail().getKey().getName());
+        return sb;
     }
 }
