@@ -42,24 +42,9 @@ package org.ikasan.sample.jmsDrivenPriceSrc.integrationTest;
 
 import javax.annotation.Resource;
 import javax.jms.JMSException;
-import javax.jms.Message;
 
-import org.ikasan.consumer.jms.GenericJmsConsumerConfiguration;
-import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
-import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.sample.jmsDrivenPriceSrc.flow.PriceFlowFactory;
-import org.ikasan.scheduler.SchedulerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.trigger.dao.TriggerDao;
-import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.Before;
+import org.ikasan.spec.module.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,61 +57,46 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/configuration-dao-config.xml", 
-        "/trigger-dao-config.xml", 
-        "/hsqldb-config.xml"})
-      
+      "/component-conf.xml", 
+      "/flow-conf.xml", 
+      "/module-conf.xml", 
+      "/exception-conf.xml", 
+      "/hsqldb-datasource-conf.xml", 
+      "/recoveryManager-service-conf.xml", 
+      "/scheduler-service-conf.xml", 
+      "/configuration-service-conf.xml",
+      "/systemevent-service-conf.xml",
+      "/module-service-conf.xml",
+      "/wiretap-service-conf.xml",
+      "/exception-conf.xml",
+      "/hsqldb-datasource-conf.xml"
+      })
+
 public class PriceFlowSampleTest
 {
-    /** Spring DI resource */
-    @Resource ConfigurationDao staticConfigurationDao;
+    @Resource
+    Module<Flow> module;
     
-    /** Spring DI resource */
-    @Resource ConfigurationDao dynamicConfigurationDao;
-    
-    /** Spring DI resource */
-    @Resource TriggerDao triggerDao;
-    
-    /** flow event factory */
-    FlowEventFactory flowEventFactory = new FlowEventFactory();
-    
-    /** configuration service */
-    ConfigurationService configurationService;
-    
-    /** configuration management for the scheduled consumer */
-    ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration> configurationManagement;
-    
-    /** recovery manager */
-    RecoveryManagerFactory recoveryManagerFactory;
-    
-    /** flow event listener */
-    FlowEventListener flowEventListener;
-    
-    @Before
-    public void setup() 
-    {
-        this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
-        
-        configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);
-        configurationManagement = (ConfigurationManagement<Consumer,GenericJmsConsumerConfiguration>)configurationService;
-        flowEventListener = new JobAwareFlowEventListener(null, triggerDao);
-    }
-
     @Test
     public void test_flow_consumer_translator_producer() throws JMSException
     {
-        PriceFlowFactory priceFlowFactory = 
-            new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement, flowEventListener);
-        Flow priceFlow = priceFlowFactory.createJmsDrivenFlow();
-
-        // we need an instance of a producer to poke the first message to the JMS destination
-        Producer testProducer = priceFlowFactory.createProducer("testProducerId");
-        priceFlow.start();
+        for(Flow flow:module.getFlows())
+        {
+            flow.start();
+        }
         
-        testProducer.invoke(priceFlowFactory.createTextMessage("text message 1"));
-        testProducer.invoke(priceFlowFactory.createTextMessage("text message 2"));
-        testProducer.invoke(priceFlowFactory.createTextMessage("text message 3"));
-        testProducer.invoke(priceFlowFactory.createTextMessage("text message 4"));
-        priceFlow.stop();
+        try
+        {
+            Thread.sleep(100);
+        }
+        catch(InterruptedException e)
+        {
+            // dont care
+        }
+        
+        for(Flow flow:module.getFlows())
+        {
+            flow.stop();
+        }
     }
 }
