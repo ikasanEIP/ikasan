@@ -23,8 +23,8 @@
         <property name="cronExpression" value="0/5 * * * * ?" />
     </bean>
     
-    <bean id="scheduledConverter" class="org.ikasan.sample.scheduleDrivenPriceSrc.component.converter.ScheduledEventConverter" />
+    <bean id="scheduledConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventConverter" />
     
-    <bean id="scheduledProducer" class="org.ikasan.sample.scheduleDrivenPriceSrc.component.endpoint.EventProducer" />
+    <bean id="scheduledProducer" class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.ScheduleEventProducer" />
 
 </beans>
