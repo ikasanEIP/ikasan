@@ -42,18 +42,8 @@ package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
 
 import javax.annotation.Resource;
 
-import org.ikasan.consumer.quartz.ScheduledConsumerConfiguration;
-import org.ikasan.flow.configuration.dao.ConfigurationDao;
-import org.ikasan.flow.configuration.service.ConfigurationManagement;
-import org.ikasan.flow.configuration.service.ConfigurationService;
-import org.ikasan.flow.configuration.service.ConfiguredResourceConfigurationService;
-import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.sample.scheduleDrivenPriceSrc.flow.PriceFlowFactory;
-import org.ikasan.scheduler.SchedulerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
-import org.junit.Before;
+import org.ikasan.spec.module.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
@@ -68,44 +58,33 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-    "/configuration-dao-config.xml", 
-    "/hsqldb-config.xml"})
+      "/component-conf.xml", 
+      "/flow-conf.xml", 
+      "/module-conf.xml", 
+      "/exception-conf.xml", 
+      "/hsqldb-datasource-conf.xml", 
+      "/recoveryManager-service-conf.xml", 
+      "/scheduler-service-conf.xml", 
+      "/configuration-service-conf.xml",
+      "/systemevent-service-conf.xml",
+      "/module-service-conf.xml",
+      "/wiretap-service-conf.xml",
+      "/exception-conf.xml",
+      "/hsqldb-datasource-conf.xml"
+      })
       
-public class PriceFlowSampleTest
+public class ScheduledFlowSampleTest
 {
-    /** Spring DI resource */
-    @Resource ConfigurationDao staticConfigurationDao;
+    @Resource
+    Module<Flow> module;
     
-    /** Spring DI resource */
-    @Resource ConfigurationDao dynamicConfigurationDao;
-    
-    /** flow event factory */
-    FlowEventFactory flowEventFactory = new FlowEventFactory();
-    
-    /** configuration service */
-    ConfigurationService configurationService;
-    
-    /** configuration management for the scheduled consumer */
-    ConfigurationManagement<Consumer,ScheduledConsumerConfiguration> configurationManagement;
-    
-    /** recovery manager */
-    RecoveryManagerFactory recoveryManagerFactory;
-    
-    @Before
-    public void setup() throws SchedulerException
-    {
-        this.recoveryManagerFactory = new RecoveryManagerFactory(SchedulerFactory.getInstance().getScheduler());
-        configurationService = new ConfiguredResourceConfigurationService(staticConfigurationDao, dynamicConfigurationDao);;
-        configurationManagement = (ConfigurationManagement<Consumer,ScheduledConsumerConfiguration>)configurationService;
-    }
-
     @Test
     public void test_flow_consumer_translator_producer() throws SchedulerException
     {
-        PriceFlowFactory priceFlowFactory = 
-            new PriceFlowFactory("flowName", "moduleName", this.configurationService, this.configurationManagement);
-        Flow priceFlow = priceFlowFactory.createScheduleDrivenFlow();
-        priceFlow.start();
+        for(Flow flow:module.getFlows())
+        {
+            flow.start();
+        }
         
         try
         {
@@ -116,6 +95,9 @@ public class PriceFlowSampleTest
             // dont care
         }
         
-        priceFlow.stop();
+        for(Flow flow:module.getFlows())
+        {
+            flow.stop();
+        }
     }
 }
