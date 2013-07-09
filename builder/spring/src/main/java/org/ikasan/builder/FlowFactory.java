@@ -58,7 +58,10 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorListener;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Resource;
 
@@ -67,7 +70,7 @@ import javax.annotation.Resource;
  * @author Ikasan Development Team
  * 
  */
-public class FlowFactory implements FactoryBean<Flow>
+public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 {
     /** logger */
     private static Logger logger = Logger.getLogger(FlowFactory.class);
@@ -226,9 +229,9 @@ public class FlowFactory implements FactoryBean<Flow>
      * (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
-    public Class<Module> getObjectType()
+    public Class<Flow> getObjectType()
     {
-        return Module.class;
+        return Flow.class;
     }
 
     /*
@@ -238,6 +241,16 @@ public class FlowFactory implements FactoryBean<Flow>
     public boolean isSingleton()
     {
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
+    {
+        this.configurationService = applicationContext.getBean(ConfigurationService.class);
+        this.recoveryManagerFactory = applicationContext.getBean(RecoveryManagerFactory.class);
+        this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
     }
 
 }
