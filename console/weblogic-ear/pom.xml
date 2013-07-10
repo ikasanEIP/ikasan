@@ -26,6 +26,7 @@
                         <webModule>
                             <groupId>org.ikasan</groupId>
                             <artifactId>console</artifactId>
+                            <contextRoot>/console</contextRoot>
                         </webModule>
 					</modules>
 				</configuration>
