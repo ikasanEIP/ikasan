@@ -69,8 +69,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
       "/systemevent-service-conf.xml",
       "/module-service-conf.xml",
       "/wiretap-service-conf.xml",
-      "/exception-conf.xml",
-      "/hsqldb-datasource-conf.xml"
+      "/exception-conf.xml"
       })
       
 public class ScheduledFlowSampleTest
