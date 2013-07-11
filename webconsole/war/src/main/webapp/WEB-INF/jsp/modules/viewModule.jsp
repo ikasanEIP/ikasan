@@ -109,6 +109,16 @@
                                     <input type="submit" value="Stop" class="controlButton"/>
                                 </form:form>
                             </c:when>
+                            <c:when test="${flow.state.equalsIgnoreCase('recovering')}">
+                                <c:url var="controlFlowLink" value="flow.htm">
+                                    <c:param name="moduleName" value="${moduleName}"/>
+                                    <c:param name="flowName" value="${flow.name}"/>
+                                    <c:param name="action" value="stop"/>
+                                </c:url>
+                                <form:form action="${controlFlowLink}" method="post">
+                                    <input type="submit" value="Stop" class="controlButton"/>
+                                </form:form>
+                            </c:when>
                             <c:otherwise>
                                 <c:url var="controlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
