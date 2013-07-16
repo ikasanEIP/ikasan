@@ -42,7 +42,10 @@ package org.ikasan.builder;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.ikasan.consumer.jms.GenericJmsConsumer;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -52,8 +55,11 @@ import org.springframework.beans.factory.FactoryBean;
  * @author Ikasan Development Team
  * 
  */
-public class FlowElementFactory<COMPONENT> implements FactoryBean<FlowElement<?>>
+public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<FlowElement<?>>
 {
+    /** class logger */
+    private static Logger logger = Logger.getLogger(FlowElementFactory.class);
+
     /** name of the flow element being instantiated */
     String name;
 
@@ -65,6 +71,12 @@ public class FlowElementFactory<COMPONENT> implements FactoryBean<FlowElement<?>
     
     /** flow element single transition */
     FlowElement<?> transition;
+    
+    /** identifier if the cmoponent supported ConfiguredResource */
+    String configuredResourceId;
+    
+    /** identifier if the cmoponent supported ConfiguredResource */
+    CONFIGURATION configuration;
     
     /**
      * Setter for name
@@ -102,12 +114,49 @@ public class FlowElementFactory<COMPONENT> implements FactoryBean<FlowElement<?>
         this.transition = transition;
     }
 
+    /**
+     * Setter for configured resource identifier
+     * @param configuredResourceId
+     */
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    /**
+     * Setter for the actual component configuration
+     * @param configuration
+     */
+    public void setConfiguration(CONFIGURATION configuration)
+    {
+        this.configuration = configuration;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
     public FlowElement<?> getObject()
     {
+        // configure component as required
+        if(configuredResourceId != null)
+        {
+            if(! (component instanceof ConfiguredResource) )
+            {
+                throw new IllegalArgumentException("Trying to configure a component not marked as a ConfiguredResource. Component [" + this.name + "] must either implement ConfiguredResource or remove the configuration.");
+            }
+            
+            ConfiguredResource configuredResource = (ConfiguredResource)component;
+            configuredResource.setConfiguredResourceId(configuredResourceId);
+            
+            if(configuration == null)
+            {
+                logger.warn("Component [" + name + "] is marked as a configured resource, but has no configuration!");
+            }
+            
+            configuredResource.setConfiguration(configuration);
+        }
+
         if(transitions != null)
         {
             return new FlowElementImpl(name, component, transitions);
