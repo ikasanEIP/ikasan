@@ -64,13 +64,13 @@
 
         <!-- ikasan eip core -->
         <module>spec</module>
-        <module>systemEvent</module>
+        <module>system-event</module>
         <module>module</module>
         <module>bootstrap</module>
         <module>scheduler</module>
-        <module>recoveryManager</module>
+        <module>recovery-manager</module>
         <module>flow</module>
-        <module>configurationService</module>
+        <module>configuration-service</module>
         <module>wiretap</module>
         <module>security</module>
 
@@ -95,7 +95,7 @@
         <!--module>compatibility</module-->
 
         <!-- samples -->
-        <!--module>sample</module-->
+        <module>sample</module>
 
         <!-- documentation -->
         <!--module>documentation</module-->
