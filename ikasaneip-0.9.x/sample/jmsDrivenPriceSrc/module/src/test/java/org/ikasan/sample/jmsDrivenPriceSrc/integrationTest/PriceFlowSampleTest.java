@@ -57,19 +57,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-      "/component-conf.xml", 
-      "/flow-conf.xml", 
-      "/module-conf.xml", 
-      "/exception-conf.xml", 
-      "/hsqldb-datasource-conf.xml", 
-      "/recoveryManager-service-conf.xml", 
-      "/scheduler-service-conf.xml", 
-      "/configuration-service-conf.xml",
-      "/systemevent-service-conf.xml",
-      "/module-service-conf.xml",
-      "/wiretap-service-conf.xml",
-      "/exception-conf.xml",
-      "/hsqldb-datasource-conf.xml"
+        "/recoveryManager-service-conf.xml", 
+        "/scheduler-service-conf.xml", 
+        "/configuration-service-conf.xml",
+        "/systemevent-service-conf.xml",
+        "/module-service-conf.xml",
+        "/wiretap-service-conf.xml",
+        "/component-conf.xml", 
+        "/flow-conf.xml", 
+        "/module-conf.xml", 
+        "/exception-conf.xml", 
+        "/hsqldb-datasource-conf.xml"
       })
 
 public class PriceFlowSampleTest
