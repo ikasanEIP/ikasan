@@ -49,9 +49,11 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.log4j.Logger;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -62,8 +64,8 @@ import org.ikasan.spec.configuration.ConfiguredResource;
  *
  * @author Ikasan Development Team
  */
-public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, ManagedResource,
-    ConfiguredResource<GenericJmsProducerConfiguration>
+public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, ManagedIdentifierService<ManagedEventIdentifierService>,
+    ManagedResource, ConfiguredResource<GenericJmsProducerConfiguration>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsProducer.class);
@@ -83,6 +85,9 @@ public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, Manage
     /** JMS consumer configuration - default to vanilla instance */
     protected GenericJmsProducerConfiguration configuration = new GenericJmsProducerConfiguration();
     
+    /** default event identifier service - can be overridden via the setter */
+    protected ManagedEventIdentifierService<String,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
+
     /** session has to be closed prior to connection being closed */
     protected Session session;
 
@@ -167,7 +172,7 @@ public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, Manage
             }
             
             // carry the event identifier if available
-            jmsMessage.setStringProperty(FlowEvent.LIFE_ID, message.getIdentifier() );
+            this.managedEventIdentifierService.setEventIdentifier(message.getIdentifier(), jmsMessage);
 
             // publish message
             messageProducer.send(jmsMessage);
@@ -191,6 +196,15 @@ public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, Manage
                 }
             }
         }
+    }
+
+    /**
+     * Override the default producer event life identifier service
+     * @param eventLifeIdentifierService
+     */
+    public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
+    {
+        this.managedEventIdentifierService = managedEventIdentifierService;
     }
 
     public void setMessageConverter(MessageConverter messageConverter)

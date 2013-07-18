@@ -40,8 +40,6 @@
  */
 package org.ikasan.consumer.jms;
 
-import java.util.Enumeration;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -60,6 +58,9 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.event.ManagedEventIdentifierException;
+import org.ikasan.spec.management.ManagedIdentifierService;
 
 /**
  * Implementation of a consumer based on the JMS specification.
@@ -67,7 +68,7 @@ import org.ikasan.spec.flow.FlowEvent;
  * @author Ikasan Development Team
  */
 public class GenericJmsConsumer 
-    implements Consumer<EventListener<?>,EventFactory>, EndpointListener<Message>,
+    implements Consumer<EventListener<?>,EventFactory>, ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message>,
     ConfiguredResource<GenericJmsConsumerConfiguration>
 {
     /** class logger */
@@ -90,6 +91,9 @@ public class GenericJmsConsumer
 
     /** consumer event listener */
     protected EventListener eventListener;
+
+    /** default event identifier service - can be overridden via the setter */
+    protected ManagedEventIdentifierService<?,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** configured resource id */
     protected String configuredResourceId;
@@ -276,6 +280,15 @@ public class GenericJmsConsumer
     }
 
     /**
+     * Override the default consumer event life identifier service
+     * @param eventLifeIdentifierService
+     */
+    public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
+    {
+        this.managedEventIdentifierService = managedEventIdentifierService;
+    }
+
+    /**
      * Callback method from the underlying JMS tech.
      * On invocation this method creates a flowEvent from the tech specific
      * message and invokes the event listener.
@@ -289,34 +302,13 @@ public class GenericJmsConsumer
         
         try
         {
-            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( getLifeIdentifier(message), message);
+            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( this.managedEventIdentifierService.getEventIdentifier(message), message);
             this.eventListener.invoke(flowEvent);
         }
-        catch (JMSException e)
+        catch (ManagedEventIdentifierException e)
         {
             this.eventListener.invoke(e);
         }
-    }
-
-    /**
-     * Default implementation for the population of the life identifier on JMS serialisation
-     * @param message
-     * @return
-     */
-    public Object getLifeIdentifier(Message message) throws JMSException
-    {
-        Enumeration<String> enumeration = message.getPropertyNames();
-        while (enumeration.hasMoreElements()) 
-        {
-            Object property = enumeration.nextElement();
-            if(FlowEvent.LIFE_ID.equals(property))
-            {
-                return property;
-            }
-        }
-        
-        // use JMS id if none other available
-        return message.getJMSMessageID();
     }
 
     /**
