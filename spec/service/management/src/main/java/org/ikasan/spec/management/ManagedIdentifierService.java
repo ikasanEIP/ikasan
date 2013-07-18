@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,37 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.spec.management;
 
 /**
- * Interface for the <code>Flow Event</code>.
+ * Interface provisioning the setting of a managed identifier service.
  * 
  * @author Ikasan Development Team
- *
  */
-public interface FlowEvent<IDENTIFIER,PAYLOAD>
+public interface ManagedIdentifierService<MANAGED_IDENTIFIER_SERVICE>
 {
-	/**
-	 * Get immutable flow event identifier.
-	 * @return IDENTIFIER - event identifier
-	 */
-	public IDENTIFIER getIdentifier();
-
-	/**
-	 * Get the immutable created date/time of the flow event.
-	 * @return long - create date time
-	 */
-	public long getTimestamp();
-
-	/**
-	 * Get the payload of this flow event.
-	 * @return PAYLOAD payload
-	 */
-	public PAYLOAD getPayload();
-	
-	/**
-	 * Set the payload of this flow event.
-	 * @param PAYLOAD - payload
-	 */
-	public void setPayload(PAYLOAD payload);
+    /**
+     * Set the mananaged identifier service on the implementing class.
+     * @param managedIdentifierService
+     */
+    public void setManagedIdentifierService(MANAGED_IDENTIFIER_SERVICE managedIdentifierService);
 }

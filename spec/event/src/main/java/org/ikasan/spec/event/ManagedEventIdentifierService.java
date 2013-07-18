@@ -38,37 +38,43 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.spec.event;
 
 /**
- * Interface for the <code>Flow Event</code>.
+ * Interface for a ManagedEventIdentifierService providing the contract for any 
+ * business event identifier to be added on the creation of a business event.
+ * 
+ * The Event Identifier is a business identifier immutable for the business
+ * life of the event.
  * 
  * @author Ikasan Development Team
  *
  */
-public interface FlowEvent<IDENTIFIER,PAYLOAD>
+public interface ManagedEventIdentifierService<IDENTIFIER,EVENT>
 {
-	/**
-	 * Get immutable flow event identifier.
-	 * @return IDENTIFIER - event identifier
-	 */
-	public IDENTIFIER getIdentifier();
+    /** provide consistent properties for access */
+    public static final String EVENT_LIFE_ID = "IkasanEventLifeIdentifier";
+    
+    /**
+     * Set the event life identifier based on the incoming event implementation.
+     * The incoming identifier should always be a valid object - never 'null',
+     * although this is not enforced in the code.
+     * 
+     * @param identifier
+     * @param event
+     * @throws ManagedEventIdentifierException
+     */
+    public void setEventIdentifier(IDENTIFIER identifier, EVENT event)
+        throws ManagedEventIdentifierException;
 
-	/**
-	 * Get the immutable created date/time of the flow event.
-	 * @return long - create date time
-	 */
-	public long getTimestamp();
-
-	/**
-	 * Get the payload of this flow event.
-	 * @return PAYLOAD payload
-	 */
-	public PAYLOAD getPayload();
-	
-	/**
-	 * Set the payload of this flow event.
-	 * @param PAYLOAD - payload
-	 */
-	public void setPayload(PAYLOAD payload);
+    /**
+     * Get the life identifier for the incoming event.
+     * This will either return a value for the life identifier or
+     * throw an exception if it cannot be obtained.
+     * This should never return 'null'.
+     * 
+     * @param event
+     * @return IDENTIFIER
+     */
+    public IDENTIFIER getEventIdentifier(EVENT event);
 }
