@@ -76,5 +76,6 @@ public interface ManagedEventIdentifierService<IDENTIFIER,EVENT>
      * @param event
      * @return IDENTIFIER
      */
-    public IDENTIFIER getEventIdentifier(EVENT event);
+    public IDENTIFIER getEventIdentifier(EVENT event)
+        throws ManagedEventIdentifierException;
 }

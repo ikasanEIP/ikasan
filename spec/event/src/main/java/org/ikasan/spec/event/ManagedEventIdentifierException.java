@@ -53,6 +53,24 @@ public class ManagedEventIdentifierException extends RuntimeException
 
     /**
      * Constructor
+     * @param message
+     */
+    public ManagedEventIdentifierException(String message)
+    {
+        super(message);
+    }
+
+    /**
+     * Constructor
+     * @param throwable
+     */
+    public ManagedEventIdentifierException(Throwable throwable)
+    {
+        super(throwable);
+    }
+
+    /**
+     * Constructor
      * 
      * @param message - The exception message
      * @param throwable - exception that caused the rollback
