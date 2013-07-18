@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,37 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.spec.event;
 
 /**
- * Interface for the <code>Flow Event</code>.
+ * Exception used to specify an exception when dealing with setting an identifier
+ * within the ManagedEventIdentiferService.
  * 
  * @author Ikasan Development Team
- *
  */
-public interface FlowEvent<IDENTIFIER,PAYLOAD>
+public class ManagedEventIdentifierException extends RuntimeException
 {
-	/**
-	 * Get immutable flow event identifier.
-	 * @return IDENTIFIER - event identifier
-	 */
-	public IDENTIFIER getIdentifier();
+    /** serialVersionUID */
+    private static final long serialVersionUID = 5643215546008399313L;
 
-	/**
-	 * Get the immutable created date/time of the flow event.
-	 * @return long - create date time
-	 */
-	public long getTimestamp();
-
-	/**
-	 * Get the payload of this flow event.
-	 * @return PAYLOAD payload
-	 */
-	public PAYLOAD getPayload();
-	
-	/**
-	 * Set the payload of this flow event.
-	 * @param PAYLOAD - payload
-	 */
-	public void setPayload(PAYLOAD payload);
+    /**
+     * Constructor
+     * 
+     * @param message - The exception message
+     * @param throwable - exception that caused the rollback
+     */
+    public ManagedEventIdentifierException(String message, Throwable throwable)
+    {
+        super(message, throwable);
+    }
 }
