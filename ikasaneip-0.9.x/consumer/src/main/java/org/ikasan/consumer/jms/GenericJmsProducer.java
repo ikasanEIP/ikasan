@@ -62,7 +62,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
  *
  * @author Ikasan Development Team
  */
-public class GenericJmsProducer<T> implements Producer<T>, ManagedResource,
+public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, ManagedResource,
     ConfiguredResource<GenericJmsProducerConfiguration>
 {
     /** class logger */
@@ -136,24 +136,25 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource,
         }
     }
 
-    public void invoke(T message) throws EndpointException
+    public void invoke(FlowEvent<String,?> message) throws EndpointException
     {
         MessageProducer messageProducer = null;
-        
+        Message jmsMessage = null;
+                
         try
         {
             messageProducer = session.createProducer(destination);
             
-            if(message instanceof Message)
+            if(message.getPayload() instanceof Message)
             {
-                messageProducer.send((Message)message);
+                jmsMessage = (Message)message.getPayload();
             }
             else
             {
                 if(this.messageConverter == null)
                 {
                     throw new EndpointException("Cannot publish message of type[" 
-                        + message.getClass().getName() 
+                        + message.getPayload().getClass().getName() 
                         + " to JMS without a converter!");
                 }
 
@@ -162,16 +163,14 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource,
                     logger.debug("Published [" + message.toString() + "]");
                 }
 
-                Message jmsMessage = this.messageConverter.toMessage(message, session);
-                
-                // carry the event identifier if available
-                if(message instanceof FlowEvent)
-                {
-                    setLifeIdentifier( (FlowEvent)message, jmsMessage);
-                }
-
-                messageProducer.send(jmsMessage);
+                jmsMessage = this.messageConverter.toMessage(message.getPayload(), session);
             }
+            
+            // carry the event identifier if available
+            jmsMessage.setStringProperty(FlowEvent.LIFE_ID, message.getIdentifier() );
+
+            // publish message
+            messageProducer.send(jmsMessage);
         }
         catch(JMSException e)
         {
@@ -194,20 +193,6 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedResource,
         }
     }
 
-    /**
-     * Default implementation for the population of the life identifier on JMS serialisation
-     * @param message
-     * @return
-     */
-    public void setLifeIdentifier(FlowEvent<String,?> message, Message jmsMessage) throws JMSException
-    {
-        Object lifeId = message.getIdentifier();
-        if(lifeId instanceof String)
-        {
-            jmsMessage.setStringProperty(FlowEvent.LIFE_ID, message.getIdentifier() );
-        }
-    }
-    
     public void setMessageConverter(MessageConverter messageConverter)
     {
         this.messageConverter = messageConverter;
