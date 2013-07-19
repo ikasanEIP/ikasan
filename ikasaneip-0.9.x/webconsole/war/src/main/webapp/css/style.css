@@ -270,6 +270,9 @@ form.fancydataform fieldset li {
 .initiatorState-runningInRecovery {
     color: orange;
 }
+.initiatorState-recovering {
+    color: orange;
+}
 .controls{
 	float: right;
 	margin-top: 5px;
