@@ -123,7 +123,10 @@ public class WiretapEventJob implements FlowEventJob
                 logger.error("timeToLive could not be parsed [" + timeToLiveString + "]");
             }
         }
-        logger.info("about to wiretap with timeToLive=[" + timeToLive + "]");
+        if(logger.isDebugEnabled())
+        {
+            logger.debug("about to wiretap with timeToLive=[" + timeToLive + "]");
+        }
         wiretapService.tapEvent(event, location, moduleName, flowName, timeToLive);
     }
 
