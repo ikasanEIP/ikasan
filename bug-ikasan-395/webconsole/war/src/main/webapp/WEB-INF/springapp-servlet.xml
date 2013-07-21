@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // 
+# // Distributed under the Modified BSD License.
+# // Copyright notice: The copyright for this software and a full listing 
+# // of individual contributors are as shown in the packaged copyright.txt 
+# // file. 
+# // 
+# // All rights reserved.
+# //
+# // Redistribution and use in source and binary forms, with or without 
+# // modification, are permitted provided that the following conditions are met:
+# //
+# //  - Redistributions of source code must retain the above copyright notice, 
+# //    this list of conditions and the following disclaimer.
+# //
+# //  - Redistributions in binary form must reproduce the above copyright notice, 
+# //    this list of conditions and the following disclaimer in the documentation 
+# //    and/or other materials provided with the distribution.
+# //
+# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
+# //    be used to endorse or promote products derived from this software without 
+# //    specific prior written permission.
+# //
+# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+
+	<!--
+		- Application context definition for "springapp" DispatcherServlet.
+	-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/webflow-config
+           http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+           http://www.springframework.org/schema/context 
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <context:component-scan base-package="org.ikasan.framework.web"/>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	
+	
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/trigger.htm">flowController</prop>
+                <prop key="/configuration.htm">flowController</prop>				
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+				<value>errors</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+		<property name="prefix">
+			<value>/WEB-INF/jsp/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+
+<!-- ************************ -->
+<!-- Webflow integraion below -->
+<!-- ************************ -->
+
+	<!-- Enables FlowHandler URL mapping -->
+	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+		<property name="flowExecutor" ref="flowExecutor" />
+	</bean>
+	
+	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
+	    <property name="flowRegistry" ref="flowRegistry"/>
+	    <property name="order" value="0"/>
+	</bean>
+
+	<bean name="flowController" class="org.springframework.webflow.mvc.servlet.FlowController">
+		<property name="flowExecutor" ref="flowExecutor"/>
+	</bean>
+
+	<webflow:flow-executor id="flowExecutor" />
+
+	<webflow:flow-registry id="flowRegistry">
+        <webflow:flow-location path="/WEB-INF/triggers/trigger.xml" />
+        <webflow:flow-location path="/WEB-INF/configuration/componentConfiguration.xml" />
+	</webflow:flow-registry>
+	
+	<!-- Having WebFlow present stuffs up some of the default behaviour of the DispatcherServlet, including the following fixes this -->
+	<bean id="controllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
+<!-- ************************ -->
+<!--  end Webflow integraion  -->
+<!-- ************************ -->
+
+	<bean id="triggerDetailsService" class="org.ikasan.framework.web.service.TriggerDetailsService">
+		<constructor-arg ref="flowEventListener"/>
+		<constructor-arg ref="moduleService" />
+	</bean>
+
+    <bean id="configurationManagementService"
+          class="org.ikasan.framework.web.service.ConfigurationManagementService">
+        <constructor-arg ref="configurationService" />
+        <constructor-arg ref="systemEventService" />
+        <constructor-arg ref="moduleService" />
+    </bean>
+
+</beans>

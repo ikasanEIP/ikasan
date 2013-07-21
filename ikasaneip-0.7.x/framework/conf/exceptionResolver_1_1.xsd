@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id: exceptionResolver_1_1.xsd 16808 2009-04-27 07:28:17Z mitcje $
+# // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/framework/conf/exceptionResolver_1_1.xsd $
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">Schema defining the Ikasan Exception Resolver structure.</xsd:documentation>
+  </xsd:annotation>
+
+  <!-- ========================== -->
+  <!-- MAIN part                  -->
+  <!-- ========================== -->
+  <xsd:element name="ExceptionResolver">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Ikasan Exception Resolver structure.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="ComponentGroup" type="ComponentGroupType" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="ComponentGroupType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">A group of related Ikasan components.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Component" type="ComponentType" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="majorCode" use="required" type="xsd:integer"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="ComponentType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">A single Ikasan component.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Exception" type="ExceptionType" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" use="required" type="NonEmptyStringType"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="ExceptionType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Defined exception that can occur from this component.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Action" type="ActionType"/>
+      <xsd:element name="Publish" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="DropDuplicate" minOccurs="0" maxOccurs="1" type="DropDuplicateType"/>
+      <xsd:element name="TimeWindows" minOccurs="0" maxOccurs="1" type="TimeWindowsType"/>
+    </xsd:sequence>
+    <xsd:attribute name="class" use="required" type="NonEmptyStringType"/>
+    <xsd:attribute name="type" use="optional" type="NonEmptyStringType"/>
+    <xsd:attribute name="minorCode" use="optional" type="xsd:integer"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="ActionType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">This defines the action to the taken by the component group when the defined exception is encountered.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="continue">
+          <xsd:annotation><xsd:documentation>This action does not interrupt the flow of execution. Execution continues from its current point.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="skip">
+          <xsd:annotation><xsd:documentation>This action rolls the transaction forward subsequently consuming the offending event.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="retry">
+          <xsd:annotation><xsd:documentation>This action rolls the transaction back forcing the retry of the offending event or action.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="rollBackStop">
+          <xsd:annotation><xsd:documentation>This action rolls back the transaction and stops the initiating component. No further processing will occur until the initiating component is manually restarted. The same event will be processed on manual start.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="rollForwardStop">
+          <xsd:annotation><xsd:documentation>This action rolls forward the transaction and stops the initiating component. No further processing will occur until the initiating component is manually restarted. The next event will be processed on manual start.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="DropDuplicateType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">If the exception has previously occurred this determines the period within which it is treated as a duplicate and whether it will be dropped.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:boolean">
+        <xsd:attribute name="period" use="required" type="xsd:long"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="TimeWindowsType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Defines specific time windows (inclusive or exclusive) within which the action, publish or dropDuplicate can be alternatively specified.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TimeWindow" minOccurs="1" maxOccurs="unbounded" type="TimeWindowType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="TimeWindowType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Defines specific time windows (inclusive or exclusive) within which the action, publish or dropDuplicate can be alternatively specified.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Time" type="CronFormatStringType"/>
+      <xsd:element name="Action" type="ActionType" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="Publish" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="DropDuplicate" minOccurs="0" maxOccurs="1" type="DropDuplicateType"/>
+    </xsd:sequence>
+    <xsd:attribute name="type" use="required" type="TimeWindowTypeType"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="TimeWindowTypeType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Defines the type of time window declared.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="inclusive">
+          <xsd:annotation><xsd:documentation>Time window defines overrides which will take effect inside the specified time.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="exclusive">
+          <xsd:annotation><xsd:documentation>Time window defines overrides which will take effect outside the specified time.</xsd:documentation></xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- TODO - maybe restrict this to the defined crontab/quartz legal chars -->
+  <xsd:simpleType name="CronFormatStringType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="NonEmptyStringType">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

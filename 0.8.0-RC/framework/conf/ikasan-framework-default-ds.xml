@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    ====================================================================
+    Ikasan Enterprise Integration Platform
+
+    Distributed under the Modified BSD License.
+    Copyright notice: The copyright for this software and a full listing
+    of individual contributors are as shown in the packaged copyright.txt
+    file.
+
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+     - Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
+
+     - Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+
+     - Neither the name of the ORGANIZATION nor the names of its contributors may
+       be used to endorse or promote products derived from this software without
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+    USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    =============================================================================
+
+-->
+
+<!DOCTYPE datasources 
+    PUBLIC "-//JBoss//DTD JBOSS JCA Config 1.5//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-ds_1_5.dtd">
+<!-- 
+# //
+# //
+# // $Id: ikasan-framework-default-ds.xml 16808 2009-04-27 07:28:17Z mitcje $
+# // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/framework/conf/ikasan-framework-default-ds.xml $
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // 
+# // Distributed under the Modified BSD License.
+# // Copyright notice: The copyright for this software and a full listing 
+# // of individual contributors are as shown in the packaged copyright.txt 
+# // file. 
+# // 
+# // All rights reserved.
+# //
+# // Redistribution and use in source and binary forms, with or without 
+# // modification, are permitted provided that the following conditions are met:
+# //
+# //  - Redistributions of source code must retain the above copyright notice, 
+# //    this list of conditions and the following disclaimer.
+# //
+# //  - Redistributions in binary form must reproduce the above copyright notice, 
+# //    this list of conditions and the following disclaimer in the documentation 
+# //    and/or other materials provided with the distribution.
+# //
+# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
+# //    be used to endorse or promote products derived from this software without 
+# //    specific prior written permission.
+# //
+# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<datasources>
+
+  <!--
+   *  No Transaction Datasource configuration
+  -->
+  <no-tx-datasource>
+    <jndi-name>ikasan/framework/default/ds</jndi-name>
+    <use-java-context>true</use-java-context>
+    <connection-url>jdbc:sybase:Tds:@EAI_DATABASE_SVCNAME@:@EAI_DATABASE_PORT@/@EAI_DATABASE_NAME@</connection-url>
+    <driver-class>com.sybase.jdbc3.jdbc.SybDataSource</driver-class>
+    <!-- The security domain -->
+    <!--security-domain>@EAI_DATASOURCE_NAME@EncryptionPolicy</security-domain-->
+    <user-name>@EAI_DATABASE_USERNAME@</user-name>
+    <password>@EAI_DATABASE_PASSWORD@</password>
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </no-tx-datasource>
+
+  <!-- 
+   * No Transaction Datasource configuration 
+  -->
+  <local-tx-datasource>
+    <jndi-name>ikasan/framework/defaultLocal/localds</jndi-name>
+    <use-java-context>true</use-java-context>
+    <connection-url>jdbc:sybase:Tds:@EAI_DATABASE_SVCNAME@:@EAI_DATABASE_PORT@/@EAI_DATABASE_NAME@</connection-url>
+    <driver-class>com.sybase.jdbc3.jdbc.SybDataSource</driver-class>
+    <!-- The security domain -->
+    <!--security-domain>@EAI_LOCAL_DATASOURCE_NAME@EncryptionPolicy</security-domain-->
+    <user-name>@EAI_DATABASE_USERNAME@</user-name>
+    <password>@EAI_DATABASE_PASSWORD@</password>
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </local-tx-datasource>
+
+  <!-- 
+   * Transactional Datasource 
+   * Persistence of sequence numbers must be within scope of the transaction 
+  -->
+  <xa-datasource>
+    <jndi-name>ikasan/framework/defaultXA/xads</jndi-name>
+    <use-java-context>true</use-java-context>
+    <track-connection-by-tx />
+    <xa-datasource-class>com.sybase.jdbc3.jdbc.SybXADataSource</xa-datasource-class>
+    <xa-datasource-property name="DatabaseName">@EAI_DATABASE_NAME@</xa-datasource-property>
+    <xa-datasource-property name="ServerName">@EAI_DATABASE_SVCNAME@</xa-datasource-property>
+    <xa-datasource-property name="PortNumber">@EAI_DATABASE_PORT@</xa-datasource-property>
+    <user-name>@EAI_DATABASE_USERNAME@</user-name>
+    <password>@EAI_DATABASE_PASSWORD@</password>
+    <!-- The security domain -->
+    <!--security-domain>@EAI_XA_DATASOURCE_NAME@EncryptionPolicy</security-domain-->
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </xa-datasource>
+
+</datasources>

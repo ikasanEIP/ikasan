@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+	<!-- 
+        Declare the access denied page & force people to go to the login screen 
+        if they try to go elsewhere first.
+     -->
+    <http access-denied-page="/accessDenied.jsp" auto-config='true'>
+        <!-- For login.jsp, css and images we don't apply security -->
+    	<intercept-url pattern="/login.jsp*" filters="none" />
+    	<intercept-url pattern='/css/*' filters='none' />
+    	<intercept-url pattern='/images/*' filters='none' />
+        <!-- You need ROLE_ADMIN for admin pages -->
+    	<intercept-url pattern="/admin/*" access="ROLE_ADMIN" />
+        <!-- You need ROLE_USER for all pages -->
+    	<intercept-url pattern="/**" access="ROLE_USER" />
+        <!-- If you fail login then redirect to the login.jsp page but with the extra parameter indicating failure -->
+    	<form-login login-page='/login.jsp'	authentication-failure-url='/login.jsp?login_error=1' />
+	</http>
+
+    <!-- The authentication provider, use the SHA1 encoding for password obscuring -->
+	<authentication-provider user-service-ref="userDetailsService">
+		<password-encoder ref="sha1PasswordEncoder" />
+	</authentication-provider>
+    
+    <!-- The SHA1 password encoder provider -->
+    <beans:bean id="sha1PasswordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
+
+    <!-- The user details service -->
+	<beans:bean id="userDetailsService" class="org.ikasan.framework.security.service.UserServiceImpl">
+		<beans:constructor-arg ref="userDao"/>
+		<beans:constructor-arg ref="authorityDao"/>
+		<beans:constructor-arg ref="sha1PasswordEncoder"/>
+	</beans:bean>
+	
+    <!-- The User DAO -->
+	<beans:bean id="userDao" class="org.ikasan.framework.security.dao.HibernateUserDao">
+        <beans:property name="sessionFactory" ref="securitySessionFactory"/>
+    </beans:bean>
+	
+    <!-- The Authority DAO -->
+    <beans:bean id="authorityDao" class="org.ikasan.framework.security.dao.HibernateAuthorityDao">
+        <beans:property name="sessionFactory" ref="securitySessionFactory"/>
+    </beans:bean>	
+
+    <!-- The security session factory -->
+    <beans:bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <beans:property name="dataSource" ref="ikasanAdminLocalTxDataSource" />
+        <beans:property name="mappingResources">
+            <beans:list>
+                <beans:value>org/ikasan/framework/security/model/User.hbm.xml</beans:value>
+                <beans:value>org/ikasan/framework/security/model/Authority.hbm.xml</beans:value>
+            </beans:list>
+        </beans:property>
+        <beans:property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </beans:bean>
+
+	<!-- Automatically receives AuthenticationEvent messages -->
+	<beans:bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" />
+
+    <!-- The access decision manager -->
+	<global-method-security access-decision-manager-ref="accessDecisionManager">
+
+		<!--
+			AspectJ pointcut expressions that locates our "post" method and
+			applies security to that call.
+		-->
+        <protect-pointcut
+            expression="execution(* org.ikasan.framework.security.service.UserService.changeUsersPassword(..))"
+            access="ROLE_ADMIN" />
+        <protect-pointcut
+            expression="execution(* org.ikasan.framework.security.service.UserService.grantAuthority(..))"
+            access="ROLE_ADMIN" />
+        <protect-pointcut
+            expression="execution(* org.ikasan.framework.security.service.UserService.revokeAuthority(..))"
+            access="ROLE_ADMIN" />
+	    <!-- Gaining access to a Module requires security check -->
+		<protect-pointcut 
+            expression="execution(* org.ikasan.framework.module.service.ModuleService.getModule(..))"
+            access="ROLE_USER,AFTER_MODULE_READ" /> 
+        <protect-pointcut
+            expression="execution(* org.ikasan.framework.module.service.ModuleService.getModules())"
+            access="ROLE_USER,AFTER_MODULE_COLLECTION_READ" />
+		
+	</global-method-security>
+
+    <!-- The access decision manager -->    
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.vote.UnanimousBased">
+    	<beans:property name="allowIfAllAbstainDecisions" value="true"/>
+	    <beans:property name="decisionVoters">
+	       <beans:list>
+	           <beans:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
+	       </beans:list>
+	   </beans:property>
+	</beans:bean>
+	
+    <!-- The access decision manager for what modules are allowed to be viewed by a user -->
+    <beans:bean id="moduleCollectionFilteringAfterInvocationProvider"
+        class="org.ikasan.console.security.AfterInvocationModuleCollectionFilteringProvider">
+        <custom-after-invocation-provider />
+    </beans:bean>
+    
+    <!-- The access decision manager for what modules are allowed to be invoked by a user -->
+    <beans:bean id="moduleAfterInvocationProvider"
+        class="org.ikasan.console.security.ModuleAfterInvocationProvider">
+        <custom-after-invocation-provider />
+    </beans:bean>
+
+</beans:beans>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+ 
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing 
+ of individual contributors are as shown in the packaged copyright.txt 
+ file. 
+ 
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without 
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<bean id="japaneseWordEventProvider"
+		class="org.ikasan.framework.event.service.SinglePayloadPerEventProvider">
+		<constructor-arg>
+			<bean id="japaneseWordPayloadProvider"
+				class="org.ikasan.demo.RandomWordPayloadProvider">
+				<constructor-arg>
+					<list>
+						<value>ichi</value>
+						<value>ni</value>
+						<value>san</value>
+						<value>shi</value>
+						<value>go</value>
+						<value>roku</value>
+						<value>shichi</value>
+						<value>hachi</value>
+						<value>kyu</value>
+						<value>ju</value>
+						<value>midori</value>
+						<value>ao</value>
+						<value>aka</value>
+						<value>chairo</value>
+						<value>dadaiiro</value>
+						<value>kiiro</value>
+						<value>shiro</value>
+						<value>haiiro</value>
+						<value>kuro</value>
+						<value>murasaki</value>
+					</list>
+				</constructor-arg>
+				<constructor-arg ref="payloadFactory" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg value="someModuleName"/>
+		<constructor-arg value="someComponentName"/>
+	</bean>
+
+
+
+
+
+	<!-- FlowComponents -->
+	<bean id="japaneseToEnglishWordTransformer"
+		class="org.ikasan.demo.WordDictionaryTransformer">
+		<constructor-arg>
+			<map>
+				<entry key="ichi" value="one" />
+				<entry key="ni" value="two" />
+				<entry key="san" value="three" />
+				<entry key="shi" value="four" />
+				<entry key="go" value="five" />
+				<entry key="roku" value="six" />
+				<entry key="shichi" value="seven" />
+				<entry key="hachi" value="eight" />
+				<entry key="kyu" value="nine" />
+				<entry key="ju" value="ten" />
+				
+				<entry key="midori" value="green" />
+				<entry key="ao" value="blue" />
+				<entry key="aka" value="red" />
+				<entry key="chairo" value="brown" />
+				<entry key="dadaiiro" value="orange" />
+				<entry key="kiiro" value="yellow" />
+				<entry key="shiro" value="white" />
+				<entry key="haiiro" value="grey" />
+				<entry key="kuro" value="black" />
+				<entry key="murasaki" value="purple" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+    <bean id="japaneseWordPublishingEndpoint"
+        class="org.ikasan.framework.component.endpoint.PluginEndpointAdapter">
+        <constructor-arg>
+            <bean class="org.ikasan.framework.plugins.JMSEventPublisherPlugin">
+                <constructor-arg ref="japaneseWordTopic" />
+                <constructor-arg ref="jmsConnectionFactory" />
+                <constructor-arg ref="jmsMessageEventSerialiser" />
+                <constructor-arg><null/></constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>	
+	
+    <bean id="englishWordPublishingEndpoint"
+        class="org.ikasan.framework.component.endpoint.PluginEndpointAdapter">
+        <constructor-arg>
+            <bean class="org.ikasan.framework.plugins.JMSEventPublisherPlugin">
+                <constructor-arg ref="englishWordTopic" />
+                <constructor-arg ref="jmsConnectionFactory" />
+                <constructor-arg ref="jmsMessageEventSerialiser" />
+                <constructor-arg><null/></constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+
+
+</beans>

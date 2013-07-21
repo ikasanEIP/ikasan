@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id$
+# // $URL$
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.ikasan</groupId>
+	<artifactId>ikasan-webconsole-war</artifactId>
+	<packaging>war</packaging>
+	<version>0.7.9-cp1</version>
+
+	<name>ikasan :: webconsole : war</name>
+
+    <scm>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.7.x</connection>
+    </scm>
+
+	<build>
+
+
+		<!-- end project structure customisation -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring</artifactId>
+			<version>2.5.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>2.5.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>2.5.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-framework</artifactId>
+			<version>0.7.9-cp1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-common</artifactId>
+			<version>0.7.9-cp1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-j2ee_1.4_spec</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.6.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.webflow</artifactId>
+			<version>2.0.5.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core-tiger</artifactId>
+			<version>2.0.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		
+      <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>1.6.0</version>
+            <scope>provided</scope>
+        </dependency> 
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.1_3</version>
+            <scope>test</scope>
+        </dependency>
+	</dependencies>
+
+  <distributionManagement>
+      <repository>
+          <id>ikasaneip-releases</id>
+          <name>Ikasan EIP Releases Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-releases</url>
+      </repository>
+      <snapshotRepository>
+          <id>ikasaneip-snapshots</id>
+          <name>Ikasan EIP Snapshot Repository</name>
+          <url>http://oss.sonatype.org/content/repositories/ikasaneip-snapshots/</url>
+      </snapshotRepository>
+  </distributionManagement>
+</project>
+

@@ -1,0 +1,103 @@
+<!--
+
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+ 
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing 
+ of individual contributors are as shown in the packaged copyright.txt 
+ file. 
+ 
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without 
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+
+
+-->
+<project name="patch-tool" basedir=".">
+
+  <description>
+    Wrapper script that bundles up calls to the underlying gnu patch program
+  </description>
+
+  <!-- Bring in antcontrib support for variable and math logic -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml" />
+
+  <!-- this file contains the patch profile information -->
+  <import file="${profileFile}"/>
+
+  <!-- Copy over a base server instance template e.g. $JBOSS_HOME/server/default -->
+  <target name="copyTemplate">
+    <fail unless="templateDir" message="You must specify a 'templateDir'. All patches will be applied to a copy of this"/>
+    <fail unless="targetDir" message="You must specify the 'targetDir'. This is the place where the template will be copied to, and where all patches will subsequently be applied"/>
+
+    <copy toDir="${targetDir}">
+        <fileset dir="${templateDir}"/>
+    </copy>
+  </target>
+
+  <!-- Apply the patch(es) -->
+  <target name="applyPatch"
+        description="directly applies a patch to the specified directory using underlying patch tool" >
+      <echo message="applyPatch called with '${patchFilePath}' and '${targetDir}'"/>
+      <!-- TODO:  Can't use patch task due to -E requirement, this may change one day -->
+      <exec executable="patch" dir="${targetDir}" failonerror="true">
+        <arg value="-i"/>
+        <arg value="${patchFilePath}"/>
+        <arg value="-p1"/>
+        <arg value="-E"/>
+      </exec>
+  </target>
+
+  <!-- Applies a patch after filtering, e.g.  Adding environmental specifics -->
+  <target name="applyFilteredPatch"
+        description="applies a patch to the specified directory, but first filters the patch making any necessary substitutions">
+
+    <delete dir="tmpPatches"/>
+    <mkdir dir="tmpPatches"/>
+
+    <copy file="${patchFilePath}" toDir="tmpPatches" filtering="true"/>
+    <foreach target="applyPatch" param="patchFilePath" inheritall="true">
+        <fileset dir="tmpPatches"/>
+    </foreach>
+
+    <delete dir="tmpPatches"/>
+  </target>
+
+  <!-- Apply the patch profile, this applies a series of patches to a copy of a templated server instance -->
+  <target name="applyPatchProfile" depends="copyTemplate">
+    <echo message=" applyPatchProfile called with ${profileName}"/>
+    <fail unless="profileName" message="you must supply a profileName"/>
+
+    <foreach target="applyFilteredPatch" param="patchFilePath" inheritall="true">
+      <path refid="${profileName}"/>
+    </foreach>
+  </target>
+
+</project>
+

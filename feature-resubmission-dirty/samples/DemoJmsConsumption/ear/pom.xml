@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# //
+# // 
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.ikasan.demo</groupId>
+		<artifactId>demoJmsConsumption-parent</artifactId>
+		<version>0.16.3-SNAPSHOT</version>
+	</parent>
+	<artifactId>demoJmsConsumption-app</artifactId>
+	<packaging>ear</packaging>
+
+	<name>demoJmsConsumption :: demoJmsConsumption : ear</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<configuration>
+					<modules>
+
+						<!-- web module so that the web application is started -->
+						<webModule>
+							<groupId>org.ikasan.demo</groupId>
+							<artifactId>demoJmsConsumption-app-war</artifactId>
+							<contextRoot>/demoJmsConsumption</contextRoot>
+						</webModule>
+
+						<!-- client web module-->
+						<webModule>
+							<groupId>org.ikasan.demo</groupId>
+							<artifactId>demoJmsConsumption-client-war</artifactId>
+							<contextRoot>/demoJmsConsumption-client</contextRoot>
+						</webModule>
+						
+						<!--jars required by the web app -->
+						<javaModule>
+							<groupId>org.ikasan</groupId>
+							<artifactId>ikasan-framework</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<javaModule>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<javaModule>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-web</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<javaModule>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-webmvc</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<javaModule>
+							<groupId>org.springframework.security</groupId>
+							<artifactId>spring-security-core</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<javaModule>
+							<groupId>org.springframework.security</groupId>
+							<artifactId>spring-security-core-tiger</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<javaModule>
+							<groupId>org.springframework.security</groupId>
+							<artifactId>spring-security-taglibs</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+
+						<javaModule>
+							<groupId>com.thoughtworks.xstream</groupId>
+							<artifactId>xstream</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+						<jarModule>
+							<groupId>org.ikasan</groupId>
+							<artifactId>ikasan-common</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+						<jarModule>
+							<groupId>org.springframework.webflow</groupId>
+							<artifactId>org.springframework.webflow</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+						<jarModule>
+							<groupId>org.springframework.webflow</groupId>
+							<artifactId>org.springframework.binding</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+						<jarModule>
+							<groupId>org.springframework.webflow</groupId>
+							<artifactId>org.springframework.js</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+						<jarModule>
+							<groupId>ognl</groupId>
+							<artifactId>ognl</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+                        <jarModule>
+                            <groupId>aspectj</groupId>
+                            <artifactId>aspectjweaver</artifactId>
+                            <bundleDir>lib</bundleDir>
+                        </jarModule>
+                        <jarModule>
+							<groupId>quartz</groupId>
+							<artifactId>quartz</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+						<jarModule>
+							<groupId>commons-lang</groupId>
+							<artifactId>commons-lang</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+                        
+
+						<!--
+							module config files must be in the lib dir for the web app to do
+							anything
+						-->
+						<javaModule>
+							<groupId>org.ikasan.demo</groupId>
+							<artifactId>demoJmsConsumption-jmsSource-jar</artifactId>
+							<bundleDir>lib</bundleDir>
+						</javaModule>
+
+						
+					</modules>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<!-- the war itself -->
+		<dependency>
+			<groupId>org.ikasan.demo</groupId>
+			<artifactId>demoJmsConsumption-app-war</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- the client war  -->
+		<dependency>
+			<groupId>org.ikasan.demo</groupId>
+			<artifactId>demoJmsConsumption-client-war</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>war</type>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!--direct dependencies of the war -->
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-framework</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring</artifactId>
+			<version>2.5.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>2.5.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>2.5.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>2.0.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core-tiger</artifactId>
+			<version>2.0.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>2.0.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.2.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-common</artifactId>
+			<version>1.1.13</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.webflow</artifactId>
+			<version>2.0.5.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.binding</artifactId>
+			<version>2.0.5.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.js</artifactId>
+			<version>2.0.5.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+			<version>2.6.9</version>
+			<scope>provided</scope>
+		</dependency>
+
+        <dependency>
+            <groupId>aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>        
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.6.0</version>
+			<scope>provided</scope>
+		</dependency>
+	    <dependency>
+      	  <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+      	  <version>2.2</version>
+      	  <scope>provided</scope>
+    	</dependency>
+
+		<!-- module files 	-->
+		<dependency>
+			<groupId>org.ikasan.demo</groupId>
+			<artifactId>demoJmsConsumption-jmsSource-jar</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+
+			
+		
+	</dependencies>
+	
+		<repositories>
+			<repository>
+			<!--  this is only required for quartz 1.6.0 -->
+			<id>jboss</id>
+			<name>JBoss Inc. Repository</name>
+			<url>http://repository.jboss.com/maven2/</url>
+		</repository>
+		
+	</repositories>
+</project>

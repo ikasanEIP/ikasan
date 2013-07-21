@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN" "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+<urlrewrite default-match-type="wildcard">
+	<rule>
+		<from>/images/**</from>
+		<to>/images/$1</to>
+	</rule>
+	<rule>
+		<from>/scripts/**</from>
+		<to>/scripts/$1</to>
+	</rule>
+	<rule>
+		<from>/css/**</from>
+		<to>/css/$1</to>
+	</rule>
+		<rule>
+		<from>/</from>
+		<to>/tool/destinations</to>
+	</rule>
+	<rule>
+		<from>/**</from>
+		<to>/tool/$1</to>
+	</rule>
+	<outbound-rule>
+		<from>/tool/**</from>
+		<to>/$1</to>
+	</outbound-rule>	
+</urlrewrite>

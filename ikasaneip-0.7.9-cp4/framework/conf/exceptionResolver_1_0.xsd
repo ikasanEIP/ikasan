@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# //
+# // $Id: exceptionResolver_1_0.xsd 16808 2009-04-27 07:28:17Z mitcje $
+# // $URL: svn+ssh://svc-vcsp/architecture/ikasan/trunk/framework/conf/exceptionResolver_1_0.xsd $
+# // 
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# // 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">Schema defining the Exception Resolver structure.</xsd:documentation>
+  </xsd:annotation>
+
+  <!-- ========================== -->
+  <!-- MAIN part                  -->
+  <!-- ========================== -->
+  <xsd:element name="exceptionResolver">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="componentGroup" type="ComponentGroup" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="ComponentGroup">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="component" type="Component" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="MAJOR_CODE" use="required" type="NonEmptyString"/>
+    <xsd:attribute name="EXT1_MAJOR_CODE" use="optional" type="NonEmptyString"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Component">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="exception" type="Exception" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="NAME"  use="required" type="NonEmptyString"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Exception">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">TYPE - .</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="CLASS" use="required" type="NonEmptyString"/>
+        <xsd:attribute name="TYPE"  use="optional" type="NonEmptyString"/>
+        <xsd:attribute name="ACTION"  use="required" type="NonEmptyString"/>
+        <xsd:attribute name="EXT1_USER_ACTION" use="optional" type="NonEmptyString"/>
+        <xsd:attribute name="MINOR_CODE" use="optional" type="NonEmptyString"/>
+        <xsd:attribute name="EXT1_MINOR_CODE" use="optional" type="NonEmptyString"/>
+        <xsd:attribute name="PUBLISH" use="required" type="NonEmptyString"/>
+        <xsd:attribute name="DROP_DUPLICATE" use="optional" type="NonEmptyString"/>
+        <xsd:attribute name="DROP_DUPLICATE_PERIOD" use="optional" type="NonEmptyString"/>
+        <xsd:attribute name="DESCRIPTION" use="required" type="NonEmptyString"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="NonEmptyString">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

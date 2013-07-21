@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * $Id$
+ * $URL$
+ *
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ * 
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing 
+ * of individual contributors are as shown in the packaged copyright.txt 
+ * file. 
+ * 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice, 
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation 
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without 
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
+ *
+ * Author:  Ikasan Development Team
+ * 
+-->
+<connector xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+  http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd" version="1.5">
+
+  <display-name>FTP Resource Adapter</display-name>
+  <vendor-name></vendor-name>
+  <eis-type></eis-type>
+  <resourceadapter-version>1.0</resourceadapter-version>
+  <resourceadapter>
+
+    <resourceadapter-class>org.ikasan.connector.ftp.outbound.FTPResourceAdapter</resourceadapter-class>
+
+    <outbound-resourceadapter>
+      <connection-definition>
+        <managedconnectionfactory-class>org.ikasan.connector.ftp.outbound.FTPManagedConnectionFactory</managedconnectionfactory-class>
+
+        <!-- FTP host we are connecting to -->
+        <config-property>
+          <config-property-name>RemoteHostname</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default Remote Hostname</config-property-value>
+        </config-property>
+
+        <config-property>
+          <config-property-name>RemotePort</config-property-name>
+          <config-property-type>java.lang.Integer</config-property-type>
+          <config-property-value>21</config-property-value>
+        </config-property>
+
+        <config-property>
+          <config-property-name>LocalHostname</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>${ikasan.connector.local.host.name}</config-property-value>
+        </config-property>
+
+        <!-- FTP username we are connecting with -->
+        <config-property>
+          <config-property-name>Username</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default Username</config-property-value>
+        </config-property>
+
+        <!-- FTP password we are connecting with -->
+        <config-property>
+          <config-property-name>Password</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default Password</config-property-value>
+        </config-property>
+
+        <!-- FTP client Id we are connecting with -->
+        <config-property>
+          <config-property-name>ClientID</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default ClientID</config-property-value>
+        </config-property>
+
+        <!-- FTP client system key -->
+        <config-property>
+          <config-property-name>SystemKey</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+          <config-property-value>Default SystemKey</config-property-value>
+        </config-property>
+
+        <connectionfactory-interface>javax.resource.cci.ConnectionFactory</connectionfactory-interface>
+        <connectionfactory-impl-class>org.ikasan.connector.ftp.outbound.FTPConnectionFactory</connectionfactory-impl-class>
+        <connection-interface>javax.resource.cci.Connection</connection-interface>
+	    <connection-impl-class>org.ikasan.connector.ftp.outbound.FTPConnectionImpl</connection-impl-class>
+      </connection-definition>
+
+      <!-- We are using XATransaction -->
+      <transaction-support>XATransaction</transaction-support>
+      <reauthentication-support>false</reauthentication-support>
+    </outbound-resourceadapter>
+  </resourceadapter>
+
+</connector>
