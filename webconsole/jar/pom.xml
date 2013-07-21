@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-eip</artifactId>
-      <version>0.9.0</version>
+      <version>0.9.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
