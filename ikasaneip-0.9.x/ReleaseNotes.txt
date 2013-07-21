@@ -1,0 +1,55 @@
+
+Release Notes - Ikasan - Version 0.9.0
+
+
+
+** Bug
+    * [IKASAN-124] - Application Servers cannot shutdown Ikasan Cleanly
+    * [IKASAN-612] - mySQL scripts in Framework do not have consistent 'I' case for the Ikasan database
+    * [IKASAN-624] - Failure on notification of the monitor causes the flow to fail
+    * [IKASAN-639] - Filter expiry time calculation is creating expiries in the past
+    * [IKASAN-641] - Admin Console event search projection count doesn't work with mssql
+    * [IKASAN-642] - Logged in as username is empty on the webconsole
+    * [IKASAN-643] - Wiretap search result count is incorrect when zero matches are returned
+    * [IKASAN-644] - Wiretap persistence parameters not validating correctly
+
+
+** Improvement
+    * [IKASAN-76] - Annoyance: webconsole initiator operation page jumps to a detail page on invoke
+    * [IKASAN-188] - Allow more flexibility in payload implementations
+    * [IKASAN-544] - Improve handling of exceptions generated on the startManagedResource() invocation for ManagedResources within the flow 
+    * [IKASAN-562] - Create an Ikasan JMS producer endpoint implementation
+    * [IKASAN-593] - Change the nature of Event and payload to utilise Java Generics 
+    * [IKASAN-594] - Change the rollback/recovery to utilise a scheduler rather than pausing active threads as we currently do in JMS recovery
+    * [IKASAN-625] - Provide a support description to the criteria in the MessageFilter
+    * [IKASAN-630] - Allow flows and flow elements to be retrieved by name 
+    * [IKASAN-631] - Allow flow listeners to be added after the instantiation of the flow
+    * [IKASAN-632] - Avoid creating multiple concurrent recoveries on high volume feeds
+    * [IKASAN-633] - Ensure we do not excessively log the exception being handled by the recovery manager
+    * [IKASAN-634] - Add simple platform builders for programmatic creation of modules and flows
+    * [IKASAN-635] - Create/update the sample module to align with 0.9.0
+    * [IKASAN-637] - Allow the managed resources to be started and stopped as part of the recovery cycle by the recovery manager
+    * [IKASAN-638] - Create a specific recovery manager contract for managed resources
+    * [IKASAN-640] - Port systemEvent into version 0.9.0
+    * [IKASAN-646] - Provide clearer more modular structure to the Ikasan platform
+
+** New Feature
+    * [IKASAN-514] - A JMS publisher that implements Endpoint
+    * [IKASAN-541] - The Converter interface
+    * [IKASAN-628] - Display the created time on the events search result page
+
+
+
+
+
+
+** Task
+    * [IKASAN-506] - Overhaul the demo applications to align with the standard look and feel development approach for Ikasan modules
+    * [IKASAN-547] - Rename the Ikasan Transformer component interface
+    * [IKASAN-560] - Move to Maven 3.x once the site plugin is ready
+    * [IKASAN-592] - Remove redundant code inherited from initial version
+    * [IKASAN-596] - Remove Common project artefact
+    * [IKASAN-598] - Remove the framework code base and artefact dependencies
+    * [IKASAN-645] - Update all Spring dependencies to 3+
+
+
