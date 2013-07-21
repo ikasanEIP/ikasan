@@ -1,4 +1,0 @@
-Release Notes - Ikasan - Version 0.7.9-cp3
-
-** Bug
-    * [IKASAN-360] - JCA based initiators still reports running state when Halt thread kicks in
