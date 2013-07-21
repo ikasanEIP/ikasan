@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE datasources
+    PUBLIC "-//JBoss//DTD JBOSS JCA Config 1.5//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-ds_1_5.dtd">
+<!--
+/*
+ * $Id$
+ * $URL$
+ *
+ * ====================================================================
+ * Ikasan Enterprise Integration Platform
+ * 
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing 
+ * of individual contributors are as shown in the packaged copyright.txt 
+ * file. 
+ * 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice, 
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation 
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without 
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
+ *
+ * Author:  Ikasan Development Team
+ * 
+-->
+<datasources>
+
+  <!--
+   * No Transaction Datasource configuration.
+  -->
+  <no-tx-datasource>
+    <jndi-name>ikasan/connector/default/ds</jndi-name>
+    <use-java-context>true</use-java-context>
+    <connection-url>jdbc:sybase:Tds:${connector.default.database.svcname}:${connector.default.database.port}/${connector.default.database.name}</connection-url>
+    <driver-class>com.sybase.jdbc3.jdbc.SybDataSource</driver-class>
+    <!-- TODO This name will change - The security domain -->
+    <!--<security-domain>${connector.default.datasource.name}EncryptionPolicy</security-domain>-->
+    <user-name>${connector.default.database.username}</user-name>
+    <password>${connector.default.database.password}</password>
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </no-tx-datasource>
+
+  <!--
+   * Local Transaction Datasource configuration
+  -->
+  <local-tx-datasource>
+    <jndi-name>ikasan/connector/defaultLocal/localds</jndi-name>
+    <use-java-context>true</use-java-context>
+    <connection-url>jdbc:sybase:Tds:${connector.default.database.svcname}:${connector.default.database.port}/${connector.default.database.name}</connection-url>
+    <driver-class>com.sybase.jdbc3.jdbc.SybDataSource</driver-class>
+    <!-- TODO This name will change - The security domain -->
+    <!--<security-domain>${connector.default.datasource.name}EncryptionPolicy</security-domain>-->
+    <user-name>${connector.default.database.username}</user-name>
+    <password>${connector.default.database.password}</password>
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </local-tx-datasource>
+
+  <!--
+   * Transactional Datasource configuration
+   * Persistence of sequence numbers must be within scope of the transaction
+  -->
+  <xa-datasource>
+    <jndi-name>ikasan/connector/defaultXA/xads</jndi-name>
+    <use-java-context>true</use-java-context>
+    <track-connection-by-tx />
+    <xa-datasource-class>com.sybase.jdbc3.jdbc.SybXADataSource</xa-datasource-class>
+    <xa-datasource-property name="DatabaseName">${connector.default.xa.database.name}</xa-datasource-property>
+    <xa-datasource-property name="ServerName">${connector.default.xa.database.svcname}</xa-datasource-property>
+    <xa-datasource-property name="PortNumber">${connector.default.xa.database.port}</xa-datasource-property>
+    <user-name>${connector.default.database.username}</user-name>
+    <password>${connector.default.database.password}</password>
+    <!-- TODO This name will change - The security domain -->
+    <!--<security-domain>${connector.default.datasource.name}EncryptionPolicy</security-domain>-->
+    <check-valid-connection-sql>SELECT @@VERSION</check-valid-connection-sql>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    <metadata>
+      <type-mapping>Sybase</type-mapping>
+    </metadata>
+  </xa-datasource>
+
+</datasources>

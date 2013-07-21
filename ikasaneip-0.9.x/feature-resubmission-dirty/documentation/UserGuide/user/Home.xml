@@ -1,0 +1,35 @@
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
+    xml:id="Home">
+
+    <title>Home</title>
+
+    <sect1>
+        <title>Introduction</title>
+
+        <para>
+            This page simply provides a welcome message.
+        </para>
+
+        <sect2>
+            <title>Screen Shot</title>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            TODO
+                            <!--
+                            <inlinemediaobject>
+                                <imageobject>
+                                    <imagedata fileref="images/login_error.png" format="png" width="450px" depth="200px" />
+                                </imageobject>
+                            </inlinemediaobject>
+                            -->
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+        </sect2>
+
+    </sect1>
+
+</chapter>

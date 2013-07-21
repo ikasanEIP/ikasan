@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# //
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+	
+	<bean id="timeDependentExceptionEndpoint" class="org.ikasan.demo.TimeDependentExceptionEndpoint"/>
+		
+	<bean id="randomWordEventProvider"
+		class="org.ikasan.framework.event.service.SinglePayloadPerEventProvider">
+		<constructor-arg>
+			<bean id="japaneseWordPayloadProvider"
+				class="org.ikasan.demo.RandomWordPayloadProvider">
+				<constructor-arg>
+					<list>
+						<value>hydrogen</value>
+						<value>helium</value>
+						<value>lithium</value>
+						<value>beryllium</value>
+						<value>boron</value>
+						<value>carbon</value>
+						<value>nitrogen</value>
+						<value>oxygen</value>
+						<value>fluorine</value>
+						<value>neon</value>
+						<value>sodium</value>
+						<value>magnesium</value>
+						<value>aluminuim</value>
+						<value>silicon</value>
+						<value>phosphorus</value>
+						<value>sulfur</value>
+						<value>chlorine</value>
+						<value>argon</value>
+						<value>potassium</value>
+						<value>calcium</value>
+					</list>
+				</constructor-arg>
+				<constructor-arg ref="payloadFactory" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg value="someModuleName"/>
+		<constructor-arg value="someComponentName"/>
+	</bean>	
+	
+	<bean id="chemicalElementNameTransformer" class="org.ikasan.demo.WordDictionaryTransformer">
+		<constructor-arg>
+			<map>
+				<entry key="hydrogen" value="H"/>
+				<entry key="helium" value="He"/>
+				<entry key="lithium" value="Li"/>
+				<entry key="beryllium" value="Be"/>
+				<entry key="boron" value="B"/>
+				<entry key="carbon" value="C"/>
+				<entry key="nitrogen" value="N"/>
+				<entry key="oxygen" value="O"/>
+				<entry key="fluorine" value="Fl"/>
+				<entry key="neon" value="Ne"/>
+				<entry key="sodium" value="Na"/>
+				<entry key="magnesium" value="Mg"/>
+				<entry key="aluminuim" value="Al"/>
+				<entry key="silicon" value="Si"/>
+				<entry key="phosphorus" value="P"/>
+				<entry key="sulfur" value="S"/>
+				<entry key="chlorine" value="Cl"/>
+				<entry key="argon" value="Ar"/>
+				<entry key="potassium" value="K"/>
+				<entry key="calcium" value="Ca"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+		
+    <bean id="randomWordChannelPublishingEndpoint"
+        class="org.ikasan.framework.component.endpoint.PluginEndpointAdapter">
+        <constructor-arg>
+            <bean class="org.ikasan.framework.plugins.JMSEventPublisherPlugin">
+                <constructor-arg ref="randomWordsChannel" />
+                <constructor-arg ref="jmsConnectionFactory" />
+                <constructor-arg ref="jmsMessageEventSerialiser" />
+                <constructor-arg><null/></constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+</beans>

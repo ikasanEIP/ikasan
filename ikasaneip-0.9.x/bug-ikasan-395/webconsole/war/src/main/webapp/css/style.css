@@ -1,0 +1,412 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background: #F0F0F0;
+	font-family: Arial, sans-serif;
+	line-height: 1.5em;
+	font-size: 12px;
+}
+
+a {
+	color: #3B6EBF;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+
+
+
+input.controlButton {
+	background:#F6F9FB;
+    border:1px solid #999999;
+	margin-left:10px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+
+
+.errorMessages {
+	color: #FF0000;
+}
+
+.header {
+	height: 100px;
+	background: #85ACF7 url('../images/hidr.jpg');
+}
+
+.header h1 {
+	padding-left: 17px;
+	padding-top: 35px;
+	color: #FFF;
+}
+
+.header h1 a {
+	font-size: 60px;
+	color: #FFF;
+	text-decoration: none;
+}
+
+.header h2 {
+	padding-left: 17px;
+	padding-top: 0px;
+	font-size: 17px;
+	color: #FFF;
+}
+
+.breadcrumbs {
+	background: #F6F9FB;
+	border-bottom: 1px solid #E1E1E1;
+	padding: 5px;
+}
+
+
+
+
+
+/* Styles for tables that list vertically*/
+.listTable {
+	border: 1px solid #E1E1E1;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.listTable thead tr {
+	background: #F6F9FB;
+	padding: 2px 2px;
+}
+
+.listTable thead tr th {
+	border-bottom: 1px solid #E1E1E1;
+	padding: 0 5px;
+}
+
+.listTable td{
+	padding: 0 5px;
+}
+/* Styles for tables that keys/values horizontally */
+.keyValueTable {
+	border: 1px solid #E1E1E1;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.keyValueTable tr th {
+	background: #F6F9FB;
+	border-right : 1px solid #E1E1E1;
+	padding: 2px 5px;
+	width: 200px;
+}
+
+.keyValueTable tr td {
+	padding-left: 2px;
+	padding-right: 5px;
+}
+
+/* syles for data forms */
+form.dataform fieldset {
+	margin-bottom: 10px;
+}
+
+form.dataform legend {
+	padding: 0 2px;
+	font-weight: bold;
+}
+
+form.dataform label {
+	display: inline-block;
+	line-height: 1.8;
+	vertical-align: top;
+}
+
+form.dataform fieldset ol {
+	margin: 0;
+	padding: 0;
+}
+
+form.dataform fieldset li {
+	list-style: none;
+	padding: 5px;
+	margin: 0;
+}
+
+form.dataform em {
+	font-weight: bold;
+	font-style: normal;
+	color: #f00;
+}
+
+form.dataform label {
+	width: 160px; /* Width of labels */
+}
+
+form.dataform .multiSelectCheckboxes {
+	padding-left:165px;
+}
+
+/* additional syles for fancy data forms */
+form.fancydataform fieldset {
+	background: transparent url(../images/login-blue-fade.jpg) repeat-x scroll
+		left bottom;
+	border-color: #AEC8FB -moz-use-text-color -moz-use-text-color;
+	border-style: solid none none;
+	border-width: 1px medium medium;
+}
+
+form.fancydataform fieldset li {
+	border-bottom: 1px solid #98BAF4;
+}
+
+#initiatorControl {
+	background: #FFFFF0;
+    border:1px solid #E1E1E1;
+    float: right;
+    margin-left:7px;
+    margin-top: -25px;
+    padding: 5px;
+    text-align:center;
+}
+
+
+.subnavcontainer {
+	padding: 5px;
+}
+
+.subnavcontainer ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.subnavcontainer ul li {
+	display: inline;
+}
+
+.subnavcontainer ul li a {
+	text-decoration: none;
+}
+
+
+
+.middle {
+	padding: 0 5px;
+	text-align: justify;
+}
+
+.middle > h2 {
+	color: #3B6EBF;
+	font-size: 16px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.middle > h3 {
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+
+
+
+
+.initiatorState-running {
+    color: green;
+}
+
+.initiatorState-stopped {
+    color: black;
+}
+
+.initiatorState-stoppedInError {
+    color: red;
+}
+
+.initiatorState-runningInRecovery {
+    color: orange;
+}
+.controls{
+	float: right;
+	margin-top: 5px;
+	margin- bottom:5px;
+}
+
+
+
+.event {
+	border: 1px solid #E1E1E1;
+	padding: 10px;
+	background: #FFFFF0;
+}
+
+.unformattable {
+    border: 1px solid #E1E1E1;
+    overflow: auto;
+    padding: 0 5px;
+}
+.data {
+    background: #FFFFF0;
+}
+
+.bordered {
+	border: 1px solid #E1E1E1;
+	padding: 5px;
+}
+/* 
+ #######################
+ #  specific elements  #
+ #######################
+*/ 
+
+/* global elements */
+#top {
+	height: 30px;
+}
+
+#wrap {
+	width: 900px;
+	margin: 20px;
+	background: #FFFFFF;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#content {
+	padding: 0 20px;
+	min-height: 1000px;
+}
+
+#bottom {
+	height: 30px;
+}
+
+#footer {
+	text-align: center;
+	color: #666;
+}
+
+#clear {
+    display: block;
+    clear: both;
+    width: 100%;
+    height: 1px;
+    overflow: hidden;
+}
+
+
+#subheader {
+    background: #F6F9FB;
+    border-bottom: 1px solid #E1E1E1;
+    height: 17px;
+    padding: 5px;
+}
+
+
+#mainNavigation {
+    float: left;
+    list-style-type: none;
+    margin: 0;
+    width: 75%;
+}
+
+#mainNavigation li {
+    display: inline;
+}
+
+#mainNavigation li:after {
+    content: " | ";
+}
+
+#mainNavigation li:last-child:after {
+    content: "";
+}
+
+#mainNavigation li a {
+    text-decoration: none;
+}
+
+#sessioninfo {
+    float: right;
+}
+
+
+#eventDump{
+	border:1px solid #E1E1E1;
+	padding:10px;
+}
+
+
+/* search results elements */
+
+#searchResultsHeader {
+	margin-top: 20px;
+}
+
+
+#searchResultsHeader span#navigationControls {
+	float: right;
+}
+
+
+
+
+
+#wiretapDetails {
+	width: 50%;
+}
+
+
+
+#excludedEventEvent{
+	background : #FFFFFF;
+}
+
+
+#payload {
+	background : #FFFFFF;
+	border : 1px solid #E1E1E1;
+	margin-top: 5px;
+	padding: 5px;	
+}
+
+
+
+
+#loginForm {
+	border: 1px solid #6695ED;
+	margin: 30px 190px;
+	padding: 20px;
+	width: 450px;
+}
+
+#loginForm legend{
+	color: #3B6EBF;
+	font-size: 24px;
+	font-weight: bold;
+	padding: 0 20px;
+}
+
+
+
+#eventTriggerJobForm {
+	width: 450px;
+}
+
+#eventTriggerParametersForm {
+	width: 450px;
+}
+
+#initiatorStateControl {
+    font-size: 16px;
+    font-weight: bold;
+}
+#systemEventSearchResults {
+	width: 100%;
+}
+#errorDetail {
+	
+}
