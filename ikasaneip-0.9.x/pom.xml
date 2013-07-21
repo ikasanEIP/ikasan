@@ -48,7 +48,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-project</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent Project</name>
 
@@ -107,9 +107,9 @@
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
-          <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.9.0/ikasaneip-0.9.x</connection>
-          <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.9.0/ikasaneip-0.9.x</developerConnection>
-          <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasan-0.9.0/ikasaneip-0.9.x</url>
+          <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</connection>
+          <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</developerConnection>
+          <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</url>
     </scm>
     <!--
          Distribution for releases
