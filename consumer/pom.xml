@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -59,9 +59,9 @@
     <description>Ikasan Default Consumers</description>
 
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/0.9.0/ikasaneip-0.9.x/consumer</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/0.9.0/ikasaneip-0.9.x/consumer</developerConnection>
-      <url>https://open.jira.com/svn/IKASAN/tags/0.9.0/ikasaneip-0.9.x/consumer</url>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/consumer</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/consumer</developerConnection>
+      <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/consumer</url>
     </scm>
 
     <build>
@@ -100,42 +100,42 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-event</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
