@@ -107,8 +107,10 @@
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</developerConnection>
-    </scm>
+          <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</connection>
+                <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</developerConnection>
+                      <url>scm:svn:http://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x</url>
+
     <!--
          Distribution for releases
          TODO: Not sure if this is strictly required here, either this or <scm> is needed
