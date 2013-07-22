@@ -109,7 +109,6 @@
     <scm>
           <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/</connection>
           <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/</developerConnection>
-          <branchBase>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/</branchBase>
           <url>scm:svn:http://open.jira.com/svn/IKASAN/</url>
     </scm>
     <!--
