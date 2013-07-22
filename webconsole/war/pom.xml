@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.0-RC4-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -80,13 +80,13 @@
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-eip</artifactId>
-      <version>0.9.0</version>
+      <version>0.9.0-RC4-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-webconsole-jar</artifactId>
-      <version>0.9.0</version>
+      <version>0.9.0-RC4-SNAPSHOT</version>
     </dependency>
 
     <dependency>
