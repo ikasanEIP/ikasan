@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -53,9 +53,9 @@
     <name>Ikasan Enterprise Integration builder</name>
 
 	<scm>
-	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.9.0/ikasaneip-0.9.x/builder/jar</connection>
-	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-0.9.0/ikasaneip-0.9.x/builder/jar</developerConnection>
-	  <url>https://open.jira.com/svn/IKASAN/tags/ikasan-0.9.0/ikasaneip-0.9.x/builder/jar</url>
+	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</connection>
+	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</developerConnection>
+	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</url>
 	</scm>
 
     <build>
@@ -93,7 +93,7 @@
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-eip</artifactId>
-	      <version>0.9.0</version>
+	      <version>0.9.1-SNAPSHOT</version>
 	      <scope>provided</scope>
 	    </dependency>
     </dependencies>
