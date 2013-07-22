@@ -50,7 +50,7 @@
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
@@ -59,9 +59,9 @@
     <inceptionYear>2007</inceptionYear>
     <name>Ikasan Build Project</name>
 	<scm>
-	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-build-0.9.0</connection>
-	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasan-build-0.9.0</developerConnection>
-	  <url>https://open.jira.com/svn/IKASAN/tags/ikasan-build-0.9.0</url>
+	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/build</connection>
+	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/build</developerConnection>
+	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/build</url>
 	</scm>
     <!-- List the core committers -->
     <developers>
