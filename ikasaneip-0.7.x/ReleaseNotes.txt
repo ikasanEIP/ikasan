@@ -1,0 +1,75 @@
+Release Notes - Ikasan - Version 0.7.11
+
+** Sub-task
+    * [IKASAN-485] - Implement for 0.7.x
+
+** Bug
+    * [IKASAN-446] - Demo apps fail due to missing filter libraries at runtime (0.7.10 only)
+    * [IKASAN-454] - connector-sftp creates a log file when tests are run
+    * [IKASAN-458] - Cannot create Wiretap for demoTransformationRouting app (possibly others)
+    * [IKASAN-461] - Default IkasanExceptionAction should be ROLLBACK_RETRY indefinitely for exceptions from EventDriveInitiator
+    * [IKASAN-483] - Split platform and web-console code into JAR and WAR components
+    * [IKASAN-488] - XSLTransformer had incorrectly configured logger
+    * [IKASAN-489] - Expectation execution position text is being incorrectly formatted when reporting the expectation executed.
+
+** Improvement
+
+    * [IKASAN-455] - Add milliseconds from epoch to Date utility method
+    * [IKASAN-467] - Move test harness out of ikasan tools and into its own ikasan-test project
+
+** Task
+
+    * [IKASAN-476] - Release 0.7.11
+
+Release Notes - Ikasan - Version 0.7.10
+
+** Bug
+    * [IKASAN-427] - UserExceptionHandlerImpl constructor specifies an implementation of the jmsEventPublisher rather than the interface EventInvocable
+    * [IKASAN-436] - Incorrect exception message from DefaultFilterEntry.equals(Object)
+
+** Improvement
+    * [IKASAN-384] - Provide support for generic inbound message adapters
+    * [IKASAN-426] - Provide XSLT transformer component more flexibility in loading the stylesheet resource.
+    * [IKASAN-429] - Ikasan Filter module does not currently provision for checked FilterEntryConverter exceptions
+** New Feature
+    * [IKASAN-408] - Implementing MessageFilter pattern
+    * [IKASAN-409] - New router implementation: FilteringRouter
+    * [IKASAN-410] - Adding duplicate messages filtering support to Ikasan
+** Task
+    * [IKASAN-438] - Release 0.7.10
+
+Release Notes - Ikasan - Version 0.7.9
+
+** Sub-task
+    * [IKASAN-331] - Sybase ASE runs out of locks on large Wiretap housekeeps
+
+** Bug
+    * [IKASAN-355] - Allow FTP Active/Passive to be configured on demoFileDelivery sample application
+    * [IKASAN-360] - JCA based initiators still reports running state when Halt thread kicks in
+
+** Improvement
+    * [IKASAN-47] - Rename base-config.xml in connectors to a more sensible name
+    * [IKASAN-147] - Remove internal Spring usage from file transfer connectors
+    * [IKASAN-357] - Quartz based initiator to be configurable to allow exhaustive consumption of data on a single scheduled invocation
+    * [IKASAN-359] - Ikasan ExceptionHandler needs to log the full stacktrace of the thrown exception
+    * [IKASAN-377] - Enhance pom.xml files for all projects to enable Nexus repo upload (0.7.x branch)
+
+** Task
+    * [IKASAN-358] - Perform 0.7.9 Release (Create and add release notes)
+
+Release Notes - Ikasan - Version 0.7.8
+
+** Bug
+    * [IKASAN-299] - Ikasan platform doesn't start due to missing libs
+    * [IKASAN-307] - JMS (JCA) based initiator hung on a rollback/retry
+    * [IKASAN-308] - Platform not passing through housekeeper credentials to housekeeper service
+    * [IKASAN-342] - FileTrransferProtocolClient doesn't logout before disconnecting
+    * [IKASAN-346] - FTP connector not logging out before disconnection
+    * [IKASAN-347] - FTP connector not defaulting to PASSIVE mode
+    * [IKASAN-348] - FTP connector not checking replyCode after connection
+
+** Task
+    * [IKASAN-349] - Merge branch back to trunk
+    * [IKASAN-353] - Merge customer patch 0.7.8-cp2 branch into 0.7.x
+    * [IKASAN-354] - Remove individual Ikasan project Release Notes and replace with Jira created project wide release notes 
+

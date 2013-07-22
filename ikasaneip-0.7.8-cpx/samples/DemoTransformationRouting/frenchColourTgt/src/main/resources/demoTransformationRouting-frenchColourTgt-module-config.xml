@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    
+    <bean id="module"
+        class="org.ikasan.framework.module.SimpleModule">
+        <constructor-arg value="${module.name}" />
+        <constructor-arg>
+            <list>
+            	<ref bean="transformerFlowInitiator"/>
+            	<ref bean="channelAdapterFlowInitiator"/>
+            </list>
+        </constructor-arg>
+        <property name="description">
+            <value>This is an example of a target module that transforms and delivers messages in target specific format </value>
+        </property>
+    </bean>
+
+
+  <!-- =========================================================================== -->
+  <!--                   Transformer Flow Initiator                                -->
+  <!-- =========================================================================== -->
+  
+    <bean id="transformerFlowInitiator" class="org.ikasan.framework.initiator.messagedriven.MessageDrivenInitiatorFactoryBean">
+        <property name="moduleName" ref="moduleName"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+       <!-- Using destinationName, and destinationResolver to allow late lookup of jms Destination-->
+        <property name="destinationResolver" ref="jmsJndiDestinationResolver"/>
+        <property name="destinationName" ref="englishColourTopicName" />
+        <!-- <property name="exceptionHandler" ref="loggingExceptionHandler" />-->
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="flow" ref="transformerFlow"/>
+        <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
+    </bean>
+
+  <!-- =========================================================================== -->
+  <!--                   Channel Adapter Flow Initiator                            -->
+  <!-- =========================================================================== -->
+
+
+    <bean id="channelAdapterFlowInitiator" class="org.ikasan.framework.initiator.messagedriven.MessageDrivenInitiatorFactoryBean">
+        <property name="moduleName" ref="moduleName"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+       <!-- Using destinationName, and destinationResolver to allow late lookup of jms Destination-->
+        <property name="destinationResolver" ref="jmsJndiDestinationResolver"/>
+        <property name="destinationName" ref="frenchColourTopicName" />
+        <!-- <property name="exceptionHandler" ref="loggingExceptionHandler"/>-->
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="flow" ref="channelAdapterFlow"/>
+        <property name="eventDeserialiser" ref="jmsMessageEventSerialiser" />
+    </bean>
+
+</beans>

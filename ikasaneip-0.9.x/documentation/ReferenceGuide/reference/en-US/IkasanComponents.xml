@@ -1,0 +1,184 @@
+<!-- 
+
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+ 
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing 
+ of individual contributors are as shown in the packaged copyright.txt 
+ file. 
+ 
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without 
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without 
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+-->
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
+	xml:id="IkasanComponents">
+	<title>Ikasan Components</title>
+
+
+	<para>
+		This is where we go through all the existing components that come
+		prepackaged with Ikasan
+	</para>
+
+
+	<section>
+		<title>Transformers</title>
+		<para>
+			The following transformers are provided by Ikasan. 
+			Additional custom transformers can be created by implementing the Transformer interface
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		      XSLT - applies an XML stylesheet to any incoming XML document
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      XML Validator - validates any incoming XML document against the given DTD or XSD
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      XML Reader - transforms any incoming data to an XML document
+		    </para>
+		  </listitem>
+		</itemizedlist>
+		</para>
+	</section>
+
+	<section>
+		<title>Endpoints</title>
+		<para>
+			The following endpoints are provided by Ikasan. 
+			Additional custom endpoints can be created by implementing the Endpoint interface
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		      Event logging - event log writer
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Event wiretap - event wiretap implementation
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Payload publisher - generic payload publisher the implementation of which is injected at startup
+		    </para>
+		  </listitem>
+		</itemizedlist>
+		</para>
+	</section>
+	
+	<section>
+		<title>Routers</title>
+		<para>
+			The following routers are provided by Ikasan. 
+			Additional custom routers can be created by implementing the Router interface
+		<itemizedlist mark='bullet'>
+		  <listitem>
+		    <para>
+		      Recipient list - routes an event to one or more recipients
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Contains payload - boolean router based on whether the event contains payload(s)	
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Xpath - xpath expression boolean and node value selector router
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      XML validation - XML Validator router (to be re-classified)
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Event name - event name based router
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>
+		      Event source system - event source system based router
+		    </para>
+		  </listitem>
+		</itemizedlist>
+		</para>
+	 </section>	
+	
+	<section>
+		<title>Sequencers</title>
+		<para>
+			The following sequencers are provided by Ikasan. 
+			Additional custom sequencer can be created by implementing the Sequencer interface
+		</para>
+		<section>
+			<title>Splitters</title>
+			<para>
+			   <itemizedlist mark='bullet'>
+			    <listitem>
+			      <para>
+				Tokenizing splitter - splits event payloads based on a given tokeniz
+			      </para>
+			    </listitem>
+			    <listitem>
+			      <para>
+				Single payload per event - splits multiple payloads contained within a single event into one payload per event
+			      </para>
+			    </listitem>
+			    <listitem>
+			      <para>
+				Unzip splitter - TBC
+			      </para>
+			    </listitem>
+			   </itemizedlist> 
+			</para>
+		</section>
+		<section>
+			<title>Aggregators</title>
+			<para>
+			   <itemizedlist mark='bullet'>
+			    <listitem>
+			      <para>
+				Event aggregation - aggregates events until a given criteria has been met
+			      </para>
+			    </listitem>
+			   </itemizedlist> 
+			</para>
+		</section>		
+	</section>
+</chapter>

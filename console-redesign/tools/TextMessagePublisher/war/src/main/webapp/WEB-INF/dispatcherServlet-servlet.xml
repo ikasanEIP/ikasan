@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/webflow-config
+           http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+           http://www.springframework.org/schema/context 
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <!-- Switch on Annotation driven development for Spring MVC -->
+    <context:component-scan base-package="org.ikasan.tools"/>
+    
+    <bean name="propertyPlaceholderConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/ikasan.properties</value>
+			</list>
+		</property>
+	</bean>
+
+    <!-- Helper bean for using annotations with Spring MVC -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <!-- Helper bean for using annotations with Spring MVC -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>        
+    </bean>
+    
+    
+    
+    <bean id="destinationServer" class="org.ikasan.tools.messaging.server.DestinationServer">
+    	<constructor-arg ref="destinationDiscoverer"/>
+    	<constructor-arg ref="jmsConnectionFactory"/>
+    </bean>
+    
+    
+    
+    <bean id="destinationDiscoverer" class = "org.ikasan.tools.messaging.destination.discovery.JndiDestinationDiscoverer">
+    	<constructor-arg ref="jmsJndiEnvironment"/>
+    	<constructor-arg>
+    		<list>
+    			<value>/topic</value>
+    			<value>/queue</value>
+    		</list>
+    	</constructor-arg>
+    </bean>
+    
+    
+    <bean id="jmsJndiEnvironment"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+				<prop key="java.naming.factory.url.pkgs">org.jnp.interfaces:org.jboss.naming</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="jmsConnectionFactory"
+	      class="org.springframework.jndi.JndiObjectFactoryBean">
+	      <property name="jndiName" value="java:/JmsXA" />
+	      <property name="lookupOnStartup" value="false" />
+	      <property name="proxyInterface" value="javax.jms.ConnectionFactory" />
+	  </bean>
+
+</beans>

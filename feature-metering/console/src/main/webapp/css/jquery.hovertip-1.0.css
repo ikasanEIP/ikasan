@@ -1,0 +1,22 @@
+.hovertip {
+    position: absolute;
+    padding: 10px 13px;
+    z-index: 2;
+    max-width: 300px;
+
+    color: #303030;
+    /* background-color: #f5f5b5; */
+    background-color: #F0F0F0;
+    /* border: 1px solid #DECA7E; */
+    border: 1px solid #AEC8FB;
+
+    /* font-family: sans-serif; */
+    font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+    font-size: .74em;
+    line-height: 1.5em;
+    /*
+    font-size: 12px;
+    line-height: 18px;
+    */
+    text-align: left;
+}

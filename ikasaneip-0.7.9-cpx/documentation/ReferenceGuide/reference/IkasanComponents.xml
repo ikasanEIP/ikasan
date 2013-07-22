@@ -1,0 +1,53 @@
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd"
+	xml:id="IkasanComponents">
+	<title>Ikasan Components</title>
+
+
+	<para>
+		This is where we go through all the existing components that come
+		prepackaged with Ikasan
+	</para>
+
+
+	<section>
+		<title>Transformers</title>
+		<para>
+			Here we will talk about the Transformers
+		</para>
+	</section>
+
+	<section>
+		<title>Endpoints</title>
+		<para>
+			Here we will talk about the Endpoints
+		</para>
+	</section>
+	
+	<section>
+		<title>Routers</title>
+		<para>
+			Here we will talk about the Routers
+		</para>
+	</section>	
+	
+	<section>
+		<title>Sequencers</title>
+		<para>
+			Here we will talk about the Sequencers
+		</para>
+		<section>
+			<title>Splitters</title>
+			<para>
+				Here we will talk about the Splitters
+			</para>
+		</section>
+		<section>
+			<title>Aggregators</title>
+			<para>
+				Here we will talk about the Aggregators
+			</para>
+		</section>		
+	</section>
+</chapter>

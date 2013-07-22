@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# // Copyright (c) 2003-2008 Mizuho International plc. and individual contributors as indicated
+# // by the @authors tag. See the copyright.txt in the distribution for a
+# // full listing of individual contributors.
+# //
+# // This is free software; you can redistribute it and/or modify it
+# // under the terms of the GNU Lesser General Public License as
+# // published by the Free Software Foundation; either version 2.1 of
+# // the License, or (at your option) any later version.
+# //
+# // This software is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# // Lesser General Public License for more details.
+# //
+# // You should have received a copy of the GNU Lesser General Public
+# // License along with this software; if not, write to the 
+# // Free Software Foundation Europe e.V. Talstrasse 110, 40217 Dusseldorf, Germany 
+# // or see the FSF site: http://www.fsfeurope.org/.
+# // ====================================================================
+# //
+# //
+# // 
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+
+	<bean id="moduleName" class="java.lang.String">
+		<constructor-arg value="${project.name}-${module.name}" />
+	</bean>
+	
+    <bean id="loggingExceptionHandler" class="org.ikasan.demo.ClassMatchingExceptionHandler">
+            <constructor-arg>
+            	<map>
+            		<entry key="org.ikasan.demo.UntimelyEventException">
+
+            				<bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    			<constructor-arg value="EXCLUDE" />
+                    		</bean>
+
+                    </entry>
+            	</map>
+            </constructor-arg>
+            <property name="errorAction">
+                <bean class="org.ikasan.framework.exception.IkasanExceptionActionImpl">
+                    <constructor-arg value="ROLLBACK_RETRY" />
+                    <constructor-arg value="10000" />
+                    <constructor-arg value="10" />
+                </bean>
+            </property>
+        </bean>
+
+
+	<bean id="flowElementInvoker"
+		class="org.ikasan.framework.flow.invoker.VisitingFlowElementInvoker">
+		<property name="flowEventListener" ref="flowEventListener" />
+	</bean>
+	
+	
+	<!-- channel adapter Flow -->
+
+
+	<bean id="channelAdapterFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
+		<constructor-arg value="channelAdapterFlow" />
+		<constructor-arg ref="moduleName" />
+		<constructor-arg ref="randomWordChannelPublisherElement" />
+		<constructor-arg ref="flowElementInvoker" />
+
+	</bean>
+
+
+    <bean id="randomWordChannelPublisherElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="randomWordChannelPublisherStep" />
+        <constructor-arg ref="randomWordChannelPublishingEndpoint" />
+        <property name="description">
+          <value>Publishes the random words to an internal channel</value>
+        </property>
+    </bean>
+
+
+	<!-- exclusion Flow -->
+
+
+	<bean id="timeDependentExclusionFlow" class="org.ikasan.framework.flow.VisitingInvokerFlow">
+		<constructor-arg value="exclusionFlow" />
+		<constructor-arg ref="moduleName" />
+		<constructor-arg ref="chemicalElementNameTransformerElement" />
+		<constructor-arg ref="flowElementInvoker" />
+
+	</bean>
+
+
+    <bean id="chemicalElementNameTransformerElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="chemicalElementNameTransformationStep" />
+        <constructor-arg ref="chemicalElementNameTransformer" />
+        <constructor-arg ref="timeDependentExceptionElement" />
+        <property name="description">
+          <value>Transforms the name of a chemical into its symbol</value>
+        </property>
+    </bean>
+
+
+    <bean id="timeDependentExceptionElement" class="org.ikasan.framework.flow.FlowElementImpl">
+        <constructor-arg value="timeDependentExceptionStep" />
+        <constructor-arg ref="timeDependentExceptionEndpoint" />
+        <property name="description">
+          <value>If the time is right, logs the event. If the time is wrong, throws an UntimelyEventException</value>
+        </property>
+    </bean>
+    
+    
+    
+	
+
+
+</beans>

@@ -1,0 +1,230 @@
+@charset "utf-8";
+/* CSS Document for Ikasan EIP Commercial website */
+
+/* Make everything have 0 padding and 0 margin by default */
+*
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+/* All links will have their decoration stripped but have a standard Ikasan link color (#3E3E3E) */
+a:link, a:visited, a:hover
+{
+    text-decoration: none;
+    color: #3E3E3E;
+}
+
+/* Background colour is Ikasan Grey (#EEEEEE) with font colour defaulting to Ikasan dark grey (#E3E3E3) */
+body
+{
+    background-color: #EBEBEB;
+    color: #3E3E3E;
+    font-family: "Trebuchet MS";
+    font-size: 13px;
+}
+
+/* The overall container div */
+#container
+{
+    clear: both;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    overflow: auto;
+    position: relative;
+}
+
+/* The content div */
+#content
+{
+    background-color: #FFFFFF;
+    border-color: #B3B3B3;
+    border-top-style: solid;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-width: 1px;
+    clear: both;
+    display: block;
+    height: 100%;
+    min-height: 500px;
+//    overflow: auto;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    position: relative;
+}
+
+#content div
+{
+    float: left;
+    height: 100%;
+    width : 45%;
+}
+
+/* The colour of the h1 heading will be #F29400 (Ikasan Orange) */
+h1
+{
+    color: #F29400;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* The colour of the h2 heading will be #99141B (Ikasan Maroon) */
+h2
+{
+    color: #99141B;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 18px;
+    margin-top: 18px;
+    padding-left: 20px;
+}
+
+/* The header section */
+#header
+{
+    background-color: #F9AF56;
+    background-image: url(../images/Banner.png);
+    background-repeat: no-repeat;
+    height: 140px;
+    /* margin-top: 20px; */
+    position: relative;
+}
+
+/* All images will have their borders removed */
+img
+{
+    border: none;
+}
+
+/* The logo image */
+#logo
+{
+    height: 70px;
+    padding-left: 20px;
+    padding-top: 17px;
+    width: 147px;
+}
+
+#mainNavigation
+{
+    padding-left: 20px;
+    float: left;
+    position: relative;
+}
+
+#mainNavigation a
+{
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
+/* The navigation section background colour matches the default page background colour */
+#navigation
+{
+    /* background-color: #EBEBEB; */
+    background-color: #3E3E3E;
+    height: 30px;
+    line-height: 30px;
+    position: relative;
+}
+
+.rightBorder
+{
+    border-color: #3E3E3E;
+    border-style: solid;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 1px;
+    border-top-width: 0px;;
+    border-spacing: 0px;
+}
+
+.supportCell
+{
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 42px;
+}
+
+.supportCell2
+{
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 558px;
+}
+
+/* The support buttons */
+.supportImage
+{
+    height: 60px;
+    width: 60px;
+}
+
+/* The support text */
+.supportText
+{
+    font-size: 18px;
+    vertical-align: top;
+}
+
+/* */
+#supportLinksTable
+{
+    border-spacing: 0px 0px;
+    width: 600px;
+}
+
+/* Normal text paragraph */
+.text
+{
+    margin-bottom: 25px;
+}
+
+table
+{
+    border-collapse:collapse;
+}
+
+ul
+{
+    display: inline;
+}
+
+ul li
+{
+    /* border-left: 1px solid #999999; */
+    /* border-left: 1px solid #FFFFFF; */
+    display: inline;
+    list-style: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+ul li.first
+{
+    border-left: none;
+    display: inline;
+    list-style: none;
+    padding-left: 0px;
+    padding-right: 10px;
+}
+
+ul li.last
+{
+    /* border-left: 1px solid #999999; */
+    border-left: 1px solid #FFFFFF;
+    display: inline;
+    list-style: none;
+    padding-left: 10px;
+    padding-right: 10px;
+}
