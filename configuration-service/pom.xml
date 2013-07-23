@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -59,9 +59,9 @@
     <description>Ikasan Default Configuration Service Implementation</description>
 
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.0/configurationService</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.0/configurationService</developerConnection>
-      <url>https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.0/configurationService</url>
+      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/configurationService</connection>
+      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/configurationService</developerConnection>
+      <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/configurationService</url>
     </scm>
 
     <build>
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

@@ -56,7 +56,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasaneip</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent Project</name>
     <description>Ikasan Projects Parent Project</description>
@@ -122,9 +122,9 @@
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
-          <connection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.0</connection>
-          <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.0</developerConnection>
-          <url>scm:svn:http://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.0</url>
+          <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/</connection>
+          <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/</developerConnection>
+          <url>scm:svn:http://open.jira.com/svn/IKASAN/</url>
     </scm>
 
     <!-- List the core committers -->
