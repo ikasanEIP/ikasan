@@ -58,7 +58,7 @@
 
 	<tag>
 		<name>authorize</name>
-		<tag-class>org.springframework.security.taglibs.authz.AuthorizeTag</tag-class>
+		<tag-class>org.springframework.security.taglibs.authz.JspAuthorizeTag</tag-class>
 		<description>
             A simple tag to output or not the body of the tag if the principal
             has or doesn't have certain authorities.

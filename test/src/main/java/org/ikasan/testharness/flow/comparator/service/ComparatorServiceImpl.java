@@ -46,11 +46,15 @@ import java.util.Map;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.model.FlowElementComparator;
 import org.ikasan.testharness.flow.comparator.model.IgnoreComparator;
-import org.ikasan.testharness.flow.expectation.model.EndpointComponent;
+import org.ikasan.testharness.flow.expectation.model.BrokerComponent;
+import org.ikasan.testharness.flow.expectation.model.ConsumerComponent;
+import org.ikasan.testharness.flow.expectation.model.ConverterComponent;
+import org.ikasan.testharness.flow.expectation.model.FilterComponent;
 import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
+import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
 import org.ikasan.testharness.flow.expectation.model.RouterComponent;
 import org.ikasan.testharness.flow.expectation.model.SequencerComponent;
-import org.ikasan.testharness.flow.expectation.model.TransformerComponent;
+import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 
 /**
  * ComparatorService default implementation provides six default comparators
@@ -71,10 +75,14 @@ public class ComparatorServiceImpl
     private Map<Class<?>,ExpectationComparator<?,?>> defaultComparators = new HashMap<Class<?>,ExpectationComparator<?,?>>()
     {{
         put(IgnoreExpectation.class, new IgnoreComparator());
-        put(TransformerComponent.class, new FlowElementComparator());
+        put(TranslatorComponent.class, new FlowElementComparator());
+        put(ConverterComponent.class, new FlowElementComparator());
         put(RouterComponent.class, new FlowElementComparator());
         put(SequencerComponent.class, new FlowElementComparator());
-        put(EndpointComponent.class, new FlowElementComparator());
+        put(ProducerComponent.class, new FlowElementComparator());
+        put(ConsumerComponent.class, new FlowElementComparator());
+        put(BrokerComponent.class, new FlowElementComparator());
+        put(FilterComponent.class, new FlowElementComparator());
     }};
 
     /**

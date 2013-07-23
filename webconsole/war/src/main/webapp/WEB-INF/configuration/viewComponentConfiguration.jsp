@@ -77,20 +77,20 @@
 		    
 		            <ol>  
 		                <li>
-		                    <label for="configurationId">Id</label>
-		                    <span class="nonEditable"><c:out value="${configuration.configurationId}" /></span>
+		                    <label for="id">Id</label>
+		                    <span class="nonEditable"><c:out value="${configuration.id}" /></span>
 		                </li>
 		                <li>
 		                    <label for="description">Configuration Description</label>
 		                    <form:textarea id="${description}" path="description"/>
 		                </li>
-  		                <c:forEach items="${configuration.configurationParameters}" var="current" varStatus="stat">
+  		                <c:forEach items="${configuration.parameters}" var="current" varStatus="stat">
 		                   <li>
 		                       <label for"<c:out value="${current.name}" />"/><c:out value="${current.name}" /></label>
-                               <form:textarea id="configurationParameters[${stat.index}].value" path="configurationParameters[${stat.index}].value"/>
+                               <form:textarea id="parameters[${stat.index}].value" path="parameters[${stat.index}].value"/>
 		                       <br/>
 		                       <label for"<c:out value="${current.description}" />"/>Parameter Description</label>
-		                       <form:textarea id="configurationParameters[${stat.index}].description" path="configurationParameters[${stat.index}].description"/>
+		                       <form:textarea id="parameters[${stat.index}].description" path="parameters[${stat.index}].description"/>
                            </li>
 		                </c:forEach>
 		             </ol>

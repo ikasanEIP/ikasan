@@ -42,7 +42,8 @@ package org.ikasan.console.pointtopointflow.service;
 
 import java.util.Set;
 
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
+import org.ikasan.spec.management.PointToPointFlowProfile;
+
 
 /**
  * Service layer for PointToPointFlowProfiles

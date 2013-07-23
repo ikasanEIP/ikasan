@@ -45,7 +45,8 @@ import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
+import org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
@@ -57,7 +58,7 @@ public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport imp
 {
 
     /** Query for finding all point to point flow profiles based on id */
-    private static final String POINT_TO_POINT_FLOW_PROFILES_BY_ID = "from PointToPointFlowProfile p where p.id in (:ids) order by name";
+    private static final String POINT_TO_POINT_FLOW_PROFILES_BY_ID = "from PointToPointFlowProfileImpl p where p.id in (:ids) order by name";
     
     /**
      * @see org.ikasan.console.pointtopointflow.dao.PointToPointFlowProfileDao#findAllPointToPointFlowProfiles()
@@ -66,7 +67,7 @@ public class HibernatePointToPointFlowProfileDao extends HibernateDaoSupport imp
     public Set<PointToPointFlowProfile> findAllPointToPointFlowProfiles()
     {
         Set<PointToPointFlowProfile> pointToPointFlowProfiles = new LinkedHashSet<PointToPointFlowProfile>();
-        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(PointToPointFlowProfile.class).addOrder(Order.asc("name"))));
+        pointToPointFlowProfiles.addAll(getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(PointToPointFlowProfileImpl.class).addOrder(Order.asc("name"))));
         return pointToPointFlowProfiles;
     }
 

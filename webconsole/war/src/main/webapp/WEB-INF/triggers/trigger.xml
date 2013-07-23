@@ -49,7 +49,6 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    
     <input name="moduleName" required="true" />
     <input name="flowName" required="true" />
     <input name="flowElementName" />
@@ -85,7 +84,7 @@
     </action-state>
     
 	
-    <end-state id="triggerConfirmed"  view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=${flowScope.triggerDetails.moduleName}&amp;flowName=${flowScope.triggerDetails.flowName}&amp;flowElementName=${flowScope.triggerDetails.flowElementName}" />
-    <end-state id="triggerCancelled" view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=${flowScope.triggerDetails.moduleName}&amp;flowName=${flowScope.triggerDetails.flowName}&amp;flowElementName=${flowScope.triggerDetails.flowElementName}" />
+    <end-state id="triggerConfirmed"  view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=#{flowScope.triggerDetails.moduleName}&amp;flowName=#{flowScope.triggerDetails.flowName}&amp;flowElementName=#{flowScope.triggerDetails.flowElementName}" />
+    <end-state id="triggerCancelled" view="externalRedirect:contextRelative:/modules/viewFlowElement.htm?moduleName=#{flowScope.triggerDetails.moduleName}&amp;flowName=#{flowScope.triggerDetails.flowName}&amp;flowElementName=#{flowScope.triggerDetails.flowElementName}" />
 
 </flow>

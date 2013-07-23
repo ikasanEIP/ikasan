@@ -42,7 +42,7 @@ package org.ikasan.console.pointtopointflow.dao;
 
 import java.util.Set;
 
-import org.ikasan.console.pointtopointflow.PointToPointFlowProfile;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 
 /**
  * Interface for all PointToPointFlowProfile data access.

@@ -43,9 +43,8 @@ package org.ikasan.testharness.flow.listener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.framework.component.Event;
-import org.ikasan.framework.flow.FlowElement;
-import org.ikasan.framework.flow.event.listener.FlowEventListener;
+import org.ikasan.spec.event.ReplicationFactory;
+import org.ikasan.spec.flow.*;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.ikasan.testharness.flow.FlowSubject;
 
@@ -63,15 +62,19 @@ import org.ikasan.testharness.flow.FlowSubject;
 public class FlowEventListenerSubject
     implements FlowEventListener, FlowSubject
 {
+    /** replication factory */
+    private ReplicationFactory<FlowEvent> replicationFactory;
+
     /** observer to be notified of flow component invocations */
     private List<FlowObserver> flowObservers;
 
     /**
      * Constructor
      */
-    public FlowEventListenerSubject()
+    public FlowEventListenerSubject(ReplicationFactory<FlowEvent> replicationFactory)
     {
         this.flowObservers = initFlowObservers();
+        this.replicationFactory = replicationFactory;
     }
     
     /**
@@ -85,28 +88,6 @@ public class FlowEventListenerSubject
     }
     
     /**
-     * Unsupported as we don't care about afterFlow operations in this implementation.
-     * @param String moduleName
-     * @param String flowName
-     * @param Event event
-     */
-    public void afterFlow(String moduleName, String flowName, Event event)
-    {
-        throw new UnsupportedOperationException("afterFlow not supported in this implementation");
-    }
-
-    /**
-     * Unsupported as we don't care about beforeFlow operations in this implementation.
-     * @param String moduleName
-     * @param String flowName
-     * @param Event event
-     */
-    public void beforeFlow(String moduleName, String flowName, Event event)
-    {
-        throw new UnsupportedOperationException("beforeFlow not supported in this implementation");
-    }
-
-    /**
      * Does nothing in this implementation as we are only interested in the
      * afterFlowElement operations for event capture.
      * @param String moduleName
@@ -115,7 +96,7 @@ public class FlowEventListenerSubject
      * @param Event event
      */
     public void beforeFlowElement(String moduleName, String flowName,
-            FlowElement flowElement, Event event)
+            FlowElement flowElement, FlowEvent event)
     {
         // notification of the component we are about to invoke
         for(FlowObserver flowObserver:this.flowObservers)
@@ -132,21 +113,12 @@ public class FlowEventListenerSubject
      * @param Event event
      */
     public void afterFlowElement(String moduleName, String flowName,
-            FlowElement flowElement, Event event)
+            FlowElement flowElement, FlowEvent event)
     {
         // notification of the resulting event from the invoked component
         for(FlowObserver flowObserver:this.flowObservers)
         {
-            try
-            {
-                Event eventSnapshot = event.clone();
-                flowObserver.notify(eventSnapshot);
-            }
-            catch (CloneNotSupportedException e)
-            {
-                flowObserver.notify("Failed to capture event at runtime due to [" 
-                        + e.getMessage() + "]");
-            }
+            flowObserver.notify( this.replicationFactory.replicate(event) );
         }
     }
 

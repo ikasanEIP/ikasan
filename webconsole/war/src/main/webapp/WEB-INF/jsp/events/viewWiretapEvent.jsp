@@ -46,7 +46,7 @@
 
 <div class="middle">
 
-<h2>Wiretap Event :: <c:out value="${wiretapEvent.id}" /></h2>
+<h2>Wiretap Event :: <c:out value="${wiretapEvent.identifier}" /></h2>
 
 <table id="wiretapDetails" class="keyValueTable">
 	<tr>
@@ -80,8 +80,9 @@
 			Created Date
 		</th>
 		<td>
-			<fmt:formatDate value="${wiretapEvent.created}"
-                                pattern="dd/MM/yyyy h:mma"/>
+			<jsp:useBean id="dateCreated" class="java.util.Date" />
+			<jsp:setProperty name="dateCreated" property="time" value="${wiretapEvent.timestamp}" />
+			<fmt:formatDate value="${dateCreated}" pattern="dd/MM/yyyy h:mma" /></p>
 		</td>
 	</tr>
 	<tr>
@@ -89,8 +90,9 @@
 			Expiry
 		</th>
 		<td>
-			<fmt:formatDate value="${wiretapEvent.expiry}"
-                                pattern="dd/MM/yyyy h:mma"/>
+            <jsp:useBean id="dateExpiry" class="java.util.Date" />
+            <jsp:setProperty name="dateExpiry" property="time" value="${wiretapEvent.expiry}" />
+            <fmt:formatDate value="${dateExpiry}" pattern="dd/MM/yyyy h:mma" /></p>
 		</td>
 	</tr>
 </table>
@@ -99,50 +101,39 @@
 <table id="wiretapContent" class="keyValueTable">
 	<tr>
 		<th>
-			Event Id
+			Event Id &nbsp
+			         <c:choose>
+                        <c:when test="${wiretapEvent.previousByEventId != null}">
+                            <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByEventId}" />">Previous</a>
+                        </c:when>
+                        <c:otherwise>
+                            Previous
+                        </c:otherwise>
+            </c:choose>
+            &nbsp;
+            <c:choose>
+                        <c:when test="${wiretapEvent.nextByEventId != null}">
+                            <a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByEventId}" />">Next</a>
+                        </c:when>
+                        <c:otherwise>
+                            Next
+                        </c:otherwise>
+            </c:choose>                 
 		</th>
 		<td colspan="2">
 			<c:out value="${wiretapEvent.eventId}" />
 		</td>
 	</tr>	
 	
-	<tr>
-		<th>
-			Payload Id
-		</th>
-		<td>
-			<c:out value="${wiretapEvent.payloadId}" />
-		</td>
-		<td>
-	 		<c:choose>
-						<c:when test="${wiretapEvent.previousByPayload != null}">
-							<a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.previousByPayload}" />">Previous</a>
-						</c:when>
-						<c:otherwise>
-							Previous
-						</c:otherwise>
-			</c:choose>
-			&nbsp;
-			<c:choose>
-						<c:when test="${wiretapEvent.nextByPayload != null}">
-							<a href="viewEvent.htm?eventId=<c:out value="${wiretapEvent.nextByPayload}" />">Next</a>
-						</c:when>
-						<c:otherwise>
-							Next
-						</c:otherwise>
-			</c:choose>					
-		</td>
-	</tr>
-
     <tr>
         <th>
-            Payload Content (XML)
+            Payload Content (XML)            
         </th>
         <c:choose>
-        <c:when test='${fn:startsWith(wiretapEvent.payloadContent, "<?xml")}'>
+        <c:when test='${fn:startsWith(wiretapEvent.event, "<?xml")}'>
         <td colspan="2">
             <!-- This link will open in a new window, see /js/ikasan.js for details -->
-            <a href="viewPrettyPayloadContent.htm?eventId=<c:out value="${wiretapEvent.id}" />" class="new-window">
+            <a href="viewPrettyPayloadContent.htm?eventId=<c:out value="${wiretapEvent.identifier}" />" class="new-window">
                 Formatted Content (XML)
             </a>
         </td>
@@ -160,7 +151,7 @@
 			Payload Content
 		</th>
 		<td colspan="2">
-			<c:out value="${wiretapEvent.payloadContent}" />
+			<c:out value="${wiretapEvent.event}" />
 		</td>
 	</tr>	
     

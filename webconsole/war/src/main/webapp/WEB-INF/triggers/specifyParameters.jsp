@@ -78,12 +78,13 @@
                     <span class="nonEditable"><c:out value="${triggerDetails.jobName}" /></span>
                 </li>
 
-            	<c:forEach items="${triggerParameterNames}" var="triggerParameterName">
-                	<li>
-                		<label for"<c:out value="${triggerParameterName}" />"/><c:out value="${triggerParameterName}" /></label>
-                		<form:input id="${triggerParameterName}" path="params.${triggerParameterName}" />
-                	</li>
-            	</c:forEach>
+                <c:forEach items="${triggerParameterNames}" var="triggerParameterName" varStatus="stat">
+                   <li>
+                        <label for"<c:out value="${triggerParameterName}" />"/><c:out value="${triggerParameterName}" /></label>
+                        <form:input id="${triggerParameterName}" path="params['${triggerParameterName}']" />
+                   </li>
+                </c:forEach>
+
 	
 	        </ol>
 	</fieldset>

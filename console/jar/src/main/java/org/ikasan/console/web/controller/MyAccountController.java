@@ -48,11 +48,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ikasan.console.service.ConsoleService;
-import org.ikasan.framework.security.model.User;
-import org.ikasan.framework.security.service.UserService;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -69,7 +69,8 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Ikasan Development Team
  */
 @Controller
-@RequestMapping("/users/*.htm")
+//@RequestMapping("/users/*.htm")
+@RequestMapping("/users")
 @SessionAttributes("user")
 public class MyAccountController
 {

@@ -43,8 +43,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>documentation</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>0.9.0-EXPERIMENT</version>
     </parent>
     <artifactId>reference-guide</artifactId>
     <packaging>jdocbook</packaging>
@@ -82,7 +81,7 @@
                     <options>
                         <xincludeSupported>true</xincludeSupported>
                         <xmlTransformerType>saxon</xmlTransformerType>
-                        <docbookVersion>1.76.1</docbookVersion>
+                        <docbookVersion>1.75.1</docbookVersion>
                         <transformerParameters>
                             <property>
                                 <name>javax.xml.parsers.DocumentBuilderFactory</name>

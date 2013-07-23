@@ -167,14 +167,14 @@
                             <input class="inputText" id="eventId" type="text" name="eventId" value="${searchParams['eventId']}"/> <span title="<fmt:message key="wiretap_events_search_event_id_help"/>" id="eventIdHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- FIXME tr>
                         <td class="searchCell formLabel">
                             <fmt:message key="wiretap_events_payload_id"/>
                         </td>
                         <td class="searchCell">
                             <input class="inputText" id="payloadId" type="text" name="payloadId" value="${searchParams['payloadId']}"/> <span title="<fmt:message key="wiretap_events_search_payload_id_help"/>" id="payloadIdHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
                         </td>
-                    </tr>
+                    </tr-->
                     <tr>
                         <td class="searchCell formLabel">
                             <fmt:message key="wiretap_events_from"/>
@@ -212,8 +212,8 @@
                                 <option value="flowName" <c:if test="${orderBy=='flowName'}">selected="selected"</c:if>>Module Flow</option>
                                 <option value="componentName" <c:if test="${orderBy=='componentName'}">selected="selected"</c:if>>Component</option>
                                 <option value="eventId" <c:if test="${orderBy=='eventId'}">selected="selected"</c:if>>Event Id</option>
-                                <option value="payloadId" <c:if test="${orderBy=='payloadId'}">selected="selected"</c:if>>Payload Id</option>
-                                <option value="created" <c:if test="${orderBy=='created'}">selected="selected"</c:if>>Created Date/Time</option>
+                                <!-- FIXME option value="payloadId" <c:if test="${orderBy=='payloadId'}">selected="selected"</c:if>>Payload Id</option-->
+                                <option value="timestamp" <c:if test="${orderBy=='timestamp'}">selected="selected"</c:if>>Created Date/Time</option>
                             </select>
                             <span title="<fmt:message key="wiretap_events_search_order_by_help"/>" id="orderByHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
                             <input id="orderAsc" class="checkbox" type="checkbox" name="orderAsc" <c:if test="${orderAsc=='true'}">checked="checked"</c:if>/> <span class="formLabel"><fmt:message key="wiretap_events_order_ascending"/></span> <span title="<fmt:message key="wiretap_events_search_order_asc_help"/>" id="orderAscHelp"><img class="helpIcon" src="/console/images/Icon_Help_sml.png" alt="?" /></span>
@@ -317,17 +317,21 @@
                         </tr>
                      </thead>
                      <tbody>
-                         <c:forEach items="${results}" var="event">
+                         <c:forEach items="${results.pagedResults}" var="event">
                          <c:url var="viewEventLink" value="viewEvent.htm">
-                         <c:param name="wiretapEventId" value="${event.id}"/>
+                         <c:param name="wiretapEventId" value="${event.identifier}"/>
                          <c:param name="searchResultsUrl" value="${searchResultsUrl}"/>
                          </c:url>
                          <tr>
-                            <td class="resultsCell"><a href="<c:out value="${viewEventLink}" escapeXml="true" />"><c:out value="${event.id}" /></a></td>
+                            <td class="resultsCell"><a href="<c:out value="${viewEventLink}" escapeXml="true" />"><c:out value="${event.identifier}" /></a></td>
                             <td class="resultsCell"><c:out value="${event.moduleName}" /></td>
                             <td class="resultsCell"><c:out value="${event.flowName}" /></td>
                             <td class="resultsCell"><c:out value="${event.componentName}" /></td>
-                            <td class="resultsCellLast"><c:out value="${event.created}" /></td>
+                            <td class="resultsCellLast">
+					            <jsp:useBean id="dateCreated" class="java.util.Date" />
+					            <jsp:setProperty name="dateCreated" property="time" value="${event.timestamp}" />
+					            <fmt:formatDate value="${dateCreated}" pattern="dd/MM/yyyy h:mm:ss:SSSa" /></p>
+                            </td>
                         </tr>
                         </c:forEach>
                     </tbody>

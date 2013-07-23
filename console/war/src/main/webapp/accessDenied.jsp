@@ -43,9 +43,9 @@
  
 --%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jstl/core_rt' %>
-<%@ page import="org.springframework.security.ui.AbstractProcessingFilter" %>
-<%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter" %>
-<%@ page import="org.springframework.security.AuthenticationException" %>
+<%@ page import="org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter" %>
+<%@ page import="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter" %>
+<%@ page import="org.springframework.security.core.AuthenticationException" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -68,7 +68,7 @@
     <div id="container">
         <!-- TODO This will need to be altered somewhat -->
         <div id="header">
-           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/logo.png" alt="logo" /></a>
+           <a class="white" href="<c:url value='/'/>"><img id="logo" src="images/Ikasan_Logo_Transp.png" alt="logo" /></a>
            <h2>Enterprise Integration Platform - Console</h2>
         </div>
         <div id="content">Oops, you don't have authorisation to view this.</div>

@@ -40,7 +40,7 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.framework.component.routing.Router;
+import org.ikasan.spec.component.routing.Router;
 
 /**
  * Router Component type.

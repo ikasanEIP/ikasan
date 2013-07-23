@@ -49,21 +49,19 @@
 <h2>Wiretapped Events</h2>
 
 <h3>Results</h3>
-
 <a href="search.htm">New Search</a>
 
 <div id="searchResultsHeader">
     
-    <span id="currentlyShowing">Showing <c:out value="${searchResults.firstIndex}"/> to <c:out value="${searchResults.lastIndex}"/> of <c:out value="${searchResults.resultSize}"/> results</span>
+    <span id="currentlyShowing">Showing <c:out value="${searchResults.firstResultIndex}"/> to <c:out value="${searchResults.lastResultIndex}"/> of <c:out value="${searchResults.resultSize}"/> results</span>
     <span id="navigationControls" >
-            <c:if test="${searchResults.firstIndex gt 1}">
+            <c:if test="${searchResults.firstResultIndex gt 1}">
                 <a href="previous.htm">Previous</a>&nbsp;
             </c:if>
-            <c:if test="${searchResults.resultSize gt searchResults.lastIndex}">
+            <c:if test="${not searchResults.lastPage}">
                 <a href="next.htm">Next</a>
             </c:if>
     </span>
-    
 
 </div> <!--end searchResultsHeader -->
 
@@ -74,17 +72,17 @@
             <th>Module</th>
             <th>Flow</th>
             <th>Component</th>
-            <th>Event Id / Payload Id</th>
+            <th>Event Id</th>
         </tr>
     </thead>
 
     <tbody>
-        <c:forEach items="${searchResults.wiretapEventHeaders}" var="event">
+        <c:forEach items="${searchResults.pagedResults}" var="event">
             <tr>
                 <td>
                     
-                    <a href="viewEvent.htm?eventId=<c:out value="${event.id}" />">
-                        <c:out value="${event.id}" />
+                    <a href="viewEvent.htm?eventId=<c:out value="${event.identifier}" />">
+                        <c:out value="${event.identifier}" />
                     </a>
                 </td>           
                 <td>
@@ -97,7 +95,7 @@
                     <c:out value="${event.componentName}" />
                 </td>
                 <td>
-                    <c:out value="${event.eventId}" /><br><c:out value="${event.payloadId}" />
+                    <c:out value="${event.eventId}" /><br>
                 </td>
             </tr>
         </c:forEach>

@@ -260,6 +260,9 @@ form.fancydataform fieldset li {
     color: black;
 }
 
+.initiatorState-paused {
+    color: blue;
+}
 .initiatorState-stoppedInError {
     color: red;
 }
@@ -267,6 +270,11 @@ form.fancydataform fieldset li {
 .initiatorState-runningInRecovery {
     color: orange;
 }
+
+.initiatorState-recovering {
+    color: orange;
+}
+
 .controls{
 	float: right;
 	margin-top: 5px;

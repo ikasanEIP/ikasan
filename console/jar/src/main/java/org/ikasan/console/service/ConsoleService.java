@@ -40,7 +40,7 @@
  */
 package org.ikasan.console.service;
 
-import org.ikasan.framework.security.model.User;
+import org.ikasan.security.model.User;
 
 /**
  * Service Tier interface for providing console services 

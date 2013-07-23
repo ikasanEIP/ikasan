@@ -50,11 +50,6 @@
 
     <toc/>
 
-    <!-- 
-        xi:includes aren't in themeselves a valid docbook entity, 
-        but you can safely ignore the validation failure. One day 
-        we might look into altering the parser to deal with this
-     -->
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="Introduction.xml" />
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="ArchitecturalStrategies.xml" />
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="ArchitecturalConcepts.xml" />

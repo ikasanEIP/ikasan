@@ -43,8 +43,8 @@ package org.ikasan.console.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ikasan.framework.security.model.User;
-import org.ikasan.framework.security.service.UserService;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.UserService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
