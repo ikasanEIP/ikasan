@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="configurationService"
+        class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
+        <constructor-arg>
+            <bean class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+                <property name="sessionFactory">
+                    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                        <property name="dataSource" ref="eai.xads" />
+                        <property name="mappingResources">
+                            <list>
+                                <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+                            </list>
+                        </property>
+                        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+                    </bean>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+                <property name="sessionFactory">
+                    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                        <property name="dataSource" ref="eai.xads" />
+                        <property name="mappingResources">
+                            <list>
+                                <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+                            </list>
+                        </property>
+                        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+                    </bean>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+</beans>

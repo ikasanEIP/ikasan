@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:jee="http://www.springframework.org/schema/jee"
+     xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="location" value="classpath:/ikasan-jndi-datasource.properties"/>
+    </bean>
+	
+    <jee:jndi-lookup id="ikasan.xads" jndi-name="${ikasan.xads}"/>
+    <jee:jndi-lookup id="eai.xads" jndi-name="${eai.xads}"/>
+    <jee:jndi-lookup id="eai.ds" jndi-name="${eai.ds}"/>
+
+</beans>
