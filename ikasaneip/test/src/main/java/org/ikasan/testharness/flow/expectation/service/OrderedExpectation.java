@@ -43,6 +43,7 @@ package org.ikasan.testharness.flow.expectation.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.ComparisonFailure;
 import org.apache.log4j.Logger;
 import org.ikasan.testharness.flow.Capture;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
@@ -190,7 +191,7 @@ public class OrderedExpectation
     @SuppressWarnings("unchecked")
     public void isSatisfied(Capture<?> actual)
     {
-        Assert.assertFalse("Not enough expectations specified for the actual behaviour occurrences", 
+        Assert.assertFalse("FAILED - Not enough expectations specified. Actual behaviour reports next invocation of " +  actual.getActual().getClass().getName(),
                 expectations.isEmpty());
 
         DefaultExpectation expectation = expectations.remove(0);
@@ -198,15 +199,21 @@ public class OrderedExpectation
 
         try
         {
-            logger.info("Running " + expectation.getDescription());
             expectationComparator.compare(expectation.getExpectation(), actual.getActual());
+            logger.info("PASSED - " + expectation.getDescription());
+        }
+        catch(ComparisonFailure e)
+        {
+            logger.info("FAILED - " + expectation.getDescription());
+            throw e;
         }
         catch(ClassCastException e)
         {
+            logger.info("FAILED - " + expectation.getDescription());
             String comparatorClassName = expectationComparator.getClass().getName();
             String expectationClassName = expectation.getExpectation().getClass().getName();
             String actualClassName = actual.getActual().getClass().getName();
-            throw new RuntimeException("Failed " + expectation.getDescription() 
+            throw new RuntimeException("FAILED - " + expectation.getDescription()
                     + " when invoking Comparator.compare method[" 
                     + comparatorClassName 
                     + "]. Could be comparator method parameters are of the wrong type for this expectation class[" +
