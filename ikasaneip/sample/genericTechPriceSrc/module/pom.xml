@@ -83,13 +83,6 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.1.1.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>3.1.1.RELEASE</version>
             <scope>test</scope>
@@ -132,7 +125,7 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test</artifactId>
+            <artifactId>ikasan-eip-test</artifactId>
             <version>0.9.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
