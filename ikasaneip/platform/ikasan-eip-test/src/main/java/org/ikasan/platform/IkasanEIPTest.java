@@ -55,6 +55,7 @@ import org.springframework.test.context.ContextConfiguration;
         "/systemevent-service-conf.xml",
         "/module-service-conf.xml",
         "/wiretap-service-conf.xml",
+        "/test-service-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })
 
