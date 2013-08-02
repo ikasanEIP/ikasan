@@ -60,11 +60,11 @@ public class FlowElementComparator
     {
         String expectedName = expected.getName();
         String actualName = actual.getComponentName();
-        Assert.assertEquals("Component name differs. Expectation[" 
+        Assert.assertEquals("FAILED - Component name differs. Expectation["
                 + expectedName + "] actual[" + actualName + "]", expectedName, actualName);
 
         Class<?> expectedClass = expected.getType();
-        Assert.assertTrue("Component expectation class differs. Expectation[" 
+        Assert.assertTrue("FAILED - Component expectation class differs. Expectation["
                 + expectedClass.getName() + "] actual["
                 + actual.getFlowComponent().getClass().getName() + "]",
                 expectedClass.isInstance(actual.getFlowComponent()) );
