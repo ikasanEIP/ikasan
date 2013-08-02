@@ -56,44 +56,38 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.ikasan.platform.IkasanEIPTest;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/recoveryManager-service-conf.xml", 
-        "/scheduler-service-conf.xml", 
-        "/configuration-service-conf.xml",
-        "/systemevent-service-conf.xml",
-        "/module-service-conf.xml",
-        "/wiretap-service-conf.xml",
-        "/component-conf.xml", 
-        "/flow-conf.xml", 
-        "/module-conf.xml", 
-        "/exception-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/component-conf.xml",
+        "/flow-conf.xml",
+        "/module-conf.xml",
+        "/exception-conf.xml"
         })
 
-public class PriceFlowSampleTest
+public class PriceFlowSampleTest extends IkasanEIPTest
 {
     /** Consumer specific event comparator */
     ConsumerEventComparator consumerEventComparator;
-    
+
     /** Converter specific event comparator */
     ConverterEventComparator converterEventComparator;
-    
+
     /** Producer specific event comparator */
     ProducerEventComparator producerEventComparator;
-    
+
     @Resource
     Module<Flow> module;
-    
+
     @Before
-    public void setup() 
+    public void setup()
     {
         // create the test comparators
         this.consumerEventComparator = new ConsumerEventComparator();
@@ -102,7 +96,7 @@ public class PriceFlowSampleTest
     }
 
     @Test
-    public void test_flow_consumer_translator_producer() 
+    public void test_flow_consumer_translator_producer()
     {
         final PriceTechMessage priceTechConsumerMessage = new PriceTechMessage("abc", 10, 10);
         final StringBuilder priceTechConverterMessage = new StringBuilder("identifier = abc bid = 10 spread = 10 at ");
@@ -115,7 +109,7 @@ public class PriceFlowSampleTest
         {
             flow.start();
         }
-        
+
         try
         {
             Thread.sleep(100);
@@ -124,12 +118,12 @@ public class PriceFlowSampleTest
         {
             // dont care
         }
-        
+
         for(Flow flow:module.getFlows())
         {
             flow.stop();
         }
-        
+
     }
 
 }
