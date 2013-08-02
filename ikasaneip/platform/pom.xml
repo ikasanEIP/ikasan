@@ -53,7 +53,8 @@
     <name>Ikasan Enterprise Integration Platform</name>
 
     <modules>
-       <module>ikasan-eip</module>
+        <module>ikasan-eip</module>
+        <module>ikasan-eip-test</module>
     </modules>
 
 </project>
