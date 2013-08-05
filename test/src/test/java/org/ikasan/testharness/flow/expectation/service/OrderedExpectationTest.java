@@ -99,7 +99,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue(flowElement));
                 
                 // expected name
@@ -136,7 +136,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue(flowElement));
                 
                 // expected name
@@ -173,7 +173,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue(flowElement));
             }
         });
@@ -202,7 +202,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue(flowElement));
             }
         });
@@ -232,7 +232,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue("one"));
             }
         });
@@ -262,7 +262,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue("one"));
             }
         });
@@ -290,7 +290,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(1).of(capture).getActual();
+                exactly(2).of(capture).getActual();
                 will(returnValue("one"));
                 
                 exactly(1).of(comparatorService).getComparator(with(any(Object.class)));
@@ -325,7 +325,7 @@ public class OrderedExpectationTest
         {
             {
                 // get the mocked actual flow element
-                exactly(2).of(capture).getActual();
+                exactly(3).of(capture).getActual();
                 will(returnValue(flowElement));
             }
         });
