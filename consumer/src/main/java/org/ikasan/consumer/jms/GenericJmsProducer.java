@@ -64,7 +64,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
  *
  * @author Ikasan Development Team
  */
-public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, ManagedIdentifierService<ManagedEventIdentifierService>,
+public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierService<ManagedEventIdentifierService>,
     ManagedResource, ConfiguredResource<GenericJmsProducerConfiguration>
 {
     /** class logger */
@@ -141,7 +141,7 @@ public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, Manage
         }
     }
 
-    public void invoke(FlowEvent<String,?> message) throws EndpointException
+    public void invoke(T message) throws EndpointException
     {
         MessageProducer messageProducer = null;
         Message jmsMessage = null;
@@ -150,16 +150,16 @@ public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, Manage
         {
             messageProducer = session.createProducer(destination);
             
-            if(message.getPayload() instanceof Message)
+            if(message instanceof Message)
             {
-                jmsMessage = (Message)message.getPayload();
+                jmsMessage = (Message)message;
             }
             else
             {
                 if(this.messageConverter == null)
                 {
                     throw new EndpointException("Cannot publish message of type[" 
-                        + message.getPayload().getClass().getName() 
+                        + message.getClass().getName() 
                         + " to JMS without a converter!");
                 }
 
@@ -168,11 +168,21 @@ public class GenericJmsProducer implements Producer<FlowEvent<String,?>>, Manage
                     logger.debug("Published [" + message.toString() + "]");
                 }
 
-                jmsMessage = this.messageConverter.toMessage(message.getPayload(), session);
+                if(message instanceof FlowEvent)
+                {
+                    jmsMessage = this.messageConverter.toMessage(((FlowEvent)message).getPayload(), session);
+                }
+                else
+                {
+                    jmsMessage = this.messageConverter.toMessage(message, session);
+                }
             }
             
             // carry the event identifier if available
-            this.managedEventIdentifierService.setEventIdentifier(message.getIdentifier(), jmsMessage);
+            if(message instanceof FlowEvent)
+            {
+                this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)message).getIdentifier(), jmsMessage);
+            }
 
             // publish message
             messageProducer.send(jmsMessage);
