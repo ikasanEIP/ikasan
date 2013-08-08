@@ -70,12 +70,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /** logger instance */
     private static final Logger logger = Logger.getLogger(VisitingFlowElementInvoker.class);
 
-    /** producer component invocation method name */
-    private static final String PRODUCER_METHOD = "invoke";
-    
-    /** method signature params requiring full event invocation */
-    private static final Class<?>[] flowEventParams = {FlowEvent.class};
-    
     /** replication factory - requirement for flows where event can undergo a number of sequential routes */
     private ReplicationFactory<FlowEvent<?,?>> replicationFactory;
 
@@ -83,7 +77,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private FlowEventListener flowEventListener;
 
     /** cache whether the producer invocation requires full event */
-    private Map<String,Boolean> requiresFullEventMap = new HashMap<String,Boolean>();
+    private Map<String,Boolean> requiresFullEvent = new HashMap<String,Boolean>();
 
     /**
      * Constructor with a ReplicationFactory for replicating events for specific
@@ -319,49 +313,38 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private FlowElement<?> handleProducer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
         Producer producer = (Producer) flowElement.getFlowComponent();
-        if( requiresFlowEvent(moduleName + flowName + flowElement.getComponentName(), producer.getClass(), PRODUCER_METHOD) )
+        Boolean requiresFullEventForInvocation = this.requiresFullEvent.get(moduleName + flowName + flowElement.getComponentName());
+        if(requiresFullEventForInvocation == null)
         {
-            producer.invoke(flowEvent);
+            try
+            {
+                // try with flowEvent and if successful mark this producer
+                producer.invoke(flowEvent);
+                this.requiresFullEvent.put(moduleName + flowName + flowElement.getComponentName(), Boolean.TRUE);
+            }
+            catch(java.lang.ClassCastException e)
+            {
+                producer.invoke(flowEvent.getPayload());
+                this.requiresFullEvent.put(moduleName + flowName + flowElement.getComponentName(), Boolean.FALSE);
+            }
         }
         else
         {
-            producer.invoke(flowEvent.getPayload());
+            if(requiresFullEventForInvocation.booleanValue())
+            {
+                producer.invoke(flowEvent);
+            }
+            else
+            {
+                producer.invoke(flowEvent.getPayload());
+            }
         }
         
         notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
         // producer is last in the flow
         return null;
     }
-
-    /**
-     * Determine whether the passed class requires a complete flowEvent to be
-     * passed on invocation or simply the payload of the flowEvent.
-     * @param componentFullName
-     * @param cls
-     * @param methodName
-     * @return boolean
-     */
-    private boolean requiresFlowEvent(String componentFullName, Class cls, String methodName)
-    {
-        Boolean required = this.requiresFullEventMap.get(componentFullName);
-        if(required == null)
-        {
-            try
-            {
-                cls.getMethod(methodName, flowEventParams);
-                this.requiresFullEventMap.put(componentFullName, Boolean.TRUE);
-                return true;
-            }
-            catch(NoSuchMethodException e)
-            {
-                this.requiresFullEventMap.put(componentFullName, Boolean.FALSE);
-                return false;
-            }
-        }
-        
-        return required.booleanValue();
-    }
-    
+   
     private FlowElement<?> handleBroker(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
     {
         Broker broker = (Broker) flowElement.getFlowComponent();
