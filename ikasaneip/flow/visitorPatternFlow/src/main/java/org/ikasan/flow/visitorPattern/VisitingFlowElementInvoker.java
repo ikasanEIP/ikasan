@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -144,6 +145,10 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 {
                     flowElement = handleSequencer(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
                 }
+                else if (flowComponent instanceof Splitter)
+                {
+                    flowElement = handleSplitter(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+                }
                 else if (flowComponent instanceof Filter)
                 {
                     flowElement = handleFilter(moduleName, flowName, flowEvent, flowElement);
@@ -181,6 +186,37 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             logger.error("sequencer is last element in flow!");
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Sequencer, but it has no default transition! "
                     + "Sequencers should never be the last component in a flow");
+        }
+        if (payloads != null)
+        {
+            for (Object payload : payloads)
+            {
+                flowEvent.setPayload(payload);
+                notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
+                invoke(moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The behaviour for visiting a <code>Splitter</code>
+     *
+     * @param event The event we're passing on
+     * @param moduleName The name of the module
+     * @param flowName The name of the flow
+     * @param flowElement The flow element we're dealing with
+     */
+    private FlowElement handleSplitter(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+    {
+        Splitter splitter = (Splitter) flowElement.getFlowComponent();
+        List payloads = splitter.split(flowEvent.getPayload());
+        FlowElement nextFlowElement = getDefaultTransition(flowElement);
+        if (nextFlowElement == null)
+        {
+            logger.error("spliiter is last element in flow!");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Splitter, but it has no default transition! "
+                    + "Splitters should never be the last component in a flow");
         }
         if (payloads != null)
         {
