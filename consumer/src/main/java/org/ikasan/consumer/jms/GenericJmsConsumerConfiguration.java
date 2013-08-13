@@ -70,6 +70,12 @@ public class GenericJmsConsumerConfiguration
     /** type of session message acknowledgement */
     private int acknowledgement = Session.AUTO_ACKNOWLEDGE;
 
+    /** optional message selector */
+    private String selector;
+
+    /** optional boolean no local - can messages be delivered by this consumers connection */
+    private boolean noLocal = false;
+
     public boolean isTransacted()
     {
         return transacted;
@@ -138,5 +144,25 @@ public class GenericJmsConsumerConfiguration
     public void setDurable(boolean durable)
     {
         this.durable = durable;
+    }
+
+    public void setSelector(String selector)
+    {
+        this.selector = selector;
+    }
+
+    public String getSelector()
+    {
+        return this.selector;
+    }
+
+    public void setNoLocal(boolean noLocal)
+    {
+        this.noLocal = noLocal;
+    }
+
+    public boolean isNoLocal()
+    {
+        return this.noLocal;
     }
 }
