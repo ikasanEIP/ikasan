@@ -40,6 +40,9 @@
  */
 package org.ikasan.consumer.jms;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -184,6 +187,14 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
                 this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)message).getIdentifier(), jmsMessage);
             }
 
+            if(this.configuration.getProperties() != null)
+            {
+                for(Map.Entry<String,String> entry : this.configuration.getProperties().entrySet())
+                {
+                    jmsMessage.setStringProperty(entry.getKey(), entry.getValue());
+                }
+            }
+            
             // publish message
             messageProducer.send(jmsMessage);
         }
