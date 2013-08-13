@@ -40,6 +40,8 @@
  */
 package org.ikasan.consumer.jms;
 
+import java.util.Map;
+
 import javax.jms.Session;
 
 /**
@@ -60,6 +62,9 @@ public class GenericJmsProducerConfiguration
 
     /** type of session message acknowledgement */
     private int acknowledgement = Session.AUTO_ACKNOWLEDGE;
+
+    /** message properties */
+    private Map<String,String> properties;
 
     public String getUsername()
     {
@@ -99,6 +104,16 @@ public class GenericJmsProducerConfiguration
     public void setAcknowledgement(int acknowledgement)
     {
         this.acknowledgement = acknowledgement;
+    }
+
+    public Map<String, String> getProperties()
+    {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties)
+    {
+        this.properties = properties;
     }
     
 }

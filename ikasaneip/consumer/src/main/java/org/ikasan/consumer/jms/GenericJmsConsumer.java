@@ -193,11 +193,25 @@ public class GenericJmsConsumer
             
             if(destination instanceof Topic && this.configuration.isDurable())
             {
-                messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId());
+                if(this.configuration.getSelector() != null)
+                {
+                    messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId(), this.configuration.getSelector(), this.configuration.isNoLocal());
+                }
+                else
+                {
+                    messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId());
+                }
             }
             else
             {
-                messageConsumer = session.createConsumer(destination, this.configuration.getSubscriberId());
+                if(this.configuration.getSelector() != null)
+                {
+                    messageConsumer = session.createConsumer(destination, this.configuration.getSelector(), this.configuration.isNoLocal());
+                }
+                else
+                {
+                    messageConsumer = session.createConsumer(destination);
+                }
             }
             
             messageConsumer.setMessageListener(messageListener);
