@@ -40,7 +40,6 @@
  */
 package org.ikasan.testharness.flow.expectation.model;
 
-import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
 
 /**
