@@ -41,7 +41,6 @@
 package org.ikasan.consumer.jms;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -187,7 +186,9 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
                 this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)message).getIdentifier(), jmsMessage);
             }
 
-            setMessageProperties(jmsMessage);
+            // pass original message to getMessageProperties to allow overridding classes to implement custom processing
+            // and set whatever comes back as properties on the message
+            setMessageProperties(jmsMessage, getMessageProperties(message));
             
             // publish message
             messageProducer.send(jmsMessage);
@@ -213,11 +214,25 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
         }
     }
 
-    protected void setMessageProperties(Message message) throws JMSException
+    /**
+     * Get default properties to set on the published message.
+     * @return
+     */
+    protected Map<String,?> getMessageProperties(T message)
     {
-        if(this.configuration.getProperties() != null)
+        return this.configuration.getProperties();
+    }
+    
+    /**
+     * Set the specified properties in the message.
+     * @param properties
+     * @throws JMSException
+     */
+    protected void setMessageProperties(Message message, Map<String,?> properties) throws JMSException
+    {
+        if(properties != null)
         {
-            for(Map.Entry<String,?> entry : this.configuration.getProperties().entrySet())
+            for(Map.Entry<String,?> entry : properties.entrySet())
             {
                 Object value = entry.getValue();
                 if(value instanceof String)
