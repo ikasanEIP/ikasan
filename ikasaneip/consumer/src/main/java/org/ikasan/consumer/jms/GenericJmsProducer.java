@@ -187,13 +187,7 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
                 this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)message).getIdentifier(), jmsMessage);
             }
 
-            if(this.configuration.getProperties() != null)
-            {
-                for(Map.Entry<String,String> entry : this.configuration.getProperties().entrySet())
-                {
-                    jmsMessage.setStringProperty(entry.getKey(), entry.getValue());
-                }
-            }
+            setMessageProperties(jmsMessage);
             
             // publish message
             messageProducer.send(jmsMessage);
@@ -219,6 +213,53 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
         }
     }
 
+    protected void setMessageProperties(Message message) throws JMSException
+    {
+        if(this.configuration.getProperties() != null)
+        {
+            for(Map.Entry<String,?> entry : this.configuration.getProperties().entrySet())
+            {
+                Object value = entry.getValue();
+                if(value instanceof String)
+                {
+                    message.setStringProperty(entry.getKey(), (String)value);
+                }
+                else if(value instanceof Integer)
+                {
+                    message.setIntProperty(entry.getKey(), (Integer)value);
+                }
+                else if(value instanceof Boolean)
+                {
+                    message.setBooleanProperty(entry.getKey(), (Boolean)value);
+                }
+                else if(value instanceof Byte)
+                {
+                    message.setByteProperty(entry.getKey(), (Byte)value);
+                }
+                else if(value instanceof Double)
+                {
+                    message.setDoubleProperty(entry.getKey(), (Double)value);
+                }
+                else if(value instanceof Float)
+                {
+                    message.setFloatProperty(entry.getKey(), (Float)value);
+                }
+                else if(value instanceof Long)
+                {
+                    message.setLongProperty(entry.getKey(), (Long)value);
+                }
+                else if(value instanceof Short)
+                {
+                    message.setShortProperty(entry.getKey(), (Short)value);
+                }
+                else
+                {
+                    message.setObjectProperty(entry.getKey(), value);
+                }
+            }
+        }
+    }
+    
     /**
      * Override the default producer event life identifier service
      * @param eventLifeIdentifierService
