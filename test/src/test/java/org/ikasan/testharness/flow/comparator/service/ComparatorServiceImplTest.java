@@ -47,6 +47,7 @@ import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
 import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
 import org.ikasan.testharness.flow.expectation.model.RouterComponent;
 import org.ikasan.testharness.flow.expectation.model.SequencerComponent;
+import org.ikasan.testharness.flow.expectation.model.SplitterComponent;
 import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -76,7 +77,9 @@ public class ComparatorServiceImplTest
         Assert.assertNotNull("RouterComponent comparator retrieval failed", 
                 comparatorService.getComparator(RouterComponent.class) );
         Assert.assertNotNull("SequencerComponent comparator retrieval failed", 
-                comparatorService.getComparator(SequencerComponent.class) );
+            comparatorService.getComparator(SequencerComponent.class) );
+        Assert.assertNotNull("SplitterComponent comparator retrieval failed", 
+            comparatorService.getComparator(SplitterComponent.class) );
         Assert.assertNotNull("ProducerComponent comparator retrieval failed", 
             comparatorService.getComparator(ProducerComponent.class) );
         Assert.assertNotNull("ConsumerComponent comparator retrieval failed", 
