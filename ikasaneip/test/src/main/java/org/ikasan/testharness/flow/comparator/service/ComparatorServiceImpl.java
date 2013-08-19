@@ -54,6 +54,7 @@ import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
 import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
 import org.ikasan.testharness.flow.expectation.model.RouterComponent;
 import org.ikasan.testharness.flow.expectation.model.SequencerComponent;
+import org.ikasan.testharness.flow.expectation.model.SplitterComponent;
 import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
 
 /**
@@ -79,6 +80,7 @@ public class ComparatorServiceImpl
         put(ConverterComponent.class, new FlowElementComparator());
         put(RouterComponent.class, new FlowElementComparator());
         put(SequencerComponent.class, new FlowElementComparator());
+        put(SplitterComponent.class, new FlowElementComparator());
         put(ProducerComponent.class, new FlowElementComparator());
         put(ConsumerComponent.class, new FlowElementComparator());
         put(BrokerComponent.class, new FlowElementComparator());
