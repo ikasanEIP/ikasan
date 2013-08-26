@@ -135,7 +135,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
                 }
                 else if (flowComponent instanceof Broker)
                 {
-                    flowElement = handleBroker(moduleName, flowName, flowEvent, flowElement);
+                    flowElement = handleBroker(moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
                 }
                 else if (flowComponent instanceof Router)
                 {
@@ -381,13 +381,23 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         return null;
     }
    
-    private FlowElement<?> handleBroker(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleBroker(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
     {
         Broker broker = (Broker) flowElement.getFlowComponent();
         flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
-        notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
-        // we may or may not have a transition out
-        return getDefaultTransition(flowElement);
+        FlowElement nextFlowElement = getDefaultTransition(flowElement);
+        if (nextFlowElement == null)
+        {
+            logger.error("broker is last element in flow!");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Broker, but it has no default transition! "
+                    + "Brokers should never be the last component in a flow");
+        }
+        if (flowEvent.getPayload() != null)
+        {
+            notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
+            invoke(moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+        }
+        return null;
     }
 
     /**
