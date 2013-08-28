@@ -335,8 +335,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         // stop consumer and remove the listener
         Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
-        consumer.setListener(null);
         consumer.stop();
+        consumer.setListener(null);
     }
     
     /**
