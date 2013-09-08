@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.1-SNAPSHOT</version>
+        <version>0.9.1</version>
         <relativePath />
     </parent>
 
@@ -53,9 +53,9 @@
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 
     <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/flow</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/flow</developerConnection>
-      <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/flow</url>
+      <connection>scm:svn:scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.1/flow</connection>
+      <developerConnection>scm:svn:scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.1/flow</developerConnection>
+      <url>scm:svn:https://open.jira.com/svn/IKASAN/tags/ikasaneip-0.9.1/flow</url>
     </scm>
 
     <build>
