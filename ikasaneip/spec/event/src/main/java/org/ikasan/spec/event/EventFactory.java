@@ -51,9 +51,18 @@ public interface EventFactory<EVENT>
 {
     /**
      * Create a new instance of an event with the provided identifier and payload.
-     * @param IDENTIFIER identifier - internal flow event identifier
-     * @param PAYLOAD payload - data content to be transported
+     * @param identifier - internal flow event identifier
+     * @param payload - data content to be transported
      * @return EVENT
      */
     public <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, PAYLOAD payload);
+
+    /**
+     * Create a new instance of an event with the provided identifier, related identifier, and payload.
+     * @param identifier - internal flow event identifier
+     * @param relatedIdentifier - previous identifier this event may have be known by
+     * @param payload - data content to be transported
+     * @return EVENT
+     */
+    public <IDENTIFIER,PAYLOAD> EVENT newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, PAYLOAD payload);
 }
