@@ -43,7 +43,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>0.9.1-SNAPSHOT</version>
+		<version>0.9.1</version>
 		<relativePath />
 	</parent>
 
@@ -56,43 +56,43 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
             <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-event</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-monitor</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-recovery-manager</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-management</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-configuration</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
