@@ -103,6 +103,9 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
     /** destination resolver for locating and returning the configured destination instance */
     protected DestinationResolver destinationResolver;
     
+    /** custom message property provider */
+    protected CustomMessagePropertyProvider customMessagePropertyProvider;
+
     /**
      * Constructor.
      * @param connectionFactory
@@ -189,7 +192,13 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
             // pass original message to getMessageProperties to allow overridding classes to implement custom processing
             // and set whatever comes back as properties on the message
             setMessageProperties(jmsMessage, getMessageProperties(message));
-            
+
+            // allow programmatic overrride of properties
+            if(customMessagePropertyProvider != null)
+            {
+                setMessageProperties(jmsMessage, customMessagePropertyProvider.getProperties(message));
+            }
+
             // publish message
             messageProducer.send(jmsMessage);
         }
@@ -221,6 +230,15 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
     protected Map<String,?> getMessageProperties(T message)
     {
         return this.configuration.getProperties();
+    }
+    
+    /**
+     * Allow the setting of a custom message property provider.
+     * @param customMessagePropertyProvider
+     */
+    public void setCustomMessagePropertyProvider(CustomMessagePropertyProvider customMessagePropertyProvider)
+    {
+        this.customMessagePropertyProvider = customMessagePropertyProvider;
     }
     
     /**
@@ -273,11 +291,12 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
                 }
             }
         }
+        
     }
     
     /**
      * Override the default producer event life identifier service
-     * @param eventLifeIdentifierService
+     * @param managedEventIdentifierService
      */
     public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
     {
