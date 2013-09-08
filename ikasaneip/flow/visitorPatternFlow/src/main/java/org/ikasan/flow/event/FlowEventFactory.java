@@ -56,12 +56,17 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 {
     /**
      * Factory method to create a new FlowEvent instance.
-     * @param immutable identifier
-     * @param mutable payload
+     * @param identifier
+     * @param payload
      */
     public <IDENTIFIER,PAYLOAD> FlowEvent<IDENTIFIER,PAYLOAD> newEvent(IDENTIFIER identifier, PAYLOAD payload)
     {
         return new GenericFlowEvent<IDENTIFIER,PAYLOAD>(identifier, payload);
+    }
+
+    public <IDENTIFIER,PAYLOAD> FlowEvent<IDENTIFIER, PAYLOAD> newEvent(IDENTIFIER identifier, IDENTIFIER relatedIdentifier, PAYLOAD payload)
+    {
+        return new GenericFlowEvent<IDENTIFIER,PAYLOAD>(identifier, relatedIdentifier, payload);
     }
 
 	/**
@@ -76,7 +81,10 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
         private static final long serialVersionUID = 1L;
 
         /** immutable identifier */
-		private String identifier;
+        private String identifier;
+
+        /** immutable related identifier */
+        private String relatedIdentifier;
 
 		/** immutable event creation timestamp */
 	    private long timestamp;
@@ -86,11 +94,26 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 
         /**
          * Constructor
-         * @param identifier2
+         * @param identifier
+         * @param payload
          */
         protected GenericFlowEvent(String identifier, PAYLOAD payload)
         {
             this.identifier = identifier;
+            this.timestamp = System.currentTimeMillis();
+            this.payload = payload;
+        }
+
+        /**
+         * Constructor
+         * @param identifier
+         * @param relatedIdentifier
+         * @param payload
+         */
+        protected GenericFlowEvent(String identifier, String relatedIdentifier, PAYLOAD payload)
+        {
+            this.identifier = identifier;
+            this.relatedIdentifier = relatedIdentifier;
             this.timestamp = System.currentTimeMillis();
             this.payload = payload;
         }
@@ -103,6 +126,15 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 		{
 		    return this.identifier;
 		}
+
+        /**
+         * Get immutable flow event related identifier.
+         * @return String - event related identifier
+         */
+        public String getRelatedIdentifier()
+        {
+            return this.relatedIdentifier;
+        }
 
 		/**
 		 * Get the immutable created date/time of the flow event.
@@ -124,7 +156,7 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
 		
 		/**
 		 * Set the payload of this flow event.
-		 * @param PAYLOAD - payload
+		 * @param payload - payload
 		 */
 		public void setPayload(PAYLOAD payload)
 		{
@@ -137,6 +169,8 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
             StringBuilder builder = new StringBuilder();
             builder.append("GenericFlowEvent [identifier=");
             builder.append(identifier);
+            builder.append(", relatedIdentifier=");
+            builder.append(relatedIdentifier);
             builder.append(", timestamp=");
             builder.append(timestamp);
             builder.append(", payload=");
