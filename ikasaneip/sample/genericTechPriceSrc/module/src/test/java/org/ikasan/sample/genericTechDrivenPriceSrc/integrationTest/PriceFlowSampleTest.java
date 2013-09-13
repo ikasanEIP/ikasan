@@ -69,7 +69,8 @@ import org.ikasan.platform.IkasanEIPTest;
         "/component-conf.xml",
         "/flow-conf.xml",
         "/module-conf.xml",
-        "/exception-conf.xml"
+        "/exception-conf.xml",
+        "/hsqldb-conf.xml"
         })
 
 public class PriceFlowSampleTest extends IkasanEIPTest
