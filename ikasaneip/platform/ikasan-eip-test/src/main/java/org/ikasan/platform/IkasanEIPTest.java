@@ -54,8 +54,7 @@ import org.springframework.test.context.ContextConfiguration;
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",
         "/module-service-conf.xml",
-        "/test-service-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/test-service-conf.xml"
         })
 
 public class IkasanEIPTest
