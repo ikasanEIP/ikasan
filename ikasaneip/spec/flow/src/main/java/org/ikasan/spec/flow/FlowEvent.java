@@ -48,13 +48,19 @@ package org.ikasan.spec.flow;
  */
 public interface FlowEvent<IDENTIFIER,PAYLOAD>
 {
-	/**
-	 * Get immutable flow event identifier.
-	 * @return IDENTIFIER - event identifier
-	 */
-	public IDENTIFIER getIdentifier();
+    /**
+     * Get immutable flow event identifier.
+     * @return IDENTIFIER - event identifier
+     */
+    public IDENTIFIER getIdentifier();
 
-	/**
+    /**
+     * Get related event identifier identifier.
+     * @return IDENTIFIER - event identifier
+     */
+    public IDENTIFIER getRelatedIdentifier();
+
+    /**
 	 * Get the immutable created date/time of the flow event.
 	 * @return long - create date time
 	 */

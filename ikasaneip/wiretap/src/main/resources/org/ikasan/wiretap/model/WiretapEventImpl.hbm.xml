@@ -74,8 +74,18 @@
                   type="java.lang.String"
                   column="ComponentName"
                   not-null="true" />
-        <property name="eventId"           type="java.lang.String"
-                  column="EventId"         not-null="true" />
+        <property name="eventId"
+                  type="java.lang.String"
+                  column="EventId"
+                  not-null="true" />
+        <property name="relatedEventId"
+                  type="java.lang.String"
+                  column="RelatedEventId"
+                  not-null="true" />
+        <property name="eventTimestamp"
+                  type="long"
+                  column="EventTimestamp"
+                  not-null="true" />
         <property name="event"
                   type="java.lang.String"
                   column="PayloadContent"
