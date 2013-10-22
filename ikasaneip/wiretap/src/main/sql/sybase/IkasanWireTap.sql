@@ -54,7 +54,8 @@ CREATE TABLE IkasanWiretap
     FlowName            VARCHAR(128)  NOT NULL,
     ComponentName       VARCHAR(128)  NOT NULL,
     EventId             VARCHAR(255)  NOT NULL,
-    PayloadId           VARCHAR(255)  NOT NULL,
+    RelatedEventId      VARCHAR(255)  NOT NULL,
+    EventTimestamp      DATETIME      DEFAULT getDate() NOT NULL,
     PayloadContent      TEXT          NOT NULL,
     CreatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
     Expiry              DATETIME      NOT NULL

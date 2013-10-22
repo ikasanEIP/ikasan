@@ -52,7 +52,13 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
 {
     /** event id */
     private String eventId;
-    
+
+    /** related event id */
+    private String relatedEventId;
+
+    /** event created date/time */
+    private long eventTimestamp;
+
     /**
      * Silly requirement from the ORM-that-shall-not-be-named!!
      */
@@ -62,15 +68,13 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
         // No implementation
     }
 
-    /**
-     * Constructor
-     * @param identifier2
-     */
     public WiretapFlowEvent(final String moduleName, final String flowName, final String componentName,
-            final String eventId, final String event, final Long expiry)
+            final String eventId, final String relatedEventId, final long eventTimestamp, final String event, final Long expiry)
     {
         super(moduleName, flowName, componentName, event, expiry);
         this.eventId = eventId;
+        this.relatedEventId = relatedEventId;
+        this.eventTimestamp = eventTimestamp;
     }
 
     public String getEventId()
@@ -81,5 +85,25 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     protected void setEventId(String eventId)
     {
         this.eventId = eventId;
+    }
+
+    public String getRelatedEventId()
+    {
+        return relatedEventId;
+    }
+
+    protected void setRelatedEventId(String relatedEventId)
+    {
+        this.relatedEventId = relatedEventId;
+    }
+
+    public long getEventTimestamp()
+    {
+        return eventTimestamp;
+    }
+
+    protected void setEventTimestamp(long eventTimestamp)
+    {
+        this.eventTimestamp = eventTimestamp;
     }
 }

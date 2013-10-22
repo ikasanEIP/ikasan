@@ -53,13 +53,13 @@ import org.ikasan.spec.wiretap.WiretapSerialiser;
  */
 public class WiretapEventFactory
 {
-    private WiretapSerialiser<FlowEvent,String> serialiser;
+    private WiretapSerialiser<Object,String> serialiser;
     
     /**
      * Constructor
      * @param serialiser
      */
-    public WiretapEventFactory(WiretapSerialiser<FlowEvent,String> serialiser)
+    public WiretapEventFactory(WiretapSerialiser<Object,String> serialiser)
     {
         this.serialiser = serialiser;
         if(serialiser == null)
@@ -70,13 +70,18 @@ public class WiretapEventFactory
     
     /**
      * Factory method to create a new FlowEvent instance.
-     * @param immutable identifier
-     * @param mutable payload
+     *
+     * @param moduleName
+     * @param flowName
+     * @param componentName
+     * @param event
+     * @param expiry
+     * @return
      */
     public WiretapEvent newEvent(final String moduleName, final String flowName, final String componentName,
             final FlowEvent<String,Object> event, final long expiry)
     {
-        return new WiretapFlowEvent(moduleName, flowName, componentName, event.getIdentifier(), this.serialiser.serialise(event), expiry);
+        return new WiretapFlowEvent(moduleName, flowName, componentName, event.getIdentifier(), event.getRelatedIdentifier(), event.getTimestamp(), this.serialiser.serialise(event.getPayload()), expiry);
     }
 
 }
