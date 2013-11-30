@@ -50,7 +50,7 @@
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>0.9.2-SNAPSHOT</version>
+    <version>0.9.2</version>
     <packaging>pom</packaging>
     <organization>
       <name>Ikasan</name>
@@ -58,11 +58,7 @@
     </organization>
     <inceptionYear>2007</inceptionYear>
     <name>Ikasan Build Project</name>
-	<scm>
-	  <connection>scm:git:https://github.com/mitcje/ikasan.git</connection>
-	  <developerConnection>scm:git:https://github.com/mitcje/ikasan.git</developerConnection>
-	  <url>scm:git:https://github.com/mitcje/ikasan.git</url>
-	</scm>
+
     <!-- List the core committers -->
     <developers>
       <developer>
