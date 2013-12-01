@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.2-SNAPSHOT</version>
+        <version>0.9.2</version>
         <relativePath />
     </parent>
 
@@ -101,21 +101,21 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
-            <version>0.9.2-SNAPSHOT</version>
+            <version>0.9.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-event</artifactId>
-            <version>0.9.2-SNAPSHOT</version>
+            <version>0.9.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
-            <version>0.9.2-SNAPSHOT</version>
+            <version>0.9.2</version>
             <scope>provided</scope>
         </dependency>
 
