@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>0.9.3</version>
+		<version>0.9.3-SNAPSHOT</version>
         <relativePath />
 	</parent>
 
@@ -17,14 +17,14 @@
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-uber-spec</artifactId>
-			<version>0.9.3</version>
+			<version>0.9.3-SNAPSHOT</version>
             <scope>provided</scope>
 		</dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-            <version>0.9.3</version>
+            <version>0.9.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
