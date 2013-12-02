@@ -153,17 +153,17 @@
                              <fmt:message key="wiretap_event_event_id" />
                         </td>
                         <td class="searchCell">
-                             <c:out value="${wiretapEvent.eventId}" />
+                             <c:out value="${wiretapEvent.identifier}" />
                         </td>
                     </tr>
-                    <!--tr>
+                    <tr>
                         <td class="searchCell formLabel">
                             <fmt:message key="wiretap_event_payload_id" />
                         </td>
                         <td class="searchCell">
-                            <c:out value="${wiretapEvent.eventId}" />
+                            <c:out value="${wiretapEvent.relatedIdentifier}" />
                         </td>
-                    </tr-->
+                    </tr>
                     <tr>
                         <td class="searchCell formLabel">
                             <fmt:message key="wiretap_event_payload_content_native" />

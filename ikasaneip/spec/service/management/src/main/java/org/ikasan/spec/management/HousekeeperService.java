@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,50 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.wiretap.model;
-
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapSerialiser;
+package org.ikasan.spec.management;
 
 /**
- * Implementation of the WiretapEventFactory based on the creation 
- * of a WiretapEvent.
+ * Interface provisioning the housekeeper invocation of a class implementing this contract.
  * 
  * @author Ikasan Development Team
- *
  */
-public class WiretapEventFactory
+public interface HousekeeperService
 {
-    private WiretapSerialiser<Object,String> serialiser;
-    
     /**
-     * Constructor
-     * @param serialiser
+     * Invoke the housekeep operation.
      */
-    public WiretapEventFactory(WiretapSerialiser<Object,String> serialiser)
-    {
-        this.serialiser = serialiser;
-        if(serialiser == null)
-        {
-            throw new IllegalArgumentException("serialiser cannot be 'null'");
-        }
-    }
-    
-    /**
-     * Factory method to create a new FlowEvent instance.
-     *
-     * @param moduleName
-     * @param flowName
-     * @param componentName
-     * @param event
-     * @param expiry
-     * @return
-     */
-    public WiretapEvent newEvent(final String moduleName, final String flowName, final String componentName,
-            final FlowEvent<String,Object> event, final long expiry)
-    {
-        return new WiretapFlowEvent(moduleName, flowName, componentName, event.getIdentifier(), event.getRelatedIdentifier(), event.getTimestamp(), this.serialiser.serialise(event.getPayload()), expiry);
-    }
-
+    public void housekeep();
 }

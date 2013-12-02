@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 # //
 # //
@@ -44,17 +45,41 @@
 # //
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>0.9.4-SNAPSHOT</version>
-        <relativePath />
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
+      <relativePath />
     </parent>
 
-    <artifactId>ikasan-spec-component</artifactId>
-    <packaging>jar</packaging>
-    <name>Ikasan Specification Component Contracts</name>
-    <description>The specification component contracts for the Ikasan Enterprise Integration Platform</description>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-parent</artifactId>
+    <version>0.9.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Ikasan Projects Parent</name>
+    <description>Ikasan Projects Parent</description>
+
+    <organization>
+      <name>Ikasan</name>
+      <url>http://www.ikasan.org</url>
+    </organization>
+    <inceptionYear>2007</inceptionYear>
+ 
+    <modules>
+        <module>ikasaneip</module>
+    </modules>
+
+    <!--
+         SCM details
+         TODO: Not sure if this is strictly required here, either this or <distributionManagement> is needed
+         Figure this out when 0.8.1 rolls around
+     -->
+    <scm>
+        <connection>scm:git:https://github.com/mitcje/ikasan.git</connection>
+        <developerConnection>scm:git:https://github.com/mitcje/ikasan.git</developerConnection>
+        <url>scm:git:https://github.com/mitcje/ikasan.git</url>
+    </scm>
 </project>
+

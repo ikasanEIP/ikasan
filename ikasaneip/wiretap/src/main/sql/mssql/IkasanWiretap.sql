@@ -48,6 +48,8 @@ CREATE TABLE [IkasanWiretap]
     [FlowName]              [varchar](128) NOT NULL,
     [ComponentName]         [varchar](128) NOT NULL,
     [EventId]               [varchar](255) NOT NULL,
+    [RelatedEventId]        [varchar](255) NOT NULL,
+    [EventTimestamp]        [numeric] NOT NULL,
     [PayloadContent]        [varchar] (max),
     [CreatedDateTime]       [numeric] NOT NULL,
     [Expiry]                [numeric] NOT NULL,
