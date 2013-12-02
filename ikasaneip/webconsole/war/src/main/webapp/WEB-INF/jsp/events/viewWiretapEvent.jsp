@@ -130,7 +130,7 @@
             Payload Content (XML)            
         </th>
         <c:choose>
-        <c:when test='${fn:startsWith(wiretapEvent.event, "<?xml")}'>
+        <c:when test='${fn:startsWith(wiretapEvent.event.payload, "<?xml")}'>
         <td colspan="2">
             <!-- This link will open in a new window, see /js/ikasan.js for details -->
             <a href="viewPrettyPayloadContent.htm?eventId=<c:out value="${wiretapEvent.identifier}" />" class="new-window">
