@@ -287,7 +287,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	 *  and attempts to delete that batch
 	 */
 	private void batchHousekeepDelete() {
-//		logger.info("called");
+		logger.info("batched housekeeper called");
 		while(housekeepablesExist()){
 			final List<Long> housekeepableBatch = getHousekeepableBatch();
 			
@@ -353,13 +353,10 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 rowCount = rowCountList.get(0);
             }
-//            logger.info(rowCount+", housekeepables exist");
+            logger.info(rowCount+", housekeepables exist");
             return new Boolean(rowCount>0);
             
             }
         });
-            
-            
-
 	}
 }
