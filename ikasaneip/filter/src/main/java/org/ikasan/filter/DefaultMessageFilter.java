@@ -40,8 +40,10 @@
  */
 package org.ikasan.filter;
 
+import org.ikasan.filter.configuration.FilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
+import org.ikasan.spec.configuration.ConfiguredResource;
 
 /**
  * Default implementation of {@link MessageFilter} that delegates to a
@@ -50,10 +52,16 @@ import org.ikasan.spec.component.filter.FilterRule;
  * @author Ikasan Development Team
  *
  */
-public class DefaultMessageFilter<T> implements Filter<T>
+public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<FilterConfiguration>
 {
     /** The {@link FilterRule} evaluating the incoming message */
     private final FilterRule<T> filterRule;
+
+    /** unique identifier for this configured resource */
+    private String configuredResourceId;
+
+    /** The {@link FilterConfiguration} generic configuration for a filter */
+    private FilterConfiguration filterConfiguration;
 
     /**
      * Constructor
@@ -74,6 +82,11 @@ public class DefaultMessageFilter<T> implements Filter<T>
      */
     public T filter(T message)
     {
+        if ( !this.filterConfiguration.isApplyFilter() )
+        {
+            return message;
+        }
+
         if (this.filterRule.accept(message))
         {
             return message;
@@ -84,4 +97,34 @@ public class DefaultMessageFilter<T> implements Filter<T>
         }
     }
 
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public FilterConfiguration getConfiguration()
+    {
+        return this.filterConfiguration;
+    }
+
+    @Override
+    public void setConfiguration(FilterConfiguration filterConfiguration)
+    {
+        if(filterConfiguration == null)
+        {
+            this.filterConfiguration = new FilterConfiguration();
+        }
+        else
+        {
+            this.filterConfiguration = filterConfiguration;
+        }
+    }
 }
