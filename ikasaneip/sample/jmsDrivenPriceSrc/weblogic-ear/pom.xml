@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.4-SNAPSHOT</version>
+        <version>0.9.4</version>
         <relativePath />
     </parent>
 
@@ -65,26 +65,26 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-jmsDrivenPriceSrc</artifactId>
-            <version>0.9.4-SNAPSHOT</version>
+            <version>0.9.4</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-jmsDrivenPriceSrc-war</artifactId>
-            <version>0.9.4-SNAPSHOT</version>
+            <version>0.9.4</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>0.9.4-SNAPSHOT</version>
+            <version>0.9.4</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder-spring</artifactId>
-            <version>0.9.4-SNAPSHOT</version>
+            <version>0.9.4</version>
         </dependency>
 
        <dependency>
