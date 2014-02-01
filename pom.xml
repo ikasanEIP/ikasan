@@ -77,9 +77,9 @@
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
-        <connection>scm:git:https://github.com/mitcje/ikasan.git</connection>
-        <developerConnection>scm:git:https://github.com/mitcje/ikasan.git</developerConnection>
-        <url>scm:git:https://github.com/mitcje/ikasan.git</url>
+        <connection>scm:git:https://github.com/ikasanEIP/ikasan.git</connection>
+        <developerConnection>scm:git:https://github.com/ikasanEIP/ikasan.git</developerConnection>
+        <url>scm:git:https://github.com/ikasanEIP/ikasan.git</url>
     </scm>
 </project>
 

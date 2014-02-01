@@ -56,7 +56,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasaneip</artifactId>
-    <version>0.9.4-SNAPSHOT</version>
+    <version>0.9.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent Project</name>
     <description>Ikasan Projects Parent Project</description>
@@ -122,9 +122,9 @@
          Figure this out when 0.8.1 rolls around
      -->
     <scm>
-        <connection>scm:git:https://github.com/mitcje/ikasan.git</connection>
-        <developerConnection>scm:git:https://github.com/mitcje/ikasan.git</developerConnection>
-        <url>scm:git:https://github.com/mitcje/ikasan.git</url>
+        <connection>scm:git:https://github.com/ikasanEIP/ikasan.git</connection>
+        <developerConnection>scm:git:https://github.com/ikasanEIP/ikasan.git</developerConnection>
+        <url>scm:git:https://github.com/ikasanEIP/ikasan.git</url>
     </scm>
 </project>
 

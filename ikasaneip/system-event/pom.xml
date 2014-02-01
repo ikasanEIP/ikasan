@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.4-SNAPSHOT</version>
+        <version>0.9.5-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -91,7 +91,7 @@
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-search</artifactId>
-            <version>0.9.4-SNAPSHOT</version>
+            <version>0.9.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         
