@@ -258,7 +258,7 @@ public class GenericJmsConsumer
         {
             try
             {
-                connection.stop();
+                connection.close();
                 connection = null;
             }
             catch (JMSException e)
