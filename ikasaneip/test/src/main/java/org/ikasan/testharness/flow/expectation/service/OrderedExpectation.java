@@ -226,10 +226,10 @@ public class OrderedExpectation
      */
     public void allSatisfied()
     {
-        Assert.assertTrue("Not all expectations were completed", expectations.isEmpty());
+        Assert.assertTrue("[" + expectations.size() + "] expectations not satisfied. Outstanding expectations ["
+                + expectations.toString() + "]", expectations.isEmpty());
     }
-    
-    
+
     /**
      * Default expectation allows for anything to be provided as an expectation.
      * 
@@ -259,7 +259,7 @@ public class OrderedExpectation
 
         /**
          * Setter for exception description
-         * @param String
+         * @param description
          */
         protected void setDescription(String description)
         {
@@ -268,7 +268,6 @@ public class OrderedExpectation
         
         /**
          * Getter for exception description
-         * @param String
          */
         protected String getDescription()
         {
@@ -291,6 +290,12 @@ public class OrderedExpectation
         protected ExpectationComparator<?,?> getExpectationComparator()
         {
             return this.expectationComparator;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Expectation description[" + description + "] detail[" + expectation.toString() + "]";
         }
     }
 }
