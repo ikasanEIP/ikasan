@@ -40,26 +40,22 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-import org.ikasan.spec.component.splitting.Splitter;
-import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.event.ReplicationFactory;
+import org.ikasan.spec.flow.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A default implementation of the FlowElementInvoker
@@ -249,10 +245,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             catch (Throwable t)
             {
                 logger.error("flowEventListener caught throwable before flowElement [" + flowElement + "], exception is[" + t + "]", t);
-                for (StackTraceElement stackTraceElement : t.getStackTrace())
-                {
-                    logger.error(stackTraceElement);
-                }
             }
         }
     }
@@ -276,10 +268,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             catch (Throwable t)
             {
                 logger.error("flowEventListener caught throwable after flowElement [" + flowElement + "], exception is[" + t + "]", t);
-                for (StackTraceElement stackTraceElement : t.getStackTrace())
-                {
-                    logger.error(stackTraceElement);
-                }
             }
         }
     }

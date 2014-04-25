@@ -49,11 +49,20 @@ package org.ikasan.spec.event;
 public interface ReplicationFactory<T>
 {
     /**
-     * Replicate the incoming object and return an independent copy.
+     * Deep replicate the incoming object and return a fully independent copy.
      * The returned object can be mutated without any consequence to
      * the originating object.
      * @param object
      * @return object copy
      */
 	public T replicate(T object);
+
+    /**
+     * Shallow replicate the incoming object and return an semi-independent copy.
+     * The returned object cannot have children references modified without consequence to
+     * the originating object.
+     * @param object
+     * @return object copy
+     */
+    public T shallowReplicate(T object);
 }
