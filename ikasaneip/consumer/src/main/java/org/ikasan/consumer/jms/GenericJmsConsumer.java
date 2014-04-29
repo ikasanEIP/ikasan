@@ -40,27 +40,22 @@
  */
 package org.ikasan.consumer.jms;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.Session;
-import javax.jms.Topic;
-
 import org.apache.log4j.Logger;
-import org.ikasan.consumer.EndpointListener;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
+
+import javax.jms.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.util.Hashtable;
 
 /**
  * Implementation of a consumer based on the JMS specification.
@@ -111,10 +106,17 @@ public class GenericJmsConsumer
     protected MessageConsumer messageConsumer;
 
     /**
+     * Default constructor
+     */
+    public GenericJmsConsumer()
+    {
+        // nothing to do with the default constructor
+    }
+
+    /**
      * Constructor
      * @param connectionFactory
      * @param destination
-     * @param flowEventFactory
      */
     public GenericJmsConsumer(ConnectionFactory connectionFactory, Destination destination)
     {
@@ -134,8 +136,7 @@ public class GenericJmsConsumer
     /**
      * Constructor
      * @param connectionFactory
-     * @param destination
-     * @param flowEventFactory
+     * @param destinationResolver
      */
     public GenericJmsConsumer(ConnectionFactory connectionFactory, DestinationResolver destinationResolver)
     {
@@ -167,18 +168,49 @@ public class GenericJmsConsumer
      */
     public void start()
     {
+        ConnectionFactory _connectionFactory = null;
+
         try
         {
-            if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
+            if(this.configuration.isRemoteJNDILookup())
             {
-                connection = connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
+                Context context = getInitialContext();
+                if(this.configuration.getConnectionFactoryName() == null)
+                {
+                    throw new RuntimeException("ConnectionFactory name cannot be 'null' when using remoteJNDILookup");
+                }
+                _connectionFactory = (ConnectionFactory)context.lookup(this.configuration.getConnectionFactoryName());
+
+                if(this.configuration.getDestinationName() == null)
+                {
+                    throw new RuntimeException("DestinationName name cannot be 'null' when using remoteJNDILookup");
+                }
+                this.destination = (Destination)context.lookup(this.configuration.getDestinationName());
             }
             else
             {
-                connection = connectionFactory.createConnection();
+                if(this.connectionFactory == null)
+                {
+                    throw new RuntimeException("You must specify the remoteJNDILookup as true or provide a ConnectionFactory instance for this class.");
+                }
+
+                _connectionFactory = this.connectionFactory;
             }
 
-            connection.setClientID(this.configuration.getClientId());
+            if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
+            {
+                connection = _connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
+            }
+            else
+            {
+                connection = _connectionFactory.createConnection();
+            }
+
+            if(this.configuration.getClientId() != null)
+            {
+                connection.setClientID(this.configuration.getClientId());
+            }
+
             if(messageListener instanceof ExceptionListener)
             {
                 connection.setExceptionListener( (ExceptionListener)messageListener );
@@ -188,6 +220,11 @@ public class GenericJmsConsumer
 
             if(destination == null)
             {
+                if(destinationResolver == null)
+                {
+                    throw new RuntimeException("destination and destinationResolver are both 'null'. No means of resolving a destination.");
+                }
+
                 destination = destinationResolver.getDestination();
             }
             
@@ -218,6 +255,10 @@ public class GenericJmsConsumer
             connection.start();
         }
         catch (JMSException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (NamingException e)
         {
             throw new RuntimeException(e);
         }
@@ -295,7 +336,7 @@ public class GenericJmsConsumer
 
     /**
      * Override the default consumer event life identifier service
-     * @param eventLifeIdentifierService
+     * @param managedEventIdentifierService
      */
     public void setManagedIdentifierService(ManagedEventIdentifierService managedEventIdentifierService)
     {
@@ -327,7 +368,7 @@ public class GenericJmsConsumer
 
     /**
      * Callback method from the JMS connector for exception reporting.
-     * @param JMSException
+     * @param jmsException
      */
     public void onException(Throwable jmsException)
     {
@@ -360,6 +401,19 @@ public class GenericJmsConsumer
     public EventFactory getEventFactory()
     {
         return this.flowEventFactory;
+    }
+
+    private InitialContext getInitialContext() throws NamingException
+    {
+        Hashtable<String,String> env = new Hashtable<String,String>();
+        env.put(Context.PROVIDER_URL, this.configuration.getProviderURL());
+        env.put(Context.INITIAL_CONTEXT_FACTORY, this.configuration.getInitialContextFactory());
+        if(this.configuration.getUrlPackagePrefixes() != null)
+        {
+            env.put(Context.URL_PKG_PREFIXES, this.configuration.getUrlPackagePrefixes());
+        }
+
+        return new InitialContext(env);
     }
 
 }

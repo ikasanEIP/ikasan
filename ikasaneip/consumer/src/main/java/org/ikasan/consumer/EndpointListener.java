@@ -43,8 +43,11 @@ package org.ikasan.consumer;
 /**
  * EndpointListener contract utilised by Consumers when negotiating
  * message and exception exchange from the tech endpoint to the consumer.
- * 
+ *
  * @author Ikasan Development Teams
+ *
+ * @deprecated - use org.ikasan.spec.component.endpoint.EndpointListener.
+ * This package interface will be removed on release 0.10.0
  */
 public interface EndpointListener<MESSAGE>
 {
