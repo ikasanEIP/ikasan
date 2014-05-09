@@ -95,6 +95,9 @@
         <!-- add ons -->
         <module>filter</module>
         <module>consumer</module>
+        <module>marshaller</module>
+        <module>component</module>
+        <module>jca</module>
 
         <!-- uber jar platform packaging -->
         <module>platform</module>
@@ -111,6 +114,7 @@
 
         <!-- samples -->
         <module>sample</module>
+        <module>transaction</module>
 
         <!-- documentation -->
         <!--module>documentation</module-->

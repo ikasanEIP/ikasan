@@ -91,7 +91,7 @@ public class GenericJmsConsumerConfiguration
     /** optional boolean no local - can messages be delivered by this consumers connection */
     private boolean noLocal = false;
 
-    /** optional boolean no local - can messages be delivered by this consumers connection */
+    /** are we using local JNDI (false) or a remote JNDI (true) */
     private boolean remoteJNDILookup = false;
 
     public boolean isRemoteJNDILookup() {

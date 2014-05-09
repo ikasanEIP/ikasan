@@ -40,16 +40,16 @@
  */
 package org.ikasan.sample.jmsDrivenPriceSrc.integrationTest;
 
-import javax.annotation.Resource;
-import javax.jms.JMSException;
-
+import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.ikasan.platform.IkasanEIPTest;
+
+import javax.annotation.Resource;
+import javax.jms.JMSException;
 
 /**
  * 
@@ -58,10 +58,11 @@ import org.ikasan.platform.IkasanEIPTest;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/component-conf.xml", 
-        "/flow-conf.xml", 
-        "/module-conf.xml", 
-        "/exception-conf.xml", 
+        "/jms-to-jms-flow-conf.xml",
+        "/jms-to-log-flow-conf.xml",
+        "/shared-conf.xml",
+        "/module-conf.xml",
+        "/exception-conf.xml",
         "/hsqldb-conf.xml"
       })
 

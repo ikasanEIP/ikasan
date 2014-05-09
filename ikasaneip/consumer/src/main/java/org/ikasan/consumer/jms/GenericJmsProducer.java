@@ -40,26 +40,26 @@
  */
 package org.ikasan.consumer.jms;
 
-import java.util.Map;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-
 import org.apache.log4j.Logger;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.ikasan.spec.configuration.ConfiguredResource;
+
+import javax.jms.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Implementation of a consumer based on the JMS specification.
@@ -96,15 +96,26 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
     /** determines whether this managed resource failure will fail the startup of the flow */
     protected boolean isCriticalOnStartup = true;
     
-    // TODO - remove Spring dependency
-    /** message converter */
-    protected MessageConverter messageConverter;
-    
     /** destination resolver for locating and returning the configured destination instance */
     protected DestinationResolver destinationResolver;
     
     /** custom message property provider */
     protected CustomMessagePropertyProvider customMessagePropertyProvider;
+
+    /**
+     * Incoming object to JMS message converters.
+     */
+    protected Converter<String,TextMessage> stringToMessageConverter = new StringToMessage();
+    protected Converter<Map<String,Object>,Message> mapToMessageConverter = new MapToMessage();
+    protected Converter<byte[],Message> byteArrayToMessageConverter = new ByteArrayToMessage();
+    protected Converter<Serializable,Message> serializableToMessageConverter = new SerializableToMessage();
+
+    /**
+     * Constructor.
+     */
+    public GenericJmsProducer()
+    {
+    }
 
     /**
      * Constructor.
@@ -118,7 +129,7 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
         {
             throw new IllegalArgumentException("connectionFactory cannot be 'null'");
         }
-        
+
         this.destination = destination;
         if(destination == null)
         {
@@ -146,6 +157,40 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
         }
     }
 
+    protected Message convertToMessage(Object object)
+    {
+        if(object instanceof Message)
+        {
+            return (Message)object;
+        }
+
+        if(object instanceof Map)
+        {
+            try
+            {
+                return this.mapToMessageConverter.convert((Map)object);
+            }
+            catch(ClassCastException e)
+            {
+                throw new EndpointException("Cannot publish message of type["
+                        + object.getClass().getName()
+                        + " to JMS. Unable to find a registered converter!");
+            }
+        }
+        else if(object instanceof byte[])
+        {
+            return this.byteArrayToMessageConverter.convert((byte[])object);
+        }
+        else if(object instanceof Serializable)
+        {
+            return this.serializableToMessageConverter.convert((Serializable)object);
+        }
+
+        throw new EndpointException("Cannot publish message of type["
+                + object.getClass().getName()
+                + " to JMS. Unable to find a registered converter!");
+    }
+
     public void invoke(T message) throws EndpointException
     {
         MessageProducer messageProducer = null;
@@ -155,38 +200,16 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
         {
             messageProducer = session.createProducer(destination);
             
-            if(message instanceof Message)
+            if(message instanceof FlowEvent)
             {
-                jmsMessage = (Message)message;
+                jmsMessage = this.convertToMessage(((FlowEvent) message).getPayload());
+
+                // carry the event identifier if available
+                this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)message).getIdentifier(), jmsMessage);
             }
             else
             {
-                if(this.messageConverter == null)
-                {
-                    throw new EndpointException("Cannot publish message of type[" 
-                        + message.getClass().getName() 
-                        + " to JMS without a converter!");
-                }
-
-                if(logger.isDebugEnabled())
-                {
-                    logger.debug("Published [" + message.toString() + "]");
-                }
-
-                if(message instanceof FlowEvent)
-                {
-                    jmsMessage = this.messageConverter.toMessage(((FlowEvent)message).getPayload(), session);
-                }
-                else
-                {
-                    jmsMessage = this.messageConverter.toMessage(message, session);
-                }
-            }
-            
-            // carry the event identifier if available
-            if(message instanceof FlowEvent)
-            {
-                this.managedEventIdentifierService.setEventIdentifier(((FlowEvent<String,?>)message).getIdentifier(), jmsMessage);
+                jmsMessage = this.convertToMessage(message);
             }
 
             // pass original message to getMessageProperties to allow overridding classes to implement custom processing
@@ -201,6 +224,11 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
 
             // publish message
             messageProducer.send(jmsMessage);
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("Published [" + message.toString() + "]");
+            }
+
         }
         catch(JMSException e)
         {
@@ -303,11 +331,6 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
         this.managedEventIdentifierService = managedEventIdentifierService;
     }
 
-    public void setMessageConverter(MessageConverter messageConverter)
-    {
-        this.messageConverter = messageConverter;
-    }
-    
     public GenericJmsProducerConfiguration getConfiguration()
     {
         return this.configuration;
@@ -333,26 +356,62 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
      */
     public void startManagedResource()
     {
+        ConnectionFactory _connectionFactory = null;
+
         try
         {
-            if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
+            if(this.configuration.isRemoteJNDILookup())
             {
-                connection = connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
+                Context context = getInitialContext();
+                if(this.configuration.getConnectionFactoryName() == null)
+                {
+                    throw new RuntimeException("ConnectionFactory name cannot be 'null' when using remoteJNDILookup");
+                }
+                _connectionFactory = (ConnectionFactory)context.lookup(this.configuration.getConnectionFactoryName());
+
+                if(this.configuration.getDestinationName() == null)
+                {
+                    throw new RuntimeException("DestinationName name cannot be 'null' when using remoteJNDILookup");
+                }
+                this.destination = (Destination)context.lookup(this.configuration.getDestinationName());
             }
             else
             {
-                connection = connectionFactory.createConnection();
+                if(this.connectionFactory == null)
+                {
+                    throw new RuntimeException("You must specify the remoteJNDILookup as true or provide a ConnectionFactory instance for this class.");
+                }
+
+                _connectionFactory = this.connectionFactory;
+            }
+
+            if(this.configuration.getUsername() != null && this.configuration.getUsername().trim().length() > 0)
+            {
+                connection = _connectionFactory.createConnection(this.configuration.getUsername(), this.configuration.getPassword());
+            }
+            else
+            {
+                connection = _connectionFactory.createConnection();
             }
 
             this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
             if(this.destination == null)
             {
+                if(destinationResolver == null)
+                {
+                    throw new RuntimeException("destination and destinationResolver are both 'null'. No means of resolving a destination.");
+                }
+
                 this.destination = this.destinationResolver.getDestination();
             }
         }
         catch(JMSException e)
         {
             throw new EndpointException(e);
+        }
+        catch (NamingException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
@@ -407,5 +466,113 @@ public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierServ
     public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
     {
         // dont check this by default
+    }
+
+    private InitialContext getInitialContext() throws NamingException
+    {
+        Hashtable<String,String> env = new Hashtable<String,String>();
+        env.put(Context.PROVIDER_URL, this.configuration.getProviderURL());
+        env.put(Context.INITIAL_CONTEXT_FACTORY, this.configuration.getInitialContextFactory());
+        if(this.configuration.getUrlPackagePrefixes() != null)
+        {
+            env.put(Context.URL_PKG_PREFIXES, this.configuration.getUrlPackagePrefixes());
+        }
+
+        return new InitialContext(env);
+    }
+
+    /**
+     * Specific converter implementation for converting String to JMS Text Message
+     */
+    protected class StringToMessage implements Converter<String,TextMessage>
+    {
+        @Override
+        public TextMessage convert(String payload) throws TransformationException
+        {
+            try
+            {
+                return session.createTextMessage(payload);
+            }
+            catch(JMSException e)
+            {
+                throw new TransformationException(e);
+            }
+        }
+    }
+
+    /**
+     * Specific converter implementation for converting String to JMS Text Message
+     */
+    protected class Jeff implements Translator<StringBuilder>
+    {
+
+        @Override
+        public void translate(StringBuilder payload) throws TransformationException {
+                payload.append("additional value");
+        }
+    }
+
+    /**
+     * Specific converter implementation for converting byte[] to Message
+     */
+    protected class ByteArrayToMessage implements Converter<byte[],Message>
+    {
+        @Override
+        public Message convert(byte[] payload) throws TransformationException
+        {
+            try
+            {
+                BytesMessage bytesMsg = session.createBytesMessage();
+                bytesMsg.writeBytes(payload);
+                return bytesMsg;
+            }
+            catch(JMSException e)
+            {
+                throw new TransformationException(e);
+            }
+        }
+    }
+
+    /**
+     * Specific converter implementation for converting any serializable object to Message
+     */
+    protected class SerializableToMessage implements Converter<Serializable,Message>
+    {
+        @Override
+        public Message convert(Serializable payload) throws TransformationException
+        {
+            try
+            {
+                return session.createObjectMessage(payload);
+            }
+            catch(JMSException e)
+            {
+                throw new TransformationException(e);
+            }
+        }
+    }
+
+    /**
+     * Specific converter implementation for converting any Map to Message
+     */
+    protected class MapToMessage implements Converter<Map<String,Object>,Message>
+    {
+        @Override
+        public Message convert(Map<String,Object> payload) throws TransformationException
+        {
+            try
+            {
+                MapMessage mapMsg = session.createMapMessage();
+                for(Map.Entry<String,Object> entry:payload.entrySet())
+                {
+                    mapMsg.setObject(entry.getKey(), entry.getValue());
+                }
+                return mapMsg;
+            }
+            catch(JMSException e)
+            {
+                throw new TransformationException(e);
+            }
+        }
     }
 }

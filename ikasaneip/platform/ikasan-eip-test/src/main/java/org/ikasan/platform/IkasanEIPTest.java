@@ -59,5 +59,5 @@ import org.springframework.test.context.ContextConfiguration;
 
 public class IkasanEIPTest
 {
-    // Just use this class as a base for Spring context loading.
+    // Just use this class as a jca for Spring context loading.
 }
