@@ -46,17 +46,15 @@ package org.ikasan.spec.configuration;
  * 
  * @author Ikasan Development Team
  */
-public interface ConfiguredResource<T> extends Configured
+public interface Configured<T>
 {
     /**
-     * Get the id for this configured resource
-     * @return
+     * Set configuration.
      */
-    public String getConfiguredResourceId();
+    public T getConfiguration();
 
     /**
-     * Set the id for this configured resource
-     * @return
+     * Set configuration.
      */
-    public void setConfiguredResourceId(String id);
+    public void setConfiguration(T configuration);
 }
