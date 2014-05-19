@@ -55,6 +55,7 @@
     <modules>
         <module>ikasan-eip</module>
         <module>ikasan-eip-test</module>
+        <module>ikasan-setup</module>
     </modules>
 
 </project>
