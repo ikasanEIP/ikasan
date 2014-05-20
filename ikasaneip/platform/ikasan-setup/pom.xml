@@ -41,7 +41,7 @@
 # // ====================================================================
 # //
 # // Author:  Ikasan Development Team
-# //
+# //  mvn clean install package assembly:single
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -68,8 +68,16 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
-    
+        <!--dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-build</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency-->
+
         <!-- logging -->
         <dependency>
             <groupId>log4j</groupId>
@@ -82,6 +90,13 @@
             <groupId>sybase</groupId>
             <artifactId>jconn4</artifactId>
             <version>7.07_build_26666</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
