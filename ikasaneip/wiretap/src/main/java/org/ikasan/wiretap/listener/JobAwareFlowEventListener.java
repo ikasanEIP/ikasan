@@ -40,19 +40,20 @@
  */
 package org.ikasan.wiretap.listener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.management.FlowEventListenerMaintenanceService;
 import org.ikasan.trigger.dao.TriggerDao;
 import org.ikasan.trigger.model.Trigger;
 import org.ikasan.trigger.model.TriggerRelationship;
 import org.ikasan.trigger.service.FlowEventJob;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The <code>JobAwareFlowEventListener</code> provides a
@@ -69,7 +70,7 @@ import org.ikasan.trigger.service.FlowEventJob;
  * 
  * @author Ikasan Development Team
  */
-public class JobAwareFlowEventListener implements FlowEventListener
+public class JobAwareFlowEventListener implements FlowEventListener, FlowEventListenerMaintenanceService<FlowEventJob>
 {
     /** Before constant for location prefix */
     private static final String AFTER_LOCATION_PREFIX = "after";
@@ -328,5 +329,25 @@ public class JobAwareFlowEventListener implements FlowEventListener
     public Map<String, FlowEventJob> getRegisteredJobs()
     {
         return new HashMap<String, FlowEventJob>(this.flowEventJobs);
+    }
+
+    /**
+     * Management for the addition of a new flow event job
+     * @param name
+     * @param flowEventJob
+     */
+    public void addJob(String name, FlowEventJob flowEventJob)
+    {
+        this.flowEventJobs.put(name, flowEventJob);
+    }
+
+    /**
+     * Management for the removal of an existing flow event job
+     * @param name
+     * @return true is job removed, false if not
+     */
+    public FlowEventJob removeJob(String name)
+    {
+        return this.flowEventJobs.remove(name);
     }
 }
