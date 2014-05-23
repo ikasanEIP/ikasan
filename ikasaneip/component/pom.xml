@@ -53,7 +53,8 @@
     <name>Ikasan Enterprise Integration Off the Shelf Components</name>
 
     <modules>
-       <module>converter</module>
+        <module>converter</module>
+        <module>endpoint</module>
     </modules>
 
     <build>
