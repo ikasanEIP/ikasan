@@ -40,24 +40,23 @@
  */
 package org.ikasan.component.converter.xml;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
 import org.ikasan.marshaller.Marshaller;
 import org.ikasan.spec.component.transformation.Converter;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 import javax.resource.ResourceException;
 
 /**
  * Functional unit test cases for
- * <code>XmlJsonConverter</code>.
+ * <code>ToXmlDocument</code>.
  * 
  * @author Ikasan Development Team
  */
-public class XmlJsonConverterTest
+public class ToXmlDocumentTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -73,25 +72,28 @@ public class XmlJsonConverterTest
     final Marshaller marshaller = mockery.mock(Marshaller.class, "mockedMarshaller");
 
     /**
-     * Test successful invocation the converter for marshalling XML to JSON
+     * Test successful invocation
      */
     @Test
-    public void test_successful_xmlString_marshall() throws ResourceException
+    public void test_successful_string_to_doc() throws ResourceException
     {
-        final JSONObject jsonObject = new JSONObject();
+        String xml = "<root><element>value</element></root>";
 
-        // set test expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(marshaller).marshall("input");
-                will(returnValue(jsonObject));
-            }
-        });
-
-        Converter<String, JSON> converter = new XmlJsonConverter( marshaller );
-        converter.convert("input");
-        mockery.assertIsSatisfied();
+        Converter<String,Document> converter = new ToXmlDocument();
+        Document document = converter.convert(xml);
+        Assert.assertNotNull("document not instantiated", document);
     }
 
+    /**
+     * Test successful invocation
+     */
+    @Test
+    public void test_successful_bytes_to_doc() throws ResourceException
+    {
+        String xml = "<root><element>value</element></root>";
+
+        Converter<byte[],Document> converter = new ToXmlDocument();
+        Document document = converter.convert(xml.getBytes());
+        Assert.assertNotNull("document not instantiated", document);
+    }
 }

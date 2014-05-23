@@ -40,58 +40,68 @@
  */
 package org.ikasan.component.converter.xml;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import org.ikasan.marshaller.Marshaller;
 import org.ikasan.spec.component.transformation.Converter;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Test;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
-import javax.resource.ResourceException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * Functional unit test cases for
- * <code>XmlJsonConverter</code>.
- * 
- * @author Ikasan Development Team
+ * Convert incoming event to an XML Document.
+ * Ikasan Development Team.
  */
-public class XmlJsonConverterTest
+public class ToXmlDocument<T> implements Converter<T, Document>
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private Mockery mockery = new Mockery()
-    {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
-
-    /** mocked marshaller */
-    final Marshaller marshaller = mockery.mock(Marshaller.class, "mockedMarshaller");
+    /** factory instance - not thread safe! */
+    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
     /**
-     * Test successful invocation the converter for marshalling XML to JSON
+     * Allow override of default document builder factory
+     * @param documentBuilderFactory
      */
-    @Test
-    public void test_successful_xmlString_marshall() throws ResourceException
+    public void setDocumentBuilderFactory(DocumentBuilderFactory documentBuilderFactory)
     {
-        final JSONObject jsonObject = new JSONObject();
-
-        // set test expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(marshaller).marshall("input");
-                will(returnValue(jsonObject));
-            }
-        });
-
-        Converter<String, JSON> converter = new XmlJsonConverter( marshaller );
-        converter.convert("input");
-        mockery.assertIsSatisfied();
+        this.documentBuilderFactory = documentBuilderFactory;
     }
 
+    @Override
+    public Document convert(T message) throws TransformationException
+    {
+        try
+        {
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            if(message instanceof byte[])
+            {
+                return documentBuilder.parse(new ByteArrayInputStream((byte[])message));
+            }
+            else if(message instanceof String)
+            {
+                return documentBuilder.parse(new ByteArrayInputStream( ((String)message).getBytes() ));
+            }
+            else if(message instanceof File)
+            {
+                return documentBuilder.parse((File)message);
+            }
+
+            throw new TransformationException("Unsupported incoming message type class[" + message.getClass().getName() + "]");
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new TransformationException(e);
+        }
+        catch (SAXException e)
+        {
+            throw new TransformationException(e);
+        }
+        catch (IOException e)
+        {
+            throw new TransformationException(e);
+        }
+    }
 }
