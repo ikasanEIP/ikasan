@@ -56,7 +56,7 @@ import java.io.IOException;
  * Convert incoming event to an XML Document.
  * Ikasan Development Team.
  */
-public class ToXmlDocument<T> implements Converter<T, Document>
+public class ToXmlDocumentConverter<T> implements Converter<T, Document>
 {
     /** factory instance - not thread safe! */
     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

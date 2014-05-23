@@ -52,7 +52,7 @@ import javax.resource.ResourceException;
 
 /**
  * Functional unit test cases for
- * <code>ToXmlDocument</code>.
+ * <code>ToXmlDocumentConverter</code>.
  * 
  * @author Ikasan Development Team
  */
@@ -79,7 +79,7 @@ public class ToXmlDocumentTest
     {
         String xml = "<root><element>value</element></root>";
 
-        Converter<String,Document> converter = new ToXmlDocument();
+        Converter<String,Document> converter = new ToXmlDocumentConverter();
         Document document = converter.convert(xml);
         Assert.assertNotNull("document not instantiated", document);
     }
@@ -92,7 +92,7 @@ public class ToXmlDocumentTest
     {
         String xml = "<root><element>value</element></root>";
 
-        Converter<byte[],Document> converter = new ToXmlDocument();
+        Converter<byte[],Document> converter = new ToXmlDocumentConverter();
         Document document = converter.convert(xml.getBytes());
         Assert.assertNotNull("document not instantiated", document);
     }
