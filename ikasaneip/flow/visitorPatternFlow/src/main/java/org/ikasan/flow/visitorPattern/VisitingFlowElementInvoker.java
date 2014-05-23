@@ -372,16 +372,47 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     private FlowElement<?> handleBroker(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
     {
         Broker broker = (Broker) flowElement.getFlowComponent();
-        flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
+
+        Boolean requiresFullEventForInvocation = this.requiresFullEvent.get(moduleName + flowName + flowElement.getComponentName());
+        if(requiresFullEventForInvocation == null)
+        {
+            try
+            {
+                // try with flowEvent and if successful mark this producer
+                flowEvent.setPayload(broker.invoke(flowEvent));
+                this.requiresFullEvent.put(moduleName + flowName + flowElement.getComponentName(), Boolean.TRUE);
+            }
+            catch(java.lang.ClassCastException e)
+            {
+                flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
+                this.requiresFullEvent.put(moduleName + flowName + flowElement.getComponentName(), Boolean.FALSE);
+            }
+        }
+        else
+        {
+            if(requiresFullEventForInvocation.booleanValue())
+            {
+                flowEvent.setPayload(broker.invoke(flowEvent));
+            }
+            else
+            {
+                flowEvent.setPayload(broker.invoke(flowEvent.getPayload()));
+            }
+        }
+
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {
-            logger.error("broker is last element in flow!");
-            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Broker, but it has no default transition! "
-                    + "Brokers should never be the last component in a flow");
+            // allow broker to terminate a flow
+            notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
+            return null;
+//            logger.error("broker is last element in flow!");
+//            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Broker, but it has no default transition! "
+//                    + "Brokers should never be the last component in a flow");
         }
         if (flowEvent.getPayload() != null)
         {
+            // keep going if we have some payload
             notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
             invoke(moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
         }
