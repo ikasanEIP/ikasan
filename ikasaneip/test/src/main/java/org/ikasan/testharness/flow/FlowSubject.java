@@ -68,4 +68,11 @@ public interface FlowSubject
      * @param flowTestObserver The flow test observer to remove
      */
     public void removeAllObservers();
+
+    /**
+     * Allow override of default event capture behaviour
+     * @param ignoreEventCapture
+     */
+    public void setIgnoreEventCapture(boolean ignoreEventCapture);
+
 }
