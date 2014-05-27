@@ -51,6 +51,7 @@ import javax.jms.MessageNotWriteableException;
  * Implementation of the ManagedEventIdentifierService specifically for JMS.
  * 
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl} in the ikasan-jms-client library
  *
  */
 public class JmsEventIdentifierServiceImpl implements ManagedEventIdentifierService<String,Message>
