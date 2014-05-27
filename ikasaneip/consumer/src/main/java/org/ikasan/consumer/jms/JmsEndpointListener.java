@@ -57,6 +57,7 @@ import javax.jms.MessageListener;
  * rather than re-entrant on the consumer class.
  *
  * @author Ikasan Development Team
+ * @deprecated - use javax.jms.MessageListener; javax.jms.ExceptionListener
  */
 public class JmsEndpointListener implements MessageListener, ExceptionListener
 {

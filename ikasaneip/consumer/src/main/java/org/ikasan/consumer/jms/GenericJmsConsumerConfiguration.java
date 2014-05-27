@@ -46,6 +46,7 @@ import javax.jms.Session;
  * Implementation of a consumer configuration for a generic JMS consumer.
  * 
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.consumer.GenericJmsConsumerConfiguration} in the ikasan-jms-client library
  */
 public class GenericJmsConsumerConfiguration
 {

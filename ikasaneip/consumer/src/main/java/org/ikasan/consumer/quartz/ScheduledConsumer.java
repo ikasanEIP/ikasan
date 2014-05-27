@@ -66,7 +66,8 @@ import org.quartz.Trigger;
  * This test class supports the <code>Consumer</code> class.
  * 
  * @author Ikasan Development Team
- */
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer} in the ikasan-quartz-endpoint library
+*/
 @DisallowConcurrentExecution
 public class ScheduledConsumer 
     implements Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job

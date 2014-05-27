@@ -65,6 +65,7 @@ import java.util.Map;
  * Implementation of a consumer based on the JMS specification.
  *
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.producer.GenericJmsProducer} in the ikasan-jms-client library
  */
 public class GenericJmsProducer<T> implements Producer<T>, ManagedIdentifierService<ManagedEventIdentifierService>,
     ManagedResource, ConfiguredResource<GenericJmsProducerConfiguration>

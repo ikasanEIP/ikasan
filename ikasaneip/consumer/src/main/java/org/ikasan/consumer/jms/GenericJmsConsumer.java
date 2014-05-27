@@ -61,6 +61,7 @@ import java.util.Hashtable;
  * Implementation of a consumer based on the JMS specification.
  *
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.consumer.GenericJmsConsumer} in the ikasan-jms-client library
  */
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>,EventFactory>, ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message>,

@@ -47,6 +47,7 @@ import java.util.Map;
  * Implementation of a producer configuration for a generic JMS producer.
  *
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.producer.GenericJmsProducerConfiguration} in the ikasan-jms-client library
  */
 public class GenericJmsProducerConfiguration
 {

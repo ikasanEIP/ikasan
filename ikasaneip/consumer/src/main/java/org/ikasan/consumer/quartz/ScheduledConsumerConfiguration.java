@@ -45,6 +45,7 @@ package org.ikasan.consumer.quartz;
  * Scheduled consumer configuration bean.
  * 
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration} in the ikasan-quartz-endpoint library
  */
 public class ScheduledConsumerConfiguration
 {
