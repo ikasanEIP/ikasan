@@ -49,7 +49,7 @@ CREATE TABLE [IkasanWiretap]
     [ComponentName]         [varchar](128) NOT NULL,
     [EventId]               [varchar](255) NOT NULL,
     [RelatedEventId]        [varchar](255),
-    [EventTimestamp]        [numeric] NOT NULL,
+    [EventTimestamp]        [numeric] DEFAULT 0 NOT NULL,
     [PayloadContent]        [varchar] (max),
     [CreatedDateTime]       [numeric] NOT NULL,
     [Expiry]                [numeric] NOT NULL,

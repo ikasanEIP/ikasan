@@ -63,7 +63,7 @@
         <list name="parameters" cascade="all" inverse="false" lazy="false" table="ConfigurationParameter" >
             <key column="ConfigurationIdentifier" not-null="true"/>
             <list-index column="PositionRef"/>
-            <composite-element class="org.ikasan.configurationService.model.ConfigurationParameter">
+            <composite-element class="org.ikasan.configurationService.model.ConfigurationParameterStringImpl">
                 <property name="name"           type="java.lang.String" 
                           column="Name"         not-null="true" />
                 <property name="value"          type="java.lang.String" 

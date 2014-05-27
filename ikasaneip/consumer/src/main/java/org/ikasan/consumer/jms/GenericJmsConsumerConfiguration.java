@@ -46,9 +46,25 @@ import javax.jms.Session;
  * Implementation of a consumer configuration for a generic JMS consumer.
  * 
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.consumer.GenericJmsConsumerConfiguration} in the ikasan-jms-client library
  */
 public class GenericJmsConsumerConfiguration
 {
+    /** optional JNDI provider URL */
+    private String providerURL;
+
+    /** optional JNDI intial context factory */
+    private String initialContextFactory;
+
+    /** optional JNDI URL packages prefix */
+    private String urlPackagePrefixes;
+
+    /** need connectionFactory name if not provided on the constructor */
+    private String connectionFactoryName;
+
+    /** need destination name if destination/destinationResolver not provided in constructor */
+    private String destinationName;
+
     /** client id set on the JMS connection */
     private String clientId;
 
@@ -75,6 +91,57 @@ public class GenericJmsConsumerConfiguration
 
     /** optional boolean no local - can messages be delivered by this consumers connection */
     private boolean noLocal = false;
+
+    /** are we using local JNDI (false) or a remote JNDI (true) */
+    private boolean remoteJNDILookup = false;
+
+    public boolean isRemoteJNDILookup() {
+        return remoteJNDILookup;
+    }
+
+    public void setRemoteJNDILookup(boolean remoteJNDILookup) {
+        this.remoteJNDILookup = remoteJNDILookup;
+    }
+
+    public String getConnectionFactoryName() {
+        return connectionFactoryName;
+    }
+
+    public void setConnectionFactoryName(String connectionFactoryName) {
+        this.connectionFactoryName = connectionFactoryName;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public String getProviderURL() {
+        return providerURL;
+    }
+
+    public void setProviderURL(String providerURL) {
+        this.providerURL = providerURL;
+    }
+
+    public String getInitialContextFactory() {
+        return initialContextFactory;
+    }
+
+    public void setInitialContextFactory(String initialContextFactory) {
+        this.initialContextFactory = initialContextFactory;
+    }
+
+    public String getUrlPackagePrefixes() {
+        return urlPackagePrefixes;
+    }
+
+    public void setUrlPackagePrefixes(String urlPackagePrefixes) {
+        this.urlPackagePrefixes = urlPackagePrefixes;
+    }
 
     public boolean isTransacted()
     {

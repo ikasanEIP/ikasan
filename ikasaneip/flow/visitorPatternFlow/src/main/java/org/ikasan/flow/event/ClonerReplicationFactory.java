@@ -69,16 +69,31 @@ public class ClonerReplicationFactory<T> implements ReplicationFactory<T>
 	}
 	
 	/**
-	 * Return a completely independent instance of the incoming object. The
+	 * Return a completely independent deep copy instance of the incoming object. The
 	 * returned object can be freely mutated without any consequential changes
 	 * being made to the originating object.
 	 * 
 	 * @param object to be replicated
-	 * @return replicated object
+	 * @return deep replicated object
 	 */
 	public T replicate(T object)
 	{
+        // TODO - find a way to control the deep clone to avoid JVM crashes at runtime
 	    return cloner.deepClone(object);
 	}
 
+    /**
+     * Return a completely independent shallow copy instance of the incoming object. The
+     * returned object CANNOT be freely mutated without any consequential changes
+     * being made to the originating object.
+     *
+     * Use with care - the returned object may share references with the original object.
+     *
+     * @param object to be replicated
+     * @return shallow replicated object
+     */
+    public T shallowReplicate(T object)
+    {
+        return cloner.shallowClone(object);
+    }
 }

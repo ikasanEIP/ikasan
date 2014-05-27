@@ -48,6 +48,7 @@ import java.util.Map;
  * based on the incoming event.
  *
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.consumer.JmsPostProcessor} in the ikasan-jms-client library
  */
 public interface CustomMessagePropertyProvider<MESSAGE>
 {

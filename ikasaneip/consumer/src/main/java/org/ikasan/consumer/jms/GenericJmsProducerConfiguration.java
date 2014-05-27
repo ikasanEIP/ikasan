@@ -40,17 +40,35 @@
  */
 package org.ikasan.consumer.jms;
 
-import java.util.Map;
-
 import javax.jms.Session;
+import java.util.Map;
 
 /**
  * Implementation of a producer configuration for a generic JMS producer.
  *
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.producer.GenericJmsProducerConfiguration} in the ikasan-jms-client library
  */
 public class GenericJmsProducerConfiguration
 {
+    /** optional JNDI provider URL */
+    private String providerURL;
+
+    /** optional JNDI intial context factory */
+    private String initialContextFactory;
+
+    /** optional JNDI URL packages prefix */
+    private String urlPackagePrefixes;
+
+    /** need connectionFactory name if not provided on the constructor */
+    private String connectionFactoryName;
+
+    /** need destination name if destination/destinationResolver not provided in constructor */
+    private String destinationName;
+
+    /** optional boolean no local - can messages be delivered by this consumers connection */
+    private boolean remoteJNDILookup = false;
+
     /** username credential where authentication is required */
     private String username;
 
@@ -62,6 +80,54 @@ public class GenericJmsProducerConfiguration
 
     /** type of session message acknowledgement */
     private int acknowledgement = Session.AUTO_ACKNOWLEDGE;
+
+    public String getProviderURL() {
+        return providerURL;
+    }
+
+    public void setProviderURL(String providerURL) {
+        this.providerURL = providerURL;
+    }
+
+    public String getInitialContextFactory() {
+        return initialContextFactory;
+    }
+
+    public void setInitialContextFactory(String initialContextFactory) {
+        this.initialContextFactory = initialContextFactory;
+    }
+
+    public String getUrlPackagePrefixes() {
+        return urlPackagePrefixes;
+    }
+
+    public void setUrlPackagePrefixes(String urlPackagePrefixes) {
+        this.urlPackagePrefixes = urlPackagePrefixes;
+    }
+
+    public String getConnectionFactoryName() {
+        return connectionFactoryName;
+    }
+
+    public void setConnectionFactoryName(String connectionFactoryName) {
+        this.connectionFactoryName = connectionFactoryName;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public boolean isRemoteJNDILookup() {
+        return remoteJNDILookup;
+    }
+
+    public void setRemoteJNDILookup(boolean remoteJNDILookup) {
+        this.remoteJNDILookup = remoteJNDILookup;
+    }
 
     /** message properties */
     private Map<String,String> properties;

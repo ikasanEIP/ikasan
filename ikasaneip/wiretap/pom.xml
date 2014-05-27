@@ -85,7 +85,14 @@
             <version>0.9.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- required for unit tests -->
         <dependency>
             <groupId>org.hamcrest</groupId>

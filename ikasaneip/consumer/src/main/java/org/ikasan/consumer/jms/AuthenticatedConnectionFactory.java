@@ -40,22 +40,22 @@
  */
 package org.ikasan.consumer.jms;
 
-import java.util.Properties;
+import org.apache.log4j.Logger;
+import org.ikasan.spec.component.endpoint.EndpointException;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.apache.log4j.Logger;
-import org.ikasan.spec.component.endpoint.EndpointException;
+import java.util.Properties;
 
 /**
  * Implementation of an authenticated ConnectionFactory.
  * Use Cases for this are primarily around WebLogic's JMS authentication.
  *  
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.AuthenticatedConnectionFactory} in the ikasan-jms-client library
  */
 public class AuthenticatedConnectionFactory implements ConnectionFactory
 {

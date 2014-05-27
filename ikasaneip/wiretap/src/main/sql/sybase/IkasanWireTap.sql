@@ -55,16 +55,16 @@ CREATE TABLE IkasanWiretap
     ComponentName       VARCHAR(128)  NOT NULL,
     EventId             VARCHAR(255)  NOT NULL,
     RelatedEventId      VARCHAR(255)  NULL,
-    EventTimestamp      DATETIME      DEFAULT getDate() NOT NULL,
-    PayloadContent      TEXT          NOT NULL,
-    CreatedDateTime     DATETIME      DEFAULT getDate() NOT NULL,
-    Expiry              DATETIME      NOT NULL
+    EventTimestamp      NUMERIC DEFAULT 0 NOT NULL,
+    PayloadContent      TEXT    NOT NULL,
+    CreatedDateTime     NUMERIC NOT NULL,
+    Expiry              NUMERIC NOT NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
 CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)
-CREATE NONCLUSTERED INDEX IkasanWiretap02i ON IkasanWiretap(PayloadId)
+--CREATE NONCLUSTERED INDEX IkasanWiretap02i ON IkasanWiretap(PayloadId)
 
 IF OBJECT_ID('IkasanWiretap') IS NOT NULL
     PRINT '<<< CREATED TABLE IkasanWiretap >>>'

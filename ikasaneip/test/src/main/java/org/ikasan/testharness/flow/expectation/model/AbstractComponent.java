@@ -82,5 +82,10 @@ public abstract class AbstractComponent
     {
         return type;
     }
-    
+
+    @Override
+    public String toString()
+    {
+        return "name[" + name + "] type[" + type + "]";
+    }
 }
