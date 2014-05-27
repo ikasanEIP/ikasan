@@ -40,17 +40,17 @@
  */
 package org.ikasan.consumer.jms;
 
-import javax.jms.Destination;
-
-import org.ikasan.consumer.jms.DestinationResolver;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
+
+import javax.jms.Destination;
 
 /**
  * Specific implementation of a destination resolver which unwraps a 
  * destination from a proxied object.
  * 
- * @author JeffMitchell
+ * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.spring.DestinationResolvedSpringProxyImpl} in the ikasan-jms-spring library
  */
 public class DestinationResolverSpringProxyImpl implements DestinationResolver
 {

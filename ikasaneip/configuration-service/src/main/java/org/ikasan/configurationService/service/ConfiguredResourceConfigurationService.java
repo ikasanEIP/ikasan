@@ -40,23 +40,19 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.model.ConfigurationParameter;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
 import org.ikasan.configurationService.model.DefaultConfiguration;
-import org.ikasan.spec.configuration.Configuration;
-import org.ikasan.spec.configuration.ConfigurationException;
-import org.ikasan.spec.configuration.ConfigurationManagement;
-import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.*;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of the Configuration Service based on a ConfiguredResource.
@@ -155,7 +151,7 @@ public class ConfiguredResourceConfigurationService
 
     /**
      * Create a new configuration instance for the given ConfiguredResource.
-     * @param ConfiguredResource
+     * @param configuredResource
      * @return Configuration
      */
     public Configuration createConfiguration(ConfiguredResource configuredResource)
@@ -174,16 +170,15 @@ public class ConfiguredResourceConfigurationService
         try
         {
             Map<String,String> properties = BeanUtils.describe(configuredObject);
-            for(Iterator it = properties.entrySet().iterator(); it.hasNext();) 
+            for(Map.Entry<String,String> entry: properties.entrySet())
             {
-                Map.Entry<String,String> entry = (Map.Entry) it.next();
                 String name = entry.getKey();
                 String value = entry.getValue();
 
                 // TODO - is there a cleaner way of ignoring the class property ?
                 if(!"class".equals(name))
                 {
-                    configuration.getParameters().add(new ConfigurationParameter(name, value));
+                    configuration.getParameters().add(new ConfigurationParameterStringImpl(name, value));
                 }
              }
         }

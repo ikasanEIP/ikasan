@@ -1,15 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <!-- standard parent -->
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>0.9.5-SNAPSHOT</version>
-        <relativePath />
-    </parent>
-
+    <groupId>org.ikasan</groupId>
 	<artifactId>sample-wls-jmsDrivenPriceSrc-ear</artifactId>
+    <version>0.9.5-SNAPSHOT</version>
 	<packaging>ear</packaging>
 	<name>Sample JMS Weblogic configured EAR</name>
 
@@ -61,6 +55,14 @@
 	</build>
 
 	<dependencies>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-build</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+            <type>pom</type>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>

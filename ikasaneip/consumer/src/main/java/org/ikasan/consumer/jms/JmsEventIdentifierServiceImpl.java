@@ -40,19 +40,25 @@
  */
 package org.ikasan.consumer.jms;
 
+import org.apache.log4j.Logger;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageNotWriteableException;
 
 /**
  * Implementation of the ManagedEventIdentifierService specifically for JMS.
  * 
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl} in the ikasan-jms-client library
  *
  */
 public class JmsEventIdentifierServiceImpl implements ManagedEventIdentifierService<String,Message>
 {
+    /** class logger */
+    private static Logger logger = Logger.getLogger(JmsEventIdentifierServiceImpl.class);
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.spec.event.EventLifeIdentifierService#getLifeIdentifier(java.lang.Object)
@@ -85,6 +91,11 @@ public class JmsEventIdentifierServiceImpl implements ManagedEventIdentifierServ
         try
         {
             message.setStringProperty(ManagedEventIdentifierService.EVENT_LIFE_ID, identifier);
+        }
+        // this must be a Message pass through
+        catch (MessageNotWriteableException e)
+        {
+            logger.info("Unable to set the event life identifier", e);
         }
         catch (JMSException e)
         {

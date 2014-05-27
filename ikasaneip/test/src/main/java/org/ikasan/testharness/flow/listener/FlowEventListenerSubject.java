@@ -40,13 +40,16 @@
  */
 package org.ikasan.testharness.flow.listener;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.log4j.Logger;
 import org.ikasan.spec.event.ReplicationFactory;
-import org.ikasan.spec.flow.*;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.ikasan.testharness.flow.FlowSubject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -62,11 +65,17 @@ import org.ikasan.testharness.flow.FlowSubject;
 public class FlowEventListenerSubject
     implements FlowEventListener, FlowSubject
 {
+    /** Logger instance */
+    private static Logger logger = Logger.getLogger(FlowEventListenerSubject.class);
+
     /** replication factory */
     private ReplicationFactory<FlowEvent> replicationFactory;
 
     /** observer to be notified of flow component invocations */
     private List<FlowObserver> flowObservers;
+
+    /** allow event capture to be turned off */
+    private boolean ignoreEventCapture;
 
     /**
      * Constructor
@@ -76,7 +85,16 @@ public class FlowEventListenerSubject
         this.flowObservers = initFlowObservers();
         this.replicationFactory = replicationFactory;
     }
-    
+
+    /**
+     * Allow override of the event capture status.
+     * @param ignoreEventCapture
+     */
+    public void setIgnoreEventCapture(boolean ignoreEventCapture)
+    {
+        this.ignoreEventCapture = ignoreEventCapture;
+    }
+
     /**
      * Utility method for initialising the flow observers list implemented 
      * for ease of testing.
@@ -90,10 +108,10 @@ public class FlowEventListenerSubject
     /**
      * Does nothing in this implementation as we are only interested in the
      * afterFlowElement operations for event capture.
-     * @param String moduleName
-     * @param String flowName
-     * @param FlowElement flowElement
-     * @param Event event
+     * @param moduleName
+     * @param flowName
+     * @param flowElement
+     * @param event
      */
     public void beforeFlowElement(String moduleName, String flowName,
             FlowElement flowElement, FlowEvent event)
@@ -107,24 +125,36 @@ public class FlowEventListenerSubject
     
     /**
      * Captures the details of the flow component and event in flight.
-     * @param String moduleName
-     * @param String flowName
-     * @param FlowElement flowElement
-     * @param Event event
+     * @param moduleName
+     * @param flowName
+     * @param flowElement
+     * @param event
      */
     public void afterFlowElement(String moduleName, String flowName,
             FlowElement flowElement, FlowEvent event)
     {
-        // notification of the resulting event from the invoked component
-        for(FlowObserver flowObserver:this.flowObservers)
+        if(!ignoreEventCapture)
         {
-            flowObserver.notify( this.replicationFactory.replicate(event) );
+            // notification of the resulting event from the invoked component
+            for(FlowObserver flowObserver:this.flowObservers)
+            {
+                try
+                {
+                    flowObserver.notify( this.replicationFactory.replicate(event) );
+                }
+                catch(RuntimeException e)
+                {
+                    // assume deep-copy was the issue and try a shallow copy
+                    logger.warn("Deep-copy replication of the event failed, resorting to shallow copy.", e);
+                    flowObserver.notify(this.replicationFactory.shallowReplicate(event));
+                }
+            }
         }
     }
 
     /**
      * Add the specified observer
-     * @param FlowObserver
+     * @param flowObserver
      */
     public void addObserver(FlowObserver flowObserver)
     {
@@ -134,7 +164,7 @@ public class FlowEventListenerSubject
 
     /**
      * Remove the specified observer
-     * @param FlowObserver
+     * @param flowObserver
      */
     public void removeObserver(FlowObserver flowObserver)
     {

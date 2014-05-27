@@ -40,13 +40,13 @@
  */
 package org.ikasan.consumer.jms;
 
+import org.apache.log4j.Logger;
+import org.ikasan.spec.component.endpoint.EndpointListener;
+
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-
-import org.apache.log4j.Logger;
-import org.ikasan.consumer.EndpointListener;
 
 /**
  * Implementation of an endpoint listener which acts as a proxy for the real 
@@ -57,6 +57,7 @@ import org.ikasan.consumer.EndpointListener;
  * rather than re-entrant on the consumer class.
  *
  * @author Ikasan Development Team
+ * @deprecated - use javax.jms.MessageListener; javax.jms.ExceptionListener
  */
 public class JmsEndpointListener implements MessageListener, ExceptionListener
 {

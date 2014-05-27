@@ -47,6 +47,7 @@ import javax.jms.Destination;
  * cannot be directly passed to the producer/consumer.
  *
  * @author Ikasan Development Team
+ * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.DestinationResolver} in the ikasan-jms-client library
  */
 public interface DestinationResolver
 {

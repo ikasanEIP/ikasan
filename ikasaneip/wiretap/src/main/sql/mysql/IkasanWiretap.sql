@@ -43,10 +43,10 @@ CREATE TABLE  `Ikasan01`.`IkasanWiretap` (
   `ComponentName` varchar(128) NOT NULL,
   `EventId` varchar(255) NOT NULL,
   `RelatedEventId` varchar(255) NULL,
-  `EventTimestamp` datetime NOT NULL,
+  `EventTimestamp` bigint(20) DEFAULT 0 NOT NULL,
   `PayloadContent` longtext NOT NULL,
-  `CreatedDateTime` datetime NOT NULL,
-  `Expiry` datetime NOT NULL,
+  `CreatedDateTime` bigint(20) NOT NULL,
+  `Expiry` bigint(20) NOT NULL,
   PRIMARY KEY (`Id`),
   INDEX PayloadId_Index USING BTREE (PayloadId)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
