@@ -73,6 +73,11 @@ public class ToXmlDocumentConverter<T> implements Converter<T, Document>
     @Override
     public Document convert(T message) throws TransformationException
     {
+        if(message instanceof Document)
+        {
+            return (Document)message;
+        }
+
         try
         {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
