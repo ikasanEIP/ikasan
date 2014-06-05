@@ -40,6 +40,7 @@
  */
 package org.ikasan.setup;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -47,13 +48,14 @@ import org.junit.Test;
  * 
  * @author Ikasan Development Team
  */
+@Ignore
 public class PersistenceTest
 {
-    String user = "mitcje";
-    String password = "Newt0n))";
-    String host = "svc-dbadv_ase_cmi2d";
+    String user = "username";
+    String password = "password";
+    String host = "hostname";
     String port = "50100";
-    String database = "JM_Ikasan01d";
+    String database = "Ikasan01d";
     String conf = "sybase15.xml";
 
     /**
