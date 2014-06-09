@@ -53,7 +53,7 @@
 
     <modules>
         <module>genericTechPriceSrc</module>
-        <module>jmsDrivenPriceSrc</module>
+        <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
         <module>scheduleDrivenSrc</module>
     </modules>
 
