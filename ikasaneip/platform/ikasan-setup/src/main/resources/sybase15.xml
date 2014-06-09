@@ -2,8 +2,10 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- connection properties -->
-    <entry key="driver">com.sybase.jdbc4.jdbc.SybDataSource</entry>
-    <entry key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</entry>
+    <!--entry key="driver">com.sybase.jdbc4.jdbc.SybDataSource</entry-->
+    <!--entry key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</entry-->
+    <entry key="driver">net.sourceforge.jtds.jdbc.Driver</entry>
+    <entry key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</entry>
 
     <!-- Wiretap Table creation -->
     <entry key="create.wiretap.table">CREATE TABLE IkasanWiretap
