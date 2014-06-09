@@ -71,6 +71,7 @@ public class Persistence
     /** persistence creator instances */
     PersistenceCreator wiretapPersistenceCreator;
     PersistenceCreator configurationPersistenceCreator;
+    PersistenceCreator systemEventPersistenceCreator;
     PersistenceCreator modulePersistenceCreator;
     PersistenceCreator consolePersistenceCreator;
     PersistenceCreator securityPersistenceCreator;
@@ -123,6 +124,7 @@ public class Persistence
 
         this.wiretapPersistenceCreator = new WiretapPersistence(connection, dbConfiguration);
         this.configurationPersistenceCreator = new ConfigurationPersistence(connection, dbConfiguration);
+        this.systemEventPersistenceCreator = new ConfigurationPersistence(connection, dbConfiguration);
         this.modulePersistenceCreator = new ModulePersistence(connection, dbConfiguration);
         this.consolePersistenceCreator = new ConsolePersistence(connection, dbConfiguration);
         this.securityPersistenceCreator = new SecurityPersistence(connection, dbConfiguration);
@@ -228,6 +230,7 @@ public class Persistence
     {
         this.wiretapPersistenceCreator.execute();
         this.configurationPersistenceCreator.execute();
+        this.systemEventPersistenceCreator.execute();
         this.modulePersistenceCreator.execute();
         this.consolePersistenceCreator.execute();
         this.securityPersistenceCreator.execute();

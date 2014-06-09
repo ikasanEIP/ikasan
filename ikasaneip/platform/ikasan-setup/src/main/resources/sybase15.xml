@@ -76,6 +76,20 @@
         CREATE UNIQUE INDEX ConfigurationParameter01u ON ConfigurationParameter(ConfigurationIdentifier, PositionRef)
     </entry>
 
+    <entry key="create.systemEvent.table">CREATE TABLE SystemEvent
+        (
+        Id                  NUMERIC IDENTITY NOT NULL,
+        Subject             VARCHAR(128)  NOT NULL,
+        Action              VARCHAR(512)   NOT NULL,
+        Actor               VARCHAR(64)   NULL,
+        Timestamp           DATETIME      NOT NULL,
+        Expiry           DATETIME      NULL
+        )
+        LOCK DATAROWS
+        WITH IDENTITY_GAP=1
+
+        CREATE UNIQUE INDEX SystemEvent01u ON SystemEvent(Id)</entry>
+
     <entry key="create.moduleStartup.table">CREATE TABLE StartupControl
         (
         Id                  NUMERIC IDENTITY NOT NULL,
