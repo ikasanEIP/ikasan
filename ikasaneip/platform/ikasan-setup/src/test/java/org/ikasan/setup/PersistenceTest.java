@@ -45,7 +45,7 @@ import org.junit.Test;
 
 /**
  * This test class supports the <code>Persistence</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @Ignore
