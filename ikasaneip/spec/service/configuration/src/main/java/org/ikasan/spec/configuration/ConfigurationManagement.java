@@ -56,6 +56,12 @@ public interface ConfigurationManagement<RESOURCE,MODEL>
     public MODEL getConfiguration(RESOURCE configuredResource);
 
     /**
+     * Allow the setting (override) of the configurationFactory
+     * @param configurationFactory
+     */
+    public void setConfigurationFactory(ConfigurationFactory configurationFactory);
+
+    /**
      * Create a configuration instance for the given configured resource.
      * @param configuredResource
      * @return

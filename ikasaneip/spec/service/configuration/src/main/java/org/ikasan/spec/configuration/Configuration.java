@@ -52,7 +52,7 @@ public interface Configuration<CONFIGURATION_PARAMS>
      * Each configuration must have a unique immutable identifier
      * @return
      */
-    public String getId();
+    public String getConfigurationId();
 
     /**
      * A configuration has collections of parameters

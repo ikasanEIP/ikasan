@@ -46,7 +46,7 @@ package org.ikasan.spec.configuration;
  * 
  * @author Ikasan Development Team
  */
-public interface ConfigurationService<RESOURCE,MODEL>
+public interface ConfigurationService<RESOURCE>
 {
     /**
      * Configure the given resource.
