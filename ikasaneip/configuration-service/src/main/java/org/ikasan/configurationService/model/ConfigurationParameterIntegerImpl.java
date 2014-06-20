@@ -38,35 +38,52 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.configurationService.dao;
+package org.ikasan.configurationService.model;
 
-import org.ikasan.spec.configuration.Configuration;
+import java.io.Serializable;
 
 /**
- * Configuration DAO interface defining the operations for interacting with
- * a runtime configuration.
- *
+ * Integer based configuration parameter.
+ * 
  * @author Ikasan Development Team
+ *
  */
-public interface ConfigurationDao<CONFIGURATION_PARAMS>
+@SuppressWarnings("serial")
+public class ConfigurationParameterIntegerImpl extends AbstractComponentParameter<Integer> implements Serializable
 {
     /**
-     * Find and return the configuration entry instance for this configurationId.
-     * If not found then 'null' is returned.
-     * @param configurationId
-     * @return Configuration
+     * Constructor
+     * @param name
+     * @param value
      */
-    public Configuration<CONFIGURATION_PARAMS> findByConfigurationId(String configurationId);
+    public ConfigurationParameterIntegerImpl(String name, Integer value)
+    {
+        this(name, value, null);
+    }
 
     /**
-     * Create/update a configuration entry.
-     * @param configuration
+     * Constructor
+     * @param name
+     * @param value
+     * @param description
      */
-    public void save(Configuration<CONFIGURATION_PARAMS> configuration);
+    public ConfigurationParameterIntegerImpl(String name, Integer value, String description)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.value = value;
+        this.description = description;
+    }
 
     /**
-     * Delete a configuration entry.
-     * @param configuration
+     * Constructor
      */
-    public void delete(Configuration<CONFIGURATION_PARAMS> configuration);
+    protected ConfigurationParameterIntegerImpl()
+    {
+        // required by ORM
+    }
 }

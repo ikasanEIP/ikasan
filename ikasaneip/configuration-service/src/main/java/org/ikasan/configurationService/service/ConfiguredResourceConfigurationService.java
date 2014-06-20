@@ -41,12 +41,10 @@
 package org.ikasan.configurationService.service;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.configurationService.model.ConfigurationParameter;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -61,7 +59,7 @@ import java.util.Map;
  *
  */
 public class ConfiguredResourceConfigurationService
-    implements ConfigurationService<ConfiguredResource,Configuration>, 
+    implements ConfigurationService<ConfiguredResource>,
     ConfigurationManagement<ConfiguredResource,Configuration> 
 {
     /** Logger instance */
@@ -72,7 +70,10 @@ public class ConfiguredResourceConfigurationService
     
     /** configuration DAO used for accessing the configuration transactionally at runtime */
     private ConfigurationDao<List<ConfigurationParameter>> dynamicConfigurationDao;
-    
+
+    /** Default factory for the creation of configurations and configuration parameters */
+    private ConfigurationFactory configurationFactory = ConfigurationFactoryDefaultImpl.getInstance();
+
     /**
      * Default configuration service returns a cached based instance.
      * @return
@@ -82,7 +83,16 @@ public class ConfiguredResourceConfigurationService
     	return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl());
     	
     }
-    
+
+    /**
+     * Allow the configurationFactory to be overridden
+     * @param configurationFactory
+     */
+    public void setConfigurationFactory(ConfigurationFactory configurationFactory)
+    {
+        this.configurationFactory = configurationFactory;
+    }
+
     /**
      * Constructor
      * @param staticConfigurationDao - used to update configuration outside a runtime transaction
@@ -103,30 +113,36 @@ public class ConfiguredResourceConfigurationService
         }
     }
 
+    /**
+     * Retrieves the persisted configuration based on the configuredResource's configurationId
+     * and applies the persisted configuration to the configuration of the configuredResource.
+     * This is typically called just prior to the flow being started.
+     * @param configuredResource
+     */
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.service.ConfigurationService#configure(java.lang.Object)
      */
     public void configure(ConfiguredResource configuredResource)
     {
-        Configuration<List<ConfigurationParameter>> configuration = this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
-        if(configuration == null)
+        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.staticConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
+        if(persistedConfiguration == null)
         {
             logger.warn("No persisted configuration for configuredResource [" 
                     + configuredResource.getConfiguredResourceId() + "]. Default programmatic configuration will be used.");
             return;
         }
 
-        Object configurationObject = configuredResource.getConfiguration();
-        if(configurationObject != null)
+        Object runtimeConfiguration = configuredResource.getConfiguration();
+        if(runtimeConfiguration != null)
         {
             try
             {
-                for(ConfigurationParameter configurationParameter:configuration.getParameters())
+                for(ConfigurationParameter persistedConfigurationParameter:persistedConfiguration.getParameters())
                 {
-                    BeanUtils.setProperty(configurationObject, configurationParameter.getName(), configurationParameter.getValue());
+                    BeanUtils.setProperty(runtimeConfiguration, persistedConfigurationParameter.getName(), persistedConfigurationParameter.getValue());
                 }
 
-                configuredResource.setConfiguration(configurationObject);
+                configuredResource.setConfiguration(runtimeConfiguration);
             }
             catch (IllegalAccessException e)
             {
@@ -156,40 +172,23 @@ public class ConfiguredResourceConfigurationService
      */
     public Configuration createConfiguration(ConfiguredResource configuredResource)
     {
-        Object configuredObject = configuredResource.getConfiguration();
-        if(configuredObject == null)
-        {
-            throw new RuntimeException("ConfiguredResource id [" 
-                    + configuredResource.getConfiguredResourceId() 
-                    + "] returned a 'null' configuration instance. ");
-        }
-        
-        Configuration<List<ConfigurationParameter>> configuration = 
-            new DefaultConfiguration(configuredResource.getConfiguredResourceId(), new ArrayList<ConfigurationParameter>());
-
         try
         {
-            Map<String,String> properties = BeanUtils.describe(configuredObject);
-            for(Map.Entry<String,String> entry: properties.entrySet())
-            {
-                String name = entry.getKey();
-                String value = entry.getValue();
-
-                // TODO - is there a cleaner way of ignoring the class property ?
-                if(!"class".equals(name))
-                {
-                    configuration.getParameters().add(new ConfigurationParameterStringImpl(name, value));
-                }
-             }
+            return configurationFactory.createConfiguration(configuredResource.getConfiguredResourceId(), configuredResource.getConfiguration());
         }
-        catch(Exception e)
+        catch(ConfigurationException e)
         {
-            throw new RuntimeException(e);
+            throw new ConfigurationException("Failed to configure configuredResource id ["
+                    + configuredResource.getConfiguredResourceId(), e);
         }
-
-        return configuration;
     }
 
+    /**
+     * Updates the persisted configuration with the current configuredResource's configuration.
+     * This is typically used for dynamically updated configuration ie. sequence numbers
+     * which change onEvent.
+     * @param configuredResource
+     */
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.service.ConfigurationService#update(org.ikasan.framework.configuration.model.Configuration)
      */
@@ -197,13 +196,13 @@ public class ConfiguredResourceConfigurationService
     {
         boolean configurationUpdated = false;
         Object runtimeConfiguration = configuredResource.getConfiguration();
-        Configuration<List<ConfigurationParameter>> configuration = this.dynamicConfigurationDao.findById(configuredResource.getConfiguredResourceId());
-        for(ConfigurationParameter configurationParameter:configuration.getParameters())
+        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.dynamicConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
+        for(ConfigurationParameter persistedConfigurationParameter:persistedConfiguration.getParameters())
         {
             String runtimeParameterValue;
             try
             {
-                runtimeParameterValue = BeanUtils.getProperty(runtimeConfiguration, configurationParameter.getName());
+                runtimeParameterValue = BeanUtils.getProperty(runtimeConfiguration, persistedConfigurationParameter.getName());
             }
             catch (IllegalAccessException e)
             {
@@ -218,17 +217,17 @@ public class ConfiguredResourceConfigurationService
                 throw new ConfigurationException(e);
             }
 
-            if( (runtimeParameterValue == null && configurationParameter.getValue() != null) ||
-                (runtimeParameterValue != null && !(runtimeParameterValue.equals(configurationParameter.getValue()))) )
+            if( (runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null) ||
+                (runtimeParameterValue != null && !(runtimeParameterValue.equals(persistedConfigurationParameter.getValue()))) )
             {
                 configurationUpdated = true;
-                configurationParameter.setValue(runtimeParameterValue);
+                persistedConfigurationParameter.setValue(runtimeParameterValue);
             }
         }
 
         if(configurationUpdated)
         {
-            this.dynamicConfigurationDao.save(configuration);
+            this.dynamicConfigurationDao.save(persistedConfiguration);
         }
     }
 
@@ -253,6 +252,6 @@ public class ConfiguredResourceConfigurationService
      */
     public Configuration getConfiguration(ConfiguredResource configuredResource)
     {
-        return this.staticConfigurationDao.findById(configuredResource.getConfiguredResourceId());
+        return this.staticConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
     }
 }

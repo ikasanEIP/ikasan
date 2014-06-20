@@ -6,19 +6,33 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-        
+
+    <bean id="setupDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+        <property name="sessionFactory">
+            <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                <property name="dataSource" ref="eai.xads" />
+                <property name="mappingResources">
+                    <list>
+                        <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+                    </list>
+                </property>
+                <property name="hibernateProperties" ref="platformHibernateProperties"/>
+            </bean>
+        </property>
+    </bean>
+
     <util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <entry key="hibernate.show_sql" value="true"/>
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
     </util:map>
     
     <bean id="dataSource" name="eai.xads eai.ds" 
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-        <property name="url" value="jdbc:hsqldb:mem:testdb" />
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
         <property name="username" value="sa" />
-        <property name="password" value="" />
+        <property name="password" value="sa" />
     </bean>
     
 </beans>

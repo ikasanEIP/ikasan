@@ -38,10 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.configurationService.model;
+package org.ikasan.spec.configuration;
 
 /**
- * Individual configuration parameter.
+ * Individual configuration parameter model contract.
  * 
  * @author Ikasan Development Team
  *
@@ -49,15 +49,51 @@ package org.ikasan.configurationService.model;
 @SuppressWarnings("serial")
 public interface ConfigurationParameter<T>
 {
+    /**
+     * Required by ORM
+     * @return
+     */
+    public Long getId();
+
+    /**
+     * Required by ORM
+     * @param id
+     */
+    public void setId(Long id);
+
+    /**
+     * Get the configuration parameter name
+     * @return
+     */
     public String getName();
 
+    /**
+     * Set the configuration parameter name
+     * @param name
+     */
     public void setName(String name);
 
+    /**
+     * Get the configuration parameter value
+     * @return
+     */
     public T getValue();
 
+    /**
+     * Set the configuration parameter value
+     * @param value
+     */
     public void setValue(T value);
 
+    /**
+     * Get the configuration parameter description
+     * @return
+     */
     public String getDescription();
 
+    /**
+     * Set the configuration parameter description
+     * @param description
+     */
     public void setDescription(String description);
 }
