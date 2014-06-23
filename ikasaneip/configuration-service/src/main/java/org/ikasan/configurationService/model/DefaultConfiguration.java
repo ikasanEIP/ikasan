@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationParameter;
 
 /**
  * Configuration data model supporting the runtime attributes 
@@ -56,7 +57,7 @@ import org.ikasan.spec.configuration.Configuration;
 public class DefaultConfiguration implements Configuration<List<ConfigurationParameter>>, Serializable
 {
     /** runtime configuration identifier */
-    protected String id;
+    protected String configurationId;
     
     /** runtime configuration description */
     protected String description;
@@ -67,35 +68,34 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
     /**
      * Constructor
      * @param configurationId
-     * @param configurationParameters
      */
-    public DefaultConfiguration(String id)
+    public DefaultConfiguration(String configurationId)
     {
-        this(id, null, new ArrayList<ConfigurationParameter>());
+        this(configurationId, null, new ArrayList<ConfigurationParameter>());
     }
 
     /**
      * Constructor
      * @param configurationId
-     * @param configurationParameters
+     * @param parameters
      */
-    public DefaultConfiguration(String id, List<ConfigurationParameter> parameters)
+    public DefaultConfiguration(String configurationId, List<ConfigurationParameter> parameters)
     {
-        this(id, null, parameters);
+        this(configurationId, null, parameters);
     }
 
     /**
      * Constructor
      * @param configurationId
      * @param description
-     * @param configurationParameters
+     * @param parameters
      */
-    public DefaultConfiguration(String id, String description, List<ConfigurationParameter> parameters)
+    public DefaultConfiguration(String configurationId, String description, List<ConfigurationParameter> parameters)
     {
-        this.id = id;
-        if(id == null)
+        this.configurationId = configurationId;
+        if(configurationId == null)
         {
-            throw new IllegalArgumentException("id cannot be 'null'");
+            throw new IllegalArgumentException("configurationId cannot be 'null'");
         }
         
         this.description = description;
@@ -115,14 +115,14 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
         // required by ORM
     }
 
-    protected void setId(String id)
+    protected void setConfigurationId(String configurationId)
     {
-        this.id = id;
+        this.configurationId = configurationId;
     }
 
-    public String getId()
+    public String getConfigurationId()
     {
-        return id;
+        return configurationId;
     }
 
     public List<ConfigurationParameter> getParameters()
@@ -167,7 +167,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
 
         // is same object type
         DefaultConfiguration configuration = (DefaultConfiguration) object;
-        if(this.id.equals(configuration.getId()) &&
+        if(this.configurationId.equals(configuration.getConfigurationId()) &&
            equalsOrNull(this.description, configuration.getDescription()) &&
            this.parameters.size() == configuration.getParameters().size() &&
            this.parameters.containsAll(configuration.getParameters()))
@@ -208,7 +208,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
     public int hashCode()
     {
         int hash = 1;
-        hash = hash * 31 + this.id.hashCode();
+        hash = hash * 31 + this.configurationId.hashCode();
         hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
         for(ConfigurationParameter configurationParameter:this.parameters)
         {
