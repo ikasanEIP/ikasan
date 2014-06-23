@@ -158,6 +158,10 @@ public class MongoClientConfiguration
         return authenticated;
     }
 
+    public Boolean getAuthenticated() {
+        return authenticated;
+    }
+
     public void setAuthenticated(Boolean authenticated) {
         this.authenticated = authenticated;
     }
