@@ -40,8 +40,6 @@
  */
 package org.ikasan.web.service;
 
-import java.util.List;
-
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.systemevent.service.SystemEventService;
 import org.ikasan.spec.configuration.Configuration;
@@ -83,7 +81,7 @@ public class ConfigurationManagementService
     
     /**
      * Constructor
-     * @param configurationDao
+     * @param configurationManagement
      * @param systemEventService
      * @param moduleService
      */
@@ -178,7 +176,7 @@ public class ConfigurationManagementService
      */
     public void insertConfiguration(Configuration configuration)
     {
-        this.systemEventService.logSystemEvent(configuration.getId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, getAuthentication().getName());
+        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_INSERT_SYSTEM_EVENT_ACTION, getAuthentication().getName());
         this.configurationManagement.saveConfiguration(configuration);
     }
     
@@ -188,7 +186,7 @@ public class ConfigurationManagementService
      */
     public void updateConfiguration(Configuration configuration)
     {
-        this.systemEventService.logSystemEvent(configuration.getId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
+        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_UPDATE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
         this.configurationManagement.saveConfiguration(configuration);
     }
     
@@ -198,7 +196,7 @@ public class ConfigurationManagementService
      */
     public void deleteConfiguration(Configuration configuration)
     {
-        this.systemEventService.logSystemEvent(configuration.getId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
+        this.systemEventService.logSystemEvent(configuration.getConfigurationId(), CONFIGURATION_DELETE_SYSTEM_EVENT_ACTION, getAuthentication().getName());
         this.configurationManagement.deleteConfiguration(configuration);
     }
 
@@ -244,16 +242,13 @@ public class ConfigurationManagementService
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
-        List<FlowElement<?>> flowElements = flow.getFlowElements();
-        for (FlowElement flowElement : flowElements)
+        FlowElement flowElement = flow.getFlowElement(flowElementName);
+        if(flowElement == null)
         {
-            if(flowElementName.equals(flowElement.getComponentName()))
-            {
-                return flowElement.getFlowComponent();
-            }
+            throw new RuntimeException("FlowComponent not found for module ["
+                    + moduleName + "] flow [" + flowName + "] flowElementName [" + flowElementName + "]");
         }
 
-        throw new RuntimeException("FlowComponent not found for module [" 
-            + moduleName + "] flow [" + flowName + "] flowElementName [" + flowElementName + "]");
+        return flowElement.getFlowComponent();
     }
 }
