@@ -84,7 +84,14 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             StartupControl flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
             if(StartupType.AUTOMATIC.equals(flowStartupControl.getStartupType()))
             {
-                flow.start();
+                try
+                {
+                    flow.start();
+                }
+                catch(RuntimeException e)
+                {
+                    logger.warn("Module [" + module.getName() + "] Flow ["+ flow.getName() + "] failed to start!", e);
+                }
             }
             else 
             {
