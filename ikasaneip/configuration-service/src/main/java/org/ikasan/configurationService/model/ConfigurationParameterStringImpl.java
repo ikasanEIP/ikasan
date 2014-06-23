@@ -43,23 +43,14 @@ package org.ikasan.configurationService.model;
 import java.io.Serializable;
 
 /**
- * Individual configuration parameter.
+ * String based configuration parameter.
  * 
  * @author Ikasan Development Team
  *
  */
 @SuppressWarnings("serial")
-public class ConfigurationParameterStringImpl implements ConfigurationParameter<String>, Serializable
+public class ConfigurationParameterStringImpl extends AbstractComponentParameter<String> implements Serializable
 {
-    /** configuration name */
-    protected String name;
-
-    /** configuration values */
-    protected String value;
-
-    /** configuration description */
-    protected String description;
-
     /**
      * Constructor
      * @param name
@@ -95,103 +86,4 @@ public class ConfigurationParameterStringImpl implements ConfigurationParameter<
     {
         // required by ORM
     }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getValue()
-    {
-        return value;
-    }
-
-    public void setValue(String value)
-    {
-        this.value = value;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object object)
-    {
-        // is same instance
-        if(this == object)
-        {
-            return true;
-        }
-
-        // is an instanceof
-        if(object == null || !(object instanceof ConfigurationParameterStringImpl))
-        {
-            return false;
-        }
-
-        // is same object type
-        ConfigurationParameterStringImpl configurationParameter = (ConfigurationParameterStringImpl) object;
-        if( this.name.equals(configurationParameter.getName()) && 
-            equalsOrNull(this.value, configurationParameter.getValue()) &&
-            equalsOrNull(this.description, configurationParameter.getDescription()) )
-        {
-            return true;
-        }
-
-        // nothing equal
-        return false;
-    }
-
-    /**
-     * Utility method for object comparison
-     * @param object1
-     * @param object2
-     * @return
-     */
-    private boolean equalsOrNull(Object object1, Object object2)
-    {
-        if(object1 != null && object1.equals(object2))
-        {
-            return true;
-        }
-        else if(object1 == null && object2 == null)
-        {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * HashCode default implementation
-     * 
-     * @return int hashcode
-     */
-    @Override
-    public int hashCode()
-    {
-        int hash = 1;
-        hash = hash * 31 + this.name.hashCode();
-        hash = hash * 31 + (this.value == null ? 0 : this.value.hashCode());
-        hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
-        return hash;
-    }
-    
 }

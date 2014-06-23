@@ -40,20 +40,29 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 
+import org.ikasan.configurationService.dao.ConfigurationHibernateImpl;
+import org.ikasan.configurationService.model.*;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 /**
- * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
+ * Test class for ConfiguredResourceConfigurationService based on
+ * the implementation of a ConfigurationService contract.
  * 
  * @author Ikasan Development Team
  */
@@ -66,12 +75,168 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class ConfiguredResourceConfigurationServiceTest
 {
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+
+    @Resource
+    ConfigurationHibernateImpl setupDao;
+
     @Resource
     ConfigurationService configurationService;
+
+    ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockedConfiguredResource");
 
     @Test
     public void test_instantiation() 
     {
         Assert.assertTrue("configurationService cannot be 'null'", configurationService != null);
     }
+
+    /**
+     * Test the setting of a static configuration on a configuredResource at runtime
+     * where no persisted configuration exists outside of that of the coded version.
+     * This is typically invoked on the start of a flow where the flow identifies
+     * all configuredResources and ensures the latest configuration is applied
+     * prior to starting the moving components.
+     */
+    @Test
+    public void test_configurationService_setting_of_a_static_configuration_no_configuration()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // once to try to locate a configuration based on this id
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceIdNotFound"));
+
+                // once to log the fact we did not find one
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+            }
+        });
+
+        configurationService.configure(configuredResource);
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test the setting of a static configuration on a configuredResource at runtime
+     * where a persisted configuration exists.
+     * This is typically invoked on the start of a flow where the flow identifies
+     * all configuredResources and ensures the latest configuration is applied
+     * prior to starting the moving components.
+     */
+    @Test
+    public void test_configurationService_setting_of_a_static_configuration_with_configuration()
+    {
+        final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
+        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
+
+        // add a string parameter
+        persistedConfiguration.getParameters().add( new ConfigurationParameterStringImpl("one", "1", "Number One") );
+
+        // save it
+        this.setupDao.save(persistedConfiguration);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // once to try to locate a configuration based on this id
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+
+                // once to try to locate a configuration based on this id
+                one(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+
+                // set the configuration on the resource
+                one(configuredResource).setConfiguration(runtimeConfiguration);
+            }
+        });
+
+        configurationService.configure(configuredResource);
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test the setting of a static configuration on a configuredResource at runtime
+     * where a persisted configuration exists.
+     * This is typically invoked on the start of a flow where the flow identifies
+     * all configuredResources and ensures the latest configuration is applied
+     * prior to starting the moving components.
+     */
+    @Test
+    public void test_configurationService_setting_of_a_static_configuration_with_configuration_null_resource_configuration()
+    {
+        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
+        ConfigurationParameter<String> stringParam = new ConfigurationParameterStringImpl("name", "value", "description");
+        persistedConfiguration.getParameters().add(stringParam);
+        this.setupDao.save(persistedConfiguration);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // once to try to locate a configuration based on this id
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+
+                // once to try to locate a configuration based on this id
+                one(configuredResource).getConfiguration();
+                will(returnValue(null));
+
+                // log warning
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));
+            }
+        });
+
+        configurationService.configure(configuredResource);
+        this.mockery.assertIsSatisfied();
+    }
+
+
+    /**
+     * Test the setting of a static configuration on a configuredResource at runtime
+     * where a persisted configuration exists.
+     * This is typically invoked on the start of a flow where the flow identifies
+     * all configuredResources and ensures the latest configuration is applied
+     * prior to starting the moving components.
+     */
+    @Test
+    @Ignore // temporary ignore as this fails on command line
+    public void test_configurationService_update_of_a_dynamic_configuration()
+    {
+        ConfigurationParameter<String> stringParam = new ConfigurationParameterStringImpl("one", "0", "description");
+        final Configuration<List<ConfigurationParameter>> persistedConfiguration = new DefaultConfiguration("configuredResourceId");
+        persistedConfiguration.getParameters().add(stringParam);
+        this.setupDao.save(persistedConfiguration);
+
+        final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
+        runtimeConfiguration.setOne("1");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // once to try to locate a configuration based on this id
+                one(configuredResource).getConfiguration();
+                will(returnValue(runtimeConfiguration));
+
+                // find by configuration id
+                one(configuredResource).getConfiguredResourceId();
+                will(returnValue("configuredResourceId"));            }
+        });
+
+        configurationService.update(configuredResource);
+        this.mockery.assertIsSatisfied();
+    }
+
 }

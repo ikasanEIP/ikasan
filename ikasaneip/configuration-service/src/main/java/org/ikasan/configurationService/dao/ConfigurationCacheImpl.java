@@ -43,7 +43,7 @@ package org.ikasan.configurationService.dao;
 import java.util.List;
 import java.util.HashMap;
 
-import org.ikasan.configurationService.model.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.Configuration;
 
 /**
@@ -60,7 +60,7 @@ public class ConfigurationCacheImpl
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
      */
-    public Configuration findById(String configurationId)
+    public Configuration findByConfigurationId(String configurationId)
     {
         return this.configurations.get(configurationId);
     }
@@ -70,7 +70,7 @@ public class ConfigurationCacheImpl
      */
     public void save(Configuration<List<ConfigurationParameter>> configuration)
     {
-        this.configurations.put(configuration.getId(), configuration);
+        this.configurations.put(configuration.getConfigurationId(), configuration);
     }
 
     /* (non-Javadoc)
@@ -78,6 +78,6 @@ public class ConfigurationCacheImpl
      */
     public void delete(Configuration<List<ConfigurationParameter>> configuration)
     {
-        this.configurations.remove(configuration.getId());
+        this.configurations.remove(configuration.getConfigurationId());
     }
 }

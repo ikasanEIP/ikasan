@@ -44,7 +44,7 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.configurationService.model.ConfigurationParameter;
+import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.Configuration;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
@@ -60,10 +60,10 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
      */
-    public Configuration findById(String configurationId)
+    public Configuration findByConfigurationId(String configurationId)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(Configuration.class);
-        criteria.add(Restrictions.eq("id", configurationId));
+        criteria.add(Restrictions.eq("configurationId", configurationId));
 
         List<Configuration> configuration = getHibernateTemplate().findByCriteria(criteria);
         if(configuration == null || configuration.size() == 0)

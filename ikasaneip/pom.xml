@@ -58,15 +58,15 @@
     <artifactId>ikasaneip</artifactId>
     <version>0.9.5-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Ikasan Projects Parent Project</name>
-    <description>Ikasan Projects Parent Project</description>
+    <name>Ikasan Parent Project</name>
+    <description>Ikasan Parent Project</description>
 
     <organization>
       <name>Ikasan</name>
       <url>http://www.ikasan.org</url>
     </organization>
     <inceptionYear>2007</inceptionYear>
- 
+
     <modules>
         <!--
             You have to keep the order correct here, dependent projects first, not alphabetical!
@@ -81,7 +81,7 @@
         <module>spec</module>
         <module>system-event</module>
         <module>module</module>
-        <module>bootstrap</module>
+        <module>bootstrap</module>  <!-- TODO - is this still required ? -->
         <module>scheduler</module>
         <module>recovery-manager</module>
         <module>flow</module>
@@ -105,12 +105,12 @@
         <!-- builders -->
         <module>builder</module>
 
+        <!-- version compatibility glue -->
+        <module>compatibility</module>
+
         <!-- top level services / applications -->
         <module>webconsole</module>
         <module>console</module>
-
-        <!-- version compatibility glue -->
-        <!--module>compatibility</module-->
 
         <!-- samples -->
         <module>sample</module>

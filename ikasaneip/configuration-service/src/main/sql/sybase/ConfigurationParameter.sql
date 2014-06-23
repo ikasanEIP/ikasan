@@ -52,11 +52,9 @@ END
 
 CREATE TABLE ConfigurationParameter
 (
+    Id                          NUMERIC IDENTITY,
     ConfigurationIdentifier     VARCHAR(256) NOT NULL,
-    PositionRef                 NUMERIC,
-    Name                        VARCHAR(128) NOT NULL,
-    Value                       VARCHAR(256) DEFAULT NULL NULL,
-    Description                 VARCHAR(256) DEFAULT NULL NULL
+    PositionRef                 NUMERIC NOT NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1

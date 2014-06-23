@@ -56,17 +56,17 @@ public interface ConfigurationDao<CONFIGURATION_PARAMS>
      * @param configurationId
      * @return Configuration
      */
-    public Configuration<CONFIGURATION_PARAMS> findById(String id);
+    public Configuration<CONFIGURATION_PARAMS> findByConfigurationId(String configurationId);
 
     /**
      * Create/update a configuration entry.
-     * @param Configuration
+     * @param configuration
      */
     public void save(Configuration<CONFIGURATION_PARAMS> configuration);
 
     /**
      * Delete a configuration entry.
-     * @param Configuration
+     * @param configuration
      */
     public void delete(Configuration<CONFIGURATION_PARAMS> configuration);
 }
