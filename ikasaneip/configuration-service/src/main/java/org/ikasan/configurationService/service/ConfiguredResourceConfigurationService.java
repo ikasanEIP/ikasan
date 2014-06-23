@@ -41,7 +41,10 @@
 package org.ikasan.configurationService.service;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.converters.IntegerConverter;
+import org.apache.commons.beanutils.converters.LongConverter;
 import org.apache.log4j.Logger;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
@@ -111,6 +114,10 @@ public class ConfiguredResourceConfigurationService
         {
             throw new IllegalArgumentException("dynamicConfigurationDao cannot be 'null'");
         }
+
+        // override some default converters to ensure null is default assignments
+        ConvertUtils.register(new IntegerConverter(null), Integer.class);
+        ConvertUtils.register(new LongConverter(null), Long.class);
     }
 
     /**
