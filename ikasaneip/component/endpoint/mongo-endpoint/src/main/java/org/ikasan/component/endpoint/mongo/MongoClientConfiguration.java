@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.mongo.broker;
+package org.ikasan.component.endpoint.mongo;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
@@ -78,13 +78,13 @@ public class MongoClientConfiguration
     protected String databaseName;
 
     /** collection reference and name */
-    protected Map<String,String> collections = new HashMap<String,String>();
+    protected List<String> collectionNames = new ArrayList<String>();
 
     /** represents preferred replica set members to which a query or command can be sent */
-    protected ReadPreference readPreference;
+    protected ReadPreference readPreference = ReadPreference.primary();
 
      /** Controls the acknowledgment of write operations */
-    protected WriteConcern writeConcern;
+    protected WriteConcern writeConcern = WriteConcern.ACKNOWLEDGED;
 
     /** Sets the acceptable latency difference - overrides default driver options if specified */
     protected Integer acceptableLatencyDiff;
@@ -186,12 +186,12 @@ public class MongoClientConfiguration
         this.databaseName = databaseName;
     }
 
-    public Map<String, String> getCollections() {
-        return collections;
+    public List<String> getCollectionNames() {
+        return collectionNames;
     }
 
-    public void setCollections(Map<String, String> collections) {
-        this.collections = collections;
+    public void setCollectionNames(List<String> collectionNames) {
+        this.collectionNames = collectionNames;
     }
 
     public ReadPreference getReadPreference() {
