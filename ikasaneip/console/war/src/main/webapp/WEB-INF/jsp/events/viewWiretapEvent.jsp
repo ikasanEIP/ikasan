@@ -161,7 +161,7 @@
                             <fmt:message key="wiretap_event_payload_id" />
                         </td>
                         <td class="searchCell">
-                            <c:out value="${wiretapEvent.relatedIdentifier}" />
+                            <c:out value="${wiretapEvent.relatedEventId}" />
                         </td>
                     </tr>
                     <tr>
