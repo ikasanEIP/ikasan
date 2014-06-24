@@ -40,6 +40,7 @@
  */
 package org.ikasan.compatibility.component.endpoint;
 
+import junit.framework.Assert;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
@@ -119,7 +120,7 @@ public class ManagedEventJmsIdentifierServiceTest
      * Test successful invocation
      */
     @Test
-    public void test_successful_getEventIdentifier() throws JMSException
+    public void test_successful_getEventIdentifier_i8() throws JMSException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -141,7 +142,7 @@ public class ManagedEventJmsIdentifierServiceTest
      * Test successful invocation
      */
     @Test
-    public void test_successful_getEventIdentifier_returns_null() throws JMSException
+    public void test_successful_getEventIdentifier_i7() throws JMSException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -149,6 +150,8 @@ public class ManagedEventJmsIdentifierServiceTest
             {
                 exactly(1).of(mapMessage).getString("EVENT_ID");
                 will(returnValue(null));
+                exactly(1).of(mapMessage).getString("envelope_id");
+                will(returnValue("envelopeId"));
             }
         });
 
@@ -156,6 +159,33 @@ public class ManagedEventJmsIdentifierServiceTest
                 new ManagedEventJmsIdentifierService();
         identifierService.getEventIdentifier(mapMessage);
 
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful invocation
+     */
+    @Test
+    public void test_successful_getEventIdentifier_is_null() throws JMSException
+    {
+        // set test expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mapMessage).getString("EVENT_ID");
+                will(returnValue(null));
+                exactly(1).of(mapMessage).getString("envelope_id");
+                will(returnValue(null));
+                exactly(1).of(mapMessage).getJMSMessageID();
+                will(returnValue("jmsMessageId"));
+            }
+        });
+
+        ManagedEventIdentifierService<String,MapMessage> identifierService =
+                new ManagedEventJmsIdentifierService();
+        String lastResort = identifierService.getEventIdentifier(mapMessage);
+
+        Assert.assertTrue("jmsMessageId".equals(lastResort));
         mockery.assertIsSatisfied();
     }
 

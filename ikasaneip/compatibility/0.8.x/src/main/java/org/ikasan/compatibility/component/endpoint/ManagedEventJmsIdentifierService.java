@@ -54,7 +54,10 @@ import javax.jms.MapMessage;
 public class ManagedEventJmsIdentifierService implements ManagedEventIdentifierService<String, MapMessage>
 {
     /** ikasan 0.8.x event identifer */
-    static String EVENT_ID = String.valueOf("EVENT_ID");
+    static String I8_EVENT_ID = String.valueOf("EVENT_ID");
+
+    /** ikasan 0.8.x event identifer */
+    static String I7_ENVELOPE_ID = String.valueOf("envelope_id");
 
     /** logger instance */
     private static Logger logger = Logger.getLogger(ManagedEventJmsIdentifierService.class);
@@ -64,7 +67,7 @@ public class ManagedEventJmsIdentifierService implements ManagedEventIdentifierS
     {
         try
         {
-            mapMessage.setString(EVENT_ID, identifier);
+            mapMessage.setString(I8_EVENT_ID, identifier);
         }
         catch(JMSException e)
         {
@@ -77,7 +80,18 @@ public class ManagedEventJmsIdentifierService implements ManagedEventIdentifierS
     {
         try
         {
-            return mapMessage.getString(EVENT_ID);
+            String eventId = mapMessage.getString(I8_EVENT_ID);
+            if(eventId == null)
+            {
+                eventId = mapMessage.getString(I7_ENVELOPE_ID);
+                if(eventId == null)
+                {
+                    // last resort is the JMS identifier
+                    eventId = mapMessage.getJMSMessageID();
+                }
+            }
+
+            return eventId;
         }
         catch(JMSException e)
         {
