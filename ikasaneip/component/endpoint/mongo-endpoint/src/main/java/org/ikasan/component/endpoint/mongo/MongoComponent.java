@@ -107,16 +107,16 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         mongoDatabase = mongoClient.getDB(configuration.getDatabaseName());
 
         collections = new HashMap<String,DBCollection>();
-        for(String collectionName:configuration.getCollectionNames())
+        for(Map.Entry<String,String> entry : configuration.getCollectionNames().entrySet())
         {
-            DBCollection dbCollection = mongoDatabase.getCollection(collectionName);
+            DBCollection dbCollection = mongoDatabase.getCollection(entry.getValue());
             if(dbCollection == null)
             {
-                throw new RuntimeException("DBCollection[" + collectionName
+                throw new RuntimeException("DBCollection[" + entry.getValue()
                         + "] not found in database[" + configuration.getDatabaseName() + "]");
             }
 
-            collections.put(collectionName, dbCollection);
+            collections.put(entry.getKey(), dbCollection);
         }
     }
 
