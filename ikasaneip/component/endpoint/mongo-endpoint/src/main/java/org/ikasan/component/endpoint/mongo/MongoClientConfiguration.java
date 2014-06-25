@@ -77,8 +77,8 @@ public class MongoClientConfiguration
     /** database name */
     protected String databaseName;
 
-    /** collection reference and name */
-    protected List<String> collectionNames = new ArrayList<String>();
+    /** collection key name and actual name */
+    protected Map<String,String> collectionNames = new HashMap<String,String>();
 
     /** represents preferred replica set members to which a query or command can be sent */
     protected ReadPreference readPreference = ReadPreference.primary();
@@ -190,11 +190,11 @@ public class MongoClientConfiguration
         this.databaseName = databaseName;
     }
 
-    public List<String> getCollectionNames() {
+    public Map<String,String> getCollectionNames() {
         return collectionNames;
     }
 
-    public void setCollectionNames(List<String> collectionNames) {
+    public void setCollectionNames(Map<String,String> collectionNames) {
         this.collectionNames = collectionNames;
     }
 
@@ -424,5 +424,39 @@ public class MongoClientConfiguration
         {
             throw new RuntimeException("DatabaseName cannot be 'null'");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "MongoClientConfiguration{" +
+                "connectionUrls=" + connectionUrls +
+                ", authenticated=" + authenticated +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", databaseName='" + databaseName + '\'' +
+                ", collectionNames=" + collectionNames +
+                ", readPreference=" + readPreference +
+                ", writeConcern=" + writeConcern +
+                ", acceptableLatencyDiff=" + acceptableLatencyDiff +
+                ", alwaysUseMBeans=" + alwaysUseMBeans +
+                ", connectionsPerHost=" + connectionsPerHost +
+                ", connectionTimeout=" + connectionTimeout +
+                ", cursorFinalizerEnabled=" + cursorFinalizerEnabled +
+                ", description='" + description + '\'' +
+                ", heartbeatConnectRetryFrequency=" + heartbeatConnectRetryFrequency +
+                ", heartbeatConnectTimeout=" + heartbeatConnectTimeout +
+                ", heartbeatFrequency=" + heartbeatFrequency +
+                ", heartbeatSocketTimeout=" + heartbeatSocketTimeout +
+                ", legacyDefaults=" + legacyDefaults +
+                ", heartbeatThreadCount=" + heartbeatThreadCount +
+                ", maxConnectionIdleTime=" + maxConnectionIdleTime +
+                ", maxConnectionLifeTime=" + maxConnectionLifeTime +
+                ", maxWaitTime=" + maxWaitTime +
+                ", minConnectionsPerHost=" + minConnectionsPerHost +
+                ", requiredReplicaSetName='" + requiredReplicaSetName + '\'' +
+                ", socketKeepAlive=" + socketKeepAlive +
+                ", socketTimeout=" + socketTimeout +
+                ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier +
+                '}';
     }
 }
