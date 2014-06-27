@@ -100,33 +100,66 @@
                     <!-- FIXME security:authorize ifAllGranted="ADMIN_${moduleName}"-->
                          <c:choose>
                             <c:when test="${flow.state.equalsIgnoreCase('running')}">
-                                <c:url var="controlFlowLink" value="flow.htm">
+                                <c:url var="pauseControlFlowLink" value="flow.htm">
+                                    <c:param name="moduleName" value="${moduleName}"/>
+                                    <c:param name="flowName" value="${flow.name}"/>
+                                    <c:param name="action" value="pause"/>
+                                </c:url>
+                                <c:url var="stopControlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
                                     <c:param name="flowName" value="${flow.name}"/>
                                     <c:param name="action" value="stop"/>
                                 </c:url>
-                                <form:form action="${controlFlowLink}" method="post">
-                                    <input type="submit" value="Stop" class="controlButton"/>
+                                <form:form method="post">
+                                    <input type="submit" disabled value="Start" class="controlButton"/>
+                                    <input type="submit" formaction="${pauseControlFlowLink}" value="Pause" class="controlButton"/>
+                                    <input type="submit" formaction="${stopControlFlowLink}" value="Stop" class="controlButton"/>
                                 </form:form>
                             </c:when>
                             <c:when test="${flow.state.equalsIgnoreCase('recovering')}">
-                                <c:url var="controlFlowLink" value="flow.htm">
+                                <c:url var="pauseControlFlowLink" value="flow.htm">
+                                    <c:param name="moduleName" value="${moduleName}"/>
+                                    <c:param name="flowName" value="${flow.name}"/>
+                                    <c:param name="action" value="pause"/>
+                                </c:url>
+                                <c:url var="stopControlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
                                     <c:param name="flowName" value="${flow.name}"/>
                                     <c:param name="action" value="stop"/>
                                 </c:url>
-                                <form:form action="${controlFlowLink}" method="post">
-                                    <input type="submit" value="Stop" class="controlButton"/>
+                                <form:form method="post">
+                                    <input type="submit" disabled value="Start" class="controlButton"/>
+                                    <input type="submit" formaction="${pauseControlFlowLink}" value="Pause" class="controlButton"/>
+                                    <input type="submit" formaction="${stopControlFlowLink}" value="Stop" class="controlButton"/>
                                 </form:form>
                             </c:when>
+                             <c:when test="${flow.state.equalsIgnoreCase('paused')}">
+                                 <c:url var="resumeControlFlowLink" value="flow.htm">
+                                     <c:param name="moduleName" value="${moduleName}"/>
+                                     <c:param name="flowName" value="${flow.name}"/>
+                                     <c:param name="action" value="resume"/>
+                                 </c:url>
+                                 <c:url var="stopControlFlowLink" value="flow.htm">
+                                     <c:param name="moduleName" value="${moduleName}"/>
+                                     <c:param name="flowName" value="${flow.name}"/>
+                                     <c:param name="action" value="stop"/>
+                                 </c:url>
+                                 <form:form method="post">
+                                     <input type="submit" disabled value="Start" class="controlButton"/>
+                                     <input type="submit" formaction="${resumeControlFlowLink}" value="Resume" class="controlButton"/>
+                                     <input type="submit" formaction="${stopControlFlowLink}" value="Stop" class="controlButton"/>
+                                 </form:form>
+                             </c:when>
                             <c:otherwise>
-                                <c:url var="controlFlowLink" value="flow.htm">
+                                <c:url var="startControlFlowLink" value="flow.htm">
                                     <c:param name="moduleName" value="${moduleName}"/>
                                     <c:param name="flowName" value="${flow.name}"/>
                                     <c:param name="action" value="start"/>
                                 </c:url>
-                                <form:form action="${controlFlowLink}" method="post">
-                                    <input type="submit" value="Start" class="controlButton"/>
+                                <form:form method="post">
+                                    <input type="submit" formaction="${startControlFlowLink}" value="Start" class="controlButton"/>
+                                    <input type="submit" disabled value="Pause" class="controlButton"/>
+                                    <input type="submit" disabled value="Stop" class="controlButton"/>
                                 </form:form>
                             </c:otherwise>
                          </c:choose>

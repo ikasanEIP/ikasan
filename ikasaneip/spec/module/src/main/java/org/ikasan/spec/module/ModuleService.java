@@ -79,12 +79,30 @@ public interface ModuleService
 
     /**
      * Attempts to start a <code>Flow</code>
-     * 
+     *
      * @param moduleName
-     * @param flowName 
+     * @param flowName
      * @param actor
      */
     public void startFlow(String moduleName, String flowName, String actor);
+
+    /**
+     * Attempts to pause a <code>Flow</code>
+     *
+     * @param moduleName
+     * @param flowName
+     * @param actor
+     */
+    public void pauseFlow(String moduleName, String flowName, String actor);
+
+    /**
+     * Attempts to resume a <code>Flow</code>
+     *
+     * @param moduleName
+     * @param flowName
+     * @param actor
+     */
+    public void resumeFlow(String moduleName, String flowName, String actor);
 
     /**
      * Set the startup type for the given module and flow
