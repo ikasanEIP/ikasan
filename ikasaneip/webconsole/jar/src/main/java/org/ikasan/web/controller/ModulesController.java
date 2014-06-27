@@ -215,6 +215,14 @@ public class ModulesController
         {
             this.moduleService.startFlow(moduleName, flowName, currentUser);
         }
+        else if (action.equalsIgnoreCase("pause"))
+        {
+            this.moduleService.pauseFlow(moduleName, flowName, currentUser);
+        }
+        else if (action.equalsIgnoreCase("resume"))
+        {
+            this.moduleService.resumeFlow(moduleName, flowName, currentUser);
+        }
         else if (action.equalsIgnoreCase("stop"))
         {
             this.moduleService.stopFlow(moduleName, flowName, currentUser);
