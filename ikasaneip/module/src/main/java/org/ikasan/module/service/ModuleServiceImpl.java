@@ -71,6 +71,14 @@ public class ModuleServiceImpl implements ModuleService
      */
     public static final String INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION = "Flow start requested";
     /**
+     * constant for logging an incomming initiator pause request
+     */
+    public static final String INITIATOR_PAUSE_REQUEST_SYSTEM_EVENT_ACTION = "Flow pause requested";
+    /**
+     * constant for logging an incomming initiator resume request
+     */
+    public static final String INITIATOR_RESUME_REQUEST_SYSTEM_EVENT_ACTION = "Flow resume requested";
+    /**
      * constant for logging an incomming initiator stop request
      */
 	public static final String INITIATOR_STOP_REQUEST_SYSTEM_EVENT_ACTION = "Flow stop requested";
@@ -158,7 +166,47 @@ public class ModuleServiceImpl implements ModuleService
             flow.stop();
         }
     }
-    
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void pauseFlow(String moduleName, String flowName, String actor)
+    {
+        //log the request
+        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_PAUSE_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+        this.logger.info("pauseFlow : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+        Flow flow = this.resolveFlow(moduleName, flowName);
+        if(flow == null)
+        {
+            // TODO - throw exception ?
+            logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+        }
+        else
+        {
+            flow.pause();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void resumeFlow(String moduleName, String flowName, String actor)
+    {
+        //log the request
+        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_RESUME_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+        this.logger.info("resumeFlow : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+        Flow flow = this.resolveFlow(moduleName, flowName);
+        if(flow == null)
+        {
+            // TODO - throw exception ?
+            logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+        }
+        else
+        {
+            flow.resume();
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.framework.module.service.ModuleService#startInitiator(java.lang.String, java.lang.String, java.lang.String)
      */

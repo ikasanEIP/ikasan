@@ -261,7 +261,7 @@ form.fancydataform fieldset li {
 }
 
 .initiatorState-paused {
-    color: blue;
+    color: lightseagreen;
 }
 .initiatorState-stoppedInError {
     color: red;
