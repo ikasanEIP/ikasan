@@ -40,13 +40,13 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.List;
-
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
+
+import java.util.List;
 
 /**
  * Default implementation of a Flow
@@ -60,5 +60,10 @@ public interface FlowConfiguration
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
-    public void configureFlowElement(FlowElement<? extends ConfiguredResource> flowElement);
+
+    /**
+     * Provision for the configuration of anything passed as a configuredResource
+     * @param configuredResource
+     */
+    public void configure(ConfiguredResource configuredResource);
 }

@@ -38,57 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
+package org.ikasan.monitor;
 
 import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.Notifier;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
+import javax.annotation.Resource;
 
 /**
- * Sample monitor implementation for testing.
- * @author Ikasan Development Team
+ * This test class supports the <code>DefaultMonitorImpl</code> class.
  * 
+ * @author Ikasan Development Team
  */
-public class SampleMonitor implements Monitor
+@RunWith(SpringJUnit4ClassRunner.class)
+//specifies the Spring configuration to load for this test fixture
+@ContextConfiguration(locations={
+        "/monitor-service-conf.xml",
+        "/monitor-factory.xml"
+})
+
+public class MonitorFactoryImplTest
 {
+    @Resource
+    Monitor monitor;
 
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.monitor.Monitor#notifyMonitor(java.lang.Object)
+    /**
+     * Test successful invoke.
      */
-    public void invoke(Object arg0)
+    @Test
+    public void test_successful_autowiring()
     {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void setName(String monitorName) {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public void setEnvironment(String environmentName) {
-
-    }
-
-    @Override
-    public String getEnvironment() {
-        return null;
-    }
-
-    @Override
-    public List<Notifier> getNotifiers() {
-        return null;
-    }
-
-    @Override
-    public void setNotifiers(List list) {
-
+        // nothing to do as the auto-wiring either works or fails
     }
 }

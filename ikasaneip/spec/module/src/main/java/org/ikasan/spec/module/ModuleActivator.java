@@ -40,8 +40,6 @@
  */
 package org.ikasan.spec.module;
 
-import org.ikasan.spec.module.Module;
-
 /**
  * Provide a contract allowing for different implementations of a module's 
  * activation and deactivation at runtime.

@@ -259,7 +259,7 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -386,7 +386,7 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -600,7 +600,7 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(1).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 will(throwException(exception));
             }
         });
@@ -662,7 +662,7 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 
                 // get the the flow element managed resource
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -755,7 +755,7 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 
                 // get the the flow element managed resource
                 one(flowConfiguration).getManagedResourceFlowElements();
@@ -844,7 +844,7 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -979,7 +979,7 @@ public class VisitingInvokerFlowTest
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -1396,7 +1396,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
-                exactly(2).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
 
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -1443,7 +1443,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
                 will(throwException(exception));
                 
                 // add failed flow element name to the context
@@ -1495,7 +1495,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
 
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
@@ -1547,7 +1547,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
 
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
@@ -1600,7 +1600,7 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(configuredResourceFlowElement.getFlowComponent());
 
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
@@ -1832,7 +1832,6 @@ public class VisitingInvokerFlowTest
      * Set the getState expectations based on the incoming parameters.
      * @param isRecovering
      * @param isRunning
-     * @param isUnrecoverable
      */
     private void setGetStateExpectations(final boolean isRecovering, final boolean isRunning)
     {
@@ -1859,7 +1858,7 @@ public class VisitingInvokerFlowTest
     
     /**
      * Convenience method for setting monitor expectations.
-     * @param String state
+     * @param state
      */
     private void setMonitorExpectations(final String state)
     {
@@ -1868,7 +1867,7 @@ public class VisitingInvokerFlowTest
         {
             {
                 // set expectation string on monitor notification
-                exactly(1).of(monitor).notifyMonitor(state);
+                exactly(1).of(monitor).invoke(state);
             }
         });
     }
