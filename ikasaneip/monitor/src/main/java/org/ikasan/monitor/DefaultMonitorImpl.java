@@ -164,16 +164,13 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     protected boolean hasStateChanged(String stateKey, T status)
     {
         T lastState = states.get(stateKey);
-        if(lastState == null)
+        if(lastState == null || !(lastState.equals(status)) )
         {
             states.put(stateKey, status);
-        }
-        else if(lastState.equals(status))
-        {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override

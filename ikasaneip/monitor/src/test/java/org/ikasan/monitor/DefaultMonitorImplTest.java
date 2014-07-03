@@ -189,7 +189,7 @@ public class DefaultMonitorImplTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(executorService).execute(with(any(Runnable.class)));
+                exactly(3).of(executorService).execute(with(any(Runnable.class)));
             }
         });
 
@@ -204,6 +204,10 @@ public class DefaultMonitorImplTest
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 
+        monitor.invoke("state is stopped");
+        monitor.invoke("state is stopped");
+        monitor.invoke("state is started");
+        monitor.invoke("state is started");
         monitor.invoke("state is stopped");
         monitor.invoke("state is stopped");
         mockery.assertIsSatisfied();
