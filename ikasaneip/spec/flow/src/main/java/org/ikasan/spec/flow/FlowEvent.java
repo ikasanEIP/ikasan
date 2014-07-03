@@ -74,7 +74,7 @@ public interface FlowEvent<IDENTIFIER,PAYLOAD>
 	
 	/**
 	 * Set the payload of this flow event.
-	 * @param PAYLOAD - payload
+	 * @param payload - payload
 	 */
 	public void setPayload(PAYLOAD payload);
 }

@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.monitor;
 
+import java.util.List;
+
 /**
  * Monitor contract for the subject notification to the monitor
  * 
@@ -47,5 +49,45 @@ package org.ikasan.spec.monitor;
  */
 public interface Monitor<NOTIFICATION>
 {
-    public void notifyMonitor(NOTIFICATION notification);
+    /**
+     * Invoke the monitor with the given notification
+     * @param notification
+     */
+    public void invoke(NOTIFICATION notification);
+
+    /**
+     * Set the name of this monitor
+     * @param monitorName
+     */
+    public void setName(String monitorName);
+
+    /**
+     * Get the name of this monitor
+     * @return
+     */
+    public String getName();
+
+    /**
+     * Set the runtime environment name this monitor is associated with
+     * @param environmentName
+     */
+    public void setEnvironment(String environmentName);
+
+    /**
+     * Get the runtime environment name this monitor is associated with
+     * @return
+     */
+    public String getEnvironment();
+
+    /**
+     * Set the notifiers to which the monitor brokers notifications
+     * @param notifiers
+     */
+    public void setNotifiers(List<Notifier> notifiers);
+
+    /**
+     * Get the notifiers registered with this monitor
+     * @return
+     */
+    public List<Notifier> getNotifiers();
 }

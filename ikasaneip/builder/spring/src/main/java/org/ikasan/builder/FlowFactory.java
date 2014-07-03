@@ -54,9 +54,8 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.module.Module;
 import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.MonitorListener;
+import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -211,15 +210,20 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
         flow.setFlowListener(flowEventListener);
 
-        if(monitor != null && flow instanceof MonitorListener)
+        if(monitor != null && flow instanceof MonitorSubject)
         {
-            ((MonitorListener)flow).setMonitor(monitor);
+            if(monitor.getName() == null)
+            {
+                monitor.setName(moduleName + "-" + name + "-monitor");
+            }
+
+            ((MonitorSubject)flow).setMonitor(monitor);
         }
         
         logger.info("Instantiated flow - name[" + name + "] module[" + moduleName 
             + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName() 
             + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none") 
-            + "]; Monitor[" + ((monitor != null && flow instanceof MonitorListener) ? monitor.getClass().getSimpleName() : "none") 
+            + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
             + "]");
         
         return flow;
