@@ -41,11 +41,28 @@
 package org.ikasan.spec.monitor;
 
 /**
- * Monitor contract for subjects being monitored
+ * Monitor contract for the subject notification to the monitor
  * 
  * @author Ikasan Development Team
  */
-public interface MonitorListener<NOTIFICATION>
+public interface Notifier<NOTIFICATION>
 {
-    public void setMonitor(Monitor<NOTIFICATION> monitor);
+    /**
+     * Invocation of the notifier for the given notification
+     * @param notification
+     */
+    public void invoke(String environment, String name, NOTIFICATION notification);
+
+    /**
+     * Sets whether the notifier is only interested in state changes which are different
+     * from the previous reported state or all state change updates.
+     * Default is true - only notify state changes
+     */
+    public void setNotifyStateChangesOnly(boolean notifyStateChangesOnly);
+
+    /**
+     * Details whether the notifier should only be informed of changes to state
+     * rather than repeated updates of the same state.
+     */
+    public boolean isNotifyStateChangesOnly();
 }

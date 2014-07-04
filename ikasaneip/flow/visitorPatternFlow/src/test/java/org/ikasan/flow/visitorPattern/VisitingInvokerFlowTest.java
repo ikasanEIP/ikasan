@@ -60,6 +60,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -239,7 +240,9 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
-        
+
+        final List<Notifier> notifiers = new ArrayList<Notifier>();
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // expectations
@@ -252,14 +255,18 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
+                // load monitor configuration and notifiers
+                exactly(1).of(monitor).getNotifiers();
+                will(returnValue(notifiers));
+
                 // load configuration
-                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -366,7 +373,9 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement1);
         managedResourceFlowElements.add(managedResourceFlowElement2);
         managedResourceFlowElements.add(managedResourceFlowElement3);
-        
+
+        final List<Notifier> notifiers = new ArrayList<Notifier>();
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // expectations
@@ -379,14 +388,18 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
+                // load monitor configuration and notifiers
+                exactly(1).of(monitor).getNotifiers();
+                will(returnValue(notifiers));
+
                 // load configuration
-                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -569,7 +582,9 @@ public class VisitingInvokerFlowTest
             flowConfiguration, flowElementInvoker, recoveryManager);
 
         final RuntimeException exception = new RuntimeException("test configuration failing");
-        
+
+        final List<Notifier> notifiers = new ArrayList<Notifier>();
+
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
 
         // expectations
@@ -593,14 +608,18 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement));
 
+                // load monitor configuration and notifiers
+                exactly(1).of(monitor).getNotifiers();
+                will(returnValue(notifiers));
+
                 // load configuration
-                exactly(1).of(configuredResourceFlowElement).getFlowComponent();
+                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
                 exactly(1).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(1).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(1).of(flowConfiguration).configure(configuredResource);
                 will(throwException(exception));
             }
         });
@@ -637,7 +656,9 @@ public class VisitingInvokerFlowTest
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
-        
+
+        final List<Notifier> notifiers = new ArrayList<Notifier>();
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // expectations
@@ -649,6 +670,10 @@ public class VisitingInvokerFlowTest
                 // pass any managed resources to the recovery manager
                 one(recoveryManager).setManagedResources(with(any(List.class)));
 
+                // load monitor configuration and notifiers
+                exactly(1).of(monitor).getNotifiers();
+                will(returnValue(notifiers));
+
                 // get the two flow element configured resources
                 one(flowConfiguration).getConfiguredResourceFlowElements();
                 will(returnValue(configuredResourceFlowElements));
@@ -656,13 +681,13 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
-                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the the flow element managed resource
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -755,7 +780,7 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
                 // load configuration
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the the flow element managed resource
                 one(flowConfiguration).getManagedResourceFlowElements();
@@ -819,7 +844,9 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement3);
 
         final RuntimeException exception = new RuntimeException("test consumer failing to start");
-        
+
+        final List<Notifier> notifiers = new ArrayList<Notifier>();
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // expectations
@@ -837,14 +864,18 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
+                // load monitor configuration and notifiers
+                exactly(1).of(monitor).getNotifiers();
+                will(returnValue(notifiers));
+
                 // load configuration
-                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -954,7 +985,9 @@ public class VisitingInvokerFlowTest
         managedResourceFlowElements.add(managedResourceFlowElement3);
 
         final RuntimeException exception = new RuntimeException("test consumer failing to start");
-        
+
+        final List<Notifier> notifiers = new ArrayList<Notifier>();
+
         final Sequence reverseOrder = mockery.sequence("flowElements in reverse order");
 
         // expectations
@@ -972,14 +1005,18 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
+                // load monitor configuration and notifiers
+                exactly(1).of(monitor).getNotifiers();
+                will(returnValue(notifiers));
+
                 // load configuration
-                exactly(2).of(configuredResourceFlowElement).getFlowComponent();
+                exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
                 exactly(2).of(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
                 
-                exactly(2).of(flowConfiguration).configureFlowElement(configuredResourceFlowElement);
+                exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the three flow element managed resources
                 exactly(1).of(flowConfiguration).getManagedResourceFlowElements();
@@ -1396,7 +1433,11 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
-                exactly(2).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+
+                exactly(2).of(flowConfiguration).configure(configuredResource);
 
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -1443,7 +1484,11 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+
+                exactly(1).of(flowConfiguration).configure(configuredResource);
                 will(throwException(exception));
                 
                 // add failed flow element name to the context
@@ -1495,7 +1540,11 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+
+                exactly(1).of(flowConfiguration).configure(configuredResource);
 
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
@@ -1547,7 +1596,11 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+
+                exactly(1).of(flowConfiguration).configure(configuredResource);
 
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
@@ -1600,7 +1653,11 @@ public class VisitingInvokerFlowTest
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
                 will(returnIterator(dynamicConfiguredResourceFlowElement));
-                exactly(1).of(flowConfiguration).configureFlowElement(dynamicConfiguredResourceFlowElement);
+
+                exactly(1).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(configuredResource));
+
+                exactly(1).of(flowConfiguration).configure(configuredResource);
 
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
@@ -1832,7 +1889,6 @@ public class VisitingInvokerFlowTest
      * Set the getState expectations based on the incoming parameters.
      * @param isRecovering
      * @param isRunning
-     * @param isUnrecoverable
      */
     private void setGetStateExpectations(final boolean isRecovering, final boolean isRunning)
     {
@@ -1859,7 +1915,7 @@ public class VisitingInvokerFlowTest
     
     /**
      * Convenience method for setting monitor expectations.
-     * @param String state
+     * @param state
      */
     private void setMonitorExpectations(final String state)
     {
@@ -1868,7 +1924,7 @@ public class VisitingInvokerFlowTest
         {
             {
                 // set expectation string on monitor notification
-                exactly(1).of(monitor).notifyMonitor(state);
+                exactly(1).of(monitor).invoke(state);
             }
         });
     }

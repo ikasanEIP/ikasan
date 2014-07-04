@@ -93,6 +93,7 @@
         <module>test</module>
 
         <!-- add ons -->
+        <module>monitor</module>
         <module>filter</module>
         <module>consumer</module>
         <module>marshaller</module>

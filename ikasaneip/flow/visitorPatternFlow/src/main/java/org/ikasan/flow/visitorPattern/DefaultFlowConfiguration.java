@@ -40,15 +40,15 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Default implementation of a Flow
@@ -62,15 +62,15 @@ public class DefaultFlowConfiguration implements FlowConfiguration
     private FlowElement<?> leadFlowElement;
 
     /** */
-    private List<FlowElement<ManagedResource>> managedReourceFlowElements = 
+    private List<FlowElement<ManagedResource>> managedReourceFlowElements =
         new ArrayList<FlowElement<ManagedResource>>();
     
     /** */
-    private List<FlowElement<ConfiguredResource>> configuredReourceFlowElements = 
+    private List<FlowElement<ConfiguredResource>> configuredReourceFlowElements =
         new ArrayList<FlowElement<ConfiguredResource>>();
     
     /** */
-    private List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredReourceFlowElements = 
+    private List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredReourceFlowElements =
         new ArrayList<FlowElement<DynamicConfiguredResource>>();
 
     /** list of components */
@@ -136,11 +136,11 @@ public class DefaultFlowConfiguration implements FlowConfiguration
         return this.managedReourceFlowElements;
     }
     
-    public void configureFlowElement(FlowElement<? extends ConfiguredResource> flowElement)
+    public void configure(ConfiguredResource configuredResource)
     {
-        this.configurationService.configure(flowElement.getFlowComponent());
+        this.configurationService.configure(configuredResource);
     }
-    
+
     public List<FlowElement<?>> getFlowElements()
     {
         List<FlowElement<?>> result = new ArrayList<FlowElement<?>>();

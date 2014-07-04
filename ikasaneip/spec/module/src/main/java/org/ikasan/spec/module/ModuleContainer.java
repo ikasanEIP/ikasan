@@ -42,38 +42,35 @@ package org.ikasan.spec.module;
 
 import java.util.List;
 
-import org.ikasan.spec.module.Module;
+
+ /**
+  * Container class for holding references to all available <code>Module</code>s
+  *
+  * @author Ikasan Development Team
+  */
+ public interface ModuleContainer
+ {
+
+     /**
+      * Returns the module named by moduleName or null if it does not exist
+      *
+      * @param moduleName - The name of the module to get
+      * @return Module or null
+      */
+     public Module getModule(String moduleName);
+
+     /**
+      * Exposes all the loaded <code>Module</code>s
+      *
+      * @return List of all loaded <code>Module</code>s
+      */
+     public List<Module> getModules();
 
 
-
-/**
- * Container class for holding references to all available <code>Module</code>s
- * 
- * @author Ikasan Development Team
- */
-public interface ModuleContainer
-{
-    
-    /**
-     * Returns the module named by moduleName or null if it does not exist
-     * 
-     * @param moduleName - The name of the module to get
-     * @return Module or null
-     */
-    public Module getModule(String moduleName);
-    
-    /**
-     * Exposes all the loaded <code>Module</code>s
-     * 
-     * @return List of all loaded <code>Module</code>s 
-     */
-    public List<Module> getModules();
-
-    
-    /**
-     * Adds a new <code>Module</code> to the container
-     * 
-     * @param module a new module
-     */
-    public void add(Module module);
-}
+     /**
+      * Adds a new <code>Module</code> to the container
+      *
+      * @param module a new module
+      */
+     public void add(Module module);
+ }
