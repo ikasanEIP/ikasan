@@ -38,57 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.builder;
-
-import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.Notifier;
-
-import java.util.List;
+package org.ikasan.spec.monitor;
 
 /**
- * Sample monitor implementation for testing.
- * @author Ikasan Development Team
+ * Monitor contract for subjects being monitored
  * 
+ * @author Ikasan Development Team
  */
-public class SampleMonitor implements Monitor
+public interface MonitorSubject
 {
-
-    /* (non-Javadoc)
-     * @see org.ikasan.spec.monitor.Monitor#notifyMonitor(java.lang.Object)
+    /**
+     * Monitor to be set on this monitored subject
+     * @param monitor
      */
-    public void invoke(Object arg0)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void setName(String monitorName) {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public void setEnvironment(String environmentName) {
-
-    }
-
-    @Override
-    public String getEnvironment() {
-        return null;
-    }
-
-    @Override
-    public List<Notifier> getNotifiers() {
-        return null;
-    }
-
-    @Override
-    public void setNotifiers(List list) {
-
-    }
+    public void setMonitor(Monitor<?> monitor);
 }

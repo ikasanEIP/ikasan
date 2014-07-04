@@ -40,10 +40,6 @@
  */
 package org.ikasan.flow.visitorPattern;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -60,16 +56,20 @@ import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.MonitorListener;
+import org.ikasan.spec.monitor.MonitorSubject;
+import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.ikasan.spec.event.EventFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Default implementation of a Flow
  * 
  * @author Ikasan Development Team
  */
-public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorListener
+public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
@@ -127,8 +127,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param flowElementInvoker
      * @param recoveryManager
      */
-    public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, 
-            FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?,?>> recoveryManager)
+    public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
+                               FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?,?>> recoveryManager)
     {
         this.name = name;
         if(name == null)
@@ -210,6 +210,37 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
 		        this.recoveryManager.initialise();
 
+                // configure any registered monitors marked as configured
+                if(this.monitor != null)
+                {
+                    if(this.monitor instanceof ConfiguredResource)
+                    {
+                        ConfiguredResource configuredMonitor = (ConfiguredResource)monitor;
+                        if( configuredMonitor.getConfiguredResourceId() == null )
+                        {
+                            configuredMonitor.setConfiguredResourceId(this.moduleName + this.name + "_monitor");
+                        }
+
+                        this.flowConfiguration.configure(configuredMonitor);
+                    }
+
+                    List<Notifier> monitorNotifiers = this.monitor.getNotifiers();
+                    for(Notifier monitorNotifier : monitorNotifiers)
+                    {
+                        if(monitorNotifier instanceof ConfiguredResource)
+                        {
+                            ConfiguredResource configuredMonitorNotifier = (ConfiguredResource)monitorNotifier;
+                            if( configuredMonitorNotifier.getConfiguredResourceId() == null )
+                            {
+                                configuredMonitorNotifier.setConfiguredResourceId(this.moduleName + this.name + "_monitor_notifier_" + monitorNotifier.getClass().getSimpleName());
+                            }
+
+                            this.flowConfiguration.configure(configuredMonitorNotifier);
+                        }
+                    }
+                }
+
+
                 // configure resources that are marked as configurable
                 for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
                 {
@@ -218,8 +249,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                     {
                         flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
                     }
-                        
-                    this.flowConfiguration.configureFlowElement(flowElement);
+
+                    this.flowConfiguration.configure(flowElement.getFlowComponent());
                 }
             }
             catch(RuntimeException e)
@@ -420,7 +451,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 try
                 {
-                    this.flowConfiguration.configureFlowElement(flowElement);
+                    this.flowConfiguration.configure(flowElement.getFlowComponent());
                 }
                 catch(RuntimeException e)
                 {
@@ -470,7 +501,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             try
             {
-                this.monitor.notifyMonitor(this.getState());
+                this.monitor.invoke(this.getState());
             }
             catch(RuntimeException e)
             {
@@ -483,7 +514,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
     /**
      * Set the flow monitor
-     * @param Monitor
+     * @param monitor
      */
     public void setMonitor(Monitor monitor)
     {
@@ -555,7 +586,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * Set the flow event listener
      * @param flowEventListener
      */
-	public void setFlowListener(FlowEventListener flowEventListener) 
+	public void setFlowListener(FlowEventListener flowEventListener)
 	{
 		this.flowElementInvoker.setFlowEventListener(flowEventListener);
 	}
