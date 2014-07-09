@@ -43,6 +43,9 @@ package org.ikasan.monitor.notifier;
 import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Notifier;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -57,6 +60,9 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(EmailNotifier.class);
+
+    /** date time formatter */
+    private static DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("Y-MM-dd HH:mm:ss.SSS Z");
 
     /** configured resource identifier */
     private String configuredResourceId;
@@ -108,11 +114,14 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
         long now = Calendar.getInstance().getTimeInMillis();
         formatContent(now, name, state, pendingContent);
 
-        if(this.lastUpdateDateTime + (configuration.getNotificationIntervalInSeconds().longValue() * 1000) < now)
-        {
+        // TODO - omit this for now as there is a bug where the notification may get missed
+        // if we dont receive a subsequent notification outside the time window to force the update to go out.
+        // really we need a timer thread i.e. quartz to manage that aspect. IKASAN-XXX jira ref.
+//        if(this.lastUpdateDateTime + (configuration.getNotificationIntervalInSeconds().longValue() * 1000) < now)
+//        {
             try
             {
-                sendNotification(environment, name, pendingContent.toString());
+                sendNotification(environment, name, state, pendingContent.toString());
                 pendingContent = new StringBuilder();
                 this.lastUpdateDateTime = now;
             }
@@ -120,7 +129,7 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
             {
                 throw new RuntimeException(e);
             }
-        }
+//        }
     }
 
     /**
@@ -132,7 +141,7 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
      */
     protected void formatContent(long dateTime, String name, String state, StringBuilder bufferedStates)
     {
-        bufferedStates.append("[" + new Date(dateTime) + "] " + name + " is " + state + "\n");
+        bufferedStates.append("[" + dateTimeFormatter.print( new DateTime(dateTime) ) + "] " + name + " is " + state + "\n");
     }
 
     /**
@@ -142,7 +151,7 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
      * @param content
      * @throws MessagingException
      */
-    protected void sendNotification(String env, String name, String content)
+    protected void sendNotification(String env, String name, String currentState, String content)
             throws MessagingException
     {
         MimeMessage message = new MimeMessage(session);
@@ -151,8 +160,18 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
         message.addRecipients(Message.RecipientType.CC, toArray( configuration.getCcRecipients() ));
         message.addRecipients(Message.RecipientType.BCC, toArray( configuration.getBccRecipients() ));
 
-        String subjectLine = "[" + env + "] " + name + " " + configuration.getSubject();
-        message.setSubject(subjectLine);
+        if(configuration.getSubject() == null)
+        {
+            message.setSubject( "[" + env + "] " + name + " is " + currentState );
+        }
+        else
+        {
+            String subject = configuration.getSubject().replaceAll("\\$\\{environment\\}", env)
+                    .replaceAll("\\$\\{name\\}", name)
+                    .replaceAll("\\$\\{state\\}", currentState);
+
+            message.setSubject(subject);
+        }
 
         BodyPart bodyPart = new MimeBodyPart();
         if(content != null)
