@@ -41,16 +41,16 @@
 --   Author:  Ikasan Development Team
 --   
 --  
-IF OBJECT_ID('ConfigurationParameterMap') IS NOT NULL
+IF OBJECT_ID('ConfParamMap') IS NOT NULL
 BEGIN
-    DROP TABLE ConfigurationParameterMap
-    IF OBJECT_ID('ConfigurationParameterMap') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE ConfigurationParameterMap >>>'
+    DROP TABLE ConfParamMap
+    IF OBJECT_ID('ConfParamMap') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ConfParamMap >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE ConfigurationParameterMap >>>'
+        PRINT '<<< DROPPED TABLE ConfParamMap >>>'
 END
 
-CREATE TABLE ConfigurationParameterMap
+CREATE TABLE ConfParamMap
 (
     Id                          NUMERIC NOT NULL,
     Name                        VARCHAR(128) NOT NULL,
@@ -59,9 +59,9 @@ CREATE TABLE ConfigurationParameterMap
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
-CREATE UNIQUE INDEX ConfigurationParameterMap01u ON ConfigurationParameterMap(Id)
+CREATE UNIQUE INDEX ConfParamMap01u ON ConfParamMap(Id)
 
-IF OBJECT_ID('ConfigurationParameterMap') IS NOT NULL
-    PRINT '<<< CREATED TABLE ConfigurationParameterMap >>>'
+IF OBJECT_ID('ConfParamMap') IS NOT NULL
+    PRINT '<<< CREATED TABLE ConfParamMap >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE ConfigurationParameterMap >>>'
+    PRINT '<<< FAILED CREATING TABLE ConfParamMap >>>'

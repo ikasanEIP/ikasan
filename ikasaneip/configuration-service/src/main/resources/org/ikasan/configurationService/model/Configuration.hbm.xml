@@ -73,7 +73,7 @@
         </id>
 
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-               table="ConfigurationParameterString">
+               table="ConfParamString">
 
             <key column="Id" />
 
@@ -87,7 +87,7 @@
         </joined-subclass>
 
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                         table="ConfigurationParameterBoolean">
+                         table="ConfParamBoolean">
 
             <key column="Id" />
 
@@ -101,7 +101,7 @@
         </joined-subclass>
 
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                         table="ConfigurationParameterInteger">
+                         table="ConfParamInteger">
 
             <key column="Id" />
 
@@ -115,7 +115,7 @@
         </joined-subclass>
 
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
-                         table="ConfigurationParameterLong">
+                         table="ConfParamLong">
 
             <key column="Id" />
 
@@ -129,14 +129,14 @@
         </joined-subclass>
 
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterListImpl"
-                         table="ConfigurationParameterList">
+                         table="ConfParamList">
 
             <key column="Id" />
 
             <property name="name"           type="java.lang.String"
                       column="Name"         not-null="true" />
 
-            <list name="value" cascade="all" inverse="false" lazy="false" table="ConfigurationParameterListString" >
+            <list name="value" cascade="all" inverse="false" lazy="false" table="ConfParamListString" >
                 <key column="Id" not-null="true"/>
                 <list-index column="PositionRef"/>
                 <element column="Value" type="java.lang.String" not-null="false" />
@@ -148,14 +148,14 @@
         </joined-subclass>
 
         <joined-subclass name="org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
-                         table="ConfigurationParameterMap">
+                         table="ConfParamMap">
 
             <key column="Id" />
 
             <property name="name"           type="java.lang.String"
                       column="Name"         not-null="true" />
 
-            <map name="value" cascade="all" inverse="false" lazy="false" table="ConfigurationParameterMapString" >
+            <map name="value" cascade="all" inverse="false" lazy="false" table="ConfParamMapString" >
                 <key column="Id" not-null="true"/>
                 <map-key type="java.lang.String" column="MapKey"/>
                 <element column="Value" type="java.lang.String" not-null="false" />

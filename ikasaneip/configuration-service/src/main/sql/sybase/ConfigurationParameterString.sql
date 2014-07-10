@@ -41,16 +41,16 @@
 --   Author:  Ikasan Development Team
 --   
 --  
-IF OBJECT_ID('ConfigurationParameterString') IS NOT NULL
+IF OBJECT_ID('ConfParamString') IS NOT NULL
 BEGIN
-    DROP TABLE ConfigurationParameterString
-    IF OBJECT_ID('ConfigurationParameterString') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE ConfigurationParameterString >>>'
+    DROP TABLE ConfParamString
+    IF OBJECT_ID('ConfParamString') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ConfParamString >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE ConfigurationParameterString >>>'
+        PRINT '<<< DROPPED TABLE ConfParamString >>>'
 END
 
-CREATE TABLE ConfigurationParameterString
+CREATE TABLE ConfParamString
 (
     Id                          NUMERIC NOT NULL,
     Name                        VARCHAR(128) NOT NULL,
@@ -60,9 +60,9 @@ CREATE TABLE ConfigurationParameterString
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
-CREATE UNIQUE INDEX ConfigurationParameterString01u ON ConfigurationParameterString(Id)
+CREATE UNIQUE INDEX ConfParamString01u ON ConfParamString(Id)
 
-IF OBJECT_ID('ConfigurationParameterString') IS NOT NULL
-    PRINT '<<< CREATED TABLE ConfigurationParameterString >>>'
+IF OBJECT_ID('ConfParamString') IS NOT NULL
+    PRINT '<<< CREATED TABLE ConfParamString >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE ConfigurationParameterString >>>'
+    PRINT '<<< FAILED CREATING TABLE ConfParamString >>>'
