@@ -41,16 +41,16 @@
 --   Author:  Ikasan Development Team
 --   
 --  
-IF OBJECT_ID('ConfigurationParameterLong') IS NOT NULL
+IF OBJECT_ID('ConfParamLong') IS NOT NULL
 BEGIN
-    DROP TABLE ConfigurationParameterLong
-    IF OBJECT_ID('ConfigurationParameterLong') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE ConfigurationParameterLong >>>'
+    DROP TABLE ConfParamLong
+    IF OBJECT_ID('ConfParamLong') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ConfParamLong >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE ConfigurationParameterLong >>>'
+        PRINT '<<< DROPPED TABLE ConfParamLong >>>'
 END
 
-CREATE TABLE ConfigurationParameterLong
+CREATE TABLE ConfParamLong
 (
     Id                          NUMERIC NOT NULL,
     Name                        VARCHAR(128) NOT NULL,
@@ -60,9 +60,9 @@ CREATE TABLE ConfigurationParameterLong
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
-CREATE UNIQUE INDEX ConfigurationParameterLong01u ON ConfigurationParameterLong(Id)
+CREATE UNIQUE INDEX ConfParamLong01u ON ConfParamLong(Id)
 
-IF OBJECT_ID('ConfigurationParameterLong') IS NOT NULL
-    PRINT '<<< CREATED TABLE ConfigurationParameterLong >>>'
+IF OBJECT_ID('ConfParamLong') IS NOT NULL
+    PRINT '<<< CREATED TABLE ConfParamLong >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE ConfigurationParameterLong >>>'
+    PRINT '<<< FAILED CREATING TABLE ConfParamLong >>>'
