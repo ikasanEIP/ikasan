@@ -41,7 +41,6 @@
 package org.ikasan.monitor;
 
 import junit.framework.Assert;
-;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
