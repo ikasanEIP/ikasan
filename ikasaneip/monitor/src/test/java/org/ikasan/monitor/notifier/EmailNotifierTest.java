@@ -81,14 +81,18 @@ public class EmailNotifierTest
     public void setup()
     {
         wiser = new Wiser();
-        for (int portNumber = 2500; portNumber <= 2505; portNumber++)
+        for(int count = 0; count < 5; count++)
         	try {
-                wiser.setPort(portNumber);
-                logger.info(String.format("Attempting to start Wiser SMTP Server on port [%1$s]", portNumber));
+                wiser.setPort(2500);
+                logger.info(String.format("Attempting to start Wiser SMTP Server on port 2500"));
         		wiser.start();
         		break;
         	} catch (RuntimeException re){
-        		logger.info("Failed to start Wiser SMTP server", re);
+        		logger.info("Failed to start Wiser SMTP server, sleeping for a couple of seconds", re);
+        		try {
+					Thread.sleep(2000l);
+				} catch (InterruptedException e) {
+				}
         	}
     }
 
