@@ -41,6 +41,7 @@
 package org.springframework.jms.core;
 
 import org.ikasan.component.endpoint.jms.producer.PostProcessor;
+import org.ikasan.spec.flow.FlowEvent;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.support.converter.MessageConverter;
 
@@ -82,7 +83,8 @@ public class IkasanJmsTemplate extends JmsTemplate
         {
             public Message createMessage(Session session) throws JMSException
             {
-                Message msg = getRequiredMessageConverter().toMessage(message, session);
+            	
+                Message msg = getRequiredMessageConverter().toMessage(getPayload(message), session);
                 if(postProcessor != null)
                 {
                     postProcessor.invoke(message, msg);
@@ -98,6 +100,21 @@ public class IkasanJmsTemplate extends JmsTemplate
             throw new IllegalStateException("No 'messageConverter' specified. Check configuration of JmsTemplate.");
         }
         return converter;
+    }
+    
+    /**
+     * Extract the payload based on event coming in.
+     * @param message
+     * @return
+     */
+    protected Object getPayload(Object message)
+    {
+        if(message instanceof FlowEvent)
+        {
+            return ((FlowEvent) message).getPayload();
+        }
+
+        return message;
     }
 
 }
