@@ -106,7 +106,8 @@ public class JmsTemplateProducer<T>
     {
         try
         {
-            this.jmsTemplate.convertAndSend(this.destination, getPayload(message));
+        	
+            this.jmsTemplate.convertAndSend(this.destination, message); 
         }
         catch(RuntimeException e)
         {
