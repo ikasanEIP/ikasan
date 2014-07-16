@@ -49,7 +49,7 @@ public interface WiretapEvent<TAPPED_EVENT>
 {
     /**
      * Get immutable flow event identifier.
-     * @return IDENTIFIER - event identifier
+     * @return IDENTIFIER - event identifier.
      */
     public long getIdentifier();
 
