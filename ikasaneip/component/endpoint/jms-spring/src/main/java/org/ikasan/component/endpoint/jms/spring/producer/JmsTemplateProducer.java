@@ -115,18 +115,5 @@ public class JmsTemplateProducer<T>
         }
     }
 
-    /**
-     * Extract the payload based on event coming in.
-     * @param message
-     * @return
-     */
-    protected Object getPayload(Object message)
-    {
-        if(message instanceof FlowEvent)
-        {
-            return ((FlowEvent) message).getPayload();
-        }
-
-        return message;
-    }
+   
 }
