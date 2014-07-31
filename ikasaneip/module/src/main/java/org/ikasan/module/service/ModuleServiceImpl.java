@@ -73,6 +73,10 @@ public class ModuleServiceImpl implements ModuleService
     /**
      * constant for logging an incomming initiator pause request
      */
+    public static final String INITIATOR_START_PAUSE_REQUEST_SYSTEM_EVENT_ACTION = "Flow start/pause requested";
+    /**
+     * constant for logging an incomming initiator pause request
+     */
     public static final String INITIATOR_PAUSE_REQUEST_SYSTEM_EVENT_ACTION = "Flow pause requested";
     /**
      * constant for logging an incomming initiator resume request
@@ -184,6 +188,26 @@ public class ModuleServiceImpl implements ModuleService
         else
         {
             flow.pause();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.ikasan.framework.module.service.ModuleService#stopInitiator(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void startPauseFlow(String moduleName, String flowName, String actor)
+    {
+        //log the request
+        this.systemEventService.logSystemEvent(moduleName+"."+flowName, INITIATOR_START_PAUSE_REQUEST_SYSTEM_EVENT_ACTION,  actor);
+        this.logger.info("startPauseFlow : " + moduleName + "." + flowName + " requested by [" + actor + "]");
+        Flow flow = this.resolveFlow(moduleName, flowName);
+        if(flow == null)
+        {
+            // TODO - throw exception ?
+            logger.error("flow name[" + flowName + "] not found in module [" + moduleName + "]");
+        }
+        else
+        {
+            flow.startPause();
         }
     }
 
