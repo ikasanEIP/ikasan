@@ -90,12 +90,19 @@ public interface Flow
        public void setFlowListener(FlowEventListener flowEventListener);
 
     /**
-     * Invoke all start operations for the flow that are required prior to an event invocation.
+     * Invoke all start operations for the flow that are required prior to an event invocation including starting the consumer.
      * For instance, this could include setting any flow component configurations,
      * or starting any flow managed resources.
      */
     public void start();
-    
+
+    /**
+     * Invoke all start operations for the flow that are required prior to an event invocation, but immediately pause the consumer.
+     * For instance, this could include setting any flow component configurations,
+     * or starting any flow managed resources.
+     */
+    public void startPause();
+
     /**
      * Invoke all stop operations for the flow that are required on shutdown of the invoking client.
      * For instance, this could include stopping any flow managed resources.

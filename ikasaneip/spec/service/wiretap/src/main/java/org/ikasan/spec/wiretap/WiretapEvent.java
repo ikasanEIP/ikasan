@@ -49,7 +49,7 @@ public interface WiretapEvent<TAPPED_EVENT>
 {
     /**
      * Get immutable flow event identifier.
-     * @return IDENTIFIER - event identifier.
+     * @return IDENTIFIER - event identifier
      */
     public long getIdentifier();
 
@@ -57,7 +57,7 @@ public interface WiretapEvent<TAPPED_EVENT>
      * Get the module name from where this event is tapped
      * @return String
      */
-    public String getModuleName(); 
+    public String getModuleName();
 
     /**
      * Get the flow name from where this event is tapped
