@@ -147,17 +147,7 @@ public class WiretapEventsSearchFormController
     @RequestMapping("newSearch.htm")
     public String initialiseWiretapEventSearch()
     {
-        String springRedirectCommand = "redirect:";
-        String baseURL = "list.htm?";
-        String parameters = "page=0&orderBy=id&orderAsc=true&pointToPointFlowProfileSearch=true&pointToPointFlowProfileSelectAll=true&moduleSelectAll=false&pageSize=10";
-        // Build the list of parameters
-        Set<Long> pointToPointFlowProfileIds = this.pointToPointFlowProfileService.getAllPointToPointFlowProfileIds();
-        for (Long pointToPointFlowProfileId : pointToPointFlowProfileIds)
-        {
-            parameters = parameters + "&pointToPointFlowProfileIds=" + pointToPointFlowProfileId;
-        }
-        String finalURL = springRedirectCommand + baseURL + parameters;
-        return finalURL;
+        return "redirect:list.htm?pointToPointFlowProfileSearch=true";
     }
 
     /**
