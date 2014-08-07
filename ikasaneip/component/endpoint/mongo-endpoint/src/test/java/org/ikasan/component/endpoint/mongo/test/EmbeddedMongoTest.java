@@ -12,7 +12,7 @@ public class EmbeddedMongoTest {
 		EmbeddedMongo em = new EmbeddedMongo(100);
 		assertEquals(100, em.getPort());
 		assertEquals("myLocalInstallationDir", em.getMongoDistributionDirectory());
-	}
+	} 
 
 	@Test
 	public void testEmbeddedMongoWithNoSystemProperty() {
