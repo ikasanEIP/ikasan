@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.mongodb.MongoClient;
@@ -36,7 +37,7 @@ public class EmbeddedMongo
 
     private MongodExecutable mongodExecutable;
 
-    private final boolean useLocalMongoDistribution;
+    private boolean useLocalMongoDistribution;
 
     private static EmbeddedMongo staticReference;
 
@@ -46,12 +47,36 @@ public class EmbeddedMongo
 
     private final String mongoDistributionDirectory;
 
-    public EmbeddedMongo(int port, boolean useLocalMongoDistribution, String mongoDistributionDirectory)
+    public int getPort() {
+		return port;
+	}
+
+	public String getMongoDistributionDirectory() {
+		return mongoDistributionDirectory;
+	}
+
+	/** CHECK SYSTEM PROPERTIES FOR A LOCAL DIRECTORY TO GET MONGO DB DIST FROM **/
+    public static final String LOCAL_MONGO_DIST_DIR_PROP="ikasan.localMongoDistDirProperty";
+    
+    public EmbeddedMongo(int port, String mongoDistributionDirectory)
     {
         super();
-        this.useLocalMongoDistribution = useLocalMongoDistribution;
         this.port = port;
         this.mongoDistributionDirectory = mongoDistributionDirectory;
+        if (mongoDistributionDirectory != null){
+        	useLocalMongoDistribution = true;
+        }
+    }
+    
+    /**
+     * Check to see if the local mongo distribution directory is
+     * defined as a system property
+     * 
+     * @param port
+     */
+    public EmbeddedMongo(int port)
+    {
+        this(port, System.getProperty(LOCAL_MONGO_DIST_DIR_PROP));
     }
 
     /**
