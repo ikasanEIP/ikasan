@@ -156,9 +156,14 @@
                                     <c:param name="flowName" value="${flow.name}"/>
                                     <c:param name="action" value="start"/>
                                 </c:url>
+                                <c:url var="startPauseControlFlowLink" value="flow.htm">
+                                    <c:param name="moduleName" value="${moduleName}"/>
+                                    <c:param name="flowName" value="${flow.name}"/>
+                                    <c:param name="action" value="startPause"/>
+                                </c:url>
                                 <form:form method="post">
                                     <input type="submit" formaction="${startControlFlowLink}" value="Start" class="controlButton"/>
-                                    <input type="submit" disabled value="Pause" class="controlButton"/>
+                                    <input type="submit" formaction="${startPauseControlFlowLink}" value="Start/Pause" class="controlButton"/>
                                     <input type="submit" disabled value="Stop" class="controlButton"/>
                                 </form:form>
                             </c:otherwise>

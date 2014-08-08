@@ -54,7 +54,7 @@ CREATE TABLE ConfParamListString
 (
     Id                          NUMERIC NOT NULL,
     PositionRef                 NUMERIC NOT NULL,
-    Value                       VARCHAR(256) DEFAULT NULL NULL
+    Value                       TEXT DEFAULT NULL NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1

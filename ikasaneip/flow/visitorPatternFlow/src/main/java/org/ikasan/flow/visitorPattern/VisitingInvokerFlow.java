@@ -194,88 +194,107 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public void start()
     {
-        this.flowInitialisationFailure = false;
-
         try
         {
+            this.flowInitialisationFailure = false;
+
             if(isRunning())
             {
-                logger.info("flow [" + name + "] module [" 
-                    + moduleName 
+                logger.info("flow [" + name + "] module ["
+                    + moduleName
                     + "] is already running. Ignoring start request.");
                 return;
             }
 
-            try
-            {
-		        this.recoveryManager.initialise();
-
-                // configure any registered monitors marked as configured
-                if(this.monitor != null)
-                {
-                    if(this.monitor instanceof ConfiguredResource)
-                    {
-                        ConfiguredResource configuredMonitor = (ConfiguredResource)monitor;
-                        if( configuredMonitor.getConfiguredResourceId() == null )
-                        {
-                            configuredMonitor.setConfiguredResourceId(this.moduleName + this.name + "_monitor");
-                        }
-
-                        this.flowConfiguration.configure(configuredMonitor);
-                    }
-
-                    List<Notifier> monitorNotifiers = this.monitor.getNotifiers();
-                    for(Notifier monitorNotifier : monitorNotifiers)
-                    {
-                        if(monitorNotifier instanceof ConfiguredResource)
-                        {
-                            ConfiguredResource configuredMonitorNotifier = (ConfiguredResource)monitorNotifier;
-                            if( configuredMonitorNotifier.getConfiguredResourceId() == null )
-                            {
-                                configuredMonitorNotifier.setConfiguredResourceId(this.moduleName + this.name + "_monitor_notifier_" + monitorNotifier.getClass().getSimpleName());
-                            }
-
-                            this.flowConfiguration.configure(configuredMonitorNotifier);
-                        }
-                    }
-                }
-
-
-                // configure resources that are marked as configurable
-                for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
-                {
-                    // set the default configured resource id if none previously set.
-                    if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
-                    {
-                        flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
-                    }
-
-                    this.flowConfiguration.configure(flowElement.getFlowComponent());
-                }
-            }
-            catch(RuntimeException e)
-            {
-                this.flowInitialisationFailure = true;
-                throw e;
-            }
-            
-            try
-            {
-                startManagedResources();
-            }
-            catch(RuntimeException e)
-            {
-                this.flowInitialisationFailure = true;
-                this.stopManagedResources();
-                throw e;
-            }
-            
+            _start();
             startConsumer();
             logger.info("Started Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
         finally
         {
             this.notifyMonitor();
+        }
+    }
+
+    public void startPause()
+    {
+        try
+        {
+            _start();
+            pause();
+        }
+        finally
+        {
+            this.notifyMonitor();
+        }
+    }
+
+    protected void _start()
+    {
+        try
+        {
+            this.flowInitialisationFailure = false;
+
+            this.recoveryManager.initialise();
+
+            // configure any registered monitors marked as configured
+            if(this.monitor != null)
+            {
+                if(this.monitor instanceof ConfiguredResource)
+                {
+                    ConfiguredResource configuredMonitor = (ConfiguredResource)monitor;
+                    if( configuredMonitor.getConfiguredResourceId() == null )
+                    {
+                        configuredMonitor.setConfiguredResourceId(this.moduleName + this.name + "_monitor");
+                    }
+
+                    this.flowConfiguration.configure(configuredMonitor);
+                }
+
+                List<Notifier> monitorNotifiers = this.monitor.getNotifiers();
+                for(Notifier monitorNotifier : monitorNotifiers)
+                {
+                    if(monitorNotifier instanceof ConfiguredResource)
+                    {
+                        ConfiguredResource configuredMonitorNotifier = (ConfiguredResource)monitorNotifier;
+                        if( configuredMonitorNotifier.getConfiguredResourceId() == null )
+                        {
+                            configuredMonitorNotifier.setConfiguredResourceId(this.moduleName + this.name + "_monitor_notifier_" + monitorNotifier.getClass().getSimpleName());
+                        }
+
+                        this.flowConfiguration.configure(configuredMonitorNotifier);
+                    }
+                }
+            }
+
+
+            // configure resources that are marked as configurable
+            for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
+            {
+                // set the default configured resource id if none previously set.
+                if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
+                {
+                    flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
+                }
+
+                this.flowConfiguration.configure(flowElement.getFlowComponent());
+            }
+        }
+        catch(RuntimeException e)
+        {
+            this.flowInitialisationFailure = true;
+            throw e;
+        }
+
+        try
+        {
+            startManagedResources();
+        }
+        catch(RuntimeException e)
+        {
+            this.flowInitialisationFailure = true;
+            this.stopManagedResources();
+            throw e;
         }
     }
 
@@ -313,7 +332,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             this.notifyMonitor();
         }
     }
-    
+
     protected boolean isRunning()
     {
         String currentState = this.getState();
