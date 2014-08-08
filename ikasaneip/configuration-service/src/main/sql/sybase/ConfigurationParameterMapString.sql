@@ -54,7 +54,7 @@ CREATE TABLE ConfParamMapString
 (
     Id                          NUMERIC NOT NULL,
     MapKey                      VARCHAR(256) NOT NULL,
-    Value                       VARCHAR(256) DEFAULT NULL NULL
+    Value                       TEXT DEFAULT NULL NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1

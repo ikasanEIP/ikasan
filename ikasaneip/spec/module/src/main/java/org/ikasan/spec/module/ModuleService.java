@@ -87,6 +87,15 @@ public interface ModuleService
     public void startFlow(String moduleName, String flowName, String actor);
 
     /**
+     * Attempts to start a <code>Flow</code>, but will immediately pause the consumer.
+     *
+     * @param moduleName
+     * @param flowName
+     * @param actor
+     */
+    public void startPauseFlow(String moduleName, String flowName, String actor);
+
+    /**
      * Attempts to pause a <code>Flow</code>
      *
      * @param moduleName
