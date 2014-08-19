@@ -47,7 +47,6 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
@@ -183,6 +182,10 @@ public class GenericJmsProducer<T>
         else if(object instanceof byte[])
         {
             return this.byteArrayToMessageConverter.convert((byte[])object);
+        }
+        else if(object instanceof String)
+        {
+            return this.stringToMessageConverter.convert((String)object);
         }
         else if(object instanceof Serializable)
         {
@@ -435,18 +438,6 @@ public class GenericJmsProducer<T>
             {
                 throw new TransformationException(e);
             }
-        }
-    }
-
-    /**
-     * Specific converter implementation for converting String to JMS Text Message
-     */
-    protected class Jeff implements Translator<StringBuilder>
-    {
-
-        @Override
-        public void translate(StringBuilder payload) throws TransformationException {
-                payload.append("additional value");
         }
     }
 
