@@ -13,6 +13,7 @@ import org.bson.Transformer;
  */
 public class BsonEncodingStringToNumberTransformer implements Transformer
 {
+
     /** logger instance */
     private static Logger logger = Logger.getLogger(BsonEncodingStringToNumberTransformer.class);
 
@@ -37,9 +38,7 @@ public class BsonEncodingStringToNumberTransformer implements Transformer
             {
                 transformed = transformToNumber(str);
             }
-        } else {
-                logger.warn(String.format("The object to be transformed [%1$s] is not a java.lang.String class ensure this transformer is mapped to this class", o));
-        }
+        } 
         return transformed;
     }
 
@@ -74,5 +73,11 @@ public class BsonEncodingStringToNumberTransformer implements Transformer
     public void setNumberRegExp(Pattern numberRegExp)
     {
         this.numberRegExp = numberRegExp;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "BsonEncodingStringToNumberTransformer [numberRegExp=" + numberRegExp + "]";
     }
 }

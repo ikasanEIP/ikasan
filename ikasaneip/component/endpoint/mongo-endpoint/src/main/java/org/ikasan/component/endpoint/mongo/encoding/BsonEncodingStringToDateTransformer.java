@@ -54,9 +54,7 @@ public class BsonEncodingStringToDateTransformer implements Transformer
             {
                 transformed = transformToDate(str, dateFormatString);
             }
-        } else {
-            logger.warn(String.format("The object to be transformed [%1$s] is not a java.lang.String class ensure this transformer is mapped to this class", o));
-        }
+        } 
         return transformed;
     }
 
@@ -94,5 +92,12 @@ public class BsonEncodingStringToDateTransformer implements Transformer
     public void setDateTimeFormatString(String dateTimeFormatString)
     {
         this.dateTimeFormatString = dateTimeFormatString;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "BsonEncodingStringToDateTransformer [dateRegExp=" + dateRegExp + ", dateTimeRegExp=" + dateTimeRegExp
+                + ", dateFormatString=" + dateFormatString + ", dateTimeFormatString=" + dateTimeFormatString + "]";
     }
 }

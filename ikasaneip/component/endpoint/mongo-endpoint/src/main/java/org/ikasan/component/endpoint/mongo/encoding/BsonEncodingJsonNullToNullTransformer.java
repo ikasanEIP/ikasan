@@ -13,6 +13,7 @@ import org.bson.Transformer;
  */
 public class BsonEncodingJsonNullToNullTransformer implements Transformer
 {
+
     /** logger instance */
     private static Logger logger = Logger.getLogger(BsonEncodingJsonNullToNullTransformer.class);
 
@@ -27,10 +28,13 @@ public class BsonEncodingJsonNullToNullTransformer implements Transformer
             logger.debug("Got a net.sf.json.JSONNull value will transform to a null value for handling by the BSONEncoder");
             return null;
         }
-        else {
-            logger.warn(String.format("The object to be transformed [%1$s] is not a type net.sf.json.JSONNull class ensure this transformer is mapped to this class", o));
-        }
         return transformed;
-
     }
+    
+    @Override
+    public String toString()
+    {
+        return "BsonEncodingJsonNullToNullTransformer []";
+    }
+
 }
