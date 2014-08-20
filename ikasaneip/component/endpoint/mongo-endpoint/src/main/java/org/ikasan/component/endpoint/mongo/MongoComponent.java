@@ -82,7 +82,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     /**
      * bson transformers that will be used when encoding from java types to bson
      **/
-    protected Map<Class<?>, Transformer> bsonEncodingTransformerMap;
+    protected Map<Class<?>, List<Transformer>> bsonEncodingTransformerMap;
 
     public static void setLogger(Logger logger)
     {
@@ -104,7 +104,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         this.mongoDatabase = mongoDatabase;
     }
 
-    public void setBsonEncodingTransformerMap(Map<Class<?>, Transformer> bsonEncodingTransformerMap)
+    public void setBsonEncodingTransformerMap(Map<Class<?>, List<Transformer>> bsonEncodingTransformerMap)
     {
         this.bsonEncodingTransformerMap = bsonEncodingTransformerMap;
     }
@@ -154,9 +154,11 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         {
             for (Class<?> c : bsonEncodingTransformerMap.keySet())
             {
-                Transformer transformer = bsonEncodingTransformerMap.get(c);
-                logger.debug(String.format("Adding bsonEncodingTransfomer [%1$s] for class [%2$s]", transformer, c));
-                BSON.addEncodingHook(c, bsonEncodingTransformerMap.get(c));
+                List<Transformer> transformers = bsonEncodingTransformerMap.get(c);
+                for(Transformer transformer : transformers){
+                    logger.debug(String.format("Adding bsonEncodingTransfomer [%1$s] for class [%2$s]", transformer, c));
+                    BSON.addEncodingHook(c, transformer);
+                }
             }
         }
     }
