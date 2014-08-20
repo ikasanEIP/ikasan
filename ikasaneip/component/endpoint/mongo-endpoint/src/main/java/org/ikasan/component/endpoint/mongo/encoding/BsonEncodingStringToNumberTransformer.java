@@ -13,6 +13,7 @@ import org.bson.Transformer;
  */
 public class BsonEncodingStringToNumberTransformer implements Transformer
 {
+
     /** logger instance */
     private static Logger logger = Logger.getLogger(BsonEncodingStringToNumberTransformer.class);
 
@@ -74,5 +75,11 @@ public class BsonEncodingStringToNumberTransformer implements Transformer
     public void setNumberRegExp(Pattern numberRegExp)
     {
         this.numberRegExp = numberRegExp;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "BsonEncodingStringToNumberTransformer [numberRegExp=" + numberRegExp + "]";
     }
 }

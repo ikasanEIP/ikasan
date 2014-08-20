@@ -95,4 +95,11 @@ public class BsonEncodingStringToDateTransformer implements Transformer
     {
         this.dateTimeFormatString = dateTimeFormatString;
     }
+    
+    @Override
+    public String toString()
+    {
+        return "BsonEncodingStringToDateTransformer [dateRegExp=" + dateRegExp + ", dateTimeRegExp=" + dateTimeRegExp
+                + ", dateFormatString=" + dateFormatString + ", dateTimeFormatString=" + dateTimeFormatString + "]";
+    }
 }
