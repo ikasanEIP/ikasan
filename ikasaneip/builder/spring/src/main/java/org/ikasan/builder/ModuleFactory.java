@@ -56,6 +56,9 @@ public class ModuleFactory implements FactoryBean<Module>
     /** module name */
     String name;
 
+    /** module version */
+    String version;
+
     /** module descriptive purpose */
     String description;
 
@@ -69,6 +72,15 @@ public class ModuleFactory implements FactoryBean<Module>
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Setter for version
+     * @param version
+     */
+    public void setVersion(String version)
+    {
+        this.version = version;
     }
 
     /**
@@ -95,7 +107,7 @@ public class ModuleFactory implements FactoryBean<Module>
      */
     public Module getObject()
     {
-        Module module = new org.ikasan.module.SimpleModule(name, flows);
+        Module module = new org.ikasan.module.SimpleModule(name, version, flows);
         module.setDescription(description);
         return module;
     }
