@@ -59,6 +59,9 @@ public class SimpleModule implements Module
     /** Module name */
     protected String name;
 
+    /** Module version */
+    protected String version;
+
     /** Human readable description of this module */
     private String description;
 
@@ -76,7 +79,20 @@ public class SimpleModule implements Module
 
     /**
      * Constructor
-     * 
+     *
+     * @param name The name of the module
+     * @param version version of the module
+     * @param flows A list of Flows for the module
+     */
+    public SimpleModule(String name, String version, List<Flow> flows)
+    {
+        this(name, version);
+        this.flows = new ArrayList<Flow>(flows);
+    }
+
+    /**
+     * Constructor
+     *
      * @param name Name of the module
      */
     public SimpleModule(String name)
@@ -86,6 +102,23 @@ public class SimpleModule implements Module
         {
             throw new IllegalArgumentException("name cannot be 'null'");
         }
+    }
+
+    /**
+     * Constructor
+     *
+     * @param name Name of the module
+     * @param version version of the module
+     */
+    public SimpleModule(String name, String version)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.version = version;
     }
 
     /**
@@ -123,7 +156,7 @@ public class SimpleModule implements Module
     }
 
     /**
-     * @see org.ikasan.framework.module.Module#getDescription()
+     * @see org.ikasan.spec.module.Module#getDescription()
      */
     public String getDescription()
     {
@@ -140,4 +173,12 @@ public class SimpleModule implements Module
         this.description = description;
     }
 
+    /**
+     * Get the runtime version of this module
+     * @return version
+     */
+    public String getVersion()
+    {
+        return this.version;
+    }
 }
