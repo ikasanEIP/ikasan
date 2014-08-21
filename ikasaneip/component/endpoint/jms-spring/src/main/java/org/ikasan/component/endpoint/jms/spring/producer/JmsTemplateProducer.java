@@ -106,7 +106,8 @@ public class JmsTemplateProducer<T>
     {
         try
         {
-            this.jmsTemplate.convertAndSend(this.destination, getPayload(message));
+        	
+            this.jmsTemplate.convertAndSend(this.destination, message); 
         }
         catch(RuntimeException e)
         {
@@ -114,18 +115,5 @@ public class JmsTemplateProducer<T>
         }
     }
 
-    /**
-     * Extract the payload based on event coming in.
-     * @param message
-     * @return
-     */
-    protected Object getPayload(Object message)
-    {
-        if(message instanceof FlowEvent)
-        {
-            return ((FlowEvent) message).getPayload();
-        }
-
-        return message;
-    }
+   
 }

@@ -41,16 +41,16 @@
 --   Author:  Ikasan Development Team
 --   
 --  
-IF OBJECT_ID('ConfigurationParameterBoolean') IS NOT NULL
+IF OBJECT_ID('ConfParamBoolean') IS NOT NULL
 BEGIN
-    DROP TABLE ConfigurationParameterString
-    IF OBJECT_ID('ConfigurationParameterBoolean') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE ConfigurationParameterBoolean >>>'
+    DROP TABLE ConfParamBoolean
+    IF OBJECT_ID('ConfParamBoolean') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ConfParamBoolean >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE ConfigurationParameterBoolean >>>'
+        PRINT '<<< DROPPED TABLE ConfParamBoolean >>>'
 END
 
-CREATE TABLE ConfigurationParameterBoolean
+CREATE TABLE ConfParamBoolean
 (
     Id                          NUMERIC NOT NULL,
     Name                        VARCHAR(128) NOT NULL,
@@ -60,9 +60,9 @@ CREATE TABLE ConfigurationParameterBoolean
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
-CREATE UNIQUE INDEX ConfigurationParameterBoolean01u ON ConfigurationParameterBoolean(Id)
+CREATE UNIQUE INDEX ConfParamBoolean01u ON ConfParamBoolean(Id)
 
-IF OBJECT_ID('ConfigurationParameterBoolean') IS NOT NULL
-    PRINT '<<< CREATED TABLE ConfigurationParameterBoolean >>>'
+IF OBJECT_ID('ConfParamBoolean') IS NOT NULL
+    PRINT '<<< CREATED TABLE ConfParamBoolean >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE ConfigurationParameterBoolean >>>'
+    PRINT '<<< FAILED CREATING TABLE ConfParamBoolean >>>'

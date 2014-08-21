@@ -41,27 +41,27 @@
 --   Author:  Ikasan Development Team
 --   
 --  
-IF OBJECT_ID('ConfigurationParameterMapString') IS NOT NULL
+IF OBJECT_ID('ConfParamMapString') IS NOT NULL
 BEGIN
-    DROP TABLE ConfigurationParameterMapString
-    IF OBJECT_ID('ConfigurationParameterMapString') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE ConfigurationParameterMapString >>>'
+    DROP TABLE ConfParamMapString
+    IF OBJECT_ID('ConfParamMapString') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE ConfParamMapString >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE ConfigurationParameterMapString >>>'
+        PRINT '<<< DROPPED TABLE ConfParamMapString >>>'
 END
 
-CREATE TABLE ConfigurationParameterMapString
+CREATE TABLE ConfParamMapString
 (
     Id                          NUMERIC NOT NULL,
     MapKey                      VARCHAR(256) NOT NULL,
-    Value                       VARCHAR(256) DEFAULT NULL NULL
+    Value                       TEXT DEFAULT NULL NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
-CREATE UNIQUE INDEX ConfigurationParameterMapString01u ON ConfigurationParameterMapString(Id, MapKey)
+CREATE UNIQUE INDEX ConfParamMapString01u ON ConfParamMapString(Id, MapKey)
 
-IF OBJECT_ID('ConfigurationParameterMapString') IS NOT NULL
-    PRINT '<<< CREATED TABLE ConfigurationParameterMapString >>>'
+IF OBJECT_ID('ConfParamMapString') IS NOT NULL
+    PRINT '<<< CREATED TABLE ConfParamMapString >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE ConfigurationParameterMapString >>>'
+    PRINT '<<< FAILED CREATING TABLE ConfParamMapString >>>'
