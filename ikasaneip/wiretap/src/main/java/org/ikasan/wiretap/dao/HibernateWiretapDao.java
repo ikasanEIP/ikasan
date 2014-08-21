@@ -177,7 +177,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             {
                 Criteria dataCriteria = getCriteria(session);
                 dataCriteria.setMaxResults(pageSize);
-                int firstResult = (pageNo == 1) ? 0 : (pageNo * pageSize);
+                int firstResult = pageNo * pageSize;
                 dataCriteria.setFirstResult(firstResult);
                 if (orderBy != null)
                 {

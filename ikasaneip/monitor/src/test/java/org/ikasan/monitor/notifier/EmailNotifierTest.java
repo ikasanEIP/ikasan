@@ -42,6 +42,7 @@ package org.ikasan.monitor.notifier;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Notifier;
 import org.junit.After;
@@ -54,6 +55,7 @@ import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -68,7 +70,10 @@ public class EmailNotifierTest
     String ccReceiver = "ccRecipient1@ikasan.org";
     String toReceiver = "toRecipient1@ikasan.org";
     String bccReceiver = "bccRecipient1@ikasan.org";
-
+    
+    /** Logger for this class */
+    private Logger logger = Logger.getLogger(EmailNotifierTest.class);
+    
     /** in memory SMTP server */
     Wiser wiser;
 
@@ -76,8 +81,19 @@ public class EmailNotifierTest
     public void setup()
     {
         wiser = new Wiser();
-        wiser.setPort(2500);
-        wiser.start();
+        for(int count = 0; count < 5; count++)
+        	try {
+                wiser.setPort(2500);
+                logger.info(String.format("Attempting to start Wiser SMTP Server on port 2500"));
+        		wiser.start();
+        		break;
+        	} catch (RuntimeException re){
+        		logger.info("Failed to start Wiser SMTP server, sleeping for a couple of seconds", re);
+        		try {
+					Thread.sleep(2000l);
+				} catch (InterruptedException e) {
+				}
+        	}
     }
 
     @After
