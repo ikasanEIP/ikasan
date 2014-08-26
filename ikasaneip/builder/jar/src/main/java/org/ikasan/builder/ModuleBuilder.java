@@ -56,8 +56,11 @@ public class ModuleBuilder
 {
 	/** name of the module being instantiated */
 	String name;
-	
-	/** optional module description */
+
+    /** module version */
+    String version;
+
+    /** optional module description */
 	String description;
 
 	/** flow builders for creating flows within this module */
@@ -75,8 +78,24 @@ public class ModuleBuilder
 			throw new IllegalArgumentException("module name cannot be 'null'");
 		}
 	}
-	
-	/**
+
+    /**
+     * Constructor
+     * @param name
+     * @param version
+     */
+    private ModuleBuilder(String name, String version)
+    {
+        this.name = name;
+        if(name == null)
+        {
+            throw new IllegalArgumentException("module name cannot be 'null'");
+        }
+
+        this.version = version;
+    }
+
+    /**
 	 * Static moduleBuilder creator
 	 * @param name
 	 * @return ModuleBuilder
@@ -86,7 +105,18 @@ public class ModuleBuilder
 		return new ModuleBuilder(name);
 	}
 
-	/**
+    /**
+     * Static moduleBuilder creator
+     * @param name
+     * @param version
+     * @return ModuleBuilder
+     */
+    public static ModuleBuilder newModule(String name, String version)
+    {
+        return new ModuleBuilder(name, version);
+    }
+
+    /**
 	 * Add description to the module
 	 * @param description
 	 * @return
@@ -99,7 +129,7 @@ public class ModuleBuilder
 
 	/**
 	 * Add a flow to the module
-	 * @param name
+	 * @param flow
 	 * @return
 	 */
 	public ModuleBuilder addFlow(Flow flow)
@@ -110,7 +140,7 @@ public class ModuleBuilder
 	
 	public Module build()
 	{
-		Module module = new SimpleModule(this.name, this.flows);
+		Module module = new SimpleModule(this.name, this.version, this.flows);
 		module.setDescription(this.description);
 		return module;
 	}
