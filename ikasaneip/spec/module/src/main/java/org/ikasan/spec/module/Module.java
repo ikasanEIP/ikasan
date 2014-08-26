@@ -50,6 +50,13 @@ import java.util.List;
 public interface Module<FLOW>
 {
     /**
+     * Returns the runtime version of the module
+     *
+     * @return version of the module
+     */
+    public String getVersion();
+
+    /**
      * Returns the name of the module
      * 
      * @return name of the module
