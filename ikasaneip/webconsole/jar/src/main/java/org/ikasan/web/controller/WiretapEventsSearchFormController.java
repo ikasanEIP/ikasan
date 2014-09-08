@@ -150,7 +150,7 @@ public class WiretapEventsSearchFormController
         {
             return "events/wiretapEvents";
         }
-        return displaySearchResults(modelMap, searchCriteria, 1);
+        return displaySearchResults(modelMap, searchCriteria, 0);
     }
 
     /**
@@ -181,7 +181,7 @@ public class WiretapEventsSearchFormController
      */
     private int getSessionPageNo(HttpServletRequest request)
     {
-        int pageNo = 1;
+        int pageNo = 0;
         Integer sessionPageNo = (Integer) request.getSession().getAttribute("pageNo");
         if (sessionPageNo != null)
         {
