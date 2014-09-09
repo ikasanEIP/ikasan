@@ -146,7 +146,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     }
 
     /**
-     * Customise java to BSON encoding
+     * Customise java to BSON encoding.
      */
     private void addEncodingHooks()
     {
