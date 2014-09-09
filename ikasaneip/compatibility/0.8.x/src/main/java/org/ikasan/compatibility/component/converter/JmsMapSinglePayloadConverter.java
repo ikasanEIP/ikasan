@@ -40,7 +40,6 @@
  */
 package org.ikasan.compatibility.component.converter;
 
-import org.apache.log4j.Logger;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 

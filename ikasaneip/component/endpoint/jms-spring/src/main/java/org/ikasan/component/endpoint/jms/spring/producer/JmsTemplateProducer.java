@@ -40,12 +40,16 @@
  */
 package org.ikasan.component.endpoint.jms.spring.producer;
 
-import org.ikasan.component.endpoint.jms.producer.PostProcessor;
+import org.ikasan.component.endpoint.jms.AuthenticatedConnectionFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.core.IkasanJmsTemplate;
-import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.util.JndiUtils;
+import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.jndi.JndiTemplate;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -55,50 +59,31 @@ import javax.jms.Destination;
  * @author Ikasan Development Team
  */
 public class JmsTemplateProducer<T>
-        implements Producer<T>
+        implements Producer<T>, ConfiguredResource<SpringMessageProducerConfiguration>, ManagedResource
 {
     /** instantiated jms template */
     private IkasanJmsTemplate jmsTemplate;
 
-    /** target destination */
-    private Destination destination;
+    /** configured resource Id handle */
+    private String configuredResourceId;
+
+    /** configuration */
+    private SpringMessageProducerConfiguration configuration;
+
+    /** critical to start of flow - default is false */
+    private boolean isCritical;
 
     /**
      * Constructor
-     * @param connectionFactory
-     * @param destination
+     * @param jmsTemplate
      */
-    public JmsTemplateProducer(ConnectionFactory connectionFactory, Destination destination)
+    public JmsTemplateProducer(IkasanJmsTemplate jmsTemplate)
     {
-        this.jmsTemplate = new IkasanJmsTemplate(connectionFactory);
+        this.jmsTemplate = jmsTemplate;
         if(jmsTemplate == null)
         {
             throw new IllegalArgumentException("jmsTemplate cannot be 'null'");
         }
-
-        this.destination = destination;
-        if(destination == null)
-        {
-            throw new IllegalArgumentException("destination cannot be 'null'");
-        }
-    }
-
-    /**
-     * Setter for the post processor
-     * @param postProcessor
-     */
-    public void setPostProcessor(PostProcessor postProcessor)
-    {
-        this.jmsTemplate.setPostProcessor(postProcessor);
-    }
-
-    /**
-     * Override default message converter
-     * @param messageConverter
-     */
-    public void setMessageConverter(MessageConverter messageConverter)
-    {
-        this.jmsTemplate.setMessageConverter(messageConverter);
     }
 
     @Override
@@ -106,8 +91,7 @@ public class JmsTemplateProducer<T>
     {
         try
         {
-        	
-            this.jmsTemplate.convertAndSend(this.destination, message); 
+            this.jmsTemplate.convertAndSend(message);
         }
         catch(RuntimeException e)
         {
@@ -115,5 +99,150 @@ public class JmsTemplateProducer<T>
         }
     }
 
-   
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public SpringMessageProducerConfiguration getConfiguration()
+    {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(SpringMessageProducerConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public void startManagedResource()
+    {
+        try
+        {
+            // get connection factory
+            if(configuration.getConnectionFactoryUsername() == null)
+            {
+                ConnectionFactory connectionFactory = JndiUtils.getConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName());
+                this.jmsTemplate.setConnectionFactory(connectionFactory);
+            }
+            else
+            {
+                ConnectionFactory connectionFactory = JndiUtils.getAuthenicatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
+                this.jmsTemplate.setConnectionFactory(connectionFactory);
+            }
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new RuntimeException("Check the configuration ConnectionFactoryName [" + configuration.getConnectionFactoryName() + "]", e);
+        }
+
+        try
+        {
+            // get destination
+            Destination destination = JndiUtils.getDestination(configuration.getDestinationJndiProperties(), configuration.getDestinationJndiName());
+            this.jmsTemplate.setDefaultDestination(destination);
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new RuntimeException("Check the configuration DestinationJndiName [" + configuration.getDestinationJndiName() + "]", e);
+        }
+
+        this.jmsTemplate.setPubSubDomain(configuration.getPubSubDomain());
+
+        if(configuration.getDeliveryPersistent() != null)
+        {
+            this.jmsTemplate.setDeliveryPersistent(configuration.getDeliveryPersistent());
+        }
+
+        if(configuration.getDeliveryMode() != null)
+        {
+            this.jmsTemplate.setDeliveryMode(configuration.getDeliveryMode());
+        }
+
+        if(configuration.getSessionTransacted() != null)
+        {
+            this.jmsTemplate.setSessionTransacted(configuration.getSessionTransacted());
+        }
+
+        if(configuration.getExplicitQosEnabled() != null)
+        {
+            this.jmsTemplate.setExplicitQosEnabled(configuration.getExplicitQosEnabled());
+        }
+
+        if(configuration.getMessageIdEnabled() != null)
+        {
+            this.jmsTemplate.setMessageIdEnabled(configuration.getMessageIdEnabled());
+        }
+
+        if(configuration.getMessageTimestampEnabled() != null)
+        {
+            this.jmsTemplate.setMessageTimestampEnabled(configuration.getMessageTimestampEnabled());
+        }
+
+        if(configuration.getPriority() != null)
+        {
+            this.jmsTemplate.setPriority(configuration.getPriority());
+        }
+
+        if(configuration.getPubSubNoLocal() != null)
+        {
+            this.jmsTemplate.setPubSubNoLocal(configuration.getPubSubNoLocal());
+        }
+
+        if(configuration.getReceiveTimeout() != null)
+        {
+            this.jmsTemplate.setReceiveTimeout(configuration.getReceiveTimeout());
+        }
+
+        if(configuration.getSessionAcknowledgeMode() != null)
+        {
+            this.jmsTemplate.setSessionAcknowledgeMode(configuration.getSessionAcknowledgeMode());
+        }
+
+        if(configuration.getSessionAcknowledgeModeName() != null)
+        {
+            this.jmsTemplate.setSessionAcknowledgeModeName(configuration.getSessionAcknowledgeModeName());
+        }
+
+        if(configuration.getTimeToLive() != null)
+        {
+            this.jmsTemplate.setTimeToLive(configuration.getTimeToLive());
+        }
+
+        this.jmsTemplate.afterPropertiesSet();
+    }
+
+    @Override
+    public void stopManagedResource()
+    {
+        // nothing to stop
+    }
+
+    @Override
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    {
+        // don't care about this here
+    }
+
+    @Override
+    public boolean isCriticalOnStartup()
+    {
+        return this.isCritical;
+    }
+
+    @Override
+    public void setCriticalOnStartup(boolean criticalOnStartup)
+    {
+        this.isCritical = criticalOnStartup;
+    }
+
 }

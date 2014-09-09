@@ -40,6 +40,7 @@
  */
 package org.springframework.jms.core;
 
+import org.ikasan.component.endpoint.jms.producer.JmsPostProcessor;
 import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.spec.flow.FlowEvent;
 import org.springframework.jms.JmsException;
@@ -55,16 +56,15 @@ import javax.jms.IllegalStateException;
  */
 public class IkasanJmsTemplate extends JmsTemplate
 {
-    /** specific post processor implementation to be applied */
-    private PostProcessor<Object,Message> postProcessor;
+    /** specific post processor implementation to be applied - ensure a default post-processor */
+    private PostProcessor<Object,Message> postProcessor = new JmsPostProcessor();
 
     /**
-     * Constructor
-     * @param connectionFactory
+     * Default constructor
      */
-    public IkasanJmsTemplate(ConnectionFactory connectionFactory)
+    public IkasanJmsTemplate()
     {
-        super(connectionFactory);
+        // nothing to do here
     }
 
     /**
@@ -76,10 +76,26 @@ public class IkasanJmsTemplate extends JmsTemplate
         this.postProcessor = postProcessor;
     }
 
+    /**
+     * Stop Spring from failing on deployment if we dont have an initial configuration - that's ok.
+     */
     @Override
-    public void convertAndSend(Destination destination, final Object message) throws JmsException
+    public void afterPropertiesSet()
     {
-        send(destination, new MessageCreator()
+        try
+        {
+            super.afterPropertiesSet();
+        }
+        catch(IllegalArgumentException e)
+        {
+            logger.info("Ignoring failed afterPropertiesSet()", e);
+        }
+    }
+
+    @Override
+    public void convertAndSend(final Object message) throws JmsException
+    {
+        send(new MessageCreator()
         {
             public Message createMessage(Session session) throws JMSException
             {
@@ -116,5 +132,4 @@ public class IkasanJmsTemplate extends JmsTemplate
 
         return message;
     }
-
 }
