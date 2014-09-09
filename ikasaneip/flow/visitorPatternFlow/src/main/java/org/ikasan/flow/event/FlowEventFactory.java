@@ -100,6 +100,10 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
         protected GenericFlowEvent(String identifier, PAYLOAD payload)
         {
             this.identifier = identifier;
+            if(identifier == null)
+            {
+                throw new IllegalArgumentException("identifier cannot be 'null'. Make sure the FlowEvent has an identifier!");
+            }
             this.timestamp = System.currentTimeMillis();
             this.payload = payload;
         }
@@ -113,6 +117,10 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
         protected GenericFlowEvent(String identifier, String relatedIdentifier, PAYLOAD payload)
         {
             this.identifier = identifier;
+            if(identifier == null)
+            {
+                throw new IllegalArgumentException("identifier cannot be 'null'. Make sure the FlowEvent has an identifier!");
+            }
             this.relatedIdentifier = relatedIdentifier;
             this.timestamp = System.currentTimeMillis();
             this.payload = payload;
