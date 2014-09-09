@@ -41,14 +41,23 @@
 package org.springframework.jms.listener;
 
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
+import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
+import org.ikasan.spec.configuration.Configured;
+import org.springframework.jms.util.JndiUtils;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 
 /**
  * Extend DefaultMessageListenerContainer to ensure standard defaults are set on the container being instantiated.
  *
  * @author Ikasan Development Team
  */
-public class IkasanMessageListenerContainer extends DefaultMessageListenerContainer implements MessageProvider
+public class IkasanMessageListenerContainer extends DefaultMessageListenerContainer implements MessageProvider, Configured<SpringMessageConsumerConfiguration>
 {
+    /** configuration instance */
+    SpringMessageConsumerConfiguration configuration;
+
     /**
      * Constructor with preferred defaults.
      */
@@ -58,6 +67,86 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         setAutoStartup(false);
         setMaxConcurrentConsumers(1);
         setConcurrentConsumers(1);
+        setCacheLevel(CACHE_CONNECTION);
     }
 
+    /**
+     * Stop Spring from failing on deployment if we dont have an initial configuration - that's ok.
+     */
+    @Override
+    public void afterPropertiesSet()
+    {
+        try
+        {
+            super.afterPropertiesSet();
+        }
+        catch(IllegalArgumentException e)
+        {
+            logger.debug("Ignoring failed afterPropertiesSet()", e);
+        }
+    }
+
+    @Override
+    public SpringMessageConsumerConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(SpringMessageConsumerConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public void start()
+    {
+        try
+        {
+            // get connection factory
+            if(configuration.getConnectionFactoryUsername() == null)
+            {
+                ConnectionFactory connectionFactory = JndiUtils.getConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName());
+                setConnectionFactory(connectionFactory);
+            }
+            else
+            {
+                ConnectionFactory connectionFactory = JndiUtils.getAuthenicatedConnectionFactory(configuration.getConnectionFactoryJndiProperties(), configuration.getConnectionFactoryName(), configuration.getConnectionFactoryUsername(), configuration.getConnectionFactoryPassword());
+                setConnectionFactory(connectionFactory);
+            }
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new RuntimeException("Check the configuration ConnectionFactoryName [" + configuration.getConnectionFactoryName() + "]", e);
+        }
+
+        try
+        {
+            // get destination
+            Destination destination = JndiUtils.getDestination(configuration.getDestinationJndiProperties(), configuration.getDestinationJndiName());
+            setDestination(destination);
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new RuntimeException("Check the configuration DestinationJndiName [" + configuration.getDestinationJndiName() + "]", e);
+        }
+
+        // get other stuff
+        setPubSubDomain(configuration.getPubSubDomain());
+        setDurableSubscriptionName(configuration.getDurableSubscriptionName());
+
+        if(configuration.getDurable() != null)
+        {
+            setSubscriptionDurable(configuration.getDurable());
+        }
+
+        if(configuration.getSessionTransacted() != null)
+        {
+            setSessionTransacted(configuration.getSessionTransacted());
+        }
+
+        afterPropertiesSet();
+
+        super.start();
+    }
 }

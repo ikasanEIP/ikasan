@@ -44,6 +44,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.configuration.Configured;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
@@ -64,10 +66,13 @@ import javax.jms.MessageListener;
 public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
         Consumer<EventListener<?>,EventFactory>,
-        ManagedIdentifierService<ManagedEventIdentifierService>
+        ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
 {
     /** Logger instance */
     private Logger logger = Logger.getLogger(JmsContainerConsumer.class);
+
+    /** configured Resource identifier */
+    String configuredResourceId;
 
     /** Factory for creating the event instance to be pushed to the flow */
     EventFactory<FlowEvent<?,?>> flowEventFactory;
@@ -177,6 +182,38 @@ public class JmsContainerConsumer
         else
         {
             logger.error("handleError reported after eventListener stopped listening.", throwable);
+        }
+    }
+
+    @Override
+    public String getConfiguredResourceId()
+    {
+        return this.configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public SpringMessageConsumerConfiguration getConfiguration()
+    {
+        if(this.messageProvider != null && this.messageProvider instanceof Configured)
+        {
+            return ((Configured<SpringMessageConsumerConfiguration>)this.messageProvider).getConfiguration();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setConfiguration(SpringMessageConsumerConfiguration configuration)
+    {
+        if(this.messageProvider != null && this.messageProvider instanceof Configured)
+        {
+            ((Configured<SpringMessageConsumerConfiguration>)this.messageProvider).setConfiguration(configuration);
         }
     }
 }
