@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,26 +36,59 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-package org.ikasan.filter.duplicate.model;
+package org.ikasan.setup.persistence.dao;
+
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
- * Base interface for converting any message to a {@link FilterEntry}. It defines
- * the contract for evaluating the Criteria of a message.
+ * JUnit based test class for testing PersistenceDAOHibernateImpl
  * 
  * @author Ikasan Development Team
- *
- * @param <T> Type of message to convert
  */
-public interface FilterEntryConverter<T>
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml"})
+public class PersistenceDAOHibernateImplTest
 {
     /**
-     * Convert any object to a {@link FilterEntry} instance
-     * @param object The instance to convert
-     * @return A {@link FilterEntry} representation of an object
-     * @throws FilterEntryConverterException allow configuration of the flow to
-     * skip filter entry issues caused by data
+     * The context that the tests run in, allows for mocking actual concrete
+     * classes
      */
-    public FilterEntry convert(T message) throws FilterEntryConverterException;
+    private Mockery context = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
+    @Resource
+    PersistenceDAOHibernateImpl persistenceDAOHibernateImpl;
+
+    /**
+     * Test create
+     */
+    @Test
+    public void test_create()
+    {
+        persistenceDAOHibernateImpl.create("wiretap");
+        persistenceDAOHibernateImpl.delete("wiretap");
+    }
+
+    /**
+     * Test find all point to point profiles
+     */
+    @Ignore@Test
+    public void test_getRuntimeVersion()
+    {
+        persistenceDAOHibernateImpl.getRuntimeVersion();
+    }
 }

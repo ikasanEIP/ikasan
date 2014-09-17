@@ -67,7 +67,7 @@ public abstract class AbstractPointToPointFlowProfileAfterInvocationProvider imp
     /**
      * Constructor
      * 
-     * @param responsiveConfigAttribute - The configuration to check 
+     * @param responsiveConfigAttribute - The configuration to check
      */
     public AbstractPointToPointFlowProfileAfterInvocationProvider(String responsiveConfigAttribute)
     {
@@ -129,10 +129,10 @@ public abstract class AbstractPointToPointFlowProfileAfterInvocationProvider imp
     }
 
     /**
-     * Returns true if the configuration attribute is supported by this provider
+     * Returns true if the dao attribute is supported by this provider
      *  
-     * @param configAttribute configuration attribute to test 
-     * @return true if the configuration attribute is supported by this provider
+     * @param configAttribute dao attribute to test
+     * @return true if the dao attribute is supported by this provider
      */
     public boolean supports(ConfigAttribute configAttribute)
     {

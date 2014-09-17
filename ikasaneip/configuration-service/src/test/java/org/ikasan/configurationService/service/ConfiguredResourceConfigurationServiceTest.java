@@ -126,10 +126,10 @@ public class ConfiguredResourceConfigurationServiceTest
     }
 
     /**
-     * Test the setting of a static configuration on a configuredResource at runtime
-     * where a persisted configuration exists.
+     * Test the setting of a static dao on a configuredResource at runtime
+     * where a persisted dao exists.
      * This is typically invoked on the start of a flow where the flow identifies
-     * all configuredResources and ensures the latest configuration is applied
+     * all configuredResources and ensures the latest dao is applied
      * prior to starting the moving components.
      */
     @Test
@@ -148,15 +148,15 @@ public class ConfiguredResourceConfigurationServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // once to try to locate a configuration based on this id
+                // once to try to locate a dao based on this id
                 one(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
 
-                // once to try to locate a configuration based on this id
+                // once to try to locate a dao based on this id
                 one(configuredResource).getConfiguration();
                 will(returnValue(runtimeConfiguration));
 
-                // set the configuration on the resource
+                // set the dao on the resource
                 one(configuredResource).setConfiguration(runtimeConfiguration);
             }
         });
@@ -166,10 +166,10 @@ public class ConfiguredResourceConfigurationServiceTest
     }
 
     /**
-     * Test the setting of a static configuration on a configuredResource at runtime
-     * where a persisted configuration exists.
+     * Test the setting of a static dao on a configuredResource at runtime
+     * where a persisted dao exists.
      * This is typically invoked on the start of a flow where the flow identifies
-     * all configuredResources and ensures the latest configuration is applied
+     * all configuredResources and ensures the latest dao is applied
      * prior to starting the moving components.
      */
     @Test
@@ -184,11 +184,11 @@ public class ConfiguredResourceConfigurationServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // once to try to locate a configuration based on this id
+                // once to try to locate a dao based on this id
                 one(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));
 
-                // once to try to locate a configuration based on this id
+                // once to try to locate a dao based on this id
                 one(configuredResource).getConfiguration();
                 will(returnValue(null));
 
@@ -204,10 +204,10 @@ public class ConfiguredResourceConfigurationServiceTest
 
 
     /**
-     * Test the setting of a static configuration on a configuredResource at runtime
-     * where a persisted configuration exists.
+     * Test the setting of a static dao on a configuredResource at runtime
+     * where a persisted dao exists.
      * This is typically invoked on the start of a flow where the flow identifies
-     * all configuredResources and ensures the latest configuration is applied
+     * all configuredResources and ensures the latest dao is applied
      * prior to starting the moving components.
      */
     @Test
@@ -226,11 +226,11 @@ public class ConfiguredResourceConfigurationServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // once to try to locate a configuration based on this id
+                // once to try to locate a dao based on this id
                 one(configuredResource).getConfiguration();
                 will(returnValue(runtimeConfiguration));
 
-                // find by configuration id
+                // find by dao id
                 one(configuredResource).getConfiguredResourceId();
                 will(returnValue("configuredResourceId"));            }
         });

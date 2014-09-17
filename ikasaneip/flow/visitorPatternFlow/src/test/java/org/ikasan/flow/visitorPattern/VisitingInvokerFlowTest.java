@@ -779,7 +779,7 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
-                // load configuration
+                // load dao
                 exactly(2).of(flowConfiguration).configure(configuredResource);
                 
                 // get the the flow element managed resource
@@ -864,11 +864,11 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
-                // load monitor configuration and notifiers
+                // load monitor dao and notifiers
                 exactly(1).of(monitor).getNotifiers();
                 will(returnValue(notifiers));
 
-                // load configuration
+                // load dao
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
@@ -1005,11 +1005,11 @@ public class VisitingInvokerFlowTest
                 one(configuredResourceFlowElements).iterator();
                 will(returnIterator(configuredResourceFlowElement, configuredResourceFlowElement));
 
-                // load monitor configuration and notifiers
+                // load monitor dao and notifiers
                 exactly(1).of(monitor).getNotifiers();
                 will(returnValue(notifiers));
 
-                // load configuration
+                // load dao
                 exactly(4).of(configuredResourceFlowElement).getFlowComponent();
                 will(returnValue(configuredResource));
                 
@@ -1428,7 +1428,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // reload any marked dynamic configuration
+                // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
@@ -1468,18 +1468,18 @@ public class VisitingInvokerFlowTest
     }
 
     /**
-     * Test failed flow invoke with a flow event, but dynamic configuration failing.
+     * Test failed flow invoke with a flow event, but dynamic dao failing.
      */
     @Test
     public void test_failed_flow_invoke_with_flowEvent_stoppingInError_due_to_dynamicConfiguration_failure()
     {
-        final RuntimeException exception = new RuntimeException("test failed dynamic configuration");
+        final RuntimeException exception = new RuntimeException("test failed dynamic dao");
         
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                // reload any marked dynamic configuration
+                // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
@@ -1535,7 +1535,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // reload any marked dynamic configuration
+                // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
@@ -1591,7 +1591,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // reload any marked dynamic configuration
+                // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();
@@ -1648,7 +1648,7 @@ public class VisitingInvokerFlowTest
         mockery.checking(new Expectations()
         {
             {
-                // reload any marked dynamic configuration
+                // reload any marked dynamic dao
                 one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
                 will(returnValue(dynamicConfiguredResourceFlowElements));
                 one(dynamicConfiguredResourceFlowElements).iterator();

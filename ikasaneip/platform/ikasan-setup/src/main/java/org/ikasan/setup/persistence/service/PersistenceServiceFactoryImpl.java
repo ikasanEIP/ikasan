@@ -38,78 +38,61 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup;
+package org.ikasan.setup.persistence.service;
 
-import org.apache.log4j.Logger;
+import org.ikasan.setup.persistence.dao.ProviderDAO;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Persistence creation for Configuration resources.
- * Ikasan Development Team
+ * PersistenceServiceFactory implementation
+ *
+ * @auther Ikasan Development Team
  */
-public class ConfigurationPersistence implements PersistenceCreator
+public class PersistenceServiceFactoryImpl implements PersistenceServiceFactory<String>
 {
-    /** logger */
-    private static Logger logger = Logger.getLogger(ConfigurationPersistence.class);
+    /**
+     * Providers and their associated DAO
+     */
+    private Map<String,ProviderDAO> providerDAOs;
 
-    /** constants */
-    static final String CREATE_CONFIGURATION_TABLE = "create.configuration.table";
-    static final String CREATE_CONFIGURATION_PARAMETER_TABLE = "create.configurationParameter.table";
-
-    private Properties properties;
-
-    private Connection connection;
-
-    public ConfigurationPersistence(Connection connection, Properties properties)
+    /**
+     * Constructor
+     * @param providerDAOs
+     */
+    public PersistenceServiceFactoryImpl(Map<String, ProviderDAO> providerDAOs)
     {
-        this.connection = connection;
-        if(connection == null)
+        this.providerDAOs = providerDAOs;
+        if(providerDAOs == null)
         {
-            throw new IllegalArgumentException("connection cannot be 'null'");
-        }
-
-        this.properties = properties;
-        if(properties == null)
-        {
-            throw new IllegalArgumentException("properties cannot be 'null'");
+            throw new IllegalArgumentException("providerDAOs cannot be 'null");
         }
     }
 
     /**
-     * Create required persistence
-     * @throws java.sql.SQLException
+     * Return a set of current providers.
+     * @return
      */
-    public void execute()
+    public Set<String> getProviders()
     {
-        Statement statement = null;
-        try
-        {
-            statement = connection.createStatement();
-            statement.executeUpdate(properties.getProperty(CREATE_CONFIGURATION_TABLE));
-            logger.info("Created Configuration Table");
+        return providerDAOs.keySet();
+    }
 
-            statement.executeUpdate(properties.getProperty(CREATE_CONFIGURATION_PARAMETER_TABLE));
-            logger.info("Created ConfigurationParameter Table");
-        }
-        catch(SQLException e)
+    /**
+     * Create a persiwtence service instance base don the given provider
+     * @param provider
+     * @return
+     * @throws UnsupportedProviderException
+     */
+    public PersistenceService getPersistenceService(String provider) throws UnsupportedProviderException
+    {
+        ProviderDAO providerDAO = providerDAOs.get(provider);
+        if(providerDAO == null)
         {
-            logger.error("Configuration persistence creation failed", e);
+            throw new UnsupportedProviderException(provider + " is not currently supported!");
         }
-        finally
-        {
-            try
-            {
-                if(statement != null) statement.close();
-            }
-            catch(SQLException e)
-            {
-                logger.error("Failed to close resources", e);
-            }
 
-        }
+        return new PersistenceServiceImpl(providerDAO);
     }
 }

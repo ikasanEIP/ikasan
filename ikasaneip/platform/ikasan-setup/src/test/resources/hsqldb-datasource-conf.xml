@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="persistenceService" class="org.ikasan.setup.persistence.service.PersistenceServiceImpl">
+        <constructor-arg ref="providerDao"/>
+    </bean>
+
+    <bean id="providerDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl">
+        <constructor-arg ref="H2"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                <property name="dataSource" ref="eai.xads" />
+
+                <property name="hibernateProperties" ref="platformHibernateProperties"/>
+            </bean>
+        </property>
+    </bean>
+
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="true"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+    </util:map>
+    
+    <bean id="dataSource" name="eai.xads eai.ds" 
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
+    </bean>
+    
+</beans>

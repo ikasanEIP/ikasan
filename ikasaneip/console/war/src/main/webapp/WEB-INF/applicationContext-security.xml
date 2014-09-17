@@ -102,6 +102,8 @@
         if they try to go elsewhere first.
      -->
     <http pattern="/login.jsp*" security="none" />
+    <http pattern="/admin/setup/provider.htm" security="none" />
+    <http pattern="/admin/setup/createProviderPersistence.htm" security="none" />
     <http pattern="/users/forgotPassword.htm" security="none" />
     <http pattern="/users/sendPassword.htm" security="none" />
     <http pattern="/css/*"  security="none" />

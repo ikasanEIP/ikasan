@@ -65,7 +65,7 @@ public abstract class AbstractModuleAfterInvocationProvider implements AfterInvo
     /**
      * Constructor
      * 
-     * @param responsiveConfigAttribute - The configuration to check 
+     * @param responsiveConfigAttribute - The configuration to check
      */
     public AbstractModuleAfterInvocationProvider(String responsiveConfigAttribute)
     {

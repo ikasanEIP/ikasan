@@ -125,7 +125,7 @@ public class ConfiguredResourceConfigurationManagementTest
 
 
     /**
-     * Test the successful creation of a configuration through the configurationManagement contract implementation.
+     * Test the successful creation of a dao through the configurationManagement contract implementation.
      */
     @Test
     public void test_configurationManagement_create_configuration()
@@ -136,7 +136,7 @@ public class ConfiguredResourceConfigurationManagementTest
         mockery.checking(new Expectations()
         {
             {
-                // once the configuration instance
+                // once the dao instance
                 one(configuredResource).getConfiguration();
                 will(returnValue(runtimeConfiguration));
 
@@ -152,7 +152,7 @@ public class ConfiguredResourceConfigurationManagementTest
     }
 
     /**
-     * Test the successful save of a mixed based configuration through the configurationManagement contract implementation.
+     * Test the successful save of a mixed based dao through the configurationManagement contract implementation.
      */
     @Test
     public void test_configurationManagement_save_mixed_based_configuration()
@@ -180,7 +180,7 @@ public class ConfiguredResourceConfigurationManagementTest
     }
 
     /**
-     * Test the successful delete of a configuration through the configurationManagement contract implementation.
+     * Test the successful delete of a dao through the configurationManagement contract implementation.
      */
     @Test
     @Ignore

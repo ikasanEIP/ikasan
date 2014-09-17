@@ -15,8 +15,15 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-		    <artifactId>ikasan-eip</artifactId>
-		    <version>0.9.5-SNAPSHOT</version>
+            <artifactId>ikasan-eip</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-setup</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
