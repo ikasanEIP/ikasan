@@ -49,6 +49,8 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
       classpath:console-service-conf.xml
+      classpath:providers-conf.xml
+      classpath:providers-properties.xml
       classpath:ikasan-datasource-conf.xml
       classpath:platform-service-conf.xml
       classpath:scheduler-service-conf.xml

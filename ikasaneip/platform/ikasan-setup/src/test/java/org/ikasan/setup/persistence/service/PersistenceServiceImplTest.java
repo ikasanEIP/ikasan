@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,33 +38,59 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup;
+package org.ikasan.setup.persistence.service;
 
-import org.junit.Ignore;
+import junit.framework.Assert;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
- * This test class supports the <code>Persistence</code> class.
- *
+ * JUnit based test class for testing HibernatePointToPointFlowProfileDao
+ * 
  * @author Ikasan Development Team
  */
-@Ignore
-public class PersistenceTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/providers-properties.xml", "/hsqldb-datasource-conf.xml"})
+public class PersistenceServiceImplTest
 {
-    String user = "username";
-    String password = "password";
-    String host = "hostname";
-    String port = "50100";
-    String database = "Ikasan01d";
-    String conf = "sybase15.xml";
+    /**
+     * The context that the tests run in, allows for mocking actual concrete
+     * classes
+     */
+    private Mockery context = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
+    @Resource
+    PersistenceService persistenceService;
 
     /**
-     * Test successful DB connection.
+     * Test
+     */
+    @Before
+    public void setup()
+    {
+        persistenceService.createPersistence();
+    }
+
+    /**
+     * Test
      */
     @Test
-    public void test_successful_dbConnection()
+    public void test_persistenceService_getVersion()
     {
-        Persistence persistence = new Persistence(user, password, host, port, database, conf);
-        persistence.execute();
+        String version = persistenceService.getVersion();
+        Assert.assertEquals("1.0.0", version);
     }
+
 }

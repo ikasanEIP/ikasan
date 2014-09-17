@@ -65,7 +65,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.ikasan.setup.Persistence</mainClass>
+                            <mainClass>org.ikasan.console.persistence.configuration.service.PersistenceCreatorServiceImpl</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -77,13 +77,20 @@
     </build>
 
     <dependencies>
-        <!--dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-build</artifactId>
+            <artifactId>ikasan-eip</artifactId>
             <version>0.9.5-SNAPSHOT</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency-->
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- logging -->
         <dependency>
@@ -97,19 +104,28 @@
 	   <groupId>net.sourceforge.jtds</groupId>
 	   <artifactId>jtds</artifactId>
 	   <version>1.3.1</version>
+       <scope>provided</scope>
 	</dependency>
 
-        <!-- Sybase driver -->
-        <!--dependency>
-            <groupId>sybase</groupId>
-            <artifactId>jconn4</artifactId>
-            <version>7.07_build_26666</version>
-        </dependency-->
+        <!-- test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>3.1.1.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.178</version>
             <scope>test</scope>
         </dependency>
 

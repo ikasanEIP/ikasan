@@ -38,74 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup;
-
-import org.apache.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+package org.ikasan.setup.persistence.service;
 
 /**
- * Persistence creation for Wiretap resources.
- * Ikasan Development Team
+ * Unsupported persistence provider exception.
+ *
+ * @author Ikasan Development Team
  */
-public class SystemEvent implements PersistenceCreator
+public class UnsupportedProviderException extends RuntimeException
 {
-    /** logger */
-    private static Logger logger = Logger.getLogger(SystemEvent.class);
-
-    /** systemEvent table */
-    static final String CREATE_SYSTEM_EVENT_TABLE = "create.systemEvent.table";
-
-    private Properties properties;
-
-    private Connection connection;
-
-    public SystemEvent(Connection connection, Properties properties)
+    public UnsupportedProviderException(String message)
     {
-        this.connection = connection;
-        if(connection == null)
-        {
-            throw new IllegalArgumentException("connection cannot be 'null'");
-        }
-
-        this.properties = properties;
-        if(properties == null)
-        {
-            throw new IllegalArgumentException("properties cannot be 'null'");
-        }
-    }
-
-    /**
-     * SystemEvent required persistence
-     * @throws java.sql.SQLException
-     */
-    public void execute()
-    {
-        Statement statement = null;
-        try
-        {
-            statement = connection.createStatement();
-            statement.executeUpdate(properties.getProperty(CREATE_SYSTEM_EVENT_TABLE));
-            logger.info("Created SystemEvent Table");
-        }
-        catch(SQLException e)
-        {
-            logger.error("SystemEvent persistence creation failed", e);
-        }
-        finally
-        {
-            try
-            {
-                if(statement != null) statement.close();
-            }
-            catch(SQLException e)
-            {
-                logger.error("Failed to close resources", e);
-            }
-
-        }
+        super(message);
     }
 }

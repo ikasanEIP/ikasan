@@ -1,4 +1,4 @@
-<%-- 
+<%--
 
  $Id$
  $URL$ 
@@ -60,8 +60,8 @@
                     <c:out value="${module.name}" />
                 </td>
             </tr>
-            
-            
+
+
         </table>
 
 <h3>Flows</h3>

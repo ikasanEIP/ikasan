@@ -38,74 +38,34 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.setup;
-
-import org.apache.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
+package org.ikasan.setup.persistence.service;
 
 /**
- * Persistence creation for Module resources.
+ * Contract for persistence creation.
+ *
  * Ikasan Development Team
  */
-public class ModulePersistence implements PersistenceCreator
+public interface PersistenceService
 {
-    /** logger */
-    private static Logger logger = Logger.getLogger(ModulePersistence.class);
-
-    /** constants */
-    static final String CREATE_MODULE_STARTUP_TABLE = "create.moduleStartup.table";
-
-    private Properties properties;
-
-    private Connection connection;
-
-    public ModulePersistence(Connection connection, Properties properties)
-    {
-        this.connection = connection;
-        if(connection == null)
-        {
-            throw new IllegalArgumentException("connection cannot be 'null'");
-        }
-
-        this.properties = properties;
-        if(properties == null)
-        {
-            throw new IllegalArgumentException("properties cannot be 'null'");
-        }
-    }
+    /**
+     * Get the runtime version of the Ikasan Core Engine
+     * @return String
+     */
+    public String getVersion();
 
     /**
-     * Create required persistence
-     * @throws java.sql.SQLException
+     * Create the core engine underlying persistence
      */
-    public void execute()
-    {
-        Statement statement = null;
-        try
-        {
-            statement = connection.createStatement();
-            statement.executeUpdate(properties.getProperty(CREATE_MODULE_STARTUP_TABLE));
-            logger.info("Created Module Startup Table");
-        }
-        catch(SQLException e)
-        {
-            logger.error("Module Startup persistence creation failed", e);
-        }
-        finally
-        {
-            try
-            {
-                if(statement != null) statement.close();
-            }
-            catch(SQLException e)
-            {
-                logger.error("Failed to close resources", e);
-            }
+    public void createPersistence();
 
-        }
-    }
+    /**
+     * Does an administration account exist in the current persistence
+     * @return boolean
+     */
+    public boolean adminAccountExists();
+
+    /**
+     * Create the default administration account and associated dependencies
+     */
+    public void createAdminAccount();
 }

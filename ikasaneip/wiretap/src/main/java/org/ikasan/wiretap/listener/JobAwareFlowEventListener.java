@@ -89,7 +89,11 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
 
     /** Logger instance */
     private static final Logger logger = Logger.getLogger(JobAwareFlowEventListener.class);
-    
+
+    // TODO - find a better way of identifying failure and reloading triggers
+    /** flag to identify initial trigger load failures */
+    private boolean triggersLoaded = false;
+
     /**
      * Constructor
      * 
@@ -101,16 +105,34 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
         super();
         this.flowEventJobs = flowEventJobs;
         this.triggerDao = triggerDao;
-        for (Trigger dynamicTrigger : triggerDao.findAll())
+        loadTriggers();
+    }
+
+    /**
+     * Load all triggers available from the DAO
+     */
+    private void loadTriggers()
+    {
+        try
         {
-            mapTrigger(dynamicTrigger);
+            for (Trigger dynamicTrigger : triggerDao.findAll())
+            {
+                mapTrigger(dynamicTrigger);
+            }
+
+            this.triggersLoaded = true;
+        }
+        catch(RuntimeException e)
+        {
+            // just log failure as the application should still deploy
+            logger.debug("Failed to load DAO triggers", e);
         }
     }
 
     /**
      * Registers a List of static triggers
      * 
-     * Static Triggers are usually set through configuration, and cannot be
+     * Static Triggers are usually set through dao, and cannot be
      * added to or deleted at runtime
      * 
      * @param staticTriggers - List of Triggers
@@ -126,7 +148,7 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
     /**
      * Registers a static triggers
      * 
-     * Static Triggers are usually set through configuration, and cannot be
+     * Static Triggers are usually set through dao, and cannot be
      * added to or deleted at runtime
      * 
      * @param trigger - The static Trigger to add
@@ -195,6 +217,11 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      */
     public void beforeFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
+        if(!triggersLoaded)
+        {
+            loadTriggers();
+        }
+
         String flowElementName = flowElement.getComponentName();
         String key = moduleName + flowName + TriggerRelationship.BEFORE.getDescription() + flowElementName;
         List<Trigger> beforeElementTriggers = this.triggers.get(key);
@@ -215,6 +242,11 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      */
     public void afterFlowElement(String moduleName, String flowName, FlowElement flowElement, FlowEvent event)
     {
+        if(!triggersLoaded)
+        {
+            loadTriggers();
+        }
+
         String flowElementName = flowElement.getComponentName();
         String key = moduleName + flowName + TriggerRelationship.AFTER.getDescription() + flowElementName;
         List<Trigger> afterElementTriggers = this.triggers.get(key);
@@ -263,6 +295,11 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      */
     public List<Trigger> getTriggers(String moduleName, String flowName, TriggerRelationship relationship, String flowElementName)
     {
+        if(!triggersLoaded)
+        {
+            loadTriggers();
+        }
+
         List<Trigger> result = new ArrayList<Trigger>();
         String key = moduleName + flowName + relationship.getDescription() + flowElementName;
         List<Trigger> mappedTriggers = this.triggers.get(key);
@@ -302,6 +339,11 @@ public class JobAwareFlowEventListener implements FlowEventListener, FlowEventLi
      */
     private void unmapTrigger(Trigger trigger)
     {
+        if(!triggersLoaded)
+        {
+            loadTriggers();
+        }
+
         String key = generateKey(trigger);
         List<Trigger> list = this.triggers.get(key);
         if (list != null)

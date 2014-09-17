@@ -134,8 +134,8 @@ public class ConfiguredResourceConfigurationService
         Configuration<List<ConfigurationParameter>> persistedConfiguration = this.staticConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
         if(persistedConfiguration == null)
         {
-            logger.warn("No persisted configuration for configuredResource [" 
-                    + configuredResource.getConfiguredResourceId() + "]. Default programmatic configuration will be used.");
+            logger.warn("No persisted dao for configuredResource ["
+                    + configuredResource.getConfiguredResourceId() + "]. Default programmatic dao will be used.");
             return;
         }
 
@@ -161,7 +161,7 @@ public class ConfiguredResourceConfigurationService
             }
             catch(RuntimeException e)
             {
-                throw new ConfigurationException("Failed configuration for configuredResource [" 
+                throw new ConfigurationException("Failed dao for configuredResource ["
                         + configuredResource.getConfiguredResourceId() + "] " + e.getMessage(), e);
             }
         }
@@ -173,7 +173,7 @@ public class ConfiguredResourceConfigurationService
     }
 
     /**
-     * Create a new configuration instance for the given ConfiguredResource.
+     * Create a new dao instance for the given ConfiguredResource.
      * @param configuredResource
      * @return Configuration
      */
@@ -191,13 +191,13 @@ public class ConfiguredResourceConfigurationService
     }
 
     /**
-     * Updates the persisted configuration with the current configuredResource's configuration.
-     * This is typically used for dynamically updated configuration ie. sequence numbers
+     * Updates the persisted dao with the current configuredResource's dao.
+     * This is typically used for dynamically updated dao ie. sequence numbers
      * which change onEvent.
      * @param configuredResource
      */
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.service.ConfigurationService#update(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#update(org.ikasan.framework.dao.model.Configuration)
      */
     public void update(ConfiguredResource configuredResource)
     {
@@ -239,7 +239,7 @@ public class ConfiguredResourceConfigurationService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.model.Configuration)
      */
     public void deleteConfiguration(Configuration configuration)
     {
@@ -247,7 +247,7 @@ public class ConfiguredResourceConfigurationService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.service.ConfigurationService#saveConfiguration(org.ikasan.framework.configuration.model.Configuration)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.model.Configuration)
      */
     public void saveConfiguration(Configuration configuration)
     {
@@ -255,7 +255,7 @@ public class ConfiguredResourceConfigurationService
     }
 
     /* (non-Javadoc)
-     * @see org.ikasan.framework.configuration.service.ConfigurationService#getConfiguration(java.lang.Object)
+     * @see org.ikasan.framework.dao.service.ConfigurationService#getConfiguration(java.lang.Object)
      */
     public Configuration getConfiguration(ConfiguredResource configuredResource)
     {
