@@ -78,6 +78,20 @@
 
                 <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
 
+                <prop key="create.version">CREATE TABLE Version
+                    (
+                    Id        NUMERIC IDENTITY NOT NULL,
+                    Component VARCHAR(256) NOT NULL UNIQUE,
+                    Release   VARCHAR(256) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+                    CREATE UNIQUE INDEX IkasanVersion01u ON Version(Component)
+                </prop>
+
+                <prop key="create.version.entry">INSERT INTO Version ( Component, Release )
+                    VALUES ( 'ikasan', '1.0.0' )
+                </prop>
 
                 <prop key="create.flowEventTrigger">CREATE TABLE FlowEventTrigger
                 (
@@ -136,9 +150,12 @@
                     (
                     Id                          NUMERIC NOT NULL,
                     Name                        VARCHAR(128) NOT NULL,
-                    Value                       BOOLEAN DEFAULT 0,
+                    Value                       BIT DEFAULT 0,
                     Description                 VARCHAR(256) DEFAULT NULL NULL
-                    );
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
                     CREATE UNIQUE INDEX ConfParamBoolean01u ON ConfParamBoolean(Id)
                 </prop>
 
@@ -148,8 +165,11 @@
                     Name                        VARCHAR(128) NOT NULL,
                     Value                       NUMERIC DEFAULT NULL NULL,
                     Description                 VARCHAR(256) DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamInteger01u ON ConfParamInteger(Id);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamInteger01u ON ConfParamInteger(Id)
                 </prop>
 
                 <prop key="create.confParamList">
@@ -158,8 +178,11 @@
                     Id                          NUMERIC NOT NULL,
                     Name                        VARCHAR(128) NOT NULL,
                     Description                 VARCHAR(256) DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamList01u ON ConfParamList(Id);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamList01u ON ConfParamList(Id)
                 </prop>
 
                 <prop key="create.confParamListString">
@@ -168,8 +191,11 @@
                     Id                          NUMERIC NOT NULL,
                     PositionRef                 NUMERIC NOT NULL,
                     Value                       TEXT DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamListString01u ON ConfParamListString(Id, PositionRef);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamListString01u ON ConfParamListString(Id, PositionRef)
                 </prop>
 
                 <prop key="create.confParamLong">
@@ -179,8 +205,11 @@
                     Name                        VARCHAR(128) NOT NULL,
                     Value                       NUMERIC DEFAULT NULL NULL,
                     Description                 VARCHAR(256) DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamLong01u ON ConfParamLong(Id);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamLong01u ON ConfParamLong(Id)
                 </prop>
 
                 <prop key="create.confParamMap">
@@ -189,8 +218,11 @@
                     Id                          NUMERIC NOT NULL,
                     Name                        VARCHAR(128) NOT NULL,
                     Description                 VARCHAR(256) DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamMap01u ON ConfParamMap(Id);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamMap01u ON ConfParamMap(Id)
                 </prop>
 
                 <prop key="create.confParamMapString">
@@ -199,8 +231,11 @@
                     Id                          NUMERIC NOT NULL,
                     MapKey                      VARCHAR(256) NOT NULL,
                     Value                       TEXT DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamMapString01u ON ConfParamMapString(Id, MapKey);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamMapString01u ON ConfParamMapString(Id, MapKey)
                 </prop>
 
                 <prop key="create.confParamString">
@@ -210,8 +245,11 @@
                     Name                        VARCHAR(128) NOT NULL,
                     Value                       TEXT DEFAULT NULL NULL,
                     Description                 VARCHAR(256) DEFAULT NULL NULL
-                    );
-                    CREATE UNIQUE INDEX ConfParamString01u ON ConfParamString(Id);
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamString01u ON ConfParamString(Id)
                 </prop>
 
 
@@ -250,18 +288,27 @@
                 Description      VARCHAR(255) NOT NULL,
                 DesignDiagramURL VARCHAR(255) NULL,
                 UNIQUE (Name)
-                )</prop>
+                )
+                LOCK DATAROWS
+                WITH IDENTITY_GAP=1
+            </prop>
             <prop key="create.consolePointToPointFlowProfile">CREATE TABLE PointToPointFlowProfile(
                 Id          NUMERIC IDENTITY NOT NULL PRIMARY KEY,
                 Name        VARCHAR(255) NOT NULL
-                )</prop>
+                )
+                LOCK DATAROWS
+                WITH IDENTITY_GAP=1
+            </prop>
             <prop key="create.consolePointToPointFlow">CREATE TABLE PointToPointFlow(
                 Id                        NUMERIC IDENTITY NOT NULL PRIMARY KEY,
                 PointToPointFlowProfileId NUMERIC NOT NULL,
                 FromModuleId              NUMERIC NULL,
                 ToModuleId                NUMERIC NULL,
                 CONSTRAINT PTPP_ID_FK FOREIGN KEY(PointToPointFlowProfileId) REFERENCES PointToPointFlowProfile(Id)
-                )</prop>
+                )
+                LOCK DATAROWS
+                WITH IDENTITY_GAP=1
+            </prop>
 
             <prop key="create.users">CREATE TABLE Users
                 (
