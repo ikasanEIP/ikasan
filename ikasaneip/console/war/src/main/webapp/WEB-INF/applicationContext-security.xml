@@ -122,10 +122,32 @@
 
     <!-- The authentication provider, use the SHA1 encoding for password obscuring -->
     <authentication-manager>
-	    <authentication-provider user-service-ref="userDetailsService">
+        <authentication-provider ref="ldapAuthenticationProvider"/>
+        <authentication-provider user-service-ref="userDetailsService">
 	        <password-encoder ref="sha1PasswordEncoder" />
 	    </authentication-provider>
     </authentication-manager>
+
+    <!-- LDAP authentication -->
+    <beans:bean id="contextSource"
+                class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+        <beans:constructor-arg value="${ldap.url}" />
+    </beans:bean>
+
+    <!-- The custom LDAP Authentication provider -->
+    <beans:bean id="ldapAuthenticationProvider"
+                class="org.ikasan.console.security.service.authentication.LdapAuthenticationProvider">
+        <beans:constructor-arg ref="userDetailsService" />
+        <beans:property name="authenticator" ref="ldapAuthenticator" />
+    </beans:bean>
+
+    <!-- The custom LDAP Authenticator -->
+    <beans:bean id="ldapAuthenticator"
+                class="org.ikasan.console.security.service.authentication.LdapAuthenticatorImpl">
+        <beans:property name="contextFactory" ref="contextSource" />
+        <beans:property name="principalPrefix" value="${ldap.principal.prefix}" />
+    </beans:bean>
+
 
     <!-- The SHA1 password encoder provider -->
     <beans:bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
