@@ -52,7 +52,8 @@
     <bean id="persistenceServiceFactory" class="org.ikasan.setup.persistence.service.PersistenceServiceFactoryImpl" >
         <constructor-arg>
             <util:map>
-                <entry key="Sybase" value-ref="sybaseProviderDao" />
+                <entry key="Sybase12" value-ref="sybase12ProviderDao" />
+                <entry key="Sybase15" value-ref="sybase15ProviderDao" />
                 <entry key="MySQL" value-ref="mysqlProviderDao" />
                 <entry key="SQLServer" value-ref="sqlServerProviderDao" />
                 <entry key="H2" value-ref="h2ProviderDao" />
@@ -60,8 +61,13 @@
         </constructor-arg>
     </bean>
 
-    <bean id="sybaseProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="Sybase"/>
+    <bean id="sybase12ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
+        <constructor-arg ref="Sybase12"/>
+        <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
+    </bean>
+
+    <bean id="sybase15ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
+        <constructor-arg ref="Sybase15"/>
         <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
     </bean>
 
