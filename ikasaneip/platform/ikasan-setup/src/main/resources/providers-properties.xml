@@ -48,7 +48,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="Sybase" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <bean id="Sybase12" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="singleton" value="true"/>
 
         <property name="properties">
@@ -67,7 +67,7 @@
                 EventId             VARCHAR(255)  NOT NULL,
                 RelatedEventId      VARCHAR(255)  NULL,
                 EventTimestamp      NUMERIC DEFAULT 0 NOT NULL,
-                PayloadContent      UNITEXT NOT NULL,
+                PayloadContent      TEXT NOT NULL,
                 CreatedDateTime     NUMERIC NOT NULL,
                 Expiry              NUMERIC NOT NULL
                 )
@@ -352,6 +352,316 @@
 
                 INSERT INTO UsersAuthorities values ( @userId, @authorityUserId )
                 INSERT INTO UsersAuthorities values ( @userId, @authorityAdminId )</prop>
+                <prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
+            </props>
+
+        </property>
+    </bean>
+
+    <bean id="Sybase15" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="singleton" value="true"/>
+
+        <property name="properties">
+            <props>
+                <!--prop key="driver">com.sybase.jdbc4.jdbc.SybDataSource</prop-->
+                <!--prop key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</prop-->
+                <prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
+                <prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
+
+                <prop key="create.wiretap">CREATE TABLE IkasanWiretap
+                    (
+                    Id                  NUMERIC IDENTITY NOT NULL,
+                    ModuleName          VARCHAR(128)  NOT NULL,
+                    FlowName            VARCHAR(128)  NOT NULL,
+                    ComponentName       VARCHAR(128)  NOT NULL,
+                    EventId             VARCHAR(255)  NOT NULL,
+                    RelatedEventId      VARCHAR(255)  NULL,
+                    EventTimestamp      NUMERIC DEFAULT 0 NOT NULL,
+                    PayloadContent      UNITEXT NOT NULL,
+                    CreatedDateTime     NUMERIC NOT NULL,
+                    Expiry              NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)</prop>
+
+                <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+
+                <prop key="create.version">CREATE TABLE Version
+                    (
+                    Id        NUMERIC IDENTITY NOT NULL,
+                    Component VARCHAR(256) NOT NULL UNIQUE,
+                    Release   VARCHAR(256) NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+                    CREATE UNIQUE INDEX IkasanVersion01u ON Version(Component)
+                </prop>
+
+                <prop key="create.version.entry">INSERT INTO Version ( Component, Release )
+                    VALUES ( 'ikasan', '1.0.0' )
+                </prop>
+
+                <prop key="create.flowEventTrigger">CREATE TABLE FlowEventTrigger
+                    (
+                    Id                  NUMERIC IDENTITY NOT NULL,
+                    ModuleName          VARCHAR(128)  NOT NULL,
+                    FlowName            VARCHAR(128)  NOT NULL,
+                    Relationship        VARCHAR(32)  NOT NULL,
+                    FlowElementName     VARCHAR(128),
+                    JobName           	VARCHAR(64)   NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX FlowEventTrigger01u ON FlowEventTrigger(Id)</prop>
+
+                <prop key="create.flowEventTriggerParameters">CREATE TABLE FlowEventTriggerParameters
+                    (
+                    TriggerId          NUMERIC NOT NULL,
+                    ParamName          VARCHAR(128)  NOT NULL,
+                    ParamValue            VARCHAR(128)
+                    )
+                    ALTER TABLE FlowEventTriggerParameters
+                    ADD CONSTRAINT FlowEventTriggerParam_Id_FK
+                    FOREIGN KEY (TriggerId)
+                    REFERENCES FlowEventTrigger (Id)
+                </prop>
+
+                <!-- Configuration Table creation -->
+                <prop key="create.configuration">CREATE TABLE Configuration
+                    (
+                    ConfigurationId         VARCHAR(256) NOT NULL,
+                    Description             VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX Configuration01u ON Configuration(ConfigurationId)
+                </prop>
+
+                <prop key="create.configurationParameter">CREATE TABLE ConfigurationParameter
+                    (
+                    Id                  NUMERIC IDENTITY NOT NULL,
+                    ConfigurationIdentifier     VARCHAR(256) NOT NULL,
+                    PositionRef                 NUMERIC,
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfigurationParameter01u ON ConfigurationParameter(ConfigurationIdentifier, PositionRef)
+                </prop>
+
+                <!-- TODO add other dao tables -->
+                <prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    Name                        VARCHAR(128) NOT NULL,
+                    Value                       BIT DEFAULT 0,
+                    Description                 VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamBoolean01u ON ConfParamBoolean(Id)
+                </prop>
+
+                <prop key="create.confParamInteger">CREATE TABLE ConfParamInteger
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    Name                        VARCHAR(128) NOT NULL,
+                    Value                       NUMERIC DEFAULT NULL NULL,
+                    Description                 VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamInteger01u ON ConfParamInteger(Id)
+                </prop>
+
+                <prop key="create.confParamList">
+                    CREATE TABLE ConfParamList
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    Name                        VARCHAR(128) NOT NULL,
+                    Description                 VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamList01u ON ConfParamList(Id)
+                </prop>
+
+                <prop key="create.confParamListString">
+                    CREATE TABLE ConfParamListString
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    PositionRef                 NUMERIC NOT NULL,
+                    Value                       TEXT DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamListString01u ON ConfParamListString(Id, PositionRef)
+                </prop>
+
+                <prop key="create.confParamLong">
+                    CREATE TABLE ConfParamLong
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    Name                        VARCHAR(128) NOT NULL,
+                    Value                       NUMERIC DEFAULT NULL NULL,
+                    Description                 VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamLong01u ON ConfParamLong(Id)
+                </prop>
+
+                <prop key="create.confParamMap">
+                    CREATE TABLE ConfParamMap
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    Name                        VARCHAR(128) NOT NULL,
+                    Description                 VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamMap01u ON ConfParamMap(Id)
+                </prop>
+
+                <prop key="create.confParamMapString">
+                    CREATE TABLE ConfParamMapString
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    MapKey                      VARCHAR(256) NOT NULL,
+                    Value                       TEXT DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamMapString01u ON ConfParamMapString(Id, MapKey)
+                </prop>
+
+                <prop key="create.confParamString">
+                    CREATE TABLE ConfParamString
+                    (
+                    Id                          NUMERIC NOT NULL,
+                    Name                        VARCHAR(128) NOT NULL,
+                    Value                       TEXT DEFAULT NULL NULL,
+                    Description                 VARCHAR(256) DEFAULT NULL NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX ConfParamString01u ON ConfParamString(Id)
+                </prop>
+
+
+                <!-- end TODO add other dao tables -->
+
+                <prop key="create.systemEvent">CREATE TABLE SystemEvent
+                    (
+                    Id                  NUMERIC IDENTITY NOT NULL,
+                    Subject             VARCHAR(128)  NOT NULL,
+                    Action              VARCHAR(512)   NOT NULL,
+                    Actor               VARCHAR(64)   NULL,
+                    Timestamp           DATETIME      NOT NULL,
+                    Expiry           DATETIME      NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX SystemEvent01u ON SystemEvent(Id)</prop>
+
+                <prop key="create.moduleStartup">CREATE TABLE StartupControl
+                    (
+                    Id                  NUMERIC IDENTITY NOT NULL,
+                    ModuleName          VARCHAR(128)  NOT NULL,
+                    FlowName            VARCHAR(128)  NOT NULL,
+                    StartupType         VARCHAR(16)   NOT NULL,
+                    Comment             VARCHAR(256)  NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX StartupControl01u ON StartupControl(Id)</prop>
+
+                <prop key="create.consoleModule">CREATE TABLE Module(
+                    Id               NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+                    Name             VARCHAR(255) NOT NULL,
+                    Description      VARCHAR(255) NOT NULL,
+                    DesignDiagramURL VARCHAR(255) NULL,
+                    UNIQUE (Name)
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+                </prop>
+                <prop key="create.consolePointToPointFlowProfile">CREATE TABLE PointToPointFlowProfile(
+                    Id          NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+                    Name        VARCHAR(255) NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+                </prop>
+                <prop key="create.consolePointToPointFlow">CREATE TABLE PointToPointFlow(
+                    Id                        NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+                    PointToPointFlowProfileId NUMERIC NOT NULL,
+                    FromModuleId              NUMERIC NULL,
+                    ToModuleId                NUMERIC NULL,
+                    CONSTRAINT PTPP_ID_FK FOREIGN KEY(PointToPointFlowProfileId) REFERENCES PointToPointFlowProfile(Id)
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+                </prop>
+
+                <prop key="create.users">CREATE TABLE Users
+                    (
+                    Id       NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+                    Username VARCHAR(50) NOT NULL UNIQUE,
+                    Password VARCHAR(50) NOT NULL,
+                    Email    VARCHAR(255) NULL,
+                    Enabled  BIT NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1</prop>
+                <prop key="create.authorities">CREATE TABLE Authorities
+                    (
+                    Id          NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+                    Authority   VARCHAR(50) NOT NULL UNIQUE,
+                    Description VARCHAR(512)
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1</prop>
+                <prop key="create.usersAuthorities">CREATE TABLE UsersAuthorities
+                    (
+                    UserId NUMERIC NOT NULL,
+                    AuthorityId NUMERIC NOT NULL,
+                    PRIMARY KEY (UserId,AuthorityId),
+                    CONSTRAINT USER_AUTH_USER_FK FOREIGN KEY(UserId) REFERENCES Users(Id),
+                    CONSTRAINT USER_AUTH_AUTH_FK FOREIGN KEY(AuthorityId) REFERENCES Authorities(Id)
+                    )  </prop>
+                <prop key="create.defaultAuthorities">INSERT INTO Authorities ( Authority, Description )
+                    VALUES ( 'ROLE_USER', 'Users who may log into the system' )
+                    INSERT INTO Authorities ( Authority, Description )
+                    VALUES ( 'ROLE_ADMIN', 'Users who may perform administration functions on the system' ) </prop>
+
+                <prop key="create.defaultAdminUser">declare @authorityUserId numeric(18), @authorityAdminId numeric(18), @username varchar(50), @userId numeric(18)
+
+                    select @authorityUserId = Id from Authorities where Authority = 'ROLE_USER'
+                    select @authorityAdminId = Id from Authorities where Authority = 'ROLE_ADMIN'
+
+                    select @username = 'admin'
+
+                    INSERT INTO Users ( Username, Password, Enabled )
+                    VALUES ( @username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 )
+                    select @userId = Id from Users where Username = @username
+
+                    INSERT INTO UsersAuthorities values ( @userId, @authorityUserId )
+                    INSERT INTO UsersAuthorities values ( @userId, @authorityAdminId )</prop>
                 <prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
             </props>
 
