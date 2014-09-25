@@ -67,7 +67,7 @@
                 EventId             VARCHAR(255)  NOT NULL,
                 RelatedEventId      VARCHAR(255)  NULL,
                 EventTimestamp      NUMERIC DEFAULT 0 NOT NULL,
-                PayloadContent      TEXT    NOT NULL,
+                PayloadContent      UNITEXT NOT NULL,
                 CreatedDateTime     NUMERIC NOT NULL,
                 Expiry              NUMERIC NOT NULL
                 )
