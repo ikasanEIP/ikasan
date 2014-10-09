@@ -116,9 +116,9 @@ public class ConsoleModuleServiceTest
     {
         // Setup
         final Set<Module> returnedModules = new LinkedHashSet<Module>();
-        final Module module1 = context.mock(Module.class);
+        final Module module1 = context.mock(Module.class, "module1");
         returnedModules.add(module1);
-        final Module module2 = context.mock(Module.class);
+        final Module module2 = context.mock(Module.class, "module2");
         returnedModules.add(module2);
         
         // Expectations
@@ -294,8 +294,8 @@ public class ConsoleModuleServiceTest
         moduleIds.add(new Long(2));
         
         final Set<Module> modules = new LinkedHashSet<Module>();
-        final Module module1 = context.mock(Module.class); 
-        final Module module2 = context.mock(Module.class);
+        final Module module1 = context.mock(Module.class,"module1"); 
+        final Module module2 = context.mock(Module.class, "module2");
         modules.add(module1);
         modules.add(module2);
         
@@ -331,8 +331,8 @@ public class ConsoleModuleServiceTest
         moduleIds.add(new Long(1));
         
         final Set<Module> modules = new LinkedHashSet<Module>();
-        final Module module1 = context.mock(Module.class); 
-        final Module module2 = context.mock(Module.class);
+        final Module module1 = context.mock(Module.class, "module1"); 
+        final Module module2 = context.mock(Module.class, "module2");
         modules.add(module1);
         modules.add(module2);
         
