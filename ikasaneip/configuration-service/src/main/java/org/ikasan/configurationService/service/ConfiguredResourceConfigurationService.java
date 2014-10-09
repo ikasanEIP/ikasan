@@ -45,10 +45,11 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.beanutils.converters.LongConverter;
-import org.apache.log4j.Logger;
 import org.ikasan.configurationService.dao.ConfigurationCacheImpl;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.spec.configuration.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -59,18 +60,17 @@ import java.util.Map;
  * Implementation of the Configuration Service based on a ConfiguredResource.
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public class ConfiguredResourceConfigurationService
-    implements ConfigurationService<ConfiguredResource>,
-    ConfigurationManagement<ConfiguredResource,Configuration> 
+public class ConfiguredResourceConfigurationService implements ConfigurationService<ConfiguredResource>,
+        ConfigurationManagement<ConfiguredResource, Configuration>
 {
-    /** Logger instance */
-    private static Logger logger = Logger.getLogger(ConfiguredResourceConfigurationService.class);
+    /** Logger */
+    private final static Logger logger = LoggerFactory.getLogger(ConfiguredResourceConfigurationService.class);
 
     /** configuration DAO used for accessing the configuration outside a transaction */
     private ConfigurationDao<List<ConfigurationParameter>> staticConfigurationDao;
-    
+
     /** configuration DAO used for accessing the configuration transactionally at runtime */
     private ConfigurationDao<List<ConfigurationParameter>> dynamicConfigurationDao;
 
@@ -79,16 +79,17 @@ public class ConfiguredResourceConfigurationService
 
     /**
      * Default configuration service returns a cached based instance.
+     * 
      * @return
      */
     public static ConfigurationService getDefaultConfigurationService()
     {
-    	return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl());
-    	
+        return new ConfiguredResourceConfigurationService(new ConfigurationCacheImpl(), new ConfigurationCacheImpl());
     }
 
     /**
      * Allow the configurationFactory to be overridden
+     * 
      * @param configurationFactory
      */
     public void setConfigurationFactory(ConfigurationFactory configurationFactory)
@@ -98,57 +99,60 @@ public class ConfiguredResourceConfigurationService
 
     /**
      * Constructor
+     * 
      * @param staticConfigurationDao - used to update configuration outside a runtime transaction
      * @param dynamicConfigurationDao - used to update configuration at runtime within a transaction
      */
-    public ConfiguredResourceConfigurationService(ConfigurationDao staticConfigurationDao, ConfigurationDao dynamicConfigurationDao)
+    public ConfiguredResourceConfigurationService(ConfigurationDao staticConfigurationDao,
+            ConfigurationDao dynamicConfigurationDao)
     {
         this.staticConfigurationDao = staticConfigurationDao;
-        if(staticConfigurationDao == null)
+        if (staticConfigurationDao == null)
         {
             throw new IllegalArgumentException("configurationDao cannot be 'null'");
         }
-        
         this.dynamicConfigurationDao = dynamicConfigurationDao;
-        if(dynamicConfigurationDao == null)
+        if (dynamicConfigurationDao == null)
         {
             throw new IllegalArgumentException("dynamicConfigurationDao cannot be 'null'");
         }
-
         // override some default converters to ensure null is default assignments
         ConvertUtils.register(new IntegerConverter(null), Integer.class);
         ConvertUtils.register(new LongConverter(null), Long.class);
     }
 
     /**
-     * Retrieves the persisted configuration based on the configuredResource's configurationId
-     * and applies the persisted configuration to the configuration of the configuredResource.
-     * This is typically called just prior to the flow being started.
+     * Retrieves the persisted configuration based on the configuredResource's configurationId and applies the persisted
+     * configuration to the configuration of the configuredResource. This is typically called just prior to the flow
+     * being started.
+     * 
      * @param configuredResource
      */
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.configuration.service.ConfigurationService#configure(java.lang.Object)
      */
     public void configure(ConfiguredResource configuredResource)
     {
-        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.staticConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
-        if(persistedConfiguration == null)
+        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.staticConfigurationDao
+            .findByConfigurationId(configuredResource.getConfiguredResourceId());
+        if (persistedConfiguration == null)
         {
-            logger.warn("No persisted dao for configuredResource ["
-                    + configuredResource.getConfiguredResourceId() + "]. Default programmatic dao will be used.");
+            logger.warn("No persisted dao for configuredResource [" + configuredResource.getConfiguredResourceId()
+                    + "]. Default programmatic dao will be used.");
             return;
         }
-
         Object runtimeConfiguration = configuredResource.getConfiguration();
-        if(runtimeConfiguration != null)
+        if (runtimeConfiguration != null)
         {
             try
             {
-                for(ConfigurationParameter persistedConfigurationParameter:persistedConfiguration.getParameters())
+                for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
                 {
-                    BeanUtils.setProperty(runtimeConfiguration, persistedConfigurationParameter.getName(), persistedConfigurationParameter.getValue());
+                    BeanUtils.setProperty(runtimeConfiguration, persistedConfigurationParameter.getName(),
+                        persistedConfigurationParameter.getValue());
                 }
-
                 configuredResource.setConfiguration(runtimeConfiguration);
             }
             catch (IllegalAccessException e)
@@ -159,7 +163,7 @@ public class ConfiguredResourceConfigurationService
             {
                 throw new ConfigurationException(e);
             }
-            catch(RuntimeException e)
+            catch (RuntimeException e)
             {
                 throw new ConfigurationException("Failed dao for configuredResource ["
                         + configuredResource.getConfiguredResourceId() + "] " + e.getMessage(), e);
@@ -167,13 +171,14 @@ public class ConfiguredResourceConfigurationService
         }
         else
         {
-            logger.warn("Cannot configure configuredResource [" 
-                    + configuredResource.getConfiguredResourceId() + "] as getConfiguration() returned 'null'");
+            logger.warn("Cannot configure configuredResource [" + configuredResource.getConfiguredResourceId()
+                    + "] as getConfiguration() returned 'null'");
         }
     }
 
     /**
      * Create a new dao instance for the given ConfiguredResource.
+     * 
      * @param configuredResource
      * @return Configuration
      */
@@ -181,9 +186,10 @@ public class ConfiguredResourceConfigurationService
     {
         try
         {
-            return configurationFactory.createConfiguration(configuredResource.getConfiguredResourceId(), configuredResource.getConfiguration());
+            return configurationFactory.createConfiguration(configuredResource.getConfiguredResourceId(),
+                configuredResource.getConfiguration());
         }
-        catch(ConfigurationException e)
+        catch (ConfigurationException e)
         {
             throw new ConfigurationException("Failed to configure configuredResource id ["
                     + configuredResource.getConfiguredResourceId(), e);
@@ -191,70 +197,89 @@ public class ConfiguredResourceConfigurationService
     }
 
     /**
-     * Updates the persisted dao with the current configuredResource's dao.
-     * This is typically used for dynamically updated dao ie. sequence numbers
-     * which change onEvent.
+     * Updates the persisted dao with the current configuredResource's dao. This is typically used for dynamically
+     * updated dao ie. sequence numbers which change onEvent.
+     * 
      * @param configuredResource
      */
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.dao.service.ConfigurationService#update(org.ikasan.framework.dao.model.Configuration)
      */
     public void update(ConfiguredResource configuredResource)
     {
         boolean configurationUpdated = false;
         Object runtimeConfiguration = configuredResource.getConfiguration();
-        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.dynamicConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
-        for(ConfigurationParameter persistedConfigurationParameter:persistedConfiguration.getParameters())
+        Configuration<List<ConfigurationParameter>> persistedConfiguration = this.dynamicConfigurationDao
+            .findByConfigurationId(configuredResource.getConfiguredResourceId());
+        if (persistedConfiguration != null)
         {
-            String runtimeParameterValue;
-            try
+            for (ConfigurationParameter persistedConfigurationParameter : persistedConfiguration.getParameters())
             {
-                runtimeParameterValue = BeanUtils.getProperty(runtimeConfiguration, persistedConfigurationParameter.getName());
+                String runtimeParameterValue;
+                try
+                {
+                    runtimeParameterValue = BeanUtils.getProperty(runtimeConfiguration,
+                        persistedConfigurationParameter.getName());
+                }
+                catch (IllegalAccessException e)
+                {
+                    throw new ConfigurationException(e);
+                }
+                catch (InvocationTargetException e)
+                {
+                    throw new ConfigurationException(e);
+                }
+                catch (NoSuchMethodException e)
+                {
+                    throw new ConfigurationException(e);
+                }
+                if ((runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null)
+                        || (runtimeParameterValue != null && !(runtimeParameterValue
+                            .equals(persistedConfigurationParameter.getValue()))))
+                {
+                    configurationUpdated = true;
+                    persistedConfigurationParameter.setValue(runtimeParameterValue);
+                }
             }
-            catch (IllegalAccessException e)
+            if (configurationUpdated)
             {
-                throw new ConfigurationException(e);
+                this.dynamicConfigurationDao.save(persistedConfiguration);
             }
-            catch (InvocationTargetException e)
-            {
-                throw new ConfigurationException(e);
-            }
-            catch (NoSuchMethodException e)
-            {
-                throw new ConfigurationException(e);
-            }
-
-            if( (runtimeParameterValue == null && persistedConfigurationParameter.getValue() != null) ||
-                (runtimeParameterValue != null && !(runtimeParameterValue.equals(persistedConfigurationParameter.getValue()))) )
-            {
-                configurationUpdated = true;
-                persistedConfigurationParameter.setValue(runtimeParameterValue);
-            }
+        } else {
+            logger.debug("Update being attempted without the configuration ever having been persisted, will persist now");
+            this.dynamicConfigurationDao.save(this.createConfiguration(configuredResource));            
         }
-
-        if(configurationUpdated)
-        {
-            this.dynamicConfigurationDao.save(persistedConfiguration);
-        }
+        
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.dao.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.model.Configuration)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ikasan.framework.dao.service.ConfigurationService#deleteConfiguration(org.ikasan.framework.dao.model.
+     * Configuration)
      */
     public void deleteConfiguration(Configuration configuration)
     {
         this.staticConfigurationDao.delete(configuration);
     }
 
-    /* (non-Javadoc)
-     * @see org.ikasan.framework.dao.service.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.model.Configuration)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ikasan.framework.dao.service.ConfigurationService#saveConfiguration(org.ikasan.framework.dao.model.Configuration
+     * )
      */
     public void saveConfiguration(Configuration configuration)
     {
         this.staticConfigurationDao.save(configuration);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ikasan.framework.dao.service.ConfigurationService#getConfiguration(java.lang.Object)
      */
     public Configuration getConfiguration(ConfiguredResource configuredResource)
