@@ -128,7 +128,7 @@
 
 
      <beans:bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <beans:property name="dataSource" ref="eai.ds" />
+        <beans:property name="dataSource" ref="ikasan.ds" />
         <beans:property name="mappingResources">
             <beans:list>
                 <beans:value>org/ikasan/security/model/User.hbm.xml</beans:value>

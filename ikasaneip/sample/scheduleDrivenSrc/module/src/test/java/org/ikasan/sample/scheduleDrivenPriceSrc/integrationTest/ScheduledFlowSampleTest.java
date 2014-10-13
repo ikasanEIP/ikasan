@@ -59,9 +59,10 @@ import org.ikasan.platform.IkasanEIPTest;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/component-conf.xml", 
-        "/flow-conf.xml", 
-        "/module-conf.xml", 
+        "/component-conf.xml",
+        "/flow-conf.xml",
+        "/exclusion-flow-conf.xml",
+        "/module-conf.xml",
         "/exception-conf.xml", 
         "/hsqldb-conf.xml"
       })

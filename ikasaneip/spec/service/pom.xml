@@ -90,5 +90,6 @@
        <module>wiretap</module>
        <module>search</module>
        <module>error</module>
+       <module>exclusion</module>
     </modules>
 </project>

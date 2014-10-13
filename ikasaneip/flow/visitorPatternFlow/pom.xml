@@ -83,6 +83,12 @@
             <version>0.9.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-exclusion</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-management</artifactId>

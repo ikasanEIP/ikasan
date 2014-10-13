@@ -42,127 +42,34 @@ package org.ikasan.flow.visitorPattern;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.management.ManagedResource;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Default implementation of a Flow
  * 
  * @author Ikasan Development Team
  */
-public class DefaultFlowConfiguration implements FlowConfiguration
+public class DefaultFlowConfiguration extends AbstractFlowConfiguration implements FlowConfiguration
 {
-    private FlowElement<Consumer> consumerFlowElement;
-
-    private FlowElement<?> leadFlowElement;
-
-    /** */
-    private List<FlowElement<ManagedResource>> managedReourceFlowElements =
-        new ArrayList<FlowElement<ManagedResource>>();
-    
-    /** */
-    private List<FlowElement<ConfiguredResource>> configuredReourceFlowElements =
-        new ArrayList<FlowElement<ConfiguredResource>>();
-    
-    /** */
-    private List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredReourceFlowElements =
-        new ArrayList<FlowElement<DynamicConfiguredResource>>();
-
-    /** list of components */
-    List<FlowElement<?>> flowElements = new ArrayList<FlowElement<?>>();
-    
-    private ConfigurationService configurationService;
-    
+    /**
+     * Constructor
+     * @param consumerFlowElement
+     * @param configurationService
+     */
     public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService)
     {
-        this.consumerFlowElement = consumerFlowElement;
-        if(consumerFlowElement == null)
-        {
-            throw new IllegalArgumentException("consumerFlowElement cannot be 'null'");
-        }
-        
-        this.leadFlowElement = consumerFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-        if(leadFlowElement == null)
+        super(consumerFlowElement, configurationService);
+
+        // TODO - remove as this should already be checked elsewhere
+        if(consumerFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME) == null)
         {
             throw new IllegalArgumentException("consumerFlowElement must have a valid flowElement default transition");
         }
-
-        this.configurationService = configurationService;
-        if(configurationService == null)
-        {
-            throw new IllegalArgumentException("configurationService cannot be 'null'");
-        }
-        
-        for(FlowElement flowElement:getFlowElements())
-        {
-            Object flowComponent = flowElement.getFlowComponent();
-            if(flowComponent instanceof ManagedResource)
-            {
-                this.managedReourceFlowElements.add(flowElement);
-            }
-            if(flowComponent instanceof ConfiguredResource)
-            {
-                this.configuredReourceFlowElements.add(flowElement);
-            }
-            if(flowComponent instanceof DynamicConfiguredResource)
-            {
-                this.dynamicConfiguredReourceFlowElements.add(flowElement);
-            }
-        }
     }
 
+    @Override
     public FlowElement<Consumer> getConsumerFlowElement()
     {
-        return this.consumerFlowElement;
+        return this.leadFlowElement;
     }
-
-    public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements()
-    {
-        return this.configuredReourceFlowElements;
-    }
-
-    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements()
-    {
-        return this.dynamicConfiguredReourceFlowElements;
-    }
-
-    public List<FlowElement<ManagedResource>> getManagedResourceFlowElements()
-    {
-        return this.managedReourceFlowElements;
-    }
-    
-    public void configure(ConfiguredResource configuredResource)
-    {
-        this.configurationService.configure(configuredResource);
-    }
-
-    public List<FlowElement<?>> getFlowElements()
-    {
-        List<FlowElement<?>> result = new ArrayList<FlowElement<?>>();
-        List<FlowElement<?>> elementsToVisit = new ArrayList<FlowElement<?>>();
-        elementsToVisit.add(this.consumerFlowElement);
-        while (!elementsToVisit.isEmpty())
-        {
-            FlowElement<?> thisFlowElement = elementsToVisit.get(0);
-            elementsToVisit.remove(0);
-            if (!result.contains(thisFlowElement))
-            {
-                result.add(thisFlowElement);
-            }
-            for (FlowElement<?> subsequentElement : thisFlowElement.getTransitions().values())
-            {
-                if (!result.contains(subsequentElement))
-                {
-                    elementsToVisit.add(subsequentElement);
-                }
-            }
-        }
-        return result;
-    }
-
 }
