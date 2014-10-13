@@ -50,6 +50,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +58,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +86,13 @@ public class ConfiguredResourceConfigurationManagementTest
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
+    @Before
+    public void clearDownDb(){
+        setupDao.getHibernateTemplate().deleteAll(
+            setupDao.getHibernateTemplate().find("from org.ikasan.configurationService.model.DefaultConfiguration")
+        );
+    }
+    
     @Resource
     ConfigurationHibernateImpl setupDao;
 

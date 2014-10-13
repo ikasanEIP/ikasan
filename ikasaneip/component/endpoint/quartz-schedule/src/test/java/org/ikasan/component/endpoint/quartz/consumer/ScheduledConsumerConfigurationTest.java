@@ -38,8 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.consumer.quartz;
+package org.ikasan.component.endpoint.quartz.consumer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -49,7 +51,6 @@ import org.quartz.SchedulerException;
  * This test class supports the <code>ScheduledConsumer</code> class.
  * 
  * @author Ikasan Development Team
- * @deprecated
  */
 public class ScheduledConsumerConfigurationTest
 {
@@ -60,11 +61,9 @@ public class ScheduledConsumerConfigurationTest
     public void test_mutators() throws SchedulerException
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
-        Assert.assertNull("initial cronExpression should be null", consumerConfiguration.getCronExpression());
-
+        assertNull("initial cronExpression should be null", consumerConfiguration.getCronExpression());
         consumerConfiguration.setCronExpression("cronExpression");
-        
-        Assert.assertEquals("cronExpression should be populated with 'cronExpression'", "cronExpression", consumerConfiguration.getCronExpression());
+        assertEquals("cronExpression should be populated with 'cronExpression'", "cronExpression", consumerConfiguration.getCronExpression());
     }
 
 }

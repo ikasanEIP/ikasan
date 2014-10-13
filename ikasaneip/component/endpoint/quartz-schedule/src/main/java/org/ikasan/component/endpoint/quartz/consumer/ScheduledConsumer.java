@@ -220,10 +220,22 @@ public class ScheduledConsumer
      */
     public void execute(JobExecutionContext context)
     {
-        JobKey jobkey = context.getJobDetail().getKey();
-        String uniqueId = jobkey.getName() + jobkey.getGroup();
-        FlowEvent<?,?> flowEvent = this.flowEventFactory.newEvent(uniqueId, context);
+        FlowEvent<?, ?> flowEvent = createFlowEvent(context);
         this.eventListener.invoke(flowEvent);
+    }
+
+    /**
+     * Override this is you want control over the flow event created by this 
+     * consumer 
+     * @param context
+     * @return
+     */
+    protected FlowEvent<?, ?> createFlowEvent(JobExecutionContext context)
+    {
+        JobKey jobkey = context.getJobDetail().getKey();
+        String uniqueId = jobkey.getName() +  jobkey.getGroup();
+        FlowEvent<?,?> flowEvent = this.flowEventFactory.newEvent(uniqueId, context);
+        return flowEvent;
     }
 
     public ScheduledConsumerConfiguration getConfiguration()
