@@ -34,7 +34,7 @@
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
     </util:map>
 
-    <bean id="dataSource" name="eai.xads eai.ds"
+    <bean id="dataSource" name="ikasan.xads ikasan.ds"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
         <property name="url" value="jdbc:hsqldb:mem:testdb" />

@@ -65,6 +65,26 @@
           <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-exclusion</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-utility-endpoint</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>javassist</groupId>

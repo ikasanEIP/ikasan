@@ -13,7 +13,7 @@
         <constructor-arg ref="H2"/>
         <property name="sessionFactory">
             <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-                <property name="dataSource" ref="eai.xads" />
+                <property name="dataSource" ref="ikasan.xads" />
 
                 <property name="hibernateProperties" ref="platformHibernateProperties"/>
             </bean>
@@ -26,7 +26,7 @@
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
     </util:map>
     
-    <bean id="dataSource" name="eai.xads eai.ds" 
+    <bean id="dataSource" name="ikasan.xads ikasan.ds"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver" />
         <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />

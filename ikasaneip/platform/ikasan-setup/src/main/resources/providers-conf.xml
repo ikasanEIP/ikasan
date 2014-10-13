@@ -89,7 +89,7 @@
     <!-- Session Factory for the persistence creator -->
     <bean id="persistenceCreatorSessionFactory"
           class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="eai.ds" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 

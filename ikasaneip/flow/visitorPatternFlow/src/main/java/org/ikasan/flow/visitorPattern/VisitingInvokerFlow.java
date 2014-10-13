@@ -47,12 +47,8 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
@@ -119,6 +115,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** default event factory */
     private EventFactory eventFactory = new FlowEventFactory();
 
+    /** Event Exclusion Service */
+    private ExclusionService<FlowEvent> exclusionService;
+
+    /** flow configuration implementation */
+    private ExclusionFlowConfiguration exclusionFlowConfiguration;
+
     /**
      * Constructor
      * @param name the flow name
@@ -127,8 +129,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param flowElementInvoker
      * @param recoveryManager
      */
-    public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
-                               FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?,?>> recoveryManager)
+    public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
+                               FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               ExclusionService exclusionService)
     {
         this.name = name;
         if(name == null)
@@ -147,7 +150,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             throw new IllegalArgumentException("flowConfiguration cannot be 'null'");
         }
-        
+
+        this.exclusionFlowConfiguration = exclusionFlowConfiguration;
+        if(exclusionFlowConfiguration == null)
+        {
+            throw new IllegalArgumentException("exclusionFlowConfiguration cannot be 'null'");
+        }
+
         this.flowElementInvoker = flowElementInvoker;
         if(flowElementInvoker == null)
         {
@@ -158,6 +167,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         if(recoveryManager == null)
         {
             throw new IllegalArgumentException("recoveryManager cannot be 'null'");
+        }
+
+        this.exclusionService = exclusionService;
+        if(exclusionService == null)
+        {
+            throw new IllegalArgumentException("exclusionService cannot be 'null'");
         }
     }
 
@@ -466,23 +481,33 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
         try
         {
-            for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+            // TODO part of flow configuration should also disable of exclusionService
+
+            if(this.exclusionService.isBlackListed(event))
             {
-                try
-                {
-                    this.flowConfiguration.configure(flowElement.getFlowComponent());
-                }
-                catch(RuntimeException e)
-                {
-                    flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-                    throw e;
-                }
+                this.flowElementInvoker.invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
+                this.exclusionService.removeBlacklisted(event);
             }
-        
-            this.flowElementInvoker.invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
-            if(this.recoveryManager.isRecovering())
+            else
             {
-                this.recoveryManager.cancel();
+                for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+                {
+                    try
+                    {
+                        this.flowConfiguration.configure(flowElement.getFlowComponent());
+                    }
+                    catch(RuntimeException e)
+                    {
+                        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+                        throw e;
+                    }
+                }
+
+                this.flowElementInvoker.invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
+                if(this.recoveryManager.isRecovering())
+                {
+                    this.recoveryManager.cancel();
+                }
             }
         }
         catch(Throwable throwable)

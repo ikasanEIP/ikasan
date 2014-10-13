@@ -48,7 +48,7 @@ package org.ikasan.exceptionResolver.action;
 public class ExcludeEventAction implements ExceptionAction
 {
     /** Exclude FlowEvent Action */
-    public static final String EXCLUDE_EVENT = "Exclude FlowEvent";
+    public static final String EXCLUDE_EVENT = "ExcludeEvent";
 
     /**
      * Static instance, probably all that is needed, as one ExcludeFlowEventAction is the same as another

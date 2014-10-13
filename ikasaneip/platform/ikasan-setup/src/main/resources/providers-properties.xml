@@ -76,6 +76,19 @@
 
                 CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)</prop>
 
+                <prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
+                    (
+                    Identifier          VARCHAR(255)  NOT NULL,
+                    ModuleName          VARCHAR(255)  NOT NULL,
+                    FlowName            VARCHAR(255)  NOT NULL,
+                    Timestamp           NUMERIC DEFAULT 0 NOT NULL,
+                    Expiry              NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX IkasanExclusionEvent01u ON ExclusionEvent(ModuleName,FlowName,Identifier)</prop>
+
                 <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
 
                 <prop key="create.version">CREATE TABLE Version
