@@ -58,8 +58,9 @@ import javax.jms.JMSException;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/jms-to-jms-flow-conf.xml",
+       // "/jms-to-jms-flow-conf.xml",
         "/jms-to-log-flow-conf.xml",
+        "/jms-conf.xml",
         "/shared-conf.xml",
         "/module-conf.xml",
         "/exception-conf.xml",

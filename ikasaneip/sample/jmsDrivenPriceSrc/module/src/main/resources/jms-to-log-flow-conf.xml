@@ -7,8 +7,8 @@
     <!--  ================================================================== -->
     <!--  Flow                                                               -->
     <!--  ================================================================== -->
-    <bean id="priceConverterFlow" class="org.ikasan.builder.FlowFactory">
-        <property name="moduleName"         value="genericTech-priceSrc" />
+    <bean id="jmsToLogFlow" class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         value="jmsToLogFlow" />
         <property name="name"               value="priceConverter" />
         <property name="description"        value="Receives a price and converts it to a standard format and logs it." />
         <property name="exceptionResolver"  ref="exceptionResolver" />
@@ -17,7 +17,9 @@
 
     <bean id="priceConsumerFlowElement"     class="org.ikasan.builder.FlowElementFactory">
         <property name="name"               value="Price Consumer"/>
-        <property name="component"          ref="priceConsumer"/>
+        <property name="component"          ref="jmsPriceConsumer"/>
+        <property name="configuration"      ref="jmsPriceConsumerConfiguration"/>
+        <property name="configuredResourceId"      value="jmsPriceConsumerConfiguration"/>
         <property name="transition"         ref="priceConverterFlowElement"/>
     </bean>
 

@@ -11,7 +11,7 @@
         <property name="description"    value="Sample showing a simple module creation based on JMS providing price ticks." />
         <property name="flows">
             <util:list>
-                <ref bean="jmsToJmsFlow" />
+                <!--<ref bean="jmsToJmsFlow" />-->
                 <ref bean="jmsToLogFlow" />
             </util:list>
         </property>
