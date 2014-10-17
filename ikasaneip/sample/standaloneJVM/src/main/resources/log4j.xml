@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
 
  ====================================================================
@@ -37,26 +38,18 @@
  ====================================================================
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>0.9.5-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>sample-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Specification Contracts</name>
-
-    <modules>
-        <module>techEndpoint</module>
-        <module>standaloneJVM</module>
-        <module>genericTechPriceSrc</module>
-        <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
-        <module>scheduleDrivenSrc</module>
-    </modules>
-
-</project>
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+ <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <param name="ConversionPattern" value="%d{yyyyMMdd HH:mm:ss SSS} %-5p [%t] %C{1}.%M(): %x %m%n"/> 
+    </layout> 
+   </appender>
+       
+  <root> 
+    <priority value ="info" />
+    <appender-ref ref="console" /> 
+  </root>
+  
+</log4j:configuration>
