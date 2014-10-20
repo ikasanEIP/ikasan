@@ -45,13 +45,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exceptionResolver.action.ExceptionAction;
-import org.ikasan.exceptionResolver.action.IgnoreAction;
-import org.ikasan.exceptionResolver.action.RetryAction;
-import org.ikasan.exceptionResolver.action.StopAction;
+import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -117,7 +115,10 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
     /** optional managed resources to stop/start on recovery */
     private List<FlowElement<ManagedResource>> managedResources;
-    
+
+    /** Event Exclusion Service */
+    private ExclusionService exclusionService;
+
     /**
      * Constructor
      * @param scheduler
@@ -126,7 +127,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * @param moduleName
      * @param consumer
      */
-    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName, Consumer<?,?> consumer)
+    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName, Consumer<?,?> consumer, ExclusionService exclusionService)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -156,6 +157,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         if(consumer == null)
         {
             throw new IllegalArgumentException("consumer cannot be null");
+        }
+
+        this.exclusionService = exclusionService;
+        if(exclusionService == null)
+        {
+            throw new IllegalArgumentException("exclusionService cannot be null");
         }
     }
 
@@ -199,14 +206,14 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
-     * Execute recovery based on the specified component name and exception.
-     * @param componetName
+     * Common resolution of the action for the componentName and throwable instance
+     *
+     * @param action
+     * @param componentName
      * @param throwable
      */
-    public void recover(String componentName, Throwable throwable)
+    protected void recover(ExceptionAction action, String componentName, Throwable throwable)
     {
-        ExceptionAction action = resolveAction(componentName, throwable);
-        logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
         if(action instanceof IgnoreAction)
         {
             return;
@@ -269,20 +276,39 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
-     * Execute recovery based on the specified component name, exception,
-     * and flowEvent.
-     * @param componetName
+     * Execute recovery based on the specified component name and exception.
+     * @param componentName
      * @param throwable
-     * @param flowEvent
      */
-    public <FlowEvent> void recover(String componentName, Throwable throwable, FlowEvent event)
+    public void recover(String componentName, Throwable throwable)
     {
-        this.recover(componentName, throwable);
+        ExceptionAction action = resolveAction(componentName, throwable);
+        logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
+        this.recover(action, componentName, throwable);
+    }
+
+    /**
+     * Execute recovery based on the specified component name, exception,
+     * and event.
+     * @param componentName
+     * @param throwable
+     * @param event
+     */
+    public <T> void recover(String componentName, Throwable throwable, T event)
+    {
+        ExceptionAction action = resolveAction(componentName, throwable);
+        logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
+        if(action instanceof ExcludeEventAction)
+        {
+            this.exclusionService.addBlacklisted(event);
+            throw new ForceTransactionRollbackException(action.toString(), throwable);
+        }
+
+        this.recover(action, componentName, throwable);
     }
 
     /**
      * Is the situation unrecoverable.
-     * @param boolean
      */
     public boolean isUnrecoverable()
     {
@@ -396,7 +422,6 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     
     /**
      * Factory method for creating a new recovery trigger.
-     * @param maxRetries
      * @param delay
      * @return Trigger
      */

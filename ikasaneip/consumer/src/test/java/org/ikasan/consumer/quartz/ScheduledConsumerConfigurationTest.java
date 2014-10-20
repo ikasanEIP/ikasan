@@ -49,6 +49,7 @@ import org.quartz.SchedulerException;
  * This test class supports the <code>ScheduledConsumer</code> class.
  * 
  * @author Ikasan Development Team
+ * @deprecated
  */
 public class ScheduledConsumerConfigurationTest
 {

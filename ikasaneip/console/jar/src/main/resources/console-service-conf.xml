@@ -47,9 +47,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <context:property-placeholder location="classpath:ikasan-console.properties, classpath:ikasan-jndi-datasource.properties" />
 
@@ -115,7 +114,7 @@
     <!-- Session Factory for the moduleDao -->
     <bean id="consoleModuleHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="eai.ds" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
                 <value>org/ikasan/console/module/Module.hbm.xml</value>
@@ -127,7 +126,7 @@
     <!-- Session Factory for the pointToPointFlowProfileDao -->
     <bean id="pointToPointFlowProfileHibernateSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="eai.ds" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
                 <value>org/ikasan/console/pointtopointflow/PointToPointFlowProfile.hbm.xml</value>

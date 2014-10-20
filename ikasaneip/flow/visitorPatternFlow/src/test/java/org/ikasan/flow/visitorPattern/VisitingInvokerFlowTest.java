@@ -47,17 +47,14 @@ import junit.framework.Assert;
 
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
+import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Notifier;
@@ -86,6 +83,9 @@ public class VisitingInvokerFlowTest
 
     /** Mock flowConfiguration */
     final FlowConfiguration flowConfiguration = mockery.mock(FlowConfiguration.class, "mockFlowConfiguration");
+
+    /** Mock exclusionFlowConfiguration */
+    final ExclusionFlowConfiguration exclusionFlowConfiguration = mockery.mock(ExclusionFlowConfiguration.class, "mockExclusionFlowConfiguration");
 
     /** Mock flowElementInvoker */
     final FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class, "mockFlowElementInvoker");
@@ -152,6 +152,9 @@ public class VisitingInvokerFlowTest
     /** Mock flow event factory */
     final FlowEventFactory flowEventFactory = mockery.mock(FlowEventFactory.class, "mockFlowEventFactory");
 
+    /** Mock exclusionService */
+    final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
+
     /** is recovering status */
     boolean isRecovering = false;
 
@@ -175,7 +178,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullName()
     {
-        new VisitingInvokerFlow(null, null, null, null, null);
+        new VisitingInvokerFlow(null, null, null, null, null, null, null);
     }
 
     /**
@@ -184,7 +187,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new VisitingInvokerFlow("flowName", null, null, null, null);
+        new VisitingInvokerFlow("flowName", null, null, null, null, null, null);
     }
 
     /**
@@ -193,16 +196,25 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowConfiguration()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", null, null, null);
+        new VisitingInvokerFlow("flowName", "moduleName", null, null, null, null, null);
     }
 
     /**
      * Test failed constructor due to null flow element invoker.
      */
     @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullExclusionFlowConfigurationInvoker()
+    {
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null, null, null);
+    }
+
+    /**
+     * Test failed constructor due to null flow recovery manager.
+     */
+    @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowElementInvoker()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null);
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, null, null, null);
     }
 
     /**
@@ -211,7 +223,16 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowRecoveryManager()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, flowElementInvoker, null);
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, null, null);
+    }
+
+    /**
+     * Test failed constructor due to null flow recovery manager.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDueToNullFlowExclusionService()
+    {
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, null);
     }
 
     /**
@@ -220,7 +241,7 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_successful_VisitingInvokerFlow_instantiation()
     {
-        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, flowElementInvoker, recoveryManager);
+        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         Assert.assertEquals("flowName setter failed", "flowName", flow.getName());
         Assert.assertEquals("moduleName setter failed", "moduleName", flow.getModuleName());
     }
@@ -233,7 +254,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -366,7 +387,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -500,7 +521,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -540,7 +561,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -579,7 +600,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         final RuntimeException exception = new RuntimeException("test configuration failing");
 
@@ -651,7 +672,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -759,7 +780,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -835,7 +856,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -976,7 +997,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -1168,7 +1189,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         // set the monitor
         isRunning = true;
@@ -1245,7 +1266,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         // set the monitor
         isRunning = true;
@@ -1324,7 +1345,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         // set the monitor
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1401,7 +1422,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         // set the monitor
         isUnrecoverable = true;
@@ -1442,7 +1463,10 @@ public class VisitingInvokerFlowTest
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
                 one(flowElementInvoker).invoke("moduleName", "flowName", flowInvocationContext, flowEvent, consumerFlowElement);
-                
+
+                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                will(returnValue(false));
+
                 // in this test we do not need to cancel recovery
                 one(recoveryManager).isRecovering();
                 will(returnValue(false));
@@ -1451,7 +1475,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1490,12 +1514,15 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
                 will(throwException(exception));
-                
+
                 // add failed flow element name to the context
                 one(dynamicConfiguredResourceFlowElement).getComponentName();
                 will(returnValue("dynamicComponentName"));
                 one(flowInvocationContext).addInvokedComponentName("dynamicComponentName");
-                
+
+                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                will(returnValue(false));
+
                 // pass the exception to the recovery manager
                 one(flowInvocationContext).getLastComponentName();
                 will(returnValue("dynamicComponentName"));
@@ -1505,7 +1532,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1546,6 +1573,9 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
 
+                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                will(returnValue(false));
+
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -1561,7 +1591,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1602,6 +1632,9 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
 
+                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                will(returnValue(false));
+
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -1617,7 +1650,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1659,6 +1692,9 @@ public class VisitingInvokerFlowTest
 
                 exactly(1).of(flowConfiguration).configure(configuredResource);
 
+                exactly(1).of(exclusionService).isBlackListed(flowEvent);
+                will(returnValue(false));
+
                 // invoke the flow elements
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -1674,7 +1710,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1717,7 +1753,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1760,7 +1796,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1804,7 +1840,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         isRunning = true;
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1842,7 +1878,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new ExtendedVisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, flowElementInvoker, recoveryManager);
+            flowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 
         Assert.assertNotNull("there should be one flow elements on this flow", flow.getFlowElements());
 
@@ -1938,9 +1974,9 @@ public class VisitingInvokerFlowTest
     {
 
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, FlowElementInvoker flowElementInvoker,
-                RecoveryManager<FlowEvent<?,?>> recoveryManager)
+                RecoveryManager<FlowEvent<?,?>> recoveryManager, ExclusionService exclusionService)
         {
-            super(name, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
+            super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         }
      
         @Override

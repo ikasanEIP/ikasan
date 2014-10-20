@@ -45,9 +45,9 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -80,6 +80,9 @@ public class RecoveryManagerFactoryTest
 
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
+
+    /** Mock exclusion service */
+    final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
 
     /** Mock scheduledJobFactory */
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
@@ -120,7 +123,7 @@ public class RecoveryManagerFactoryTest
     public void test_successful_getRecovery_instance() throws SchedulerException
     {
         RecoveryManagerFactory recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
-        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer) instanceof ScheduledRecoveryManager);
+        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer, exclusionService) instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }
@@ -133,7 +136,7 @@ public class RecoveryManagerFactoryTest
     public void test_successful_getRecovery_instance_with_resolver() throws SchedulerException
     {
         RecoveryManagerFactory recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
-        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer) instanceof ScheduledRecoveryManager);
+        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer, exclusionService) instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }

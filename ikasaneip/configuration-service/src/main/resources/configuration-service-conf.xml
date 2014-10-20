@@ -10,7 +10,7 @@
             <bean class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
                 <property name="sessionFactory">
                     <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-                        <property name="dataSource" ref="eai.xads" />
+                        <property name="dataSource" ref="ikasan.ds" />
                         <property name="mappingResources">
                             <list>
                                 <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
@@ -25,7 +25,7 @@
             <bean class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
                 <property name="sessionFactory">
                     <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-                        <property name="dataSource" ref="eai.xads" />
+                        <property name="dataSource" ref="ikasan.xads" />
                         <property name="mappingResources">
                             <list>
                                 <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>

@@ -50,6 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/recoveryManager-service-conf.xml",
+        "/exclusion-service-conf.xml",
         "/scheduler-service-conf.xml",
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",
@@ -59,5 +60,5 @@ import org.springframework.test.context.ContextConfiguration;
 
 public class IkasanEIPTest
 {
-    // Just use this class as a jca for Spring context loading.
+    // Just use this class for Spring context loading.
 }

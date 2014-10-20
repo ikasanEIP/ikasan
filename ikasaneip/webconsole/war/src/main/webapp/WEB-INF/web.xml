@@ -59,6 +59,7 @@
             classpath:module-service-conf.xml
             classpath:ikasan-module-bootstrap-conf.xml
             classpath:wiretap-service-conf.xml
+            classpath:exclusion-service-conf.xml
             classpath:systemevent-service-conf.xml
             classpath:flow-service-conf.xml
             classpath:configuration-service-conf.xml
