@@ -62,6 +62,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
+@SuppressWarnings("unchecked")
 public class VisitingFlowElementInvoker implements FlowElementInvoker
 {
     /** logger instance */
@@ -167,7 +168,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Sequencer</code>
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -198,7 +198,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Splitter</code>
      *
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -229,7 +228,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * Helper method to notify listeners before a flow element is invoked
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -252,7 +250,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * Helper method to notify listeners after a flow element is invoked
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -275,7 +272,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Router</code>
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -329,7 +325,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Producer</code> component endpoint
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -379,7 +374,17 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
             try
             {
                 // try with flowEvent and if successful mark this producer
-                flowEvent.setPayload(broker.invoke(flowEvent));
+                // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                Object o = broker.invoke(flowEvent);
+                if (o instanceof FlowEvent)
+                {
+                    FlowEvent brokerFlowEvent = (FlowEvent)o;
+                    flowEvent.setPayload(brokerFlowEvent.getPayload());
+                }
+                else
+                {
+                    flowEvent.setPayload(o);
+                }
                 this.requiresFullEvent.put(moduleName + flowName + flowElement.getComponentName(), Boolean.TRUE);
             }
             catch(java.lang.ClassCastException e)
@@ -392,7 +397,17 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         {
             if(requiresFullEventForInvocation.booleanValue())
             {
-                flowEvent.setPayload(broker.invoke(flowEvent));
+                // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
+                Object o = broker.invoke(flowEvent);
+                if (o instanceof FlowEvent)
+                {
+                    FlowEvent brokerFlowEvent = (FlowEvent)o;
+                    flowEvent.setPayload(brokerFlowEvent.getPayload());
+                }
+                else
+                {
+                    flowEvent.setPayload(o);
+                }
             }
             else
             {
@@ -419,6 +434,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         return null;
     }
 
+
     /**
      * For consumers we simply want to notify the listeners then get the default transition.
      * @param moduleName
@@ -436,7 +452,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Transformer</code>
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -460,7 +475,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Transformer</code>
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
@@ -484,7 +498,6 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
     /**
      * The behaviour for visiting a <code>Filter</code>
      * 
-     * @param event The event we're passing on
      * @param moduleName The name of the module
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with

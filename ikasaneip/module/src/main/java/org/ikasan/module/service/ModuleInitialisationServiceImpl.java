@@ -40,9 +40,6 @@
  */
 package org.ikasan.module.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.ikasan.security.model.Authority;
 import org.ikasan.security.service.UserService;
@@ -58,7 +55,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Module Initialisation Service default implementation
@@ -88,6 +90,9 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     /** UserService provides access to users and authorities */
     private UserService userService;
 
+    /** Container for Spring application contexts loaded internally by this class */
+    private List<AbstractApplicationContext> innerContexts;
+
     /**
      * Constructor
      * @param moduleContainer
@@ -114,6 +119,7 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         {
             throw new IllegalArgumentException("userService cannot be 'null'");
         }
+        innerContexts = new LinkedList<>();
     }
 
     /*
@@ -143,13 +149,14 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         // Load the configurations defined by the loader conf and instantiate a context merged with the platform context
         ApplicationContext loaderContext = new ClassPathXmlApplicationContext(this.loaderConfiguration);
         Map<String,List> loaderResources = loaderContext.getBeansOfType(List.class);
-        
+
         for(List<String> loaderResource : loaderResources.values())
         {
             String[] resourcesArray = new String[loaderResource.size()];
             loaderResource.toArray(resourcesArray);
 
-            ApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
+            AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext(resourcesArray, platformContext);
+            innerContexts.add(applicationContext);
     
             // check for moduleActivator overrides and use the first one found
             try
@@ -183,11 +190,11 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
     }
 
     /**
-     * Callback fom the container to gracefully stop flows and modules.
+     * Callback from the container to gracefully stop flows and modules, and stop the inner loaded contexts
      */
     public void destroy() throws Exception
     {
-        // shutdown all modules
+        // shutdown all modules cleanly
         for(Module<Flow> module:this.moduleContainer.getModules())
         {
             this.moduleActivator.deactivate(module);
@@ -202,6 +209,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
                 scheduler.shutdown();
             }
         }
+        // close our inner loaded contexts
+        for (AbstractApplicationContext context : innerContexts)
+        {
+            logger.debug("closing and destroying inner context: " + context.getDisplayName());
+            context.close();
+        }
+        innerContexts.clear();
     }
 
     /**

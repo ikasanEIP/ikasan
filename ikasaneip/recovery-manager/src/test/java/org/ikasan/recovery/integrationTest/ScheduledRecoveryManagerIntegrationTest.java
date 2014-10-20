@@ -51,6 +51,7 @@ import org.ikasan.exceptionResolver.ExceptionGroup;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.MatchingExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExceptionAction;
+import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
@@ -59,6 +60,7 @@ import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,6 +99,9 @@ public class ScheduledRecoveryManagerIntegrationTest
     /** module name */
     private String moduleName = "moduleName";
 
+    /** exclusion service */
+    private ExclusionService exclusionService;
+
     @Before
     public void setUp()
     {
@@ -104,6 +109,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         this.scheduledJobFactory = CachingScheduledJobFactory.getInstance();
         this.consumer = new StubbedConsumer();
         this.recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
+        this.exclusionService = new StubbedExclusionService();
     }
 
     /**
@@ -112,7 +118,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_state_after_creation()
     {
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
         Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
         Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
     }
@@ -124,7 +130,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_default_stop_when_no_resolver()
     {
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
 
         // start the consumer and pass exception to recoveryManager
         consumer.start();
@@ -165,7 +171,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
         recoveryManager.setResolver(resolver);
 
         //
@@ -192,6 +198,48 @@ public class ScheduledRecoveryManagerIntegrationTest
     }
 
     /**
+     * Test recovery manager with resolver for exclude action.
+     */
+    @Test
+    public void test_recoveryManager_resolver_to_excludeAction()
+    {
+        //
+        // create an exception resolver
+        ExceptionAction excludeEventAction = ExcludeEventAction.instance();
+        IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
+        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, excludeEventAction);
+        List<ExceptionGroup> matchers = new ArrayList<ExceptionGroup>();
+        matchers.add(matcher);
+        ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
+
+        //
+        // create the RM and set the resolver
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
+        recoveryManager.setResolver(resolver);
+
+        //
+        // start the consumer and pass exception to recoveryManager
+        consumer.start();
+        Assert.assertTrue("consumer should be running", consumer.isRunning());
+
+        try
+        {
+            recoveryManager.recover(componentName, new Exception(), new String());
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("ExcludeEvent", e.getMessage());
+        }
+
+        //
+        // expected results are consumer is still running
+        Assert.assertTrue("consumer should be running", consumer.isRunning());
+        Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
+        Assert.assertFalse("recovery manager should not report unrecoverable", recoveryManager.isUnrecoverable());
+    }
+
+    /**
      * Test recovery manager with resolver for retry action.
      * @throws SchedulerException 
      */
@@ -211,7 +259,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
         recoveryManager.setResolver(resolver);
 
         //
@@ -311,7 +359,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
         recoveryManager.setResolver(resolver);
 
         //
@@ -427,7 +475,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // create the RM and set the resolver
-        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer);
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName, consumer, exclusionService);
         recoveryManager.setResolver(resolver);
 
         //
@@ -471,6 +519,38 @@ public class ScheduledRecoveryManagerIntegrationTest
             Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
             Assert.assertNull("job should not be registered with scheduler",
                 this.scheduler.getJobDetail(jobKey));
+        }
+    }
+
+    /**
+     * Stubbed ExclusionService implementation for testing
+     * @author Ikasan Development Team
+     */
+    private class StubbedExclusionService<T> implements ExclusionService
+    {
+        @Override
+        public boolean isBlackListed(Object o) {
+            return false;
+        }
+
+        @Override
+        public void addBlacklisted(Object o) {
+
+        }
+
+        @Override
+        public void removeBlacklisted(Object o) {
+
+        }
+
+        @Override
+        public void setTimeToLive(Long timeToLive) {
+
+        }
+
+        @Override
+        public void housekeep() {
+
         }
     }
 

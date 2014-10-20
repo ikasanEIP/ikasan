@@ -51,10 +51,11 @@ import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.IgnoreAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
-import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
@@ -123,14 +124,20 @@ public class ScheduledRecoveryManagerTest
     
     /** Mock managedResource */
     final ManagedResource managedResource = mockery.mock(ManagedResource.class, "ManagedResource");
-    
+
+    /** Mock exclusion service */
+    final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
+
+    /** Mock flowEvent */
+    final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
+
     /**
      * Test failed constructor due to null scheduler.
      */
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManager(null, null, null, null, null);
+        new ScheduledRecoveryManager(null, null, null, null, null, null);
     }
 
     /**
@@ -139,7 +146,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduledJobFactory()
     {
-        new ScheduledRecoveryManager(scheduler, null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, null, null, null, null, null);
     }
 
     /**
@@ -148,7 +155,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null, null, null);
     }
 
     /**
@@ -157,7 +164,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null, null, null);
     }
 
     /**
@@ -166,7 +173,16 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullConsumer()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", null, null);
+    }
+
+    /**
+     * Test failed constructor due to null exclusionService.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructorDieToNullExclusionService()
+    {
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, null);
     }
 
     /**
@@ -175,7 +191,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_successful_instantiation()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService);
     }
 
     /**
@@ -211,6 +227,45 @@ public class ScheduledRecoveryManagerTest
         catch(RuntimeException e)
         {
             Assert.assertEquals("Stop", e.getMessage());
+        }
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful exclude action on recovery.
+     * @throws SchedulerException
+     */
+    @Test
+    public void test_successful_recover_to_excludeAction() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(excludeEventAction));
+
+                // add to exclusion list
+                exactly(1).of(exclusionService).addBlacklisted(flowEvent);
+            }
+        });
+
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName", consumer);
+        recoveryManager.setResolver(exceptionResolver);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception, flowEvent);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("ExcludeEvent", e.getMessage());
         }
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -796,7 +851,7 @@ public class ScheduledRecoveryManagerTest
 
         public StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer)
         {
-            super(scheduler, scheduledJobFactory, flowName, moduleName, consumer);
+            super(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService);
         }
         
         @Override

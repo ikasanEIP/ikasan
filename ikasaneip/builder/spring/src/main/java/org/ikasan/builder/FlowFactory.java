@@ -41,15 +41,15 @@
 package org.ikasan.builder;
 
 import org.apache.log4j.Logger;
+import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.exceptionResolver.ExceptionResolver;
+import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
-import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
-import org.ikasan.flow.visitorPattern.FlowConfiguration;
-import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
+import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -91,8 +91,15 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     @Resource
     RecoveryManagerFactory recoveryManagerFactory;
 
+    /** exclusionService factory for getting a default exclusionService instance */
+    @Resource
+    ExclusionServiceFactory exclusionServiceFactory;
+
     /** allow override of recovery manager instance */
     RecoveryManager recoveryManager;
+
+    /** exclusion service */
+    ExclusionService exclusionService;
 
     /** exception resolver to be registered with recovery manager */
     ExceptionResolver exceptionResolver;
@@ -106,7 +113,10 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
     /** consumer is the only flow element we need a handle on */
     FlowElement<Consumer> consumer;
-    
+
+    /** head flow element of the exclusion flow */
+    FlowElement<?> exclusionFlowHeadElement;
+
     /**
      * Setter for moduleName
      * @param moduleName
@@ -144,6 +154,15 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     }
 
     /**
+     * Allow override of default exclusionService
+     * @param exclusionService
+     */
+    public void setExclusionService(ExclusionService exclusionService)
+    {
+        this.exclusionService = exclusionService;
+    }
+
+    /**
      * Allow override of default configurationService
      * @param configurationService
      */
@@ -168,6 +187,15 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     public void setConsumer(FlowElement<Consumer> consumer)
     {
         this.consumer = consumer;
+    }
+
+    /**
+     * Setter for exclusion flow head flow element
+     * @param exclusionFlowHeadElement
+     */
+    public void setExclusionFlowHeadElement(FlowElement<?> exclusionFlowHeadElement)
+    {
+        this.exclusionFlowHeadElement = exclusionFlowHeadElement;
     }
 
     /**
@@ -197,9 +225,21 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumer, configurationService);
 
+        if(this.exclusionFlowHeadElement == null)
+        {
+            this.exclusionFlowHeadElement = new FlowElementImpl("Exclusion Logger", new LogProducer("ExcludedEvent [EVENT]", "EVENT"));
+        }
+
+        ExclusionFlowConfiguration exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, configurationService);
+
+        if(exclusionService == null)
+        {
+            exclusionService = this.exclusionServiceFactory.getExclusionService(moduleName, name);
+        }
+
         if(recoveryManager == null)
         {
-            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName,  consumer.getFlowComponent());
+            recoveryManager = recoveryManagerFactory.getRecoveryManager(name,  moduleName,  consumer.getFlowComponent(), exclusionService);
         }
 
         if(exceptionResolver != null)
@@ -207,7 +247,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             recoveryManager.setResolver(exceptionResolver);
         }
 
-        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, flowElementInvoker, recoveryManager);
+        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
         flow.setFlowListener(flowEventListener);
 
         if(monitor != null && flow instanceof MonitorSubject)
@@ -225,9 +265,10 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             ((MonitorSubject)flow).setMonitor(monitor);
         }
         
-        logger.info("Instantiated flow - name[" + name + "] module[" + moduleName 
-            + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName() 
-            + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none") 
+        logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
+            + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
+            + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
+            + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
             + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
             + "]");
         
@@ -259,6 +300,12 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     {
         this.configurationService = applicationContext.getBean(ConfigurationService.class);
         this.recoveryManagerFactory = applicationContext.getBean(RecoveryManagerFactory.class);
+        this.exclusionServiceFactory = applicationContext.getBean(ExclusionServiceFactory.class);
+        if(this.exclusionServiceFactory == null)
+        {
+            this.exclusionServiceFactory = ExclusionServiceFactory.getInstance();
+        }
+
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
     }
 

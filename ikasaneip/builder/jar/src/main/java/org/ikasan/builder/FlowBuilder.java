@@ -45,20 +45,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.Otherwise;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.When;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerRootConfigurationBuilder.Sequence;
+import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
+import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
+import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.event.FlowEventFactory;
-import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
-import org.ikasan.flow.visitorPattern.FlowConfiguration;
-import org.ikasan.flow.visitorPattern.FlowElementImpl;
-import org.ikasan.flow.visitorPattern.VisitingFlowElementInvoker;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
+import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.sequencing.Sequencer;
@@ -66,6 +67,7 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowElementInvoker;
@@ -97,13 +99,19 @@ public class FlowBuilder
 	/** configuration service */
 	ConfigurationService configurationService;
 
-	/** flow element wiriing */
+    /** exclusion service */
+    ExclusionService exclusionService;
+
+    /** flow element wiriing */
 	FlowConfigurationBuilder flowConfigurationBuilder;
 
 	/** default event factory */
 	EventFactory eventFactory = new FlowEventFactory();
 
-	/**
+    /** head flow element of the exclusion flow */
+    FlowElement<?> exclusionFlowHeadElement;
+
+    /**
 	 * Constructor
 	 * 
 	 * @param name
@@ -150,7 +158,7 @@ public class FlowBuilder
 	/**
 	 * Add a flow description
 	 * 
-	 * @param description
+	 * @param flowEventListener
 	 * @return
 	 */
 	public FlowBuilder withFlowListener(FlowEventListener flowEventListener) 
@@ -162,7 +170,7 @@ public class FlowBuilder
 	/**
 	 * Allow override of default configuration service
 	 * 
-	 * @param description
+	 * @param configurationService
 	 * @return
 	 */
 	public FlowBuilder withConfigurationService(ConfigurationService configurationService) 
@@ -183,7 +191,29 @@ public class FlowBuilder
 		return this;
 	}
 
-	/**
+    /**
+     * Override the default exclusion service
+     *
+     * @param exclusionService
+     * @return
+     */
+    public FlowBuilder withExclusionService(ExclusionService exclusionService)
+    {
+        this.exclusionService = exclusionService;
+        return this;
+    }
+
+    /**
+     * Setter for exclusion flow head flow element
+     * @param exclusionFlowHeadElement
+     */
+    public FlowBuilder withExclusionFlowHeadElement(FlowElement<?> exclusionFlowHeadElement)
+    {
+        this.exclusionFlowHeadElement = exclusionFlowHeadElement;
+        return this;
+    }
+
+    /**
 	 * Override the default event factory
 	 * 
 	 * @param eventFactory
@@ -558,20 +588,34 @@ public class FlowBuilder
 							.getDefaultConfigurationService();
 				}
 
-				if (recoveryManager == null) 
+                if (exclusionService == null)
+                {
+                    exclusionService = ExclusionServiceFactory.getInstance().getExclusionService(moduleName, name);
+                }
+
+                if (recoveryManager == null)
 				{
 					recoveryManager = RecoveryManagerFactory.getInstance()
 							.getRecoveryManager(
 									name,
 									moduleName,
 									((FlowElement<Consumer>) nextFlowElement)
-											.getFlowComponent());
+											.getFlowComponent(),
+                                    exclusionService);
 				}
 
 				FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
 				flowElementInvoker.setFlowEventListener(flowEventListener);
 				FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService);
-				return new VisitingInvokerFlow(name, moduleName,flowConfiguration, flowElementInvoker, recoveryManager);
+
+                if(exclusionFlowHeadElement == null)
+                {
+                    exclusionFlowHeadElement = new FlowElementImpl("Exclusion Logger", new LogProducer("ExcludedEvent [EVENT]", "EVENT"));
+                }
+                
+                ExclusionFlowConfiguration exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService);
+
+                return new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
 			}
 		}
 

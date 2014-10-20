@@ -61,6 +61,7 @@ import org.quartz.Job;
  * This test class supports the <code>ScheduledConsumer</code> class.
  * 
  * @author Ikasan Development Team
+ * @deprecated
  */
 public class ScheduledConsumerTest
 {

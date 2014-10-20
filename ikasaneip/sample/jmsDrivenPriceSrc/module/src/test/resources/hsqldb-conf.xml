@@ -60,7 +60,7 @@
         <entry key="hibernate.hbm2ddl.auto" value="create" />
     </util:map>
 
-    <bean name="eai.xads eai.ds" id="xaDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean name="ikasan.xads ikasan.ds" id="xaDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName">
             <value>org.hsqldb.jdbcDriver</value>
         </property>

@@ -12,7 +12,6 @@
     </bean>
 	
     <jee:jndi-lookup id="ikasan.xads" jndi-name="${ikasan.xads}"/>
-    <jee:jndi-lookup id="eai.xads" jndi-name="${eai.xads}"/>
-    <jee:jndi-lookup id="eai.ds" jndi-name="${eai.ds}"/>
+    <jee:jndi-lookup id="ikasan.ds" jndi-name="${ikasan.ds}"/>
 
 </beans>

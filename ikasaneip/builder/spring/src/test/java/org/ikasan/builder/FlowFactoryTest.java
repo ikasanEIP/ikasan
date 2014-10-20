@@ -69,9 +69,11 @@ import javax.annotation.Resource;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations = { 
         "/flow-conf.xml", 
-        "/component-conf.xml",  
-        "/recoveryManager-service-conf.xml", 
-        "/scheduler-service-conf.xml", 
+        "/component-conf.xml",
+        "/recoveryManager-service-conf.xml",
+        "/recoveryManager-service-conf.xml",
+        "/exclusion-service-conf.xml",
+        "/scheduler-service-conf.xml",
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",
         "/module-service-conf.xml",
