@@ -49,18 +49,47 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-endpoint-parent</artifactId>
+    <artifactId>ikasan-ftp-endpoint</artifactId>
     <version>0.9.5-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Endpoints</name>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration Client FTP endpoints</name>
 
-    <modules>
-        <module>utility-endpoint</module>
-        <module>jms-client</module>
-        <module>jms-spring</module>
-        <module>quartz-schedule</module>
-        <module>mongo-endpoint</module>
-        <module>ftp-endpoint</module>
-    </modules>
+    <dependencies>
+        <!-- Standard build -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-build</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
 
+        <!-- Apache commons net - ftp client -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 </project>
