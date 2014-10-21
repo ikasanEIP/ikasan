@@ -77,7 +77,14 @@
       <version>2.4</version>
     </dependency>
 
-    <dependency>
+     <dependency>
+          <groupId>se.jiderhamn</groupId>
+          <artifactId>classloader-leak-prevention</artifactId>
+          <version>1.10.0</version>
+      </dependency>
+
+
+      <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-eip</artifactId>
       <version>0.9.5-SNAPSHOT</version>
