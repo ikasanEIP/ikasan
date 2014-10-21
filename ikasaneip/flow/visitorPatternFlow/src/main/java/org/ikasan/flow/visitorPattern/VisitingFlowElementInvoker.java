@@ -172,9 +172,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleSequencer(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement handleSequencer(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Sequencer> flowElement)
     {
-        Sequencer sequencer = (Sequencer) flowElement.getFlowComponent();
+        Sequencer sequencer = flowElement.getFlowComponent();
         List payloads = sequencer.sequence(flowEvent.getPayload());
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
@@ -202,9 +202,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleSplitter(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement handleSplitter(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        Splitter splitter = (Splitter) flowElement.getFlowComponent();
+        Splitter splitter = flowElement.getFlowComponent();
         List payloads = splitter.split(flowEvent.getPayload());
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
@@ -277,9 +277,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowElement The flow element we're dealing with
      */
     private FlowElement handleRouter(String moduleName, String flowName, 
-            FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+            FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Router> flowElement)
     {
-        Router router = (Router) flowElement.getFlowComponent();
+        Router router = flowElement.getFlowComponent();
         List<String> targetNames = router.route(flowEvent.getPayload());
         if (targetNames == null || targetNames.size() == 0)
         {
@@ -329,9 +329,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement<?> handleProducer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleProducer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement<Producer> flowElement)
     {
-        Producer producer = (Producer) flowElement.getFlowComponent();
+        Producer producer = flowElement.getFlowComponent();
         Boolean requiresFullEventForInvocation = this.requiresFullEvent.get(moduleName + flowName + flowElement.getComponentName());
         if(requiresFullEventForInvocation == null)
         {
@@ -364,9 +364,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
         return null;
     }
    
-    private FlowElement<?> handleBroker(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleBroker(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Broker> flowElement)
     {
-        Broker broker = (Broker) flowElement.getFlowComponent();
+        Broker broker = flowElement.getFlowComponent();
 
         Boolean requiresFullEventForInvocation = this.requiresFullEvent.get(moduleName + flowName + flowElement.getComponentName());
         if(requiresFullEventForInvocation == null)
@@ -443,7 +443,7 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowElement
      * @return flowElement
      */
-    private FlowElement<?> handleConsumer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleConsumer(String moduleName, String flowName, FlowEvent flowEvent, FlowElement<Consumer> flowElement)
     {
         notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
         return getDefaultTransition(flowElement);
@@ -456,9 +456,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement<?> handleTranslator(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement<?> handleTranslator(String moduleName, String flowName, FlowEvent flowEvent, FlowElement<Translator> flowElement)
     {
-        Translator translator = (Translator) flowElement.getFlowComponent();
+        Translator translator = flowElement.getFlowComponent();
         translator.translate(flowEvent.getPayload());
         notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
@@ -479,9 +479,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleConverter(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement handleConverter(String moduleName, String flowName, FlowEvent flowEvent, FlowElement<Converter> flowElement)
     {
-        Converter converter = (Converter) flowElement.getFlowComponent();
+        Converter converter = flowElement.getFlowComponent();
         flowEvent.setPayload(converter.convert(flowEvent.getPayload()));
         notifyListenersAfterElement(moduleName, flowName, flowEvent, flowElement);
         // sort out the next element
@@ -502,9 +502,9 @@ public class VisitingFlowElementInvoker implements FlowElementInvoker
      * @param flowName The name of the flow
      * @param flowElement The flow element we're dealing with
      */
-    private FlowElement handleFilter(String moduleName, String flowName, FlowEvent flowEvent, FlowElement flowElement)
+    private FlowElement handleFilter(String moduleName, String flowName, FlowEvent flowEvent, FlowElement<Filter> flowElement)
     {
-        Filter filter = (Filter) flowElement.getFlowComponent();
+        Filter filter = flowElement.getFlowComponent();
         if(filter.filter(flowEvent.getPayload()) == null)
         {
             return null;
