@@ -77,7 +77,7 @@ public class ConfigurationParameterListImpl extends AbstractComponentParameter<L
         }
 
         this.value = value;
-        if(value.size() == 0)
+        if(value != null && value.size() == 0)
         {
             value = null;
         }
