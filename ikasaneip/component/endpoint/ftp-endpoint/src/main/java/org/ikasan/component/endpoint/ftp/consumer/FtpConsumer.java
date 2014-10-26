@@ -42,17 +42,26 @@ package org.ikasan.component.endpoint.ftp.consumer;
 
 import org.apache.log4j.Logger;
 
+import org.ikasan.component.endpoint.ftp.common.BaseFileTransferMappedRecord;
 import org.ikasan.component.endpoint.ftp.common.ClientConnectionException;
 import org.ikasan.component.endpoint.ftp.common.ClientInitialisationException;
-import org.ikasan.component.endpoint.ftp.common.FileTransferProtocolClient;
+import org.ikasan.component.endpoint.ftp.endpoint.FtpEndpoint;
+import org.ikasan.component.endpoint.ftp.endpoint.FtpEndpointFactory;
+import org.ikasan.component.endpoint.ftp.endpoint.FtpEndpointImpl;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.flow.FlowEvent;
+import org.quartz.*;
+
+
+import java.text.ParseException;
 import java.util.Date;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 
 /**
@@ -61,28 +70,47 @@ import java.util.Date;
  * @author Ikasan Development Team
  */
 public class FtpConsumer
-        implements Consumer<EventListener<?>, EventFactory>,
-        EndpointListener<Object>,
-        ConfiguredResource<FtpConsumerConfiguration> {
+        implements Consumer<EventListener, EventFactory>, ConfiguredResource<FtpConsumerConfiguration>, Job {
     /**
      * class logger
      */
     private static Logger logger = Logger.getLogger(FtpConsumer.class);
 
+
+    /**
+     * Scheduler
+     */
+    private Scheduler scheduler;
+
+    /**
+     * scheduled job factory
+     */
+    private ScheduledJobFactory scheduledJobFactory;
+
     /**
      * consumer event factory
      */
-    protected EventFactory<FlowEvent<?, ?>> flowEventFactory;
+    private EventFactory<FlowEvent<?, ?>> flowEventFactory;
 
     /**
      * consumer event listener
      */
-    protected EventListener eventListener;
+    private EventListener eventListener;
 
     /**
-     * configured resource id
+     * configuredResourceId
      */
-    protected String configuredResourceId;
+    private String configuredResourceId;
+
+    /**
+     * job identifying name
+     */
+    private String name;
+
+    /**
+     * job identifying group
+     */
+    private String group;
 
     /**
      * Ftp consumer configuration - default to vanilla instance
@@ -90,9 +118,14 @@ public class FtpConsumer
     protected FtpConsumerConfiguration configuration = new FtpConsumerConfiguration();
 
     /**
-     * Common library used by both inbound and outbound connectors
+     * Ftp tech endpoint factory
      */
-    private FileTransferProtocolClient ftpClient;
+    private FtpEndpointFactory ftpEndpointFactory;
+
+    /**
+     * Ftp tech endpoint connector using FTP Client libraries.
+     */
+    private FtpEndpoint ftpEndpoint;
 
     /**
      * Default constructor
@@ -104,89 +137,47 @@ public class FtpConsumer
     /**
      * Constructor
      *
+     * @param scheduler
+     * @param scheduledJobFactory
+     * @param name
+     * @param group
      * @param configuration
      */
-    public FtpConsumer(FtpConsumerConfiguration configuration) {
+    public FtpConsumer(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String name, String group, FtpConsumerConfiguration configuration, FtpEndpointFactory ftpEndpointFactory) {
+        this.scheduler = scheduler;
+        if (scheduler == null) {
+            throw new IllegalArgumentException("scheduler cannot be 'null'");
+        }
+
+        this.scheduledJobFactory = scheduledJobFactory;
+        if (scheduledJobFactory == null) {
+            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
+        }
+
+        this.name = name;
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be 'null'");
+        }
+
+        this.group = group;
+        if (group == null) {
+            throw new IllegalArgumentException("group cannot be 'null'");
+        }
 
         this.configuration = configuration;
         if (configuration == null) {
             throw new IllegalArgumentException("configuration cannot be 'null'");
         }
+
+        this.ftpEndpointFactory = ftpEndpointFactory;
+        if (ftpEndpointFactory == null) {
+            throw new IllegalArgumentException("ftpEndpointFactory cannot be 'null'");
+        }
     }
+
 
     public void setEventFactory(EventFactory flowEventFactory) {
         this.flowEventFactory = flowEventFactory;
-    }
-
-    /**
-     * Start the underlying JMS
-     */
-    public void start() {
-        try {
-            createFTPClient();
-        } catch (ClientInitialisationException e) {
-            e.printStackTrace();
-        } catch (ClientConnectionException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    /**
-     * Stop the underlying JMS
-     */
-    public void stop() {
-
-        closeSession();
-
-    }
-
-    /**
-     * TODO - find a better way to ascertain if underlying JMS is running?
-     * Is the underlying JMS actively running
-     *
-     * @return boolean
-     */
-    public boolean isRunning() {
-        return true;
-    }
-
-    /**
-     * Set the consumer event listener
-     *
-     * @param eventListener
-     */
-    public void setListener(EventListener eventListener) {
-        this.eventListener = eventListener;
-    }
-
-
-    /**
-     * Callback method from the underlying JMS tech.
-     * On invocation this method creates a flowEvent from the tech specific
-     * message and invokes the event listener.
-     */
-    public void onMessage(Object message) {
-        if (this.eventListener == null) {
-            throw new RuntimeException("No active eventListeners registered!");
-        }
-
-        try {
-            FlowEvent<?, ?> flowEvent = flowEventFactory.newEvent(new Date().getTime(), message);
-            this.eventListener.invoke(flowEvent);
-        } catch (ManagedEventIdentifierException e) {
-            this.eventListener.invoke(e);
-        }
-    }
-
-    /**
-     * Callback method from the JMS connector for exception reporting.
-     *
-     * @param jmsException
-     */
-    public void onException(Throwable jmsException) {
-        this.eventListener.invoke(jmsException);
     }
 
     public FtpConsumerConfiguration getConfiguration() {
@@ -205,6 +196,128 @@ public class FtpConsumer
         this.configuredResourceId = configuredResourceId;
     }
 
+    /**
+     * Start the underlying tech
+     */
+    public void start() {
+        try {
+            JobDetail jobDetail = scheduledJobFactory.createJobDetail(this, this.name, this.group);
+
+            // create trigger
+            JobKey jobkey = jobDetail.getKey();
+
+            Trigger trigger = getCronTrigger(jobkey, configuration.getCronExpression());
+            Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
+            logger.info("Scheduled consumer for flow ["
+                    + jobkey.getName()
+                    + "] module [" + jobkey.getGroup()
+                    + "] starting at [" + scheduledDate + "]");
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            ftpEndpoint = ftpEndpointFactory.createFtpEndpoint(configuration);
+        } catch (ClientInitialisationException ftpClientInitialisationException) {
+            throw new RuntimeException(ftpClientInitialisationException);
+        } catch (ClientConnectionException ftpClientConnectionException) {
+            throw new RuntimeException(ftpClientConnectionException);
+        }
+
+    }
+
+    /**
+     * Stop the scheduled job and triggers
+     */
+    public void stop() {
+        ftpEndpoint.closeSession();
+
+        try {
+            JobKey jobKey = new JobKey(name, group);
+            if (this.scheduler.checkExists(jobKey)) {
+                this.scheduler.deleteJob(jobKey);
+            }
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * Is the underlying tech actively running
+     *
+     * @return isRunning
+     */
+    public boolean isRunning() {
+        try {
+            if (this.scheduler.isShutdown() || this.scheduler.isInStandbyMode()) {
+                return false;
+            }
+
+            JobKey jobKey = new JobKey(this.name, this.group);
+            if (this.scheduler.checkExists(jobKey)) {
+                return true;
+            }
+
+            return false;
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * Set the consumer event listener
+     *
+     * @param eventListener
+     */
+    public void setListener(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
+
+    /**
+     * Callback from the scheduler.
+     *
+     * @param context
+     */
+    public void execute(JobExecutionContext context) {
+
+        BaseFileTransferMappedRecord consumedFile = null;
+        try {
+            consumedFile = ftpEndpoint.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        FlowEvent<?, ?> flowEvent = createFlowEvent(consumedFile);
+        this.eventListener.invoke(flowEvent);
+    }
+
+    /**
+     * Override this is you want control over the flow event created by this
+     * consumer
+     *
+     * @param consumedFile
+     * @return
+     */
+    protected FlowEvent<?, ?> createFlowEvent(BaseFileTransferMappedRecord consumedFile) {
+
+        FlowEvent<?, ?> flowEvent = this.flowEventFactory.newEvent(consumedFile.getName(), consumedFile);
+        return flowEvent;
+    }
+
+    /**
+     * Method factory for creating a cron trigger
+     *
+     * @return jobDetail
+     * @throws java.text.ParseException
+     */
+    protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException {
+        return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression)).build();
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
      */
@@ -212,89 +325,5 @@ public class FtpConsumer
         return this.flowEventFactory;
     }
 
-    /**
-     * Creates the FileTransferProtocolClient based off the properties from the
-     * ConnectionRequestInfo, and opens the connection
-     *
-     * @throws ClientInitialisationException Exception thrown by connector
-     */
-    private void createFTPClient() throws ClientInitialisationException, ClientConnectionException {
-        logger.debug("Called createFTPClient \n"
-                + "active   [" + this.configuration.getActive() + "]\n"
-                + "host     [" + this.configuration.getRemoteHost() + "]\n"
-                + "maxretry [" + this.configuration.getMaxRetryAttempts() + "]\n"
-                + "password [" + this.configuration.getPassword() + "]\n"
-                + "port     [" + this.configuration.getRemotePort() + "]\n"
-                + "user     [" + this.configuration.getUsername() + "]");
-        // Active
-        boolean active = this.configuration.getActive();
-        // Hostname
-        String remoteHostname = null;
-        if (this.configuration.getRemoteHost() != null) {
-            remoteHostname = this.configuration.getRemoteHost();
-        } else {
-            throw new ClientInitialisationException("Remote hostname is null."); //$NON-NLS-1$
-        }
-        // Max retry attempts (Integer unboxes to int)
-        int maxRetryAttempts;
-        if (this.configuration.getMaxRetryAttempts() != null) {
-            maxRetryAttempts = this.configuration.getMaxRetryAttempts();
-        } else {
-            throw new ClientInitialisationException("max retry attempts is null"); //$NON-NLS-1$
-        }
-        // Password
-        String password;
-        if (this.configuration.getPassword() != null) {
-            password = this.configuration.getPassword();
-        } else {
-            throw new ClientInitialisationException("password is null"); //$NON-NLS-1$
-        }
-        // Port (Integer unboxes to int)
-        int remotePort;
-        if (this.configuration.getRemotePort() != null) {
-            remotePort = this.configuration.getRemotePort();
-        } else {
-            throw new ClientInitialisationException("Remote port is null"); //$NON-NLS-1$
-        }
-        // Username
-        String username = null;
-        if (this.configuration.getUsername() != null) {
-            username = this.configuration.getUsername();
-        } else {
-            throw new ClientInitialisationException("username is null"); //$NON-NLS-1$
-        }
-        String localHostname = null;
 
-        String systemKey = this.configuration.getSystemKey();
-        Integer connectionTimeout = this.configuration.getConnectionTimeout();
-        Integer dataTimeout = this.configuration.getDataTimeout();
-        Integer soTimeout = this.configuration.getSocketTimeout();
-
-        // Create a FileTransferProtocolClient
-        this.ftpClient = new FileTransferProtocolClient(active, remoteHostname, localHostname, maxRetryAttempts, password, remotePort, username, systemKey,
-                connectionTimeout, dataTimeout, soTimeout);
-
-        this.ftpClient.validateConstructorArgs();
-
-        // attempts to open the connection
-        ftpClient.connect();
-        // attempts to login
-        ftpClient.login();
-
-    }
-
-
-    protected void closeSession() {
-        if (this.ftpClient == null) {
-            logger.debug("FTPClient is null.  Closing Session aborted."); //$NON-NLS-1$
-        } else {
-            if (this.ftpClient.isConnected()) {
-                logger.debug("Closing FTP connection!"); //$NON-NLS-1$
-                this.ftpClient.disconnect();
-                logger.debug("Disconnected from FTP host."); //$NON-NLS-1$
-            } else {
-                logger.info("Client was already disconnected.  Closing Session aborted."); //$NON-NLS-1$
-            }
-        }
-    }
 }

@@ -1,5 +1,3 @@
-package org.ikasan.component.endpoint.ftp.consumer;
-
 /*
  * $Id$
  * $URL$
@@ -41,19 +39,18 @@ package org.ikasan.component.endpoint.ftp.consumer;
  * ====================================================================
  */
 
-import java.util.List;
-
 /**
- * Directory URL Factory interface
- *
+ * Sample tech endpoint implementation
  * @author Ikasan Development Team
  */
-public interface DirectoryURLFactory {
-    /**
-     * Get a list of directory URLs
-     *
-     * @param path The path to look in
-     * @return List of directory URLs
-     */
-    public List<String> getDirectoriesURLs(String path);
+package org.ikasan.component.endpoint.ftp.endpoint;
+
+import org.ikasan.component.endpoint.ftp.common.BaseFileTransferMappedRecord;
+
+public interface FtpEndpoint {
+
+
+    public BaseFileTransferMappedRecord get() throws Exception;
+
+    public void closeSession();
 }

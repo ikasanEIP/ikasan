@@ -562,6 +562,65 @@ public class FileTransferProtocolClient implements FileTransferClient
         }
     }
 
+    public BaseFileTransferMappedRecord get(ClientListEntry clientListEntry) throws ClientCommandGetException
+    {
+        // Construct file path and get the file into an
+        // BaseFileTransferMappedRecord
+        URI uri = clientListEntry.getUri();
+        File srcFile = new File((uri).getPath());
+        logger.debug("Getting file [" + srcFile.getPath() + "] into an BaseFileTransferMappedRecord"); //$NON-NLS-1$ //$NON-NLS-2$
+        // Getting the file content
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        String fileName = srcFile.getName();
+        BaseFileTransferMappedRecord record = null;
+        try
+        {
+            if(!this.ftpClient.retrieveFile(fileName, output))
+            {
+                throw new ClientCommandGetException("Failed to get file [" + fileName //$NON-NLS-1$
+                        + "] from directory [" + uri.getPath()); //$NON-NLS-1$
+            }
+            record = BaseFileTransferUtils.createBaseFileTransferMappedRecord(uri, output);
+            output.close();
+        }
+        catch (IOException e)
+        {
+            throw new ClientCommandGetException("Failed to get file [" + fileName //$NON-NLS-1$
+                    + "] from directory [" + uri.getPath(), e); //$NON-NLS-1$
+        }
+        return record;
+    }
+
+    public BaseFileTransferMappedRecord get(String filePath) throws ClientCommandGetException
+    {
+        URI uri;
+        BaseFileTransferMappedRecord record = null;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try
+        {
+            uri = new URI(filePath);
+            try
+            {
+                logger.debug("getting file from filepath: [" + filePath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                if(!this.ftpClient.retrieveFile(filePath, output))
+                {
+                    throw new ClientCommandGetException("Failed to get file from [" + filePath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                record = BaseFileTransferUtils.createBaseFileTransferMappedRecord(uri, output);
+                output.close();
+            }
+            catch (IOException e)
+            {
+                throw new ClientCommandGetException("Failed to get file from [" + filePath + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        catch (URISyntaxException e)
+        {
+            throw new ClientCommandGetException("could not create URI from filePath", e); //$NON-NLS-1$
+        }
+        return record;
+    }
+
     /**
      * OutputStream is closed by the caller
      * 

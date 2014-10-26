@@ -60,11 +60,6 @@ public class FtpConsumerConfiguration {
     private String filenamePattern;
 
     /**
-     * Classname for source directories URLs factory
-     */
-    private DirectoryURLFactory sourceDirectoryURLFactory;
-
-    /**
      * Whether we filterDuplicates what we are picking up - True by default
      */
     private Boolean filterDuplicates = Boolean.TRUE;
@@ -198,6 +193,10 @@ public class FtpConsumerConfiguration {
      * System key
      */
     private String systemKey = "";
+    /**
+     * cron based expression for this schedule
+     */
+    private String cronExpression;
 
     /**
      * Logger instance
@@ -271,21 +270,6 @@ public class FtpConsumerConfiguration {
      */
     public void setFilenamePattern(String filenamePattern) {
         this.filenamePattern = filenamePattern;
-    }
-
-    /**
-     * @return the sourceDirectoryURLFactory
-     */
-    public DirectoryURLFactory getSourceDirectoryURLFactory() {
-        return this.sourceDirectoryURLFactory;
-    }
-
-    /**
-     * @param sourceDirectoryURLFactory the sourceDirectoryURLFactory to set
-     */
-    public void setSourceDirectoryURLFactory(
-            DirectoryURLFactory sourceDirectoryURLFactory) {
-        this.sourceDirectoryURLFactory = sourceDirectoryURLFactory;
     }
 
     /**
@@ -665,4 +649,13 @@ public class FtpConsumerConfiguration {
     public String getSystemKey() {
         return this.systemKey;
     }
+
+    public String getCronExpression() {
+        return cronExpression;
+    }
+
+    public void setCronExpression(String cronExpression) {
+        this.cronExpression = cronExpression;
+    }
+
 }
