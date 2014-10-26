@@ -181,7 +181,7 @@ public class FtpEndpointImpl implements FtpEndpoint {
                 if (filterDuplicates && filterOptionsSet()) {
 //                    if (!persistence.isDuplicate(entry, configuration.getFilterOnFilename(), configuration.getFilterOnLastModifiedDate()))
 //                    {
-//                        result.add(entry);
+                        result.add(entry);
 //                    }
                 } else {
                     result.add(entry);

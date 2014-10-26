@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="fakeFtpServer" class="org.mockftpserver.fake.FakeFtpServer">
+        <property name="serverControlPort" value="9981"/>
+        <property name="systemName" value="UNIX"/>
+        <property name="userAccounts">
+            <list>
+                <bean class="org.mockftpserver.fake.UserAccount">
+                    <property name="username" value="joe"/>
+                    <property name="password" value="password"/>
+                    <property name="homeDirectory" value="/"/>
+                </bean>
+            </list>
+        </property>
+
+        <property name="fileSystem">
+            <bean class="org.mockftpserver.fake.filesystem.UnixFakeFileSystem">
+                <property name="createParentDirectoriesAutomatically" value="false"/>
+                <property name="entries">
+                    <list>
+                        <bean class="org.mockftpserver.fake.filesystem.DirectoryEntry">
+                            <property name="path" value="/"/>
+                        </bean>
+                        <bean class="org.mockftpserver.fake.filesystem.DirectoryEntry">
+                            <property name="path" value="/source"/>
+                        </bean>
+                        <bean class="org.mockftpserver.fake.filesystem.FileEntry">
+                            <property name="path" value="/source/File.txt"/>
+                            <property name="contents" value="abcdefghijklmnopqrstuvwxyz"/>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+    </bean>
+
+</beans>

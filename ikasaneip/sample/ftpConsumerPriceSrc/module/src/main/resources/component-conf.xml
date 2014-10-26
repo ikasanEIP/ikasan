@@ -17,12 +17,14 @@
     </bean>
 
     <bean id="consumerConfiguration" class="org.ikasan.component.endpoint.ftp.consumer.FtpConsumerConfiguration">
-        <property name="sourceDirectory" value="ftp/source"/>
-        <property name="filenamePattern" value=".*txt"/>
-        <property name="username" value="amajewski"/>
-        <property name="password" value="pwr128009"/>
+        <property name="sourceDirectory" value="/source"/>
+        <property name="filenamePattern" value=".*"/>
+        <property name="username" value="joe"/>
+        <property name="password" value="password"/>
+        <property name="remotePort" value="9981" />
+        <property name="remoteHost" value="127.0.0.1" />
         <property name="active" value="true"/>
-        <property name="cronExpression" value="0/30 * * * * ?" />
+        <property name="cronExpression" value="0/5 * * * * ?" />
     </bean>
 
     <bean id="priceLoggerProducer" class="org.ikasan.sample.ftpConsumerPriceSrc.component.endpoint.PriceLoggerProducer" />

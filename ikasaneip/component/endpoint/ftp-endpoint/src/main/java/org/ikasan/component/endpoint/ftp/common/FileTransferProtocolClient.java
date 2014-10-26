@@ -571,7 +571,7 @@ public class FileTransferProtocolClient implements FileTransferClient
         logger.debug("Getting file [" + srcFile.getPath() + "] into an BaseFileTransferMappedRecord"); //$NON-NLS-1$ //$NON-NLS-2$
         // Getting the file content
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        String fileName = srcFile.getName();
+        String fileName = srcFile.getPath();
         BaseFileTransferMappedRecord record = null;
         try
         {

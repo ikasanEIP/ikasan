@@ -291,8 +291,10 @@ public class FtpConsumer
             e.printStackTrace();
         }
 
-        FlowEvent<?, ?> flowEvent = createFlowEvent(consumedFile);
-        this.eventListener.invoke(flowEvent);
+        if(consumedFile!=null) {
+            FlowEvent<?, ?> flowEvent = createFlowEvent(consumedFile);
+            this.eventListener.invoke(flowEvent);
+        }
     }
 
     /**

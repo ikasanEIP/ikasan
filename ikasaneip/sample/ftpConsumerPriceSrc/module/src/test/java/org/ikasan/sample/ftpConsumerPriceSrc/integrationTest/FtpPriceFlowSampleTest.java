@@ -44,9 +44,15 @@ package org.ikasan.sample.ftpConsumerPriceSrc.integrationTest;
 import org.ikasan.platform.IkasanEIPTest;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.FlowTestHarness;
+import org.ikasan.testharness.flow.FlowTestHarnessImpl;
+import org.ikasan.testharness.flow.expectation.service.OrderedExpectation;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockftpserver.fake.FakeFtpServer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -65,7 +71,8 @@ import java.io.File;
         "/ftp-to-log-flow-conf.xml",
         "/module-conf.xml",
         "/exception-conf.xml",
-        "/hsqldb-conf.xml"
+        "/hsqldb-conf.xml" ,
+        "/ftp-fake-server-conf.xml"
       })
 
 public class FtpPriceFlowSampleTest extends IkasanEIPTest
@@ -73,6 +80,13 @@ public class FtpPriceFlowSampleTest extends IkasanEIPTest
     @Resource
     Module<Flow> module;
 
+    @Autowired
+    private FakeFtpServer fakeFtpServer;
+
+    @Before
+    public void setup(){
+        fakeFtpServer.start();
+    }
 
     @Test
     public void test_flow_consumer_translator_producer() throws JMSException
@@ -82,11 +96,12 @@ public class FtpPriceFlowSampleTest extends IkasanEIPTest
         for(Flow flow:module.getFlows())
         {
             flow.start();
+
         }
-        
+
         try
         {
-            Thread.sleep(120000);
+            Thread.sleep(7000);
         }
         catch(InterruptedException e)
         {
@@ -97,5 +112,10 @@ public class FtpPriceFlowSampleTest extends IkasanEIPTest
         {
             flow.stop();
         }
+    }
+
+    @After
+    public void tearDown(){
+        fakeFtpServer.stop();
     }
 }

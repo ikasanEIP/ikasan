@@ -347,4 +347,14 @@ public class BaseFileTransferMappedRecord
     {
         return this.clone();
     }
+
+    @Override
+    public String toString() {
+        return "BaseFileTransferMappedRecord{" +
+                "recordName='" + recordName + '\'' +
+                ", recordDescription='" + recordDescription + '\'' +
+                ", mappedRecord=" + mappedRecord +
+                '}';
+    }
 }
+
