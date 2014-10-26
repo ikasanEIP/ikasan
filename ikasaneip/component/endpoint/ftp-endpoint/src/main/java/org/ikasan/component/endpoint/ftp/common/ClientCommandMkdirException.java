@@ -43,7 +43,7 @@ package org.ikasan.component.endpoint.ftp.common;
 /**
  * @author Ikasan Development Team 
  */
-public class ClientCommandMkdirException extends Exception
+public class ClientCommandMkdirException extends RuntimeException
 {
     /** GUID */
     private static final long serialVersionUID = 1L;

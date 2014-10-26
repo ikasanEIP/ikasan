@@ -43,7 +43,7 @@ package org.ikasan.component.endpoint.ftp.common;
 /**
  * @author Ikasan Development Team
  */
-public class ClientCommandCdException extends Exception
+public class ClientCommandCdException extends RuntimeException
 {
     /** Logger */
     private static final long serialVersionUID = 1L;

@@ -43,7 +43,7 @@ package org.ikasan.component.endpoint.ftp.common;
 /**
  * @author Ikasan Development Team
  */
-public class ClientCommandGetException extends Exception
+public class ClientCommandGetException extends RuntimeException
 {
     
     /** GUID */
