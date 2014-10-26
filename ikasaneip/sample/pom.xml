@@ -55,6 +55,7 @@
         <module>genericTechPriceSrc</module>
         <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
         <module>scheduleDrivenSrc</module>
+        <module>ftpConsumerPriceSrc</module>
     </modules>
 
 </project>

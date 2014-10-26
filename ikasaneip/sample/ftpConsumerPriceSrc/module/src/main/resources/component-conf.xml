@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  Sample component implementations for testing                       -->
+    <!--  ================================================================== -->
+    <bean id="ftpConsumer" class="org.ikasan.component.endpoint.ftp.consumer.FtpConsumer">
+        <constructor-arg ref="scheduler" />
+        <constructor-arg ref="scheduledJobFactory" />
+        <constructor-arg value="scheduledConsumer"/>
+        <constructor-arg value="sample"/>
+        <constructor-arg ref="consumerConfiguration" />
+        <constructor-arg ref="ftpEndpointFactory" />
+    </bean>
+
+    <bean id="consumerConfiguration" class="org.ikasan.component.endpoint.ftp.consumer.FtpConsumerConfiguration">
+        <property name="sourceDirectory" value="ftp/source"/>
+        <property name="filenamePattern" value=".*txt"/>
+        <property name="username" value="amajewski"/>
+        <property name="password" value="pwr128009"/>
+        <property name="active" value="true"/>
+        <property name="cronExpression" value="0/30 * * * * ?" />
+    </bean>
+
+    <bean id="priceLoggerProducer" class="org.ikasan.sample.ftpConsumerPriceSrc.component.endpoint.PriceLoggerProducer" />
+    <bean id="ftpEndpointFactory" class="org.ikasan.component.endpoint.ftp.endpoint.FtpEndpointFactory" />
+
+</beans>

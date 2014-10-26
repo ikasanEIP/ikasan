@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <util:list id="module1-config-files">
+        <value>shared-conf.xml</value>
+        <value>resource-conf.xml</value>
+        <value>component-conf.xml</value>
+        <value>ftp-to-log-flow-conf.xml</value>
+        <value>module-conf.xml</value>
+        <value>exception-conf.xml</value>
+        <value>hsqldb-datasource-conf.xml</value>
+        <value>transaction-conf.xml</value>
+        <value>transactionManager-conf.xml</value>
+    </util:list>
+
+</beans>

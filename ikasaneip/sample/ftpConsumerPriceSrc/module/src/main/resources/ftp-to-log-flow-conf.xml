@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  Flow                                                               -->
+    <!--  ================================================================== -->
+    <bean id="moduleName"       class="java.lang.String">
+        <constructor-arg  value="ftpConsumerModule" />
+    </bean>
+
+
+    <bean id="ftpFlow"       class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         ref="moduleName" />
+        <property name="name"               value="Ftp Flow" />
+        <property name="description"        value="Demonstrates ftp callbacks for a flow." />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="consumer"           ref="ftpConsumerFlowElement" />
+    </bean>
+
+
+    <bean id="ftpConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Ftp Consumer"/>
+        <property name="component"          ref="ftpConsumer"/>
+        <property name="transition"         ref="pricePublisherFlowElement"/>
+    </bean>
+
+
+    <bean id="pricePublisherFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Log Publisher"/>
+        <property name="component"          ref="priceLoggerProducer"/>
+    </bean>
+    
+</beans>

@@ -1,0 +1,45 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!-- inject userService to permission H2 db -->
+    <bean class="org.ikasan.security.util.InitialisePermission">
+        <constructor-arg ref="userDetailsService" />
+        <constructor-arg ref="moduleName" />
+        <constructor-arg ref="userDao" />
+        <property name="rootAdminUser">
+            <bean class="org.ikasan.security.model.User">
+                <property name="username" value="admin"/>
+                <property name="password" value="d033e22ae348aeb5660fc2140aec35850c4da997"/>
+                <property name="email" value="email@localhost.com"/>
+                <property name="enabled" value="true"/>
+            </bean>
+        </property>
+        <property name="moduleAdminUser">
+            <bean class="org.ikasan.security.model.User">
+                <property name="username" value="moduleAdmin"/>
+                <property name="password" value="d033e22ae348aeb5660fc2140aec35850c4da997"/>
+                <property name="email" value="email@localhost.com"/>
+                <property name="enabled" value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+    <util:map id="platformHibernateProperties">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        <entry key="hibernate.show_sql" value="true"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+    </util:map>
+
+    <bean id="dataSource" name="ikasan.xads ikasan.ds"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:mem:testdb" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+
+</beans>
