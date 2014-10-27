@@ -54,6 +54,13 @@ import java.util.List;
 public interface FileTransferClient
 {
     /**
+     * Method to ensure connection
+     *
+     * @throws RuntimeException
+     */
+    public void ensureConnection() throws ClientException;
+
+    /**
      * Method to change directory
      * 
      * @param targetPath
@@ -119,7 +126,17 @@ public interface FileTransferClient
      * @return InputStream
      * @throws ClientCommandGetException
      */
-    public InputStream getContentAsStream(ClientListEntry entry) throws ClientCommandGetException;    
+    public InputStream getContentAsStream(ClientListEntry entry) throws ClientCommandGetException;
+
+    /**
+     * Get the content of a ClientListFileEntry (a 'File') as an BaseFileTransferMappedRecord
+     *
+     * @param entry
+     * @return BaseFileTransferMappedRecord
+     * @throws ClientCommandGetException
+     */
+    public BaseFileTransferMappedRecord get(ClientListEntry entry) throws ClientCommandGetException;
+
 
     /**
      * Method to return a list of the contents of a directory
@@ -169,7 +186,15 @@ public interface FileTransferClient
      * @throws ClientCommandRenameException
      */
     public void rename(String currentPath, String newPath) throws ClientCommandRenameException;
-    
+
+    /**
+     * Indicates if the Ftp client is connected.
+     *
+     * @return true or false
+     */
+    public boolean isConnected();
+
+
     /**TODO add comment */
     public void disconnect();
 

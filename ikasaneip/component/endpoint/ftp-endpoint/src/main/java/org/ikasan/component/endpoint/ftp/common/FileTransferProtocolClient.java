@@ -465,6 +465,7 @@ public class FileTransferProtocolClient implements FileTransferClient
         logger.log(logLevel, sb.toString());
     }
 
+    @Override
     public void ensureConnection() throws RuntimeException
     {
         if(!isConnected())
@@ -476,7 +477,7 @@ public class FileTransferProtocolClient implements FileTransferClient
             }
             catch (ClientConnectionException e1)
             {
-                throw new RuntimeException(
+                throw new ClientException(
                     "Failed to ensure that the underlying ftp connection is still open. Likely this was previously open, closed prematurely, and now cannot be reestablished", //$NON-NLS-1$
                     e1);
             }
@@ -562,6 +563,7 @@ public class FileTransferProtocolClient implements FileTransferClient
         }
     }
 
+    @Override
     public BaseFileTransferMappedRecord get(ClientListEntry clientListEntry) throws ClientCommandGetException
     {
         // Construct file path and get the file into an
