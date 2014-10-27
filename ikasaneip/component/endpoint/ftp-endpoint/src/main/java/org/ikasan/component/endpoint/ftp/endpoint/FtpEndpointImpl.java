@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.ftp.common.*;
 import org.ikasan.component.endpoint.ftp.consumer.FtpConsumerConfiguration;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,13 +65,12 @@ public class FtpEndpointImpl implements FtpEndpoint {
     /**
      * Common library used by both inbound and outbound connectors
      */
-    private FileTransferProtocolClient ftpClient;
+    private FileTransferClient ftpClient;
 
     /**
      * client Id used by this ftp endpoint
      */
     private String clientID;
-
 
     /**
      * source directory
@@ -105,7 +105,7 @@ public class FtpEndpointImpl implements FtpEndpoint {
      */
     private boolean filterOnLastModifiedDate;
 
-    public FtpEndpointImpl(FileTransferProtocolClient ftpClient, String clientID, String sourceDirectory, String filenamePattern, long minAge, boolean filterDuplicates, boolean filterOnFilename, boolean filterOnLastModifiedDate) {
+    public FtpEndpointImpl(FileTransferClient ftpClient, String clientID, String sourceDirectory, String filenamePattern, long minAge, boolean filterDuplicates, boolean filterOnFilename, boolean filterOnLastModifiedDate) {
         this.ftpClient = ftpClient;
         this.clientID = clientID;
         this.sourceDirectory = sourceDirectory;
@@ -119,27 +119,40 @@ public class FtpEndpointImpl implements FtpEndpoint {
     /**
      */
     @Override
-    public BaseFileTransferMappedRecord get() throws Exception {
-        logger.info("execute called on this command: [" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+    public BaseFileTransferMappedRecord getFile() {
+        logger.info("Get file from ftpClient: [" + ftpClient + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        List<ClientListEntry> entries = getList();
+        try{
 
-        //sourcePath = entry.getUri().getPath();
-        // We change the path to be file based as opposed to URI based,
-        // means that root starts as '/' as opposed to '//' which
-        // some FTP servers don't like
-        BaseFileTransferMappedRecord record = ftpClient.get(entries.get(0));
+            List<ClientListEntry> entries = getList();
 
-        return record;
+            //sourcePath = entry.getUri().getPath();
+            // We change the path to be file based as opposed to URI based,
+            // means that root starts as '/' as opposed to '//' which
+            // some FTP servers don't like
+            BaseFileTransferMappedRecord record = ftpClient.get(entries.get(0));
+
+            return record;
+        }catch(ClientCommandCdException cdException) {
+            throw new FtpEndpointException("Unable to change directory on ftp server: "+ cdException.getMessage(),cdException); //$NON-NLS-1$
+        }catch (ClientCommandLsException  lsException){
+            throw new FtpEndpointException("Unable to get list of files from ftp server: "+ lsException.getMessage(),lsException);
+        }
+        catch(URISyntaxException uriSyntaxException){
+            throw new FtpEndpointException("Unable to get list of files from ftp due to wrong uri/filename: ",uriSyntaxException);
+        }
+
     }
 
     /**
-     * retrieves a list of new files
+     * Retrieves a list of new files
      *
      * @return List<ClientListEntry>
-     * @throws Exception Exception thrown by Connector
+     * @throws ClientCommandCdException Exception thrown by Connector
+     * @throws ClientCommandLsException Exception thrown by Connector
+     * @throws java.net.URISyntaxException If a malformed <code>URI</code> is created
      */
-    private List<ClientListEntry> getList() throws ClientCommandCdException, URISyntaxException, ClientCommandLsException {
+    private List<ClientListEntry> getList() throws URISyntaxException {
 
         Date now = new Date();
         List<ClientListEntry> result = new ArrayList<ClientListEntry>();

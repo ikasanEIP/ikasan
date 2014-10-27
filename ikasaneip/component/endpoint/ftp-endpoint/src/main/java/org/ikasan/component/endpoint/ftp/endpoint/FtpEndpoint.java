@@ -50,7 +50,7 @@ import org.ikasan.component.endpoint.ftp.common.BaseFileTransferMappedRecord;
 public interface FtpEndpoint {
 
 
-    public BaseFileTransferMappedRecord get() throws Exception;
+    public BaseFileTransferMappedRecord getFile();
 
     public void closeSession();
 }

@@ -43,6 +43,7 @@ package org.ikasan.component.endpoint.ftp.consumer;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.ikasan.component.endpoint.ftp.common.BaseFileTransferMappedRecord;
 import org.ikasan.component.endpoint.ftp.common.ClientConnectionException;
 import org.ikasan.component.endpoint.ftp.common.ClientInitialisationException;
 import org.ikasan.component.endpoint.ftp.endpoint.FtpEndpoint;
@@ -80,35 +81,17 @@ public class FtpConsumerTest {
         }
     };
 
-    /**
-     * Mock scheduler
-     */
-    final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
+    final Scheduler mockScheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
-    /**
-     * Mock scheduled job factory
-     */
-    final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
+    final ScheduledJobFactory mockScheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
 
-    /**
-     * Mock job detail
-     */
     final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
-    /**
-     * Mock trigger
-     */
-    final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
+    final Trigger mockTrigger = mockery.mock(Trigger.class, "mockTrigger");
 
-    /**
-     * Mock flowEventFactory
-     */
-    final EventFactory<FlowEvent> flowEventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
+    final EventFactory<FlowEvent> mockFlowEventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
 
-    /**
-     * Mock consumerConfiguration
-     */
-    final FtpConsumerConfiguration consumerConfiguration =
+    final FtpConsumerConfiguration mockConsumerConfiguration =
             mockery.mock(FtpConsumerConfiguration.class, "mockFtpConsumerConfiguration");
 
     /**
@@ -116,20 +99,11 @@ public class FtpConsumerTest {
      */
     final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
-    /**
-     * consumer event listener
-     */
-    final EventListener eventListener = mockery.mock(EventListener.class);
+    final EventListener mockEventListener = mockery.mock(EventListener.class);
 
-    /**
-     * Mock ftp endpoint factory
-     */
-    final FtpEndpointFactory ftpEndpointFactory = mockery.mock(FtpEndpointFactory.class, "mockFtpEndpointFactory");
+    final FtpEndpointFactory mockFtpEndpointFactory = mockery.mock(FtpEndpointFactory.class, "mockFtpEndpointFactory");
 
-    /**
-     * Mock ftp endpoint
-     */
-    final FtpEndpoint ftpEndpoint = mockery.mock(FtpEndpoint.class, "mockFtpEndpoint");
+    final FtpEndpoint mockFtpEndpoint = mockery.mock(FtpEndpoint.class, "mockFtpEndpoint");
 
 
     @Test(expected = IllegalArgumentException.class)
@@ -139,27 +113,27 @@ public class FtpConsumerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructor_fails_when_flowEventFactoryIsNull() {
-        new FtpConsumer(scheduler, null, null, null, null, null);
+        new FtpConsumer(mockScheduler, null, null, null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructor_fails_when_nameIsNull() {
-        new FtpConsumer(scheduler, scheduledJobFactory, null, null, null, null);
+        new FtpConsumer(mockScheduler, mockScheduledJobFactory, null, null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructor_fails_when_groupIsNull() {
-        new FtpConsumer(scheduler, scheduledJobFactory, "name", null, null, null);
+        new FtpConsumer(mockScheduler, mockScheduledJobFactory, "name", null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructor_fails_when_configurationIsNull() {
-        new FtpConsumer(scheduler, scheduledJobFactory, "name", "group", null, null);
+        new FtpConsumer(mockScheduler, mockScheduledJobFactory, "name", "group", null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructor_fails_when_ftpEndpointFactoryIsNull() {
-        new FtpConsumer(scheduler, scheduledJobFactory, "name", "group", consumerConfiguration, null);
+        new FtpConsumer(mockScheduler, mockScheduledJobFactory, "name", "group", mockConsumerConfiguration, null);
     }
 
     @Test
@@ -169,7 +143,7 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(mockScheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -177,20 +151,20 @@ public class FtpConsumerTest {
                 will(returnValue(jobKey));
 
                 // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
+                exactly(1).of(mockConsumerConfiguration).getCronExpression();
                 will(returnValue("* * * * * ?"));
 
                 // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
                 will(returnValue(new Date()));
 
-                // create ftpEndpoint
-                exactly(1).of(ftpEndpointFactory).createFtpEndpoint(consumerConfiguration);
-                will(returnValue(ftpEndpoint));
+                // create mockFtpEndpoint
+                exactly(1).of(mockFtpEndpointFactory).createFtpEndpoint(mockConsumerConfiguration);
+                will(returnValue(mockFtpEndpoint));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -202,7 +176,7 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(mockScheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -210,16 +184,16 @@ public class FtpConsumerTest {
                 will(returnValue(jobKey));
 
                 // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
+                exactly(1).of(mockConsumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
 
                 // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
                 will(throwException(new SchedulerException()));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -231,7 +205,7 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(mockScheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -239,16 +213,16 @@ public class FtpConsumerTest {
                 will(returnValue(jobKey));
 
                 // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
+                exactly(1).of(mockConsumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
 
                 // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
                 will(throwException(new ParseException("test", 0)));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -261,7 +235,7 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(mockScheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -269,16 +243,16 @@ public class FtpConsumerTest {
                 will(returnValue(jobKey));
 
                 // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
+                exactly(1).of(mockConsumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
 
                 // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
                 will(throwException(new ParseException("test", 0)));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -290,7 +264,7 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(mockScheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -298,21 +272,21 @@ public class FtpConsumerTest {
                 will(returnValue(jobKey));
 
                 // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
+                exactly(1).of(mockConsumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
 
                 // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
                 will(returnValue(new Date()));
 
 
-                // create ftpEndpoint
-                exactly(1).of(ftpEndpointFactory).createFtpEndpoint(consumerConfiguration);
+                // create mockFtpEndpoint
+                exactly(1).of(mockFtpEndpointFactory).createFtpEndpoint(mockConsumerConfiguration);
                 will(throwException(new ClientInitialisationException("Error starting client")));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -324,7 +298,7 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(mockScheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -332,21 +306,21 @@ public class FtpConsumerTest {
                 will(returnValue(jobKey));
 
                 // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
+                exactly(1).of(mockConsumerConfiguration).getCronExpression();
                 will(returnValue("* * * * ? ?"));
 
                 // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
                 will(returnValue(new Date()));
 
 
-                // create ftpEndpoint
-                exactly(1).of(ftpEndpointFactory).createFtpEndpoint(consumerConfiguration);
+                // create mockFtpEndpoint
+                exactly(1).of(mockFtpEndpointFactory).createFtpEndpoint(mockConsumerConfiguration);
                 will(throwException(new ClientConnectionException("Error starting client")));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -359,19 +333,19 @@ public class FtpConsumerTest {
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(ftpEndpoint).closeSession();
+                exactly(1).of(mockFtpEndpoint).closeSession();
 
                 // unschedule the job
-                exactly(1).of(scheduler).checkExists(jobKey);
+                exactly(1).of(mockScheduler).checkExists(jobKey);
                 will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(scheduler).deleteJob(jobKey);
+                exactly(1).of(mockScheduler).deleteJob(jobKey);
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
 
-        ReflectionTestUtils.setField(ftpConsumer, "ftpEndpoint", ftpEndpoint);
+        ReflectionTestUtils.setField(ftpConsumer, "ftpEndpoint", mockFtpEndpoint);
 
         // method under test
         ftpConsumer.stop();
@@ -379,37 +353,107 @@ public class FtpConsumerTest {
         mockery.assertIsSatisfied();
     }
 
-    /**
-     * Test failed consumer stop due to scheduler exception.
-     *
-     * @throws SchedulerException
-     */
     @Test(expected = RuntimeException.class)
-    public void test_failed_stop_due_to_schedulerException() throws SchedulerException {
+    public void stop_when_schedulerThrowsException() throws SchedulerException {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
 
         // expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(ftpEndpoint).closeSession();
+                exactly(1).of(mockFtpEndpoint).closeSession();
 
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
 
                 // unschedule the job
-                exactly(1).of(scheduler).checkExists(jobKey);
+                exactly(1).of(mockScheduler).checkExists(jobKey);
                 will(returnValue(Boolean.TRUE));
 
-                exactly(1).of(scheduler).deleteJob(jobKey);
+                exactly(1).of(mockScheduler).deleteJob(jobKey);
                 will(throwException(new SchedulerException()));
             }
         });
 
-        FtpConsumer ftpConsumer = new StubbedFtpConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName", consumerConfiguration, ftpEndpointFactory);
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
         ftpConsumer.stop();
         mockery.assertIsSatisfied();
     }
+
+
+    @Test
+    public void execute_when_no_exceptions() throws SchedulerException {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final BaseFileTransferMappedRecord consumedFile = new BaseFileTransferMappedRecord();
+        consumedFile.setName("testFileName");
+
+        final FlowEvent mockFlowEvent = mockery.mock(FlowEvent.class);
+
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+
+                exactly(1).of(mockFtpEndpoint).getFile();
+                will(returnValue(consumedFile));
+
+                exactly(1).of(mockFlowEventFactory).newEvent(consumedFile.getName(), consumedFile);
+                will(returnValue(mockFlowEvent));
+
+                exactly(1).of(mockEventListener).invoke(mockFlowEvent);
+
+            }
+
+        });
+
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
+
+        ReflectionTestUtils.setField(ftpConsumer, "ftpEndpoint", mockFtpEndpoint);
+        ReflectionTestUtils.setField(ftpConsumer, "flowEventFactory", mockFlowEventFactory);
+        ReflectionTestUtils.setField(ftpConsumer, "eventListener", mockEventListener);
+
+        // method under test
+        ftpConsumer.execute(jobExecutionContext);
+        // assertions
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void execute_when_no_ftpGetsNoFile() throws SchedulerException {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final BaseFileTransferMappedRecord consumedFile = new BaseFileTransferMappedRecord();
+        consumedFile.setName("testFileName");
+
+        final FlowEvent mockFlowEvent = mockery.mock(FlowEvent.class);
+
+        // expectations
+        mockery.checking(new Expectations() {
+            {
+
+                exactly(1).of(mockFtpEndpoint).getFile();
+                will(returnValue(null));
+
+                exactly(0).of(mockFlowEventFactory).newEvent(consumedFile.getName(), consumedFile);
+                will(returnValue(mockFlowEvent));
+
+                exactly(0).of(mockEventListener).invoke(mockFlowEvent);
+
+            }
+
+        });
+
+        FtpConsumer ftpConsumer = new StubbedFtpConsumer(mockScheduler, mockScheduledJobFactory, "flowName", "moduleName", mockConsumerConfiguration, mockFtpEndpointFactory);
+
+        ReflectionTestUtils.setField(ftpConsumer, "ftpEndpoint", mockFtpEndpoint);
+        ReflectionTestUtils.setField(ftpConsumer, "flowEventFactory", mockFlowEventFactory);
+        ReflectionTestUtils.setField(ftpConsumer, "eventListener", mockEventListener);
+
+        // method under test
+        ftpConsumer.execute(jobExecutionContext);
+        // assertions
+        mockery.assertIsSatisfied();
+    }
+
+
 
     /**
      * Extended ScheduledRecoveryManagerJobFactory for testing with replacement mocks.
@@ -423,9 +467,8 @@ public class FtpConsumerTest {
 
         @Override
         protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) {
-            return trigger;
+            return mockTrigger;
         }
     }
-
 
 }

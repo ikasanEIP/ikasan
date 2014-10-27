@@ -57,6 +57,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.quartz.*;
 
 
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -284,12 +285,7 @@ public class FtpConsumer
      */
     public void execute(JobExecutionContext context) {
 
-        BaseFileTransferMappedRecord consumedFile = null;
-        try {
-            consumedFile = ftpEndpoint.get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        BaseFileTransferMappedRecord consumedFile = ftpEndpoint.getFile();
 
         if(consumedFile!=null) {
             FlowEvent<?, ?> flowEvent = createFlowEvent(consumedFile);
