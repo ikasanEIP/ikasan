@@ -52,33 +52,29 @@ import org.apache.log4j.Logger;
  * @author Ikasan Development Team
  * 
  */
-public class WiretapSerialiserService<SOURCE> implements WiretapSerialiser<SOURCE, String>
+public class WiretapSerialiserService implements WiretapSerialiser<Object, String>
 {
     private static Logger logger = Logger.getLogger(WiretapSerialiserService.class);
 
-    private Map<Class<?>, WiretapSerialiser<?,String>> serialisers;
+    private Map<Class<?>, WiretapSerialiser<Object,String>> serialisers;
 
-    public WiretapSerialiserService(Map<Class<?>, WiretapSerialiser<?,String>> serialisers)
+    public WiretapSerialiserService(Map<Class<?>, WiretapSerialiser<Object,String>> serialisers)
     {
         this.serialisers = serialisers;
     }
+    
 
-    public String serialise(SOURCE source)
+    public String serialise(Object source)
     {
-        WiretapSerialiser<?,String> serialiser = this.serialisers.get(source.getClass());
+        WiretapSerialiser<Object,String> serialiser = this.serialisers.get(source.getClass());
         if (serialiser == null)
         {
-            // TODO - there are some other options to try ie. readObject/writeObject
-            
-            // last resort - toString
             if(source instanceof byte[])
             {
                 return new String( (byte[])source );
             }
             return source.toString();
         }
-
-        return source.toString();
-// FIXME        return serialiser.serialise(source);
+        return serialiser.serialise(source);
     }
 }
