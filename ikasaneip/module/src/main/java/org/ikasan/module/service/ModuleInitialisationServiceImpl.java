@@ -182,7 +182,11 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             Map<String, Module> moduleBeans = applicationContext.getBeansOfType(Module.class);
             for (Module<Flow> module : moduleBeans.values())
             {
-                this.initialiseModuleSecurity(module);
+                try {
+                    this.initialiseModuleSecurity(module);
+                } catch (RuntimeException re){
+                    logger.error("There was a problem initialising module security", re);
+                }
                 this.moduleContainer.add(module);
                 this.moduleActivator.activate(module);
             }
