@@ -184,11 +184,11 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
             {
                 try {
                     this.initialiseModuleSecurity(module);
+                    this.moduleContainer.add(module);
+                    this.moduleActivator.activate(module);
                 } catch (RuntimeException re){
                     logger.error("There was a problem initialising module security", re);
                 }
-                this.moduleContainer.add(module);
-                this.moduleActivator.activate(module);
             }
         }
     }
