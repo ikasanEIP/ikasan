@@ -55,7 +55,7 @@
 
     <artifactId>ikasan-xml-marshaller</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan XML Marshaller support</name>
+    <name>Ikasan XML Marshaller</name>
     <description>XML marshallers and xml-related marshaller implementations for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>

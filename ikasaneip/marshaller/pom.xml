@@ -50,7 +50,7 @@
 
     <artifactId>ikasan-marshaller</artifactId>
     <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Data Marshallers</name>
+    <name>Ikasan Data Marshallers</name>
 
     <modules>
        <module>xml-marshaller</module>

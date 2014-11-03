@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * $URL$ 
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,70 +38,64 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.exclusion;
+package org.ikasan.component.endpoint.util.consumer;
 
-import org.ikasan.spec.exclusion.ExcludedEvent;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.EventListener;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * @author The Ikasan Development Team
+ * Test class for AbstractConsumer.
  * 
+ * @author Ikasan Development Team
  */
-public interface ExcludedEventService<EVENT,PAGEDRESULT>
+public class AbstractConsumerTest
 {
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {{
+            setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+
+    private EventFactory eventFactory = mockery.mock(EventFactory.class);
+    private EventListener eventListener = mockery.mock(EventListener.class);
 
     /**
-     * Exclude and Event from a specified flow
-     * 
-     * @param event
-     * @param moduleName
-     * @param flowName
+     * Test mutators on abstractConsumer
      */
-    public void excludeEvent(EVENT event, String moduleName, String flowName);
+    @Test
+    public void test_mutators()
+    {
+        StubbedAbstractConsumer consumer = new StubbedAbstractConsumer();
+        consumer.setEventFactory(eventFactory);
+        consumer.setListener(eventListener);
+        Assert.assertEquals(eventFactory, consumer.flowEventFactory);
+        Assert.assertEquals(eventListener, consumer.eventListener);
+    }
 
     /**
-     * Returns a paged listing of ExcludedEvent
-     * 
-     * @param pageNo - 0 or greater, index into the list of all possible results
-     * @param pageSize - 0 or greater, no of excludedEvents to return on a page
-     * @param orderBy - field to order by
-     * @param orderAscending - in ascending order?
-     * @param flowName - restrict by flowName if supplied
-     * @param moduleName - restrict by moduleName if supplied
-     * 
-     * @return PagedSearchResult<ExcludedEvent>
+     * Need to instantiate an extended class to test the AbstractConsumer
      */
-    public PAGEDRESULT getExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
+    class StubbedAbstractConsumer extends AbstractConsumer
+    {
+        @Override
+        public void start() {
 
-    /**
-     * Retrieve an ExcludedEvent specified by its event Id
-     * 
-     * @param eventId
-     * @return ExcludedEvent
-     */
-    public ExcludedEvent getExcludedEvent(String eventId);
+        }
 
-    /**
-     * Synchronously attempts to resubmit an ExcludedEvent specified by id
-     * 
-     * 
-     * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if
-     *             referenced module or flow are not available
-     * 
-     * @param eventId
-     * @param resubmitter
-     */
-    public void resubmit(String eventId, String resubmitter);
+        @Override
+        public boolean isRunning() {
+            return false;
+        }
 
-    /**
-     * attempts to resolve an ExcludedEvent specified by id as cancelled
-     * 
-     * 
-     * @throws IllegalArgumentException if ExcludedEvent cannot be found, or if
-     *             referenced module or flow are not available
-     * 
-     * @param eventId
-     * @param canceller
-     */
-    public void cancel(String eventId, String canceller);
+        @Override
+        public void stop() {
 
+        }
+    }
 }

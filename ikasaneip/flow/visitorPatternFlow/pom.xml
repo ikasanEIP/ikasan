@@ -49,7 +49,7 @@
 
 	<artifactId>ikasan-flow-visitorPattern</artifactId>
 	<packaging>jar</packaging>
-	<name>Ikasan Flow Implementation based on Visitor Pattern</name>
+	<name>Ikasan Flow Implementation Visitor Pattern</name>
 	<description>Ikasan EIP Flow implementation based on the Visitor design pattern</description>
 
 	<dependencies>
