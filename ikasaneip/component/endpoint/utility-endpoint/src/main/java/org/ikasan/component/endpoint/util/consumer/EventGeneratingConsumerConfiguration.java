@@ -60,7 +60,7 @@ public class EventGeneratingConsumerConfiguration
     int batchsize;
 
     /** allow a limit to be set on the total number of events published - default -1 unlimited */
-    int eventLimit = -1;
+    int eventLimit;
 
     public String getIdentifier() {
         return identifier;
