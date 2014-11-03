@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * $URL$ 
+ * $URL$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
@@ -38,56 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.exclusion;
+package org.ikasan.component.endpoint.util.consumer;
+
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.flow.FlowEvent;
 
 /**
- * @author The Ikasan Development Team
+ * This abstract consumer provides a convenience base for any standard consumer extending classes.
  * 
+ * @author Ikasan Development Team
  */
-public interface ExcludedEventDao<PAGEDRESULT>
+public abstract class AbstractConsumer
+    implements Consumer<EventListener, EventFactory>
 {
+    /** consumer event factory */
+    protected EventFactory<FlowEvent<?,?>> flowEventFactory;
+
+    /** consumer event listener */
+    protected EventListener eventListener;
 
     /**
-     * Saves an <code>ExcludedEvent</code> to persistent storage
-     * 
-     * @param excludedEvent
+     * Setter for eventFactory
+     * @param flowEventFactory
      */
-    public void save(ExcludedEvent excludedEvent);
-
+    public void setEventFactory(EventFactory flowEventFactory)
+    {
+    	this.flowEventFactory = flowEventFactory;
+    }
+    
     /**
-     * Loads an <code>ExcludedEvent</code> to persistent storage
-     * 
-     * @param excludedEventId
+     * Set the consumer event listener
+     * @param eventListener
      */
-    public ExcludedEvent load(Long excludedEventId);
+    public void setListener(EventListener eventListener)
+    {
+        this.eventListener = eventListener;
+    }
 
-    /**
-     * Perform a paged search for <code>ExcludedEvent</code>s
-     * 
-     * @param pageNo
-     * @param pageSize
-     * @param orderBy
-     * @param orderAscending
-     * @param flowName
-     * @param moduleName
-     * 
-     * @return PagedSearchResult
+    /* (non-Javadoc)
+     * @see org.ikasan.spec.component.endpoint.Consumer#getEventFactory()
      */
-    public PAGEDRESULT findExcludedEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
-
-    /**
-     * Retrieves an ExcludedEvent by event Id
-     * 
-     * @param eventId
-     * @return ExcludedEvent
-     */
-    public ExcludedEvent getExcludedEvent(String eventId, boolean mutable);
-
-    /**
-     * Deletes excluded event
-     * 
-     * @param excludedEvent
-     */
-    public void delete(ExcludedEvent excludedEvent);
-
+    public EventFactory getEventFactory()
+    {
+        return this.flowEventFactory;
+    }
 }
