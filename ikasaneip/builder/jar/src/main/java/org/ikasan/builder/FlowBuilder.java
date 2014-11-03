@@ -45,11 +45,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.Otherwise;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigurationBuilder.When;
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerRootConfigurationBuilder.Sequence;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
+import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.event.DefaultReplicationFactory;
@@ -70,6 +72,8 @@ import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
+import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
 
 /**
@@ -79,6 +83,9 @@ import org.ikasan.spec.recovery.RecoveryManager;
  */
 public class FlowBuilder 
 {
+    /** logger */
+    private static Logger logger = Logger.getLogger(FlowBuilder.class);
+
 	/** name of the flow module owner */
 	String moduleName;
 
@@ -94,11 +101,17 @@ public class FlowBuilder
 	/** flow recovery manager instance */
 	RecoveryManager recoveryManager;
 
+    /** exception resolver to be registered with recovery manager */
+    ExceptionResolver exceptionResolver;
+
 	/** configuration service */
 	ConfigurationService configurationService;
 
     /** exclusion service */
     ExclusionService exclusionService;
+
+    /** flow monitor */
+    Monitor monitor;
 
     /** flow element wiriing */
 	FlowConfigurationBuilder flowConfigurationBuilder;
@@ -209,6 +222,24 @@ public class FlowBuilder
     {
         this.exclusionFlowHeadElement = exclusionFlowHeadElement;
         return this;
+    }
+
+    /**
+     * Setter for monitor
+     * @param monitor
+     */
+    public void setMonitor(Monitor monitor)
+    {
+        this.monitor = monitor;
+    }
+
+    /**
+     * Setter for exception resolver to be registered with the recovery manager.
+     * @param exceptionResolver
+     */
+    public void setExceptionResolver(ExceptionResolver exceptionResolver)
+    {
+        this.exceptionResolver = exceptionResolver;
     }
 
     /**
@@ -650,7 +681,12 @@ public class FlowBuilder
                                     exclusionService);
 				}
 
-				FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService);
+                if(exceptionResolver != null)
+                {
+                    recoveryManager.setResolver(exceptionResolver);
+                }
+
+                FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService);
 
                 if(exclusionFlowHeadElement == null)
                 {
@@ -659,7 +695,32 @@ public class FlowBuilder
                 
                 ExclusionFlowConfiguration exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService);
 
-                return new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+                Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+                flow.setFlowListener(flowEventListener);
+
+                if(monitor != null && flow instanceof MonitorSubject)
+                {
+                    if(monitor.getEnvironment() == null)
+                    {
+                        monitor.setEnvironment("Undefined Environment");
+                    }
+
+                    if(monitor.getName() == null)
+                    {
+                        monitor.setName("Module[" + moduleName + "] Flow[" + name + "]");
+                    }
+
+                    ((MonitorSubject)flow).setMonitor(monitor);
+                }
+
+                logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
+                        + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
+                        + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
+                        + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
+                        + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
+                        + "]");
+
+                return flow;
 			}
 		}
 
