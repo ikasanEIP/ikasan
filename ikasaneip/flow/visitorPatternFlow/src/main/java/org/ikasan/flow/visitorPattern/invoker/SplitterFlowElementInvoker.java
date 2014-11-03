@@ -38,45 +38,53 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.component.producer;
+package org.ikasan.flow.visitorPattern.invoker;
 
-import org.apache.log4j.Logger;
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
-import org.ikasan.spec.component.routing.RouterException;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.module.Module;
+import org.ikasan.flow.visitorPattern.InvalidFlowException;
+import org.ikasan.spec.component.splitting.Splitter;
+import org.ikasan.spec.component.splitting.SplitterException;
+import org.ikasan.spec.flow.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple Producer logging the message count on every 200,000 publishes.
- * @author Ikasan Development Team.
+ * A default implementation of the FlowElementInvoker for a splitter
+ *
+ * @author Ikasan Development Team
  */
-public class SimpleProducer<T> implements Producer<T>
+@SuppressWarnings("unchecked")
+public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>
 {
-    Logger logger = Logger.getLogger(SimpleProducer.class);
-
-    static int msgCount = 0;
-
     @Override
-    public void invoke(T payload) throws TransformationException
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
-        if(++msgCount % 200000 == 0)
+        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+
+        Splitter splitter = flowElement.getFlowComponent();
+        List payloads = splitter.split(flowEvent.getPayload());
+        FlowElement nextFlowElement = getDefaultTransition(flowElement);
+        if (nextFlowElement == null)
         {
-            //logger.info("Published [" + msgCount + "] messages.");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Splitter, but it has no default transition! "
+                    + "Splitters should never be the last component in a flow");
         }
+
+        if (payloads == null || payloads.size() == 0)
+        {
+            throw new SplitterException("FlowElement [" + flowElement.getComponentName() + "] contains a Splitter. "
+                    + "Splitters must return at least one payload.");
+        }
+
+        for (Object payload : payloads)
+        {
+            flowEvent.setPayload(payload);
+            notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+            nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+        }
+
+        return null;
     }
+
 }
 

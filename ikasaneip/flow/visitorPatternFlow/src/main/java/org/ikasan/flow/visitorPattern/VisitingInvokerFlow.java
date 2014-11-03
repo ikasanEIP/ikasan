@@ -91,9 +91,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** Name of the module within which this flow exists */
     private String moduleName;
 
-    /** flow element invoker implementation */
-    private FlowElementInvoker flowElementInvoker;
-    
+    /** The flow event listener */
+    private FlowEventListener flowEventListener;
+
     /** flow configuration implementation */
     private FlowConfiguration flowConfiguration;
 
@@ -126,11 +126,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      * @param name the flow name
      * @param moduleName name of module this flow exists for
      * @param flowConfiguration
-     * @param flowElementInvoker
      * @param recoveryManager
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
-                               FlowElementInvoker flowElementInvoker, RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               RecoveryManager<FlowEvent<?,?>> recoveryManager,
                                ExclusionService exclusionService)
     {
         this.name = name;
@@ -157,12 +156,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             throw new IllegalArgumentException("exclusionFlowConfiguration cannot be 'null'");
         }
 
-        this.flowElementInvoker = flowElementInvoker;
-        if(flowElementInvoker == null)
-        {
-            throw new IllegalArgumentException("flowElementInvoker cannot be 'null'");
-        }
-        
         this.recoveryManager = recoveryManager;
         if(recoveryManager == null)
         {
@@ -485,7 +478,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             if(this.exclusionService.isBlackListed(event))
             {
-                this.flowElementInvoker.invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
+                invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 this.exclusionService.removeBlacklisted(event);
             }
             else
@@ -503,7 +496,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                     }
                 }
 
-                this.flowElementInvoker.invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
+                invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
@@ -517,6 +510,25 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         finally
         {
             this.notifyMonitor();
+        }
+    }
+
+    protected void invoke(String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
+                       FlowEvent flowEvent, FlowElement flowElement)
+    {
+        while (flowElement != null)
+        {
+            try
+            {
+                flowElement = flowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, flowElement);
+            }
+            catch (ClassCastException e)
+            {
+                throw new RuntimeException("Unable to find method signature in module["
+                        + moduleName + "] flow[" + flowName + "] on component ["
+                        + flowElement.getComponentName() + "] for payload class ["
+                        + flowEvent.getPayload().getClass().getName() + "]", e);
+            }
         }
     }
 
@@ -632,7 +644,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
 	public void setFlowListener(FlowEventListener flowEventListener)
 	{
-		this.flowElementInvoker.setFlowEventListener(flowEventListener);
+		this.flowEventListener = flowEventListener;
 	}
 
     /**

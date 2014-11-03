@@ -43,7 +43,7 @@ package org.ikasan.flow.visitorPattern;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.*;
 
 /**
  * Simple implementation of <code>FlowElement</code>
@@ -60,7 +60,10 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
 
     /** <code>Map</code> of all flowComponent results to downstream <code>FlowElement</code>s */
     private Map<String, FlowElement> transitions;
-    
+
+    /** invoker for this flow element */
+    private FlowElementInvoker<COMPONENT> flowElementInvoker;
+
     /**
      * Human readable description of this FlowElement
      */
@@ -74,10 +77,11 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
      * @param flowComponent The FlowComponent
      * @param transitions A map of transitions
      */
-    public FlowElementImpl(String componentName, COMPONENT flowComponent, Map<String, FlowElement> transitions)
+    public FlowElementImpl(String componentName, COMPONENT flowComponent, FlowElementInvoker<COMPONENT> flowElementInvoker, Map<String, FlowElement> transitions)
     {
         this.componentName = componentName;
         this.flowComponent = flowComponent;
+        this.flowElementInvoker = flowElementInvoker;
         this.transitions = transitions;
     }
 
@@ -88,9 +92,9 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
      * @param flowComponent The FlowComponent
      * @param defaultTransition The default transition
      */
-    public FlowElementImpl(String componentName, COMPONENT flowComponent, FlowElement defaultTransition)
+    public FlowElementImpl(String componentName, COMPONENT flowComponent, FlowElementInvoker<COMPONENT> flowElementInvoker, FlowElement defaultTransition)
     {
-        this(componentName, flowComponent, createTransitionMap(defaultTransition));
+        this(componentName, flowComponent, flowElementInvoker, createTransitionMap(defaultTransition));
     }
 
     /**
@@ -99,9 +103,9 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
      * @param componentName The name of the component
      * @param flowComponent The FlowComponent
      */
-    public FlowElementImpl(String componentName, COMPONENT flowComponent)
+    public FlowElementImpl(String componentName, COMPONENT flowComponent, FlowElementInvoker<COMPONENT> flowElementInvoker)
     {
-        this(componentName, flowComponent, (Map<String, FlowElement>) null);
+        this(componentName, flowComponent, flowElementInvoker, (Map<String, FlowElement>) null);
     }
 
     /**
@@ -184,6 +188,26 @@ public class FlowElementImpl<COMPONENT> implements FlowElement<COMPONENT>
         sb.append(transitions);
         sb.append("]");
         return sb.toString();
+    }
+
+    /**
+     * Getter for the flow element invoker
+     * @return
+     */
+    @Override
+    public FlowElementInvoker<COMPONENT> getFlowElementInvoker()
+    {
+        return this.flowElementInvoker;
+    }
+
+    /**
+     * Setter for the flow element invoker
+     * @param flowElementInvoker
+     */
+    @Override
+    public void setFlowElementInvoker(FlowElementInvoker<COMPONENT> flowElementInvoker)
+    {
+        this.flowElementInvoker = flowElementInvoker;
     }
 
     public Map<String, FlowElement> getTransitions()

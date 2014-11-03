@@ -38,54 +38,45 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.techEndpoint;
+package org.ikasan.flow.visitorPattern.invoker;
+
+import org.ikasan.flow.visitorPattern.InvalidFlowException;
+import org.ikasan.spec.component.routing.SingleRecipientRouter;
+import org.ikasan.spec.flow.*;
 
 /**
- * Sample tech endpoint implementation
+ * A default implementation of the FlowElementInvoker for a singleRecipientRouter
+ *
  * @author Ikasan Development Team
  */
-public class TechEndpointImpl implements TechEndpoint
+@SuppressWarnings("unchecked")
+public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<SingleRecipientRouter>
 {
-    /** tech endpoint listener implementation */
-    private TechEndpointListener techEndpointListener;
-
-    /**
-     * Allow setting of listener
-     * @param techEndpointListener
-     */
-    public void setListener(TechEndpointListener techEndpointListener)
-    {
-        this.techEndpointListener = techEndpointListener;
-    }
-
-    /**
-     * Execute the techEndpoint in a separate thread to simulate a real tech producer implementation.
-     */
     @Override
-    public void run()
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<SingleRecipientRouter> flowElement)
     {
-        int x = 0;
-        int eventCount = 3000000;
-        StopWatch stopWatch = StopWatch.getInstance();
+        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
-        try
+        SingleRecipientRouter router = flowElement.getFlowComponent();
+        String targetName = router.route(flowEvent.getPayload());
+        if (targetName == null)
         {
-            stopWatch.start();
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Router without a valid transition. "
+                    + "All Routers must result in at least one transition.");
+        }
 
-            for(;x < eventCount; x++)
-            {
-                this.techEndpointListener.onMessage(new Integer(x));
-            }
-        }
-        catch(NullPointerException e)
+        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        final FlowElement nextFlowElement = flowElement.getTransition(targetName);
+        if (nextFlowElement == null)
         {
-            // listener stopped listening, just dump the stacktrace
-            e.printStackTrace();
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
+                    + "] contains a Router, but it does not have a transition mapped for that Router's target[" + targetName + "] "
+                    + "All Router targets must be mapped to transitions in their enclosing FlowElement");
         }
-        finally
-        {
-            stopWatch.stop();
-            System.out.print(stopWatch.getTime() + " for [" + eventCount + "] events.\n");
-        }
+
+        nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+        return null;
     }
 }
+

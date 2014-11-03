@@ -38,45 +38,47 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.component.producer;
+package org.ikasan.flow.visitorPattern.invoker;
 
-import org.apache.log4j.Logger;
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
-import org.ikasan.spec.component.routing.RouterException;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.module.Module;
+import org.ikasan.flow.visitorPattern.InvalidFlowException;
+import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.flow.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple Producer logging the message count on every 200,000 publishes.
- * @author Ikasan Development Team.
+ * A default implementation of the FlowElementInvoker for a sequencer
+ *
+ * @author Ikasan Development Team
  */
-public class SimpleProducer<T> implements Producer<T>
+@SuppressWarnings("unchecked")
+public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Sequencer>
 {
-    Logger logger = Logger.getLogger(SimpleProducer.class);
-
-    static int msgCount = 0;
-
     @Override
-    public void invoke(T payload) throws TransformationException
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Sequencer> flowElement)
     {
-        if(++msgCount % 200000 == 0)
+        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+
+        Sequencer sequencer = flowElement.getFlowComponent();
+        List payloads = sequencer.sequence(flowEvent.getPayload());
+        FlowElement nextFlowElement = getDefaultTransition(flowElement);
+        if (nextFlowElement == null)
         {
-            //logger.info("Published [" + msgCount + "] messages.");
+            throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Sequencer, but it has no default transition! "
+                    + "Sequencers should never be the last component in a flow");
         }
+        if (payloads != null)
+        {
+            for (Object payload : payloads)
+            {
+                flowEvent.setPayload(payload);
+                notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+                nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+            }
+        }
+        return null;
     }
+
 }
 
