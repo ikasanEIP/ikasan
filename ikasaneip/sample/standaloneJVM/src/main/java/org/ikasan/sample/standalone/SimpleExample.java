@@ -46,6 +46,7 @@ import org.ikasan.sample.component.consumer.SimpleConsumer;
 import org.ikasan.sample.component.converter.SimpleConverter;
 import org.ikasan.sample.component.producer.SimpleProducer;
 import org.ikasan.sample.component.router.SimpleRouter;
+import org.ikasan.sample.flow.listener.SimpleFlowListener;
 import org.ikasan.spec.module.Module;
 
 /**
@@ -71,8 +72,8 @@ public class SimpleExample
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
                         .router("routerName", new SimpleRouter())
-                            .when("odd").publisher("oddValuePublisher", new SimpleProducer())
-                            .otherise().publisher("evenValuePublisher", new SimpleProducer())
+                        .when("odd").publisher("oddValuePublisher", new SimpleProducer())
+                        .otherise().publisher("evenValuePublisher", new SimpleProducer())
                         .build())
             .build();
     }
