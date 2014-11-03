@@ -91,4 +91,16 @@ public interface FlowElement<COMPONENT>
      * @return String description
      */
     public String getDescription();
+
+    /**
+     * Getter for the flow element invoker.
+     * @return flowElementInvoker
+     */
+    public FlowElementInvoker getFlowElementInvoker();
+
+    /**
+     * Setter for the flow element invoker.
+     * @param flowElementInvoker
+     */
+    public void setFlowElementInvoker(FlowElementInvoker<COMPONENT> flowElementInvoker);
 }

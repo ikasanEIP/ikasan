@@ -43,10 +43,23 @@ package org.ikasan.builder;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.ikasan.consumer.jms.GenericJmsConsumer;
-import org.ikasan.flow.visitorPattern.FlowElementImpl;
+import org.ikasan.flow.event.DefaultReplicationFactory;
+import org.ikasan.flow.visitorPattern.*;
+import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
+import org.ikasan.spec.component.routing.Router;
+import org.ikasan.spec.component.routing.SingleRecipientRouter;
+import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.component.splitting.Splitter;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvoker;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -159,14 +172,14 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
 
         if(transitions != null)
         {
-            return new FlowElementImpl(name, component, transitions);
+            return new FlowElementImpl(name, component, getFlowElementInvoker(component), transitions);
         }
         else if(transition != null)
         {
-            return new FlowElementImpl(name, component, transition);
+            return new FlowElementImpl(name, component, getFlowElementInvoker(component), transition);
         }
         
-        return new FlowElementImpl(name, component);
+        return new FlowElementImpl(name, component, getFlowElementInvoker(component));
     }
 
     /*
@@ -185,5 +198,62 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     public boolean isSingleton()
     {
         return false;
+    }
+
+    /**
+     * Get the correct instance of an invoker based on the component type.
+     * @param component
+     * @return
+     */
+    protected FlowElementInvoker getFlowElementInvoker(COMPONENT component)
+    {
+        if(component instanceof Consumer)
+        {
+            return new ConsumerFlowElementInvoker();
+        }
+        else if(component instanceof Translator)
+        {
+            return new TranslatorFlowElementInvoker();
+        }
+        else if(component instanceof Converter)
+        {
+            return new ConverterFlowElementInvoker();
+        }
+        else if(component instanceof Producer)
+        {
+            return new ProducerFlowElementInvoker();
+        }
+        else if(component instanceof Broker)
+        {
+            return new BrokerFlowElementInvoker();
+        }
+        else if(component instanceof Router)
+        {
+            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance());
+        }
+        else if(component instanceof MultiRecipientRouter)
+        {
+            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance());
+        }
+        else if(component instanceof SingleRecipientRouter)
+        {
+            return new SingleRecipientRouterFlowElementInvoker();
+        }
+        else if(component instanceof Sequencer)
+        {
+            return new SequencerFlowElementInvoker();
+        }
+        else if(component instanceof Splitter)
+        {
+            return new SplitterFlowElementInvoker();
+        }
+        else if(component instanceof Filter)
+        {
+            return new FilterFlowElementInvoker();
+        }
+        else
+        {
+            throw new RuntimeException("Unknown FlowComponent type[" + component.getClass() + "]");
+        }
     }
 }

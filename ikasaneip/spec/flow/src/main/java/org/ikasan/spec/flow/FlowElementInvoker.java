@@ -46,19 +46,19 @@ package org.ikasan.spec.flow;
  * 
  * @author Ikasan Development Team
  */
-public interface FlowElementInvoker
+public interface FlowElementInvoker<COMPONENT>
 {
     /**
      * Invokes the specified <code>FlowElement</code>with the specified <code>FlowEvent</code>
-     * 
+     *
+     * @param flowEventListener
      * @param moduleName
      * @param flowName
      * @param flowInvocationContext
      * @param flowEvent argument for the <code>FlowElement</code>'s component
      * @param flowElement for invocation
+     * @return FlowElement for subsequent execution
      */
-    public void invoke(String moduleName, String flowName, FlowInvocationContext flowInvocationContext, 
-            FlowEvent event, FlowElement flowElement);
-    
-    public void setFlowEventListener(FlowEventListener flowEventListener);
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext,
+            FlowEvent flowEvent, FlowElement<COMPONENT> flowElement);
 }

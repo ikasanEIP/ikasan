@@ -47,20 +47,19 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  * @param <T> message to route
- * @deprecated use either the SingleRecipientRouter or MultiRecipientRouter
  */
-public interface Router<T>
+public interface SingleRecipientRouter<T>
 {
     /** Default result for any unresolved routing implementation */
     public static final String DEFAULT_RESULT = "default";
 
     /**
-     * Handles the <code>messageToRoute<code> in a read-only fashion, returning an ordered List of 
-     * paths/routes for this <code>messageToRoute</code> to take next.
-     * 
+     * Handles the <code>messageToRoute<code> in a read-only fashion, returning a dictating the
+      path/route for this <code>messageToRoute</code> to take next.
+     *
      * @param messageToRoute Event to handle
-     * @return List<String> of paths/routes for this <code>Event</code> to take next
-     * @throws RouterException - if the result cannot be calculated for any reason
+     * @return String for path/route for this <code>Event</code> to take next
+     * @throws org.ikasan.spec.component.routing.RouterException - if the result cannot be calculated for any reason
      */
-    public List<String> route(final T messageToRoute) throws RouterException;
+    public String route(final T messageToRoute) throws RouterException;
 }

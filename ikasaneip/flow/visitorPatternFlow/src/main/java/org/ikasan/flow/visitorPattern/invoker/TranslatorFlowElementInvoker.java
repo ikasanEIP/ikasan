@@ -38,45 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.component.producer;
+package org.ikasan.flow.visitorPattern.invoker;
 
-import org.apache.log4j.Logger;
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
-import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.routing.Router;
-import org.ikasan.spec.component.routing.RouterException;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowEventListener;
-import org.ikasan.spec.module.Module;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.ikasan.flow.visitorPattern.InvalidFlowException;
+import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.flow.*;
 
 /**
- * Simple Producer logging the message count on every 200,000 publishes.
- * @author Ikasan Development Team.
+ * A default implementation of the FlowElementInvoker for a translator
+ *
+ * @author Ikasan Development Team
  */
-public class SimpleProducer<T> implements Producer<T>
+@SuppressWarnings("unchecked")
+public class TranslatorFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Translator>
 {
-    Logger logger = Logger.getLogger(SimpleProducer.class);
-
-    static int msgCount = 0;
-
     @Override
-    public void invoke(T payload) throws TransformationException
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Translator> flowElement)
     {
-        if(++msgCount % 200000 == 0)
+        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+        notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+
+        Translator translator = flowElement.getFlowComponent();
+        translator.translate(flowEvent.getPayload());
+        notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
+        // sort out the next element
+        FlowElement previousFlowElement = flowElement;
+        flowElement = getDefaultTransition(flowElement);
+        if (flowElement == null)
         {
-            //logger.info("Published [" + msgCount + "] messages.");
+            throw new InvalidFlowException("FlowElement [" + previousFlowElement.getComponentName()
+                    + "] contains a Translator, but it has no default transition! " + "Translators should never be the last component in a flow");
         }
+        return flowElement;
     }
 }
 

@@ -44,8 +44,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.flow.event.DefaultReplicationFactory;
 import org.ikasan.flow.visitorPattern.*;
+import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -222,12 +222,11 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
      */
     public Flow getObject()
     {
-        FlowElementInvoker flowElementInvoker = new VisitingFlowElementInvoker(DefaultReplicationFactory.getInstance());
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumer, configurationService);
 
         if(this.exclusionFlowHeadElement == null)
         {
-            this.exclusionFlowHeadElement = new FlowElementImpl("Exclusion Logger", new LogProducer("ExcludedEvent [EVENT]", "EVENT"));
+            this.exclusionFlowHeadElement = new FlowElementImpl("Exclusion Logger", new LogProducer("ExcludedEvent [EVENT]", "EVENT"), new ProducerFlowElementInvoker());
         }
 
         ExclusionFlowConfiguration exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, configurationService);
@@ -247,7 +246,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             recoveryManager.setResolver(exceptionResolver);
         }
 
-        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, flowElementInvoker, recoveryManager, exclusionService);
+        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
         flow.setFlowListener(flowEventListener);
 
         if(monitor != null && flow instanceof MonitorSubject)
