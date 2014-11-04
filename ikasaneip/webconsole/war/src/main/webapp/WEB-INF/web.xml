@@ -61,7 +61,6 @@
             classpath:wiretap-service-conf.xml
             classpath:exclusion-service-conf.xml
             classpath:systemevent-service-conf.xml
-            classpath:flow-service-conf.xml
             classpath:configuration-service-conf.xml
             /WEB-INF/security-service-conf.xml
         </param-value>
