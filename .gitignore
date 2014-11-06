@@ -1,8 +1,11 @@
 *.iml
 .idea
 atlassian-ide-plugin.xml
+**/target
+.DS_Store
 target
 .project
 .classpath
 .settings
+**.gitignore
 
