@@ -41,11 +41,13 @@
 package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.apache.log4j.Logger;
+import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.quartz.*;
 
@@ -57,78 +59,100 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This test class supports the <code>Consumer</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @DisallowConcurrentExecution
-public class ScheduledConsumer 
-    implements Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
+public class ScheduledConsumer<T>
+        implements Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
 {
-    /** logger */
+    /**
+     * logger
+     */
     private static Logger logger = Logger.getLogger(ScheduledConsumer.class);
 
-    /** Scheduler */
+    /**
+     * Scheduler
+     */
     private Scheduler scheduler;
-    
-    /** scheduled job factory */
-    private ScheduledJobFactory scheduledJobFactory;
-    
-    /** consumer event factory */
-    private EventFactory<FlowEvent<?,?>> flowEventFactory;
 
-    /** consumer event listener */
+    /**
+     * scheduled job factory
+     */
+    private ScheduledJobFactory scheduledJobFactory;
+
+    /**
+     * consumer event factory
+     */
+    private EventFactory<FlowEvent<?, ?>> flowEventFactory;
+
+    /**
+     * default event identifier service - can be overridden via the setter
+     */
+    protected ManagedEventIdentifierService<?, T> managedEventIdentifierService = new HashedEventIdentifierServiceImpl();
+
+    /**
+     * consumer event listener
+     */
     private EventListener eventListener;
 
-    /** configuredResourceId */
+    /**
+     * configuredResourceId
+     */
     private String configuredResourceId;
-    
-    /** consumer configuration */
+
+    /**
+     * consumer configuration
+     */
     private ScheduledConsumerConfiguration consumerConfiguration;
-    
-    /** job identifying name */
+
+    /**
+     * job identifying name
+     */
     private String name;
-    
-    /** job identifying group */
+
+    /**
+     * job identifying group
+     */
     private String group;
-    
+
+    /**
+     * default messageProvider is set to QuartzMessageProvider - can be overridden via the setter
+     */
+    private MessageProvider<?> messageProvider = new QuartzMessageProvider();
+
     /**
      * Constructor
+     *
      * @param scheduler
-     * @param jobDetail
-     * @param flowEventFactory
+     * @param scheduledJobFactory
+     * @param name
+     * @param group
      */
     public ScheduledConsumer(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String name, String group)
     {
         this.scheduler = scheduler;
-        if(scheduler == null)
+        if (scheduler == null)
         {
             throw new IllegalArgumentException("scheduler cannot be 'null'");
         }
-
         this.scheduledJobFactory = scheduledJobFactory;
-        if(scheduledJobFactory == null)
+        if (scheduledJobFactory == null)
         {
             throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
         }
-        
         this.name = name;
-        if(name == null)
+        if (name == null)
         {
             throw new IllegalArgumentException("name cannot be 'null'");
         }
-
         this.group = group;
-        if(group == null)
+        if (group == null)
         {
             throw new IllegalArgumentException("group cannot be 'null'");
         }
     }
-    
-    public void setEventFactory(EventFactory flowEventFactory)
-    {
-    	this.flowEventFactory = flowEventFactory;
-    }
-    
+
     /**
      * Start the underlying tech
      */
@@ -137,17 +161,15 @@ public class ScheduledConsumer
         try
         {
             JobDetail jobDetail = scheduledJobFactory.createJobDetail(this, this.name, this.group);
-            
             // create trigger
             // TODO - allow configuration to support multiple triggers
             JobKey jobkey = jobDetail.getKey();
-
             Trigger trigger = getCronTrigger(jobkey, this.consumerConfiguration.getCronExpression());
             Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-            logger.info("Scheduled consumer for flow [" 
-                + jobkey.getName()
-                + "] module [" + jobkey.getGroup() 
-                + "] starting at [" + scheduledDate + "]");
+            logger.info("Scheduled consumer for flow ["
+                    + jobkey.getName()
+                    + "] module [" + jobkey.getGroup()
+                    + "] starting at [" + scheduledDate + "]");
         }
         catch (SchedulerException e)
         {
@@ -167,7 +189,7 @@ public class ScheduledConsumer
         try
         {
             JobKey jobKey = new JobKey(name, group);
-            if(this.scheduler.checkExists(jobKey))
+            if (this.scheduler.checkExists(jobKey))
             {
                 this.scheduler.deleteJob(jobKey);
             }
@@ -180,62 +202,92 @@ public class ScheduledConsumer
 
     /**
      * Is the underlying tech actively running
+     *
      * @return isRunning
      */
     public boolean isRunning()
     {
         try
         {
-            if(this.scheduler.isShutdown() || this.scheduler.isInStandbyMode())
+            if (this.scheduler.isShutdown() || this.scheduler.isInStandbyMode())
             {
                 return false;
             }
-
             JobKey jobKey = new JobKey(this.name, this.group);
-            if(this.scheduler.checkExists(jobKey))
+            if (this.scheduler.checkExists(jobKey))
             {
                 return true;
             }
-            
             return false;
         }
-        catch(SchedulerException e)
+        catch (SchedulerException e)
         {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Set the consumer event listener
-     * @param eventListener
+     * Callback from the scheduler.
+     *
+     * @param context
      */
-    public void setListener(EventListener eventListener)
+    public void execute(JobExecutionContext context)
+    {
+        T message = (T) messageProvider.invoke(context);
+        if (message != null)
+        {
+            FlowEvent<?, ?> flowEvent = createFlowEvent(message);
+            this.eventListener.invoke(flowEvent);
+        }
+    }
+
+    /**
+     * Override this is you want control over the flow event created by this
+     * consumer
+     *
+     * @param message
+     * @return
+     */
+    protected FlowEvent<?, ?> createFlowEvent(T message)
+    {
+        FlowEvent<?, ?> flowEvent = this.flowEventFactory
+                .newEvent(this.managedEventIdentifierService.getEventIdentifier(message), message);
+        return flowEvent;
+    }
+
+    public void setEventFactory(EventFactory flowEventFactory)
+    {
+        this.flowEventFactory = flowEventFactory;
+    }
+
+    public ManagedEventIdentifierService<?, T> getManagedEventIdentifierService()
+    {
+        return managedEventIdentifierService;
+    }
+
+    public void setManagedEventIdentifierService(ManagedEventIdentifierService<?, T> managedEventIdentifierService)
+    {
+        this.managedEventIdentifierService = managedEventIdentifierService;
+    }
+
+    public EventListener getEventListener()
+    {
+        return eventListener;
+    }
+
+    public void setEventListener(EventListener eventListener)
     {
         this.eventListener = eventListener;
     }
 
     /**
-     * Callback from the scheduler.
-     * @param context
+     * Set the consumer event listener
+     *
+     * @param eventListener
      */
-    public void execute(JobExecutionContext context)
+    public void setListener(EventListener eventListener)
     {
-        FlowEvent<?, ?> flowEvent = createFlowEvent(context);
-        this.eventListener.invoke(flowEvent);
-    }
-
-    /**
-     * Override this is you want control over the flow event created by this 
-     * consumer 
-     * @param context
-     * @return
-     */
-    protected FlowEvent<?, ?> createFlowEvent(JobExecutionContext context)
-    {
-        JobKey jobkey = context.getJobDetail().getKey();
-        String uniqueId = jobkey.getName() +  jobkey.getGroup();
-        FlowEvent<?,?> flowEvent = this.flowEventFactory.newEvent(uniqueId, context);
-        return flowEvent;
+        this.eventListener = eventListener;
     }
 
     public ScheduledConsumerConfiguration getConfiguration()
@@ -257,15 +309,22 @@ public class ScheduledConsumer
     {
         this.configuredResourceId = configuredResourceId;
     }
-    
+
+    public void setMessageProvider(MessageProvider<T> messageProvider)
+    {
+        this.messageProvider = messageProvider;
+    }
+
     /**
      * Method factory for creating a cron trigger
+     *
      * @return jobDetail
      * @throws java.text.ParseException
      */
     protected Trigger getCronTrigger(JobKey jobkey, String cronExpression) throws ParseException
     {
-        return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression)).build();
+        return newTrigger().withIdentity(jobkey.getName(), jobkey.getGroup()).withSchedule(cronSchedule(cronExpression))
+                .build();
     }
 
     /* (non-Javadoc)
@@ -275,5 +334,4 @@ public class ScheduledConsumer
     {
         return this.flowEventFactory;
     }
-    
 }
