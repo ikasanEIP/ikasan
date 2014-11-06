@@ -46,6 +46,7 @@ import java.util.Date;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -101,8 +102,9 @@ public class ScheduledConsumerTest
     /** consumer event listener */
     final EventListener eventListener = mockery.mock(EventListener.class);
 
+    final ManagedEventIdentifierService  mockManagedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class);
 
-    
+
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
      */
@@ -308,6 +310,73 @@ public class ScheduledConsumerTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_execute_when_messageProvider_message_is_not_null() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final String identifier = "testId";
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+
+                // schedule the job
+                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                will(returnValue(identifier));
+
+                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                will(returnValue(mockFlowEvent));
+
+                exactly(1).of(eventListener).invoke(mockFlowEvent);
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_execute_when_messageProvider_message_is_null() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
+        final String identifier = "testId";
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(null));
+
+                // schedule the job
+                exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                will(returnValue(identifier));
+
+                exactly(0).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                will(returnValue(mockFlowEvent));
+
+                exactly(0).of(eventListener).invoke(mockFlowEvent);
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setMessageProvider(mockMessageProvider);
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
     /**
      * Extended ScheduledRecoveryManagerJobFactory for testing with replacement mocks.
      * @author Ikasan Development Team
