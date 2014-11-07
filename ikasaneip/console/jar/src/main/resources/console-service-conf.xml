@@ -50,7 +50,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <context:property-placeholder location="classpath:ikasan-console.properties, classpath:ikasan-jndi-datasource.properties" />
+    <context:property-placeholder location="classpath:ikasan-console.properties, classpath:ikasan-environment.properties, classpath:ikasan-jndi-datasource.properties" />
 
     <!-- The console specific Module Service -->
     <bean id="consoleModuleService" class="org.ikasan.console.module.service.ConsoleModuleService" >
@@ -74,31 +74,37 @@
     <bean id="consoleEmailNotifier" class="org.ikasan.console.service.ConsoleEmailNotifier">
         <constructor-arg index="0">
             <bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
-                <property name="host" ref="mailHost"/>
+                <property name="host" ref="mail.smtp.host"/>
             </bean>
         </constructor-arg>
         <!-- distributionList/To field not supplied at this point -->
-        <constructor-arg index="1"><null/></constructor-arg>
+        <constructor-arg index="1" ref="to.recipients"/>
         <!-- distributionList/To field not supplied at this point -->
-        <constructor-arg index="2" ref="mailFrom"/>
+        <constructor-arg index="2" ref="mail.from"/>
         <constructor-arg index="3" ref="environment"/>
     </bean>
 
+    <!-- The to address -->
+    <bean id="to.recipients" class="java.lang.String">
+        <!-- to.recipients usually supplied via ikasan.properties file -->
+        <constructor-arg value="${to.recipients}" />
+    </bean>
+
     <!-- The from address -->
-    <bean id="mailFrom" class="java.lang.String">
+    <bean id="mail.from" class="java.lang.String">
         <!-- monitor.email.from usually supplied via ikasan.properties file -->
-        <constructor-arg value="${monitor.email.from}" />
+        <constructor-arg value="${mail.from}" />
     </bean>
 
     <!-- The mailHost -->
-    <bean id="mailHost" class="java.lang.String">
+    <bean id="mail.smtp.host" class="java.lang.String">
         <!-- monitor.email.host usually supplied via ikasan.properties file -->
-        <constructor-arg value="${monitor.email.host}" />
+        <constructor-arg value="${mail.smtp.host}" />
     </bean>
 
     <bean id="environment" class="java.lang.String">
         <!-- monitor.email.env usually supplied via ikasan.properties file -->    
-        <constructor-arg value="${monitor.email.env}" />
+        <constructor-arg value="${environment}" />
     </bean>
 
     <!-- The pointToPointFlowProfileDao definition for the Ikasan console -->
