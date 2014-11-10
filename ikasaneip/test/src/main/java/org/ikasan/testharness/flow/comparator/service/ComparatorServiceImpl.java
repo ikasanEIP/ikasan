@@ -46,16 +46,7 @@ import java.util.Map;
 import org.ikasan.testharness.flow.comparator.ExpectationComparator;
 import org.ikasan.testharness.flow.comparator.model.FlowElementComparator;
 import org.ikasan.testharness.flow.comparator.model.IgnoreComparator;
-import org.ikasan.testharness.flow.expectation.model.BrokerComponent;
-import org.ikasan.testharness.flow.expectation.model.ConsumerComponent;
-import org.ikasan.testharness.flow.expectation.model.ConverterComponent;
-import org.ikasan.testharness.flow.expectation.model.FilterComponent;
-import org.ikasan.testharness.flow.expectation.model.IgnoreExpectation;
-import org.ikasan.testharness.flow.expectation.model.ProducerComponent;
-import org.ikasan.testharness.flow.expectation.model.RouterComponent;
-import org.ikasan.testharness.flow.expectation.model.SequencerComponent;
-import org.ikasan.testharness.flow.expectation.model.SplitterComponent;
-import org.ikasan.testharness.flow.expectation.model.TranslatorComponent;
+import org.ikasan.testharness.flow.expectation.model.*;
 
 /**
  * ComparatorService default implementation provides six default comparators
@@ -79,6 +70,8 @@ public class ComparatorServiceImpl
         put(TranslatorComponent.class, new FlowElementComparator());
         put(ConverterComponent.class, new FlowElementComparator());
         put(RouterComponent.class, new FlowElementComparator());
+        put(SingleRecipientRouterComponent.class, new FlowElementComparator());
+        put(MultiRecipientRouterComponent.class, new FlowElementComparator());
         put(SequencerComponent.class, new FlowElementComparator());
         put(SplitterComponent.class, new FlowElementComparator());
         put(ProducerComponent.class, new FlowElementComparator());
