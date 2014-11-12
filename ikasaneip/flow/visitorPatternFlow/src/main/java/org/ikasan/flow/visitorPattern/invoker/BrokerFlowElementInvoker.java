@@ -119,7 +119,7 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker impleme
         {
             // keep going if we have some payload
             notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-            nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+            return nextFlowElement;
         }
         return null;
     }
