@@ -109,10 +109,6 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition("one");
                 will(returnValue(flowElement));
-
-                exactly(1).of(flowElement).getFlowElementInvoker();
-                will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
             }
         });
 
@@ -153,13 +149,25 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(flowEvent));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
-
-                exactly(1).of(flowElement).getTransition("two");
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(flowElement));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
+
+                exactly(1).of(flowElement).getTransition("two");
+                will(returnValue(flowElement));
+                exactly(1).of(replicationFactory).replicate(flowEvent);
+                will(returnValue(flowEvent));
+                exactly(1).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(flowElement));
+                exactly(1).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
             }
         });
 
@@ -299,7 +307,8 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(flowEvent));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
 
                 exactly(1).of(flowElement).getTransition("two");
                 will(returnValue(null));

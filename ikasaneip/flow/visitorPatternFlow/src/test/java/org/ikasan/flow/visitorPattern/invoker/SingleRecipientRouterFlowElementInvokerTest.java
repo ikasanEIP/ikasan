@@ -106,10 +106,6 @@ public class SingleRecipientRouterFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowElement).getTransition("one");
                 will(returnValue(flowElement));
-
-                exactly(1).of(flowElement).getFlowElementInvoker();
-                will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
             }
         });
 

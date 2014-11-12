@@ -98,7 +98,7 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
                         + "All Router targets must be mapped to transitions in their enclosing FlowElement");
             }
 
-            nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+            return nextFlowElement;
         }
         else
         {
@@ -109,24 +109,28 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
             }
 
             int targetCount = 0;
-            for (String targetName : targetNames)
-            {
+            for (String targetName : targetNames) {
                 final FlowElement nextFlowElement = flowElement.getTransition(targetName);
-                if (nextFlowElement == null)
-                {
+                if (nextFlowElement == null) {
                     throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
                             + "] contains a Router, but it does not have a transition mapped for that Router's target[" + targetName + "] "
                             + "All Router targets must be mapped to transitions in their enclosing FlowElement");
                 }
 
                 // if we are at the last targetName then skip replication of the event as this is expensive
-                if(++targetCount == targetNames.size())
+                FlowElement nextFlowElementInRoute = nextFlowElement;
+
+                targetCount++;
+                while (nextFlowElementInRoute != null)
                 {
-                    nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
-                }
-                else
-                {
-                    nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, replicationFactory.replicate(flowEvent), nextFlowElement);
+                    if (targetCount == targetNames.size())
+                    {
+                        nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                    }
+                    else
+                    {
+                        nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, replicationFactory.replicate(flowEvent), nextFlowElementInRoute);
+                    }
                 }
             }
         }
