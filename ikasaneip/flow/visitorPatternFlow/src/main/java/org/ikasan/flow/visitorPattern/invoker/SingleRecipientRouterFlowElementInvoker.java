@@ -75,8 +75,7 @@ public class SingleRecipientRouterFlowElementInvoker extends AbstractFlowElement
                     + "All Router targets must be mapped to transitions in their enclosing FlowElement");
         }
 
-        nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
-        return null;
+        return nextFlowElement;
     }
 }
 
