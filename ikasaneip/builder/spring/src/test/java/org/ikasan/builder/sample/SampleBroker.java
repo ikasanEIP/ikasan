@@ -38,23 +38,19 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.techEndpoint;
+package org.ikasan.builder.sample;
+
+import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.EndpointException;
 
 /**
- * Simple Tech Endpoint Contract extends Runnable to allow execution is a different thread.
+ * Sample component for test only.
  * @author Ikasan Development Team.
  */
-public interface TechEndpoint extends Runnable
+public class SampleBroker<T> implements Broker<T,T>
 {
-    /**
-     * Allow a listener to be set on the tech endpoint
-      * @param listener
-     */
-    public void setListener(TechEndpointListener listener);
-
-    /**
-     * Allow a client to set the number of events this dummy tech endpoint will create.
-     * @param eventCount
-     */
-    public void setEventCount(int eventCount);
+    @Override
+    public T invoke(T message) throws EndpointException {
+        return message;
+    }
 }

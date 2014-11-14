@@ -49,6 +49,9 @@ public class TechEndpointImpl implements TechEndpoint
     /** tech endpoint listener implementation */
     private TechEndpointListener techEndpointListener;
 
+    /** event count default of 3,000,000 */
+    private int eventCount = 3000000;
+
     /**
      * Allow setting of listener
      * @param techEndpointListener
@@ -58,6 +61,12 @@ public class TechEndpointImpl implements TechEndpoint
         this.techEndpointListener = techEndpointListener;
     }
 
+    @Override
+    public void setEventCount(int eventCount)
+    {
+        this.eventCount = eventCount;
+    }
+
     /**
      * Execute the techEndpoint in a separate thread to simulate a real tech producer implementation.
      */
@@ -65,7 +74,6 @@ public class TechEndpointImpl implements TechEndpoint
     public void run()
     {
         int x = 0;
-        int eventCount = 3000000;
         StopWatch stopWatch = StopWatch.getInstance();
 
         try

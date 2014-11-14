@@ -38,23 +38,25 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.techEndpoint;
+package org.ikasan.builder.sample;
+
+import org.ikasan.spec.component.sequencing.Sequencer;
+import org.ikasan.spec.component.sequencing.SequencerException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Simple Tech Endpoint Contract extends Runnable to allow execution is a different thread.
+ * Sample component for test only.
  * @author Ikasan Development Team.
  */
-public interface TechEndpoint extends Runnable
-{
-    /**
-     * Allow a listener to be set on the tech endpoint
-      * @param listener
-     */
-    public void setListener(TechEndpointListener listener);
+public class SampleSequencer implements Sequencer<String> {
 
-    /**
-     * Allow a client to set the number of events this dummy tech endpoint will create.
-     * @param eventCount
-     */
-    public void setEventCount(int eventCount);
+    @Override
+    public List<String> sequence(String event) throws SequencerException {
+        List<String> results = new ArrayList<String>();
+        results.add("one");
+        results.add("two");
+        return results;
+    }
 }

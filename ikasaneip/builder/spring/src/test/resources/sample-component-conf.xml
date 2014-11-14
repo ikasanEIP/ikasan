@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  Sample component implementations for testing                       -->
+    <!--  ================================================================== -->
+    <bean id="consumer"    class="org.ikasan.builder.sample.SampleConsumer" />
+    <bean id="converter"   class="org.ikasan.builder.sample.SampleConverter" />
+    <bean id="producer"    class="org.ikasan.builder.sample.SampleProducer" />
+    <bean id="router"      class="org.ikasan.builder.sample.SampleRouter" />
+    <bean id="mrRouter"    class="org.ikasan.builder.sample.SampleMultiRecipientRouter" />
+    <bean id="srRouter"    class="org.ikasan.builder.sample.SampleSingleRecipientRouter" />
+    <bean id="broker"      class="org.ikasan.builder.sample.SampleBroker" />
+    <bean id="sequencer"   class="org.ikasan.builder.sample.SampleSequencer" />
+    <bean id="splitter"   class="org.ikasan.builder.sample.SampleSplitter" />
+    <bean id="translator"  class="org.ikasan.builder.sample.SampleTranslator" />
+    <bean id="filter"      class="org.ikasan.builder.sample.SampleFilter" />
+
+    <!--  ================================================================== -->
+    <!--  Sample monitor implementation for testing                          -->
+    <!--  ================================================================== -->
+    <bean id="monitor"              class="org.ikasan.builder.SampleMonitor" />
+
+</beans>

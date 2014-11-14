@@ -38,23 +38,84 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.techEndpoint;
+package org.ikasan.builder.sample;
+
+import org.ikasan.flow.event.FlowEventFactory;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.event.EventListener;
 
 /**
- * Simple Tech Endpoint Contract extends Runnable to allow execution is a different thread.
+ * Sample component for test only.
  * @author Ikasan Development Team.
  */
-public interface TechEndpoint extends Runnable
+public class SampleConsumer implements
+        Consumer<EventListener<Integer>, FlowEventFactory> // Ikasan Contract
 {
-    /**
-     * Allow a listener to be set on the tech endpoint
-      * @param listener
-     */
-    public void setListener(TechEndpointListener listener);
+    /** Ikasan Event Listener registered with this consumer to be called back with the instantiated flowEvent */
+    EventListener eventListener;
+
+    /** Ikasan event factory for instantiating the Ikasan flow event based on the tech endpoint payload */
+    FlowEventFactory flowEventFactory;
 
     /**
-     * Allow a client to set the number of events this dummy tech endpoint will create.
-     * @param eventCount
+     * Set the Ikasan event listener. This is the consumer's handle to pass the event back up to the ikasan flow.
+     * @param eventListener
      */
-    public void setEventCount(int eventCount);
+    @Override
+    public void setListener(EventListener eventListener)
+    {
+        this.eventListener = eventListener;
+    }
+
+    /**
+     * Set the event factory. Factory used to instantiate ikasan flow events based on incoming payload from the tech endpoint
+     * @param flowEventFactory
+     */
+    @Override
+    public void setEventFactory(FlowEventFactory flowEventFactory)
+    {
+        this.flowEventFactory = flowEventFactory;
+    }
+
+    @Override
+    public FlowEventFactory getEventFactory()
+    {
+        return this.flowEventFactory;
+    }
+
+    /**
+     * Tell the consumer to start the tech endpoint publication
+     */
+    @Override
+    public void start()
+    {
+    }
+
+    /**
+     * Is the tech endpoint currently active
+     * @return
+     */
+    @Override
+    public boolean isRunning()
+    {
+        return false;
+    }
+
+    /**
+     * Tell the consumer to stop the tech endpoint publication
+     */
+    @Override
+    public void stop()
+    {
+    }
+
+    /**
+     * Callback from the tech endpoint with the payload
+     * @param message
+     */
+    public void onMessage(String message)
+    {
+        this.eventListener.invoke( this.flowEventFactory.newEvent(message, message) );
+    }
+
 }

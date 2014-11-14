@@ -260,17 +260,24 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 }
 
                 List<Notifier> monitorNotifiers = this.monitor.getNotifiers();
-                for(Notifier monitorNotifier : monitorNotifiers)
+                if(monitorNotifiers == null)
                 {
-                    if(monitorNotifier instanceof ConfiguredResource)
+                    logger.warn("Flow monitor has no registered notifiers. Flow state changes will not be notified!");
+                }
+                else
+                {
+                    for(Notifier monitorNotifier : monitorNotifiers)
                     {
-                        ConfiguredResource configuredMonitorNotifier = (ConfiguredResource)monitorNotifier;
-                        if( configuredMonitorNotifier.getConfiguredResourceId() == null )
+                        if(monitorNotifier instanceof ConfiguredResource)
                         {
-                            configuredMonitorNotifier.setConfiguredResourceId(this.moduleName + this.name + "_monitor_notifier_" + monitorNotifier.getClass().getSimpleName());
-                        }
+                            ConfiguredResource configuredMonitorNotifier = (ConfiguredResource)monitorNotifier;
+                            if( configuredMonitorNotifier.getConfiguredResourceId() == null )
+                            {
+                                configuredMonitorNotifier.setConfiguredResourceId(this.moduleName + this.name + "_monitor_notifier_" + monitorNotifier.getClass().getSimpleName());
+                            }
 
-                        this.flowConfiguration.configure(configuredMonitorNotifier);
+                            this.flowConfiguration.configure(configuredMonitorNotifier);
+                        }
                     }
                 }
             }
