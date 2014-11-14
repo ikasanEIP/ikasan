@@ -61,7 +61,7 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations = { 
         "/module-conf.xml", 
         "/flow-conf.xml",
-        "/component-conf.xml",
+        "/sample-component-conf.xml",
         "/exclusion-service-conf.xml",
         "/recoveryManager-service-conf.xml",
         "/scheduler-service-conf.xml", 
