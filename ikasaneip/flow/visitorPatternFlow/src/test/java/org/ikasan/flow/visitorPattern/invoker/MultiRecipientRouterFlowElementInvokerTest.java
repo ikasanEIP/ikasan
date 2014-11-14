@@ -42,6 +42,7 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
@@ -72,7 +73,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
     private FlowEvent flowEvent = mockery.mock(FlowEvent.class, "flowEvent");
     private FlowElement flowElement = mockery.mock(FlowElement.class, "flowElement");
     private FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class, "flowElementInvoker");
-    private Router router = mockery.mock(Router.class, "router");
+    private MultiRecipientRouter router = mockery.mock(MultiRecipientRouter.class, "router");
     private ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "replicationFactory");
     private Map payload = mockery.mock(Map.class, "payload");
 
