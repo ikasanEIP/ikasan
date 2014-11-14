@@ -74,7 +74,12 @@ public class SequencerFlowElementInvoker extends AbstractFlowElementInvoker impl
             {
                 flowEvent.setPayload(payload);
                 notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-                nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+
+                FlowElement nextFlowElementInRoute = nextFlowElement;
+                while (nextFlowElementInRoute != null)
+                {
+                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+                }
             }
         }
         return null;
