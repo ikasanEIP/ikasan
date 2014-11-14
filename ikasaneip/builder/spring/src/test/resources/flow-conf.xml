@@ -19,31 +19,31 @@
 
     <bean id="consumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="consumer"/>
-        <property name="component"  ref="consumerComponent"/>
+        <property name="component"  ref="consumer"/>
         <property name="transition" ref="converterFlowElement"/>
     </bean>
 
     <bean id="converterFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="converter"/>
-        <property name="component"  ref="converterComponent"/>
+        <property name="component"  ref="converter"/>
         <property name="transition" ref="translatorFlowElement"/>
     </bean>
 
     <bean id="translatorFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="translator"/>
-        <property name="component"  ref="translatorComponent"/>
+        <property name="component"  ref="translator"/>
         <property name="transition" ref="brokerFlowElement"/>
     </bean>
 
     <bean id="brokerFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="broker"/>
-        <property name="component"  ref="brokerComponent"/>
+        <property name="component"  ref="broker"/>
         <property name="transition" ref="routerFlowElement"/>
     </bean>
 
     <bean id="routerFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="router"/>
-        <property name="component"  ref="routerComponent"/>
+        <property name="component"  ref="router"/>
         <property name="transitions">
             <util:map>
                 <entry key="routeToA"  value-ref="sequencerAFlowElement" />
@@ -54,7 +54,7 @@
 
     <bean id="sequencerAFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="sequencerA"/>
-        <property name="component"  ref="sequencerComponent"/>
+        <property name="component"  ref="sequencer"/>
         <property name="transitions">
             <util:map>
                 <entry key="passToA"  value-ref="producerAFlowElement" />
@@ -65,7 +65,7 @@
 
     <bean id="sequencerBFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="sequencerB"/>
-        <property name="component"  ref="sequencerComponent"/>
+        <property name="component"  ref="sequencer"/>
         <property name="transitions">
             <util:map>
                 <entry key="passToA"  value-ref="producerAFlowElement" />
@@ -76,12 +76,12 @@
 
     <bean id="producerAFlowElement"  class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="producerA"/>
-        <property name="component"  ref="producerComponent"/>
+        <property name="component"  ref="producer"/>
     </bean>
     
     <bean id="producerBFlowElement"  class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="producerB"/>
-        <property name="component"  ref="producerComponent"/>
+        <property name="component"  ref="producer"/>
     </bean>
     
 </beans>
