@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  Flow                                                               -->
+    <!--  ================================================================== -->
+    <bean id="flow" class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         value="moduleName" />
+        <property name="name"               value="flowName" />
+        <property name="description"        value="flowDescription" />
+        <property name="monitor"            ref="monitor" />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="consumer"           ref="consumerFlowElement" />
+    </bean>
+
+    <bean id="consumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="consumer"/>
+        <property name="component"  ref="consumer"/>
+        <property name="transition" ref="converterFlowElement"/>
+    </bean>
+
+    <bean id="converterFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="converter"/>
+        <property name="component"  ref="converter"/>
+        <property name="transition" ref="translatorFlowElement"/>
+    </bean>
+
+    <bean id="translatorFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="translator"/>
+        <property name="component"  ref="translator"/>
+        <property name="transition" ref="brokerFlowElement"/>
+    </bean>
+
+    <bean id="brokerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="broker"/>
+        <property name="component"  ref="broker"/>
+        <property name="transition" ref="mrRouterFlowElement"/>
+    </bean>
+
+    <bean id="mrRouterFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="mrRouter"/>
+        <property name="component"  ref="mrRouter"/>
+        <property name="transitions">
+            <util:map>
+                <entry key="one"  value-ref="sequencerAFlowElement" />
+                <entry key="two"  value-ref="sequencerBFlowElement" />
+                <entry key="three" value-ref="srRouterFlowElement" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="sequencerAFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="sequencerA"/>
+        <property name="component"  ref="sequencer"/>
+        <property name="transition" ref="producerAFlowElement"/>
+    </bean>
+
+    <bean id="srRouterFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="srRouter"/>
+        <property name="component"  ref="srRouter"/>
+        <property name="transitions">
+            <util:map>
+                <entry key="one"  value-ref="sequencerAFlowElement" />
+                <entry key="two"  value-ref="sequencerBFlowElement" />
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="sequencerBFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="sequencerB"/>
+        <property name="component"  ref="sequencer"/>
+        <property name="transition" ref="producerBFlowElement"/>
+    </bean>
+
+    <bean id="producerAFlowElement"  class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="producerA"/>
+        <property name="component"  ref="producer"/>
+    </bean>
+    
+    <bean id="producerBFlowElement"  class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="producerB"/>
+        <property name="component"  ref="producer"/>
+    </bean>
+    
+</beans>

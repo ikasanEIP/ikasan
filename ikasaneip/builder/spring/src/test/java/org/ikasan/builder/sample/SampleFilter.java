@@ -38,23 +38,36 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.techEndpoint;
+package org.ikasan.builder.sample;
+
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterException;
 
 /**
- * Simple Tech Endpoint Contract extends Runnable to allow execution is a different thread.
+ * Sample component for test only.
  * @author Ikasan Development Team.
  */
-public interface TechEndpoint extends Runnable
+public class SampleFilter<T> implements Filter<T>
 {
-    /**
-     * Allow a listener to be set on the tech endpoint
-      * @param listener
-     */
-    public void setListener(TechEndpointListener listener);
+    boolean drop;
 
-    /**
-     * Allow a client to set the number of events this dummy tech endpoint will create.
-     * @param eventCount
-     */
-    public void setEventCount(int eventCount);
+    public SampleFilter()
+    {
+        // nothing
+    }
+
+    public SampleFilter(boolean drop)
+    {
+        this.drop = drop;
+    }
+
+    @Override
+    public T filter(T message) throws FilterException
+    {
+        if(drop)
+        {
+            return null;
+        }
+        return message;
+    }
 }
