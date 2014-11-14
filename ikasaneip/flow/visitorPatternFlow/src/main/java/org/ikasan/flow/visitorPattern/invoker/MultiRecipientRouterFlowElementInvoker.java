@@ -41,6 +41,7 @@
 package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
@@ -53,7 +54,7 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Router>
+public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<MultiRecipientRouter>
 {
     /** replication factory - requirement for flows where event can undergo a number of sequential routes */
     private ReplicationFactory<FlowEvent<?,?>> replicationFactory;
@@ -73,12 +74,12 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     }
 
     @Override
-    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Router> flowElement)
+    public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<MultiRecipientRouter> flowElement)
     {
         flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
-        Router router = flowElement.getFlowComponent();
+        MultiRecipientRouter router = flowElement.getFlowComponent();
         List<String> targetNames = router.route(flowEvent.getPayload());
         if (targetNames == null || targetNames.size() == 0)
         {
