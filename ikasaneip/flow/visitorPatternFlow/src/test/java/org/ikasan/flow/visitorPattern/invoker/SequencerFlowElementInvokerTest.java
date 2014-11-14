@@ -106,8 +106,8 @@ public class SequencerFlowElementInvokerTest
                 exactly(1).of(flowEvent).setPayload(payload);
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
-            }
+                exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));            }
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
@@ -148,8 +148,8 @@ public class SequencerFlowElementInvokerTest
                 exactly(3).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
-                ignoring(flowElementInvoker);
-            }
+                exactly(3).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));            }
         });
 
         FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();

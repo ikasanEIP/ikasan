@@ -117,12 +117,12 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
                             + "All Router targets must be mapped to transitions in their enclosing FlowElement");
                 }
 
-                // if we are at the last targetName then skip replication of the event as this is expensive
                 FlowElement nextFlowElementInRoute = nextFlowElement;
 
                 targetCount++;
                 while (nextFlowElementInRoute != null)
                 {
+                    // if we are at the last targetName then skip replication of the event as this is expensive
                     if (targetCount == targetNames.size())
                     {
                         nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);

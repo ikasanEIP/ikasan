@@ -55,6 +55,9 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker implements FlowElementInvoker<Splitter>
 {
+    /** does this component require the full flowEvent or just the payload */
+    Boolean requiresFullEventForInvocation;
+
     @Override
     public FlowElement invoke(FlowEventListener flowEventListener, String moduleName, String flowName, FlowInvocationContext flowInvocationContext, FlowEvent flowEvent, FlowElement<Splitter> flowElement)
     {
@@ -62,7 +65,33 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
         notifyListenersBeforeElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
 
         Splitter splitter = flowElement.getFlowComponent();
-        List payloads = splitter.split(flowEvent.getPayload());
+        List payloads;
+        if(requiresFullEventForInvocation == null)
+        {
+            try
+            {
+                // try with flowEvent and if successful mark this component
+                payloads = splitter.split(flowEvent);
+                requiresFullEventForInvocation = Boolean.TRUE;
+            }
+            catch(java.lang.ClassCastException e)
+            {
+                payloads = splitter.split(flowEvent.getPayload());
+                requiresFullEventForInvocation = Boolean.FALSE;
+            }
+        }
+        else
+        {
+            if(requiresFullEventForInvocation.booleanValue())
+            {
+                payloads = splitter.split(flowEvent);
+            }
+            else
+            {
+                payloads = splitter.split(flowEvent.getPayload());
+            }
+        }
+
         FlowElement nextFlowElement = getDefaultTransition(flowElement);
         if (nextFlowElement == null)
         {
@@ -78,13 +107,24 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker imple
 
         for (Object payload : payloads)
         {
-            flowEvent.setPayload(payload);
+            if(payload instanceof FlowEvent)
+            {
+                flowEvent = (FlowEvent)payload;
+            }
+            else
+            {
+                flowEvent.setPayload(payload);
+            }
             notifyListenersAfterElement(flowEventListener, moduleName, flowName, flowEvent, flowElement);
-            nextFlowElement.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElement);
+
+            FlowElement nextFlowElementInRoute = nextFlowElement;
+            while (nextFlowElementInRoute != null)
+            {
+                nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
+            }
         }
 
         return null;
     }
 
 }
-
