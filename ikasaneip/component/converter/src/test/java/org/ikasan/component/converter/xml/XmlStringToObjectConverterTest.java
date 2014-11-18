@@ -65,6 +65,25 @@ public class XmlStringToObjectConverterTest
     }
     
     @Test
+    public void testConvertWithContextPathAndPayloadByteArray(){
+        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
+        configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
+        converter.setConfiguration(configuration);
+        Example converted = (Example)converter.convert(new ExampleEventFactory().getXmlEvent().getBytes());
+        assertEquals(new Example("1", "2"), converted);
+    }
+    
+    @Test(expected = TransformationException.class)
+    public void testConvertWithContextPathAndPayloadCantBeConvertedToString(){
+        XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
+        XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();
+        configuration.setContextPath("org.ikasan.component.converter.xml.jaxb");
+        converter.setConfiguration(configuration);
+        Example converted = (Example)converter.convert(new Object());
+    }
+    
+    @Test
     public void testConvertWithClass(){
         XmlStringToObjectConverter converter = new XmlStringToObjectConverter();
         XmlStringToObjectConfiguration configuration = new XmlStringToObjectConfiguration();

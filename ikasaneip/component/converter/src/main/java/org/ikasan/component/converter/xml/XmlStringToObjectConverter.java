@@ -58,7 +58,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
  * 
  * @author edwaki
  */
-public class XmlStringToObjectConverter implements Converter<String, Object>, ConfiguredResource<XmlStringToObjectConfiguration>
+public class XmlStringToObjectConverter implements Converter<Object, Object>, ConfiguredResource<XmlStringToObjectConfiguration>
 {
 
     private XmlStringToObjectConfiguration configuration;
@@ -106,10 +106,18 @@ public class XmlStringToObjectConverter implements Converter<String, Object>, Co
     }
 
     @Override
-    public Object convert(String payload) throws TransformationException
+    public Object convert(Object payload) throws TransformationException
     {
         try {
-        Object result = marshaller.unmarshal(new StreamSource(new StringReader(payload)));
+        String xml = null;
+        if (payload instanceof String){
+            xml = (String)payload;
+        } else if (payload instanceof byte[]){
+            xml = new String((byte[])payload);
+        } else {
+            throw new TransformationException("Cannot get xml string from payload " + payload.toString());
+        }
+        Object result = marshaller.unmarshal(new StreamSource(new StringReader(xml)));
         return result;
         } catch (XmlMappingException e){
              throw new TransformationException(e);
