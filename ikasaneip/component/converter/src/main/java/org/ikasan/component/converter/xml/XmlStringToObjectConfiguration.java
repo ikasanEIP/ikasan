@@ -40,50 +40,60 @@
  */
 package org.ikasan.component.converter.xml;
 
-import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 /**
- * Example class for testing JAXB.
+ * Configuration for an XML to Object JAXB converter.
  * 
  * @author Ikasan Development Team
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "example", propOrder = {
-        "one",
-        "two"
-})
-
-@XmlRootElement
-public class Example implements Serializable
+public class XmlStringToObjectConfiguration
 {
-    /** default serial id */
-    private static final long serialVersionUID = 1L;
+    
+    private Class<?>[] classesToBeBound;
+    
+    private String contextPath;
+    
+    private String[] contextPaths;
+    
+    private String schema;
+    
+    public String[] getContextPaths()
+    {
+        return contextPaths;
+    }
 
-    @XmlElement(required=true)
-    protected String one;
-    @XmlElement
-    protected String two;
-    public String getOne()
+    public void setContextPaths(String[] contextPaths)
     {
-        return one;
+        this.contextPaths = contextPaths;
     }
-    public void setOne(String one)
+
+    public String getContextPath()
     {
-        this.one = one;
+        return contextPath;
     }
-    public String getTwo()
+
+    public void setContextPath(String contextPath)
     {
-        return two;
+        this.contextPath = contextPath;
     }
-    public void setTwo(String two)
+
+    public Class<?>[] getClassesToBeBound()
     {
-        this.two = two;
+        return classesToBeBound;
+    }
+
+    public void setClassesToBeBound(Class<?>[] classesToBeBound)
+    {
+        this.classesToBeBound = classesToBeBound;
+    }
+
+    public String getSchema()
+    {
+        return schema;
+    }
+
+    public void setSchema(String schema)
+    {
+        this.schema = schema;
     }
 
 }

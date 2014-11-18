@@ -53,6 +53,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceConstants;
 import org.custommonkey.xmlunit.DifferenceListener;
+import org.ikasan.component.converter.xml.jaxb.Example;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -269,25 +270,5 @@ public class ObjectToXMLStringConverterTest
         }
     }
     
-    public class ExampleEventFactory
-    {
-        final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://mizuho.com/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><one>1</one><two>2</two></example>";
 
-        final String sparseXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><example xsi:schemaLocation=\"http://mizuho.com/domain example.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></example>";
-
-        public String getXmlEvent()
-        {
-            return this.xml;
-        }
-        
-        public String getSparseXmlEvent()
-        {
-            return this.sparseXml;
-        }
-        
-        public Example getObjectEvent()
-        {
-            return new Example();
-        }
-    }
 }
