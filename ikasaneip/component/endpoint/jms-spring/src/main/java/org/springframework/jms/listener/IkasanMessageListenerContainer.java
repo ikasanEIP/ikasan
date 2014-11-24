@@ -47,6 +47,7 @@ import org.springframework.jms.util.JndiUtils;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 
 /**
  * Extend DefaultMessageListenerContainer to ensure standard defaults are set on the container being instantiated.
@@ -148,5 +149,18 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         afterPropertiesSet();
 
         super.start();
+    }
+
+    /**
+     * Attempt to recover a shared connection, if its used
+     * @see #refreshSharedConnection()
+     * @throws javax.jms.JMSException if the underlying provider cannot re-establish itself
+     */
+    public void recoverSharedConnection() throws JMSException
+    {
+        if (sharedConnectionEnabled())
+        {
+            refreshSharedConnection();
+        }
     }
 }
