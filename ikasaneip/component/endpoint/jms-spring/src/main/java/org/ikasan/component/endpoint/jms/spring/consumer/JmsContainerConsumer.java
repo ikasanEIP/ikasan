@@ -41,8 +41,8 @@
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
 import org.apache.log4j.Logger;
-import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
+import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -52,6 +52,7 @@ import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
+import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
 
 import javax.jms.ExceptionListener;
@@ -162,14 +163,35 @@ public class JmsContainerConsumer
     @Override
     public void onException(JMSException jmsException)
     {
-        if(eventListener != null)
+        // added to work around IKASAN-739
+        boolean recovered = false;
+        try
         {
-            this.eventListener.invoke(jmsException);
+            if ( messageProvider instanceof IkasanMessageListenerContainer
+                    && jmsException instanceof javax.jms.IllegalStateException)
+            {
+                IkasanMessageListenerContainer imlc = (IkasanMessageListenerContainer)messageProvider;
+                imlc.recoverSharedConnection();
+                recovered = true;
+            }
         }
-        else
+        catch (JMSException ex)
         {
-            logger.error("onException reported after eventListener stopped listening.", jmsException);
+            logger.warn("Unable to recover from JMSException");
         }
+        finally
+        {
+            if(!recovered && eventListener != null)
+            {
+                this.eventListener.invoke(jmsException);
+            }
+            else
+            {
+                logger.error("onException reported after eventListener stopped listening.", jmsException);
+            }
+
+        }
+
     }
 
     @Override
