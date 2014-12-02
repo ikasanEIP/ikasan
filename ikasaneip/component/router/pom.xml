@@ -48,14 +48,12 @@
         <relativePath />
     </parent>
 
-    <artifactId>ikasan-component</artifactId>
+    <artifactId>ikasan-router-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Components</name>
+    <name>Ikasan Enterprise Integration Off the Shelf Routers</name>
 
     <modules>
-        <module>converter</module>
-        <module>router</module>
-        <module>endpoint</module>
+        <module>multirecipient</module>
     </modules>
 
 </project>

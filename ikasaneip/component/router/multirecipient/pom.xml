@@ -48,14 +48,17 @@
         <relativePath />
     </parent>
 
-    <artifactId>ikasan-component</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Components</name>
+    <artifactId>ikasan-component-multiRecipient-router</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration Router Implementations</name>
 
-    <modules>
-        <module>converter</module>
-        <module>router</module>
-        <module>endpoint</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
+            <version>0.9.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
+    </dependencies>
 </project>
