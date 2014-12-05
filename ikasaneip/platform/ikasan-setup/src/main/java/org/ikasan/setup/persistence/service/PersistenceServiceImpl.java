@@ -59,6 +59,7 @@ public class PersistenceServiceImpl implements PersistenceService
     private static Logger logger = Logger.getLogger(PersistenceServiceImpl.class);
 
     private static String WIRETAP = "wiretap";
+    private static String FILTER = "filter";
     private static String FLOW_EVENT_TRIGGER = "flowEventTrigger";
     private static String FLOW_EVENT_TRIGGER_PARAMETERS = "flowEventTriggerParameters";
     private static String CONFIGURATION = "configuration";
@@ -132,6 +133,7 @@ public class PersistenceServiceImpl implements PersistenceService
     public void createPersistence() {
 
         this.providerDAO.create(WIRETAP);
+        this.providerDAO.create(FILTER);
         this.providerDAO.create(VERSION);
         this.providerDAO.create(VERSION_ENTRY);
         this.providerDAO.create(FLOW_EVENT_TRIGGER);
