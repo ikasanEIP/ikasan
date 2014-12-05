@@ -789,7 +789,7 @@
                     CriteriaDescription VARCHAR(512)  NULL,
                     CreatedDateTime     NUMERIC NOT NULL,
                     Expiry              NUMERIC NOT NULL
-                    )
+                    );
                     CREATE UNIQUE INDEX MessageFilter01u ON MessageFilter(Criteria,ClientId)</prop>
 
                 <prop key="create.flowEventTrigger">CREATE TABLE FlowEventTrigger
