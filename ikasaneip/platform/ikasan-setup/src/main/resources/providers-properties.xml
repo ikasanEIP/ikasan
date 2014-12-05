@@ -76,6 +76,19 @@
 
                 CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)</prop>
 
+                <prop key="create.filter">CREATE TABLE MessageFilter
+                    (
+                    Criteria            NUMERIC DEFAULT 0 NOT NULL,
+                    ClientId            VARCHAR(256)  NOT NULL,
+                    CriteriaDescription VARCHAR(512)  NULL,
+                    CreatedDateTime     NUMERIC NOT NULL,
+                    Expiry              NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX MessageFilter01u ON MessageFilter(Criteria,ClientId)</prop>
+
                 <prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
                     (
                     Identifier          VARCHAR(255)  NOT NULL,
@@ -400,6 +413,19 @@
                     CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id)</prop>
 
                 <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+
+                <prop key="create.filter">CREATE TABLE MessageFilter
+                    (
+                    Criteria            NUMERIC DEFAULT 0 NOT NULL,
+                    ClientId            VARCHAR(256)  NOT NULL,
+                    CriteriaDescription VARCHAR(512)  NULL,
+                    CreatedDateTime     NUMERIC NOT NULL,
+                    Expiry              NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX MessageFilter01u ON MessageFilter(Criteria,ClientId)</prop>
 
                 <prop key="create.version">CREATE TABLE Version
                     (
@@ -755,6 +781,16 @@
                     CREATE UNIQUE INDEX IkasanWiretap01u ON IkasanWiretap(Id);</prop>
 
                 <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+
+                <prop key="create.filter">CREATE TABLE MessageFilter
+                    (
+                    Criteria            NUMERIC DEFAULT 0 NOT NULL,
+                    ClientId            VARCHAR(256)  NOT NULL,
+                    CriteriaDescription VARCHAR(512)  NULL,
+                    CreatedDateTime     NUMERIC NOT NULL,
+                    Expiry              NUMERIC NOT NULL
+                    )
+                    CREATE UNIQUE INDEX MessageFilter01u ON MessageFilter(Criteria,ClientId)</prop>
 
                 <prop key="create.flowEventTrigger">CREATE TABLE FlowEventTrigger
                     (
