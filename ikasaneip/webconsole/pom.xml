@@ -55,6 +55,7 @@
     <modules>
        <module>jar</module>
        <module>war</module>
+       <module>skinny-war</module>
     </modules>
 
 </project>
