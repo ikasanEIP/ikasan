@@ -67,12 +67,12 @@
                   not-null="false" />
 
         <property name="createdDateTime"
-                  type="java.util.Date"
+                  type="long"
                   column="CreatedDateTime"
                   not-null="true" />
 
         <property name="expiry"
-                  type="java.util.Date"
+                  type="long"
                   column="Expiry"
                   not-null="true" />
     </class>

@@ -41,8 +41,6 @@
 
 package org.ikasan.filter.duplicate.model;
 
-import java.util.Date;
-
 /**
  * Interface defining what a persisted message should look like.
  * 
@@ -95,16 +93,16 @@ public interface FilterEntry
     public String getCriteriaDescription();
 
     /**
-     * Getter for {@link Date} object representing the date/time a {@link FilterEntry}
+     * Getter for object representing the date/time a {@link FilterEntry}
      * was persisted.
      * @return a creation date.
      */
-    public Date getCreatedDateTime();
+    public long getCreatedDateTime();
 
     /**
-     * Getter for {@link Date} object representing the date/time a {@link FilterEntry}
+     * Getter for object representing the date/time a {@link FilterEntry}
      * is expired and can be removed from persistance.
      * @return an expiry date
      */
-    public Date getExpiry();
+    public long getExpiry();
 }

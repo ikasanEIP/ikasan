@@ -40,7 +40,6 @@
  */
 package org.ikasan.filter.duplicate;
 
-import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
 import org.ikasan.filter.duplicate.model.FilterEntryConverterException;

@@ -72,4 +72,16 @@ public interface FilteredMessageDao
      * Delete expired Filter Entries from persistence 
      */
     public void deleteAllExpired();
+
+    /**
+     * Allow batching of housekeep tasks to be turned on/off
+     * @param batchedHousekeep
+     */
+    public void setBatchedHousekeep(boolean batchedHousekeep);
+
+    /**
+     * Allow the batch size to be overridden
+     * @param batchSize
+     */
+    public void setBatchSize(int batchSize);
 }

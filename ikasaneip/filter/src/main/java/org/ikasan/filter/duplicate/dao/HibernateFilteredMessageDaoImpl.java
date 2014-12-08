@@ -42,7 +42,6 @@
 package org.ikasan.filter.duplicate.dao;
 
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -65,11 +64,10 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     /** Query used for housekeeping expired filtered messages */
     private static final String HOUSEKEEP_QUERY = "delete DefaultFilterEntry m where m.expiry <= ?";
 
-    /** Flag for batch housekeeping option. Defaults to false */
-    private boolean batchedHousekeep = false;
+    /** Flag for batch housekeeping option. Defaults to true */
+    private boolean batchedHousekeep = true;
 
     /** The batch size used when {@link #batchedHousekeep} option is set. Default to 100*/
-    //TODO investigate an optimum value for batch size
     private int batchSize = 100;
 
     /**
@@ -129,7 +127,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     {
         if (!this.batchedHousekeep)
         {
-            this.getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, new Date());
+            this.getHibernateTemplate().bulkUpdate(HOUSEKEEP_QUERY, System.currentTimeMillis());
         }
         else
         {
@@ -163,7 +161,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             public Object doInHibernate(Session session) throws HibernateException, SQLException
             {
                 Criteria criteria = session.createCriteria(FilterEntry.class);
-                criteria.add(Restrictions.lt(FilterEntry.EXPRIY_PROP_KEY, new Date()));
+                criteria.add(Restrictions.lt(FilterEntry.EXPRIY_PROP_KEY, System.currentTimeMillis()));
                 criteria.setMaxResults(batchSize);
                 return criteria.list();
             }

@@ -42,7 +42,6 @@ package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;

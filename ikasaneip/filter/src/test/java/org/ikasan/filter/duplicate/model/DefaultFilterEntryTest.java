@@ -203,7 +203,7 @@ public class DefaultFilterEntryTest
         DefaultFilterEntry filterEntry = new DefaultFilterEntry("firstEntry".hashCode(), "test-1", 30);
 
         Assert.assertTrue("CreateDate must be smaller than Expiry date",
-                filterEntry.getCreatedDateTime().getTime() < filterEntry.getExpiry().getTime());
+                filterEntry.getCreatedDateTime() < filterEntry.getExpiry());
     }
 
     /**
@@ -217,7 +217,7 @@ public class DefaultFilterEntryTest
         DefaultFilterEntry filterEntry = new DefaultFilterEntry("firstEntry".hashCode(), "test-1", "test-1", 30);
 
         Assert.assertTrue("CreateDate must be smaller than Expiry date",
-                filterEntry.getCreatedDateTime().getTime() < filterEntry.getExpiry().getTime());
+                filterEntry.getCreatedDateTime() < filterEntry.getExpiry());
     }
 
 }

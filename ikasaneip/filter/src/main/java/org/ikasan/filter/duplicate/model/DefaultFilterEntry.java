@@ -42,7 +42,6 @@
 package org.ikasan.filter.duplicate.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Default implementation of {@link FilterEntry}. This covers all
@@ -71,11 +70,11 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     /** string form of the criteria to aid support should entries need cherry pick removal */
     private String criteriaDescription;
 
-    /** {@link Date} of insertion */
-    private Date createdDateTime;
+    /** date/time of insertion */
+    private long createdDateTime;
 
-    /** Expiry {@link Date}*/
-    private Date expiry;
+    /** Expiry date/time */
+    private long expiry;
 
     @SuppressWarnings("unused")
     private DefaultFilterEntry()
@@ -95,8 +94,8 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         this.criteria = criteria;
         this.clientId = clientId;
         long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
-        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000L));
+        this.createdDateTime = now;
+        this.expiry = now + (timeToLive * 24 * 3600 * 1000L);
     }
 
     /**
@@ -113,15 +112,15 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         this.clientId = clientId;
         this.criteriaDescription = criteriaDescription;
         long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
-        this.expiry = new Date(now + (timeToLive * 24 * 3600 * 1000L));
+        this.createdDateTime = now;
+        this.expiry = now + (timeToLive * 24 * 3600 * 1000L);
     }
 
     /**
      * Setter for {@link #expiry}
      * @param expiry
      */
-    public void setExpiry(Date expiry)
+    public void setExpiry(long expiry)
     {
         this.expiry = expiry;
     }
@@ -129,7 +128,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     /**
      * Getter for {@link #expiry}
      */
-    public Date getExpiry()
+    public long getExpiry()
     {
         return this.expiry;
     }
@@ -189,7 +188,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
      * Setter for {@link #createdDateTime}
      * @param createdDateTime
      */
-    public void setCreatedDateTime(Date createdDateTime)
+    public void setCreatedDateTime(long createdDateTime)
     {
         this.createdDateTime = createdDateTime;
     }
@@ -197,7 +196,7 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     /**
      * Getter for {@link #createdDateTime}
      */
-    public Date getCreatedDateTime()
+    public long getCreatedDateTime()
     {
         return this.createdDateTime;
     }
@@ -233,5 +232,16 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
         hash = 31 * hash + this.criteria.hashCode();
         hash = 31 * hash + this.clientId.hashCode();
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultFilterEntry{" +
+                "criteria=" + criteria +
+                ", clientId='" + clientId + '\'' +
+                ", criteriaDescription='" + criteriaDescription + '\'' +
+                ", createdDateTime=" + createdDateTime +
+                ", expiry=" + expiry +
+                '}';
     }
 }
