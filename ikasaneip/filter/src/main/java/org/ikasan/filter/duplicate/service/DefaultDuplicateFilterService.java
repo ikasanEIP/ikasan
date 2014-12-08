@@ -42,7 +42,7 @@ package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+import org.ikasan.spec.configuration.Configured;
 
 /**
  * The default implementation for {@link DuplicateFilterService}
@@ -50,15 +50,17 @@ import org.ikasan.filter.duplicate.service.DuplicateFilterService;
  * @author Ikasan Development Team
  *
  */
-public class DefaultDuplicateFilterService implements DuplicateFilterService
+public class DefaultDuplicateFilterService implements DuplicateFilterService, Configured<FilteredMessageConfiguration>
 {
     /** {@link FilteredMessageDao} for accessing encountered messages*/
     private final FilteredMessageDao dao;
 
+    /** filter configuration - provide a default instance */
+    private FilteredMessageConfiguration configuration = new FilteredMessageConfiguration();
+
     /**
      * Constructor
      * @param dao
-     * @param converter
      */
     public DefaultDuplicateFilterService(final FilteredMessageDao dao)
     {
@@ -102,5 +104,20 @@ public class DefaultDuplicateFilterService implements DuplicateFilterService
     public void housekeep()
     {
         this.dao.deleteAllExpired();
+    }
+
+    @Override
+    public FilteredMessageConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(FilteredMessageConfiguration configuration)
+    {
+        this.configuration = configuration;
+
+        // set dependents
+        this.dao.setBatchedHousekeep(configuration.isBatchedHousekeep());
+        this.dao.setBatchSize(configuration.getHousekeepBatchSize());
     }
 }

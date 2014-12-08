@@ -40,9 +40,6 @@
  */
 package org.ikasan.filter.duplicate.dao;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import junit.framework.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
@@ -104,13 +101,11 @@ public class FilteredMessageDaoInMemDBTest
         Assert.assertEquals("test", newEntryReloaded.getClientId());
         Assert.assertEquals("save_test".hashCode(), newEntryReloaded.getCriteria().intValue());
 
-        //Because testing Date sucks. Will restrict the assertions to yyyyMMdd only!
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-        String expectedCreatedDate = formatter.format(new Date(System.currentTimeMillis()));
-        String expectedExpiryDate = formatter.format(new Date(System.currentTimeMillis() + (timeToLive * 24 * 3600 * 1000)));
+        // created should be before expiry
+        Assert.assertTrue(newEntryReloaded.getCreatedDateTime() < newEntryReloaded.getExpiry());
 
-        Assert.assertEquals(expectedCreatedDate, formatter.format(newEntryReloaded.getCreatedDateTime()));
-        Assert.assertEquals(expectedExpiryDate, formatter.format(newEntryReloaded.getExpiry()));
+        // created + TTL should equal expiry
+        Assert.assertTrue((newEntryReloaded.getCreatedDateTime() + (timeToLive * 24 * 3600 * 1000)) == newEntryReloaded.getExpiry());
     }
 
     /**

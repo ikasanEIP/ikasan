@@ -42,7 +42,6 @@ package org.ikasan.filter.duplicate.model;
 
 import org.ikasan.spec.component.filter.FilterException;
 
-
 /**
  * FilterEntryConvertorException defines the exception on the 
  * FilterEntryConverter contract.
