@@ -40,30 +40,34 @@
  */
 package org.ikasan.wiretap.service;
 
-import java.util.Date;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.wiretap.dao.WiretapDao;
 import org.ikasan.wiretap.model.WiretapEventFactory;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.module.ModuleService;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Default implementation of the <code>WiretapService</code>
  * 
  * @author Ikasan Development Team
  */
-public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>
+public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchResult<WiretapEvent>>, InitializingBean
 {
     /** Data access object for the persistence of <code>WiretapFlowEvent</code> */
     private WiretapDao wiretapDao;
 
     /** Logger for this class */
     private static Logger logger = Logger.getLogger(WiretapServiceImpl.class);
+
+    /** Optional service configuration for the wiretap service */
+    private WiretapServiceConfiguration wiretapServiceConfiguration;
 
     /**
      * Container for modules
@@ -139,7 +143,7 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
     /**
      * Get a wireTap event given its Id
      * 
-     * @param wiretapFlowEventId - The Id to search with
+     * @param wiretapEventId - The Id to search with
      * @return The WiretapFlowEvent
      */
     public WiretapEvent getWiretapEvent(Long wiretapEventId)
@@ -190,4 +194,23 @@ public class WiretapServiceImpl implements WiretapService<FlowEvent,PagedSearchR
         logger.info("wiretap housekeep completed in ["+(endTime-startTime)+" ms]");
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception
+    {
+        if (wiretapServiceConfiguration != null)
+        {
+            wiretapDao.setHousekeepingBatchSize(wiretapServiceConfiguration.getHousekeepingBatchSize());
+            wiretapDao.setBatchHousekeepDelete(wiretapServiceConfiguration.isBatchHousekeepDelete());
+        }
+    }
+
+    public WiretapServiceConfiguration getWiretapServiceConfiguration()
+    {
+        return wiretapServiceConfiguration;
+    }
+
+    public void setWiretapServiceConfiguration(WiretapServiceConfiguration wiretapServiceConfiguration)
+    {
+        this.wiretapServiceConfiguration = wiretapServiceConfiguration;
+    }
 }
