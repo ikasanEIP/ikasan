@@ -359,4 +359,24 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             }
         });
 	}
+
+    public boolean isBatchHousekeepDelete()
+    {
+        return batchHousekeepDelete;
+    }
+
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
+    {
+        this.batchHousekeepDelete = batchHousekeepDelete;
+    }
+
+    public Integer getHousekeepingBatchSize()
+    {
+        return housekeepingBatchSize;
+    }
+
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        this.housekeepingBatchSize = housekeepingBatchSize;
+    }
 }
