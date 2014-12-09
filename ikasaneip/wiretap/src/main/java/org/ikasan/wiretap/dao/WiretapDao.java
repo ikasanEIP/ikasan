@@ -94,4 +94,12 @@ public interface WiretapDao
      * Deletes all WiretapFlowEvents that have surpassed their expiryDate
      */
     public void deleteAllExpired();
+
+    public boolean isBatchHousekeepDelete();
+
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
+
+    public Integer getHousekeepingBatchSize();
+
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
 }
