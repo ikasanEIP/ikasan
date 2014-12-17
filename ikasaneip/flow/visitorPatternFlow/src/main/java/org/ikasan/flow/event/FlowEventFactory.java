@@ -186,8 +186,27 @@ public class FlowEventFactory implements EventFactory<FlowEvent<?,?>>
             builder.append("]");
             return builder.toString();
         }
-		
-		
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            GenericFlowEvent that = (GenericFlowEvent) o;
+
+            if (!identifier.equals(that.identifier)) return false;
+            if (relatedIdentifier != null ? !relatedIdentifier.equals(that.relatedIdentifier) : that.relatedIdentifier != null)
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = identifier.hashCode();
+            result = 31 * result + (relatedIdentifier != null ? relatedIdentifier.hashCode() : 0);
+            return result;
+        }
+    }
 
 }
