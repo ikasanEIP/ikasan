@@ -71,7 +71,7 @@ public class SimpleExample
                 .addFlow(FlowBuilder.newFlow("flowName", moduleName).withDescription("Simple Module Example")
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
-                        .router("routerName", new SimpleRouter())
+                        .singleRecipientRouter("routerName", new SimpleRouter())
                         .when("odd").publisher("oddValuePublisher", new SimpleProducer())
                         .otherise().publisher("evenValuePublisher", new SimpleProducer())
                         .build())
