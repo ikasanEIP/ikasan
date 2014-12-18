@@ -449,13 +449,13 @@ public class FlowBuilder
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
-            public RouterRootConfigurationBuilder router(String name, MultiRecipientRouter router)
+            public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
             {
                 flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance())));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
-            public RouterRootConfigurationBuilder router(String name, SingleRecipientRouter router)
+            public RouterRootConfigurationBuilder singleRecipientRouter(String name, SingleRecipientRouter router)
             {
                 flowElements.add(new FlowElementImpl(name, router, new SingleRecipientRouterFlowElementInvoker()));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
@@ -570,13 +570,13 @@ public class FlowBuilder
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
-            public RouterRootConfigurationBuilder router(String name, MultiRecipientRouter router)
+            public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
             {
                 flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance())));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
-            public RouterRootConfigurationBuilder router(String name, SingleRecipientRouter router)
+            public RouterRootConfigurationBuilder singleRecipientRouter(String name, SingleRecipientRouter router)
             {
                 flowElements.add(new FlowElementImpl(name, router, new SingleRecipientRouterFlowElementInvoker()));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
@@ -634,7 +634,15 @@ public class FlowBuilder
                                 flowElement.getFlowElementInvoker(), new HashMap<String,FlowElement>(transitions) );
                         transitions.clear();
                     }
-					else if (flowElement.getFlowComponent() instanceof Sequencer)
+                    else if (flowElement.getFlowComponent() instanceof SingleRecipientRouter)
+                    {
+                        nextFlowElement = new FlowElementImpl(
+                                flowElement.getComponentName(),
+                                flowElement.getFlowComponent(),
+                                flowElement.getFlowElementInvoker(), new HashMap<String,FlowElement>(transitions) );
+                        transitions.clear();
+                    }
+                    else if (flowElement.getFlowComponent() instanceof Sequencer)
 					{
 						nextFlowElement = new FlowElementImpl(
 								flowElement.getComponentName(),
