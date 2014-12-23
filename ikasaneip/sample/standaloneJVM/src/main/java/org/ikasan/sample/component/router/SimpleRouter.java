@@ -42,6 +42,7 @@ package org.ikasan.sample.component.router;
 
 import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.component.routing.RouterException;
+import org.ikasan.spec.component.routing.SingleRecipientRouter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,20 +51,17 @@ import java.util.List;
  * Simple Router based on whether the string represents an even or odd number.
  * @author Ikasan Development Team.
  */
-public class SimpleRouter implements Router<String>
+public class SimpleRouter implements SingleRecipientRouter<String>
 {
         @Override
-        public List<String> route(String messageToRoute) throws RouterException
+        public String route(String messageToRoute) throws RouterException
         {
-            List<String> routes = new ArrayList<String>();
             char ch = messageToRoute.charAt(messageToRoute.length()-1);
             if(ch == 49 || ch == 51 || ch == 53 || ch == 55 || ch == 57)
             {
-                routes.add("odd");
-                return routes;
+                return "odd";
             }
 
-            routes.add("default");
-            return routes;
+            return Router.DEFAULT_RESULT;
         }
 }
