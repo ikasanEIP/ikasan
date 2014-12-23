@@ -52,6 +52,9 @@ public class FilterConfiguration
     /** allow filter to be turned on or off - default on */
     private boolean applyFilter = true;
 
+    /** log filtered events */
+    private boolean logFiltered = false;
+
     /**
      * Getter for determining if filter should be applied
      * @return
@@ -70,4 +73,11 @@ public class FilterConfiguration
         this.applyFilter = applyFilter;
     }
 
+    public boolean isLogFiltered() {
+        return logFiltered;
+    }
+
+    public void setLogFiltered(boolean logFiltered) {
+        this.logFiltered = logFiltered;
+    }
 }

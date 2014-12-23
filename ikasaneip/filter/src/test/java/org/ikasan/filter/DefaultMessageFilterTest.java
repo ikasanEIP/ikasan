@@ -89,6 +89,7 @@ public class DefaultMessageFilterTest
                 one(filterConfiguration).isApplyFilter();
                 will(returnValue(true));
                 one(filterRule).accept(messageToFilter);will(returnValue(false));
+                one(filterConfiguration).isLogFiltered();will(returnValue(true));
             }
         });
 
