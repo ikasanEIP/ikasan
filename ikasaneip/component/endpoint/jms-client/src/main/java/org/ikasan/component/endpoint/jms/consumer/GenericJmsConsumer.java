@@ -66,7 +66,7 @@ import java.util.Hashtable;
  */
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>,EventFactory>,
-        ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message>,
+        ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message,Throwable>,
         ConfiguredResource<GenericJmsConsumerConfiguration>
 {
     /** class logger */
