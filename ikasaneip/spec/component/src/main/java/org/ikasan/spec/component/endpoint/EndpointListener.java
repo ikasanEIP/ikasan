@@ -46,7 +46,7 @@ package org.ikasan.spec.component.endpoint;
  * 
  * @author Ikasan Development Teams
  */
-public interface EndpointListener<MESSAGE>
+public interface EndpointListener<MESSAGE,EXCEPTION extends Throwable>
 {
     /**
      * Notify on endpoint message receipt.
@@ -56,7 +56,7 @@ public interface EndpointListener<MESSAGE>
 
     /**
      * Notify on endpoint exception.
-     * @param throwable
+     * @param exception
      */
-    public void onException(Throwable throwable);
+    public void onException(EXCEPTION exception);
 }

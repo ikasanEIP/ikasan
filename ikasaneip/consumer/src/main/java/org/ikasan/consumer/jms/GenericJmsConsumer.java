@@ -64,7 +64,7 @@ import java.util.Hashtable;
  * @deprecated - replaced with {@link org.ikasan.component.endpoint.jms.consumer.GenericJmsConsumer} in the ikasan-jms-client library
  */
 public class GenericJmsConsumer 
-    implements Consumer<EventListener<?>,EventFactory>, ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message>,
+    implements Consumer<EventListener<?>,EventFactory>, ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message,Throwable>,
     ConfiguredResource<GenericJmsConsumerConfiguration>
 {
     /** class logger */
