@@ -44,11 +44,14 @@ import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.*;
 
 import java.text.ParseException;
@@ -64,7 +67,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @DisallowConcurrentExecution
 public class ScheduledConsumer<T>
-        implements Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
+        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
 {
     /**
      * logger
@@ -105,6 +108,9 @@ public class ScheduledConsumer<T>
      * consumer configuration
      */
     private ScheduledConsumerConfiguration consumerConfiguration;
+
+    /** is this a critical resource to cause startup failure */
+    private boolean criticalOnStartup;
 
     /**
      * job identifying name
@@ -303,6 +309,12 @@ public class ScheduledConsumer<T>
     public void setConfiguration(ScheduledConsumerConfiguration consumerConfiguration)
     {
         this.consumerConfiguration = consumerConfiguration;
+
+        // pass configuration to messageProvider if this is configured
+        if(messageProvider instanceof Configured)
+        {
+            ((Configured)messageProvider).setConfiguration(consumerConfiguration);
+        }
     }
 
     public void setConfiguredResourceId(String configuredResourceId)
@@ -333,5 +345,44 @@ public class ScheduledConsumer<T>
     public EventFactory getEventFactory()
     {
         return this.flowEventFactory;
+    }
+
+    @Override
+    public void startManagedResource()
+    {
+        if(messageProvider instanceof ManagedResource)
+        {
+            ((ManagedResource)messageProvider).startManagedResource();
+        }
+    }
+
+    @Override
+    public void stopManagedResource()
+    {
+        if(messageProvider instanceof ManagedResource)
+        {
+            ((ManagedResource)messageProvider).stopManagedResource();
+        }
+    }
+
+    @Override
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    {
+        if(messageProvider instanceof ManagedResource)
+        {
+            ((ManagedResource)messageProvider).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+        }
+    }
+
+    @Override
+    public boolean isCriticalOnStartup()
+    {
+        return this.criticalOnStartup;
+    }
+
+    @Override
+    public void setCriticalOnStartup(boolean criticalOnStartup)
+    {
+        this.criticalOnStartup = criticalOnStartup;
     }
 }
