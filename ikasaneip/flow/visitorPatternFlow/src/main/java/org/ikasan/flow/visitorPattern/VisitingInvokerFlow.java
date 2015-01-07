@@ -411,7 +411,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     {
         for(FlowElement<ManagedResource> flowElement:this.flowConfiguration.getManagedResourceFlowElements())
         {
+            logger.info("Stopping managed component             ["
+                    + flowElement.getComponentName() + "]...");
             flowElement.getFlowComponent().stopManagedResource();
+            logger.info("Successfully stopped managed component ["
+                    + flowElement.getComponentName() + "]");
         }
     }
     
@@ -430,8 +434,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 ManagedResource managedResource = flowElement.getFlowComponent();
                 managedResource.setManagedResourceRecoveryManager( managedResourceRecoveryManagerFactory.getManagedResourceRecoveryManager(flowElement.getComponentName()) );
+                logger.info("Starting managed component             ["
+                        + flowElement.getComponentName() + "]...");
                 managedResource.startManagedResource();
-                logger.info("Started managed component [" 
+                logger.info("Successfully started managed component ["
                     + flowElement.getComponentName() + "]");
             }
             catch(RuntimeException e)
