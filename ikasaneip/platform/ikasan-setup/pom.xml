@@ -49,13 +49,13 @@
 	<parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc1</version>
+        <version>1.0.0-rc2-SNAPSHOT</version>
         <relativePath />
     </parent>
     
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-setup</artifactId>
-    <version>1.0.0-rc1</version>
+    <version>1.0.0-rc2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <build>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc1</version>
+            <version>1.0.0-rc2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
