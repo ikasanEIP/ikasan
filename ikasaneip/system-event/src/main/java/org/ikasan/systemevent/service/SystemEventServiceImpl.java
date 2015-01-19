@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.dao.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEvent;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * SystemFlowEvent service implementation
@@ -53,7 +54,7 @@ import org.ikasan.systemevent.model.SystemEvent;
  * @author Ikasan Development Team
  * 
  */
-public class SystemEventServiceImpl implements SystemEventService
+public class SystemEventServiceImpl implements SystemEventService, InitializingBean
 {
     private Logger logger = Logger.getLogger(SystemEventServiceImpl.class);
 
@@ -67,6 +68,8 @@ public class SystemEventServiceImpl implements SystemEventService
      * null, then no expiry
      */
     private Long eventExpiryMinutes;
+
+    private SystemEventServiceConfiguration systemEventServiceConfiguration;
 
     /**
      * Constructor
@@ -128,5 +131,25 @@ public class SystemEventServiceImpl implements SystemEventService
         long after = System.currentTimeMillis();
         logger.info("housekeep completed in [" + (after - before) + "]ms");
 
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception
+    {
+        if (systemEventDao != null && systemEventServiceConfiguration != null)
+        {
+            systemEventDao.setBatchHousekeepDelete(systemEventServiceConfiguration.isBatchHousekeepDelete());
+            systemEventDao.setHousekeepingBatchSize(systemEventServiceConfiguration.getHousekeepingBatchSize());
+        }
+    }
+
+    public SystemEventServiceConfiguration getSystemEventServiceConfiguration()
+    {
+        return systemEventServiceConfiguration;
+    }
+
+    public void setSystemEventServiceConfiguration(SystemEventServiceConfiguration systemEventServiceConfiguration)
+    {
+        this.systemEventServiceConfiguration = systemEventServiceConfiguration;
     }
 }

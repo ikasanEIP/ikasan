@@ -83,4 +83,12 @@ public interface SystemEventDao {
 	 * Deletes all expired system events
 	 */
 	public void deleteExpired();
+
+	public boolean isBatchHousekeepDelete();
+
+	public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
+
+	public Integer getHousekeepingBatchSize();
+
+	public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
 }
