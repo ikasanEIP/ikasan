@@ -193,7 +193,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      * @param restrictionValue - The value to check
      * @return - true if the restriction exists for that value, else false
      */
-    static final boolean restrictionExists(Object restrictionValue)
+    static boolean restrictionExists(Object restrictionValue)
     {
         // If the value passed in is not null and not an empty string then it
         // can have a restriction applied
@@ -231,7 +231,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      */
     private void batchHousekeepDelete()
     {
-        logger.info("called");
+        logger.info("called batchHousekeppDelete");
         while (housekeepablesExist())
         {
             final List<Long> housekeepableBatch = getHousekeepableBatch();
@@ -309,5 +309,29 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             }
         });
 
+    }
+
+    @Override
+    public boolean isBatchHousekeepDelete()
+    {
+        return batchHousekeepDelete;
+    }
+
+    @Override
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
+    {
+        this.batchHousekeepDelete = batchHousekeepDelete;
+    }
+
+    @Override
+    public Integer getHousekeepingBatchSize()
+    {
+        return housekeepingBatchSize;
+    }
+
+    @Override
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
+    {
+        this.housekeepingBatchSize = housekeepingBatchSize;
     }
 }
