@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>0.9.5-SNAPSHOT</version>
+		<version>1.0.0-rc1</version>
 		<relativePath />
 	</parent>
 
@@ -34,13 +34,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-setup</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
         </dependency>
 
         <dependency>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>console-jar</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
         </dependency>
 
         <dependency>

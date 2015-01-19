@@ -49,8 +49,8 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.5-SNAPSHOT</version>
-        <relativePath/>
+        <version>1.0.0-rc1</version>
+        <relativePath />
     </parent>
 
     <artifactId>ikasan-security</artifactId>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
             <scope>provided</scope>
         </dependency>
 

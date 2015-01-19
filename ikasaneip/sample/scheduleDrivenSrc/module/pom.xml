@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>0.9.5-SNAPSHOT</version>
+        <version>1.0.0-rc1</version>
         <relativePath />
     </parent>
 
@@ -62,13 +62,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder-spring</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-test</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
+            <version>1.0.0-rc1</version>
             <scope>test</scope>
         </dependency>
 
