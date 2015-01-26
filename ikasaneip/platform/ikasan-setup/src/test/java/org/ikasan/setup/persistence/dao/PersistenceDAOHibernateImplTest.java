@@ -42,6 +42,8 @@ package org.ikasan.setup.persistence.dao;
 
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,6 +71,8 @@ public class PersistenceDAOHibernateImplTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
+    
+
 
     @Resource
     PersistenceDAOHibernateImpl persistenceDAOHibernateImpl;
