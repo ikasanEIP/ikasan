@@ -43,7 +43,6 @@ package org.ikasan.flow.visitorPattern.invoker;
 
 import org.ikasan.flow.visitorPattern.InvalidFlowException;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.ikasan.spec.component.routing.Router;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.*;
 import org.jmock.Expectations;
@@ -159,8 +158,6 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
                 exactly(1).of(flowElement).getTransition("two");
                 will(returnValue(flowElement));
-                exactly(1).of(replicationFactory).replicate(flowEvent);
-                will(returnValue(flowEvent));
                 exactly(1).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
                 exactly(1).of(flowElementInvoker).invoke(flowEventListener, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);

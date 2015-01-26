@@ -111,6 +111,7 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
 
             int targetCount = 0;
             for (String targetName : targetNames) {
+                FlowEvent routedFlowEvent = flowEvent;
                 final FlowElement nextFlowElement = flowElement.getTransition(targetName);
                 if (nextFlowElement == null) {
                     throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName()
@@ -121,17 +122,16 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
                 FlowElement nextFlowElementInRoute = nextFlowElement;
 
                 targetCount++;
+
+                // if we are at the last targetName then skip replication of the event as this is expensive
+                if (targetCount < targetNames.size())
+                {
+                    routedFlowEvent = replicationFactory.replicate(flowEvent);
+                }
+
                 while (nextFlowElementInRoute != null)
                 {
-                    // if we are at the last targetName then skip replication of the event as this is expensive
-                    if (targetCount == targetNames.size())
-                    {
-                        nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, flowEvent, nextFlowElementInRoute);
-                    }
-                    else
-                    {
-                        nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, replicationFactory.replicate(flowEvent), nextFlowElementInRoute);
-                    }
+                    nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListener, moduleName, flowName, flowInvocationContext, routedFlowEvent, nextFlowElementInRoute);
                 }
             }
         }
