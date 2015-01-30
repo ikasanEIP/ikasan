@@ -48,15 +48,24 @@
         <relativePath />
     </parent>
 
-    <artifactId>ikasan-component</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Components</name>
+    <artifactId>ikasan-component-splitter</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration Splitter Implementations</name>
 
-    <modules>
-        <module>converter</module>
-        <module>router</module>
-        <module>splitter</module>
-        <module>endpoint</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
+            <version>1.0.0-rc2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 </project>
