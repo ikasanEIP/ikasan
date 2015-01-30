@@ -89,6 +89,7 @@ public class PersistenceServiceImpl implements PersistenceService
 
     private static String VERSION = "version";
     private static String VERSION_ENTRY = "version.entry";
+    private static String EXCLUSION_EVENT = "exclusionEvent";
 
     /** handle to under DAO layer */
     private ProviderDAO providerDAO;
@@ -156,6 +157,7 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(USERS);
         this.providerDAO.create(AUTHORITIES);
         this.providerDAO.create(USERS_AUTHORITIES);
+        this.providerDAO.create(EXCLUSION_EVENT);
     }
 
     @Override
