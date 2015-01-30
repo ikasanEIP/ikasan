@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>1.0.0-rc2-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -65,26 +65,26 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-genericTechPriceSrc</artifactId>
-            <version>1.0.0-rc2</version>
+            <version>1.0.0-rc2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-genericTechPriceSrc-war</artifactId>
-            <version>1.0.0-rc2</version>
+            <version>1.0.0-rc2-SNAPSHOT</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc2</version>
+            <version>1.0.0-rc2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder-spring</artifactId>
-            <version>1.0.0-rc2</version>
+            <version>1.0.0-rc2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
