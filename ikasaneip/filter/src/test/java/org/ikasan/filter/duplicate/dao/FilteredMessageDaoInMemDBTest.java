@@ -44,7 +44,6 @@ import junit.framework.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,8 +110,9 @@ public class FilteredMessageDaoInMemDBTest
     /**
      * Test case: bulk delete only expired messages found in persistence. Searching for
      * housekept entries will return null.
+     * @throws InterruptedException 
      */
-    @Test public void bulk_delete_expired_entries()
+    @Test public void bulk_delete_expired_entries() throws InterruptedException
     {
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
         this.daoToTest.save(one);
@@ -122,7 +122,7 @@ public class FilteredMessageDaoInMemDBTest
 
         FilterEntry three = new DefaultFilterEntry("three".hashCode(), "bulk_delete_test", 1);
         this.daoToTest.save(three);
-
+        Thread.sleep(10l); // let time move on 
         this.daoToTest.deleteAllExpired();
 
         FilterEntry found = this.daoToTest.findMessage(one);
@@ -138,8 +138,9 @@ public class FilteredMessageDaoInMemDBTest
     /**
      * Test case: delete expired entries in batches of pre-set size. Searching for
      * housekept entries will return null.
+     * @throws InterruptedException 
      */
-    @Test public void batch_delete_expired_entries()
+    @Test public void batch_delete_expired_entries() throws InterruptedException
     {
         this.daoToTest.setBatchedHousekeep(true);
         this.daoToTest.setBatchSize(1);
@@ -151,7 +152,7 @@ public class FilteredMessageDaoInMemDBTest
 
         FilterEntry three = new DefaultFilterEntry("three".hashCode(), "batch_delete_test", 1);
         this.daoToTest.save(three);
-
+        Thread.sleep(10l); // let time move on 
         this.daoToTest.deleteAllExpired();
 
         FilterEntry found = this.daoToTest.findMessage(one);
