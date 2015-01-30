@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
         <relativePath />
     </parent>
 
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <version>1.0.0-rc2-SNAPSHOT</version>
+            <version>1.0.0-rc2</version>
             <scope>provided</scope>
         </dependency>
 

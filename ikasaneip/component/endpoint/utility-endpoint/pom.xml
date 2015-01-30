@@ -44,13 +44,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
         <relativePath />
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-utility-endpoint</artifactId>
-    <version>1.0.0-rc2-SNAPSHOT</version>
+    <version>1.0.0-rc2</version>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration general utility endpoints</name>
 
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-build</artifactId>
-            <version>1.0.0-rc2-SNAPSHOT</version>
+            <version>1.0.0-rc2</version>
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <version>1.0.0-rc2-SNAPSHOT</version>
+            <version>1.0.0-rc2</version>
             <scope>provided</scope>
         </dependency>
 
