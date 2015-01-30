@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc2-SNAPSHOT</version>
+        <version>1.0.0-rc2</version>
         <relativePath />
     </parent>
 
@@ -93,25 +93,25 @@
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-spec-module</artifactId>
-	      <version>1.0.0-rc2-SNAPSHOT</version>
+	      <version>1.0.0-rc2</version>
 	      <scope>provided</scope>
 	    </dependency>
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-security</artifactId>
-          <version>1.0.0-rc2-SNAPSHOT</version>
+          <version>1.0.0-rc2</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-system-event</artifactId>
-          <version>1.0.0-rc2-SNAPSHOT</version>
+          <version>1.0.0-rc2</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-spec-flow</artifactId>
-          <version>1.0.0-rc2-SNAPSHOT</version>
+          <version>1.0.0-rc2</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
