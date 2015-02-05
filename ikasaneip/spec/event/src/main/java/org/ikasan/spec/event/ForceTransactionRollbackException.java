@@ -42,10 +42,12 @@ package org.ikasan.spec.event;
 
 /**
  * Exception used to specify a transaction rollback.
+ * Marked as final so we can ensure no subclasses and correct behaviour when detecting
+ * a tech provider is returning a bubbled up exception back to a error handler
  * 
  * @author Ikasan Development Team
  */
-public class ForceTransactionRollbackException extends RuntimeException
+public final class ForceTransactionRollbackException extends RuntimeException
 {
     /** serialVersionUID */
     private static final long serialVersionUID = 5643215546008399313L;

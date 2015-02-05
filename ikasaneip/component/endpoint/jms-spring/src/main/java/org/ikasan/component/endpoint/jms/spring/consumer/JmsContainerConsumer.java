@@ -46,10 +46,7 @@ import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.event.ManagedEventIdentifierException;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
+import org.ikasan.spec.event.*;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
@@ -197,6 +194,11 @@ public class JmsContainerConsumer
     @Override
     public void handleError(Throwable throwable)
     {
+        if (throwable instanceof ForceTransactionRollbackException)
+        {
+            logger.info("Ignoring rethrown ForceTransactionRollbackException");
+            return;
+        }
         if(eventListener != null)
         {
             this.eventListener.invoke(throwable);
