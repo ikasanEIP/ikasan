@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>1.0.0-rc2</version>
+		<version>1.0.0-rc3-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-bootstrap-war</artifactId>
-    <version>1.0.0-rc2</version>
+    <version>1.0.0-rc3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Ikasan Enterprise Integration Bootstrap WAR</name>
 
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-bootstrap</artifactId>
-            <version>1.0.0-rc2</version>
+            <version>1.0.0-rc3-SNAPSHOT</version>
         </dependency>
 
 		<dependency>
