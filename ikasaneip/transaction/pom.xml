@@ -45,13 +45,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc2</version>
+        <version>1.0.0-rc3-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-transaction</artifactId>
-    <version>1.0.0-rc2</version>
+    <version>1.0.0-rc3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Transation Parent</name>
     <description>Ikasan Transaction Support Parent</description>
