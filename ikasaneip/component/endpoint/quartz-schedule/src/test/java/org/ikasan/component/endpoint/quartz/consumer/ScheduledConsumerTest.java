@@ -48,6 +48,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -377,6 +378,48 @@ public class ScheduledConsumerTest
         // assert
         mockery.assertIsSatisfied();
     }
+    
+    @Test
+    public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
+        final ManagedResourceRecoveryManager resourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class);
+        final String identifier = "testId";
+        final RuntimeException rt = new RuntimeException("rt is thrown");
+        
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
+                will(throwException(rt));
+                exactly(1).of(resourceRecoveryManager).recover(rt);
+                // schedule the job
+                exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                will(returnValue(identifier));
+
+                exactly(0).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                will(returnValue(mockFlowEvent));
+
+                exactly(0).of(eventListener).invoke(mockFlowEvent);
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setMessageProvider(mockMessageProvider);
+        scheduledConsumer.setManagedResourceRecoveryManager(resourceRecoveryManager);
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
+
+    
     /**
      * Extended ScheduledRecoveryManagerJobFactory for testing with replacement mocks.
      * @author Ikasan Development Team

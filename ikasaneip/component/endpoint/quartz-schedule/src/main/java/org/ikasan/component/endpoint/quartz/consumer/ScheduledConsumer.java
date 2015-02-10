@@ -127,6 +127,8 @@ public class ScheduledConsumer<T>
      */
     private MessageProvider<?> messageProvider = new QuartzMessageProvider();
 
+    private ManagedResourceRecoveryManager managedResourceRecoveryManager;
+
     /**
      * Constructor
      *
@@ -239,11 +241,15 @@ public class ScheduledConsumer<T>
      */
     public void execute(JobExecutionContext context)
     {
+        try {
         T message = (T) messageProvider.invoke(context);
         if (message != null)
         {
             FlowEvent<?, ?> flowEvent = createFlowEvent(message);
             this.eventListener.invoke(flowEvent);
+        }
+        } catch (Throwable thr){
+            managedResourceRecoveryManager.recover(thr);
         }
     }
 
@@ -368,6 +374,7 @@ public class ScheduledConsumer<T>
     @Override
     public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
     {
+        this.managedResourceRecoveryManager = managedResourceRecoveryManager;
         if(messageProvider instanceof ManagedResource)
         {
             ((ManagedResource)messageProvider).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
