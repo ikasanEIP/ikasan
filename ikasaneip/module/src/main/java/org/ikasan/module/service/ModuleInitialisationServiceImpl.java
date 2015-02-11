@@ -49,6 +49,7 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -205,21 +206,35 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
         }
 
         // TODO - find a more generic way of managing this for platform resources
-        Map<String,Scheduler> schedulers = this.platformContext.getBeansOfType(Scheduler.class);
-        if(schedulers != null)
-        {
-            for(Scheduler scheduler:schedulers.values())
-            {
-                scheduler.shutdown();
-            }
-        }
+        shutdownSchedulers(platformContext);
         // close our inner loaded contexts
         for (AbstractApplicationContext context : innerContexts)
         {
             logger.debug("closing and destroying inner context: " + context.getDisplayName());
+            shutdownSchedulers(context);
             context.close();
         }
         innerContexts.clear();
+    }
+
+    private void shutdownSchedulers(ApplicationContext context)
+    {
+        Map<String,Scheduler> schedulers = context.getBeansOfType(Scheduler.class);
+        if(schedulers != null)
+        {
+            for(Map.Entry<String, Scheduler> entry : schedulers.entrySet())
+            {
+                logger.info("Shutting down Quartz scheduler with bean name: " + entry.getKey());
+                try
+                {
+                    entry.getValue().shutdown();
+                }
+                catch (SchedulerException e)
+                {
+                    logger.warn("Exception shutting down Quartz scheduler. Will continue shutdown", e);
+                }
+            }
+        }
     }
 
     /**
