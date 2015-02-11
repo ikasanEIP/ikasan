@@ -73,6 +73,9 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     /** instantiated mongoclient */
     protected MongoClient mongoClient;
 
+    /** optional proxy for sharing a Mongo client*/
+    protected MongoClientProxy mongoClientProxy;
+
     /** handle to all referenced collections */
     protected Map<String, DBCollection> collections;
 
@@ -87,11 +90,6 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     public static void setLogger(Logger logger)
     {
         MongoComponent.logger = logger;
-    }
-
-    public void setMongoClient(MongoClient mongoClient)
-    {
-        this.mongoClient = mongoClient;
     }
 
     public void setCollections(Map<String, DBCollection> collections)
@@ -112,26 +110,24 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     @Override
     public void startManagedResource()
     {
-        this.configuration.validate();
-        List<ServerAddress> addresses = configuration.getServerAddresses();
-        if (addresses.size() == 0)
+        // if we have a proxy, use it, register interest in its lifecycle until Ikasan framework allows ManagedResource at the flow or module level
+        if (mongoClientProxy != null)
         {
-            throw new RuntimeException("No Mongo server addresses specified!");
-        }
-        MongoClientOptions mongoClientOptions = buildMongoClientOptions(configuration);
-        if (configuration.isAuthenticated())
-        {
-            MongoCredential mongoCredential = MongoCredential.createMongoCRCredential(configuration.getUsername(),
-                configuration.getDatabaseName(), (configuration.getPassword() != null) ? configuration.getPassword()
-                    .toCharArray() : null);
-            mongoClient = getClient(addresses, mongoCredential, mongoClientOptions);
+            if (mongoClientProxy.getConfiguration() == null)
+            {
+                mongoClientProxy.setConfiguration(configuration);
+                mongoClientProxy.setConfiguredResourceId(configuredResourceId);
+            }
+            mongoClientProxy.start(this);
+            mongoClient = mongoClientProxy.getMongoClient();
         }
         else
         {
-            mongoClient = getClient(addresses, mongoClientOptions);
+            mongoClient = MongoClientFactory.getMongoClient(configuration);
         }
+
         mongoDatabase = mongoClient.getDB(configuration.getDatabaseName());
-        collections = new HashMap<String, DBCollection>();
+        collections = new HashMap<>();
         for (Map.Entry<String, String> entry : configuration.getCollectionNames().entrySet())
         {
             DBCollection dbCollection = mongoDatabase.getCollection(entry.getValue());
@@ -143,6 +139,25 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
             collections.put(entry.getKey(), dbCollection);
         }
         addEncodingHooks();
+    }
+
+    @Override
+    public void stopManagedResource()
+    {
+        if (mongoClientProxy != null)
+        {
+            // use the proxy to manage the lifecycle
+            mongoClientProxy.stop(this);
+            mongoClient = null;
+        }
+        else
+        {
+            if (this.mongoClient != null)
+            {
+                this.mongoClient.close();
+                this.mongoClient = null;
+            }
+        }
     }
 
     /**
@@ -163,142 +178,6 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         }
     }
 
-    /**
-     * Factory method to support testing
-     * 
-     * @param addresses
-     * @param mongoCredential
-     * @param mongoClientOptions
-     * @return
-     */
-    protected MongoClient getClient(List<ServerAddress> addresses, MongoCredential mongoCredential,
-            MongoClientOptions mongoClientOptions)
-    {
-        return new com.mongodb.MongoClient(addresses, Arrays.asList(mongoCredential), mongoClientOptions);
-    }
-
-    /**
-     * Factory method to support testing
-     * 
-     * @param addresses
-     * @param mongoClientOptions
-     * @return
-     */
-    protected MongoClient getClient(List<ServerAddress> addresses, MongoClientOptions mongoClientOptions)
-    {
-        return new com.mongodb.MongoClient(addresses, mongoClientOptions);
-    }
-
-    /**
-     * Mongo option builder method
-     * 
-     * @param configuration
-     * @return
-     */
-    private MongoClientOptions buildMongoClientOptions(MongoClientConfiguration configuration)
-    {
-        MongoClientOptions.Builder builder = MongoClientOptions.builder();
-        if (configuration.getAcceptableLatencyDiff() != null)
-        {
-            builder.acceptableLatencyDifference(configuration.getAcceptableLatencyDiff().intValue());
-        }
-        if (configuration.getAlwaysUseMBeans() != null)
-        {
-            builder.alwaysUseMBeans(configuration.getAlwaysUseMBeans());
-        }
-        if (configuration.getConnectionsPerHost() != null)
-        {
-            builder.connectionsPerHost(configuration.getConnectionsPerHost());
-        }
-        if (configuration.getConnectionTimeout() != null)
-        {
-            builder.connectTimeout(configuration.getConnectionTimeout());
-        }
-        if (configuration.getCursorFinalizerEnabled() != null)
-        {
-            builder.cursorFinalizerEnabled(configuration.getCursorFinalizerEnabled());
-        }
-        if (configuration.getDescription() != null)
-        {
-            builder.description(configuration.getDescription());
-        }
-        if (configuration.getHeartbeatConnectRetryFrequency() != null)
-        {
-            builder.heartbeatConnectRetryFrequency(configuration.getHeartbeatConnectRetryFrequency());
-        }
-        if (configuration.getHeartbeatConnectTimeout() != null)
-        {
-            builder.heartbeatConnectTimeout(configuration.getHeartbeatConnectTimeout());
-        }
-        if (configuration.getHeartbeatFrequency() != null)
-        {
-            builder.heartbeatFrequency(configuration.getHeartbeatFrequency());
-        }
-        if (configuration.getHeartbeatSocketTimeout() != null)
-        {
-            builder.heartbeatSocketTimeout(configuration.getHeartbeatSocketTimeout());
-        }
-        if (configuration.getLegacyDefaults() != null && configuration.getLegacyDefaults())
-        {
-            builder.legacyDefaults();
-        }
-        if (configuration.getHeartbeatThreadCount() != null)
-        {
-            builder.heartbeatThreadCount(configuration.getHeartbeatThreadCount());
-        }
-        if (configuration.getMaxConnectionIdleTime() != null)
-        {
-            builder.maxConnectionIdleTime(configuration.getMaxConnectionIdleTime());
-        }
-        if (configuration.getMaxConnectionLifeTime() != null)
-        {
-            builder.maxConnectionLifeTime(configuration.getMaxConnectionLifeTime());
-        }
-        if (configuration.getMaxWaitTime() != null)
-        {
-            builder.maxWaitTime(configuration.getMaxWaitTime());
-        }
-        if (configuration.getSocketTimeout() != null)
-        {
-            builder.socketTimeout(configuration.getSocketTimeout());
-        }
-        if (configuration.getMinConnectionsPerHost() != null)
-        {
-            builder.minConnectionsPerHost(configuration.getMinConnectionsPerHost());
-        }
-        if (configuration.getRequiredReplicaSetName() != null)
-        {
-            builder.requiredReplicaSetName(configuration.getRequiredReplicaSetName());
-        }
-        if (configuration.getSocketKeepAlive() != null)
-        {
-            builder.socketKeepAlive(configuration.getSocketKeepAlive());
-        }
-        if (configuration.getThreadsAllowedToBlockForConnectionMultiplier() != null)
-        {
-            builder.threadsAllowedToBlockForConnectionMultiplier(configuration
-                .getThreadsAllowedToBlockForConnectionMultiplier());
-        }
-        if (configuration.getReadPreference() != null)
-        {
-            builder.readPreference(configuration.getReadPreference());
-        }
-        if (configuration.getWriteConcern() != null)
-        {
-            builder.writeConcern(configuration.getWriteConcern());
-        }
-        return builder.build();
-    }
-
-    @Override
-    public void stopManagedResource()
-    {
-        if (this.mongoClient != null)
-        {
-            this.mongoClient.close();
-            this.mongoClient = null;
-        }
-    }
 
     @Override
     public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
@@ -341,4 +220,20 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     {
         this.configuration = configuration;
     }
+
+    public MongoClientProxy getMongoClientProxy()
+    {
+        return mongoClientProxy;
+    }
+
+    public void setMongoClientProxy(MongoClientProxy mongoClientProxy)
+    {
+        this.mongoClientProxy = mongoClientProxy;
+    }
+
+    public MongoClient getMongoClient()
+    {
+        return mongoClient;
+    }
+
 }
