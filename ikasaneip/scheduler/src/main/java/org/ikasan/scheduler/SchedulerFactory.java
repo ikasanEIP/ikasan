@@ -104,6 +104,7 @@ public class SchedulerFactory
      */
     protected Scheduler newScheduler() throws SchedulerException
     {
+        System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
         return StdSchedulerFactory.getDefaultScheduler();
     }
 }
