@@ -99,7 +99,7 @@ public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Fi
         {
             if(this.filterConfiguration.isLogFiltered())
             {
-                logger.info("Filtered [" + message.toString() + "]");
+                logger.info("Filtered [" + ((message != null) ? message.toString() : "null") + "]");
             }
             return null;
         }
