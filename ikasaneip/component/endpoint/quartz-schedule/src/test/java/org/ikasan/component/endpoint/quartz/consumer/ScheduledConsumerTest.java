@@ -81,9 +81,6 @@ public class ScheduledConsumerTest
     /** Mock scheduler */
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
-    /** Mock scheduled job factory */
-    final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
-
     /** Mock job detail */
     final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
@@ -112,34 +109,7 @@ public class ScheduledConsumerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledConsumer(null, null, null, null);
-    }
-
-    /**
-     * Test failed constructor for scheduled consumer due to null flowEventFactory.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullFlowEventFactory()
-    {
-        new ScheduledConsumer(scheduler, null, null, null);
-    }
-
-    /**
-     * Test failed constructor for scheduled consumer due to null name.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullName()
-    {
-        new ScheduledConsumer(scheduler, scheduledJobFactory, null, null);
-    }
-
-    /**
-     * Test failed constructor for scheduled consumer due to null group.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullGroup()
-    {
-        new ScheduledConsumer(scheduler, scheduledJobFactory, "name", null);
+        new ScheduledConsumer(null);
     }
 
     /**
@@ -155,9 +125,6 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
-                will(returnValue(mockJobDetail));
-
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
@@ -172,8 +139,9 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
     }
@@ -191,9 +159,6 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
-                will(returnValue(mockJobDetail));
-
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
@@ -208,7 +173,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -227,9 +192,6 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
-                will(returnValue(mockJobDetail));
-
                 // get flow and module name from the job
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
@@ -244,7 +206,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -265,6 +227,9 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+
                 // unschedule the job
                 exactly(1).of(scheduler).checkExists(jobKey);
                 will(returnValue(Boolean.TRUE));
@@ -273,8 +238,9 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.stop();
         mockery.assertIsSatisfied();
     }
@@ -305,7 +271,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.stop();
         mockery.assertIsSatisfied();
@@ -333,7 +299,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -368,7 +334,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
@@ -406,7 +372,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
         
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
@@ -427,9 +393,9 @@ public class ScheduledConsumerTest
      */
     private class StubbedScheduledConsumer extends ScheduledConsumer
     {
-        protected StubbedScheduledConsumer(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String name, String group)
+        protected StubbedScheduledConsumer(Scheduler scheduler)
         {
-            super(scheduler, scheduledJobFactory, name, group);
+            super(scheduler);
         }
         
         @Override
