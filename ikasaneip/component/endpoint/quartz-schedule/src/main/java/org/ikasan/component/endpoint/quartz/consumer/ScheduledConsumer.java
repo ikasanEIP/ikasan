@@ -80,11 +80,6 @@ public class ScheduledConsumer<T>
     private Scheduler scheduler;
 
     /**
-     * scheduled job factory
-     */
-    private ScheduledJobFactory scheduledJobFactory;
-
-    /**
      * consumer event factory
      */
     private EventFactory<FlowEvent<?, ?>> flowEventFactory;
@@ -113,14 +108,9 @@ public class ScheduledConsumer<T>
     private boolean criticalOnStartup;
 
     /**
-     * job identifying name
+     * job detail wired by spring config.
      */
-    private String name;
-
-    /**
-     * job identifying group
-     */
-    private String group;
+    private JobDetail jobDetail;
 
     /**
      * default messageProvider is set to QuartzMessageProvider - can be overridden via the setter
@@ -133,31 +123,13 @@ public class ScheduledConsumer<T>
      * Constructor
      *
      * @param scheduler
-     * @param scheduledJobFactory
-     * @param name
-     * @param group
      */
-    public ScheduledConsumer(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String name, String group)
+    public ScheduledConsumer(Scheduler scheduler)
     {
         this.scheduler = scheduler;
         if (scheduler == null)
         {
             throw new IllegalArgumentException("scheduler cannot be 'null'");
-        }
-        this.scheduledJobFactory = scheduledJobFactory;
-        if (scheduledJobFactory == null)
-        {
-            throw new IllegalArgumentException("scheduledJobFactory cannot be 'null'");
-        }
-        this.name = name;
-        if (name == null)
-        {
-            throw new IllegalArgumentException("name cannot be 'null'");
-        }
-        this.group = group;
-        if (group == null)
-        {
-            throw new IllegalArgumentException("group cannot be 'null'");
         }
     }
 
@@ -168,7 +140,6 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            JobDetail jobDetail = scheduledJobFactory.createJobDetail(this, this.name, this.group);
             // create trigger
             // TODO - allow configuration to support multiple triggers
             JobKey jobkey = jobDetail.getKey();
@@ -196,7 +167,7 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            JobKey jobKey = new JobKey(name, group);
+            JobKey jobKey = jobDetail.getKey();
             if (this.scheduler.checkExists(jobKey))
             {
                 this.scheduler.deleteJob(jobKey);
@@ -221,7 +192,7 @@ public class ScheduledConsumer<T>
             {
                 return false;
             }
-            JobKey jobKey = new JobKey(this.name, this.group);
+            JobKey jobKey = jobDetail.getKey();
             if (this.scheduler.checkExists(jobKey))
             {
                 return true;
@@ -391,5 +362,10 @@ public class ScheduledConsumer<T>
     public void setCriticalOnStartup(boolean criticalOnStartup)
     {
         this.criticalOnStartup = criticalOnStartup;
+    }
+
+    public void setJobDetail(JobDetail jobDetail)
+    {
+        this.jobDetail = jobDetail;
     }
 }
