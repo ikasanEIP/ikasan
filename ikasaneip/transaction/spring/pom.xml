@@ -45,13 +45,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc3</version>
+        <version>1.0.0-rc4-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-transaction-spring</artifactId>
-    <version>1.0.0-rc3</version>
+    <version>1.0.0-rc4-SNAPSHOT</version>
     <name>Ikasan Transaction Spring</name>
     <description>Ikasan Transaction extensions to support Spring transaction wrapper</description>
 
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-build</artifactId>
-            <version>1.0.0-rc3</version>
+            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
             <type>pom</type>
         </dependency>

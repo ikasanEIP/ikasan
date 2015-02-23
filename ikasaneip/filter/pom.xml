@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc3</version>
+        <version>1.0.0-rc4-SNAPSHOT</version>
         <relativePath />
     </parent>
     
@@ -99,14 +99,14 @@
       <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-spec-component</artifactId>
-          <version>1.0.0-rc3</version>
+          <version>1.0.0-rc4-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-spec-configuration</artifactId>
-          <version>1.0.0-rc3</version>
+          <version>1.0.0-rc4-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
 
