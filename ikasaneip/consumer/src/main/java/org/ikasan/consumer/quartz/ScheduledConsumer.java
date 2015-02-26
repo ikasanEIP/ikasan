@@ -40,12 +40,6 @@
  */
 package org.ikasan.consumer.quartz;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
-
-import java.text.ParseException;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -53,14 +47,13 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.flow.FlowEvent;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
+
+import java.text.ParseException;
+import java.util.Date;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This test class supports the <code>Consumer</code> class.
@@ -144,7 +137,7 @@ public class ScheduledConsumer
     {
         try
         {
-            JobDetail jobDetail = scheduledJobFactory.createJobDetail(this, this.name, this.group);
+            JobDetail jobDetail = scheduledJobFactory.createJobDetail(this, ScheduledConsumer.class, this.name, this.group);
             
             // create trigger
             // TODO - allow configuration to support multiple triggers

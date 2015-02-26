@@ -40,9 +40,6 @@
  */
 package org.ikasan.consumer.quartz;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.FlowEvent;
@@ -50,12 +47,10 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.Job;
+import org.quartz.*;
+
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * This test class supports the <code>ScheduledConsumer</code> class.
@@ -143,7 +138,7 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -179,7 +174,7 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job
@@ -215,7 +210,7 @@ public class ScheduledConsumerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(mockJobDetail));
 
                 // get flow and module name from the job

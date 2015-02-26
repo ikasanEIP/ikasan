@@ -52,12 +52,13 @@ import org.quartz.spi.JobFactory;
 public interface ScheduledJobFactory extends JobFactory
 {
     /**
-     * Create a new jobDetail based on the given job implementation, name, 
+     * Create a new jobDetail based on the given job implementation, Class, name,
      * and group name.
-     * @param job
-     * @param name
-     * @param group
-     * @return JobDetail
+     * @param job the Job instance
+     * @param jobClass the Job implementation class - needed to work around problems with AOP proxies
+     * @param name the name of the Job
+     * @param group the group of the Job
+     * @return JobDetail a JobDetail
      */
-    public JobDetail createJobDetail(Job job, String name, String group);
+    public JobDetail createJobDetail(Job job, Class<? extends Job> jobClass, String name, String group);
 }

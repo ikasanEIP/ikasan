@@ -40,17 +40,9 @@
  */
 package org.ikasan.recovery;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.Assert;
-
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exceptionResolver.action.ExceptionAction;
-import org.ikasan.exceptionResolver.action.ExcludeEventAction;
-import org.ikasan.exceptionResolver.action.IgnoreAction;
-import org.ikasan.exceptionResolver.action.RetryAction;
-import org.ikasan.exceptionResolver.action.StopAction;
+import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.exclusion.ExclusionService;
@@ -62,12 +54,10 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This test class supports the <code>ScheduledRecoveryManager</code> class.
@@ -409,7 +399,7 @@ public class ScheduledRecoveryManagerTest
 
                 // create the recovery job and associated trigger
 //                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 exactly(2).of(retryAction).getMaxRetries();
@@ -484,7 +474,7 @@ public class ScheduledRecoveryManagerTest
 
                 // create the recovery job and associated trigger
 //                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
-                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 exactly(2).of(retryAction).getMaxRetries();
@@ -554,7 +544,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
                 
-                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 // create the recovery job and associated trigger
@@ -698,7 +688,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
                 
-                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(String.class)), with(any(String.class)));
+                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 // create the recovery job and associated trigger
