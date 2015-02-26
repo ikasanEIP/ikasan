@@ -40,21 +40,16 @@
  */
 package org.ikasan.scheduler;
 
-import java.util.Map;
-
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
+
+import java.util.Map;
 
 /**
  * This test class supports the <code>CachingScheduledJobFactory</code> class.
@@ -109,7 +104,7 @@ public class CachingScheduledJobFactoryTest
         });
 
         ScheduledJobFactory scheduledJobFactory = new StubbedCachingScheduledJobFactory();
-        Assert.assertTrue( scheduledJobFactory.createJobDetail(job, "name", "group") instanceof JobDetail );
+        Assert.assertTrue( scheduledJobFactory.createJobDetail(job, job.getClass(), "name", "group") instanceof JobDetail );
         mockery.assertIsSatisfied();
     }
     

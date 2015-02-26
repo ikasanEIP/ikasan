@@ -40,23 +40,15 @@
  */
 package org.ikasan.scheduler;
 
-import java.text.ParseException;
-
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 
-import static org.quartz.TriggerBuilder.*;
-import static org.quartz.CronScheduleBuilder.*;
+import java.text.ParseException;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This test class tests the scheduling and callback for jobs within Quartz.
@@ -91,7 +83,7 @@ public class SchedulerCallbackExecutionTest
         ConcurrentCallbackJob job = new ConcurrentCallbackJob(6000);
         Assert.assertFalse(this.callbackInvoked);
         
-        JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, "name", "group");
+        JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, ConcurrentCallbackJob.class, "name", "group");
         Trigger trigger = newTrigger().withIdentity("name", "group").withSchedule(cronSchedule("0/5 * * * * ?")).build();
         scheduler.scheduleJob(jobDetail, trigger);
         Assert.assertFalse("no callbacks should have occurred yet", this.callbackInvoked);
@@ -118,7 +110,7 @@ public class SchedulerCallbackExecutionTest
         NonConcurrentCallbackJob job = new NonConcurrentCallbackJob(15000);
         Assert.assertFalse(this.callbackInvoked);
         
-        JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, "name2", "group");
+        JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, NonConcurrentCallbackJob.class, "name2", "group");
         Trigger trigger = newTrigger().withIdentity("name2", "group").withSchedule(cronSchedule("0/5 * * * * ?")).build();
         scheduler.scheduleJob(jobDetail, trigger);
         Assert.assertFalse("no callbacks should have occurred yet", this.callbackInvoked);
@@ -171,6 +163,6 @@ public class SchedulerCallbackExecutionTest
     	{
     		super(sleep);
     	}
-     }
+    }
 }
 

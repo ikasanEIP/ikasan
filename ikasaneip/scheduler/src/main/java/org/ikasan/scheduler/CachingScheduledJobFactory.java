@@ -40,17 +40,13 @@
  */
 package org.ikasan.scheduler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.simpl.SimpleJobFactory;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Scheduled job factory implementation for returning cached job instances on callback.
@@ -120,17 +116,18 @@ public class CachingScheduledJobFactory implements ScheduledJobFactory
     }
 
     /**
-     * Create the job detail and cache the job instance for invocation on 
-     * scheduler callback.
-     * @param Job
-     * @param name
-     * @param group
-     * @return JobDetail
+     * Create a new jobDetail based on the given job implementation, Class, name,
+     * and group name.
+     * @param job the Job instance
+     * @param jobClass the Job implementation class - needed to work around problems with AOP proxies
+     * @param name the name of the Job
+     * @param group the group of the Job
+     * @return JobDetail a JobDetail
      */
-    public JobDetail createJobDetail(Job job, String name, String group)
+    public JobDetail createJobDetail(Job job, Class<? extends Job> jobClass, String name, String group)
     {
         JobKey jobKey = new JobKey(name, group);
         this.cachedJobs.put(jobKey, job);
-        return org.quartz.JobBuilder.newJob( job.getClass() ).withIdentity(name,group).build(); 
+        return org.quartz.JobBuilder.newJob( jobClass ).withIdentity(name,group).build();
     }
 }

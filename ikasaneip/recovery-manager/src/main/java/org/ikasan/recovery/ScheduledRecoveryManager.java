@@ -40,9 +40,6 @@
  */
 package org.ikasan.recovery;
 
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
@@ -53,17 +50,12 @@ import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 
-import static org.quartz.TriggerBuilder.*;
+import java.util.Date;
+import java.util.List;
+
+import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.TriggerKey.triggerKey;
 
 /**
@@ -323,7 +315,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     private void startRecovery(RetryAction retryAction)
         throws SchedulerException
     {
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
         Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
 
@@ -351,7 +343,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             throw new RuntimeException("Exhausted maximum retries.");
         }
 
-        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
         Trigger recoveryJobTrigger = newRecoveryTrigger(retryAction.getDelay());
         
         // Only schedule a new recovery if we don't have one in-progress.
