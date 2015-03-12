@@ -110,7 +110,8 @@
         <!-- version compatibility glue -->
         <module>compatibility</module>
 
-        <!-- top level services / applications -->
+	<!-- top level services / applications -->
+        <module>management</module>
         <module>webconsole</module>
         <module>console</module>
 

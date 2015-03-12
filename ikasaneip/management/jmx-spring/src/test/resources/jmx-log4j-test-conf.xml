@@ -1,0 +1,31 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+  
+ <bean id="moduleName" class="java.lang.String">
+        <constructor-arg value="stratusTradeIdentifierSrc" />
+ </bean>
+ 
+ <bean id="serverConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean" />
+ 
+ <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+  <property name="locateExistingServerIfPossible" value="false">
+  
+</property></bean>
+    
+<bean id="clientConnector"
+        class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
+    <property name="serviceUrl" value="service:jmx:jmxmp://127.0.0.1:9875"/>
+</bean>
+
+<bean id="log4jConfiguratorClient" class="org.springframework.jmx.access.MBeanProxyFactoryBean">
+    <property name="objectName" value="org.ikasan.modules:type=#{moduleName},moduleType=logging,name=config"/>
+    <property name="proxyInterface" value="org.ikasan.management.jmx.logging.Log4jConfiguratorMXBean"/>
+    <property name="server" ref="clientConnector"/>
+</bean>
+
+
+
+</beans>
