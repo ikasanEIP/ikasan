@@ -124,11 +124,6 @@
 					ExclusionEvent(ModuleName,FlowName,Identifier)
 				</prop>
 
-
-
-
-
-
 				<prop key="create.version">CREATE TABLE Version
 					(
 					Id NUMERIC IDENTITY NOT NULL,
@@ -1029,13 +1024,11 @@
                     [FlowName]              [varchar](255) NOT NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     [Expiry]                [numeric] NOT NULL,
-                    CONSTRAINT              [PK_IkasanWiretap_Id] PRIMARY KEY CLUSTERED
+                    CONSTRAINT              [PK_ExclusionEvent_Module_Flow_Id] PRIMARY KEY CLUSTERED
                     (
-                    [ModuleName,FlowName,Identifier] ASC
+                    [ModuleName],[FlowName],[Identifier] ASC
                     )
                     )
-
-                    CREATE NONCLUSTERED INDEX [IX_IkasanWiretap_EventId] ON [IkasanWiretap] (EventId)
                 </prop>
 
                 <prop key="create.filter">CREATE TABLE [MessageFilter]
@@ -1057,7 +1050,7 @@
                     [Id]                    [numeric](18)  IDENTITY NOT NULL,
                     [Component]             [varchar](256) NOT NULL UNIQUE,
                     [Release]               [varchar](256) NULL,
-                    CONSTRAINT              [PK_FlowEventTrigger_Id] PRIMARY KEY CLUSTERED
+                    CONSTRAINT              [PK_Version_Component] PRIMARY KEY CLUSTERED
                     (
                     [Component] ASC
                     )
