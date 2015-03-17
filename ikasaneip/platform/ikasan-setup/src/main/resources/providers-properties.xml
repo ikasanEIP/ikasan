@@ -1108,7 +1108,7 @@
 
                 <prop key="create.confParamBoolean">CREATE TABLE [ConfParamBoolean]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [Name]                        [varchar](128) NOT NULL,
                     [Value]                       [BIT] DEFAULT 0,
                     [Description]                 [varchar](256) DEFAULT NULL NULL,
@@ -1119,7 +1119,7 @@
 
                 <prop key="create.confParamInteger">CREATE TABLE [ConfParamInteger]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [Name]                        [varchar](128) NOT NULL,
                     [Value]                       [numeric] DEFAULT NULL NULL,
                     [Description]                 [varchar](256) DEFAULT NULL NULL,
@@ -1130,7 +1130,7 @@
 
                 <prop key="create.confParamList">CREATE TABLE [ConfParamList]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [Name]                        [varchar](128) NOT NULL,
                     [Description]                 [varchar](256) DEFAULT NULL NULL,
                     )
@@ -1140,7 +1140,7 @@
 
                 <prop key="create.confParamListString">CREATE TABLE [ConfParamListString]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [PositionRef]                 [numeric] NOT NULL,
                     [Value]                       [varchar] (max) DEFAULT NULL NULL,
                     )
@@ -1151,7 +1151,7 @@
 
                 <prop key="create.confParamLong">CREATE TABLE [ConfParamLong]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [Name]                        [varchar](128) NOT NULL,
                     [Value]                       [numeric] DEFAULT NULL NULL,
                     [Description]                 [varchar](256) DEFAULT NULL NULL,
@@ -1162,7 +1162,7 @@
 
                 <prop key="create.confParamMap">CREATE TABLE [ConfParamMap]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [Name]                        [varchar](128) NOT NULL,
                     [Description]                 [varchar](256) DEFAULT NULL NULL,
                     )
@@ -1172,7 +1172,7 @@
 
                 <prop key="create.confParamMapString">CREATE TABLE [ConfParamMapString]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [MapKey]                      [varchar](256) NOT NULL,
                     [Value]                       [varchar](max) DEFAULT NULL NULL,
                     )
@@ -1182,7 +1182,7 @@
 
                 <prop key="create.confParamString">CREATE TABLE [ConfParamString]
                     (
-                    [Id]                          [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+                    [Id]                          [numeric](18, 0) NOT NULL,
                     [Name]                        [varchar](128) NOT NULL,
                     [Value]                       [varchar] (max) DEFAULT NULL NULL,
                     [Description]                 [varchar](256) DEFAULT NULL NULL,

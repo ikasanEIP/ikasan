@@ -96,7 +96,6 @@
         <!-- add ons -->
         <module>monitor</module>
         <module>filter</module>
-        <module>consumer</module>
         <module>marshaller</module>
         <module>component</module>
         <module>jca</module>
