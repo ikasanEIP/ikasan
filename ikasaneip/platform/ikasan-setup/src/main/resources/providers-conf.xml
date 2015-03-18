@@ -56,7 +56,7 @@
                 <entry key="Sybase15" value-ref="sybase15ProviderDao" />
                 <!-- MySQL and SQLServer table creation is not yet tested - dont expose these -->
                 <!--entry key="MySQL" value-ref="mysqlProviderDao" /-->
-                <!--entry key="SQLServer" value-ref="sqlServerProviderDao" /-->
+                <entry key="SQLServer2008" value-ref="sqlServer2008ProviderDao" />
                 <entry key="H2" value-ref="h2ProviderDao" />
             </util:map>
         </constructor-arg>
@@ -77,8 +77,8 @@
         <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
     </bean>
 
-    <bean id="sqlServerProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
-        <constructor-arg ref="SQLServer"/>
+    <bean id="sqlServer2008ProviderDao" class="org.ikasan.setup.persistence.dao.PersistenceDAOHibernateImpl" >
+        <constructor-arg ref="SQLServer2008"/>
         <property name="sessionFactory" ref="persistenceCreatorSessionFactory" />
     </bean>
 
