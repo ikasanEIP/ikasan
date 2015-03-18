@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmfTrade xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://svc-trade01XMLi:20100/cmi2/cmf/conf/cmfTrade_1_2.xsd">
+	<action>new</action>
+	<vendor>tradeweb-jgbPostTradeSrc</vendor>
+	<tradeDetails>
+		<tradeIdentifiers>
+			<genericIdentifier NAME="TradewebIdentifier">TW:20140909:JGB:16:tt</genericIdentifier>
+		</tradeIdentifiers>
+		<tradeType>bond</tradeType>
+		<tradeSubType>traderTicket</tradeSubType>
+		<bookingTicketType>traderTicket</bookingTicketType>
+		<tradeEntryDate TIMEZONE="GMT" TYPE="dateTime">20140909131208000</tradeEntryDate>
+		<buySell>buy</buySell>
+		<tradeSide>active</tradeSide>
+		<tradeSize>1000000</tradeSize>
+		<tradePrice>
+			<amount>100.6030</amount>
+			<currency>JPY</currency>
+		</tradePrice>
+		<cleanPrice>
+			<amount>100.6030</amount>
+		</cleanPrice>
+		<nominalAmount>
+			<amount>1000000</amount>
+		</nominalAmount>
+		<principalAmount>
+			<amount>1006030.0</amount>
+		</principalAmount>
+		<yield>
+			<amount>0.05680</amount>
+		</yield>
+		<traderId>lyseri-Auto</traderId>
+		<traderName>lyseri-Auto</traderName>
+		<salesmanId/>
+		<salesmanName/>
+		<tradingSystem>
+			<systemDescription>Tradeweb</systemDescription>
+		</tradingSystem>
+	</tradeDetails>
+	<feesDetails>
+		<feesDetail>
+			<type>salesCommission</type>
+			<feeOrTax>commission</feeOrTax>
+			<code>C6</code>
+		</feesDetail>
+	</feesDetails>
+	<securityDetails>
+		<securityIdentifiers>
+			<isin>JP1050971B60</isin>
+			<japanese>00970045</japanese>
+			<genericIdentifier NAME="tradewebBondName">J 5-097 0.400 20/06/16</genericIdentifier>
+		</securityIdentifiers>
+		<maturityDate TYPE="date">20160620000000000</maturityDate>
+		<couponRate>
+			<amount>0.40</amount>
+		</couponRate>
+		<accruedInterestAmount>
+			<amount>964.0</amount>
+		</accruedInterestAmount>
+	</securityDetails>
+	<partyDetails>
+		<role>Client</role>
+		<partyIdentifiers>
+			<longName>Mizuho Trust Bk1</longName>
+			<shortName>Richard Lyseight</shortName>
+			<bloombergId>CBKUAE</bloombergId>
+			<genericIdentifier NAME="TradewebCounterpartyId">CBKUAE</genericIdentifier>
+		</partyIdentifiers>
+	</partyDetails>
+	<settlementDetails>
+		<settleDate TYPE="date">20140916000000000</settleDate>
+		<settleMethod>BOJ-NET</settleMethod>
+		<settlementCurrency>JPY</settlementCurrency>
+		<settlementCurrencyRate>
+			<amount>1</amount>
+		</settlementCurrencyRate>
+	</settlementDetails>
+	<additionalData NAME="TradewebCounterpartyAccountId"/>
+	<additionalData NAME="TaxStatus">Clean</additionalData>
+	<additionalData NAME="shortNote5">1</additionalData>
+	<additionalData NAME="longNote1">TW:20140909:JGB:16:tt</additionalData>
+	<additionalData NAME="cmfCustomTradeId">TW:20140909:JGB:16:tt</additionalData>
+	<additionalData NAME="tradeType">traderTicket</additionalData>
+	<additionalData NAME="tradewebSecurityType">REGJNOTE</additionalData>
+</cmfTrade>
