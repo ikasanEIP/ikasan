@@ -1,0 +1,461 @@
+/*
+ * $Id: MappingConfigurationImportWindow.java 40648 2014-11-07 11:12:53Z stewmi $
+ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI/war/src/main/java/org/ikasan/mapping/configuration/ui/window/MappingConfigurationImportWindow.java $
+ *
+ * ====================================================================
+ *
+ * Copyright (c) 2000-2011 by Mizuho International plc.
+ * All Rights Reserved.
+ *
+ * ====================================================================
+ *
+ */
+package org.ikasan.dashboard.ui.mappingconfiguration.window;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.util.DocumentValidator;
+import org.ikasan.dashboard.ui.framework.util.SchemaValidationErrorHandler;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
+import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
+import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
+import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow.FileUploader;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext;
+import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient;
+import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType;
+import com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery;
+import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
+import com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue;
+import com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue;
+import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
+import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationServiceException;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.FinishedEvent;
+import com.vaadin.ui.Upload.Receiver;
+import com.vaadin.ui.Upload.StartedEvent;
+import com.vaadin.ui.Upload.SucceededEvent;
+import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.Reindeer;
+
+/**
+ * @author CMI2 Development Team
+ *
+ */
+public class MappingConfigurationImportWindow extends Window
+{
+    private static final long serialVersionUID = 4798260539109852939L;
+
+    private Logger logger = Logger.getLogger(MappingConfigurationImportWindow.class);
+
+    private MappingConfigurationService mappingConfigurationService;
+    private MappingConfiguration mappingConfiguration;
+    private List<MappingConfigurationValue> mappingConfigurationValues;
+
+    private FileUploader receiver = new FileUploader();
+    private HorizontalLayout progressLayout = new HorizontalLayout();
+    private Label uploadLabel = new Label();
+    private MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable;
+    private MappingConfigurationPanel mappingConfigurationPanel;
+    private List<KeyLocationQuery> keyLocationQueries;
+
+    /**
+     * Constructor
+     * 
+     * @param mappingConfigurationService
+     * @param mappingConfiguration
+     * @param mappingConfigurationConfigurationValuesTable
+     */
+    public MappingConfigurationImportWindow(MappingConfigurationService mappingConfigurationService,
+            MappingConfigurationConfigurationValuesTable mappingConfigurationConfigurationValuesTable,
+            MappingConfigurationPanel mappingConfigurationPanel)
+    {
+        this.mappingConfigurationService = mappingConfigurationService;
+        this.mappingConfigurationConfigurationValuesTable = mappingConfigurationConfigurationValuesTable;
+        this.mappingConfigurationPanel = mappingConfigurationPanel;
+        init();
+    }
+
+    /**
+     * Helper method to initialise this object.
+     */
+    protected void init()
+    {
+        this.setModal(true);
+        super.setHeight(40.0f, Unit.PERCENTAGE);
+        super.setWidth(40.0f, Unit.PERCENTAGE);
+        super.center();
+        super.setStyleName("ikasan");
+
+        progressLayout.setSpacing(true);
+        progressLayout.setVisible(false);
+        progressLayout.addComponent(uploadLabel);
+ 
+        final Upload upload = new Upload("", receiver);
+        upload.addSucceededListener(receiver);
+
+        upload.addFinishedListener(new Upload.FinishedListener() {
+            public void uploadFinished(FinishedEvent event) {
+                upload.setVisible(false);
+                try
+                {
+                    parseUploadFile();
+                }
+                catch (Exception e)
+                {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    
+                    Notification.show("Caught exception trying to import a Mapping Configuration!\n", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        final Button importButton = new Button("Import");
+        importButton.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                upload.interruptUpload();
+            }
+        });
+
+        upload.addStartedListener(new Upload.StartedListener() {
+            public void uploadStarted(StartedEvent event) {
+                // This method gets called immediately after upload is started
+                upload.setVisible(false);
+            }
+        });
+
+        upload.addProgressListener(new Upload.ProgressListener() {
+            public void updateProgress(long readBytes, long contentLength) {
+                // This method gets called several times during the update
+                
+            }
+
+        });
+
+        importButton.setStyleName(Reindeer.BUTTON_SMALL);
+        importButton.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try
+                {
+                    saveImportedMappingConfiguration();
+                    mappingConfiguration = null;
+                    progressLayout.setVisible(false);
+                    upload.setVisible(true);
+                }
+                catch (MappingConfigurationServiceException e)
+                {
+                    if(e.getCause() instanceof DataIntegrityViolationException)
+                    {
+                        Notification.show("Caught exception trying to save an imported Mapping Configuration!", "This is due to the fact " +
+                        		"that, combined, the client, type, source and target context values are unique for a Mapping Configuration. The values" +
+                        		" that are being imported and not unique." 
+                            , Notification.Type.ERROR_MESSAGE);
+                    }
+                    else
+                    {
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        e.printStackTrace(pw);
+                        
+                        Notification.show("Caught exception trying to save an imported Mapping Configuration!\n", sw.toString()
+                            , Notification.Type.ERROR_MESSAGE);
+                    }
+                }
+
+                close();
+            }
+        });
+
+        progressLayout.addComponent(importButton);
+        
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        layout.addComponent(new Label("Select file to upload mapping configurations."));
+        layout.addComponent(upload);
+
+        layout.addComponent(progressLayout);
+
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyleName(Reindeer.BUTTON_SMALL);
+
+        cancelButton.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                mappingConfiguration = null;
+                progressLayout.setVisible(false);
+                upload.setVisible(true);
+                close();
+            }
+        });
+
+        HorizontalLayout hlayout = new HorizontalLayout();
+        hlayout.addComponent(cancelButton);
+
+        layout.addComponent(hlayout);
+        
+        super.setContent(layout);
+    }
+
+    /**
+     * Inner class to help with file uploads.
+     */
+    class FileUploader implements Receiver, SucceededListener 
+    {
+        private static final long serialVersionUID = 5176770080834995716L;
+
+        public ByteArrayOutputStream file;
+        
+        public OutputStream receiveUpload(String filename,
+                                          String mimeType) {
+            this.file = new ByteArrayOutputStream();
+            return file;// Return the output stream to write to
+        }
+
+        public void uploadSucceeded(SucceededEvent event) {
+            logger.info("File = " + new String(file.toByteArray()));
+        }
+    };
+
+    /**
+     * Helper method to parse the upload file.
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws XPathExpressionException 
+     */
+    protected void parseUploadFile() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
+    {
+
+        SchemaValidationErrorHandler errorHandler = DocumentValidator.validateUploadedDocument(receiver.file.toByteArray());
+
+        if(errorHandler.isInError())
+        {
+            StringBuffer errors = new StringBuffer();
+
+            for(SAXParseException exception: errorHandler.getErrors())
+            {
+                errors.append(exception.getMessage()).append("\n");
+            }
+
+            for(SAXParseException exception: errorHandler.getFatal())
+            {
+                errors.append(exception.getMessage()).append("\n");
+            }
+
+            Notification.show("An error occured parsing the uploaded XML document!\n", errors.toString()
+                , Notification.Type.ERROR_MESSAGE);
+        }
+        else
+        {
+            MappingConfigurationDocumentHelper helper = new MappingConfigurationDocumentHelper();
+
+            this.mappingConfiguration = helper.getMappingConfiguration(receiver.file.toByteArray());
+            this.mappingConfigurationValues = helper.getMappingConfigurationValues(receiver.file.toByteArray());
+            this.keyLocationQueries = helper.getKeyLocationQueries(receiver.file.toByteArray());
+    
+            this.uploadLabel.setValue("Importing " + mappingConfigurationValues.size()
+                + " configuration values. Press import to procede.");
+            progressLayout.setVisible(true);
+        }
+
+    }
+
+    /**
+     * Method to save the imported mapping configuration values.
+     * 
+     * @throws MappingConfigurationServiceException
+     */
+    protected void saveImportedMappingConfiguration() throws MappingConfigurationServiceException
+    {
+        ConfigurationServiceClient client = this.mappingConfiguration.getConfigurationServiceClient();
+        StringBuffer errorMessage = new StringBuffer();
+        
+        client = this.mappingConfigurationService.getAllConfigurationClientByName(client.getName());
+        if(client == null)
+        {
+            errorMessage.append("No matching configuration client found.\n");
+        }
+        else
+        {
+            this.mappingConfiguration.setConfigurationServiceClient(client);
+        }
+
+        ConfigurationType type = this.mappingConfiguration.getConfigurationType();
+        type = this.mappingConfigurationService.getAllConfigurationTypeByName(type.getName());
+
+        if(type == null)
+        {
+            errorMessage.append("No matching configuration type found.\n");
+        }
+        else
+        {
+            this.mappingConfiguration.setConfigurationType(type);
+        }
+
+        ConfigurationContext sourceContext = this.mappingConfiguration.getSourceContext();
+        sourceContext = this.mappingConfigurationService.getAllConfigurationContextByName(sourceContext.getName());
+        if(sourceContext == null)
+        {
+            errorMessage.append("No source configuration context found.\n");
+        }
+        else
+        {
+            this.mappingConfiguration.setSourceContext(sourceContext);
+        }
+
+        ConfigurationContext targetContext = this.mappingConfiguration.getTargetContext();
+        targetContext = this.mappingConfigurationService.getAllConfigurationContextByName(targetContext.getName());
+        if(targetContext == null)
+        {
+            errorMessage.append("No target configuration context found.\n");
+        }
+        else
+        {
+            this.mappingConfiguration.setTargetContext(targetContext);
+        }
+
+        if(errorMessage.length() > 0)
+        {            
+            Notification.show("Caught exception trying to import a Mapping Configuration!\n", errorMessage.toString()
+                , Notification.Type.ERROR_MESSAGE);
+        }
+        else
+        {    
+            Long id = this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+
+            for(MappingConfigurationValue mappingConfigurationValue: this.mappingConfigurationValues)
+            {
+                this.mappingConfigurationService.saveTargetConfigurationValue(mappingConfigurationValue.getTargetConfigurationValue());
+                
+                Long sourceConfigurationGroupId = null;
+                
+                if(this.mappingConfiguration.getNumberOfParams() > 1)
+                {
+                    sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
+                }
+
+                for(SourceConfigurationValue value: mappingConfigurationValue.getSourceConfigurationValues())
+                {
+                    logger.info("Source value: " + value);
+                    value.setMappingConfigurationId(id);
+                    value.setSourceConfigGroupId(sourceConfigurationGroupId);
+                }
+
+                this.mappingConfiguration.getSourceConfigurationValues().addAll(mappingConfigurationValue.getSourceConfigurationValues());
+            }
+
+            for(KeyLocationQuery query: this.keyLocationQueries)
+            {
+                query.setMappingConfigurationId(id);
+
+                this.mappingConfigurationService.saveKeyLocationQuery(query);
+            }
+
+            this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
+
+            mappingConfiguration = this.mappingConfigurationService.getMappingConfigurationById(id);
+
+            UI.getCurrent().getNavigator().navigateTo("existingMappingConfigurationPanel");
+
+            this.mappingConfigurationPanel.setMappingConfiguration(this.mappingConfiguration);
+            this.mappingConfigurationPanel.populateMappingConfigurationForm();
+
+            this.mappingConfigurationConfigurationValuesTable.populateTable(mappingConfiguration);
+        }
+    }
+
+    /**
+     * Helper method to return a composite mapping configuration value.
+     * 
+     * @param mappingConfigurationValue
+     * @return
+     */
+    protected MappingConfigurationValue getMappingConfigurationValue(Element mappingConfigurationValue)
+    {
+        TargetConfigurationValue targetConfigurationValue = getTargetConfigurationValue
+                (mappingConfigurationValue.getElementsByTagName("targetConfigurationValue").item(0));
+
+        ArrayList<SourceConfigurationValue> sourceConfigurationValues = getSourceConfigurationValues(mappingConfigurationValue
+            .getElementsByTagName("sourceConfigurationValue"));
+
+        for(SourceConfigurationValue sourceConfigurationValue: sourceConfigurationValues)
+        {
+            logger.info("Source value: " + sourceConfigurationValue.getSourceSystemValue());
+            sourceConfigurationValue.setTargetConfigurationValue(targetConfigurationValue);
+            sourceConfigurationValue.setMappingConfigurationId(this.mappingConfiguration.getId());
+        }
+
+        return new MappingConfigurationValue(targetConfigurationValue, sourceConfigurationValues);
+    }
+
+    /**
+     * Gets a list of source configuration values from an XML node list.
+     * @param sourceConfigurationValues
+     * @return
+     */
+    protected ArrayList<SourceConfigurationValue> getSourceConfigurationValues(NodeList sourceConfigurationValues)
+    {
+        ArrayList<SourceConfigurationValue> returnValue = new ArrayList<SourceConfigurationValue>();
+
+        Long sourceConfigurationGroupId = null;
+        
+        if(this.mappingConfiguration.getNumberOfParams() > 1)
+        {
+            sourceConfigurationGroupId = this.mappingConfigurationService.getNextSequenceNumber();
+        }
+
+        for(int i=0; i<sourceConfigurationValues.getLength(); i++)
+        {
+            logger.info("Source value: " + sourceConfigurationValues.item(i).getTextContent());
+            SourceConfigurationValue value = new SourceConfigurationValue();
+            value.setSourceSystemValue(sourceConfigurationValues.item(i).getTextContent());
+            value.setSourceConfigGroupId(sourceConfigurationGroupId);
+
+            returnValue.add(value);
+        }
+
+        return returnValue;
+    }
+
+    /**
+     * Gets a target configuration value from an XML node.
+     * @param targetConfigurationValue
+     * @return
+     */
+    protected TargetConfigurationValue getTargetConfigurationValue(Node targetConfigurationValue)
+    {
+        logger.info("Target value: " + targetConfigurationValue.getTextContent());
+        TargetConfigurationValue value = new TargetConfigurationValue();
+        value.setTargetSystemValue(targetConfigurationValue.getTextContent());
+        return value;
+    }
+}

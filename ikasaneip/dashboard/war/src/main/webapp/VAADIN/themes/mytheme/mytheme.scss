@@ -1,0 +1,146 @@
+/* Import the reindeer theme. */
+/* This only allows us to use the mixins defined in it and does not add any styles by itself. */
+@import "../reindeer/reindeer.scss";
+
+/* This contains all of your theme. */
+/* If somebody wants to extend the theme she will include this mixin. */
+@mixin mytheme 
+{
+  	/* Include all the styles from the reindeer theme */
+ 	@include reindeer;
+
+  	/* Insert your theme rules here */
+  	
+  	.v-panel .v-panel-caption {
+ 		background: transparent;
+ 		font-family: 'Trebuchet MS';
+  		color: #99141B;
+  		font-size: 12px;
+  		text-decoration: none;
+  		display: block;
+  		padding-top: 5px;
+	}
+	
+	.v-panel-navigation {
+        background: #3E3E3E;
+    }
+
+    .v-panel-content-navigation {
+        background: #3E3E3E;
+        border: none;
+        width: 30%;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+	.v-panel-content > div {
+	   background: transparent;
+	}
+
+	.v-panel-content {
+		border: none;
+		width: 30%;
+		padding-top: 0px;
+		padding-bottom: 0px;
+		padding-right: 0px;
+		padding-left: 0px;
+	}
+	
+	.v-panel-content .v-label {
+		font-family: 'Trebuchet MS';
+		color:#666;
+		font-size:11px;
+	}
+	
+	.v-caption-ikasan {
+        font-family: 'Trebuchet MS';
+        color:#666;
+        font-size:11px;
+    }
+
+	
+	/* The header section */
+	.v-header{
+		background-color: #F9AF56;
+		background-image: url(./images/Banner.png);
+		background-repeat: no-repeat;
+		height: 140px;
+		/* margin-top: 20px; */
+		position: relative;
+		padding-left: 0px;
+	}
+
+    .v-label-ikasan-maroon {
+        font-family: 'Trebuchet MS';
+        color: #99141B;
+        font-size: 18px;
+        font-weight: bold;
+        line-height: 18px;
+        margin-top: 18px;
+        padding-left: 0px;
+    }
+
+    .v-window-ikasan .v-window-outerheader {
+        background: #99141B;
+     }
+
+    .v-window-ikasan .v-window-header {
+        color: white;
+     }
+
+    .v-table tr.v-selected {
+    background: #466c90;
+    color: #fff;
+    }
+
+    .v-table tr.v-selected:hover {
+        background: #5C8EBD;
+        color: #fff;
+    }
+
+    .v-app, .v-window, .v-popupview-popup, .v-tooltip, .v-app input, .v-app select,
+    .v-app button, .v-app textarea.v-textarea, .v-window input, .v-window select,
+    .v-window button, .v-window textarea.v-textarea, .v-popupview-popup input,
+    .v-popupview-popup select, .v-popupview-popup button,
+    .v-popupview-popup textarea.v-textarea, .v-filterselect-suggestpopup,
+    .v-datefield-popup, .v-contextmenu, .v-notification, .v-menubar-submenu,
+    .v-drag-element, .v-customoverlay, .v-button-link .v-button-caption {
+      font-family: 'Trebuchet MS';
+      font-size:11px;
+    }
+
+    input[type="text"] {
+      font-family: 'Trebuchet MS';
+      font-size:11px;
+    }
+
+    .v-table-cell-content-ikasan {
+      font-family: 'Trebuchet MS';
+      font-size:11px;
+    }
+
+    textarea.v-textarea {
+        font-family: 'Trebuchet MS' !important;
+        font-size:11px !important;  
+    }
+    
+    .myCustomUpload .v-button {
+        background: none;
+        border: 1px solid black;
+        height: auto;
+        padding: 0 !important;
+    }
+    
+    .myCustomUpload .v-button .v-button-wrap {
+        height: auto;
+        background: none;
+        padding: 0 !important;
+    }
+    
+    .myCustomUpload .v-button .v-button-wrap .v-button-caption {
+        height: auto;
+        padding: 2px;
+    }
+}
