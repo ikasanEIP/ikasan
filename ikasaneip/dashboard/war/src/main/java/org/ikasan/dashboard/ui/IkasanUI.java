@@ -10,9 +10,9 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.tab.HomeTab;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
-import com.mizuho.cmi2.security.service.SecurityService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ThemeResource;

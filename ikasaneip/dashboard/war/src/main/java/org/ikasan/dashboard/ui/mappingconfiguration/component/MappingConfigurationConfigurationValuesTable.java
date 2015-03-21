@@ -14,9 +14,9 @@ package org.ikasan.dashboard.ui.mappingconfiguration.component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Comparator;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
@@ -24,18 +24,17 @@ import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.SourceConfigurationValue;
+import org.ikasan.mapping.model.TargetConfigurationValue;
+import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingConfigurationServiceException;
 
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue;
-import com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationServiceException;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.DefaultItemSorter;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;

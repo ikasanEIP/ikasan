@@ -14,9 +14,9 @@ package org.ikasan.dashboard.ui.mappingconfiguration.listener;
 
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationPanel;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.UI;

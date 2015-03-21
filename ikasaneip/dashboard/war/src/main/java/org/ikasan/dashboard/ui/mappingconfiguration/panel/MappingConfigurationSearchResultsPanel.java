@@ -13,8 +13,8 @@
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.HorizontalLayout;

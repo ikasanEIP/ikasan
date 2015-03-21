@@ -15,8 +15,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.data.NewClientFieldGroup;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.ObjectProperty;

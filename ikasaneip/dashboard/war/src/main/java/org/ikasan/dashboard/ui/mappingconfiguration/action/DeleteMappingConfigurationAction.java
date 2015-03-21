@@ -20,9 +20,9 @@ import org.ikasan.dashboard.ui.framework.action.Action;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
 

@@ -5,15 +5,14 @@ import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
-import com.mizuho.cmi2.security.service.SecurityService;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;

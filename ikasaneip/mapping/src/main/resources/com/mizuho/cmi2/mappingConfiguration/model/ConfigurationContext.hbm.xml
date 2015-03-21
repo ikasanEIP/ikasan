@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!-- 
+ * $Id: ConfigurationContext.hbm.xml 31946 2013-08-09 08:14:03Z stewmi $
+ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationService/api/src/main/resources/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml $
+ *
+ * ====================================================================
+ *
+ * Copyright (c) 2000-2010 by Mizuho International plc.
+ * All Rights Reserved.
+ *
+ * ====================================================================
+ *
+-->
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class
+        name="org.ikasan.mapping.model.ConfigurationContext"
+        table="MCSConfigurationContext">
+
+        <id name="id"
+          type="java.lang.Long"
+          column="Id"
+          unsaved-value="null">
+          <generator class="identity" />
+        </id>
+
+        <property name="name"
+                  type="java.lang.String"
+                  column="Name" />
+
+        <property name="description"
+                  type="java.lang.String"
+                  column="Description" />
+
+        <property name="createdDateTime"
+                  type="java.util.Date"
+                  column="CreatedDateTime"
+                  not-null="true" />
+
+        <property name="updatedDateTime"
+                  type="java.util.Date"
+                  column="UpdatedDateTime"
+                  not-null="true" />
+    </class>
+</hibernate-mapping>

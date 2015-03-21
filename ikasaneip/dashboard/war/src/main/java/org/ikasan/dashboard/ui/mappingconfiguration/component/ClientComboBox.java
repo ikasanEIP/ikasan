@@ -15,9 +15,9 @@ package org.ikasan.dashboard.ui.mappingconfiguration.component;
 import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.group.Refreshable;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.ui.ComboBox;

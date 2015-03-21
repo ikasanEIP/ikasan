@@ -17,11 +17,11 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextCombo
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.model.ConfigurationType;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;

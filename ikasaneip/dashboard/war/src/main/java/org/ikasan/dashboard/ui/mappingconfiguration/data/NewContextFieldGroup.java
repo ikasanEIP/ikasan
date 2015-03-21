@@ -18,13 +18,10 @@ import java.io.StringWriter;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.server.VaadinService;

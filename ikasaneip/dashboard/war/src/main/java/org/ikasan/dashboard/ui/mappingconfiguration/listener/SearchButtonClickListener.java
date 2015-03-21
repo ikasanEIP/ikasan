@@ -24,13 +24,12 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.model.ConfigurationType;
+import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType;
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfigurationLite;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;

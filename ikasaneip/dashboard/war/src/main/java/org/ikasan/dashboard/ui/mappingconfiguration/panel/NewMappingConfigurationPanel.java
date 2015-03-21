@@ -26,10 +26,10 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextCombo
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
+import org.ikasan.mapping.model.KeyLocationQuery;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.service.MappingConfigurationService;
 
-import com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery;
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.StringLengthValidator;

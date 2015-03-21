@@ -17,7 +17,6 @@ import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow;
 
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
