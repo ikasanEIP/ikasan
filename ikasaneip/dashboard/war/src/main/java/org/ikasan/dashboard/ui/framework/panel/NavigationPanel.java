@@ -20,11 +20,10 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
+import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
-import com.mizuho.cmi2.security.service.SecurityService;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;

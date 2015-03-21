@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- * $Id: securityModelService-context.xml 44071 2015-03-17 10:17:18Z stewmi 
+	$ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/securityModelService/api/src/main/resources/securityModelService-context.xml 
+	$ * * ==================================================================== 
+	* * Copyright (c) 2000-2010 by Mizuho International plc. * All Rights Reserved. 
+	* * ==================================================================== 
+	* -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.5.xsd">
+
+	<bean id="xaSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
+		<constructor-arg ref="xaSecurityDao" />
+		<constructor-arg ref="ldapAuthenticationProvider" />
+	</bean>
+
+	<bean id="xaSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
+		<property name="sessionFactory" ref="xaSecuritySessionFactory" />
+	</bean>
+
+	<bean id="xaSecuritySessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="xaIkasanDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
+				<value>/org/ikasan/security/model/Role.hbm.xml</value>
+				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+	<bean id="localTxSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
+		<constructor-arg ref="localTxSecurityDao" />
+		<constructor-arg ref="ldapAuthenticationProvider" />
+	</bean>
+
+	<bean id="localTxSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
+		<property name="sessionFactory" ref="localTxSecuritySessionFactory" />
+	</bean>
+
+	<bean id="localTxSecuritySessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="localTxIkasanDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
+				<value>/org/ikasan/security/model/Role.hbm.xml</value>
+				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+	<bean id="noTxSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
+		<constructor-arg ref="noTxSecurityDao" />
+		<constructor-arg ref="ldapAuthenticationProvider" />
+	</bean>
+
+	<bean id="noTxSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
+		<property name="sessionFactory" ref="noTxSecuritySessionFactory" />
+	</bean>
+
+	<bean id="noTxSecuritySessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="noTxIkasanDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
+				<value>/org/ikasan/security/model/Role.hbm.xml</value>
+				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+	<!-- LDAP Configuration -->
+
+	<!-- The custom LDAP Authentication provider -->
+	<bean id="ldapAuthenticationProvider"
+		class="org.ikasan.security.service.authentication.LdapAuthenticationProvider">
+		<constructor-arg>
+			<bean
+				class="org.springframework.security.ldap.authentication.BindAuthenticator">
+				<constructor-arg ref="contextSource" />
+				<property name="userSearch" ref="userSearch" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="userSearch"
+		class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+		<constructor-arg value="OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com" />
+		<constructor-arg value="(sAMAccountName={0})" />
+		<constructor-arg ref="contextSource" />
+		<property name="searchSubtree" value="true" />
+	</bean>
+
+	<!-- The context source for the LDAP/AD server -->
+	<bean id="contextSource"
+		class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+		<constructor-arg ref="ldapServerUrl" />
+		<property name="userDn" value="cn=Directory Manager" />
+		<property name="password" value="password" />
+	</bean>
+</beans>

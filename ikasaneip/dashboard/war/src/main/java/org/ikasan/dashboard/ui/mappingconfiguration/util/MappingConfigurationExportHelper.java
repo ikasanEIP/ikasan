@@ -17,9 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
-
-import com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery;
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
+import org.ikasan.mapping.model.KeyLocationQuery;
+import org.ikasan.mapping.model.MappingConfiguration;
 
 /**
  * @author CMI2 Development Team

@@ -14,8 +14,8 @@ package org.ikasan.dashboard.ui.mappingconfiguration.model;
 
 import java.util.ArrayList;
 
-import com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue;
-import com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue;
+import org.ikasan.mapping.model.SourceConfigurationValue;
+import org.ikasan.mapping.model.TargetConfigurationValue;
 
 /**
  * @author CMI2 Development Team

@@ -37,14 +37,14 @@ import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExp
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationValuesImportWindow;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.model.ConfigurationType;
+import org.ikasan.mapping.model.KeyLocationQuery;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.mapping.service.MappingConfigurationServiceException;
 
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType;
-import com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery;
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService;
-import com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationServiceException;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.NullValidator;

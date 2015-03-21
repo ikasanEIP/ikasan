@@ -4,19 +4,19 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>dashboard-war</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.0-rc4-SNAPSHOT</version>
 	<name>Ikasan Dashboard</name>
 
 	<parent>
 		<groupId>org.ikasan</groupId>
-		<artifactId>dashboard</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<artifactId>ikasan-dashboard</artifactId>
+		<version>1.0.0-rc4-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.1.10</vaadin.version>
+		<vaadin.version>7.4.1</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 	</properties>
 
@@ -119,18 +119,19 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.mizuho.cmi2.cmi2-mappingConfigurationService</groupId>
-			<artifactId>cmi2-mappingConfigurationService-api</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-mapping</artifactId>
+			<version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.mizuho.cmi2.cmi2-securityModelService</groupId>
-			<artifactId>cmi2-securityModelService-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-security</artifactId>
+			<version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -159,24 +160,7 @@
 			<version>1.7.7</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-framework</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency -->
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-security</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>console-jar</artifactId>
-			<version>0.8.4</version>
-			<scope>compile</scope>
-		</dependency -->
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>

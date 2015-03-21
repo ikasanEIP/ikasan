@@ -13,20 +13,19 @@
 package org.ikasan.dashboard.ui.framework.data;
 
 import org.apache.log4j.Logger;
-import org.ikasan.security.model.User;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.SecurityServiceException;
 import org.ikasan.security.service.UserService;
 
-import com.mizuho.cmi2.security.model.Policy;
-import com.mizuho.cmi2.security.model.Principal;
-import com.mizuho.cmi2.security.model.Role;
-import com.mizuho.cmi2.security.service.SecurityService;
-import com.mizuho.cmi2.security.service.SecurityServiceException;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Field;
 
@@ -101,7 +100,7 @@ public class LoginFieldGroup extends FieldGroup
         {
             logger.info("Attempting to validate user: " + username.getValue());
 
-            Principal principal = securityService.login(username.getValue(), password.getValue());
+            IkasanPrincipal principal = securityService.login(username.getValue(), password.getValue());
 
             logger.info("Loaded principal: " + principal);
 

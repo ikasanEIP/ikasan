@@ -22,10 +22,9 @@ import junit.framework.Assert;
 
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationDocumentHelper;
+import org.ikasan.mapping.model.MappingConfiguration;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
 
 /**
  * @author CMI2 Development Team

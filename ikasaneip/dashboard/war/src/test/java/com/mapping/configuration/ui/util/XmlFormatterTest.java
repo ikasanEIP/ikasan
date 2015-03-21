@@ -13,19 +13,13 @@
 package com.mapping.configuration.ui.util;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import junit.framework.Assert;
-
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
-import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
 
 /**
  * @author CMI2 Development Team

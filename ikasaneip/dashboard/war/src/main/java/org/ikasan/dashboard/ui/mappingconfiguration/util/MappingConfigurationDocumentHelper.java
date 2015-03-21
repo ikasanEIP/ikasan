@@ -27,7 +27,13 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
-import org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationValuesImportWindow.SimpleErrorHandler;
+import org.ikasan.mapping.model.ConfigurationContext;
+import org.ikasan.mapping.model.ConfigurationServiceClient;
+import org.ikasan.mapping.model.ConfigurationType;
+import org.ikasan.mapping.model.KeyLocationQuery;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.SourceConfigurationValue;
+import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,14 +41,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationContext;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationServiceClient;
-import com.mizuho.cmi2.mappingConfiguration.model.ConfigurationType;
-import com.mizuho.cmi2.mappingConfiguration.model.KeyLocationQuery;
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue;
-import com.mizuho.cmi2.mappingConfiguration.model.TargetConfigurationValue;
 
 /**
  * @author CMI2 Development Team

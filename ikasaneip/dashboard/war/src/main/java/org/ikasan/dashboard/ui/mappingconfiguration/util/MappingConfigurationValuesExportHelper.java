@@ -21,9 +21,8 @@ import java.util.Set;
 
 import org.ikasan.dashboard.ui.framework.util.XmlFormatter;
 import org.ikasan.dashboard.ui.mappingconfiguration.model.MappingConfigurationValue;
-
-import com.mizuho.cmi2.mappingConfiguration.model.MappingConfiguration;
-import com.mizuho.cmi2.mappingConfiguration.model.SourceConfigurationValue;
+import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.SourceConfigurationValue;
 
 /**
  * @author CMI2 Development Team
