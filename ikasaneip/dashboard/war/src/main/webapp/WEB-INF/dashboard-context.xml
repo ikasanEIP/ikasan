@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security 
+        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="dashboardNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="dashboard"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="emptyPanel"/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="dashboardPanel"/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+
+    <bean id="dashboardPanel" class="org.ikasan.dashboard.ui.dashboard.panel.DashboardPanel" scope="session" />
+
+	<bean id="dashboardViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+		<constructor-arg value="false"/>
+    </bean>
+
+</beans>

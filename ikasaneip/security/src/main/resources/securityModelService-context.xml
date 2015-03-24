@@ -108,7 +108,8 @@
 	<bean id="contextSource"
 		class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
 		<constructor-arg ref="ldapServerUrl" />
-		<property name="userDn" value="cn=Directory Manager" />
-		<property name="password" value="password" />
+		<property name="userDn" ref="ldapUserDn" />
+		<property name="password" ref="ldapPassword" />
 	</bean>
+	
 </beans>

@@ -27,9 +27,9 @@
 
     <util:map id="platformHibernateProperties">
         <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
-        <entry key="hibernate.show_sql" value="true" />
-        <entry key="hibernate.format_sql" value="true" />
-        <entry key="hibernate.use_sql_comments" value="true" />
+        <entry key="hibernate.show_sql" value="false" />
+        <entry key="hibernate.format_sql" value="false" />
+        <entry key="hibernate.use_sql_comments" value="false" />
         <entry key="hibernate.hbm2ddl.auto" value="create" />
         <entry key="hibernate.connection.pool_size" value="1"/>
         <entry key="hibernate.jdbc.factory_class" value="org.hibernate.jdbc.NonBatchingBatcherFactory"/>

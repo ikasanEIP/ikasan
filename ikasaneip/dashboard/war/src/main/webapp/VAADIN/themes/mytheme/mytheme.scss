@@ -7,10 +7,23 @@
 @mixin mytheme 
 {
   	/* Include all the styles from the reindeer theme */
- 	@include reindeer;
+ 	@include reindeer; 
+	/*  @include chameleon; */
 
   	/* Insert your theme rules here */
-  	
+ 
+ 	.v-menubar-mybarmenu  {
+		background: #3E3E3E;
+	}
+
+ 	.v-menubar-submenu-mybarmenu  {
+		background: #3E3E3E;
+	}
+	
+	.v-menubar-menuitem-highlight {
+	    background: #3E3E3E; /* Dark blue */
+	}
+	 	
   	.v-panel .v-panel-caption {
  		background: transparent;
  		font-family: 'Trebuchet MS';

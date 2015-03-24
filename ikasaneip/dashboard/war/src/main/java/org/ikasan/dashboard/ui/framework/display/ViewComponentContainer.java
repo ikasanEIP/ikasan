@@ -25,9 +25,9 @@ public class ViewComponentContainer extends HorizontalLayout
     /**
      * Constructor
      */
-    public ViewComponentContainer()
+    public ViewComponentContainer(boolean setMargin)
     {
         this.setSizeFull();
-        this.setMargin(true);
+        this.setMargin(setMargin);
     }
 }

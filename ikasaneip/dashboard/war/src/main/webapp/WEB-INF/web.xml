@@ -14,7 +14,7 @@
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/root-context.xml, classpath:mappingConfigurationUI-environmentalisation.xml, classpath:mappingConfigurationService-datasource.xml, classpath:mappingConfigurationService-context.xml, classpath:securityModelService-datasource.xml, classpath:securityModelService-context.xml</param-value>
+        <param-value>/WEB-INF/root-context.xml, /WEB-INF/error-context.xml, /WEB-INF/profile-context.xml, /WEB-INF/replay-context.xml, /WEB-INF/topology-context.xml, /WEB-INF/user-context.xml, /WEB-INF/mapping-context.xml, /WEB-INF/dashboard-context.xml, /WEB-INF/hospital-context.xml, classpath:mappingConfigurationUI-environmentalisation.xml, classpath:mappingConfigurationService-datasource.xml, classpath:mappingConfigurationService-context.xml, classpath:securityModelService-datasource.xml, classpath:securityModelService-context.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>

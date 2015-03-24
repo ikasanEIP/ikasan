@@ -1,5 +1,6 @@
 package org.ikasan.dashboard.ui;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
@@ -7,6 +8,7 @@ import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
+import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.tab.HomeTab;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
@@ -33,8 +35,8 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class IkasanUI extends UI
 {   
-    private HomeTab homeTab;
-    private List<IkasanUIView> views;
+//    private HomeTab homeTab;
+    private HashMap<String, IkasanUINavigator> views;
     private ViewComponentContainer viewComponentContainer;
     private UserService userService;
     private SecurityService securityService;
@@ -59,13 +61,12 @@ public class IkasanUI extends UI
      * @param newMappingConfigurationFunctionalGroup
      * @param existingMappingConfigurationFunctionalGroup
      */
-	public IkasanUI(HomeTab homeTab, List<IkasanUIView> views,
+	public IkasanUI(HashMap views,
 	        ViewComponentContainer viewComponentContainer, UserService userService,
 	        SecurityService securityService, VisibilityGroup visibilityGroup,
             UserDetailsHelper userDetailsHelper, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup)
 	{
-	    this.homeTab = homeTab;
 	    this.views = views;
 	    this.userService = userService;
 	    this.securityService = securityService;
@@ -85,8 +86,7 @@ public class IkasanUI extends UI
         this.setContent(layout);
 
         imagePanelLayout = new VerticalLayout();
-        imagePanelLayout.setMargin(true);
-        imagePanelLayout.setHeight("140px");
+        imagePanelLayout.setHeight("70px");
 
         layout.addComponent(imagePanelLayout, 0, 0);
 
@@ -95,31 +95,33 @@ public class IkasanUI extends UI
         ThemeResource resource = new ThemeResource("images/Ikasan_Logo_Transp.png");
         Image image = new Image("", resource);
         imagePanelLayout.addComponent(image);
-        image.setHeight("100%");
-        imagePanelLayout.setExpandRatio(image, 0.8f);
-        Label label = new Label("Enterprise Integration Platform - Mapping Configuration Service");
+        image.setHeight("150%");
+        imagePanelLayout.setExpandRatio(image, 0.5f);
+        Label label = new Label("Enterprise Integration Platform");
         label.setStyleName("ikasan-maroon");
         label.setHeight("100%");
         imagePanelLayout.addComponent(label);
-        imagePanelLayout.setExpandRatio(label, 0.2f);
+        imagePanelLayout.setExpandRatio(label, 0.5f);
         imagePanelLayout.setComponentAlignment(label, Alignment.BOTTOM_LEFT);
 
         NavigationPanel navigationPanel = new NavigationPanel(this.userService, this.securityService
             , this.visibilityGroup, this.userDetailsHelper, this.editableGroup, this.newMappingConfigurationFunctionalGroup,
-            this.existingMappingConfigurationFunctionalGroup, imagePanelLayout);
+            this.existingMappingConfigurationFunctionalGroup, imagePanelLayout, this.views);
         layout.addComponent(navigationPanel, 0, 1);
         
-        layout.addComponent(this.homeTab, 0, 2);
+        layout.addComponent(this.views.get("dashboard").getContainer(), 0, 2);
         layout.setRowExpandRatio(2, 1);
 
-        Navigator navigator = new Navigator(this, this.viewComponentContainer);
+        Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
 
-        for(IkasanUIView view: views)
+        List<IkasanUIView> mappingViews = this.views.get("topLevel").getIkasanViews();
+        
+        for(IkasanUIView view: mappingViews)
         {
             navigator.addView(view.getPath(), view.getView());
         }
 
-        navigator.navigateTo("emptyPanel");
+        navigator.navigateTo("landingView");       
     }
 
 }
