@@ -1036,8 +1036,8 @@
                     [Criteria]              [numeric](18) NOT NULL,
                     [ClientId]              [varchar](256) NOT NULL,
                     [CriteriaDescription]   [varchar](512) NULL,
-                    [CreatedDateTime]       [datetime] NOT NULL,
-                    [Expiry]                [datetime] NOT NULL,
+                    [CreatedDateTime]       [numeric] (18) NOT NULL,
+                    [Expiry]                [numeric] (18) NOT NULL,
                     CONSTRAINT              [PK_ClientId_Criteria] PRIMARY KEY CLUSTERED
                     (
                     [Criteria],[ClientId] ASC
