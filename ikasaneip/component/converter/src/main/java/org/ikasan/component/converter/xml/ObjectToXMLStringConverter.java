@@ -42,6 +42,7 @@ package org.ikasan.component.converter.xml;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -93,17 +94,36 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
 
     /**
      * Constructor
-     * @param context
+     * @param classes
      */
-    public ObjectToXMLStringConverter(JAXBContext context)
+    public ObjectToXMLStringConverter(List<Class> classes)
     {
-        this.context = context;
-        if(context == null)
+        try
         {
-            throw new IllegalArgumentException("JAXBContext cannot be 'null'");
+            this.context = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
+        }
+        catch(JAXBException e)
+        {
+            throw new IllegalArgumentException("Failed to create JAXBContext with classes[" + classes + "]", e);
         }
     }
-    
+
+    /**
+     * Constructor
+     * @param cls
+     */
+    public ObjectToXMLStringConverter(Class cls)
+    {
+        try
+        {
+            this.context = JAXBContext.newInstance(cls);
+        }
+        catch(JAXBException e)
+        {
+            throw new IllegalArgumentException("Failed to create JAXBContext with class[" + cls + "]", e);
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.ikasan.spec.component.transformation.Converter#convert(java.lang.Object)
      */

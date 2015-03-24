@@ -43,10 +43,11 @@ package org.ikasan.component.converter.xml;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import org.custommonkey.xmlunit.Diff;
@@ -86,7 +87,7 @@ public class ObjectToXMLStringConverterTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_due_to_null_context()
     {
-        new ObjectToXMLStringConverter(null);
+        new ObjectToXMLStringConverter((Class)null);
     }
 
     /**
@@ -110,7 +111,7 @@ public class ObjectToXMLStringConverterTest
         example.setTwo("2");
         
         /** class on test */
-        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(JAXBContext.newInstance(Example.class));
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(Example.class);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
 
         for(int i = 0;i <20; i++)
@@ -144,7 +145,7 @@ public class ObjectToXMLStringConverterTest
         final Example example = eventFactory.getObjectEvent();
         
         /** class on test */
-        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(JAXBContext.newInstance(Example.class));
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(Example.class);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
         
         String xml = (String)objectToXML.convert(example);
@@ -175,7 +176,9 @@ public class ObjectToXMLStringConverterTest
         example.setTwo("2");
         
         /** class on test */
-        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(JAXBContext.newInstance(Example.class));
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
         
         String xml = (String)objectToXML.convert(example);
@@ -204,7 +207,9 @@ public class ObjectToXMLStringConverterTest
         final Example example = eventFactory.getObjectEvent();
         
         /** class on test */
-        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(JAXBContext.newInstance(Example.class));
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(Example.class);
+        Converter<Object,Object> objectToXML = new ObjectToXMLStringConverter(classes);
         ((ConfiguredResource)objectToXML).setConfiguration(xmlConfiguration);
         
         String xml = (String)objectToXML.convert(example);

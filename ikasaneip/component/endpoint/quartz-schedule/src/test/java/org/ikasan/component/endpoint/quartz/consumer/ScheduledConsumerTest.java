@@ -95,8 +95,11 @@ public class ScheduledConsumerTest
         mockery.mock(ScheduledConsumerConfiguration.class, "mockScheduledConsumerConfiguration");
 
     /** Mock jobExecutionContext **/
-    final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class); 
-    
+    final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
+
+    /** Mock managedResourceRecoveryManager **/
+    final ManagedResourceRecoveryManager mockManagedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class);
+
     /** consumer event listener */
     final EventListener eventListener = mockery.mock(EventListener.class);
 
@@ -310,7 +313,7 @@ public class ScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_null() throws SchedulerException
+    public void test_execute_when_messageProvider_message_is_null_not_in_recovery() throws SchedulerException
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
@@ -331,6 +334,9 @@ public class ScheduledConsumerTest
                 will(returnValue(mockFlowEvent));
 
                 exactly(0).of(eventListener).invoke(mockFlowEvent);
+
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
             }
         });
 
@@ -338,19 +344,61 @@ public class ScheduledConsumerTest
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setMessageProvider(mockMessageProvider);
         // test
         scheduledConsumer.execute(jobExecutionContext);
         // assert
         mockery.assertIsSatisfied();
     }
-    
+
+    @Test
+    public void test_execute_when_messageProvider_message_is_null_when_in_recovery() throws SchedulerException
+    {
+        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+        final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
+        final String identifier = "testId";
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(null));
+
+                // schedule the job
+                exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                will(returnValue(identifier));
+
+                exactly(0).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
+                will(returnValue(mockFlowEvent));
+
+                exactly(0).of(eventListener).invoke(mockFlowEvent);
+
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(true));
+
+                exactly(1).of(mockManagedResourceRecoveryManager).cancel();
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+        scheduledConsumer.setMessageProvider(mockMessageProvider);
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
+
     @Test
     public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
-        final ManagedResourceRecoveryManager resourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class);
         final String identifier = "testId";
         final RuntimeException rt = new RuntimeException("rt is thrown");
         
@@ -360,7 +408,7 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
-                exactly(1).of(resourceRecoveryManager).recover(rt);
+                exactly(1).of(mockManagedResourceRecoveryManager).recover(rt);
                 // schedule the job
                 exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
                 will(returnValue(identifier));
@@ -378,7 +426,7 @@ public class ScheduledConsumerTest
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setMessageProvider(mockMessageProvider);
-        scheduledConsumer.setManagedResourceRecoveryManager(resourceRecoveryManager);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         // test
         scheduledConsumer.execute(jobExecutionContext);
         // assert
