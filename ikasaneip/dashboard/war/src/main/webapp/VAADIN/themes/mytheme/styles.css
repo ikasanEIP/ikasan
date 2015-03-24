@@ -1,3 +1,5 @@
+/** Ikasan font: Trebuchet MS **/
+
 .v-assistive-device-only {
 	position: absolute;
 	top: -2000px;
@@ -79,7 +81,7 @@
 	-webkit-opacity: 0.8;
 	opacity: 0.8;
 	color: #666;
-	font-family: Arial, Helvetica, Tahoma, Verdana, sans-serif;
+	font-family: Calibri, Helvetica, Tahoma, Verdana, sans-serif;
 	font-size: 13px;
 }
 
@@ -2003,6 +2005,7 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-gridlayout-slot {
 	position: absolute;
+	padding: 2px;
 }
 
 .mytheme .v-gridlayout-margin-top {
@@ -2097,11 +2100,11 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-menubar-submenu {
-	background: #fff;
+	background: #3E3E3E;
 }
 
 .mytheme .v-menubar-menuitem-selected {
-	background: #333;
+	background: #3E3E3E;
 	color: #fff;
 }
 
@@ -2122,7 +2125,7 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-menubar-submenu-indicator {
 	display: none;
-	font-family: arial, helvetica, sans-serif;
+	font-family: Calibri, helvetica, sans-serif;
 }
 
 .mytheme .v-menubar-submenu .v-menubar-submenu-indicator {
@@ -2139,7 +2142,7 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-menubar-more-menuitem {
-	font-family: arial, helvetica, sans-serif;
+	font-family: Calibri, helvetica, sans-serif;
 }
 
 .mytheme .v-menubar-separator {
@@ -2158,6 +2161,10 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-menubar .v-icon, .mytheme .v-menubar-submenu .v-icon {
 	margin-right: 3px;
+}
+
+.mytheme .v-menubar .v-icon {
+    float: right;   
 }
 
 .mytheme .v-menubar:focus, .mytheme .v-menubar-popup:focus, .mytheme .v-menubar-popup .popupContent:focus, .mytheme .v-menubar-popup .popupContent .v-menubar-submenu:focus {
@@ -2688,7 +2695,7 @@ body .mytheme.v-app .v-app-loading {
 	font-size: 11px;
 	line-height: 13px;
 	font-weight: bold;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Calibri, Helvetica, sans-serif;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
@@ -4006,7 +4013,7 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme.v-app, .mytheme .v-window, .mytheme .v-popupview-popup, .mytheme .v-tooltip, .mytheme.v-app input, .mytheme.v-app select, .mytheme.v-app button, .mytheme.v-app textarea, .mytheme .v-window input, .mytheme .v-window select, .mytheme .v-window button, .mytheme .v-window textarea, .mytheme .v-popupview-popup input, .mytheme .v-popupview-popup select, .mytheme .v-popupview-popup button, .mytheme .v-popupview-popup textarea, .mytheme .v-filterselect-suggestpopup, .mytheme .v-datefield-popup, .mytheme .v-contextmenu, .mytheme .v-Notification, .mytheme .v-menubar-submenu, .mytheme .v-drag-element, .mytheme .v-table-header-drag {
-	font-family: Arial, Helvetica, Tahoma, Verdana, sans-serif;
+	font-family: Calibri, Helvetica, Tahoma, Verdana, sans-serif;
 	font-size: 12px;
 	line-height: normal;
 	color: #222;
@@ -5013,7 +5020,7 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-label-h1, .mytheme .v-label-h2, .mytheme .v-caption-h1, .mytheme .v-caption-h2, .mytheme .white .v-label-h1, .mytheme .white .v-label-h2, .mytheme .white .v-caption-h1, .mytheme .white .v-caption-h2 {
-	font-family: Helvetica, Arial, "Lucida Grande", Geneva, Tahoma, Verdana, sans-serif;
+	font-family: Helvetica, Calibri, "Lucida Grande", Geneva, Tahoma, Verdana, sans-serif;
 	font-size: 24px;
 	line-height: 30px;
 	font-weight: bold;
@@ -5130,7 +5137,7 @@ body .mytheme.v-app .v-app-loading {
 	height: 23px;
 	background: #323336 repeat-x;
 	background-image: url(../reindeer/menubar/img/bg.png);/** sprite-ref: verticals; sprite-alignment: repeat */
-	color: #d1d3d6;
+	color: #fff;
 	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
 	padding: 0 8px;
 }
@@ -5166,14 +5173,14 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-menubar .v-menubar-menuitem-selected, .mytheme .v-menubar-submenu .v-menubar-menuitem-selected {
-	background: #4d749f repeat-x;
-	background-image: url(../reindeer/common/img/sel-bg.png);/** sprite-ref: verticals; sprite-alignment: repeat */
+	background: #3E3E3E repeat-x;
 	color: #fff;
-	text-shadow: 0 1px 0 #3b5a7a;
+	text-shadow: 0 1px 0 #3E3E3E;
 }
 
 .mytheme .v-menubar .v-menubar-menuitem-selected {
-	background-image: url(../reindeer/menubar/img/menu-sel-bg.png);/** sprite-ref: verticals; sprite-alignment: repeat; sprite-margin-bottom: 1px  */
+	background: #3E3E3E;
+	/** background-image: url(../reindeer/menubar/img/menu-sel-bg.png); sprite-ref: verticals; sprite-alignment: repeat; sprite-margin-bottom: 1px  */
 }
 
 .mytheme .v-menubar-submenu .v-menubar-submenu-indicator {
@@ -5303,6 +5310,9 @@ body .mytheme.v-app .v-app-loading {
 .mytheme .v-panel-deco, .mytheme .white .v-panel-deco {
 	height: 1px;
 	border-top: 1px solid #bebebe;
+	border-bottom: 1px solid #bebebe;
+	border-left: 1px solid #bebebe;
+	border-right: 1px solid #bebebe;
 	background: #e2e2e2;
 	overflow: hidden;
 }
@@ -7034,7 +7044,7 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-panel .v-panel-caption {
 	background: transparent;
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	color: #99141B;
 	font-size: 12px;
 	text-decoration: none;
@@ -7049,7 +7059,7 @@ body .mytheme.v-app .v-app-loading {
 .mytheme .v-panel-content-navigation {
         background: #3E3E3E;
         border: none;
-        font-family: "Trebuchet MS";
+        font-family: "Calibri";
         color: white;
         width: 30%;
         padding-top: 0px;
@@ -7070,7 +7080,7 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .white .v-button-caption {
 	padding-top: 5px;
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
     color: white;
 }
 .mytheme .v-panel-content > div {
@@ -7087,7 +7097,7 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-panel-content .v-label {
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	color: #666;
 	font-size: 11px;
 }
@@ -7106,7 +7116,7 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-caption-ikasan {
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	color: #666;
 	font-size: 11px;
 }
@@ -7115,13 +7125,13 @@ body .mytheme.v-app .v-app-loading {
 	background-color: #F9AF56;
 	background-image: url(./images/Banner.png);
 	background-repeat: no-repeat;
-	height: 140px;
+	height: 70px;
 	position: relative;
 	padding-left: 0px;
 }
 
 .mytheme .v-label-ikasan-maroon {
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	color: #99141B;
 	font-size: 18px;
 	font-weight: bold;
@@ -7131,7 +7141,7 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-label-ikasan-white {
-    font-family: "Trebuchet MS";
+    font-family: "Calibri";
     color: white !important;
     padding-left: 10px;
 }
@@ -7155,22 +7165,22 @@ body .mytheme.v-app .v-app-loading {
 }
 
 .mytheme .v-app, .mytheme .v-window, .mytheme .v-popupview-popup, .mytheme .v-tooltip, .mytheme .v-app input, .mytheme .v-app select, .mytheme .v-app button, .mytheme .v-app textarea.v-textarea, .mytheme .v-window input, .mytheme .v-window select, .mytheme .v-window button, .mytheme .v-window textarea.v-textarea, .mytheme .v-popupview-popup input, .mytheme .v-popupview-popup select, .mytheme .v-popupview-popup button, .mytheme .v-popupview-popup textarea.v-textarea, .mytheme .v-filterselect-suggestpopup, .mytheme .v-datefield-popup, .mytheme .v-contextmenu, .mytheme .v-notification, .mytheme .v-menubar-submenu, .mytheme .v-drag-element, .mytheme .v-customoverlay, .mytheme .v-button-link .v-button-caption {
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	font-size: 11px;
 }
 
 .mytheme input[type="text"] {
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	font-size: 11px;
 }
 
 .mytheme .v-table-cell-content-ikasan {
-	font-family: "Trebuchet MS";
+	font-family: "Calibri";
 	font-size: 11px;
 }
 
 .mytheme textarea.v-textarea {
-	font-family: "Trebuchet MS" !important;
+	font-family: "Calibri" !important;
 	font-size: 11px !important;
 }
 

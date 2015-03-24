@@ -15,85 +15,58 @@ package org.ikasan.dashboard.ui.framework.navigation;
 import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
-
-import com.vaadin.navigator.NavigationStateManager;
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.ViewDisplay;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.SingleComponentContainer;
-import com.vaadin.ui.UI;
+import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 
 /**
  * @author CMI2 Development Team
  *
  */
-public class IkasanUINavigator extends Navigator
+public class IkasanUINavigator
 {
-    private static final long serialVersionUID = -193864770035097124L;
+	private static final long serialVersionUID = -193864770035097124L;
 
+    private String name;
+    private List<IkasanUIView> ikasanViews;
+    private ViewComponentContainer container;
+   
     /**
-     * Constructor
-     * 
-     * @param ui
-     * @param container
-     * @param views
+     * Constructor 
+     * @param name
+     * @param ikasanViews
      */
-    public IkasanUINavigator(UI ui, ComponentContainer container, List<IkasanUIView> views)
+    public IkasanUINavigator(String name, List<IkasanUIView> ikasanViews,
+    		ViewComponentContainer container) 
     {
-        super(ui, container);
-        init(views);
-    }
+		super();
+		this.name = name;
+		if(this.name == null)
+		{
+			throw new IllegalArgumentException("name cannot be null!");
+		}
+		this.ikasanViews = ikasanViews;
+		if(this.ikasanViews == null)
+		{
+			throw new IllegalArgumentException("ikasanViews cannot be null!");
+		}
+		this.container = container;
+		if(this.container == null)
+		{
+			throw new IllegalArgumentException("container cannot be null!");
+		}
+	}
 
-    /**
-     * Constructor
-     * 
-     * @param ui
-     * @param stateManager
-     * @param display
-     * @param views
-     */
-    public IkasanUINavigator(UI ui, NavigationStateManager stateManager, ViewDisplay display, List<IkasanUIView> views)
-    {
-        super(ui, stateManager, display);
-        init(views);
-    }
+	public ViewComponentContainer getContainer() 
+	{
+		return container;
+	}
 
-    /**
-     * Constructor
-     * 
-     * @param ui
-     * @param container
-     * @param views
-     */
-    public IkasanUINavigator(UI ui, SingleComponentContainer container, List<IkasanUIView> views)
-    {
-        super(ui, container);
-        init(views);
-    }
+	public String getName() 
+	{
+		return name;
+	}
 
-    /**
-     * Constructor
-     * 
-     * @param ui
-     * @param display
-     * @param views
-     */
-    public IkasanUINavigator(UI ui, ViewDisplay display, List<IkasanUIView> views)
-    {
-        super(ui, display);
-        init(views);
-    }
-
-    /**
-     * Helper method to initialise this object.
-     * 
-     * @param views
-     */
-    protected void init(List<IkasanUIView> views)
-    {
-        for(IkasanUIView view: views)
-        {
-            this.addView(view.getPath(), view.getView());
-        }
-    }
+	public List<IkasanUIView> getIkasanViews() 
+	{
+		return ikasanViews;
+	}
 }

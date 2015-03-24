@@ -3,10 +3,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/security 
-        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <context:annotation-config/>
     <context:component-scan base-package="org.ikasan.mapping.configuration.ui"/>
@@ -18,55 +20,9 @@
 
     <bean class="ru.xpoft.vaadin.VaadinMessageSource" />
 
-    <bean id="mappingConfigurationSearchPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="clientComboBox"/>
-        <constructor-arg ref="typeComboBox"/>
-        <constructor-arg ref="sourceContextComboBox"/>
-        <constructor-arg ref="targetContextComboBox"/>
-        <constructor-arg ref="searchButtonClickListener"/>
-    </bean>
-
-    <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="session">
-        <constructor-arg ref="homeTab"/>
-        <constructor-arg>
-            <list>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="emptyPanel"/>
-                   <constructor-arg ref="emptyPanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="searchResultsPanel"/>
-                   <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="existingMappingConfigurationPanel"/>
-                   <constructor-arg ref="existingMappingConfigurationPanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="newClientPanel"/>
-                   <constructor-arg ref="newClientPanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="newContextPanel"/>
-                   <constructor-arg ref="newContextPanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="newConfigurationTypePanel"/>
-                   <constructor-arg ref="newConfigurationTypePanel"/>
-                </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="newMappingConfigurationPanel"/>
-                   <constructor-arg ref="newMappingConfigurationPanel"/>
-                </bean>
-                <!--  Removing the Ikasan estate view -->
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="estateViewPanel"/>
-                   <constructor-arg ref="estateViewPanel"/>
-                </bean>
-            </list>
-        </constructor-arg>
-        <constructor-arg ref="viewComponentContainer"/>
+    <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="prototype">
+        <constructor-arg ref="navigatorMap"/>
+        <constructor-arg ref="mappingViewComponentContainer"/>
         <constructor-arg ref="userDetailsService"/>
         <constructor-arg ref="localTxSecurityService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
@@ -76,554 +32,68 @@
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
     </bean>
 
+	<util:map id="navigatorMap" value-type="java.util.List" map-class="java.util.HashMap" scope="session">
+	  <entry key="topLevel" value-ref="topLevelNavigator" />
+      <entry key="mapping" value-ref="mappingNavigator" />
+      <entry key="dashboard" value-ref="dashboardNavigator" />
+      <entry key="error" value-ref="errorNavigator" />
+      <entry key="user" value-ref="userNavigator" />
+      <entry key="replay" value-ref="replayNavigator" />
+      <entry key="profile" value-ref="profileNavigator" />
+      <entry key="hospital" value-ref="hospitalNavigator" />
+      <entry key="topology" value-ref="topologyNavigator" />
+    </util:map>
+
+	<bean id="topLevelNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="topLevel"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="landingView"/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="dashboardView"/>
+                   <constructor-arg ref="dashboardPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="mappingView"/>
+                   <constructor-arg ref="mappingView"/>
+                </bean>
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="errorView"/>
+                   <constructor-arg ref="errorPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="userView"/>
+                   <constructor-arg ref="userPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="replayView"/>
+                   <constructor-arg ref="replayPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="profileView"/>
+                   <constructor-arg ref="profilePanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="hospitalView"/>
+                   <constructor-arg ref="hospitalPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="topologyView"/>
+                   <constructor-arg ref="estateViewPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+
+
     <bean id="userDetailsHelper" class="org.ikasan.dashboard.ui.framework.util.UserDetailsHelper" scope="session">
     </bean>
 
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
-    </bean>
-
-    <bean id="saveRequiredMonitor" class="org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor" scope="session">
-        <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
-    </bean>
-
-    <bean id="newActionsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewActionsPanel" scope="session">
-        <constructor-arg ref="newMappingConfigurationPanel"/>
-        <constructor-arg ref="typeComboBoxRefreshGroup"/>
-        <constructor-arg ref="clientComboBoxRefreshGroup"/>
-        <constructor-arg ref="contextComboBoxRefreshGroup"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-        <constructor-arg ref="newClientButton"/>
-        <constructor-arg ref="newContextButton"/>
-        <constructor-arg ref="newTypeButton"/>
-        <constructor-arg ref="newMappingConfigurationButton"/>
-        <constructor-arg ref="importMappingConfigurationButton"/>
-        <constructor-arg ref="newClientLabel"/>
-        <constructor-arg ref="newContextLabel"/>
-        <constructor-arg ref="newTypeLabel"/>
-        <constructor-arg ref="newMappingConfigurationLabel"/>
-        <constructor-arg ref="importMappingConfigurationLabel"/>
-        <constructor-arg ref="mappingConfigurationImportWindow"/>
-    </bean>
-
-    <bean id="mappingConfigurationImportWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
-        <constructor-arg ref="existingMappingConfigurationPanel"/>
-    </bean>
-
-    <bean id="newConfigurationTypePanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationTypePanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="typeComboBoxRefreshGroup"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-    </bean>
-
-    <bean id="newClientPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewClientPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="clientComboBoxRefreshGroup"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-    </bean>
-
-    <bean id="newContextPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationContextPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="contextComboBoxRefreshGroup"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.ExistingMappingConfigurationPanel" scope="session">
-        <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
-        <constructor-arg ref="existingMappingConfigurationClientComboBox"/>
-        <constructor-arg ref="existingMappingConfigurationTypeComboBox"/>
-        <constructor-arg ref="existingMappingConfigurationSourceContextComboBox"/>
-        <constructor-arg ref="existingMappingConfigurationTargetContextComboBox"/>
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-        <constructor-arg ref="existingMappingConfigurationEditButton"/>
-        <constructor-arg ref="existingMappingConfigurationSaveButton"/>
-        <constructor-arg ref="existingMappingConfigurationValueNewRecordButton"/>
-        <constructor-arg ref="existingMappingConfigurationValueDeleteAllButton"/>
-        <constructor-arg ref="existingMappingConfigurationValueImportButton"/>
-        <constructor-arg ref="existingMappingConfigurationValueExportButton"/>
-        <constructor-arg ref="existingMappingConfigurationExportButton"/>
-        <constructor-arg ref="existingMappingConfigurationCancelButton"/>
-        <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
-        <constructor-arg ref="mappingConfigurationExportHelper"/>
-        <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
-    </bean>
-
-    <bean id="newMappingConfigurationPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationPanel" scope="session">
-        <constructor-arg ref="newMappingConfigurationConfigurationValuesTable"/>
-        <constructor-arg ref="newMappingConfigurationClientComboBox"/>
-        <constructor-arg ref="newMappingConfigurationTypeComboBox"/>
-        <constructor-arg ref="newMappingConfigurationSourceContextComboBox"/>
-        <constructor-arg ref="newMappingConfigurationTargetContextComboBox"/>
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-        <constructor-arg ref="newMappingConfigurationEditButton"/>
-        <constructor-arg ref="newMappingConfigurationSaveButton"/>
-        <constructor-arg ref="newMappingConfigurationValueNewRecordButton"/>
-        <constructor-arg ref="newMappingConfigurationValueDeleteAllButton"/>
-        <constructor-arg ref="newMappingConfigurationValueImportButton"/>
-        <constructor-arg ref="newMappingConfigurationValueExportButton"/>
-        <constructor-arg ref="newMappingConfigurationExportButton"/>
-        <constructor-arg ref="newMappingConfigurationCancelButton"/>
-        <constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
-        <constructor-arg ref="mappingConfigurationExportHelper"/>
-        <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
-    </bean>
-
-    <bean id="mappingConfigurationExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper" scope="session">
-        <constructor-arg ref="mappingConfigurationExportSchema"/>
-        <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
-    </bean>
-
-    <bean id="mappingConfigurationValuesExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper" scope="session">
-        <constructor-arg ref="mappingConfigurationValuesExportSchema"/>
-    </bean>
-
-    <bean id="homeTab" class="org.ikasan.dashboard.ui.framework.tab.HomeTab" scope="session">
-        <constructor-arg ref="mappingConfigurationSearchPanel"/>
-        <constructor-arg ref="mappingConfigurationSearchResultsPanel"/>
-        <constructor-arg ref="viewComponentContainer"/>
-        <constructor-arg ref="newActionsPanel"/>
-    </bean>
-
-    <bean id="componentContainerViewDisplay" class="com.vaadin.navigator.Navigator.ComponentContainerViewDisplay" scope="session">
-        <constructor-arg ref="viewComponentContainer"/>
-    </bean>
-
-    <bean id="viewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
-    </bean>
-
-    <bean id="searchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable" scope="session">
-        <constructor-arg ref="searchResultTableItemClickListener"/>
-    </bean>
-
-    <bean id="mappingConfigurationConfigurationValuesTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="adminUserVisibilityGroup"/>
-    </bean>
-
-    <bean id="newMappingConfigurationConfigurationValuesTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="adminUserVisibilityGroup"/>
-    </bean>
-
-    <bean id="mappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="searchResultsTable"/>
-    </bean>
-
-    <bean id="newMappingConfigurationFunctionalGroup" class="org.ikasan.dashboard.ui.framework.group.FunctionalGroup" scope="session">
-        <constructor-arg ref="newMappingConfigurationEditButton"/>
-        <constructor-arg ref="newMappingConfigurationSaveButton"/>
-        <constructor-arg ref="newMappingConfigurationCancelButton"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationFunctionalGroup" class="org.ikasan.dashboard.ui.framework.group.FunctionalGroup" scope="session">
-        <constructor-arg ref="existingMappingConfigurationEditButton"/>
-        <constructor-arg ref="existingMappingConfigurationSaveButton"/>
-        <constructor-arg ref="existingMappingConfigurationCancelButton"/>
-    </bean>
-
-    <bean id="clientComboBoxRefreshGroup" class="org.ikasan.dashboard.ui.framework.group.RefreshGroup" scope="session">
-        <property name="refreshableItems">
-            <list>
-                <ref bean="clientComboBox" />
-                <ref bean="existingMappingConfigurationClientComboBox" />
-                <ref bean="newMappingConfigurationClientComboBox" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="typeComboBoxRefreshGroup" class="org.ikasan.dashboard.ui.framework.group.RefreshGroup" scope="session">
-        <property name="refreshableItems">
-            <list>
-                <ref bean="typeComboBox" />
-                <ref bean="existingMappingConfigurationTypeComboBox" />
-                <ref bean="newMappingConfigurationTypeComboBox" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="contextComboBoxRefreshGroup" class="org.ikasan.dashboard.ui.framework.group.RefreshGroup" scope="session">
-        <property name="refreshableItems">
-            <list>
-                <ref bean="sourceContextComboBox" />
-                <ref bean="targetContextComboBox" />
-                <ref bean="existingMappingConfigurationSourceContextComboBox" />
-                <ref bean="existingMappingConfigurationTargetContextComboBox" />
-                <ref bean="newMappingConfigurationSourceContextComboBox" />
-                <ref bean="newMappingConfigurationTargetContextComboBox" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="editableGroup" class="org.ikasan.dashboard.ui.framework.group.EditableGroup" scope="session">
-        <property name="editables">
-            <list>
-                <ref bean="newMappingConfigurationPanel" />
-                <ref bean="existingMappingConfigurationPanel" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="clientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="typeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="sourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="targetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="newMappingConfigurationClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="newMappingConfigurationTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="newMappingConfigurationSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="newMappingConfigurationTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-    </bean>
-
-    <bean id="searchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="clientComboBox"/>
-        <constructor-arg ref="typeComboBox"/>
-        <constructor-arg ref="sourceContextComboBox"/>
-        <constructor-arg ref="targetContextComboBox"/>
-        <constructor-arg ref="searchResultsTable"/>
-        <constructor-arg ref="saveRequiredMonitor"/>
-        <constructor-arg ref="adminUserVisibilityGroup"/>
-    </bean>
-
-    <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchResultTableItemClickListener" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
-        <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
-        <constructor-arg ref="existingMappingConfigurationPanel"/>
-    </bean>
-
-    <!-- Components -->
-
-    <bean id="editIcon" class="com.vaadin.server.ThemeResource" scope="singleton">
-        <constructor-arg value="images/edit.png"/>
-    </bean>
-
-    <bean id="saveIcon" class="com.vaadin.server.ThemeResource" scope="singleton">
-        <constructor-arg value="images/save.png"/>
-    </bean>
-
-    <bean id="addIcon" class="com.vaadin.server.ThemeResource" scope="singleton">
-        <constructor-arg value="images/plus-button.JPG"/>
-    </bean>
-
-    <bean id="newMappingConfigurationEditButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="editIcon"/ -->
-        <constructor-arg value="Edit"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationEditButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="editIcon"/ -->
-        <constructor-arg value="Edit"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationSaveButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="saveIcon"/> -->
-        <constructor-arg value="Save"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationSaveButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="saveIcon"/> -->
-        <constructor-arg value="Save"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationCancelButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="saveIcon"/> -->
-        <constructor-arg value="Cancel"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationCancelButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="saveIcon"/> -->
-        <constructor-arg value="Cancel"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationValueNewRecordButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="New"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationValueNewRecordButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="New"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationValueDeleteAllButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Delete all"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationValueDeleteAllButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Delete all"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationValueImportButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Import"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationValueImportButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Import"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationValueExportButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Export"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationExportButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Export"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationValueExportButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Export"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="existingMappingConfigurationExportButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Export"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newClientButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="addIcon"/ -->
-        <constructor-arg value="Add"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newContextButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="addIcon"/ -->
-        <constructor-arg value="Add"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newTypeButton" class="com.vaadin.ui.Button" scope="session">
-        <!--  property name="icon" ref="addIcon"/ -->
-        <constructor-arg value="Add"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Add"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="importMappingConfigurationButton" class="com.vaadin.ui.Button" scope="session">
-        <constructor-arg value="Import"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newClientLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration client"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newContextLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration context"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newTypeLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration type"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="newMappingConfigurationLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="New mapping configuration"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="importMappingConfigurationLabel" class="com.vaadin.ui.Label" scope="session">
-        <constructor-arg value="Import mapping configuration"/>
-        <property name="visible" value="false"/>
-    </bean>
-
-    <bean id="adminUserVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
-        <property name="components">
-            <list>
-                <ref bean="newMappingConfigurationEditButton" />
-                <ref bean="newMappingConfigurationSaveButton" />
-                <ref bean="newMappingConfigurationCancelButton" />
-                <ref bean="newMappingConfigurationValueNewRecordButton" />
-                <ref bean="newMappingConfigurationValueDeleteAllButton" />
-                <ref bean="newMappingConfigurationValueImportButton" />
-                <ref bean="newMappingConfigurationValueExportButton" />
-                <ref bean="newMappingConfigurationExportButton" />
-                <ref bean="existingMappingConfigurationEditButton" />
-                <ref bean="existingMappingConfigurationSaveButton" />
-                <ref bean="existingMappingConfigurationCancelButton" />
-                <ref bean="existingMappingConfigurationValueNewRecordButton" />
-                <ref bean="existingMappingConfigurationValueDeleteAllButton" />
-                <ref bean="existingMappingConfigurationValueImportButton" />
-                <ref bean="existingMappingConfigurationValueExportButton" />
-                <ref bean="existingMappingConfigurationExportButton" />
-                <ref bean="newClientButton" />
-                <ref bean="newContextButton" />
-                <ref bean="newTypeButton" />
-                <ref bean="newMappingConfigurationButton" />
-                <ref bean="importMappingConfigurationButton" />
-                <ref bean="newClientLabel" />
-                <ref bean="newContextLabel" />
-                <ref bean="newTypeLabel" />
-                <ref bean="newMappingConfigurationLabel" />
-                <ref bean="importMappingConfigurationLabel" />
-            </list>
-        </property>
-    </bean>
-
-    <!--  Estate Resolution -->
-    <!--  Removing the Ikasan estate view -->
-  
-    <bean id="estateViewPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.EstateViewPanel">
-        <constructor-arg ref="ikasanModuleService" />
-    </bean>
-
-    <bean id="httpTransport" class="org.ikasan.module.util.HttpTransport">
-    </bean>
-
-    <bean id="ikasanModuleService" class="org.ikasan.module.IkasanModuleServiceImpl">
-        <constructor-arg ref="httpTransport" />
-        <constructor-arg value="stewmi" />
-        <constructor-arg value="flower" />
-        <constructor-arg>
-        <list>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="blbgToms-mhiCmfTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="blbgToms-mhiTradeFeedSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="blbgToms-mhiTradeReportingSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="ion-tradeReportingTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="intellimatch-labPositionFileTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="tradeweb-jgbPostTradeSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="tradeWeb-postTradeSrc" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="murex-bondTradeTgt" />
-                <property name="serverName" value="http://svc-fixedincomebondeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="cityFios-equityTradeTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="derivation-equityTradeTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-              </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="derivation-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-counterpartyTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-equityReportingSrc" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="fidessa-postEquityTradeSrc" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="murex-convertibleBondTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="murex-equityTradeTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="mhiSupport-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="miCore-misReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="miCore-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="stratus-equityReportingTgt" />
-                <property name="serverName" value="http://svc-equityeaid:60000" />
-            </bean>
-            <bean class="org.ikasan.module.model.Module">
-                <property name="moduleName" value="swiftAlliance-swiftGateway" />
-                <property name="serverName" value="http://svc-swiftgweaid:60000" />
-            </bean>
-        </list>
-    </constructor-arg> 
     </bean>
 
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>

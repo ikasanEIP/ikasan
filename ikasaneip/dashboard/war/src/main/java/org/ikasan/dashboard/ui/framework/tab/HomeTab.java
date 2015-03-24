@@ -6,6 +6,8 @@ import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSe
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.NewActionsPanel;
 
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -15,7 +17,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.BaseTheme;
 
-public class HomeTab extends VerticalLayout 
+public class HomeTab extends VerticalLayout implements View
 {
     private static final long serialVersionUID = -4759498822589839343L;
     private MappingConfigurationSearchPanel searchPanel;
@@ -50,7 +52,6 @@ public class HomeTab extends VerticalLayout
      * Helper method to initialise this object.
      */
     protected void init() {
-//        super.setMargin(true);
         this.setSizeFull();
         Panel panel = new Panel();
         panel.setSizeFull();
@@ -123,4 +124,10 @@ public class HomeTab extends VerticalLayout
 
         return layout;
     }
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -18,6 +18,7 @@ import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
@@ -34,7 +35,7 @@ public class LogoutAction implements Action
     private GridLayout layout;
     private Button loginButton;
     private Label userLabel;
-    private Button logOutButton;
+    private Component logOutButton;
 
     /**
      * Constructor
@@ -46,7 +47,7 @@ public class LogoutAction implements Action
      * @param loginButton
      */
     public LogoutAction(VisibilityGroup visibilityGroup, UserDetailsHelper userDetailsHelper,
-            EditableGroup editableGroup, GridLayout layout, Button loginButton, Button logOutButton,
+            EditableGroup editableGroup, GridLayout layout, Button loginButton, Component logOutButton,
             Label userLabel)
     {
         super();
@@ -70,7 +71,7 @@ public class LogoutAction implements Action
         this.editableGroup.setEditable(false);
 
         layout.removeComponent(this.logOutButton);
-        layout.addComponent(this.loginButton, 1, 0);
+        layout.addComponent(this.loginButton, 2, 0);
         layout.setComponentAlignment(this.loginButton, Alignment.MIDDLE_RIGHT);
         this.layout.removeComponent(userLabel);
         UI.getCurrent().getNavigator().navigateTo("emptyPanel");

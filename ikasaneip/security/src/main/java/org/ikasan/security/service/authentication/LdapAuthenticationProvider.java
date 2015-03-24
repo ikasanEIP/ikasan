@@ -125,12 +125,12 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 
 //        Object[] groups =  authAdapter.
 
-        for(String group: groups)
-        {
-            System.out.println("Group: " + group);
-        }
-
-        System.out.println("Role: " + role);
+//        for(String group: groups)
+//        {
+//            System.out.println("Group: " + group);
+//        }
+//
+//        System.out.println("Role: " + role);
 
         return new LdapAuthenticationToken();
     }
