@@ -212,14 +212,24 @@ public class ScheduledConsumer<T>
      */
     public void execute(JobExecutionContext context)
     {
-        try {
-        T message = (T) messageProvider.invoke(context);
-        if (message != null)
+        try
         {
-            FlowEvent<?, ?> flowEvent = createFlowEvent(message);
-            this.eventListener.invoke(flowEvent);
+            T message = (T) messageProvider.invoke(context);
+            if (message != null)
+            {
+                FlowEvent<?, ?> flowEvent = createFlowEvent(message);
+                this.eventListener.invoke(flowEvent);
+            }
+            else
+            {
+                if(managedResourceRecoveryManager.isRecovering())
+                {
+                    managedResourceRecoveryManager.cancel();
+                }
+            }
         }
-        } catch (Throwable thr){
+        catch (Throwable thr)
+        {
             managedResourceRecoveryManager.recover(thr);
         }
     }
