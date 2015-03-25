@@ -6,13 +6,6 @@ import org.junit.Test;
 
 public class EmbeddedMongoTest {
 
-	@Test
-	public void testEmbeddedMongoWithSystemProperty() {
-		System.setProperty("ikasan.localMongoDistDirProperty", "myLocalInstallationDir");
-		EmbeddedMongo em = new EmbeddedMongo(100);
-		assertEquals(100, em.getPort());
-		assertEquals("myLocalInstallationDir", em.getMongoDistributionDirectory());
-	} 
 
 	@Test
 	public void testEmbeddedMongoWithNoSystemProperty() {
@@ -22,9 +15,10 @@ public class EmbeddedMongoTest {
 		assertNull(em.getMongoDistributionDirectory());
 	}
 	
+	
 	@Test
 	public void testEmbeddedMongoWithNullLocalDistributionDirector(){
-		EmbeddedMongo em = new EmbeddedMongo(100, null);
+		EmbeddedMongo em = new EmbeddedMongo(100);
 		assertEquals(100, em.getPort());
 		assertNull(em.getMongoDistributionDirectory());
 		
