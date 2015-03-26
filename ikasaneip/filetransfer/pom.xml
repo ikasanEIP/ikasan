@@ -1,0 +1,114 @@
+<!--
+
+ ====================================================================
+ Ikasan Enterprise Integration Platform
+
+ Distributed under the Modified BSD License.
+ Copyright notice: The copyright for this software and a full listing
+ of individual contributors are as shown in the packaged copyright.txt
+ file.
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+  - Neither the name of the ORGANIZATION nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ====================================================================
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-build</artifactId>
+        <version>1.0.0-rc4-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <artifactId>ikasan-filetransfer</artifactId>
+    <packaging>pom</packaging>
+    <name>Ikasan Enterprise Integration Platform file transfer</name>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>3.1.1.RELEASE</spring.version>
+        <ikasan.version>${project.version}</ikasan.version>
+    </properties>
+
+    <modules>
+        <module>common</module>
+        <module>client-connection</module>
+        <module>connector-base</module>
+        <module>client-filetransfer</module>
+        <module>connector-basefiletransfer</module>
+        <module>connector-filetransfer-parent</module>
+        <module>connector-ftp</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- J2EE -->
+        <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- For persisting information about the connector such as chunking large messages -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.5.4-Final</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- TODO Investigate wrapping this one day, used to interact with LastResourceCommit -->
+        <dependency>
+            <groupId>org.jboss.transaction</groupId>
+            <artifactId>jboss-jta</artifactId>
+            <version>4.2.3.SP7</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
