@@ -61,7 +61,7 @@ import org.ikasan.platform.IkasanEIPTest;
 @ContextConfiguration(locations={
         "/component-conf.xml",
         "/flow-conf.xml",
-        "/exclusion-flow-conf.xml",
+       // "/exclusion-flow-conf.xml",
         "/module-conf.xml",
         "/exception-conf.xml", 
         "/hsqldb-conf.xml"

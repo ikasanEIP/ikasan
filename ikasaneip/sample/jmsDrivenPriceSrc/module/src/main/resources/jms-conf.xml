@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+    <!--  ================================================================== -->
+    <!--  Sample component implementations for testing                       -->
+    <!--  ================================================================== -->
+    <bean id="priceConsumerMessageListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
+        <property name="messageListener" ref="jmsPriceConsumer"/>
+        <property name="exceptionListener" ref="jmsPriceConsumer"/>
+        <property name="errorHandler" ref="jmsPriceConsumer"/>
+    </bean>
+    <bean id="jmsPriceConsumerConfiguration"
+          class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
+        <property name="destinationJndiName" value="dynamicTopics/topic"/>
+        <property name="destinationJndiProperties" ref="jndiPropertiesMap"/>
+        <property name="connectionFactoryName" value="ConnectionFactory"/>
+        <property name="connectionFactoryJndiProperties" ref="jndiPropertiesMap"/>
+        <property name="pubSubDomain" value="true"/>
+        <property name="durableSubscriptionName" value="testublisher"/>
+    </bean>
+    <bean id="jmsProducerConfiguration"
+          class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">
+        <property name="destinationJndiName" value="dynamicTopics/topic"/>
+        <property name="destinationJndiProperties" ref="jndiPropertiesMap"/>
+        <property name="connectionFactoryName" value="ConnectionFactory"/>
+        <property name="connectionFactoryJndiProperties" ref="jndiPropertiesMap"/>
+        <property name="pubSubDomain" value="true"/>
+    </bean>
+    <bean id="jmsProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">
+        <constructor-arg>
+            <bean class="org.springframework.jms.core.IkasanJmsTemplate"/>
+        </constructor-arg>
+        <property name="configuration" ref="jmsProducerConfiguration"/>
+        <property name="configuredResourceId" value="jmsProducerConfiguration"/>
+    </bean>
+    <util:map id="jndiPropertiesMap">
+        <entry key="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+        <entry key="java.naming.provider.url" value="vm://localhost?broker.persistent=false"/>
+    </util:map>
+
+
+    <bean id="jmsPriceConsumer"
+          class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        <property name="messageProvider" ref="priceConsumerMessageListener"/>
+        <property name="managedIdentifierService" >
+            <bean class="org.ikasan.compatibility.component.endpoint.ManagedEventJmsIdentifierService"/>
+        </property>
+    </bean>
+</beans>

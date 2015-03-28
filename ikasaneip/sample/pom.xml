@@ -56,7 +56,7 @@
         <module>techEndpoint</module>
         <module>standaloneJVM</module>
         <module>genericTechPriceSrc</module>
-        <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
+        <module>jmsDrivenPriceSrc</module>
         <module>scheduleDrivenSrc</module>
     </modules>
 
