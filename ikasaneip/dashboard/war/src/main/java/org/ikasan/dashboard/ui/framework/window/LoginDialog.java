@@ -5,6 +5,7 @@ import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
+import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
@@ -46,12 +47,12 @@ public class LoginDialog extends Window
      * @param commitHandler
      */
     public LoginDialog(UserService userService,
-            SecurityService securityService,
+    		AuthenticationService authenticationService,
             VisibilityGroup visibilityGroup, UserDetailsHelper userDetailsHelper,
             NavigationPanel commitHandler)
     {
         super("Login");
-        init(userService, securityService, visibilityGroup, userDetailsHelper, commitHandler);
+        init(userService, authenticationService, visibilityGroup, userDetailsHelper, commitHandler);
     }
 
     /**
@@ -63,7 +64,7 @@ public class LoginDialog extends Window
      * @param userDetailsHelper
      * @param commitHandler
      */
-    protected void init(UserService userService, SecurityService securityService,
+    protected void init(UserService userService, AuthenticationService authenticationService,
             VisibilityGroup visibilityGroup, UserDetailsHelper userDetailsHelper
             , final NavigationPanel commitHandler)
     {
@@ -97,7 +98,7 @@ public class LoginDialog extends Window
         form.addComponent(passwordField);
 
         final LoginFieldGroup binder = new LoginFieldGroup(item, visibilityGroup
-            , userService, securityService, userDetailsHelper);
+            , userService, authenticationService, userDetailsHelper);
         binder.bind(userNameField, LoginFieldGroup.USERNAME);
         binder.bind(passwordField, LoginFieldGroup.PASSWORD);
 

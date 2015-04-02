@@ -2005,7 +2005,6 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-gridlayout-slot {
 	position: absolute;
-	padding: 2px;
 }
 
 .mytheme .v-gridlayout-margin-top {
@@ -2256,6 +2255,33 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-horizontallayout-slot, .mytheme .v-verticallayout-slot {
 	position: absolute;
+}
+
+.mytheme .v-panel-dashboard {
+	 border-style:solid;
+	 /* border-width:thick; */
+	 border-color:LightGrey;
+	 border-radius: 25px;
+	 overflow: hidden;
+}
+
+.mytheme .v-panel-caption-dashboard {
+	padding-left: 12px;
+	background-color: LightGrey;
+}
+
+.mytheme .v-panel-content-dashboard {
+	border-style: none !important;
+	border: none !important;
+	border-top: none !important;
+	border-bottom: none !important;
+}
+
+.mytheme .v-panel-deco-dashboard {
+    border-style: none !important;
+	border: none !important;
+	border-top: none !important;
+	border-bottom: none !important;
 }
 
 .mytheme .v-panel, .mytheme .v-panel-caption, .mytheme .v-panel-content, .mytheme .v-panel-deco, .mytheme .v-panel-light, .mytheme .v-panel-caption-light, .mytheme .v-panel-content-light, .mytheme .v-panel-deco-light {
@@ -5135,10 +5161,10 @@ body .mytheme.v-app .v-app-loading {
 
 .mytheme .v-menubar {
 	height: 23px;
-	background: #323336 repeat-x;
-	background-image: url(../reindeer/menubar/img/bg.png);/** sprite-ref: verticals; sprite-alignment: repeat */
+	background: #3E3E3E repeat-x;
+	/** background-image: url(../reindeer/menubar/img/bg.png); *//** sprite-ref: verticals; sprite-alignment: repeat */
 	color: #fff;
-	text-shadow: rgba(0, 0, 0, 0.9) 0 1px 0;
+	text-shadow: rgba(0, 0, 0.1, 0) 0 0.8px 0;
 	padding: 0 8px;
 }
 
@@ -5310,9 +5336,6 @@ body .mytheme.v-app .v-app-loading {
 .mytheme .v-panel-deco, .mytheme .white .v-panel-deco {
 	height: 1px;
 	border-top: 1px solid #bebebe;
-	border-bottom: 1px solid #bebebe;
-	border-left: 1px solid #bebebe;
-	border-right: 1px solid #bebebe;
 	background: #e2e2e2;
 	overflow: hidden;
 }
@@ -7102,6 +7125,17 @@ body .mytheme.v-app .v-app-loading {
 	font-size: 11px;
 }
 
+.mytheme .v-panel-content .v-label-large {
+	font-family: "Calibri";
+	color: #666;
+	font-size: 15px;
+}
+
+.mytheme .v-panel-content .v-label-xlarge {
+	font-family: "Calibri";
+	color: #666;
+	font-size: 18px;
+}
 
 .v-splitpanel-hsplitter-ikasansplitpanel,
 .v-splitpanel-hsplitter-ikasansplitpanel div  {

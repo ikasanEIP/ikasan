@@ -12,8 +12,6 @@ O * $Id: SecurityServiceTest.java 43977 2015-03-10 16:06:07Z stewmi $
  */
 package org.ikasan.security.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,9 +24,6 @@ import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.SecurityServiceException;
-import org.ikasan.security.service.SecurityServiceImpl;
 import org.ikasan.security.service.authentication.LdapAuthenticationProvider;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -43,8 +38,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.sdk.LDAPException;
-import com.unboundid.ldif.LDIFReader;
 
 
 
@@ -57,7 +50,7 @@ import com.unboundid.ldif.LDIFReader;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/securityModelService-context.xml",
+        "/security-conf.xml",
         "/hsqldb-config.xml",
         "/substitute-components.xml",
         "/mock-components.xml"
@@ -188,28 +181,21 @@ public class SecurityServiceTest
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
     }
 
-    @Test 
-    @DirtiesContext
-    @Ignore
-    public void test_success_login() throws SecurityServiceException
-    {
-        IkasanPrincipal principal = this.xaSecurityService.login("stewmi", "password");
-
-        Assert.assertNotNull(principal);
-    }
+//    @Test 
+//    @DirtiesContext
+//    @Ignore
+//    public void test_success_login() throws SecurityServiceException
+//    {
+//        IkasanPrincipal principal = this.xaSecurityService.login("stewmi", "password");
+//
+//        Assert.assertNotNull(principal);
+//    }
 
     @Test(expected = IllegalArgumentException.class)
     @DirtiesContext
     public void test_exception_null_dao_on_construction() throws SecurityServiceException
     {
-        new SecurityServiceImpl(null, authProvider);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    @DirtiesContext
-    public void test_exception_null_auth_provider_on_construction() throws SecurityServiceException
-    {
-        new SecurityServiceImpl(this.xaSecurityDao, null);
+        new SecurityServiceImpl(null);
     }
 
     @Test 

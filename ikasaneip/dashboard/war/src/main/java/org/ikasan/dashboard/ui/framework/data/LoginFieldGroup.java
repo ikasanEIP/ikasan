@@ -20,8 +20,8 @@ import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.SecurityServiceException;
+import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.AuthenticationServiceException;
 import org.ikasan.security.service.UserService;
 
 import com.vaadin.data.Item;
@@ -45,7 +45,7 @@ public class LoginFieldGroup extends FieldGroup
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
 
-    private SecurityService securityService;
+    private AuthenticationService authenticationService;
     private UserService userService;
     private VisibilityGroup visibilityGroup;
     private UserDetailsHelper userDetailsHelper;
@@ -59,12 +59,12 @@ public class LoginFieldGroup extends FieldGroup
      * @param userDetailsHelper
      */
     public LoginFieldGroup(VisibilityGroup visibilityGroup, UserService userService,
-            SecurityService securityService, UserDetailsHelper userDetailsHelper)
+    		AuthenticationService authenticationService, UserDetailsHelper userDetailsHelper)
     {
         super();
         this.visibilityGroup = visibilityGroup;
         this.userService = userService;
-        this.securityService = securityService;
+        this.authenticationService = authenticationService;
         this.userDetailsHelper = userDetailsHelper;
     }
 
@@ -78,12 +78,12 @@ public class LoginFieldGroup extends FieldGroup
     * @param userDetailsHelper
     */
     public LoginFieldGroup(Item itemDataSource, VisibilityGroup visibilityGroup, UserService userService,
-            SecurityService securityService, UserDetailsHelper userDetailsHelper)
+    		AuthenticationService authenticationService, UserDetailsHelper userDetailsHelper)
     {
         super(itemDataSource);
         this.visibilityGroup = visibilityGroup;
         this.userService = userService;
-        this.securityService = securityService;
+        this.authenticationService = authenticationService;
         this.userDetailsHelper = userDetailsHelper;
     }
 
@@ -100,21 +100,24 @@ public class LoginFieldGroup extends FieldGroup
         {
             logger.info("Attempting to validate user: " + username.getValue());
 
-            IkasanPrincipal principal = securityService.login(username.getValue(), password.getValue());
+            IkasanPrincipal principal = authenticationService.login(username.getValue(), password.getValue());
 
             logger.info("Loaded principal: " + principal);
-
-            for(Role role: principal.getRoles())
+            
+            if(principal != null)
             {
-                logger.info("Loaded role: " + principal);
-
-                for(Policy policy: role.getPolicies())
-                {
-                    logger.info("Loaded policy: " + policy);
-                }
+	            for(Role role: principal.getRoles())
+	            {
+	                logger.info("Loaded role: " + principal);
+	
+	                for(Policy policy: role.getPolicies())
+	                {
+	                    logger.info("Loaded policy: " + policy);
+	                }
+	            }
             }
-
-            User userDetails = userService.loadUserByUsername(username.getValue());
+            
+            User userDetails = userService.loadUserByUsername("admin");
 
             this.userDetailsHelper.setUserDetails(userDetails);
 
@@ -126,8 +129,9 @@ public class LoginFieldGroup extends FieldGroup
             VaadinService.getCurrentRequest().getWrappedSession()
                 .setAttribute(MappingConfigurationUISessionValueConstants.USER, this.userDetailsHelper);
         }
-        catch (SecurityServiceException e)
+        catch (AuthenticationServiceException e)
         {
+        	e.printStackTrace();
             logger.info("User has supplied invalid password: " + username.getValue());
             throw new CommitException("Invalid user name or password. Please try again.");
         }

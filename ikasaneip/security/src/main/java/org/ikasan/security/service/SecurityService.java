@@ -42,6 +42,8 @@ package org.ikasan.security.service;
 
 import java.util.List;
 
+import org.ikasan.security.dao.SecurityDaoException;
+import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
@@ -53,15 +55,6 @@ import org.ikasan.security.model.Role;
  */
 public interface SecurityService
 {
-    /**
-     * 
-     * @param username
-     * @param password
-     * @return
-     * @throws SecurityServiceException
-     */
-    public IkasanPrincipal login(String username, String password) throws SecurityServiceException;
-
     /**
      * 
      * @param name
@@ -157,4 +150,19 @@ public interface SecurityService
      * @throws SecurityServiceException
      */
     public List<Policy> getAllPolicies() throws SecurityServiceException;
+
+    /**
+     * 
+     * @param authenticationMethod
+     * @throws SecurityDaoException
+     */
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityDaoException;
+
+    /**
+     * 
+     * @param id
+     * @return
+     * @throws SecurityDaoException
+     */
+    public AuthenticationMethod getAuthenticationMethod() throws SecurityDaoException;
 }

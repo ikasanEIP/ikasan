@@ -42,19 +42,19 @@ package org.ikasan.security.service.authentication;
 
 import java.util.Collection;
 
-import org.ikasan.security.model.IkasanPrincipal;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public class LdapAuthenticationToken implements Authentication
+public class AuthenticationToken implements IkasanAuthentication
 {
+	private static final long serialVersionUID = 6278479282380900119L;
 
-    private boolean isAuthenticated;
+	private boolean isAuthenticated;
 
     /* (non-Javadoc)
      * @see java.security.Principal#getName()

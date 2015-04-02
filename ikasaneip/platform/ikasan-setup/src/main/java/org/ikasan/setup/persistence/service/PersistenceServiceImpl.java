@@ -53,7 +53,7 @@ import java.util.List;
  */
 public class PersistenceServiceImpl implements PersistenceService
 {
-    /**
+   	/**
      * logger
      */
     private static Logger logger = Logger.getLogger(PersistenceServiceImpl.class);
@@ -87,9 +87,32 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String DEFAULT_ADMIN_USER = "defaultAdminUser";
     private static String ANY_ADMIN_USER = "anyAdminUser";
 
+    private static String SECURITY_PRINCIAL = "securityPrincipal";
+    private static String SECURITY_ROLE = "securityRole";
+    private static String SECUIRTY_POLICY = "securityPolicy";
+    private static String PRINCIPAL_ROLE = "principalRole";
+    private static String ROLE_POLICY = "rolePolicy";
+
+    private static String MAPPING_CONFIGURATION_TYPE = "mappingConfigurationType";
+    private static String MAPPING_CONFIGURATION_CONTEXT = "mappingConfigurationContext";
+    private static String MAPPING_CONFIGURATION_CLIENT = "mappingConfigurationClient";
+    private static String MAPPING_CONFIGURATION = "mappingConfiguration";
+    private static String MAPPING_TARGET_VALUE = "mappingTargetValue";
+    private static String MAPPING_SOURCE_VALUE = "mappingSourceValue";
+    private static String MAPPING_KEY_LOCATION_QUERY = "mappingKeyLocationQuery";
+    private static String MAPPING_SOURCE_CONFIG_GROUP_SEQ = "mappingSourceConfigGroupSeq";
+    
     private static String VERSION = "version";
     private static String VERSION_ENTRY = "version.entry";
     private static String EXCLUSION_EVENT = "exclusionEvent";
+    
+    private static String USERS_TABLE_EXISTS = "usersTableExists";
+    private static String AUTHORITIES_TABLE_EXISTS = "authoritiesTableExists";
+    private static String USERS_AUTHORITIES_TABLE_EXISTS = "usersAuthoritiesTableExists";
+    
+    private static String AUTHENTICATION_METHOD ="authenticationMethod";
+    
+    private static final String DEFAULT_PRINCIPAL = "defaultPrincipal";
 
     /** handle to under DAO layer */
     private ProviderDAO providerDAO;
@@ -123,6 +146,23 @@ public class PersistenceServiceImpl implements PersistenceService
 
         return false;
     }
+ 
+    @Override
+	public boolean userTablesExist() 
+    {
+    	List<String> usersTableExists = this.providerDAO.find(USERS_TABLE_EXISTS);
+    	List<String> authoritiesTableExists = this.providerDAO.find(AUTHORITIES_TABLE_EXISTS);
+    	List<String> userAuthoritiesTableExists = this.providerDAO.find(USERS_AUTHORITIES_TABLE_EXISTS);
+
+    	if(usersTableExists != null && usersTableExists.size() > 0 &&
+    			authoritiesTableExists != null && authoritiesTableExists.size() > 0 &&
+    					userAuthoritiesTableExists != null && userAuthoritiesTableExists.size() > 0) 
+    	{
+    		return true;
+    	}
+
+    	return false;
+	}	
 
     @Override
     public String getVersion()
@@ -158,6 +198,20 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(AUTHORITIES);
         this.providerDAO.create(USERS_AUTHORITIES);
         this.providerDAO.create(EXCLUSION_EVENT);
+        this.providerDAO.create(SECURITY_PRINCIAL);
+        this.providerDAO.create(SECURITY_ROLE);
+        this.providerDAO.create(SECUIRTY_POLICY);
+        this.providerDAO.create(PRINCIPAL_ROLE);
+        this.providerDAO.create(ROLE_POLICY);
+        this.providerDAO.create(MAPPING_CONFIGURATION_TYPE);
+        this.providerDAO.create(MAPPING_CONFIGURATION_CONTEXT);
+        this.providerDAO.create(MAPPING_CONFIGURATION_CLIENT);
+        this.providerDAO.create(MAPPING_CONFIGURATION);
+        this.providerDAO.create(MAPPING_TARGET_VALUE);
+        this.providerDAO.create(MAPPING_SOURCE_VALUE);
+        this.providerDAO.create(MAPPING_KEY_LOCATION_QUERY);
+        this.providerDAO.create(MAPPING_SOURCE_CONFIG_GROUP_SEQ);
+        this.providerDAO.create(AUTHENTICATION_METHOD);
     }
 
     @Override
@@ -165,5 +219,6 @@ public class PersistenceServiceImpl implements PersistenceService
     {
         this.providerDAO.create(DEFAULT_AUTHORITIES);
         this.providerDAO.create(DEFAULT_ADMIN_USER);
+        this.providerDAO.create(DEFAULT_PRINCIPAL);
     }
 }

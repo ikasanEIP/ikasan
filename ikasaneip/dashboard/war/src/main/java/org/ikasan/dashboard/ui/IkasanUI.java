@@ -5,47 +5,65 @@ import java.util.List;
 
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
+import org.ikasan.dashboard.ui.framework.event.AlertEvent;
+import org.ikasan.dashboard.ui.framework.event.HealthEvent;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
-import org.ikasan.dashboard.ui.framework.tab.HomeTab;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
-import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
+import org.ikasan.setup.persistence.service.PersistenceService;
+import org.ikasan.setup.persistence.service.PersistenceServiceFactory;
 
+import com.google.common.eventbus.EventBus;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Container;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
+@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
 /**
  * 
  * @author CMI2 Development Team
  *
  */
-public class IkasanUI extends UI
+public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 {   
-//    private HomeTab homeTab;
     private HashMap<String, IkasanUINavigator> views;
     private ViewComponentContainer viewComponentContainer;
     private UserService userService;
-    private SecurityService securityService;
+    private AuthenticationService authenticationService;
     private VisibilityGroup visibilityGroup;
     private UserDetailsHelper userDetailsHelper;
     private EditableGroup editableGroup;
     private FunctionalGroup newMappingConfigurationFunctionalGroup;
     private FunctionalGroup existingMappingConfigurationFunctionalGroup;
     private VerticalLayout imagePanelLayout;
+    private EventBus eventBus = new EventBus();
+    private PersistenceService persistenceService; 
+    
+    private final Table table = new Table();
+    private Container container = new IndexedContainer();
+    private FeederThread feederThread = new FeederThread();
 
     /**
      * Constructor
@@ -63,24 +81,29 @@ public class IkasanUI extends UI
      */
 	public IkasanUI(HashMap views,
 	        ViewComponentContainer viewComponentContainer, UserService userService,
-	        SecurityService securityService, VisibilityGroup visibilityGroup,
+	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup,
             UserDetailsHelper userDetailsHelper, EditableGroup editableGroup,
-            FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup)
+            FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
+            EventBus eventBus, PersistenceServiceFactory<String> persistenceServiceFactory, String persistenceProvider)
 	{
 	    this.views = views;
 	    this.userService = userService;
-	    this.securityService = securityService;
+	    this.authenticationService = authenticationService;
 	    this.visibilityGroup = visibilityGroup;
 	    this.viewComponentContainer = viewComponentContainer;
 	    this.userDetailsHelper = userDetailsHelper;
 	    this.editableGroup = editableGroup;
 	    this.newMappingConfigurationFunctionalGroup = newMappingConfigurationFunctionalGroup;
 	    this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;
+	    this.eventBus = eventBus;
+	    this.persistenceService = persistenceServiceFactory.getPersistenceService(persistenceProvider);
+	    
+	    Broadcaster.register(this);
 	}
 
     @Override
     protected void init(VaadinRequest request) {
-        final GridLayout layout = new GridLayout(1, 3);	
+        final GridLayout layout = new GridLayout(1, 4);	
         layout.setSizeFull();   
         layout.setMargin(true);
         this.setContent(layout);
@@ -104,7 +127,7 @@ public class IkasanUI extends UI
         imagePanelLayout.setExpandRatio(label, 0.5f);
         imagePanelLayout.setComponentAlignment(label, Alignment.BOTTOM_LEFT);
 
-        NavigationPanel navigationPanel = new NavigationPanel(this.userService, this.securityService
+        NavigationPanel navigationPanel = new NavigationPanel(this.userService, this.authenticationService
             , this.visibilityGroup, this.userDetailsHelper, this.editableGroup, this.newMappingConfigurationFunctionalGroup,
             this.existingMappingConfigurationFunctionalGroup, imagePanelLayout, this.views);
         layout.addComponent(navigationPanel, 0, 1);
@@ -121,7 +144,73 @@ public class IkasanUI extends UI
             navigator.addView(view.getPath(), view.getView());
         }
 
-        navigator.navigateTo("landingView");       
+        boolean usersTablesExist = this.persistenceService.userTablesExist();
+
+        if(!usersTablesExist)
+        {
+        	navigator.navigateTo("persistanceSetupView");
+        	navigationPanel.setVisible(false);
+        }
+        else
+        {
+        	navigator.navigateTo("landingView");  
+        	navigationPanel.setVisible(true);
+        }
+
+        VerticalLayout vlayout = new VerticalLayout();
+
+        Button button = new Button("Start Alerts");
+
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	feederThread.start();
+            }
+        });
+        
+        vlayout.addComponent(button);
+        layout.addComponent(vlayout);
+    }
+    
+    static class FeederThread extends Thread {
+        int count = 0;
+        
+        @Override
+        public void run() {
+	    	for(int i=0; i<100; i++)
+	    	{
+	    		Broadcaster.broadcast("" + System.currentTimeMillis());
+	    		System.out.println("Sending Alert!");
+    	    	try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	}
+	    }
     }
 
+    @Override
+	public void receiveBroadcast(final String message)
+	{
+		access(new Runnable() {
+            @Override
+            public void run() {
+            	eventBus.post(new AlertEvent("Alert:" + message, "Module:" + message));
+            	eventBus.post(new HealthEvent("Health Alert:" + message, "Module:" + message));
+            }
+        });	
+	}
+	
+	// Must also unregister when the UI expires    
+    @Override
+    public void detach() {
+        Broadcaster.unregister(this);
+        feederThread.stop();
+        super.detach();
+    }
+
+	public EventBus getEventBus() {
+		return eventBus;
+	}
 }

@@ -203,7 +203,9 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
-        // TODO Auto-generated method stub
-        
+        this.clientComboBox.loadClientSelectValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
+        this.typeComboBox.loadClientTypeValues();
     }
 }

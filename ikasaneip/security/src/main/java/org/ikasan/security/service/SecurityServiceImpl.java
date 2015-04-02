@@ -45,13 +45,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.SecurityDaoException;
-import org.ikasan.security.model.Policy;
+import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 
 
 /**
@@ -62,26 +60,20 @@ public class SecurityServiceImpl implements SecurityService
 {
     /** Logger instance */
     private static Logger logger = Logger.getLogger(SecurityServiceImpl.class);
-
+    
     private SecurityDao securityDao;
-    private AuthenticationProvider authProvider;
+
 
     /**
      * @param securityDao
      */
-    public SecurityServiceImpl(SecurityDao securityDao,
-            AuthenticationProvider authProvider)
+    public SecurityServiceImpl(SecurityDao securityDao)
     {
         super();
         this.securityDao = securityDao;
         if(this.securityDao == null)
         {
             throw new IllegalArgumentException("securityDao cannot be null!");
-        }
-        this.authProvider = authProvider;
-        if(this.authProvider == null)
-        {
-            throw new IllegalArgumentException("authProvider cannot be null!");
         }
     }
 
@@ -327,32 +319,22 @@ public class SecurityServiceImpl implements SecurityService
         return policies;
     }
 
-    /* (non-Javadoc)
-     * @see com.mizuho.cmi2.security.service.SecurityService#login(java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
      */
-    @Override
-    public IkasanPrincipal login(String username, String password) throws SecurityServiceException
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityDaoException
     {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
- 
-        Authentication token = null;
-        
-        try
-        {
-            token = authProvider.authenticate(auth);
-        } 
-        catch (BadCredentialsException exception)
-        {
-            throw new SecurityServiceException("Username or password is incorrect!", exception);
-        }
+    	authenticationMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+    	this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
+    }
 
-        IkasanPrincipal principal = this.findPrincipalByName(username);
-
-        if(principal == null)
-        {
-            throw new SecurityServiceException("Unable to log in. Cannot load principal!");
-        }
-
-        return principal;
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
+     */
+    public AuthenticationMethod getAuthenticationMethod() throws SecurityDaoException
+    {
+    	return this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
     }
 }

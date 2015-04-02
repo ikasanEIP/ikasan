@@ -136,7 +136,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         
         contentLayout.addComponent(toolBarLayout);
         contentLayout.addComponent(createMappingConfigurationForm());
-        super.populateMappingConfigurationForm();
+        
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(contentLayout
             , createTableLayout(false));
@@ -279,6 +279,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     public void enter(ViewChangeEvent event)
     {
         this.saveRequiredMonitor.setSaveRequired(true);
+        super.populateMappingConfigurationForm();
     }
 
 }
