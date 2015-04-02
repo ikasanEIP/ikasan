@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- * $Id: securityModelService-context.xml 44071 2015-03-17 10:17:18Z stewmi 
-	$ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/securityModelService/api/src/main/resources/securityModelService-context.xml 
+<!-- * $Id$
+	$ * $URL$ 
 	$ * * ==================================================================== 
 	* * Copyright (c) 2000-2010 by Mizuho International plc. * All Rights Reserved. 
 	* * ==================================================================== 
@@ -16,10 +16,34 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.5.xsd">
 
+	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+		<constructor-arg ref="xaAuthenticationProviderFactory" />
+		<constructor-arg ref="xaSecurityService" />
+	</bean>
+
+	<bean id="xaAuthenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
+		<constructor-arg ref="xaUserService" />
+		<constructor-arg ref="xaSecurityService" />
+	</bean>
+
 	<bean id="xaSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
 		<constructor-arg ref="xaSecurityDao" />
-		<constructor-arg ref="ldapAuthenticationProvider" />
 	</bean>
+	
+	<bean id="xaUserService"
+        class="org.ikasan.security.service.UserServiceImpl">
+        <constructor-arg ref="xaUserDao"/>
+        <constructor-arg ref="xaAuthorityDao"/>
+        <constructor-arg ref="sha1PasswordEncoder"/>
+    </bean>
+    
+    <bean id="xaUserDao" class="org.ikasan.security.dao.HibernateUserDao">
+        <property name="sessionFactory" ref="xaSecuritySessionFactory"/>
+    </bean>
+    
+    <bean id="xaAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
+        <property name="sessionFactory" ref="xaSecuritySessionFactory"/>
+    </bean>
 
 	<bean id="xaSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="xaSecuritySessionFactory" />
@@ -27,21 +51,48 @@
 
 	<bean id="xaSecuritySessionFactory"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="xaIkasanDataSource" />
+		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>
 				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
 				<value>/org/ikasan/security/model/Role.hbm.xml</value>
 				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
+				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
+	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+		<constructor-arg ref="localTxAuthenticationProviderFactory" />
+		<constructor-arg ref="localTxSecurityService" />
+	</bean>
+
+	<bean id="localTxAuthenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
+		<constructor-arg ref="localTxUserService" />
+		<constructor-arg ref="localTxSecurityService" />
+	</bean>
+
 	<bean id="localTxSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
 		<constructor-arg ref="localTxSecurityDao" />
-		<constructor-arg ref="ldapAuthenticationProvider" />
 	</bean>
+	
+	<bean id="localTxUserService"
+        class="org.ikasan.security.service.UserServiceImpl">
+        <constructor-arg ref="localTxUserDao"/>
+        <constructor-arg ref="localTxAuthorityDao"/>
+        <constructor-arg ref="sha1PasswordEncoder"/>
+    </bean>
+    
+    <bean id="localTxUserDao" class="org.ikasan.security.dao.HibernateUserDao">
+        <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
+    </bean>
+    
+    <bean id="localTxAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
+        <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
+    </bean>
 
 	<bean id="localTxSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="localTxSecuritySessionFactory" />
@@ -49,21 +100,48 @@
 
 	<bean id="localTxSecuritySessionFactory"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="localTxIkasanDataSource" />
+		<property name="dataSource" ref="ikasan.ds" />
 		<property name="mappingResources">
 			<list>
 				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
 				<value>/org/ikasan/security/model/Role.hbm.xml</value>
 				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
+				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
+	<bean id="noTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+		<constructor-arg ref="noTxAuthenticationProviderFactory" />
+		<constructor-arg ref="noTxSecurityService" />
+	</bean>
+
+	<bean id="noTxAuthenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
+		<constructor-arg ref="noTxUserService" />
+		<constructor-arg ref="noTxSecurityService" />
+	</bean>
+
 	<bean id="noTxSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
 		<constructor-arg ref="noTxSecurityDao" />
-		<constructor-arg ref="ldapAuthenticationProvider" />
 	</bean>
+	
+	<bean id="noTxUserService"
+        class="org.ikasan.security.service.UserServiceImpl">
+        <constructor-arg ref="noTxUserDao"/>
+        <constructor-arg ref="noTxAuthorityDao"/>
+        <constructor-arg ref="sha1PasswordEncoder"/>
+    </bean>
+    
+    <bean id="noTxUserDao" class="org.ikasan.security.dao.HibernateUserDao">
+        <property name="sessionFactory" ref="noTxSecuritySessionFactory"/>
+    </bean>
+    
+    <bean id="noTxAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
+        <property name="sessionFactory" ref="noTxSecuritySessionFactory"/>
+    </bean>
 
 	<bean id="noTxSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="noTxSecuritySessionFactory" />
@@ -71,20 +149,25 @@
 
 	<bean id="noTxSecuritySessionFactory"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="noTxIkasanDataSource" />
+		<property name="dataSource" ref="ikasan.ds" />
 		<property name="mappingResources">
 			<list>
 				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
 				<value>/org/ikasan/security/model/Role.hbm.xml</value>
 				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
+				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
+	<bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+
 	<!-- LDAP Configuration -->
 
-	<!-- The custom LDAP Authentication provider -->
+	<!-- The custom LDAP Authentication provider
 	<bean id="ldapAuthenticationProvider"
 		class="org.ikasan.security.service.authentication.LdapAuthenticationProvider">
 		<constructor-arg>
@@ -104,12 +187,11 @@
 		<property name="searchSubtree" value="true" />
 	</bean>
 
-	<!-- The context source for the LDAP/AD server -->
 	<bean id="contextSource"
 		class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
 		<constructor-arg ref="ldapServerUrl" />
 		<property name="userDn" ref="ldapUserDn" />
 		<property name="password" ref="ldapPassword" />
-	</bean>
+	</bean> -->
 	
 </beans>

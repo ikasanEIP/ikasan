@@ -23,14 +23,19 @@
     <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="prototype">
         <constructor-arg ref="navigatorMap"/>
         <constructor-arg ref="mappingViewComponentContainer"/>
-        <constructor-arg ref="userDetailsService"/>
-        <constructor-arg ref="localTxSecurityService"/>
+        <constructor-arg ref="localTxUserService"/>
+        <constructor-arg ref="localTxAuthenticationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
         <constructor-arg ref="userDetailsHelper"/>
         <constructor-arg ref="editableGroup"/>
         <constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
+        <constructor-arg ref="eventBus"/>
+        <constructor-arg ref="persistenceServiceFactory"/>
+        <constructor-arg ref="databaseVersion"/>
     </bean>
+
+	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
 
 	<util:map id="navigatorMap" value-type="java.util.List" map-class="java.util.HashMap" scope="session">
 	  <entry key="topLevel" value-ref="topLevelNavigator" />
@@ -42,6 +47,7 @@
       <entry key="profile" value-ref="profileNavigator" />
       <entry key="hospital" value-ref="hospitalNavigator" />
       <entry key="topology" value-ref="topologyNavigator" />
+      <entry key="persistanceSetup" value-ref="persistanceSetupNavigator" />
     </util:map>
 
 	<bean id="topLevelNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
@@ -50,6 +56,10 @@
             <list>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="landingView"/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
@@ -84,6 +94,14 @@
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="estateViewPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="persistanceSetupView"/>
+                   <constructor-arg ref="persistanceSetupPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="authenticationMethodView"/>
+                   <constructor-arg ref="authenticationMethodPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
@@ -92,9 +110,16 @@
 
     <bean id="userDetailsHelper" class="org.ikasan.dashboard.ui.framework.util.UserDetailsHelper" scope="session">
     </bean>
-
+    
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
     </bean>
+
+	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodPanel" scope="session">
+		 <constructor-arg ref="localTxSecurityService"/>
+		 <constructor-arg ref="localTxAuthenticationProviderFactory"/>
+    </bean>
+
+	<!-- 
 
     <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
     
@@ -114,7 +139,7 @@
     </bean>
     
     <bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="localTxIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
                 <value>org/ikasan/security/model/User.hbm.xml</value>
@@ -122,5 +147,5 @@
             </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
+    </bean -->
 </beans>

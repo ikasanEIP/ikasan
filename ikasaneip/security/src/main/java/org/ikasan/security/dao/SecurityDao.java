@@ -42,8 +42,9 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
-import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 
 
@@ -132,5 +133,20 @@ public interface SecurityDao
      * @throws SecurityDaoException
      */
     public Role getRoleByName(String name) throws SecurityDaoException;
+
+    /**
+     * 
+     * @param authenticationMethod
+     * @throws SecurityDaoException
+     */
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityDaoException;
+
+    /**
+     * 
+     * @param id
+     * @return
+     * @throws SecurityDaoException
+     */
+    public AuthenticationMethod getAuthenticationMethod(Long id) throws SecurityDaoException;
 
 }

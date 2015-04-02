@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://java.sun.com/xml/ns/javaee"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-    id="WebApp_ID" version="2.5">
-    <display-name>Vaadin Widget Test Application</display-name>
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    id="WebApp_ID" version="3.0">
+    <display-name>Ikasan Dashboard</display-name>
 
     <!-- Spring -->
     <listener>
@@ -14,7 +14,23 @@
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/root-context.xml, /WEB-INF/error-context.xml, /WEB-INF/profile-context.xml, /WEB-INF/replay-context.xml, /WEB-INF/topology-context.xml, /WEB-INF/user-context.xml, /WEB-INF/mapping-context.xml, /WEB-INF/dashboard-context.xml, /WEB-INF/hospital-context.xml, classpath:mappingConfigurationUI-environmentalisation.xml, classpath:mappingConfigurationService-datasource.xml, classpath:mappingConfigurationService-context.xml, classpath:securityModelService-datasource.xml, classpath:securityModelService-context.xml</param-value>
+        <param-value>/WEB-INF/root-context.xml, 
+        			 /WEB-INF/error-context.xml, 
+        			 /WEB-INF/profile-context.xml, 
+        			 /WEB-INF/replay-context.xml, 
+        			 /WEB-INF/topology-context.xml, 
+        			 /WEB-INF/user-context.xml, 
+        			 /WEB-INF/mapping-context.xml, 
+        			 /WEB-INF/dashboard-context.xml, 
+        			 /WEB-INF/hospital-context.xml, 
+        			 /WEB-INF/persistence-setup-context.xml,
+        			 classpath:mappingConfigurationUI-environmentalisation.xml, 
+        			 classpath:mapping-conf.xml, 
+        			 classpath:platform-service-conf.xml, 
+        			 classpath:security-conf.xml,
+        			 classpath:providers-conf.xml,
+        			 classpath:providers-properties.xml
+        </param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
@@ -57,6 +73,7 @@
             <param-name>systemMessagesBeanName</param-name>
             <param-value>DEFAULT</param-value>
         </init-param>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
         <servlet-name>Mapping Configuration UI</servlet-name>

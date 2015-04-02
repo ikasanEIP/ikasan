@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
@@ -208,4 +209,37 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     {
         this.getHibernateTemplate().delete(principal);
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 */
+	@Override
+	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
+			throws SecurityDaoException
+	{
+		try
+        {
+            this.getHibernateTemplate().saveOrUpdate(authenticationMethod);
+        }
+        catch(DataAccessException e)
+        {
+            throw new SecurityDaoException(e);
+        }
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethod(java.lang.Long)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethod(Long id)
+			throws SecurityDaoException
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
+        criteria.add(Restrictions.eq("id", id));
+        @SuppressWarnings("unchecked")
+		AuthenticationMethod authenticationMethod = (AuthenticationMethod) DataAccessUtils
+        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+        return authenticationMethod;
+	}
 }

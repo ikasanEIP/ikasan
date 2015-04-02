@@ -47,7 +47,7 @@ public class ClientComboBox extends ComboBox implements Refreshable, FocusListen
     protected void init()
     {
         this.setWidth(140, Unit.PIXELS);
-        loadClientSelectValues();
+//        loadClientSelectValues();
     }
 
     /**

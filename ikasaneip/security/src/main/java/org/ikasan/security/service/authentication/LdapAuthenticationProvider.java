@@ -40,19 +40,17 @@
  */
 package org.ikasan.security.service.authentication;
 
-import javax.naming.ldap.InitialLdapContext;
-
+import org.ikasan.security.service.SecurityService;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
 
 /**
  * Custom Spring Security authentication provider which tries to bind to an LDAP server with the passed-in credentials;
- * of note, when used with the custom {@link LdapAuthenticatorImpl}, does <strong>not</strong> require an LDAP username
+ * of note, when used with the custom {@link LdapAuthenticatorImpl}, <strong>does<strong> require an LDAP username
  * and password for initial binding.
  * 
  * @author Ikasan Development Team
@@ -62,14 +60,25 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
     
     /** The authenticator we're going to authenticate with */
     private LdapAuthenticator authenticator;
+    private SecurityService securityService;
 
     /**
      * Constructor - Takes a UserService
      * @param userService
      */
-    public LdapAuthenticationProvider(BindAuthenticator authenticator)
+    public LdapAuthenticationProvider(BindAuthenticator authenticator,
+    		SecurityService securityService)
     {
         this.authenticator = authenticator;
+        if(this.authenticator == null)
+        {
+        	throw new IllegalArgumentException("authenticator cannot be null!");
+        }
+        this.securityService = securityService;
+        if(this.securityService == null)
+        {
+        	throw new IllegalArgumentException("securityService cannot be null!");
+        }
     }
    
 
@@ -95,7 +104,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
      * @see org.springframework.security.providers.AuthenticationProvider#supports(java.lang.Class)
      */
     @Override
-    public boolean supports(Class clazz)
+    public boolean supports(Class<?> clazz)
     {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz));
     }
@@ -132,7 +141,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 //
 //        System.out.println("Role: " + role);
 
-        return new LdapAuthenticationToken();
+        return new AuthenticationToken();
     }
 
 

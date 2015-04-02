@@ -38,13 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.dao.constants;
+package org.ikasan.security.service;
 
 /**
  * @author CMI2 Development Team
  *
  */
-public interface SecurityDaoConstants
+public class AuthenticationServiceException extends Exception
 {
-    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2463315800294867651L;
+
+    /**
+     * 
+     */
+    public AuthenticationServiceException()
+    {
+        super();
+    }
+
+    /**
+     * @param arg0
+     */
+    public AuthenticationServiceException(String message)
+    {
+        super(message);
+    }
+
+    /**
+     * @param arg0
+     */
+    public AuthenticationServiceException(Throwable throwable)
+    {
+        super(throwable);
+    }
+
+    /**
+     * @param arg0
+     * @param arg1
+     */
+    public AuthenticationServiceException(String message, Throwable throwable)
+    {
+        super(message, throwable);
+    }
 }

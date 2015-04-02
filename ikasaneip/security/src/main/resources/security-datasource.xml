@@ -16,17 +16,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="xaIkasanDataSource"
+    <bean id="ikasan.xads"
         class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:/ikasan/admin/xads" />
     </bean>
 
-    <bean id="localTxIkasanDataSource"
-        class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ikasan/admin/localds" />
-    </bean>
-
-    <bean id="noTxIkasanDataSource"
+    <bean id="ikasan.ds"
         class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:/ikasan/admin/ds" />
     </bean>

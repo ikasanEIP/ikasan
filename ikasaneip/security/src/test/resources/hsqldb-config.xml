@@ -35,8 +35,8 @@
         <entry key="hibernate.jdbc.factory_class" value="org.hibernate.jdbc.NonBatchingBatcherFactory"/>
     </util:map>
 
-    <bean id="xaDataSource"
-          name="localTxIkasanDataSource,noTxIkasanDataSource,xaIkasanDataSource" 
+    <bean id="ikasan.ds"
+          name="ikasan.xads" 
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
             <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
             <property name="url" value="jdbc:hsqldb:mem:testdb" />

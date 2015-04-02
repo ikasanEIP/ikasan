@@ -69,6 +69,7 @@ public class EstateViewPanel extends Panel implements View, Action.Handler
     {
         this.setWidth("100%");
         this.setHeight("100%");
+        this.setStyleName("dashboard");
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidth("100%");
