@@ -52,9 +52,11 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.*;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.TriggerKey.triggerKey;
 
@@ -225,6 +227,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
+
+        // simple delay retry action
         else if(action instanceof RetryAction)
         {
             RetryAction retryAction = (RetryAction)action;
@@ -259,6 +263,44 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                 throw new RuntimeException(e);
             }
             
+            throw new ForceTransactionRollbackException(action.toString(), throwable);
+        }
+
+        // cron expression based delay retry action
+        else if(action instanceof ScheduledRetryAction)
+        {
+            ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)action;
+            this.consumer.stop();
+            stopManagedResources();
+
+            try
+            {
+                if(!isRecovering())
+                {
+                    startRecovery(scheduledRetryAction);
+                }
+                else
+                {
+                    // TODO - not 100% identification of same issue, but sufficient
+                    if(this.previousExceptionAction.equals(scheduledRetryAction) && this.previousComponentName.equals(componentName))
+                    {
+                        continueRecovery(scheduledRetryAction);
+                    }
+                    else
+                    {
+                        cancel();
+                        startRecovery(scheduledRetryAction);
+                    }
+                }
+
+                this.previousComponentName = componentName;
+                this.previousExceptionAction = scheduledRetryAction;
+            }
+            catch (SchedulerException e)
+            {
+                throw new RuntimeException(e);
+            }
+
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
         else
@@ -327,6 +369,25 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
+     * Start a new scheduled recovery job.
+     * @param scheduledRetryAction
+     * @throws SchedulerException
+     */
+    private void startRecovery(ScheduledRetryAction scheduledRetryAction)
+            throws SchedulerException
+    {
+        JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail(this, ScheduledRecoveryManager.class, RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        Trigger recoveryJobTrigger = newRecoveryTrigger(scheduledRetryAction.getCronExpression());
+        Date scheduled = this.scheduler.scheduleJob(recoveryJobDetail, recoveryJobTrigger);
+
+        recoveryAttempts = 1;
+        logger.info("Recovery [" + recoveryAttempts + "/"
+                + ((scheduledRetryAction.getMaxRetries() < 0) ? "unlimited" : scheduledRetryAction.getMaxRetries())
+                + "] flow [" + flowName + "] module [" + moduleName + "] started at ["
+                + scheduled + "] with cronExpression[" + scheduledRetryAction.getCronExpression() + "]");
+    }
+
+    /**
      * Continue an in progress recovery based on the retry action.
      * @param retryAction
      */
@@ -364,6 +425,27 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
                 + "] flow [" + flowName + "] module [" + moduleName + "] rescheduled at ["
                 + scheduled + "]");
         }
+
+    }
+
+    /**
+     * Continue an in progress recovery based on the retry action.
+     * @param scheduledRetryAction
+     */
+    private void continueRecovery(ScheduledRetryAction scheduledRetryAction) throws SchedulerException
+    {
+        recoveryAttempts++;
+
+        if(scheduledRetryAction.getMaxRetries() != RetryAction.RETRY_INFINITE && recoveryAttempts > scheduledRetryAction.getMaxRetries())
+        {
+            this.cancel();
+            this.isUnrecoverable = true;
+
+            // TODO - define a better exception!?!
+            throw new RuntimeException("Exhausted maximum retries.");
+        }
+
+        // nothing else to do as its on a cron expression schedule currently running
 
     }
 
@@ -424,7 +506,27 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         .startAt(new Date(System.currentTimeMillis() + delay))
         .build();
     }
-    
+
+    /**
+     * Factory method for creating a new recovery trigger.
+     * @param cronExpression
+     * @return Trigger
+     */
+    protected Trigger newRecoveryTrigger(String cronExpression) throws SchedulerException
+    {
+        try
+        {
+            return newTrigger()
+                    .withIdentity(triggerKey(RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
+                    .withSchedule(cronSchedule(cronExpression))
+                    .build();
+        }
+        catch(ParseException e)
+        {
+            throw new SchedulerException(e);
+        }
+    }
+
     /**
      * Cancel the recovery job with the scheduler.
      * @throws SchedulerException
@@ -444,7 +546,15 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         try
         {
             startManagedResources();
-            this.consumer.start();
+
+            if(this.consumer instanceof Job)
+            {
+                ((Job)this.consumer).execute(context);
+            }
+            else
+            {
+                this.consumer.start();
+            }
         }
         catch(Throwable throwable)
         {

@@ -224,7 +224,11 @@ public class ScheduledConsumer<T>
             {
                 if(managedResourceRecoveryManager.isRecovering())
                 {
+                    // cancel the recovery schedule
                     managedResourceRecoveryManager.cancel();
+
+                    // restore the normal schedule
+                    this.start();
                 }
             }
         }
