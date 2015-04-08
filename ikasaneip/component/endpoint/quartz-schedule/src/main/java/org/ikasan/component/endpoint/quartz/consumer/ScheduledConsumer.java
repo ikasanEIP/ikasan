@@ -42,12 +42,12 @@ package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
-import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
@@ -226,11 +226,12 @@ public class ScheduledConsumer<T>
                 {
                     // cancel the recovery schedule
                     managedResourceRecoveryManager.cancel();
-
-                    // restore the normal schedule
-                    this.start();
                 }
             }
+        }
+        catch (ForceTransactionRollbackException thrownByRecoveryManager)
+        {
+            throw thrownByRecoveryManager;
         }
         catch (Throwable thr)
         {
