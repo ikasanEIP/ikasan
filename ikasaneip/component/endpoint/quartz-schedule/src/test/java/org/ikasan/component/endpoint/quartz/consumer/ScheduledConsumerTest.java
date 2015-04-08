@@ -355,10 +355,7 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_null_when_in_recovery() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
-        final String identifier = "testId";
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
 
         // expectations
         mockery.checking(new Expectations()
@@ -367,32 +364,11 @@ public class ScheduledConsumerTest
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(null));
 
-                // schedule the job
-                exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(0).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(0).of(eventListener).invoke(mockFlowEvent);
-
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
 
                 // cancel recovery
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
-
-                // start normal operation
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
-
-                // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
-
-                // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
-                will(returnValue(new Date()));
             }
         });
 

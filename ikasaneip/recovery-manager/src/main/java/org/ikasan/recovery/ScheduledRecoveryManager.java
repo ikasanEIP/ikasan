@@ -73,10 +73,16 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
     /** recovery job name */
     protected static final String RECOVERY_JOB_NAME = "recoveryJob_";
-    
+
+    /** consumer recovery job name */
+    protected static final String CONSUMER_RECOVERY_JOB_NAME = "consumerRecoveryJob_";
+
     /** recovery job trigger name */
     protected static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger_";
-    
+
+    /** recovery job trigger name */
+    protected static final String IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME = "immediateRecoveryJobTrigger_";
+
     /** consumer to stop and start for recovery */
     private Consumer<?,?> consumer;
 
@@ -204,7 +210,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      *
      * @param action
      * @param componentName
-     * @param throwable
+     * @param throwable 
      */
     protected void recover(ExceptionAction action, String componentName, Throwable throwable)
     {
@@ -462,6 +468,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
             this.previousComponentName = null;
             this.previousExceptionAction = null;
             logger.info("Recovery cancelled for flow [" + flowName + "] module [" + moduleName + "]");
+
+            // for scheduled based consumers we need start them on their normal flow of execution
+            if(this.consumer instanceof Job)
+            {
+                this.consumer.start();
+            }
         }
         catch(SchedulerException e)
         {
@@ -508,6 +520,18 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     }
 
     /**
+     * Factory method for creating a new recovery trigger which starts immediately.
+     * @return Trigger
+     */
+    protected Trigger newImmediateRecoveryTrigger()
+    {
+        return newTrigger()
+                .withIdentity(triggerKey(IMMEDIATE_RECOVERY_JOB_TRIGGER_NAME + this.flowName, this.moduleName))
+                .startNow()
+                .build();
+    }
+
+    /**
      * Factory method for creating a new recovery trigger.
      * @param cronExpression
      * @return Trigger
@@ -535,6 +559,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         JobKey jobKey = new JobKey(RECOVERY_JOB_NAME + this.flowName, this.moduleName);
         this.scheduler.deleteJob(jobKey);
+
+        JobKey consumerJobKey = new JobKey(CONSUMER_RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+        if(this.scheduler.checkExists(consumerJobKey))
+        {
+            this.scheduler.deleteJob(consumerJobKey);
+        }
     }
 
     /**
@@ -549,7 +579,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
 
             if(this.consumer instanceof Job)
             {
-                ((Job)this.consumer).execute(context);
+                Class consumerClass = this.consumer.getClass();
+                JobDetail recoveryJobDetail = scheduledJobFactory.createJobDetail((Job)this.consumer, consumerClass, CONSUMER_RECOVERY_JOB_NAME + this.flowName, this.moduleName);
+                this.scheduler.scheduleJob(recoveryJobDetail, newImmediateRecoveryTrigger());
             }
             else
             {
@@ -558,9 +590,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         }
         catch(Throwable throwable)
         {
-            // this situation only occurs on failure of a retry of a 
+            // this situation only occurs on failure of a retry of a
             // critical managed resource or a consumer
-            // so we should be good using the previousComponentName which 
+            // so we should be good using the previousComponentName which
             // will be equal to the consumer name
             this.recover(this.previousComponentName, throwable);
         }
