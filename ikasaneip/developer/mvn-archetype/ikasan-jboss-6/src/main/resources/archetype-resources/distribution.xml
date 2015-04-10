@@ -7,12 +7,12 @@
     <files>
         <file>
             <source>conf/log4j.xml</source>
-            <outputDirectory>Specify output directory for the JBoss Module</outputDirectory>
+            <outputDirectory>jboss-eap/modules/${jbossModuleDir}</outputDirectory>
             <filtered>false</filtered>
         </file>
         <file>
             <source>conf/module.xml</source>
-            <outputDirectory>Specify output directory for the JBoss Module</outputDirectory>
+            <outputDirectory>jboss-eap/modules/${jbossModuleDir}</outputDirectory>
             <filtered>false</filtered>
         </file>
     </files>

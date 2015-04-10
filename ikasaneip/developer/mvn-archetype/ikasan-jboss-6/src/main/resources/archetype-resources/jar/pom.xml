@@ -21,41 +21,35 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Optional component implementing default multi-recipient router behaviour -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-component-multiRecipient-router</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Optional component implementing default splitter behaviour -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-component-splitter</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Default builder uses Spring builder -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder-spring</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Default component scheduler implementation behaviour -->
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-quartz-endpoint</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
