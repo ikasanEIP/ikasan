@@ -114,6 +114,9 @@
         <module>webconsole</module>
         <module>console</module>
 
+        <!-- developer tooling -->
+        <module>developer</module>
+
         <!-- samples -->
         <module>sample</module>
         <module>transaction</module>
