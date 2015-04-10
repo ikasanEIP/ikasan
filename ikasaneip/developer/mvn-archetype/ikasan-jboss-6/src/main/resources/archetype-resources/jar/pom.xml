@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>${build.parent.groupId}</groupId>
-        <artifactId>${build.parent.artifactId}</artifactId>
-        <version>${build.parent.version}</version>
+        <groupId>${buildParentGroupId}</groupId>
+        <artifactId>${buildParentArtifactId}</artifactId>
+        <version>${buildParentVersion}</version>
         <relativePath/>
     </parent>
 
