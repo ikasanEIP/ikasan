@@ -40,7 +40,7 @@
 <archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
-                      name="ikasaneip-integration-module-jboss-maven-plugin" partial="true">
+                      name="ikasan-integration-module-jboss6-maven-plugin" partial="true">
 
     <requiredProperties>
         <requiredProperty key="buildParentGroupId">
@@ -54,6 +54,9 @@
         </requiredProperty>
         <requiredProperty key="jbossModuleNamespace">
             <defaultValue>org.ikasan.configuration.${artifactId}.conf</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="jbossModuleDir">
+            <defaultValue>org/ikasan/configuration/${artifactId}/conf/main</defaultValue>
         </requiredProperty>
     </requiredProperties>
 
@@ -73,18 +76,12 @@
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>ear</directory>
-            <includes>
-                <include>pom.xml</include>
-            </includes>
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>environment</directory>
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>jar</directory>
-            <includes>
-                <include>pom.xml</include>
-            </includes>
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>sql</directory>
