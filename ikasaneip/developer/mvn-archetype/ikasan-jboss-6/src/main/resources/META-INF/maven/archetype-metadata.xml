@@ -40,19 +40,19 @@
 <archetype-descriptor xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                       xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
-                      name="ikasaneip-im-jboss-maven-plugin" partial="true">
+                      name="ikasaneip-integration-module-jboss-maven-plugin" partial="true">
 
     <requiredProperties>
-        <requiredProperty key="build.parent.groupId">
+        <requiredProperty key="buildParentGroupId">
             <defaultValue>org.ikasan</defaultValue>
         </requiredProperty>
-        <requiredProperty key="build.parent.artifactId">
+        <requiredProperty key="buildParentArtifactId">
             <defaultValue>esb-build</defaultValue>
         </requiredProperty>
-        <requiredProperty key="build.parent.version">
-            <defaultValue>1.0.0</defaultValue>
+        <requiredProperty key="buildParentVersion">
+            <defaultValue>1.0.0-SNAPSHOT</defaultValue>
         </requiredProperty>
-        <requiredProperty key="jboss.module.namespace">
+        <requiredProperty key="jbossModuleNamespace">
             <defaultValue>org.ikasan.configuration.${artifactId}.conf</defaultValue>
         </requiredProperty>
     </requiredProperties>
@@ -73,12 +73,18 @@
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>ear</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>environment</directory>
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>jar</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
         </fileSet>
         <fileSet filtered="true" packaged="false">
             <directory>sql</directory>
@@ -87,6 +93,7 @@
             <directory></directory>
             <includes>
                 <include>distribution.xml</include>
+                <include>pom.xml</include>
             </includes>
         </fileSet>
     </fileSets>

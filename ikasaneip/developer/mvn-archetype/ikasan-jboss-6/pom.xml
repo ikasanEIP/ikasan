@@ -40,8 +40,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>ikasaneip-integration-module-maven-plugin</groupId>
-    <artifactId>ikasaneip-integration-module-maven-plugin</artifactId>
+    <groupId>ikasaneip-integration-module-jboss-maven-plugin</groupId>
+    <artifactId>ikasaneip-integration-module-jboss-maven-plugin</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
@@ -52,7 +52,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                    <goalPrefix>ikasaneip-integration-module</goalPrefix>
+                    <goalPrefix>ikasaneip-integration-module-jboss</goalPrefix>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
                 <executions>
