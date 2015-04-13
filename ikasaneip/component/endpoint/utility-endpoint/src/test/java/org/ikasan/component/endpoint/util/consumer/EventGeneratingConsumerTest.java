@@ -86,7 +86,7 @@ public class EventGeneratingConsumerTest
         {
             {
                 // event limit of 1
-                exactly(7).of(consumerConfiguration).getEventLimit();
+                exactly(6).of(consumerConfiguration).getEventLimit();
                 will(returnValue(1));
 
                 // new flowEvent
@@ -99,6 +99,10 @@ public class EventGeneratingConsumerTest
                 will(returnValue(flowEvent));
 
                 one(eventListener).invoke(flowEvent);
+                exactly(2).of(consumerConfiguration).getEventGenerationInterval();
+                will(returnValue(1L));
+                exactly(1).of(consumerConfiguration).getBatchsize();
+                will(returnValue(1));
             }
         });
 
@@ -124,7 +128,7 @@ public class EventGeneratingConsumerTest
         {
             {
                 // event limit of 1
-                exactly(10).of(consumerConfiguration).getEventLimit();
+                exactly(8).of(consumerConfiguration).getEventLimit();
                 will(returnValue(2));
 
                 // new flowEvent
@@ -138,10 +142,10 @@ public class EventGeneratingConsumerTest
 
                 exactly(2).of(eventListener).invoke(flowEvent);
 
-                exactly(2).of(consumerConfiguration).getEventGenerationInterval();
+                exactly(3).of(consumerConfiguration).getEventGenerationInterval();
                 will(returnValue(1L));
 
-                exactly(1).of(consumerConfiguration).getBatchsize();
+                exactly(2).of(consumerConfiguration).getBatchsize();
                 will(returnValue(1));
             }
         });

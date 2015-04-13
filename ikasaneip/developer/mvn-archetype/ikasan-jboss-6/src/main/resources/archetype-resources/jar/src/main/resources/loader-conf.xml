@@ -22,6 +22,7 @@
         <value>module-conf.xml</value>
         <value>exclusion-flow-conf.xml</value>
         <value>sample-flow-conf.xml</value>
+        <value>sample-scheduled-flow-conf.xml</value>
     </util:list>
 
 </beans>
