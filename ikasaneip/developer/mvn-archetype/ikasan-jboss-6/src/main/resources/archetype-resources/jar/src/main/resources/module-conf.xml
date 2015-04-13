@@ -11,6 +11,7 @@
         <property name="flows">
             <util:list>
                 <ref bean="sampleFlow" />
+                <ref bean="sampleScheduledFlow" />
             </util:list>
         </property>
     </bean>
