@@ -40,11 +40,23 @@
  */
 package org.ikasan.security.service.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.SecurityServiceException;
+import org.ikasan.security.service.UserService;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
 
@@ -57,17 +69,19 @@ import org.springframework.security.ldap.authentication.LdapAuthenticator;
  */
 public class LdapAuthenticationProvider implements AuthenticationProvider
 {
-    
+	private static Logger logger = Logger.getLogger(LdapAuthenticationProvider.class);
+
     /** The authenticator we're going to authenticate with */
     private LdapAuthenticator authenticator;
     private SecurityService securityService;
+    private UserService userService;
 
     /**
      * Constructor - Takes a UserService
      * @param userService
      */
     public LdapAuthenticationProvider(BindAuthenticator authenticator,
-    		SecurityService securityService)
+    		SecurityService securityService, UserService userService)
     {
         this.authenticator = authenticator;
         if(this.authenticator == null)
@@ -119,27 +133,28 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         // Authenticate, using the passed-in credentials.
         DirContextOperations authAdapter = authenticator.authenticate(auth);
 
-        // Get the users role
-        String role = authAdapter.getStringAttribute("Role");
+			User user = this.userService.loadUserByUsername(auth.getName());
+			Set<IkasanPrincipal> principals = user.getPrincipals();
 
-//        LdapAuthenticationToken ldapAuth = new LdapAuthenticationToken(auth, role);
-//
-//        InitialLdapContext ldapContext = (InitialLdapContext) authAdapter.getObjectAttribute("ldapContext");
-//        if (ldapContext != null)
-//        {
-//            ldapAuth.setContext(ldapContext);
-//        }
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
-        String[] groups = authAdapter.getStringAttributes("memberOf");
-
-//        Object[] groups =  authAdapter.
-
-//        for(String group: groups)
-//        {
-//            System.out.println("Group: " + group);
-//        }
-//
-//        System.out.println("Role: " + role);
+		for(IkasanPrincipal principal: principals)
+		{
+			Set<Role> roles = principal.getRoles();
+			
+			for(Role role: roles)
+			{
+				Set<Policy> policies = role.getPolicies();
+				
+				for(Policy policy: policies)
+				{
+					if(!authorities.contains(policy))
+					{
+						authorities.add(policy);
+					}
+				}
+			}
+		}
 
         return new AuthenticationToken();
     }

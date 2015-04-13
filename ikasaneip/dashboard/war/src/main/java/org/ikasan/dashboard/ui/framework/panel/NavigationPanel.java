@@ -30,7 +30,6 @@ import org.ikasan.security.service.UserService;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -74,6 +73,8 @@ public class NavigationPanel extends Panel
 	private Label loggedInUserLabel;
 	private HashMap<String, IkasanUINavigator> views;
 	private String currentView;
+	private String currentViewName;
+	private String currentNavigator;
 	private MenuBar actionMenu = new MenuBar();
 	private MenuBar utilityMenu = new MenuBar();
 
@@ -114,6 +115,8 @@ public class NavigationPanel extends Panel
 	 */
 	protected void init()
 	{
+		logger.info("Initialising navigation panel.");
+
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setHeight(30, Unit.PIXELS);
 		this.setStyleName("navigation");
@@ -121,6 +124,9 @@ public class NavigationPanel extends Panel
 		this.layout.setColumnExpandRatio(1, 50f);
 		this.layout.setColumnExpandRatio(2, 2.5f);
 		this.layout.setColumnExpandRatio(3, 2.5f);
+		
+		this.actionMenu.setStyleName("ikasan");
+		this.utilityMenu.setStyleName("ikasan");
 		
 		this.createActionMenuItems();
 		this.createUtilityMenuItems();
@@ -208,6 +214,7 @@ public class NavigationPanel extends Panel
 	{
 		MenuItem dashboards = actionMenu.addItem("Dashboards",
 				new ThemeResource("images/menu-icon.png"), null);
+		dashboards.setStyleName("ikasan");
 
 		MenuBar.Command dashboardCommand = createNavigatorMenuCommand(
 				"dashboard", "dashboardView");
@@ -230,6 +237,7 @@ public class NavigationPanel extends Panel
 		// Another top-level item
 		MenuItem service = this.actionMenu.addItem("Services",
 				new ThemeResource("images/menu-icon.png"), null);
+		service.setStyleName("ikasan");
 		service.addItem("Topology", null, topologyCommand);
 		service.addSeparator();
 		service.addItem("Mapping", null, mappingCommand);
@@ -261,6 +269,7 @@ public class NavigationPanel extends Panel
 
 		MenuItem admin = utilityMenu.addItem("", new ThemeResource(
 				"images/gear.png"), null);
+		admin.setStyleName("ikasan");
 		admin.addItem("Manage Users", null, userCommand);
 		admin.addItem("Security Administration", null, authenticationMethodCommand);
 		
@@ -277,6 +286,7 @@ public class NavigationPanel extends Panel
 
 		MenuItem userItem = this.utilityMenu.addItem("", new ThemeResource(
 				"images/user.png"), null);
+		userItem.setStyleName("ikasan");
 		userItem.addItem("Profile", profileCommand);
 		userItem.addSeparator();
 		userItem.addItem("Log Out", logOutCommand);
@@ -329,6 +339,7 @@ public class NavigationPanel extends Panel
 
 		for (IkasanUIView view : this.views.get("topLevel").getIkasanViews())
 		{
+			logger.info("Adding view:" + view.getPath());
 			navigator.addView(view.getPath(), view.getView());
 		}
 	}
@@ -349,6 +360,8 @@ public class NavigationPanel extends Panel
 					UI.getCurrent().getNavigator().navigateTo(viewName);
 
 					currentView = views.get(navigatorName).getName();
+					currentNavigator = navigatorName;
+					currentViewName = viewName;
 
 					List<IkasanUIView> mappingViews = views.get(navigatorName)
 							.getIkasanViews();
@@ -370,4 +383,40 @@ public class NavigationPanel extends Panel
 	{
 		this.layout.setVisible(visible);
 	}
+
+	public void resetCurrentView()
+	{
+		this.currentView = null;
+	}
+	
+//	/**
+//	 * 
+//	 */
+//	public void navigateToCurrentView()
+//	{
+//		logger.info("Loading to level navigator");
+//		loadTopLevelNavigator();
+//		
+//		UI.getCurrent().getNavigator().navigateTo(this.currentViewName);
+//		logger.info("Navigated to: " + this.currentViewName);
+//		List<IkasanUIView> mappingViews = views.get(this.currentNavigator)
+//				.getIkasanViews();
+//		
+//		Navigator navigator = new Navigator(UI.getCurrent(), views
+//				.get(this.currentNavigator).getContainer());
+//
+//		for (IkasanUIView view : mappingViews)
+//		{
+//			navigator.addView(view.getPath(), view.getView());
+//		}
+//	}
+//
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	public boolean isCurrentViewNull()
+//	{
+//		return this.currentView == null;
+//	}
 }

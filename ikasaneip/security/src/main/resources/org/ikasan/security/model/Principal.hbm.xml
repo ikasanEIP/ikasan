@@ -42,6 +42,11 @@
                   type="java.lang.String"
                   column="PrincipalType"
                   not-null="true"/>
+                  
+        <property name="description"
+                  type="java.lang.String"
+                  column="Description"
+                  not-null="true"/>
 
         <property name="createdDateTime"
                   type="java.util.Date"

@@ -86,7 +86,8 @@ public class SecurityServiceImpl implements SecurityService
         IkasanPrincipal principal = new IkasanPrincipal();
         principal.setName(name);
         principal.setType(type);
-
+        principal.setDescription("description");
+        
         try
         {
             this.securityDao.saveOrUpdatePrincipal(principal);
@@ -323,18 +324,102 @@ public class SecurityServiceImpl implements SecurityService
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityDaoException
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityServiceException
     {
     	authenticationMethod.setId(SecurityConstants.AUTH_METHOD_ID);
-    	this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
+    	try
+		{
+			this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
+		} catch (SecurityDaoException e)
+		{
+			throw new SecurityServiceException(e);
+		}
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
      */
-    public AuthenticationMethod getAuthenticationMethod() throws SecurityDaoException
+    public AuthenticationMethod getAuthenticationMethod() throws SecurityServiceException
     {
-    	return this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
+    	try
+		{
+			return this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
+		} catch (SecurityDaoException e)
+		{
+			throw new SecurityServiceException(e);
+		}
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#findRoleByName(java.lang.String)
+	 */
+	@Override
+	public Role findRoleByName(String name)
+			throws SecurityServiceException
+	{
+		try
+		{
+			return this.securityDao.getRoleByName(name);
+		} catch (SecurityDaoException e)
+		{
+			throw new SecurityServiceException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#findPolicyByName(java.lang.String)
+	 */
+	@Override
+	public Policy findPolicyByName(String name)
+			throws SecurityServiceException
+	{
+		try
+		{
+			return this.securityDao.getPolicyByName(name);
+		} catch (SecurityDaoException e)
+		{
+			throw new SecurityServiceException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAllPrincipalsWithRole(java.lang.String)
+	 */
+	@Override
+	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
+			throws SecurityServiceException
+	{
+		List<IkasanPrincipal> principals = null;
+		try
+		{
+			principals =  this.securityDao.getAllPrincipalsWithRole(roleName);
+		} 
+		catch (SecurityDaoException e)
+		{
+			throw new SecurityServiceException(e);
+		}
+		
+		return principals;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getPrincipalsByName(java.util.List)
+	 */
+	@Override
+	public List<IkasanPrincipal> getPrincipalsByName(List<String> names)
+			throws SecurityServiceException
+	{
+		List<IkasanPrincipal> principals = null;
+		try
+		{
+			principals =  this.securityDao.getPrincipalsByName(names);
+		} 
+		catch (SecurityDaoException e)
+		{
+			throw new SecurityServiceException(e);
+		}
+		
+		return principals;
+	}
 }

@@ -44,8 +44,8 @@ import java.util.List;
 
 import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 
 
@@ -62,6 +62,22 @@ public interface SecurityService
      * @throws SecurityServiceException
      */
     public IkasanPrincipal findPrincipalByName(String name) throws SecurityServiceException;
+
+    /**
+     * 
+     * @param name
+     * @return
+     * @throws SecurityServiceException
+     */
+    public Role findRoleByName(String name) throws SecurityServiceException;
+    
+    /**
+     * 
+     * @param name
+     * @return
+     * @throws SecurityServiceException
+     */
+    public Policy findPolicyByName(String name) throws SecurityServiceException;
 
     /**
      * 
@@ -85,6 +101,20 @@ public interface SecurityService
      * @throws SecurityServiceException
      */
     public List<IkasanPrincipal> getAllPrincipals() throws SecurityServiceException;
+
+    /**
+     * 
+     * @return
+     * @throws SecurityDaoException
+     */
+    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName) throws SecurityServiceException;
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<IkasanPrincipal> getPrincipalsByName(List<String> names) throws SecurityServiceException;
 
     /**
      * 
@@ -156,7 +186,7 @@ public interface SecurityService
      * @param authenticationMethod
      * @throws SecurityDaoException
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityDaoException;
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityServiceException;
 
     /**
      * 
@@ -164,5 +194,5 @@ public interface SecurityService
      * @return
      * @throws SecurityDaoException
      */
-    public AuthenticationMethod getAuthenticationMethod() throws SecurityDaoException;
+    public AuthenticationMethod getAuthenticationMethod() throws SecurityServiceException;
 }

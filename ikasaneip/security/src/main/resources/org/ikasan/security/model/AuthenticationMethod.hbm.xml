@@ -61,7 +61,17 @@
 		<property name="ldapBindUserDn" column="LdapBindUserDn" type="java.lang.String" not-null="false"/>
 		<property name="ldapBindUserPassword" column="LdapBindUserPassword" type="java.lang.String" not-null="false"/>
 		<property name="ldapUserSearchBaseDn" column="LdapUserSearchBaseDn" type="java.lang.String" not-null="false"/>
-		<property name="ldapUserSearchFilter" column="LdapUserSearchFilter" type="java.lang.String" not-null="false"/>
-
+		<property name="ldapUserSearchFilter" column="LdapUserSearchFilter" type="java.lang.String" not-null="false"/>		
+		<property name="emailAttributeName" column="EmailAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="userAccountNameAttributeName" column="UserAccNameAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="accountTypeAttributeName" column="AccountTypeAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="applicationSecurityBaseDn" column="AppSecBaseDn" type="java.lang.String" not-null="false"/>
+		<property name="applicationSecurityGroupAttributeName" column="AppSecGroupAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="firstNameAttributeName" column="FirstNameAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="surnameAttributeName" column="SurnameAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="departmentAttributeName" column="DepartmentAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="applicationSecurityDescriptionAttributeName" column="AppSecDescAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="ldapUserDescriptionAttributeName" column="LdapUserDescAttributeName" type="java.lang.String" not-null="false"/>
+		<property name="memberofAttributeName" column="MemberofAttributeName" type="java.lang.String" not-null="false"/>
 	</class>
 </hibernate-mapping>

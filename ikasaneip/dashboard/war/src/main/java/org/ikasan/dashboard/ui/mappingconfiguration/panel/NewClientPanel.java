@@ -70,6 +70,8 @@ public class NewClientPanel extends Panel implements View
      */
     protected void init()
     {
+    	this.setStyleName("dashboard");
+    	
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(NewClientFieldGroup.NAME, new ObjectProperty<String>(""));
         item.addItemProperty(NewClientFieldGroup.KEY_LOCATION_QUERY_PROCESSOR_TYPE,

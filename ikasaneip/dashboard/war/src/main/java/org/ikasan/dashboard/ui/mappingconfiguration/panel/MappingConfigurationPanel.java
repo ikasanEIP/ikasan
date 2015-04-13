@@ -583,6 +583,9 @@ public class MappingConfigurationPanel extends Panel implements View
                 throw e;
             }
 
+            logger.info("this.parameterQueryTextFields.size() = " + this.parameterQueryTextFields.size());
+            logger.info("this.mappingConfiguration.getNumberOfParams() = " + this.mappingConfiguration.getNumberOfParams());
+            
             if(this.parameterQueryTextFields.size() != this.mappingConfiguration.getNumberOfParams())
             {
                 throw new Exception("You must define the key location queries!");

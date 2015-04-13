@@ -16,6 +16,11 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.5.xsd">
 
+	<bean id="xaLdapService" class="org.ikasan.security.service.LdapServiceImpl">
+		<constructor-arg ref="noTxSecurityService" />
+		<constructor-arg ref="noTxUserService" />
+	</bean>
+	
 	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
 		<constructor-arg ref="xaAuthenticationProviderFactory" />
 		<constructor-arg ref="xaSecurityService" />
@@ -65,6 +70,11 @@
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
+	<bean id="localTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
+		<constructor-arg ref="noTxSecurityService" />
+		<constructor-arg ref="noTxUserService" />
+	</bean>
+
 	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
 		<constructor-arg ref="localTxAuthenticationProviderFactory" />
 		<constructor-arg ref="localTxSecurityService" />
@@ -112,6 +122,11 @@
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+	
+	<bean id="noTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
+		<constructor-arg ref="noTxSecurityService" />
+		<constructor-arg ref="noTxUserService" />
 	</bean>
 
 	<bean id="noTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">

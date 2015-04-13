@@ -92,6 +92,7 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String SECUIRTY_POLICY = "securityPolicy";
     private static String PRINCIPAL_ROLE = "principalRole";
     private static String ROLE_POLICY = "rolePolicy";
+    private static String USER_PRINCIPAL = "userPrincipal";
 
     private static String MAPPING_CONFIGURATION_TYPE = "mappingConfigurationType";
     private static String MAPPING_CONFIGURATION_CONTEXT = "mappingConfigurationContext";
@@ -203,6 +204,7 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(SECUIRTY_POLICY);
         this.providerDAO.create(PRINCIPAL_ROLE);
         this.providerDAO.create(ROLE_POLICY);
+        this.providerDAO.create(USER_PRINCIPAL);
         this.providerDAO.create(MAPPING_CONFIGURATION_TYPE);
         this.providerDAO.create(MAPPING_CONFIGURATION_CONTEXT);
         this.providerDAO.create(MAPPING_CONFIGURATION_CLIENT);

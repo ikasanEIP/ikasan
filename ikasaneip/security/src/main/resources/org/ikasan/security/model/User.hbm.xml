@@ -56,10 +56,17 @@
     <property name="username" type="java.lang.String" column="Username" unique="true"/>
     <property name="password" column="Password" type="java.lang.String" not-null="true"/>
     <property name="email" column="Email" type="java.lang.String" not-null="false"/>
+    <property name="surname" column="Surname" type="java.lang.String" not-null="true"/>
+    <property name="firstName" column="FirstName" type="java.lang.String" not-null="true"/>
+    <property name="department" column="Department" type="java.lang.String" not-null="false"/>
     <property name="enabled" column="Enabled" type="boolean" not-null="true"/>
     <set name="grantedAuthorities" lazy="false" table="UsersAuthorities">
         <key column="UserId"/>
         <many-to-many class="org.ikasan.security.model.Authority" column="AuthorityId"  />
+    </set>
+    <set name="principals" table="UserPrincipal" lazy="false">
+        <key column="UserId"/>
+        <many-to-many column="PrincipalId" class="org.ikasan.security.model.IkasanPrincipal"/>
     </set>
   </class>
 </hibernate-mapping>

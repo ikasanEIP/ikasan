@@ -41,6 +41,7 @@
 package org.ikasan.security.service.authentication;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -55,6 +56,7 @@ public class AuthenticationToken implements IkasanAuthentication
 	private static final long serialVersionUID = 6278479282380900119L;
 
 	private boolean isAuthenticated;
+	private List<GrantedAuthority> authorities;
 
     /* (non-Javadoc)
      * @see java.security.Principal#getName()
@@ -71,8 +73,7 @@ public class AuthenticationToken implements IkasanAuthentication
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return authorities;
     }
 
     /* (non-Javadoc)
@@ -81,8 +82,7 @@ public class AuthenticationToken implements IkasanAuthentication
     @Override
     public Object getCredentials()
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /* (non-Javadoc)

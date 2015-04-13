@@ -52,6 +52,8 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
     @SuppressWarnings("serial")
     protected void init()
     {
+    	this.setStyleName("dashboard");
+    	
         final HorizontalLayout contentLayout = new HorizontalLayout();
 
         contentLayout.setSizeFull();
