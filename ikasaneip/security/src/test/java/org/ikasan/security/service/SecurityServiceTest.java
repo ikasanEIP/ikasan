@@ -121,6 +121,7 @@ public class SecurityServiceTest
         principalGroup.setName("ISD_Middleware");
         principalGroup.setType("group");
         principalGroup.setRoles(roles);
+        principalGroup.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principalGroup);
 
@@ -128,6 +129,7 @@ public class SecurityServiceTest
         principal.setName("stewmi");
         principal.setType("user");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
 
@@ -135,6 +137,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal1");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -142,6 +145,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal2");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -149,6 +153,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal3");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -156,6 +161,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal4");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -163,6 +169,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal5");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -170,6 +177,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal6");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -177,6 +185,7 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal7");
         principal.setType("type");
         principal.setRoles(roles);
+        principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
     }

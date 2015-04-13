@@ -25,7 +25,7 @@ public class HomeTab extends VerticalLayout implements View
     private ViewComponentContainer viewComponentContainer;
     private NewActionsPanel newActionsPanel;
     private HorizontalSplitPanel horizontalSplitPanel;
-    private VerticalLayout leftPanelLayout;
+    private Panel leftPanelLayout;
 
     /**
      * Constructor
@@ -72,8 +72,9 @@ public class HomeTab extends VerticalLayout implements View
      * 
      * @return
      */
-    private VerticalLayout getExpandedLeftSplitPanelLayout()
+    private Panel getExpandedLeftSplitPanelLayout()
     {   
+    	
         Button collapseButton = new Button("<<");
         collapseButton.setVisible(true);
         collapseButton.addClickListener(new Button.ClickListener() {
@@ -97,10 +98,17 @@ public class HomeTab extends VerticalLayout implements View
         layout.setComponentAlignment(newActionsPanel, Alignment.TOP_RIGHT);
 
         layout.setStyleName("grey");
-        return layout;
+//        layout.setMargin(true);
+        
+        Panel panel = new Panel();
+        panel.setSizeFull();
+        panel.setStyleName("dashboard-grey");
+        panel.setContent(layout);
+        
+        return panel;
     }
 
-    private VerticalLayout getCollapsedLeftSplitPanelLayout()
+    private Panel getCollapsedLeftSplitPanelLayout()
     {   
         Button expandButton = new Button(">>");
         expandButton.setVisible(true);
@@ -122,7 +130,12 @@ public class HomeTab extends VerticalLayout implements View
         layout.setStyleName("grey");
         layout.setHeight("100%");
 
-        return layout;
+        Panel panel = new Panel();
+        panel.setSizeFull();
+        panel.setStyleName("dashboard-grey");
+        panel.setContent(layout);
+        
+        return panel;
     }
 
 	@Override

@@ -27,6 +27,9 @@
         <constructor-arg ref="dashboardViewComponentContainer"/>
     </bean>
     
-    <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.user.panel.UserPanel" scope="session" />
+    <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.user.panel.UserPanel" scope="session">
+    	<constructor-arg ref="localTxUserService"/>
+    	<constructor-arg ref="localTxSecurityService"/>
+    </bean>
     
 </beans>

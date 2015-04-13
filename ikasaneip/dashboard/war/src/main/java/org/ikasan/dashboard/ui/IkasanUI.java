@@ -60,6 +60,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private VerticalLayout imagePanelLayout;
     private EventBus eventBus = new EventBus();
     private PersistenceService persistenceService; 
+    private NavigationPanel navigationPanel;
     
     private final Table table = new Table();
     private Container container = new IndexedContainer();
@@ -84,7 +85,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup,
             UserDetailsHelper userDetailsHelper, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
-            EventBus eventBus, PersistenceServiceFactory<String> persistenceServiceFactory, String persistenceProvider)
+            EventBus eventBus, PersistenceServiceFactory<String> persistenceServiceFactory, String persistenceProvider,
+            VerticalLayout imagePanelLayout, NavigationPanel navigationPanel)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -97,6 +99,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;
 	    this.eventBus = eventBus;
 	    this.persistenceService = persistenceServiceFactory.getPersistenceService(persistenceProvider);
+	    this.imagePanelLayout = imagePanelLayout;
+	    this.navigationPanel = navigationPanel;
 	    
 	    Broadcaster.register(this);
 	}
@@ -108,7 +112,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         layout.setMargin(true);
         this.setContent(layout);
 
-        imagePanelLayout = new VerticalLayout();
+        imagePanelLayout.removeAllComponents();
         imagePanelLayout.setHeight("70px");
 
         layout.addComponent(imagePanelLayout, 0, 0);
@@ -127,13 +131,12 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         imagePanelLayout.setExpandRatio(label, 0.5f);
         imagePanelLayout.setComponentAlignment(label, Alignment.BOTTOM_LEFT);
 
-        NavigationPanel navigationPanel = new NavigationPanel(this.userService, this.authenticationService
-            , this.visibilityGroup, this.userDetailsHelper, this.editableGroup, this.newMappingConfigurationFunctionalGroup,
-            this.existingMappingConfigurationFunctionalGroup, imagePanelLayout, this.views);
         layout.addComponent(navigationPanel, 0, 1);
         
         layout.addComponent(this.views.get("dashboard").getContainer(), 0, 2);
         layout.setRowExpandRatio(2, 1);
+
+        boolean usersTablesExist = this.persistenceService.userTablesExist();
 
         Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
 
@@ -143,9 +146,9 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         {
             navigator.addView(view.getPath(), view.getView());
         }
-
-        boolean usersTablesExist = this.persistenceService.userTablesExist();
-
+       
+        this.navigationPanel.resetCurrentView();
+        
         if(!usersTablesExist)
         {
         	navigator.navigateTo("persistanceSetupView");
@@ -153,9 +156,36 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         }
         else
         {
-        	navigator.navigateTo("landingView");  
-        	navigationPanel.setVisible(true);
+       	 navigator.navigateTo("landingView");  
+       	 navigationPanel.setVisible(true);
         }
+        
+//        if(!this.navigationPanel.isCurrentViewNull())
+//        {
+//        	this.navigationPanel.navigateToCurrentView();
+//        }
+//        else
+//        {
+//        	 Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
+//
+//             List<IkasanUIView> mappingViews = this.views.get("topLevel").getIkasanViews();
+//             
+//             for(IkasanUIView view: mappingViews)
+//             {
+//                 navigator.addView(view.getPath(), view.getView());
+//             }
+//            
+//             if(!usersTablesExist)
+//             {
+//             	navigator.navigateTo("persistanceSetupView");
+//             	navigationPanel.setVisible(false);
+//             }
+//             else
+//             {
+//            	 navigator.navigateTo("landingView");  
+//            	 navigationPanel.setVisible(true);
+//             }
+//        }
 
         VerticalLayout vlayout = new VerticalLayout();
 

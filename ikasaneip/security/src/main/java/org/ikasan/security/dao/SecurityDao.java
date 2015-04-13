@@ -100,6 +100,13 @@ public interface SecurityDao
 
     /**
      * 
+     * @param name
+     * @return
+     */
+    public List<IkasanPrincipal> getPrincipalsByName(List<String> names) throws SecurityDaoException;
+
+    /**
+     * 
      * @return
      * @throws SecurityDaoException
      */
@@ -118,6 +125,13 @@ public interface SecurityDao
      * @throws SecurityDaoException
      */
     public List<IkasanPrincipal> getAllPrincipals() throws SecurityDaoException;
+
+    /**
+     * 
+     * @return
+     * @throws SecurityDaoException
+     */
+    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName) throws SecurityDaoException;
 
     /**
      * 

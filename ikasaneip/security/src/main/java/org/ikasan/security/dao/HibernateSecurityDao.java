@@ -242,4 +242,30 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 
         return authenticationMethod;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAllPrincipalsWithRole(java.lang.String)
+	 */
+	@Override
+	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
+			throws SecurityDaoException
+	{
+		 DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
+		 criteria.createCriteria("roles").add(Restrictions.eq("name", roleName));
+
+	     return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getPrincipalsByName(java.util.List)
+	 */
+	@Override
+	public List<IkasanPrincipal> getPrincipalsByName(List<String> names)
+			throws SecurityDaoException
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
+		criteria.createCriteria("roles").add(Restrictions.in("name", names));
+
+	    return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
 }

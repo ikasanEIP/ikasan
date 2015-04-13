@@ -20,7 +20,9 @@ import org.apache.log4j.Logger;
 import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
+import org.ikasan.security.service.LdapService;
 import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.SecurityServiceException;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 
 import com.vaadin.data.util.BeanItem;
@@ -62,9 +64,22 @@ public class AuthenticationMethodPanel extends Panel implements View
     private TextField ldapBindUserPassword;
     private TextField ldapUserSearchDn;
     private TextField ldapUserSearchFilter;
+	private TextField accountTypeAttributeName;
+	private TextField userAccountNameAttributeName;
+	private TextField emailAttributeName;
+	private TextField firstNameAttributeName;
+	private TextField surnameAttributeName;
+	private TextField departmentAttributeName;
+	private TextField ldapUserDescriptionAttributeName;
+	private TextField applicationSecurityBaseDn;
+	private TextField applicationSecurityGroupAttributeName;
+	private TextField applicationSecurityDescriptionAttributeName;
+	private TextField memberofAttributeName;
+    
     private AuthenticationMethod authenticationMethod = new AuthenticationMethod();
     private ComboBox authenticationMethodCombo = new ComboBox();
     private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
+    private LdapService ldapService;
     
     /**
      * Constructor
@@ -72,7 +87,8 @@ public class AuthenticationMethodPanel extends Panel implements View
      * @param ikasanModuleService
      */
     public AuthenticationMethodPanel(SecurityService securityService,
-    		AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory)
+    		AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory,
+    		LdapService ldapService)
     {
         super();
         this.securityService = securityService;
@@ -84,6 +100,11 @@ public class AuthenticationMethodPanel extends Panel implements View
         if(this.authenticationProviderFactory == null)
         {
         	throw new IllegalArgumentException("authenticationProviderFactory cannot be null!");
+        }
+        this.ldapService = ldapService;
+        if(this.ldapService == null)
+        {
+        	throw new IllegalArgumentException("ldapService cannot be null!");
         }
         init();
     }
@@ -98,10 +119,10 @@ public class AuthenticationMethodPanel extends Panel implements View
 
         Panel securityAdministrationPanel = new Panel("Security Administration");
         securityAdministrationPanel.setStyleName("dashboard");
-        securityAdministrationPanel.setHeight("300px");
+        securityAdministrationPanel.setHeight("500px");
         securityAdministrationPanel.setWidth("800px");
         
-        GridLayout gridLayout = new GridLayout(2,7);
+        GridLayout gridLayout = new GridLayout(2, 19);
         gridLayout.setWidth("100%");
         gridLayout.setHeight("100%");
         gridLayout.setMargin(true);
@@ -153,17 +174,107 @@ public class AuthenticationMethodPanel extends Panel implements View
         Label ldapUserSearchFilterLabel = new Label("LDAP User Search Filter");
         this.ldapUserSearchFilter = new TextField();
         this.ldapUserSearchFilter.setWidth("100%");
-        
+
         gridLayout.addComponent(ldapUserSearchFilterLabel, 0, 5);
         gridLayout.addComponent(this.ldapUserSearchFilter, 1, 5);
+
+        Label emailAttributeNameLabel = new Label("LDAP User Email Attribute Name");
+        this.emailAttributeName = new TextField();
+        this.emailAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(emailAttributeNameLabel, 0, 6);
+        gridLayout.addComponent(this.emailAttributeName, 1, 6);
+        
+        Label userAccountNameAttributeNameLabel = new Label("LDAP User Account Name Attribute Name");
+        this.userAccountNameAttributeName = new TextField();
+        this.userAccountNameAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(userAccountNameAttributeNameLabel, 0, 7);
+        gridLayout.addComponent(this.userAccountNameAttributeName, 1, 7);
+
+        Label accountTypeAttributeNameLabel = new Label("LDAP User Account Type Attribute Name");
+        this.accountTypeAttributeName = new TextField();
+        this.accountTypeAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(accountTypeAttributeNameLabel, 0, 8);
+        gridLayout.addComponent(this.accountTypeAttributeName, 1, 8);
+        
+        Label firstNameAttributeNameLabel = new Label("LDAP User First Name Attribute Name");
+        this.firstNameAttributeName = new TextField();
+        this.firstNameAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(firstNameAttributeNameLabel, 0, 9);
+        gridLayout.addComponent(this.firstNameAttributeName, 1, 9);
+        
+        Label surnameAttributeNameLabel = new Label("LDAP User Surname Attribute Name");
+        this.surnameAttributeName = new TextField();
+        this.surnameAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(surnameAttributeNameLabel, 0, 10);
+        gridLayout.addComponent(this.surnameAttributeName, 1, 10);
+
+        Label departmentAttributeNameLabel = new Label("LDAP User Department Attribute Name");
+        this.departmentAttributeName = new TextField();
+        this.departmentAttributeName.setWidth("100%");
+        
+        gridLayout.addComponent(departmentAttributeNameLabel, 0, 11);
+        gridLayout.addComponent(this.departmentAttributeName, 1, 11);
+        
+        Label ldapUserDescriptionAttributeNameLabel = new Label("LDAP User Description Attribute Name");
+        this.ldapUserDescriptionAttributeName = new TextField();
+        this.ldapUserDescriptionAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(ldapUserDescriptionAttributeNameLabel, 0, 12);
+        gridLayout.addComponent(this.ldapUserDescriptionAttributeName, 1, 12);
+        
+        Label memberOfAttributeNameLabel = new Label("LDAP Member Of Attribute Name");
+        this.memberofAttributeName = new TextField();
+        this.memberofAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(memberOfAttributeNameLabel, 0, 13);
+        gridLayout.addComponent(this.memberofAttributeName, 1, 13);
+
+        Label applicationSecurityBaseDnLabel = new Label("Application Security Base DN");
+        this.applicationSecurityBaseDn = new TextField();
+        this.applicationSecurityBaseDn.setWidth("100%");
+
+        gridLayout.addComponent(applicationSecurityBaseDnLabel, 0, 14);
+        gridLayout.addComponent(this.applicationSecurityBaseDn, 1, 14);
+        
+        Label applicationSecurityGroupAttributeNameLabel = new Label("Application Security Group Attribute Name");
+        this.applicationSecurityGroupAttributeName = new TextField();
+        this.applicationSecurityGroupAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(applicationSecurityGroupAttributeNameLabel, 0, 15);
+        gridLayout.addComponent(this.applicationSecurityGroupAttributeName, 1, 15);
+        
+        Label applicationSecurityAttributeNameLabel = new Label("Application Security Description Attribute Name");
+        this.applicationSecurityDescriptionAttributeName = new TextField();
+        this.applicationSecurityDescriptionAttributeName.setWidth("100%");
+
+        gridLayout.addComponent(applicationSecurityAttributeNameLabel, 0, 16);
+        gridLayout.addComponent(this.applicationSecurityDescriptionAttributeName, 1, 16);
+
         
         BeanItem<AuthenticationMethod> authenticationMethodItem = new BeanItem<AuthenticationMethod>(authenticationMethod);
 		
-    	ldapServerUrl.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapServerUrl"));
-    	ldapBindUserDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserDn"));
-    	ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
-    	ldapUserSearchDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchBaseDn"));
-    	ldapUserSearchFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchFilter"));
+        this.ldapServerUrl.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapServerUrl"));
+        this.ldapBindUserDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserDn"));
+        this.ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
+        this.ldapUserSearchDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchBaseDn"));
+        this.ldapUserSearchFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchFilter"));        
+        this.emailAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("emailAttributeName"));
+        this.userAccountNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("userAccountNameAttributeName"));
+        this.accountTypeAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("accountTypeAttributeName"));
+        this.applicationSecurityBaseDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityBaseDn"));
+        this.applicationSecurityGroupAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityGroupAttributeName"));
+        this.departmentAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("departmentAttributeName"));
+        this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
+        this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
+        this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+        this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
+        
 
         Button saveButton = new Button("Save");
         saveButton.addClickListener(new Button.ClickListener() 
@@ -178,7 +289,7 @@ public class AuthenticationMethodPanel extends Panel implements View
             		authenticationMethod.setMethod(((AuthenticationMethodDropdownValue)authenticationMethodCombo.getValue()).getValue());
             		securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
             	}
-            	catch(SecurityDaoException e)
+            	catch(SecurityServiceException e)
             	{
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
@@ -232,8 +343,45 @@ public class AuthenticationMethodPanel extends Panel implements View
             }
         });
         
-        gridLayout.addComponent(saveButton, 0, 6);
-        gridLayout.addComponent(testConnectionButton, 1, 6);
+        gridLayout.addComponent(saveButton, 0, 17);
+        gridLayout.addComponent(testConnectionButton, 1, 17);
+        
+        Button sychronizeButton = new Button("Synchronize");
+        sychronizeButton.addClickListener(new Button.ClickListener() 
+        {
+            public void buttonClick(ClickEvent event) 
+            {
+            	try
+            	{
+            		ldapService.synchronize();
+            	}
+            	catch(RuntimeException e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while synchronizing!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+            	catch(Exception e)
+            	{
+            		StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+
+                    Notification.show("Error occurred while synchronizing!", sw.toString()
+                        , Notification.Type.ERROR_MESSAGE);
+                    
+                    return;
+            	}
+
+                Notification.show("Synchronized!");
+            }
+        });
+        gridLayout.addComponent(sychronizeButton, 0, 18);
 
         securityAdministrationPanel.setContent(gridLayout);        
         layout.addComponent(securityAdministrationPanel);
@@ -263,8 +411,20 @@ public class AuthenticationMethodPanel extends Panel implements View
 		    	this.ldapBindUserPassword.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapBindUserPassword"));
 		    	this.ldapUserSearchDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchBaseDn"));
 		    	this.ldapUserSearchFilter.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserSearchFilter"));
+		    	this.emailAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("emailAttributeName"));
+		        this.userAccountNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("userAccountNameAttributeName"));
+		        this.accountTypeAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("accountTypeAttributeName"));
+		        this.applicationSecurityBaseDn.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityBaseDn"));
+		        this.applicationSecurityGroupAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityGroupAttributeName"));
+		        this.departmentAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("departmentAttributeName"));
+		        this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
+		        this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
+		        this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+		        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+		        this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
 			}
-		} catch (SecurityDaoException e)
+		}
+		catch (SecurityServiceException e)
 		{
 			logger.error("Error occurred trying to load authentication method: ", e);
 			

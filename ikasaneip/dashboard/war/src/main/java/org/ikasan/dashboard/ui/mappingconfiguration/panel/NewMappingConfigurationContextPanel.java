@@ -73,6 +73,8 @@ public class NewMappingConfigurationContextPanel extends Panel implements View
      */
     protected void init()
     {
+    	this.setStyleName("dashboard");
+    	
         PropertysetItem item = new PropertysetItem();
         item.addItemProperty(NewContextFieldGroup.NAME, new ObjectProperty<String>(""));
         item.addItemProperty(NewContextFieldGroup.DESCRIPTION,

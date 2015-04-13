@@ -33,6 +33,8 @@
         <constructor-arg ref="eventBus"/>
         <constructor-arg ref="persistenceServiceFactory"/>
         <constructor-arg ref="databaseVersion"/>
+        <constructor-arg ref="imagePanelLayout"/>
+        <constructor-arg ref="navigationPanel"/>
     </bean>
 
 	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
@@ -107,6 +109,20 @@
         <constructor-arg ref="dashboardViewComponentContainer"/>
     </bean>
 
+	<bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
+		<constructor-arg ref="localTxUserService"/>
+		<constructor-arg ref="localTxAuthenticationService"/>
+		<constructor-arg ref="adminUserVisibilityGroup"/>
+		<constructor-arg ref="userDetailsHelper"/>
+        <constructor-arg ref="editableGroup"/>
+		<constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
+        <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
+        <constructor-arg ref="imagePanelLayout"/>
+		<constructor-arg ref="navigatorMap"/>
+	</bean>
+	
+	<bean id="imagePanelLayout" class="com.vaadin.ui.VerticalLayout" scope="session">
+	</bean>
 
     <bean id="userDetailsHelper" class="org.ikasan.dashboard.ui.framework.util.UserDetailsHelper" scope="session">
     </bean>
@@ -117,6 +133,7 @@
 	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodPanel" scope="session">
 		 <constructor-arg ref="localTxSecurityService"/>
 		 <constructor-arg ref="localTxAuthenticationProviderFactory"/>
+		 <constructor-arg ref="localTxLdapService"/>
     </bean>
 
 	<!-- 

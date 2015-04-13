@@ -106,6 +106,61 @@
 	height: 14px;
 }
 
+.mytheme .v-panel-content .v-label-large {
+	font-family: "Calibri";
+	color: #666;
+	font-size: 15px;
+}
+
+.mytheme .v-panel-content .v-label-xlarge {
+	font-family: "Calibri";
+	color: #666;
+	font-size: 18px;
+}
+
+.mytheme .v-panel-dashboard {
+	 border-style:solid;
+	 /* border-width:thick; */
+	 border-color:LightGrey;
+	 border-radius: 25px;
+	 overflow: hidden;
+}
+
+.mytheme .v-panel-dashboard-grey {
+	 border-style:solid;
+	 /* border-width:thick; */
+	 border-color:LightGrey;
+	 border-radius: 25px;
+	 overflow: hidden;
+	 background-color: LightGrey;
+}
+
+.mytheme .v-panel-caption-dashboard {
+	padding-left: 12px;
+	padding-right: 12px;
+	background-color: LightGrey;
+}
+
+.mytheme .v-panel-caption-dashboard-grey {
+	padding-left: 12px;
+	padding-right: 12px;
+	background-color: LightGrey;
+}
+
+.mytheme .v-panel-content-dashboard {
+	border-style: none !important;
+	border: none !important;
+	border-top: none !important;
+	border-bottom: none !important;
+}
+
+.mytheme .v-panel-deco-dashboard {
+    border-style: none !important;
+	border: none !important;
+	border-top: none !important;
+	border-bottom: none !important;
+}
+
 .v-debugwindow:hover {
 	-moz-opacity: 1;
 	-webkit-opacity: 1;
@@ -5808,11 +5863,22 @@ body .mytheme.v-app .v-app-loading {
 	background-image: url(../reindeer/table/img/header-bg-light.png);/** sprite-ref: verticals; sprite-alignment: repeat */
 	height: 20px;
 	text-transform: uppercase;
-	font-size: 10px;
+	font-size: 11px !important;
 	font-weight: bold;
+	font-family: "Calibri";
 	color: #222;
 	text-shadow: #f3f5f8 0 1px 0;
 	line-height: normal;
+}
+
+.v-table-header {
+    font-family: "Calibri";
+    font-size: 11px !important;
+}
+
+.v-table-header-cell {
+    font-family: "Calibri";
+    font-size: 11px !important;
 }
 
 .mytheme .v-table-footer-wrap, .mytheme .white .v-table-footer-wrap {

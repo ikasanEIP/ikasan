@@ -40,8 +40,6 @@
  */
 package org.ikasan.security.service.authentication;
 
-import javax.naming.NamingException;
-
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -152,7 +150,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 		else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP))
 		{
 			
-				this.testLdapConnection(authMethod);
+			this.testLdapConnection(authMethod);
 		}
 		else if(authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LDAP_LOCAL))
 		{

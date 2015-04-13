@@ -24,6 +24,7 @@
         			 /WEB-INF/dashboard-context.xml, 
         			 /WEB-INF/hospital-context.xml, 
         			 /WEB-INF/persistence-setup-context.xml,
+        			 /WEB-INF/transaction-context.xml,
         			 classpath:mappingConfigurationUI-environmentalisation.xml, 
         			 classpath:mapping-conf.xml, 
         			 classpath:platform-service-conf.xml, 
@@ -44,7 +45,7 @@
         <filter-class>org.ikasan.dashboard.ui.framework.web.AmsOpenSessionInViewFilter</filter-class>
         <init-param>
             <param-name>sessionFactoryBeanName</param-name>
-            <param-value>localTxIkasanSessionFactory</param-value>
+            <param-value>localTxSecuritySessionFactory</param-value>
         </init-param>
         <init-param>
           <param-name>singleSession</param-name>
@@ -52,7 +53,7 @@
         </init-param>
         <init-param>
             <param-name>flushMode</param-name>
-            <param-value>COMMIT</param-value>
+            <param-value>MANUAL</param-value>
         </init-param>
     </filter>
 
@@ -63,7 +64,7 @@
 
     <!-- Vaadin servlet -->
     <servlet>
-        <servlet-name>Mapping Configuration UI</servlet-name>
+        <servlet-name>Ikasan Dashboard</servlet-name>
         <servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
         <init-param>
             <param-name>beanName</param-name>
@@ -73,14 +74,18 @@
             <param-name>systemMessagesBeanName</param-name>
             <param-value>DEFAULT</param-value>
         </init-param>
+        <init-param>
+		    <param-name>widgetset</param-name>
+		    <param-value>org.ikasan.dashboard.ui.AppWidgetSet</param-value>
+		</init-param>
         <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Mapping Configuration UI</servlet-name>
+        <servlet-name>Ikasan Dashboard</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Mapping Configuration UI</servlet-name>
+        <servlet-name>Ikasan Dashboard</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
 

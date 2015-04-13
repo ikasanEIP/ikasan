@@ -261,10 +261,12 @@
 
     <bean id="sourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="true"/>
     </bean>
 
     <bean id="targetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="true"/>
     </bean>
 
     <bean id="existingMappingConfigurationClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
@@ -277,10 +279,12 @@
 
     <bean id="existingMappingConfigurationSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="existingMappingConfigurationTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="newMappingConfigurationClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
@@ -293,10 +297,12 @@
 
     <bean id="newMappingConfigurationSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="newMappingConfigurationTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="searchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener" scope="session">

@@ -34,15 +34,17 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
     private String clientName = null;
     private String type = null;
     private String sourceContext = null;
+    private boolean isFocusRefreshable;
 
     /**
      * Constructor
      * 
      * @param mappingConfigurationService
      */
-    public TargetContextComboBox(MappingConfigurationService mappingConfigurationService)
+    public TargetContextComboBox(MappingConfigurationService mappingConfigurationService, boolean isFocusRefreshable)
     {
         this.mappingConfigurationService = mappingConfigurationService;
+        this.isFocusRefreshable = isFocusRefreshable;
         this.init();
     }
 
@@ -123,6 +125,9 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
     @Override
     public void focus(FocusEvent event)
     {
-        this.refresh(this.clientName, this.type, this.sourceContext);
+    	if(this.isFocusRefreshable)
+    	{
+    		this.refresh(this.clientName, this.type, this.sourceContext);
+    	}
     }
 }

@@ -417,13 +417,14 @@
 
 				<prop key="create.users">CREATE TABLE Users
 					(
-					Id NUMERIC IDENTITY NOT NULL
-					PRIMARY KEY,
-					Username VARCHAR(50) NOT NULL UNIQUE,
-					Password
-					VARCHAR(50) NOT NULL,
-					Email VARCHAR(255) NULL,
-					Enabled BIT NOT NULL
+					Id 					NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+					Username 			VARCHAR(50) NOT NULL UNIQUE,
+					Password			VARCHAR(50) NOT NULL,
+					Email 				VARCHAR(255) NULL,
+					FirstName			VARCHAR(50) NOT NULL,
+					Surname				VARCHAR(50) NOT NULL,
+					Department			VARCHAR(50) NULL,
+					Enabled 			BIT NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -474,9 +475,9 @@
 
 					select @username = 'admin'
 
-					INSERT INTO Users ( Username, Password, Enabled )
+					INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
 					VALUES (
-					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 )
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User')
 					select
 					@userId = Id from Users where Username = @username
 
@@ -498,6 +499,7 @@
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(256)		    NOT NULL,
 					   CreatedDateTime      DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
@@ -536,6 +538,19 @@
 					
 					CREATE NONCLUSTERED INDEX Policy_Name ON SecurityPolicy(Name)
 				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
+					(
+					   UserId         				NUMERIC(18, 0) NOT NULL,
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
 				<prop key="create.principalRole">CREATE TABLE PrincipalRole
 					(
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
@@ -566,12 +581,23 @@
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
 					   Id               			NUMERIC(18, 0) NOT NULL,
-					   Method    		          VARCHAR(128) NOT NULL,
-					   LdapServerUrl    		  VARCHAR(256) NULL,
-					   LdapBindUserDn		      VARCHAR(256) NULL,
-					   LdapBindUserPassword   VARCHAR(256) NULL,
-					   LdapUserSearchBaseDn   VARCHAR(256) NULL,
-					   LdapUserSearchFilter   VARCHAR(256) NULL,
+					   Method    		          	VARCHAR(128) NOT NULL,
+					   LdapServerUrl    		  	VARCHAR(256) NULL,
+					   LdapBindUserDn		      	VARCHAR(256) NULL,
+					   LdapBindUserPassword   		VARCHAR(256) NULL,
+					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
+					   LdapUserSearchFilter   		VARCHAR(256) NULL,
+					   EmailAttributeName 			VARCHAR(256) NULL,
+					   UserAccNameAttributeName 	VARCHAR(256) NULL,
+					   AccountTypeAttributeName   	VARCHAR(256) NULL,
+					   AppSecBaseDn   				VARCHAR(256) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(256) NULL,
+					   FirstNameAttributeName 		VARCHAR(256) NULL,
+					   SurnameAttributeName 		VARCHAR(256) NULL,
+					   DepartmentAttributeName	 	VARCHAR(256) NULL,
+					   AppSecDescAttributeName		VARCHAR(256) NULL,
+					   LdapUserDescAttributeName	VARCHAR(256) NULL,
+					   MemberofAttributeName		VARCHAR(256) NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
@@ -584,8 +610,8 @@
 					@securityRoleId numeric(18), @securityPolicyId numeric(18)
 					
 					INSERT INTO 
-					SecurityPrincipal ( Name, PrincipalType )
-					VALUES ( 'admin', 'user' )
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user')
 					
 					select @securityPrincipalId = Id 
 					from SecurityPrincipal 
@@ -612,6 +638,130 @@
 					INSERT
 					INTO PrincipalRole ( PrincipalId, RoleId )
 					VALUES ( @securityPrincipalId, @securityRoleId )
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'User'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Control'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream User'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
 					
 					INSERT
 					INTO RolePolicy ( RoleId, PolicyId )
@@ -1135,13 +1285,14 @@
 
 				<prop key="create.users">CREATE TABLE Users
 					(
-					Id NUMERIC IDENTITY NOT NULL
-					PRIMARY KEY,
-					Username VARCHAR(50) NOT NULL UNIQUE,
-					Password
-					VARCHAR(50) NOT NULL,
-					Email VARCHAR(255) NULL,
-					Enabled BIT NOT NULL
+					Id 					NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+					Username 			VARCHAR(50) NOT NULL UNIQUE,
+					Password			VARCHAR(50) NOT NULL,
+					Email 				VARCHAR(255) NULL,
+					FirstName			VARCHAR(50) NOT NULL,
+					Surname				VARCHAR(50) NOT NULL,
+					Department			VARCHAR(50) NULL,
+					Enabled 			BIT NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1192,9 +1343,9 @@
 
 					select @username = 'admin'
 
-					INSERT INTO Users ( Username, Password, Enabled )
+					INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
 					VALUES (
-					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 )
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User')
 					select
 					@userId = Id from Users where Username = @username
 
@@ -1208,12 +1359,14 @@
 				<prop key="find.authoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'Authorities' AND type = 'U'</prop>
 				<prop key="find.usersAuthoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'UsersAuthorities' AND type = 'U'</prop>
 				
+				
 				<!--  Tables required for the security module -->
 				<prop key="create.securityPrincipal">CREATE TABLE SecurityPrincipal
 					(
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(256)		    NOT NULL,
 					   CreatedDateTime      DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
@@ -1252,6 +1405,19 @@
 					
 					CREATE NONCLUSTERED INDEX Policy_Name ON SecurityPolicy(Name)
 				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
+					(
+					   UserId         				NUMERIC(18, 0) NOT NULL,
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
 				<prop key="create.principalRole">CREATE TABLE PrincipalRole
 					(
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
@@ -1278,7 +1444,193 @@
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
 				</prop>
+				
+				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
+					(
+					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Method    		          	VARCHAR(128) NOT NULL,
+					   LdapServerUrl    		  	VARCHAR(256) NULL,
+					   LdapBindUserDn		      	VARCHAR(256) NULL,
+					   LdapBindUserPassword   		VARCHAR(256) NULL,
+					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
+					   LdapUserSearchFilter   		VARCHAR(256) NULL,
+					   EmailAttributeName 			VARCHAR(256) NULL,
+					   UserAccNameAttributeName 	VARCHAR(256) NULL,
+					   AccountTypeAttributeName   	VARCHAR(256) NULL,
+					   AppSecBaseDn   				VARCHAR(256) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(256) NULL,
+					   FirstNameAttributeName 		VARCHAR(256) NULL,
+					   SurnameAttributeName 		VARCHAR(256) NULL,
+					   DepartmentAttributeName	 	VARCHAR(256) NULL,
+					   AppSecDescAttributeName		VARCHAR(256) NULL,
+					   LdapUserDescAttributeName	VARCHAR(256) NULL,
+					   MemberofAttributeName		VARCHAR(256) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
+					@securityRoleId numeric(18), @securityPolicyId numeric(18)
+					
+					INSERT INTO 
+					SecurityPrincipal ( Name, PrincipalType )
+					VALUES ( 'admin', 'user' )
+					
+					select @securityPrincipalId = Id 
+					from SecurityPrincipal 
+					where Name = 'admin'
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'Administrator',
+					'Users who may perform administration functions on
+					the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'Administrators'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'All', 'Policy to do everything' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'All'
+					
+					INSERT
+					INTO PrincipalRole ( PrincipalId, RoleId )
+					VALUES ( @securityPrincipalId, @securityRoleId )
 
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'User'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Control'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream User'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+				</prop>
+				
 				<!-- Tables required for the ikasan mapping module -->
 				<prop key="create.mappingConfigurationType">CREATE TABLE MCSConfigurationType
 					(
@@ -1403,7 +1755,7 @@
 					) VALUES (
 					   1
 					  ,100)
-					SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
+				   SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
 				</prop>
 			</props>
 
@@ -1761,6 +2113,9 @@
                     [Username] [VARCHAR] (50) NOT NULL UNIQUE,
                     [Password] [VARCHAR] (50) NOT NULL,
                     [Email]    [VARCHAR] (255) NULL,
+                    [FirstName] [VARCHAR] (50) NOT NULL,
+                    [Surname] [VARCHAR] (50) NOT NULL,
+                    [Department] [VARCHAR] (50) NULL,
                     [Enabled]  [BIT] NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
                     (
@@ -1804,8 +2159,9 @@
 
                     select @username = 'admin';
 
-                    INSERT INTO Users ( Username, Password, Enabled )
-                    VALUES ( @username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 ) ;
+                    INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
+					VALUES (
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User')
                     select @userId = Id from Users where Username = @username;
 
                     INSERT INTO UsersAuthorities values ( @userId, @authorityUserId );
@@ -2115,16 +2471,19 @@
 					ExclusionEvent(ModuleName,FlowName,Identifier)
 				</prop>
 
-
 				<prop key="create.users">CREATE TABLE Users
 					(
 					Id IDENTITY NOT NULL PRIMARY KEY,
 					Username VARCHAR(50) NOT NULL UNIQUE,
 					Password VARCHAR(50) NOT NULL,
 					Email VARCHAR(255) NULL,
+					FirstName			VARCHAR(50) NOT NULL,
+					Surname				VARCHAR(50) NOT NULL,
+					Department			VARCHAR(50) NULL,
 					Enabled BIT NOT NULL
 					);
 				</prop>
+				
 				<prop key="create.authorities">CREATE TABLE Authorities
 					(
 					Id IDENTITY NOT NULL PRIMARY
@@ -2182,9 +2541,9 @@
 					set @username =
 					'admin';
 
-					INSERT INTO Users ( Username, Password, Enabled )
+					INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
 					VALUES (
-					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 );
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User');
 					set
 					@userId = select Id from Users where Username = @username;
 
@@ -2210,6 +2569,7 @@
 					   Id               	IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(256)		    NOT NULL,
 					   CreatedDateTime      DATETIME NOT NULL,
 					   UpdatedDateTime      DATETIME NOT NULL,
 					   PRIMARY KEY (Id) 
@@ -2233,6 +2593,17 @@
 					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) 
+					);
+				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
+					(
+					   UserId         				NUMERIC(18, 0) NOT NULL,
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id)
 					);
 				</prop>
 				<prop key="create.principalRole">CREATE TABLE PrincipalRole
@@ -2335,7 +2706,7 @@
 					(
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Value			    		VARCHAR(256) NOT NULL,
-					   MappingConfigurationId    		NUMERIC(18, 0) NOT NULL,
+					   MappingConfigurationId    	NUMERIC(18, 0) NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), 
@@ -2352,19 +2723,29 @@
 				
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
-					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
-					   Method    		          VARCHAR(128) NOT NULL,
-					   LdapServerUrl    		  VARCHAR(256) NULL,
-					   LdapBindUserDn		      VARCHAR(256) NULL,
-					   LdapBindUserPassword   VARCHAR(256) NULL,
-					   LdapUserSearchBaseDn   VARCHAR(256) NULL,
-					   LdapUserSearchFilter   VARCHAR(256) NULL,
+					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Method    		          	VARCHAR(128) NOT NULL,
+					   LdapServerUrl    		  	VARCHAR(256) NULL,
+					   LdapBindUserDn		      	VARCHAR(256) NULL,
+					   LdapBindUserPassword   		VARCHAR(256) NULL,
+					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
+					   LdapUserSearchFilter   		VARCHAR(256) NULL,
+					   EmailAttributeName 			VARCHAR(256) NULL,
+					   UserAccNameAttributeName 	VARCHAR(256) NULL,
+					   AccountTypeAttributeName   	VARCHAR(256) NULL,
+					   AppSecBaseDn   				VARCHAR(256) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(256) NULL,
+					   FirstNameAttributeName 		VARCHAR(256) NULL,
+					   SurnameAttributeName 		VARCHAR(256) NULL,
+					   DepartmentAttributeName	 	VARCHAR(256) NULL,
+					   AppSecDescAttributeName		VARCHAR(256) NULL,
+					   LdapUserDescAttributeName	VARCHAR(256) NULL, 
+					   MemberofAttributeName		VARCHAR(256) NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
-					);
+					) 
 				</prop>
-
 			</props>
 
 

@@ -89,12 +89,14 @@ public class HibernateSecurityDaoTest
     	principal.setName("stewmi");
     	principal.setType("type");
     	principal.setRoles(roles);
+    	principal.setDescription("description");
 
     	this.xaSecurityDao.saveOrUpdatePrincipal(principal);
 
     	principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal1");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -102,6 +104,7 @@ public class HibernateSecurityDaoTest
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal2");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -109,6 +112,7 @@ public class HibernateSecurityDaoTest
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal3");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -116,6 +120,7 @@ public class HibernateSecurityDaoTest
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal4");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -123,6 +128,7 @@ public class HibernateSecurityDaoTest
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal5");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -130,6 +136,7 @@ public class HibernateSecurityDaoTest
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal6");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -137,6 +144,7 @@ public class HibernateSecurityDaoTest
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal7");
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
