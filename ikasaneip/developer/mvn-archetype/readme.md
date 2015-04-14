@@ -48,3 +48,29 @@ mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasa
 (Accept defaults or update as required)
 
 Then build it normally using mvn clean install
+
+
+ikasan-rt-conf-jboss6-maven-plugin
+---------------------------------------------
+Creates a standard Ikasan configuration JBoss module for the runtime platform.
+
+mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasan-rt-conf-jboss6-maven-plugin \
+-DarchetypeVersion=<Ikasan Version> \
+-DgroupId=<Maven Group Id> \
+-DartifactId=<Module Name> \
+-Dversion=<Module Version>
+
+Where,
+ Ikasan Version       - the version of the Ikasan platform being used. i.e. 1.0.0-rc4-SNAPSHOT
+ Maven Group Id       - maven group coordinates you want this build pom to have
+ Build Parent Name    - name of the Integration Module project.
+ Build Parent Version - version of the Integration Module project
+
+Example Usage,
+
+For example,
+mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasan-rt-conf-jboss6-maven-plugin -DarchetypeVersion=1.0.0-rc4-SNAPSHOT
+
+(Accept defaults or update as required)
+
+Then build it normally using mvn clean package assembly:assembly

@@ -48,14 +48,38 @@
         <relativePath />
     </parent>
 
-    <artifactId>ikasan-mvn-archetype</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Platform Developer Maven Archetypes</name>
+    <artifactId>ikasan-rt-conf-jboss6-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <name>IkasanEIP Maven Archetype for the Ikasan Runtime configuration within JBoss6</name>
 
-    <modules>
-        <module>ikasan-build-parent</module>
-        <module>ikasan-jboss-6</module>
-        <module>ikasan-rt-conf-jboss-6</module>
-    </modules>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <goalPrefix>ikasan-rt-conf-jboss</goalPrefix>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                    <execution>
+                        <id>help-descriptor</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
