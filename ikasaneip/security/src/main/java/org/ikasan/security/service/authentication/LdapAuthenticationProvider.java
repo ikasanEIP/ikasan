@@ -93,6 +93,11 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         {
         	throw new IllegalArgumentException("securityService cannot be null!");
         }
+        this.userService = userService;
+        if(this.userService == null)
+        {
+        	throw new IllegalArgumentException("userService cannot be null!");
+        }
     }
    
 

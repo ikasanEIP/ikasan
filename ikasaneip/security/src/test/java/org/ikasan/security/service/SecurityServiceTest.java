@@ -229,14 +229,14 @@ public class SecurityServiceTest
         Assert.assertNotNull(principal);
     }
 
-    @Test (expected = SecurityServiceException.class)
+    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_create_new_principal_null_name() throws SecurityServiceException
     {
         this.xaSecurityService.createNewPrincipal(null, "type");
     }
 
-    @Test (expected = SecurityServiceException.class)
+    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_create_new_principal_null_type() throws SecurityServiceException
     {
@@ -292,14 +292,14 @@ public class SecurityServiceTest
         Assert.assertNotNull(role);
     }
 
-    @Test (expected = SecurityServiceException.class)
+    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_create_new_role_null_name() throws SecurityServiceException
     {
         this.xaSecurityService.createNewRole(null, "description");
     }
 
-    @Test (expected = SecurityServiceException.class)
+    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_create_new_role_null_description() throws SecurityServiceException
     {
@@ -330,7 +330,7 @@ public class SecurityServiceTest
         Assert.assertEquals(principal.getRoles().size(), 0);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_principal_no_name() throws SecurityDaoException, SecurityServiceException
     {
@@ -363,7 +363,7 @@ public class SecurityServiceTest
         this.xaSecurityService.savePrincipal(principal);
     }
 
-    @Test(expected = SecurityServiceException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_principal_duplicate_name() throws SecurityServiceException
     {
@@ -398,7 +398,7 @@ public class SecurityServiceTest
         Assert.assertTrue(principals.size() == 8);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_role_no_name() throws SecurityDaoException, SecurityServiceException
     {
@@ -472,7 +472,7 @@ public class SecurityServiceTest
         Assert.assertTrue(roles.size() == 10);
     }
 
-    @Test(expected = SecurityServiceException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_principal_policy_name() throws SecurityServiceException
     {
@@ -481,7 +481,7 @@ public class SecurityServiceTest
         this.xaSecurityService.savePolicy(policy);
     }
 
-    @Test(expected = SecurityServiceException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_policy_no_name() throws SecurityDaoException, SecurityServiceException
     {
@@ -522,21 +522,21 @@ public class SecurityServiceTest
         Assert.assertNotNull(policy);
     }
 
-    @Test (expected = SecurityServiceException.class)
+    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_create_new_policy_null_name() throws SecurityServiceException
     {
         this.xaSecurityService.createNewPolicy(null, "description");
     }
 
-    @Test (expected = SecurityServiceException.class)
+    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_create_new_policy_null_description() throws SecurityServiceException
     {
         this.xaSecurityService.createNewPolicy("role", null);
     }
 
-    @Test(expected = SecurityServiceException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_role_name() throws SecurityServiceException
     {

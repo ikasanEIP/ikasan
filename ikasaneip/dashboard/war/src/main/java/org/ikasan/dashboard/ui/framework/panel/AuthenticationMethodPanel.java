@@ -272,7 +272,7 @@ public class AuthenticationMethodPanel extends Panel implements View
         this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
         this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
         this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
-        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityDescriptionAttributeName"));
         this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
         
 
@@ -289,7 +289,7 @@ public class AuthenticationMethodPanel extends Panel implements View
             		authenticationMethod.setMethod(((AuthenticationMethodDropdownValue)authenticationMethodCombo.getValue()).getValue());
             		securityService.saveOrUpdateAuthenticationMethod(authenticationMethod);
             	}
-            	catch(SecurityServiceException e)
+            	catch(RuntimeException e)
             	{
             		StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
@@ -420,11 +420,11 @@ public class AuthenticationMethodPanel extends Panel implements View
 		        this.firstNameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("firstNameAttributeName"));
 		        this.surnameAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("surnameAttributeName"));
 		        this.ldapUserDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
-		        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("ldapUserDescriptionAttributeName"));
+		        this.applicationSecurityDescriptionAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("applicationSecurityDescriptionAttributeName"));
 		        this.memberofAttributeName.setPropertyDataSource(authenticationMethodItem.getItemProperty("memberofAttributeName"));
 			}
 		}
-		catch (SecurityServiceException e)
+		catch (RuntimeException e)
 		{
 			logger.error("Error occurred trying to load authentication method: ", e);
 			

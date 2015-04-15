@@ -251,7 +251,7 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals(principal.getRoles().size(), 0);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_principal_no_name() throws SecurityDaoException
     {
@@ -284,7 +284,7 @@ public class HibernateSecurityDaoTest
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_principal_duplicate_name() throws SecurityDaoException
     {
@@ -319,7 +319,7 @@ public class HibernateSecurityDaoTest
         Assert.assertTrue(principals.size() == 7);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_role_no_name() throws SecurityDaoException
     {
@@ -393,7 +393,7 @@ public class HibernateSecurityDaoTest
         Assert.assertTrue(roles.size() == 10);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_principal_policy_name() throws SecurityDaoException
     {
@@ -402,7 +402,7 @@ public class HibernateSecurityDaoTest
         this.xaSecurityDao.saveOrUpdatePolicy(policy);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_policy_no_name() throws SecurityDaoException
     {
@@ -437,7 +437,7 @@ public class HibernateSecurityDaoTest
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
     }
 
-    @Test(expected = SecurityDaoException.class)
+    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
     public void test_exception_role_name() throws SecurityDaoException
     {

@@ -10,26 +10,26 @@
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-	<bean id="userNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
-		<constructor-arg value="user"/>
+	<bean id="policyManagementNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="policyManagement"/>
         <constructor-arg>
             <list>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="userPanel"/>
-                   <constructor-arg ref="userPanel"/>
+                   <constructor-arg value="policyManagementPanel"/>
+                   <constructor-arg ref="policyManagementPanel"/>
                 </bean>
             </list>
         </constructor-arg>
-        <constructor-arg ref="userManagementViewComponentContainer"/>
+        <constructor-arg ref="policyManagementViewComponentContainer"/>
     </bean>
     
-    <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
+    <bean id="policyManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PolicyManagementPanel" scope="session">
     	<constructor-arg ref="localTxUserService"/>
     	<constructor-arg ref="localTxSecurityService"/>
     </bean>
     
-    <bean id="userManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+    <bean id="policyManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
-    
+
 </beans>

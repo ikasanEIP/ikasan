@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -41,135 +41,127 @@
 package org.ikasan.security.model;
 
 import java.util.Date;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public class Policy implements GrantedAuthority
+public class PolicyLinkType
 {
-    private Long id;
-    private String name;
-    private String description;
-    private PolicyLink policyLink;
+	public Long id;
+	public String name;
+	public String tableName;
 
-    /** The data time stamp when an instance was first created */
+	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
     private Date updatedDateTime;
 
+  
     /**
-     * Default constructor
+     * 
      */
-    public Policy()
+    @SuppressWarnings("unused")
+	private PolicyLinkType()
     {
-        long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
+    	
+    }
+   
+	/**
+	 * @param id
+	 * @param name
+	 */
+	public PolicyLinkType(String name, String tableName)
+	{
+		super();
+		this.name = name;
+		this.tableName = tableName;
+		long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
         this.updatedDateTime = new Date(now);
-    }
-
-    /**
-     * @return the id
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    /**
-     * @return the createdDateTime
-     */
-    public Date getCreatedDateTime()
-    {
-        return createdDateTime;
-    }
-
-    /**
-     * @param createdDateTime the createdDateTime to set
-     */
-    public void setCreatedDateTime(Date createdDateTime)
-    {
-        this.createdDateTime = createdDateTime;
-    }
-
-    /**
-     * @return the updatedDateTime
-     */
-    public Date getUpdatedDateTime()
-    {
-        return updatedDateTime;
-    }
-
-    /**
-     * @param updatedDateTime the updatedDateTime to set
-     */
-    public void setUpdatedDateTime(Date updatedDateTime)
-    {
-        this.updatedDateTime = updatedDateTime;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription()
-    {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    @Override
-	public String getAuthority() 
-    {
-		return this.name;
 	}
 
 	/**
-	 * @return the policyLink
+	 * @return the id
 	 */
-	public PolicyLink getPolicyLink()
+	public Long getId()
 	{
-		return policyLink;
+		return id;
 	}
 
 	/**
-	 * @param policyLink the policyLink to set
+	 * @param id the id to set
 	 */
-	public void setPolicyLink(PolicyLink policyLink)
+	@SuppressWarnings("unused")
+	private void setId(Long id)
 	{
-		this.policyLink = policyLink;
+		this.id = id;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/**
+	 * @return the createdDateTime
+	 */
+	public Date getCreatedDateTime()
+	{
+		return createdDateTime;
+	}
+
+	/**
+	 * @param createdDateTime the createdDateTime to set
+	 */
+	public void setCreatedDateTime(Date createdDateTime)
+	{
+		this.createdDateTime = createdDateTime;
+	}
+
+	/**
+	 * @return the updatedDateTime
+	 */
+	public Date getUpdatedDateTime()
+	{
+		return updatedDateTime;
+	}
+
+	/**
+	 * @param updatedDateTime the updatedDateTime to set
+	 */
+	public void setUpdatedDateTime(Date updatedDateTime)
+	{
+		this.updatedDateTime = updatedDateTime;
+	}
+
+	/**
+	 * @return the tableName
+	 */
+	public String getTableName()
+	{
+		return tableName;
+	}
+
+	/**
+	 * @param tableName the tableName to set
+	 */
+	public void setTableName(String tableName)
+	{
+		this.tableName = tableName;
 	}
 
 	/* (non-Javadoc)
@@ -182,12 +174,10 @@ public class Policy implements GrantedAuthority
 		int result = 1;
 		result = prime * result
 				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
-				+ ((policyLink == null) ? 0 : policyLink.hashCode());
+				+ ((tableName == null) ? 0 : tableName.hashCode());
 		result = prime * result
 				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
 		return result;
@@ -205,18 +195,12 @@ public class Policy implements GrantedAuthority
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Policy other = (Policy) obj;
+		PolicyLinkType other = (PolicyLinkType) obj;
 		if (createdDateTime == null)
 		{
 			if (other.createdDateTime != null)
 				return false;
 		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null)
-		{
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
 			return false;
 		if (id == null)
 		{
@@ -230,11 +214,11 @@ public class Policy implements GrantedAuthority
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (policyLink == null)
+		if (tableName == null)
 		{
-			if (other.policyLink != null)
+			if (other.tableName != null)
 				return false;
-		} else if (!policyLink.equals(other.policyLink))
+		} else if (!tableName.equals(other.tableName))
 			return false;
 		if (updatedDateTime == null)
 		{
@@ -251,11 +235,9 @@ public class Policy implements GrantedAuthority
 	@Override
 	public String toString()
 	{
-		return "Policy [id=" + id + ", name=" + name + ", description="
-				+ description + ", policyLink=" + policyLink
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
-	}  
-	
-	
+		return "PolicyLinkType [id=" + id + ", name=" + name + ", tableName="
+				+ tableName + ", createdDateTime=" + createdDateTime
+				+ ", updatedDateTime=" + updatedDateTime + "]";
+	}
+
 }

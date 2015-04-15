@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -41,135 +41,127 @@
 package org.ikasan.security.model;
 
 import java.util.Date;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public class Policy implements GrantedAuthority
+public class PolicyLink
 {
-    private Long id;
-    private String name;
-    private String description;
-    private PolicyLink policyLink;
-
-    /** The data time stamp when an instance was first created */
+	private Long id;
+	private PolicyLinkType policyLinkType;
+	private Long targetId;
+	
+	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
     private Date updatedDateTime;
-
+    
     /**
-     * Default constructor
+     * 
      */
-    public Policy()
+    @SuppressWarnings("unused")
+	private PolicyLink()
     {
-        long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
+    	
+    }
+
+	/**
+	 * @param policyLinkType
+	 * @param targetId
+	 * @param createdDateTime
+	 */
+	public PolicyLink(PolicyLinkType policyLinkType, Long targetId)
+	{
+		super();
+		this.policyLinkType = policyLinkType;
+		this.targetId = targetId;
+		long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
         this.updatedDateTime = new Date(now);
-    }
-
-    /**
-     * @return the id
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    /**
-     * @return the createdDateTime
-     */
-    public Date getCreatedDateTime()
-    {
-        return createdDateTime;
-    }
-
-    /**
-     * @param createdDateTime the createdDateTime to set
-     */
-    public void setCreatedDateTime(Date createdDateTime)
-    {
-        this.createdDateTime = createdDateTime;
-    }
-
-    /**
-     * @return the updatedDateTime
-     */
-    public Date getUpdatedDateTime()
-    {
-        return updatedDateTime;
-    }
-
-    /**
-     * @param updatedDateTime the updatedDateTime to set
-     */
-    public void setUpdatedDateTime(Date updatedDateTime)
-    {
-        this.updatedDateTime = updatedDateTime;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription()
-    {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    @Override
-	public String getAuthority() 
-    {
-		return this.name;
 	}
 
 	/**
-	 * @return the policyLink
+	 * @return the id
 	 */
-	public PolicyLink getPolicyLink()
+	public Long getId()
 	{
-		return policyLink;
+		return id;
 	}
 
 	/**
-	 * @param policyLink the policyLink to set
+	 * @param id the id to set
 	 */
-	public void setPolicyLink(PolicyLink policyLink)
+	@SuppressWarnings("unused")
+	private void setId(Long id)
 	{
-		this.policyLink = policyLink;
+		this.id = id;
+	}
+
+	/**
+	 * @return the policyLinkType
+	 */
+	public PolicyLinkType getPolicyLinkType()
+	{
+		return policyLinkType;
+	}
+
+	/**
+	 * @param policyLinkType the policyLinkType to set
+	 */
+	public void setPolicyLinkType(PolicyLinkType policyLinkType)
+	{
+		this.policyLinkType = policyLinkType;
+	}
+
+	/**
+	 * @return the targetId
+	 */
+	public Long getTargetId()
+	{
+		return targetId;
+	}
+
+	/**
+	 * @param targetId the targetId to set
+	 */
+	public void setTargetId(Long targetId)
+	{
+		this.targetId = targetId;
+	}
+
+	/**
+	 * @return the createdDateTime
+	 */
+	public Date getCreatedDateTime()
+	{
+		return createdDateTime;
+	}
+
+	/**
+	 * @param createdDateTime the createdDateTime to set
+	 */
+	public void setCreatedDateTime(Date createdDateTime)
+	{
+		this.createdDateTime = createdDateTime;
+	}
+
+	/**
+	 * @return the updatedDateTime
+	 */
+	public Date getUpdatedDateTime()
+	{
+		return updatedDateTime;
+	}
+
+	/**
+	 * @param updatedDateTime the updatedDateTime to set
+	 */
+	public void setUpdatedDateTime(Date updatedDateTime)
+	{
+		this.updatedDateTime = updatedDateTime;
 	}
 
 	/* (non-Javadoc)
@@ -182,12 +174,11 @@ public class Policy implements GrantedAuthority
 		int result = 1;
 		result = prime * result
 				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
-				+ ((policyLink == null) ? 0 : policyLink.hashCode());
+				+ ((policyLinkType == null) ? 0 : policyLinkType.hashCode());
+		result = prime * result
+				+ ((targetId == null) ? 0 : targetId.hashCode());
 		result = prime * result
 				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
 		return result;
@@ -205,18 +196,12 @@ public class Policy implements GrantedAuthority
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Policy other = (Policy) obj;
+		PolicyLink other = (PolicyLink) obj;
 		if (createdDateTime == null)
 		{
 			if (other.createdDateTime != null)
 				return false;
 		} else if (!createdDateTime.equals(other.createdDateTime))
-			return false;
-		if (description == null)
-		{
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
 			return false;
 		if (id == null)
 		{
@@ -224,17 +209,17 @@ public class Policy implements GrantedAuthority
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (name == null)
+		if (policyLinkType == null)
 		{
-			if (other.name != null)
+			if (other.policyLinkType != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!policyLinkType.equals(other.policyLinkType))
 			return false;
-		if (policyLink == null)
+		if (targetId == null)
 		{
-			if (other.policyLink != null)
+			if (other.targetId != null)
 				return false;
-		} else if (!policyLink.equals(other.policyLink))
+		} else if (!targetId.equals(other.targetId))
 			return false;
 		if (updatedDateTime == null)
 		{
@@ -251,11 +236,9 @@ public class Policy implements GrantedAuthority
 	@Override
 	public String toString()
 	{
-		return "Policy [id=" + id + ", name=" + name + ", description="
-				+ description + ", policyLink=" + policyLink
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
-	}  
-	
-	
+		return "PolicyLink [id=" + id + ", policyLinkType=" + policyLinkType
+				+ ", targetId=" + targetId + ", createdDateTime="
+				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
+				+ "]";
+	} 
 }

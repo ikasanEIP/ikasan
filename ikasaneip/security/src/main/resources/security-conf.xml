@@ -65,6 +65,8 @@
 				<value>/org/ikasan/security/model/User.hbm.xml</value>
 				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
 				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
@@ -119,6 +121,8 @@
 				<value>/org/ikasan/security/model/User.hbm.xml</value>
 				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
 				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
@@ -173,6 +177,8 @@
 				<value>/org/ikasan/security/model/User.hbm.xml</value>
 				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
 				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties" />
