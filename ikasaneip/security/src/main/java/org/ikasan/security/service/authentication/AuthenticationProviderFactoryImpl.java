@@ -205,7 +205,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 		BindAuthenticator bindAuthenicator = new BindAuthenticator(contextSource);
 		bindAuthenicator.setUserSearch(userSearch);
 
-		return new LdapAuthenticationProvider(bindAuthenicator, this.securityService);
+		return new LdapAuthenticationProvider(bindAuthenicator, this.securityService, this.userService);
 	}
 
 	/**

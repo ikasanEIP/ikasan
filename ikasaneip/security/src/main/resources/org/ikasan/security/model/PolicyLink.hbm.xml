@@ -16,8 +16,8 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class
-        name="org.ikasan.security.model.Policy"
-        table="SecurityPolicy">
+        name="org.ikasan.security.model.PolicyLink"
+        table="PolicyLink">
 
         <id name="id"
           type="java.lang.Long"
@@ -25,19 +25,13 @@
           unsaved-value="null">
           <generator class="identity" />
         </id>
-        
-        <many-to-one name="policyLink" column="PolicyLinkId" 
-       			  class="org.ikasan.security.model.PolicyLink" not-null="false"/>
 
-        <property name="name"
-                  type="java.lang.String"
-                  column="Name"
-                  not-null="true"
-                  unique="true"/>
+		<many-to-one name="policyLinkType" column="PolicyLinkTypeId" 
+       			  class="org.ikasan.security.model.PolicyLinkType" not-null="true"/>
 
-        <property name="description"
-                  type="java.lang.String"
-                  column="Description"
+        <property name="targetId"
+                  type="java.lang.Long"
+                  column="TargetId"
                   not-null="true" 
                   unique="false"/>
 

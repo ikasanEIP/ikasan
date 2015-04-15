@@ -289,44 +289,29 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public void synchronize() throws LdapServiceException
 	{
-		try
+
+		List<String> applicationSecurities = getAllApplicationSecurity();
+		
+		for (String applicationSecurity : applicationSecurities)
 		{
-			List<String> applicationSecurities = getAllApplicationSecurity();
-			
-			for (String applicationSecurity : applicationSecurities)
+			IkasanPrincipal principal = securityService
+					.findPrincipalByName(applicationSecurity);
+
+			if (principal == null)
 			{
-				IkasanPrincipal principal = securityService
-						.findPrincipalByName(applicationSecurity);
-
-				if (principal == null)
-				{
-					principal = getApplicationSecurity(applicationSecurity);
-				}
-
-				if(principal != null)
-				{
-					logger.info("Adding application Principal: " + principal);
-					this.securityService.savePrincipal(principal);
-				}
+				principal = getApplicationSecurity(applicationSecurity);
 			}
-		} catch (SecurityServiceException e)
-		{
-			e.printStackTrace();
-			throw new LdapServiceException(e);
+
+			if(principal != null)
+			{
+				logger.info("Adding application Principal: " + principal);
+				this.securityService.savePrincipal(principal);
+			}
 		}
 
 		List<String> users = getAllLdapUsers();
 		
-		Role role = null;
-				
-		try
-		{
-			role = securityService.findRoleByName("User");
-		} 
-		catch (SecurityServiceException e)
-		{
-			throw new LdapServiceException(e);
-		}
+		Role role = securityService.findRoleByName("User");
 
 		for (String username : users)
 		{
@@ -405,28 +390,16 @@ public class LdapServiceImpl implements LdapService
 				user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 				
 				this.userService.createUser(user);
-			} catch (SecurityServiceException e)
-			{
-				e.printStackTrace();
-				throw new LdapServiceException(e);
-			}
+			} 
 		}
 	}
 
 	protected AuthenticationMethod getAuthenticationMethod()
 			throws LdapServiceException
 	{
-		try
+		if(this.authenticationMethod == null)
 		{
-			if(this.authenticationMethod == null)
-			{
-				this.authenticationMethod = this.securityService.getAuthenticationMethod();
-			}
-		} 
-		catch (SecurityServiceException e)
-		{
-			e.printStackTrace();
-			throw new LdapServiceException();
+			this.authenticationMethod = this.securityService.getAuthenticationMethod();
 		}
 		
 		if(this.authenticationMethod == null)

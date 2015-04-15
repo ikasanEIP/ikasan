@@ -236,18 +236,29 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
      */
     public void setEditable(boolean editable)
     {
-        this.saveRequiredMonitor.setSaveRequired(editable);
-        this.mappingConfigurationConfigurationValuesTable.setEditable(editable);
-        this.typeComboBox.setReadOnly(!editable);
-        this.clientComboBox.setReadOnly(!editable);
-        this.sourceContextComboBox.setReadOnly(!editable);
-        this.targetContextComboBox.setReadOnly(!editable);
-        this.descriptionTextArea.setReadOnly(!editable);
-        this.numberOfParametersTextField.setReadOnly(!editable);
+    	if(this.saveRequiredMonitor!= null)
+    		this.saveRequiredMonitor.setSaveRequired(editable);
+        if(this.mappingConfigurationConfigurationValuesTable != null)
+        	this.mappingConfigurationConfigurationValuesTable.setEditable(editable);
+        if(this.typeComboBox != null)
+        	this.typeComboBox.setReadOnly(!editable);
+        if(this.clientComboBox != null)
+        	this.clientComboBox.setReadOnly(!editable);
+        if(this.sourceContextComboBox != null)
+        	this.sourceContextComboBox.setReadOnly(!editable);
+        if(this.targetContextComboBox != null)
+        	this.targetContextComboBox.setReadOnly(!editable);
+        if(this.descriptionTextArea != null)
+        	this.descriptionTextArea.setReadOnly(!editable);
+        if(this.numberOfParametersTextField != null)
+        	this.numberOfParametersTextField.setReadOnly(!editable);
 
-        for(TextField textField: this.parameterQueryTextFields)
+        if(this.parameterQueryTextFields != null)
         {
-            textField.setReadOnly(!editable);
+	        for(TextField textField: this.parameterQueryTextFields)
+	        {
+	            textField.setReadOnly(!editable);
+	        }
         }
     }
 

@@ -10,26 +10,26 @@
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-	<bean id="userNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
-		<constructor-arg value="user"/>
+	<bean id="roleNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="roleManagement"/>
         <constructor-arg>
             <list>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="userPanel"/>
-                   <constructor-arg ref="userPanel"/>
+                   <constructor-arg value="roleManagementPanel"/>
+                   <constructor-arg ref="roleManagementPanel"/>
                 </bean>
             </list>
         </constructor-arg>
-        <constructor-arg ref="userManagementViewComponentContainer"/>
+        <constructor-arg ref="roleManagementViewComponentContainer"/>
     </bean>
     
-    <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
+    <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RoleManagementPanel" scope="session">
     	<constructor-arg ref="localTxUserService"/>
     	<constructor-arg ref="localTxSecurityService"/>
     </bean>
     
-    <bean id="userManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+    <bean id="roleManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
-    
+
 </beans>

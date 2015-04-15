@@ -10,7 +10,7 @@
  * ====================================================================
  *
  */
-package org.ikasan.dashboard.ui.administration.user.panel;
+package org.ikasan.dashboard.ui.administration.panel;
 
 import java.util.List;
 
@@ -52,11 +52,11 @@ import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
  * @author CMI2 Development Team
  * 
  */
-public class UserPanel extends Panel implements View
+public class UserManagementPanel extends Panel implements View
 {
 	private static final long serialVersionUID = 6005593259860222561L;
 
-	private Logger logger = Logger.getLogger(UserPanel.class);
+	private Logger logger = Logger.getLogger(UserManagementPanel.class);
 
 	private UserService userService;
 	private SecurityService securityService;
@@ -67,7 +67,7 @@ public class UserPanel extends Panel implements View
 	 * 
 	 * @param ikasanModuleService
 	 */
-	public UserPanel(UserService userService, SecurityService securityService)
+	public UserManagementPanel(UserService userService, SecurityService securityService)
 	{
 		super();
 		this.userService = userService;
@@ -153,22 +153,15 @@ public class UserPanel extends Panel implements View
 				email.setValue(user.getEmail());
 
 				IkasanPrincipal principal;
-				try
-				{
-					principal = securityService
-							.findPrincipalByName(user.getUsername());
+				principal = securityService
+						.findPrincipalByName(user.getUsername());
 
-					roleTable.removeAllItems();
+				roleTable.removeAllItems();
 
-					for (Role role : principal.getRoles())
-					{
-						roleTable.addItem(new Object[]
-						{ role.getName() }, role);
-					}
-				} catch (SecurityServiceException e)
+				for (Role role : principal.getRoles())
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					roleTable.addItem(new Object[]
+					{ role.getName() }, role);
 				}
 			}
 		});
@@ -198,22 +191,15 @@ public class UserPanel extends Panel implements View
 				email.setValue(user.getEmail());
 
 				IkasanPrincipal principal;
-				try
-				{
-					principal = securityService
-							.findPrincipalByName(user.getUsername());
+				principal = securityService
+						.findPrincipalByName(user.getUsername());
 
-					roleTable.removeAllItems();
+				roleTable.removeAllItems();
 
-					for (Role role : principal.getRoles())
-					{
-						roleTable.addItem(new Object[]
-						{ role.getName() }, role);
-					}
-				} catch (SecurityServiceException e)
+				for (Role role : principal.getRoles())
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					roleTable.addItem(new Object[]
+					{ role.getName() }, role);
 				}
 			}
 		});
@@ -243,22 +229,15 @@ public class UserPanel extends Panel implements View
 				email.setValue(user.getEmail());
 
 				IkasanPrincipal principal;
-				try
-				{
-					principal = securityService
-							.findPrincipalByName(user.getUsername());
+				principal = securityService
+						.findPrincipalByName(user.getUsername());
 
-					roleTable.removeAllItems();
+				roleTable.removeAllItems();
 
-					for (Role role : principal.getRoles())
-					{
-						roleTable.addItem(new Object[]
-						{ role.getName() }, role);
-					}
-				} catch (SecurityServiceException e)
+				for (Role role : principal.getRoles())
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					roleTable.addItem(new Object[]
+					{ role.getName() }, role);
 				}
 			}
 		});
@@ -318,24 +297,17 @@ public class UserPanel extends Panel implements View
 				dropTable.addItem(new Object[]
 						{ sourceContainer.getText()}, sourceContainer.getText());
 				
-				try
-				{
-					IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
-					principal.getRoles().add((Role)rolesCombo.getValue());
-					
-					securityService.savePrincipal(principal);
+				IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
+				principal.getRoles().add((Role)rolesCombo.getValue());
+				
+				securityService.savePrincipal(principal);
 
-					roleTable.removeAllItems();
-					
-					for (Role role : principal.getRoles())
-					{
-						roleTable.addItem(new Object[]
-						{ role.getName() }, role);
-					}
-				} catch (SecurityServiceException e)
+				roleTable.removeAllItems();
+				
+				for (Role role : principal.getRoles())
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					roleTable.addItem(new Object[]
+					{ role.getName() }, role);
 				}
 			}
 
@@ -355,21 +327,14 @@ public class UserPanel extends Panel implements View
 		        
 		        logger.info("Value changed got Role: " + role);
 		        
-		        try
+		        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
+				
+				dropTable.removeAllItems();
+				
+				for(IkasanPrincipal principal: principals)
 				{
-					List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
-					
-					dropTable.removeAllItems();
-					
-					for(IkasanPrincipal principal: principals)
-					{
-						dropTable.addItem(new Object[]
-								{ principal.getName() }, principal.getName());
-					}
-				} catch (SecurityServiceException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					dropTable.addItem(new Object[]
+							{ principal.getName() }, principal.getName());
 				}
 		    }
 		});
@@ -392,20 +357,12 @@ public class UserPanel extends Panel implements View
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
-		try
+		List<Role> roles = this.securityService.getAllRoles();
+		
+		for(Role role: roles)
 		{
-			List<Role> roles = this.securityService.getAllRoles();
-			
-			for(Role role: roles)
-			{
-				this.rolesCombo.addItem(role);
-				this.rolesCombo.setItemCaption(role, role.getName());
-			}
-			
-		} catch (SecurityServiceException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.rolesCombo.addItem(role);
+			this.rolesCombo.setItemCaption(role, role.getName());
 		}
 	}
 }

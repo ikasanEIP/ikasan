@@ -50,6 +50,9 @@
       <entry key="hospital" value-ref="hospitalNavigator" />
       <entry key="topology" value-ref="topologyNavigator" />
       <entry key="persistanceSetup" value-ref="persistanceSetupNavigator" />
+      <entry key="principalManagement" value-ref="principalNavigator" />
+      <entry key="roleManagement" value-ref="roleNavigator" />
+      <entry key="policyManagement" value-ref="policyManagementNavigator" />
     </util:map>
 
 	<bean id="topLevelNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
@@ -103,6 +106,18 @@
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="authenticationMethodView"/>
                    <constructor-arg ref="authenticationMethodPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="principalManagementView"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="roleManagementView"/>
+                   <constructor-arg ref="roleManagementPanel"/>
+                </bean>
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="policyManagementView"/>
+                   <constructor-arg ref="policyManagementPanel"/>
                 </bean>
             </list>
         </constructor-arg>

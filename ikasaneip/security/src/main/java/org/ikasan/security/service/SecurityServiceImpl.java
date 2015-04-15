@@ -49,6 +49,7 @@ import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 
 
@@ -81,21 +82,14 @@ public class SecurityServiceImpl implements SecurityService
      * @see com.mizuho.cmi2.security.service.SecurityService#createNewPrincipal(java.lang.String, java.lang.String)
      */
     @Override
-    public IkasanPrincipal createNewPrincipal(String name, String type) throws SecurityServiceException
+    public IkasanPrincipal createNewPrincipal(String name, String type)
     {
         IkasanPrincipal principal = new IkasanPrincipal();
         principal.setName(name);
         principal.setType(type);
         principal.setDescription("description");
         
-        try
-        {
-            this.securityDao.saveOrUpdatePrincipal(principal);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+        this.securityDao.saveOrUpdatePrincipal(principal);
 
         return principal;
     }
@@ -104,36 +98,21 @@ public class SecurityServiceImpl implements SecurityService
      * @see com.mizuho.cmi2.security.service.SecurityService#savePrincipal(com.mizuho.cmi2.security.model.Principal)
      */
     @Override
-    public void savePrincipal(IkasanPrincipal principal) throws SecurityServiceException
+    public void savePrincipal(IkasanPrincipal principal)
     {
-        try
-        {
-            this.securityDao.saveOrUpdatePrincipal(principal);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+    	this.securityDao.saveOrUpdatePrincipal(principal);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#createNewRole(java.lang.String)
      */
     @Override
-    public Role createNewRole(String name, String description) throws SecurityServiceException
+    public Role createNewRole(String name, String description)
     {
         Role role = new Role();
         role.setName(name);
-        role.setDescription(description);
-
-        try
-        {
-            this.securityDao.saveOrUpdateRole(role);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+        role.setDescription(description);        
+        this.securityDao.saveOrUpdateRole(role);
 
         return role;
     }
@@ -142,20 +121,13 @@ public class SecurityServiceImpl implements SecurityService
      * @see com.mizuho.cmi2.security.service.SecurityService#createNewPolicy(java.lang.String)
      */
     @Override
-    public Policy createNewPolicy(String name, String description) throws SecurityServiceException
+    public Policy createNewPolicy(String name, String description)
     {
         Policy policy = new Policy();
         policy.setName(name);
         policy.setDescription(description);
  
-        try
-        {
-            this.securityDao.saveOrUpdatePolicy(policy);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+        this.securityDao.saveOrUpdatePolicy(policy);
 
         return policy;
     }
@@ -164,191 +136,109 @@ public class SecurityServiceImpl implements SecurityService
      * @see com.mizuho.cmi2.security.service.SecurityService#saveRole(com.mizuho.cmi2.security.model.Role)
      */
     @Override
-    public void saveRole(Role role) throws SecurityServiceException
+    public void saveRole(Role role) 
     {
-        try
-        {
-            this.securityDao.saveOrUpdateRole(role);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+    	this.securityDao.saveOrUpdateRole(role);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#savePolicy(com.mizuho.cmi2.security.model.Policy)
      */
     @Override
-    public void savePolicy(Policy policy) throws SecurityServiceException
+    public void savePolicy(Policy policy) 
     {
-        try
-        {
-            this.securityDao.saveOrUpdatePolicy(policy);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+    	this.securityDao.saveOrUpdatePolicy(policy);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#findPrincipalByName(java.lang.String)
      */
     @Override
-    public IkasanPrincipal findPrincipalByName(String name) throws SecurityServiceException
+    public IkasanPrincipal findPrincipalByName(String name) 
     {
-        IkasanPrincipal principal = null;
-
-        try
-        {
-            principal = this.securityDao.getPrincipalByName(name);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
-
-        return principal;
+        return this.securityDao.getPrincipalByName(name);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#deletePrincipal(com.mizuho.cmi2.security.model.Principal)
      */
     @Override
-    public void deletePrincipal(IkasanPrincipal principal) throws SecurityServiceException
+    public void deletePrincipal(IkasanPrincipal principal) 
     {
-        try
-        {
-            this.securityDao.deletePrincipal(principal);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+    	this.securityDao.deletePrincipal(principal);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#deleteRole(com.mizuho.cmi2.security.model.Role)
      */
     @Override
-    public void deleteRole(Role role) throws SecurityServiceException
+    public void deleteRole(Role role) 
     {
-        try
-        {
-            this.securityDao.deleteRole(role);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+    	this.securityDao.deleteRole(role);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#deletePolicy(com.mizuho.cmi2.security.model.Policy)
      */
     @Override
-    public void deletePolicy(Policy policy) throws SecurityServiceException
+    public void deletePolicy(Policy policy) 
     {
-        try
-        {
-            this.securityDao.deletePolicy(policy);
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
+    	this.securityDao.deletePolicy(policy);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#getAllPrincipals()
      */
     @Override
-    public List<IkasanPrincipal> getAllPrincipals() throws SecurityServiceException
+    public List<IkasanPrincipal> getAllPrincipals() 
     {
-        List<IkasanPrincipal> principals = null;
-
-        try
-        {
-            principals = this.securityDao.getAllPrincipals();
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
-
-        return principals;
+        return this.securityDao.getAllPrincipals();
     }
 
     /* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getPrincipalByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<IkasanPrincipal> getPrincipalByNameLike(String name)
+	{
+		return this.securityDao.getPrincipalByNameLike(name);
+	}
+
+	/* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#getAllRoles()
      */
     @Override
-    public List<Role> getAllRoles() throws SecurityServiceException
+    public List<Role> getAllRoles() 
     {
-        List<Role> roles = null;
-
-        try
-        {
-            roles = this.securityDao.getAllRoles();
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
-
-        return roles;
+        return this.securityDao.getAllRoles();
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.service.SecurityService#getAllPolicies()
      */
     @Override
-    public List<Policy> getAllPolicies() throws SecurityServiceException
+    public List<Policy> getAllPolicies() 
     {
-        List<Policy> policies = null;
-
-        try
-        {
-            policies = this.securityDao.getAllPolicies();
-        }
-        catch (SecurityDaoException e)
-        {
-            throw new SecurityServiceException(e);
-        }
-
-        return policies;
+        return this.securityDao.getAllPolicies();
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityServiceException
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) 
     {
     	authenticationMethod.setId(SecurityConstants.AUTH_METHOD_ID);
-    	try
-		{
-			this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
-		} catch (SecurityDaoException e)
-		{
-			throw new SecurityServiceException(e);
-		}
+		this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
     }
 
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
      */
-    public AuthenticationMethod getAuthenticationMethod() throws SecurityServiceException
+    public AuthenticationMethod getAuthenticationMethod() 
     {
-    	try
-		{
-			return this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
-		} catch (SecurityDaoException e)
-		{
-			throw new SecurityServiceException(e);
-		}
+		return this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
     }
 
 	/* (non-Javadoc)
@@ -356,15 +246,8 @@ public class SecurityServiceImpl implements SecurityService
 	 */
 	@Override
 	public Role findRoleByName(String name)
-			throws SecurityServiceException
 	{
-		try
-		{
-			return this.securityDao.getRoleByName(name);
-		} catch (SecurityDaoException e)
-		{
-			throw new SecurityServiceException(e);
-		}
+		return this.securityDao.getRoleByName(name);
 	}
 
 	/* (non-Javadoc)
@@ -372,15 +255,8 @@ public class SecurityServiceImpl implements SecurityService
 	 */
 	@Override
 	public Policy findPolicyByName(String name)
-			throws SecurityServiceException
 	{
-		try
-		{
-			return this.securityDao.getPolicyByName(name);
-		} catch (SecurityDaoException e)
-		{
-			throw new SecurityServiceException(e);
-		}
+		return this.securityDao.getPolicyByName(name);
 	}
 
 	/* (non-Javadoc)
@@ -388,19 +264,8 @@ public class SecurityServiceImpl implements SecurityService
 	 */
 	@Override
 	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
-			throws SecurityServiceException
-	{
-		List<IkasanPrincipal> principals = null;
-		try
-		{
-			principals =  this.securityDao.getAllPrincipalsWithRole(roleName);
-		} 
-		catch (SecurityDaoException e)
-		{
-			throw new SecurityServiceException(e);
-		}
-		
-		return principals;
+	{	
+		return this.securityDao.getAllPrincipalsWithRole(roleName);
 	}
 
 	/* (non-Javadoc)
@@ -408,18 +273,25 @@ public class SecurityServiceImpl implements SecurityService
 	 */
 	@Override
 	public List<IkasanPrincipal> getPrincipalsByName(List<String> names)
-			throws SecurityServiceException
 	{
-		List<IkasanPrincipal> principals = null;
-		try
-		{
-			principals =  this.securityDao.getPrincipalsByName(names);
-		} 
-		catch (SecurityDaoException e)
-		{
-			throw new SecurityServiceException(e);
-		}
-		
-		return principals;
+		return this.securityDao.getPrincipalsByName(names);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAllPolicyLinkTypes()
+	 */
+	@Override
+	public List<PolicyLinkType> getAllPolicyLinkTypes()
+	{
+		return this.securityDao.getAllPolicyLinkTypes();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getPolicyByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<Policy> getPolicyByNameLike(String name)
+	{
+		return this.securityDao.getPolicyByNameLike(name);
 	}
 }

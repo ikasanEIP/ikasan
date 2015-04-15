@@ -45,6 +45,7 @@ import java.util.List;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 
 
@@ -58,87 +59,87 @@ public interface SecurityDao
      * 
      * @param role
      */
-    public void saveOrUpdateRole(Role role) throws SecurityDaoException;
+    public void saveOrUpdateRole(Role role);
 
     /**
      * 
      * @param role
      */
-    public void deleteRole(Role role) throws SecurityDaoException;
+    public void deleteRole(Role role);
 
     /**
      * 
      * @param role
      */
-    public void saveOrUpdatePolicy(Policy policy) throws SecurityDaoException;
+    public void saveOrUpdatePolicy(Policy policy);
 
     /**
      * 
      * @param role
      */
-    public void deletePolicy(Policy policy) throws SecurityDaoException;
+    public void deletePolicy(Policy policy);
 
     /**
      * 
      * @param principal
      */
-    public void saveOrUpdatePrincipal(IkasanPrincipal principal) throws SecurityDaoException;
+    public void saveOrUpdatePrincipal(IkasanPrincipal principal);
 
 
     /**
      * 
      * @param principal
      */
-    public void deletePrincipal(IkasanPrincipal principal) throws SecurityDaoException;
+    public void deletePrincipal(IkasanPrincipal principal);
 
     /**
      * 
      * @param name
      * @return
      */
-    public IkasanPrincipal getPrincipalByName(String name) throws SecurityDaoException;
+    public IkasanPrincipal getPrincipalByName(String name);
 
     /**
      * 
      * @param name
      * @return
      */
-    public List<IkasanPrincipal> getPrincipalsByName(List<String> names) throws SecurityDaoException;
+    public List<IkasanPrincipal> getPrincipalsByName(List<String> names);
 
     /**
      * 
      * @return
      * @throws SecurityDaoException
      */
-    public List<Policy> getAllPolicies() throws SecurityDaoException;
+    public List<Policy> getAllPolicies();
 
     /**
      * 
      * @return
      * @throws SecurityDaoException
      */
-    public List<Role> getAllRoles() throws SecurityDaoException;
+    public List<Role> getAllRoles();
 
     /**
      * 
      * @return
      * @throws SecurityDaoException
      */
-    public List<IkasanPrincipal> getAllPrincipals() throws SecurityDaoException;
+    public List<IkasanPrincipal> getAllPrincipals();
 
     /**
      * 
      * @return
      * @throws SecurityDaoException
      */
-    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName) throws SecurityDaoException;
+    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
 
     /**
      * 
      * @return
      * @throws SecurityDaoException
      */
-    public Policy getPolicyByName(String name) throws SecurityDaoException;
+    public Policy getPolicyByName(String name);
 
     /**
      * 
@@ -146,14 +147,14 @@ public interface SecurityDao
      * @return
      * @throws SecurityDaoException
      */
-    public Role getRoleByName(String name) throws SecurityDaoException;
+    public Role getRoleByName(String name);
 
     /**
      * 
      * @param authenticationMethod
      * @throws SecurityDaoException
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) throws SecurityDaoException;
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
      * 
@@ -161,6 +162,26 @@ public interface SecurityDao
      * @return
      * @throws SecurityDaoException
      */
-    public AuthenticationMethod getAuthenticationMethod(Long id) throws SecurityDaoException;
+    public AuthenticationMethod getAuthenticationMethod(Long id);
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<IkasanPrincipal> getPrincipalByNameLike(String name);
+    
+    /**
+     * 
+     * @return
+     */
+    public List<PolicyLinkType> getAllPolicyLinkTypes();
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<Policy> getPolicyByNameLike(String name);
 
 }

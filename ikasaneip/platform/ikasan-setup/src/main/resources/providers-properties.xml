@@ -527,11 +527,13 @@
 				<prop key="create.securityPolicy">CREATE TABLE SecurityPolicy
 					(
 					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkId               		NUMERIC(18, 0) NULL,
 					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
 					   Description	     				VARCHAR(1024)		   	   NOT NULL,
 					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
-					   PRIMARY KEY (Id) -- clustered index on Id
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -560,6 +562,31 @@
 					   PRIMARY KEY (PrincipalId, RoleId), -- clustered index on Id
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLinkType">CREATE TABLE PolicyLinkType
+					(
+					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
+					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE PolicyLink
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
+					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -766,6 +793,10 @@
 					INSERT
 					INTO RolePolicy ( RoleId, PolicyId )
 					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
 				</prop>
 				
 				<!-- Tables required for the ikasan mapping module -->
@@ -1394,11 +1425,13 @@
 				<prop key="create.securityPolicy">CREATE TABLE SecurityPolicy
 					(
 					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkId               		NUMERIC(18, 0) NULL,
 					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
 					   Description	     				VARCHAR(1024)		   	   NOT NULL,
 					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
-					   PRIMARY KEY (Id) -- clustered index on Id
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
 					) 
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -1444,7 +1477,31 @@
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
 				</prop>
-				
+				<prop key="create.policyLinkType">CREATE TABLE PolicyLinkType
+					(
+					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
+					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE PolicyLink
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
+					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (PolicyLinkId), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>				
 				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
 					(
 					   Id               			NUMERIC(18, 0) NOT NULL,
@@ -1629,6 +1686,10 @@
 					INSERT
 					INTO RolePolicy ( RoleId, PolicyId )
 					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
 				</prop>
 				
 				<!-- Tables required for the ikasan mapping module -->
@@ -2585,14 +2646,37 @@
 					   PRIMARY KEY (Id)
 					);
 				</prop>
+				<prop key="create.policyLinkType">CREATE TABLE PolicyLinkType
+					(
+					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
+					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE PolicyLink
+					(
+					   Id               		NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
+					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
+					);
+				</prop>
 				<prop key="create.securityPolicy">CREATE TABLE SecurityPolicy
 					(
 					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkId               		NUMERIC(18, 0) NULL,
 					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
 					   Description	     				VARCHAR(1024)		   	   NOT NULL,
 					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
-					   PRIMARY KEY (Id) 
+					   PRIMARY KEY (Id), 
+					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id) 
 					);
 				</prop>
 				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
@@ -2601,7 +2685,7 @@
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
-					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
+					   PRIMARY KEY (UserId, PrincipalId), 
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (UserId) REFERENCES Users(Id)
 					);
@@ -2627,9 +2711,7 @@
 					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
 					);
-				</prop>
-				
-				
+				</prop>				
 				
 				<!-- Tables required for the ikasan mapping module -->
 				<prop key="create.mappingConfigurationType">CREATE TABLE MCSConfigurationType
@@ -2744,7 +2826,7 @@
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id)
-					) 
+					);
 				</prop>
 			</props>
 

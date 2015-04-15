@@ -266,13 +266,21 @@ public class NavigationPanel extends Panel
 				"userView");
 		MenuBar.Command authenticationMethodCommand = createNavigatorMenuCommand("topLevel",
 				"authenticationMethodView");
+		MenuBar.Command principalManagementCommand = createNavigatorMenuCommand("principalManagement",
+				"principalManagementView");
+		MenuBar.Command roleManagementCommand = createNavigatorMenuCommand("roleManagement",
+				"roleManagementView");
+		MenuBar.Command policyManagementCommand = createNavigatorMenuCommand("policyManagement",
+				"policyManagementView");
 
 		MenuItem admin = utilityMenu.addItem("", new ThemeResource(
 				"images/gear.png"), null);
 		admin.setStyleName("ikasan");
 		admin.addItem("Manage Users", null, userCommand);
-		admin.addItem("Security Administration", null, authenticationMethodCommand);
-		
+		admin.addItem("Manage Principals", null, principalManagementCommand);
+		admin.addItem("Manage Roles", null, roleManagementCommand);
+		admin.addItem("Manage Policies", null, policyManagementCommand);
+		admin.addItem("Security Administration", null, authenticationMethodCommand);		
 
 		MenuBar.Command profileCommand = createNavigatorMenuCommand("profile",
 				"profileView");
