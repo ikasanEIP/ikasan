@@ -98,7 +98,6 @@ public class HomeTab extends VerticalLayout implements View
         layout.setComponentAlignment(newActionsPanel, Alignment.TOP_RIGHT);
 
         layout.setStyleName("grey");
-//        layout.setMargin(true);
         
         Panel panel = new Panel();
         panel.setSizeFull();

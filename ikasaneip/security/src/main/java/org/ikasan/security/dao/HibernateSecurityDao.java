@@ -47,6 +47,7 @@ import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.springframework.dao.support.DataAccessUtils;
@@ -276,5 +277,23 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 		List<Policy> results = getHibernateTemplate().find("from Policy where name LIKE ?", name + '%');
 
         return results;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLink(org.ikasan.security.model.PolicyLink)
+	 */
+	@Override
+	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
+	{
+		this.getHibernateTemplate().saveOrUpdate(policyLink);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#deletePolicyLink(org.ikasan.security.model.PolicyLink)
+	 */
+	@Override
+	public void deletePolicyLink(PolicyLink policyLink)
+	{
+		this.getHibernateTemplate().delete(policyLink);
 	}
 }

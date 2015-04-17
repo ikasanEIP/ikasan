@@ -44,14 +44,19 @@ import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  *
  */
 public class Policy implements GrantedAuthority
 {
-    private Long id;
-    private String name;
-    private String description;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3421453948503155354L;
+
+	private Long id;
+    private String name = "";
+    private String description = "";
     private PolicyLink policyLink;
 
     /** The data time stamp when an instance was first created */

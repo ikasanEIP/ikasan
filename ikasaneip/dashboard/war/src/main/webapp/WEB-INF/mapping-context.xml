@@ -178,7 +178,7 @@
         <constructor-arg ref="mappingViewComponentContainer"/>
     </bean -->
 
-    <bean id="searchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable" scope="session">
+    <bean id="searchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable" scope="session">
         <constructor-arg ref="searchResultTableItemClickListener"/>
     </bean>
 
@@ -305,7 +305,7 @@
         <constructor-arg value="false"/>
     </bean>
 
-    <bean id="searchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener" scope="session">
+    <bean id="searchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchButtonClickListener" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
         <constructor-arg ref="clientComboBox"/>
         <constructor-arg ref="typeComboBox"/>
@@ -316,7 +316,7 @@
         <constructor-arg ref="adminUserVisibilityGroup"/>
     </bean>
 
-    <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchResultTableItemClickListener" scope="session">
+    <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchResultTableItemClickListener" scope="session">
         <constructor-arg ref="localTxMappingConfigurationService"/>
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>

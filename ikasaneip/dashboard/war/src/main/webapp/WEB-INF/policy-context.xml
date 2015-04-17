@@ -26,10 +26,74 @@
     <bean id="policyManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PolicyManagementPanel" scope="session">
     	<constructor-arg ref="localTxUserService"/>
     	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="policyAssociationMappingSearchWindow"/>
     </bean>
     
     <bean id="policyManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
+    
+    <bean id="policyAssociationMappingSearchWindow" class="org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow" scope="session">
+        <constructor-arg ref="policyLinkMappingConfigurationSearchPanel"/>
+        <constructor-arg ref="policyLinkMappingConfigurationSearchResultsPanel"/>
+    </bean>
+    
+    <bean id="policyLinkMappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="policyLinkMappingSearchResultsTable"/>
+    </bean>
+    
+    <bean id="policyLinkSearchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchButtonClickListener" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="policyLinkClientComboBox"/>
+        <constructor-arg ref="policyLinkTypeComboBox"/>
+        <constructor-arg ref="policyLinkSourceContextComboBox"/>
+        <constructor-arg ref="policyLinkTargetContextComboBox"/>
+        <constructor-arg ref="policyLinkMappingSearchResultsTable"/>
+    </bean>
+    
+    <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="policyLinkSearchResultTableItemClickListenerProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="policyLinkSearchResultTableItemClickListener"/></property>
+        </bean>
+      </property>
+    </bean>
 
+    <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">
+        <constructor-arg ref="policyAssociationMappingSearchWindow"/>
+    </bean>
+    
+    <bean id="policyLinkMappingConfigurationSearchPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="policyLinkClientComboBox"/>
+        <constructor-arg ref="policyLinkTypeComboBox"/>
+        <constructor-arg ref="policyLinkSourceContextComboBox"/>
+        <constructor-arg ref="policyLinkTargetContextComboBox"/>
+        <constructor-arg ref="policyLinkSearchButtonClickListener"/>
+    </bean>
+    
+    <bean id="policyLinkMappingSearchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.PolicyLinkMappingConfigurationSearchResultsTable" scope="session">
+        <constructor-arg ref="policyLinkSearchResultTableItemClickListenerProxy"/>
+    </bean>
+
+	<bean id="policyLinkClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+    </bean>
+
+    <bean id="policyLinkTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+    </bean>
+
+    <bean id="policyLinkSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="true"/>
+    </bean>
+
+    <bean id="policyLinkTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
+        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg value="true"/>
+    </bean>
+    
 </beans>

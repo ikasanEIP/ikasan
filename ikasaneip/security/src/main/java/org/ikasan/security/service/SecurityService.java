@@ -46,6 +46,7 @@ import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 
@@ -216,5 +217,17 @@ public interface SecurityService
      * @return
      */
     public List<Policy> getPolicyByNameLike(String name);
+    
+    /**
+     * 
+     * @param policyLink
+     */
+    public void savePolicyLink(PolicyLink policyLink);
+    
+    /**
+     * 
+     * @param policyLink
+     */
+    public void deletePolicyLink(PolicyLink policyLink);
 }
 

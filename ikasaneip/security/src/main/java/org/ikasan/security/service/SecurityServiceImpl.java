@@ -49,6 +49,7 @@ import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 
@@ -293,5 +294,23 @@ public class SecurityServiceImpl implements SecurityService
 	public List<Policy> getPolicyByNameLike(String name)
 	{
 		return this.securityDao.getPolicyByNameLike(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#savePolicyLink(org.ikasan.security.model.PolicyLink)
+	 */
+	@Override
+	public void savePolicyLink(PolicyLink policyLink)
+	{
+		this.securityDao.saveOrUpdatePolicyLink(policyLink);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#deletePolicyLink(org.ikasan.security.model.PolicyLink)
+	 */
+	@Override
+	public void deletePolicyLink(PolicyLink policyLink)
+	{
+		this.securityDao.deletePolicyLink(policyLink);
 	}
 }
