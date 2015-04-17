@@ -192,6 +192,34 @@ public class PolicyManagementPanel extends Panel implements View
 					PolicyManagementPanel.this.linkTypeCombo.setValue(new String());
 					PolicyManagementPanel.this.linkedEntity.setValue(new String());
 				}
+				
+				roleTable.removeAllItems();
+
+				for (final Role role : policy.getRoles())
+				{
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	roleTable.removeItem(role);
+			            	
+			            	policy.getRoles().remove(role);
+			            	
+			            	securityService.savePolicy(policy);
+			            	
+			            	policyDropTable.removeItem(policy.getName());
+			            }
+			        });
+					
+					roleTable.addItem(new Object[]
+					{ role.getName(), deleteButton }, role);
+				}
 			}
 		});
 		
@@ -381,15 +409,13 @@ public class PolicyManagementPanel extends Panel implements View
 		this.rolesCombo.addValueChangeListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
-		        
-		        logger.info("Value changed got Role: " + role);
-		        
-		        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
+
+		        List<Policy> policies = securityService.getAllPoliciesWithRole(role.getName());
 				
 				policyDropTable.removeAllItems();
 				
 				
-				for(final IkasanPrincipal principal: principals)
+				for(final Policy policy: policies)
 				{
 					Button deleteButton = new Button();
 					ThemeResource deleteIcon = new ThemeResource(
@@ -401,12 +427,19 @@ public class PolicyManagementPanel extends Panel implements View
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {
+			            	role.getPolicies().remove(policy);
+			            	
+			            	securityService.saveRole(role);
+			            	
+			            	policyDropTable.removeItem(policy.getName());
+			            	
+			            	roleTable.removeItem(role);
 			            }
 			        });
 					
 					
 					policyDropTable.addItem(new Object[]
-							{ principal.getName(), deleteButton }, principal.getName());
+							{ policy.getName(), deleteButton }, policy.getName());
 				}
 		    }
 		});
@@ -440,26 +473,33 @@ public class PolicyManagementPanel extends Panel implements View
 				deleteButton.setIcon(deleteIcon);
 				deleteButton.setStyleName(Reindeer.BUTTON_LINK);
 				
-				final IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
-				final Role roleToRemove = (Role)rolesCombo.getValue();
+				final Policy policy = securityService.findPolicyByName(sourceContainer.getText());
+				
+				final Role selectedRole = securityService.findRoleByName(((Role)rolesCombo.getValue()).getName());
 				
 				deleteButton.addClickListener(new Button.ClickListener() 
 		        {
 		            public void buttonClick(ClickEvent event) 
 		            {
+		            	policyDropTable.removeItem(policy.getName());
+		            	
+		            	selectedRole.getPolicies().remove(policy);
+		            	
+		            	securityService.saveRole(selectedRole);
 		            }
 		        });
 				
 				policyDropTable.addItem(new Object[]
 						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
 
-				principal.getRoles().add((Role)rolesCombo.getValue());
+				selectedRole.getPolicies().add(policy);
 				
-				securityService.savePrincipal(principal);
+				securityService.saveRole(selectedRole);
+				policy.getRoles().add(selectedRole);
 
 				roleTable.removeAllItems();
 
-				for (final Role role : principal.getRoles())
+				for (final Role role : policy.getRoles())
 				{
 					Button roleDeleteButton = new Button();
 					roleDeleteButton.setIcon(deleteIcon);
@@ -471,16 +511,16 @@ public class PolicyManagementPanel extends Panel implements View
 			            {
 			            	roleTable.removeItem(role);
 			            	
-			            	principal.getRoles().remove(role);
+			            	selectedRole.getPolicies().remove(policy);
 			            	
-			            	securityService.savePrincipal(principal);
+			            	securityService.saveRole(selectedRole);
 			            	
-			            	policyDropTable.removeItem(principal.getName());
+			            	policyDropTable.removeItem(policy.getName());
 			            }
 			        }); 
 					
 					roleTable.addItem(new Object[]
-					{ role.getName(), roleDeleteButton }, role);
+							{ role.getName(), roleDeleteButton }, role);
 				}
 			}
 
@@ -496,7 +536,9 @@ public class PolicyManagementPanel extends Panel implements View
 		layout.setWidth("100%");
 		layout.setHeight("100%");
 		layout.addComponent(this.rolesCombo);
+		layout.setExpandRatio(this.rolesCombo, 0.05f);
 		layout.addComponent(this.policyDropTable);
+		layout.setExpandRatio(this.policyDropTable, 0.95f);
 		
 		this.policyDropPanel.setContent(layout);
 	}

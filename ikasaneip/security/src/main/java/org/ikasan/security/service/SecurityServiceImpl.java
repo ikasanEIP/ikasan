@@ -313,4 +313,13 @@ public class SecurityServiceImpl implements SecurityService
 	{
 		this.securityDao.deletePolicyLink(policyLink);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getAllPoliciesWithRole(java.lang.String)
+	 */
+	@Override
+	public List<Policy> getAllPoliciesWithRole(String roleName)
+	{
+		return this.securityDao.getAllPoliciesWithRole(roleName);
+	}
 }

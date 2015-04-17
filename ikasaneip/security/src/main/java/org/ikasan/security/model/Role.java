@@ -49,7 +49,7 @@ import java.util.Set;
  * @author CMI2 Development Team
  *
  */
-public class Role
+public class Role implements Comparable<Role>
 {
     private Long id;
     private String name = "";
@@ -168,91 +168,96 @@ public class Role
         this.policies = policies;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        final int maxLen = 10;
-        return "Role [id=" + id + ", name=" + name + ", description=" + description + ", policies="
-                + (policies != null ? toString(policies, maxLen) : null) + ", createdDateTime=" + createdDateTime
-                + ", updatedDateTime=" + updatedDateTime + "]";
-    }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
+		return result;
+	}
 
-    private String toString(Collection<?> collection, int maxLen)
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        int i = 0;
-        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++)
-        {
-            if (i > 0) builder.append(", ");
-            builder.append(iterator.next());
-        }
-        builder.append("]");
-        return builder.toString();
-    }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Role other = (Role) obj;
+		if (createdDateTime == null)
+		{
+			if (other.createdDateTime != null)
+				return false;
+		} else if (!createdDateTime.equals(other.createdDateTime))
+			return false;
+		if (description == null)
+		{
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (id == null)
+		{
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null)
+		{
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (updatedDateTime == null)
+		{
+			if (other.updatedDateTime != null)
+				return false;
+		} else if (!updatedDateTime.equals(other.updatedDateTime))
+			return false;
+		return true;
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((policies == null) ? 0 : policies.hashCode());
-        result = prime * result + ((updatedDateTime == null) ? 0 : updatedDateTime.hashCode());
-        return result;
-    }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Role [id=" + id + ", name=" + name + ", description="
+				+ description + ", createdDateTime="
+				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
+				+ "]";
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Role other = (Role) obj;
-        if (createdDateTime == null)
-        {
-            if (other.createdDateTime != null) return false;
-        }
-        else if (!createdDateTime.equals(other.createdDateTime)) return false;
-        if (description == null)
-        {
-            if (other.description != null) return false;
-        }
-        else if (!description.equals(other.description)) return false;
-        if (id == null)
-        {
-            if (other.id != null) return false;
-        }
-        else if (!id.equals(other.id)) return false;
-        if (name == null)
-        {
-            if (other.name != null) return false;
-        }
-        else if (!name.equals(other.name)) return false;
-        if (policies == null)
-        {
-            if (other.policies != null) return false;
-        }
-        else if (!policies.equals(other.policies)) return false;
-        if (updatedDateTime == null)
-        {
-            if (other.updatedDateTime != null) return false;
-        }
-        else if (!updatedDateTime.equals(other.updatedDateTime)) return false;
-        return true;
-    }
-
-    
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(Role role)
+	{		
+		if(role.hashCode() == this.hashCode())
+		{
+			return 0;
+		}
+		else
+		{
+			return role.hashCode() - this.hashCode();
+		}
+	}
 }
