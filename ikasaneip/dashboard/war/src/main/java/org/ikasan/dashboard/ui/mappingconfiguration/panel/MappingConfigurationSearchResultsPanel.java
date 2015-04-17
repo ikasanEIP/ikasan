@@ -12,13 +12,13 @@
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
-import org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable;
 import org.ikasan.mapping.service.MappingConfigurationService;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
 
 /**
  * @author CMI2 Development Team
@@ -29,7 +29,7 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
     private static final long serialVersionUID = 5863997626883201511L;
 
     private MappingConfigurationService mappingConfigurationService;
-    private SearchResultsTable searchResultsTable;
+    private Table searchResultsTable;
 
     /**
      * Constructor
@@ -38,7 +38,7 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
      * @param searchResultsTable
      */
     public MappingConfigurationSearchResultsPanel(MappingConfigurationService mappingConfigurationService,
-            SearchResultsTable searchResultsTable)
+            Table searchResultsTable)
     {
         super("Search Results");
         this.mappingConfigurationService = mappingConfigurationService;
@@ -69,7 +69,13 @@ public class MappingConfigurationSearchResultsPanel extends Panel implements Vie
     @Override
     public void enter(ViewChangeEvent event)
     {
-        // TODO Auto-generated method stub
-        
+    }
+    
+    /* (non-Javadoc)
+     * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
+     */
+    public void clear()
+    {
+    	this.searchResultsTable.removeAllItems();
     }
 }

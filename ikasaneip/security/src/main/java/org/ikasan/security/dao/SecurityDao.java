@@ -45,6 +45,7 @@ import java.util.List;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 
@@ -69,15 +70,27 @@ public interface SecurityDao
 
     /**
      * 
-     * @param role
+     * @param policy
      */
     public void saveOrUpdatePolicy(Policy policy);
 
     /**
      * 
-     * @param role
+     * @param policy
      */
     public void deletePolicy(Policy policy);
+    
+    /**
+     * 
+     * @param policyLink
+     */
+    public void saveOrUpdatePolicyLink(PolicyLink policyLink);
+
+    /**
+     * 
+     * @param policyLink
+     */
+    public void deletePolicyLink(PolicyLink policyLink);
 
     /**
      * 

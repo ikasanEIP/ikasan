@@ -27,7 +27,7 @@
         </id>
 
 		<many-to-one name="policyLinkType" column="PolicyLinkTypeId" 
-       			  class="org.ikasan.security.model.PolicyLinkType" not-null="true"/>
+       			  class="org.ikasan.security.model.PolicyLinkType" not-null="true" lazy="false"/>
 
         <property name="targetId"
                   type="java.lang.Long"

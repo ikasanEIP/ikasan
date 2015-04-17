@@ -16,7 +16,6 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
-import org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
@@ -27,6 +26,7 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -45,7 +45,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     private SourceContextComboBox sourceContextComboBox;
     private TargetContextComboBox targetContextComboBox;
     private MappingConfigurationService mappingConfigurationService;
-    private SearchButtonClickListener searchButtonClickListener;
+    private ClickListener searchButtonClickListener;
 
     /**
      * Constructor
@@ -59,7 +59,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
      */
     public MappingConfigurationSearchPanel(MappingConfigurationService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, SearchButtonClickListener searchButtonClickListener)
+            TargetContextComboBox targetContextComboBox, ClickListener searchButtonClickListener)
     {
         super("Mapping Configuration Search");
         this.mappingConfigurationService = mappingConfigurationService;
@@ -203,6 +203,18 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
+        this.clientComboBox.loadClientSelectValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
+        this.typeComboBox.loadClientTypeValues();
+    }
+    
+    public void clear()
+    {
+    	this.clientComboBox.setValue(null);
+    	this.sourceContextComboBox.setValue(null);
+    	this.targetContextComboBox.setValue(null);
+    	this.typeComboBox.setValue(null);
         this.clientComboBox.loadClientSelectValues();
         this.sourceContextComboBox.loadContextValues();
         this.targetContextComboBox.loadContextValues();

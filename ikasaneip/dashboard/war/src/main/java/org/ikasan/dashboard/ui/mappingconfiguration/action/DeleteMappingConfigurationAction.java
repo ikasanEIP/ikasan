@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.action.Action;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
-import org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
@@ -36,7 +36,7 @@ public class DeleteMappingConfigurationAction implements Action
     private static Logger logger = Logger.getLogger(DeleteRowAction.class);
     
     private Long mappingConfigurationId;
-    private SearchResultsTable searchResultsTable;
+    private MappingConfigurationSearchResultsTable searchResultsTable;
     private MappingConfigurationService mappingConfigurationService;
 
     /**
@@ -46,7 +46,7 @@ public class DeleteMappingConfigurationAction implements Action
      * @param mappingConfirutation
      * @param mappingConfigurationConfigurationValuesTable
      */
-    public DeleteMappingConfigurationAction(Long mappingConfigurationId, SearchResultsTable searchResultsTable,
+    public DeleteMappingConfigurationAction(Long mappingConfigurationId, MappingConfigurationSearchResultsTable searchResultsTable,
             MappingConfigurationService mappingConfigurationService)
     {
         super();
