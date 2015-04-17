@@ -296,4 +296,18 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	{
 		this.getHibernateTemplate().delete(policyLink);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAllPoliciessWithRole(java.lang.String)
+	 */
+	@Override
+	public List<Policy> getAllPoliciesWithRole(String roleName)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
+		 criteria.createCriteria("roles").add(Restrictions.eq("name", roleName));
+
+	     return (List<Policy>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	
 }

@@ -41,13 +41,15 @@
 package org.ikasan.security.model;
 
 import java.util.Date;
+import java.util.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 
 /**
  * @author Ikasan Development Team
  *
  */
-public class Policy implements GrantedAuthority
+public class Policy implements GrantedAuthority, Comparable<Policy>
 {
     /**
 	 * 
@@ -58,6 +60,7 @@ public class Policy implements GrantedAuthority
     private String name = "";
     private String description = "";
     private PolicyLink policyLink;
+    private Set<Role> roles;
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -177,6 +180,22 @@ public class Policy implements GrantedAuthority
 		this.policyLink = policyLink;
 	}
 
+	/**
+	 * @return the roles
+	 */
+	public Set<Role> getRoles()
+	{
+		return roles;
+	}
+
+	/**
+	 * @param roles the roles to set
+	 */
+	public void setRoles(Set<Role> roles)
+	{
+		this.roles = roles;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -257,10 +276,25 @@ public class Policy implements GrantedAuthority
 	public String toString()
 	{
 		return "Policy [id=" + id + ", name=" + name + ", description="
-				+ description + ", policyLink=" + policyLink
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
-	}  
-	
+				+ description + ", policyLink=" + policyLink + ", createdDateTime=" + createdDateTime
+				+ ", updatedDateTime=" + updatedDateTime + "]";
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(Policy policy)
+	{
+		
+		if(policy.hashCode() == this.hashCode())
+		{
+			return 0;
+		}
+		else
+		{
+			return policy.hashCode() - this.hashCode();
+		}
+	}
 	
 }

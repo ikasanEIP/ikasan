@@ -146,6 +146,13 @@ public interface SecurityDao
      * @throws SecurityDaoException
      */
     public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
+    
+    /**
+     * 
+     * @return
+     * @throws SecurityDaoException
+     */
+    public List<Policy> getAllPoliciesWithRole(String roleName);
 
     /**
      * 

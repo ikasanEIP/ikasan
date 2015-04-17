@@ -229,5 +229,11 @@ public interface SecurityService
      * @param policyLink
      */
     public void deletePolicyLink(PolicyLink policyLink);
+    
+    /**
+     * 
+     * @return
+     */
+    public List<Policy> getAllPoliciesWithRole(String roleName);
 }
 
