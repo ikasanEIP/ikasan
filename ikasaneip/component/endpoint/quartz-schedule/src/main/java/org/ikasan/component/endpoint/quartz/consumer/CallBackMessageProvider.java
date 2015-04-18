@@ -43,17 +43,28 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import org.quartz.JobExecutionContext;
 
 /**
- * This generic Message provider Interface invoked by Quartz scheduler.
+ * This generic CallBack Message Provider Interface invoked by Quartz scheduler.
+ *
+ * Rather than simply returning a message to the consumer and allowing the consumer
+ * to manage the invoking of the flow, the callback provider calls back
+ * to have the flow invoked under its own control thus allowing certain
+ * message provider implemenations to be more efficient.
+ * For instance, file line consumers can callback the flow for each line in the file
  *
  * @author Ikasan Development Team
  */
-public interface MessageProvider<MESSAGE>
+public interface CallBackMessageProvider
 {
     /**
-     * Invokes the underlying tech implementation of message provider.
+     * Delegates control to the CallBackMessageProvider implementation.
      *
      * @param context
-     * @return
      */
-    MESSAGE invoke(JobExecutionContext context);
+    void invoke(JobExecutionContext context);
+
+    /**
+     * Set the consumer to be called back on for this provider
+     * @param callBackMessageConsumer
+     */
+    void setCallBackMessageConsumer(CallBackMessageConsumer callBackMessageConsumer);
 }
