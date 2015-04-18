@@ -40,20 +40,18 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.quartz.JobExecutionContext;
-
 /**
- * This generic Message provider Interface invoked by Quartz scheduler.
+ * Contract for a message consumer exposing an interface for callbacks.
  *
  * @author Ikasan Development Team
  */
-public interface MessageProvider<MESSAGE>
+public interface CallBackMessageConsumer<MESSAGE>
 {
     /**
      * Invokes the underlying tech implementation of message provider.
      *
-     * @param context
+     * @param message
      * @return
      */
-    MESSAGE invoke(JobExecutionContext context);
+    void invoke(MESSAGE message);
 }

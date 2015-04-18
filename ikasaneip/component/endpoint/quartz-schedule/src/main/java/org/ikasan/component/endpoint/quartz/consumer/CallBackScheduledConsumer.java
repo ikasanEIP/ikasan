@@ -40,20 +40,73 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.quartz.JobExecutionContext;
+import org.apache.log4j.Logger;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.quartz.*;
 
 /**
- * This generic Message provider Interface invoked by Quartz scheduler.
+ * This implements the CallBackMessageConsumer contract supporting message provider callbacks.
  *
  * @author Ikasan Development Team
  */
-public interface MessageProvider<MESSAGE>
+@DisallowConcurrentExecution
+public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements CallBackMessageConsumer<T>
 {
     /**
-     * Invokes the underlying tech implementation of message provider.
+     * logger
+     */
+    private static Logger logger = Logger.getLogger(CallBackScheduledConsumer.class);
+
+    /**
+     * default messageProvider is set to QuartzMessageProvider - can be overridden via the setter
+     */
+    private CallBackMessageProvider messageProvider;
+
+    /**
+     * Constructor
+     *
+     * @param scheduler
+     */
+    public CallBackScheduledConsumer(Scheduler scheduler)
+    {
+        super(scheduler);
+    }
+
+    @Override
+    public void start()
+    {
+        if(this.messageProvider == null)
+        {
+            throw new IllegalArgumentException("callBackMessageProvider not set. Check you are setting this via the setCallBackMessageProvider(CallBackMessageProvider ..) method.");
+        }
+
+        super.start();
+    }
+
+    /**
+     * Callback from the scheduler.
      *
      * @param context
-     * @return
      */
-    MESSAGE invoke(JobExecutionContext context);
+    @Override
+    public void execute(JobExecutionContext context)
+    {
+        try
+        {
+            messageProvider.invoke(context);
+        }
+        catch (ForceTransactionRollbackException thrownByRecoveryManager)
+        {
+            throw thrownByRecoveryManager;
+        }
+        catch (Throwable thr)
+        {
+            managedResourceRecoveryManager.recover(thr);
+        }
+    }
+
+    public void setCallBackMessageProvider(CallBackMessageProvider messageProvider)
+    {
+        this.messageProvider = messageProvider;
+    }
 }

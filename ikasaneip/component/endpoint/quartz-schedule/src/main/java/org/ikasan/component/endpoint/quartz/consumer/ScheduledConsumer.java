@@ -117,7 +117,10 @@ public class ScheduledConsumer<T>
      */
     private MessageProvider<?> messageProvider = new QuartzMessageProvider();
 
-    private ManagedResourceRecoveryManager managedResourceRecoveryManager;
+    /**
+     * Recovery manager for this Managed Resource and any extending implementations of it
+     */
+    protected ManagedResourceRecoveryManager managedResourceRecoveryManager;
 
     /**
      * Constructor
@@ -214,20 +217,7 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            T message = (T) messageProvider.invoke(context);
-            if (message != null)
-            {
-                FlowEvent<?, ?> flowEvent = createFlowEvent(message);
-                this.eventListener.invoke(flowEvent);
-            }
-            else
-            {
-                if(managedResourceRecoveryManager.isRecovering())
-                {
-                    // cancel the recovery schedule
-                    managedResourceRecoveryManager.cancel();
-                }
-            }
+            this.invoke((T) messageProvider.invoke(context));
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
         {
@@ -236,6 +226,32 @@ public class ScheduledConsumer<T>
         catch (Throwable thr)
         {
             managedResourceRecoveryManager.recover(thr);
+        }
+    }
+
+    /**
+     * Invoke the eventListener with the incoming mes
+     * @param message
+     */
+    public void invoke(T message)
+    {
+        if (message != null)
+        {
+            FlowEvent<?, ?> flowEvent = createFlowEvent(message);
+            this.eventListener.invoke(flowEvent);
+        }
+        else
+        {
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("'null' returned from MessageProvider. Flow not invoked");
+            }
+
+            if(managedResourceRecoveryManager.isRecovering())
+            {
+                // cancel the recovery schedule
+                managedResourceRecoveryManager.cancel();
+            }
         }
     }
 
