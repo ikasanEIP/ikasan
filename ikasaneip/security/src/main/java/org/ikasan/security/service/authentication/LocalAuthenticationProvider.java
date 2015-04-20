@@ -40,6 +40,13 @@
  */
 package org.ikasan.security.service.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
@@ -48,6 +55,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * 
@@ -94,7 +102,28 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 
 		if(user.getPassword().equals(shaPassword))
 		{
-			return new AuthenticationToken();
+			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+			Set<IkasanPrincipal> principals = user.getPrincipals();
+			
+			for(IkasanPrincipal principal: principals)
+			{
+				Set<Role> roles = principal.getRoles();
+				
+				for(Role role: roles)
+				{
+					Set<Policy> policies = role.getPolicies();
+					
+					for(Policy policy: policies)
+					{
+						if(!authorities.contains(policy))
+						{
+							authorities.add(policy);
+						}
+					}
+				}
+			}
+
+	        return new IkasanAuthentication(true, user, authorities);
 		}
 		else
 		{

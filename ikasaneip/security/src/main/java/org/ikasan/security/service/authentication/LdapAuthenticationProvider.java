@@ -50,7 +50,6 @@ import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.SecurityServiceException;
 import org.ikasan.security.service.UserService;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -138,10 +137,12 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         // Authenticate, using the passed-in credentials.
         DirContextOperations authAdapter = authenticator.authenticate(auth);
 
-			User user = this.userService.loadUserByUsername(auth.getName());
-			Set<IkasanPrincipal> principals = user.getPrincipals();
+		User user = this.userService.loadUserByUsername(auth.getName());
+		Set<IkasanPrincipal> principals = user.getPrincipals();
 
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		
+		logger.info("Logging in user: " + user.getName());
 
 		for(IkasanPrincipal principal: principals)
 		{
@@ -151,17 +152,22 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 			{
 				Set<Policy> policies = role.getPolicies();
 				
+				logger.info("User: " + user.getName() + " has role: " + role + " via association wit principal: " + principal);
+				
 				for(Policy policy: policies)
 				{
+					logger.info("Attempting to add granted authority: " + policy);
+					
 					if(!authorities.contains(policy))
 					{
+						logger.info("Adding granted authority: " + policy);
 						authorities.add(policy);
 					}
 				}
 			}
 		}
 
-        return new AuthenticationToken();
+        return new IkasanAuthentication(true, user, authorities);
     }
 
 

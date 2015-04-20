@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.service;
 
-import org.ikasan.security.model.IkasanPrincipal;
+import org.springframework.security.core.Authentication;
 
 /**
  * 
@@ -56,5 +56,5 @@ public interface AuthenticationService
      * @return
      * @throws SecurityServiceException
      */
-    public IkasanPrincipal login(String username, String password) throws AuthenticationServiceException;
+    public Authentication login(String username, String password) throws AuthenticationServiceException;
 }

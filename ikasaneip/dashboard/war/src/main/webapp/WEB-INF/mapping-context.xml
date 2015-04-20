@@ -320,6 +320,7 @@
         <constructor-arg ref="localTxMappingConfigurationService"/>
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
+        <constructor-arg ref="modifyExistingMappingConfigurationVisibilityGroup"/>
     </bean>
 
     <!-- Components -->
@@ -508,4 +509,18 @@
         </property>
     </bean>
     
+    <bean id="modifyExistingMappingConfigurationVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
+        <property name="components">
+            <list>
+                <ref bean="existingMappingConfigurationEditButton" />
+                <ref bean="existingMappingConfigurationSaveButton" />
+                <ref bean="existingMappingConfigurationCancelButton" />
+                <ref bean="existingMappingConfigurationValueNewRecordButton" />
+                <ref bean="existingMappingConfigurationValueDeleteAllButton" />
+                <ref bean="existingMappingConfigurationValueImportButton" />
+                <ref bean="existingMappingConfigurationValueExportButton" />
+                <ref bean="existingMappingConfigurationExportButton" />
+            </list>
+        </property>
+    </bean>
 </beans>

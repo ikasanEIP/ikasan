@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,89 +38,16 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.service.authentication;
-
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-
+package org.ikasan.dashboard.ui.framework.constants;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class AuthenticationToken implements IkasanAuthentication
+public class SecurityConstants
 {
-	private static final long serialVersionUID = 6278479282380900119L;
-
-	private boolean isAuthenticated;
-	private List<GrantedAuthority> authorities;
-
-    /* (non-Javadoc)
-     * @see java.security.Principal#getName()
-     */
-    @Override
-    public String getName()
-    {
-        return "";
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.core.Authentication#getAuthorities()
-     */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
-    {
-        return authorities;
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.core.Authentication#getCredentials()
-     */
-    @Override
-    public Object getCredentials()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.core.Authentication#getDetails()
-     */
-    @Override
-    public Object getDetails()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.core.Authentication#getPrincipal()
-     */
-    @Override
-    public Object getPrincipal()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.core.Authentication#isAuthenticated()
-     */
-    @Override
-    public boolean isAuthenticated()
-    {
-        return isAuthenticated;
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.security.core.Authentication#setAuthenticated(boolean)
-     */
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException
-    {
-    	this.isAuthenticated = isAuthenticated;
-    }
-   
+	public static String ALL_AUTHORITY = "ALL";
+	
+	public static String MAPPING_CONFIGURATION_LINKED_TYPE = "Mapping Configuration";
 }

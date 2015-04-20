@@ -82,10 +82,10 @@ public class AuthenticationServiceImpl implements AuthenticationService
 	 * @see org.ikasan.security.service.AuthenticationService#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public IkasanPrincipal login(String username, String password)
+	public Authentication login(String username, String password)
 			throws AuthenticationServiceException
 	{
-		IkasanPrincipal principal = null;
+		Authentication authentication = null;
 		
 		try
 		{
@@ -94,7 +94,7 @@ public class AuthenticationServiceImpl implements AuthenticationService
 	
 			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
 			
-			Authentication authentication = authProvider.authenticate(auth);
+			authentication = authProvider.authenticate(auth);
 
 			if(authentication == null)
 			{
@@ -106,6 +106,6 @@ public class AuthenticationServiceImpl implements AuthenticationService
 			throw new AuthenticationServiceException(e);
 		}
 
-		return principal;
+		return authentication;
 	}
 }
