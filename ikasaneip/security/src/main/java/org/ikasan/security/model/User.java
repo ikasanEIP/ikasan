@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.model;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,7 +53,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Ikasan Development Team
  * 
  */
-public class User implements UserDetails
+public class User implements UserDetails, Principal
 {
     /** serialVersionUID */
     private static final long serialVersionUID = 8975017088981341914L;
@@ -182,6 +183,15 @@ public class User implements UserDetails
     {
         return enabled;
     }
+    
+    /* (non-Javadoc)
+	 * @see java.security.Principal#getName()
+	 */
+	@Override
+	public String getName()
+	{
+		return username;
+	}
 
     /*
      * (non-Javadoc)
@@ -481,6 +491,5 @@ public class User implements UserDetails
 				+ ", enabled=" + enabled + ", grantedAuthorities="
 				+ grantedAuthorities + ", principals=" + principals + "]";
 	}
-
 	   
 }

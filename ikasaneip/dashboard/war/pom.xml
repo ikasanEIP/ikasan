@@ -22,8 +22,8 @@
 
 	<repositories>
 		<repository>
-			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
+   			<id>vaadin-addons</id>
+   			<url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
 		</repository>
 		<repository>
 			<id>vaadin-snapshots</id>
@@ -80,6 +80,12 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
 			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+		   <groupId>com.vaadin</groupId>
+		   <artifactId>vaadin-testbench</artifactId>
+		   <version>4.0.2</version>
+		   <scope>compile</scope>
 		</dependency>
 		<!-- dependency>
 			<groupId>org.atmosphere</groupId>
@@ -161,7 +167,7 @@
 			<scope>compile</scope>
         </dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
@@ -188,7 +194,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.7</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>

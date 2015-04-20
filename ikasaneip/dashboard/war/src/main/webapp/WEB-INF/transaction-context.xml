@@ -19,6 +19,8 @@
     <aop:config>
         <aop:pointcut id="serviceMethods"
                 expression="execution(* org.ikasan.security.service.*.*(..))"/>
+        <!--  aop:pointcut id="serviceMethods"
+                expression="execution(* javax.servlet.http.HttpServlet.service(..))"/ -->
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>
 
@@ -27,5 +29,5 @@
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
     </tx:advice>
-
+	
 </beans>

@@ -324,8 +324,7 @@ public class NavigationPanel extends Panel
 	public void postCommit() throws CommitException
 	{
 		this.layout.removeComponent(this.loginButton);
-		loggedInUserLabel = new Label("Logged in as "
-				+ this.userDetailsHelper.getUserDetails().getUsername());
+		loggedInUserLabel = new Label("");
 		loggedInUserLabel.setStyleName("ikasan-white");
 		loggedInUserLabel.setVisible(false);
 		this.layout.addComponent(loggedInUserLabel, 1, 0);

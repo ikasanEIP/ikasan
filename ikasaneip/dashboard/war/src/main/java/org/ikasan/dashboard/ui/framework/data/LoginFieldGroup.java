@@ -13,16 +13,15 @@
 package org.ikasan.dashboard.ui.framework.data;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
 import org.ikasan.security.service.UserService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.springframework.security.core.Authentication;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -40,7 +39,6 @@ public class LoginFieldGroup extends FieldGroup
     /** Logger instance */
     private static Logger logger = Logger.getLogger(LoginFieldGroup.class);
     
-    private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
@@ -100,34 +98,17 @@ public class LoginFieldGroup extends FieldGroup
         {
             logger.info("Attempting to validate user: " + username.getValue());
 
-            IkasanPrincipal principal = authenticationService.login(username.getValue(), password.getValue());
+            Authentication authentication = authenticationService.login(username.getValue(), password.getValue());
 
-            logger.info("Loaded principal: " + principal);
-            
-            if(principal != null)
-            {
-	            for(Role role: principal.getRoles())
-	            {
-	                logger.info("Loaded role: " + principal);
-	
-	                for(Policy policy: role.getPolicies())
-	                {
-	                    logger.info("Loaded policy: " + policy);
-	                }
-	            }
-            }
-            
-            User userDetails = userService.loadUserByUsername("admin");
+            logger.info("Loaded authentication: " + authentication);
 
-            this.userDetailsHelper.setUserDetails(userDetails);
-
-            if(isAdminUser(userDetails))
+            if(canAccessAll(authentication))
             {
                 this.visibilityGroup.setVisible(true);
             }
 
             VaadinService.getCurrentRequest().getWrappedSession()
-                .setAttribute(MappingConfigurationUISessionValueConstants.USER, this.userDetailsHelper);
+                .setAttribute(MappingConfigurationUISessionValueConstants.USER, authentication);
         }
         catch (AuthenticationServiceException e)
         {
@@ -143,8 +124,15 @@ public class LoginFieldGroup extends FieldGroup
      * @param userDetails
      * @return
      */
-    private boolean isAdminUser(User userDetails)
+    private boolean canAccessAll(Authentication authentication)
     {
-        return true;
+        if(((IkasanAuthentication)authentication).hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+        {
+        	return true;
+        }
+        else
+        {
+        	return false;
+        }
     }
 }
