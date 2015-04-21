@@ -62,107 +62,92 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-flow</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+              <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-module</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-wiretap</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+              <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-search</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
         </dependency>
 
         <!-- required for unit tests -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
+              <scope>provided</scope>
         </dependency>
 
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-orm</artifactId>
-          <version>3.1.1.RELEASE</version>
-          <scope>provided</scope>
+           <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.5.4-Final</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>1.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.0.5.RELEASE</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>3.0.5.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version> 1.8.0.10</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.8</version>
-            <scope>test</scope>
+           <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.11.0.GA</version>
-            <scope>test</scope>
+              <scope>test</scope>
         </dependency>
 
     </dependencies>

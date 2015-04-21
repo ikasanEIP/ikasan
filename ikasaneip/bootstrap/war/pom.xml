@@ -11,30 +11,25 @@
 		<relativePath />
 	</parent>
 
-	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-bootstrap-war</artifactId>
-    <version>1.0.0-rc4-SNAPSHOT</version>
-	<packaging>war</packaging>
+   	<packaging>war</packaging>
 	<name>Ikasan Enterprise Integration Bootstrap WAR</name>
 
 	<dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-bootstrap</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-        </dependency>
+          </dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>3.1.1.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>3.1.1.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 

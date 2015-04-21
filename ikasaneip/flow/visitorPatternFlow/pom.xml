@@ -56,55 +56,46 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-flow</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-			<scope>provided</scope>
+ 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-event</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-monitor</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-			<scope>provided</scope>
+ 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-recovery-manager</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-			<scope>provided</scope>
+ 			<scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-exclusion</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-management</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-configuration</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>3.5.4-Final</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -118,14 +109,12 @@
         <dependency>
             <groupId>uk.com.robust-it</groupId>
             <artifactId>cloning</artifactId>
-            <version>1.9.0</version>
         </dependency>
 
         <!-- used by replication factory -->
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>1.2</version>
         </dependency>
 
 
