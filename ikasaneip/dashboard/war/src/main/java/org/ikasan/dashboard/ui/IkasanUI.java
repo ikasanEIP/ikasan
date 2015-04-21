@@ -12,7 +12,6 @@ import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 import org.ikasan.setup.persistence.service.PersistenceService;
@@ -53,7 +52,6 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private UserService userService;
     private AuthenticationService authenticationService;
     private VisibilityGroup visibilityGroup;
-    private UserDetailsHelper userDetailsHelper;
     private EditableGroup editableGroup;
     private FunctionalGroup newMappingConfigurationFunctionalGroup;
     private FunctionalGroup existingMappingConfigurationFunctionalGroup;
@@ -67,23 +65,26 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private FeederThread feederThread = new FeederThread();
 
     /**
-     * Constructor
+     * Constructor 
      * 
-     * @param homeTab
      * @param views
      * @param viewComponentContainer
      * @param userService
-     * @param authProvider
+     * @param authenticationService
      * @param visibilityGroup
-     * @param userDetailsHelper
      * @param editableGroup
      * @param newMappingConfigurationFunctionalGroup
      * @param existingMappingConfigurationFunctionalGroup
+     * @param eventBus
+     * @param persistenceServiceFactory
+     * @param persistenceProvider
+     * @param imagePanelLayout
+     * @param navigationPanel
      */
-	public IkasanUI(HashMap views,
+	public IkasanUI(HashMap<String, IkasanUINavigator> views,
 	        ViewComponentContainer viewComponentContainer, UserService userService,
 	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup,
-            UserDetailsHelper userDetailsHelper, EditableGroup editableGroup,
+            EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
             EventBus eventBus, PersistenceServiceFactory<String> persistenceServiceFactory, String persistenceProvider,
             VerticalLayout imagePanelLayout, NavigationPanel navigationPanel)
@@ -93,7 +94,6 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.authenticationService = authenticationService;
 	    this.visibilityGroup = visibilityGroup;
 	    this.viewComponentContainer = viewComponentContainer;
-	    this.userDetailsHelper = userDetailsHelper;
 	    this.editableGroup = editableGroup;
 	    this.newMappingConfigurationFunctionalGroup = newMappingConfigurationFunctionalGroup;
 	    this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;

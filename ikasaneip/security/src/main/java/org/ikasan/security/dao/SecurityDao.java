@@ -204,4 +204,10 @@ public interface SecurityDao
      */
     public List<Policy> getPolicyByNameLike(String name);
 
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<Role> getRoleByNameLike(String name);
 }

@@ -86,7 +86,7 @@ public class PolicyManagementPanel extends Panel implements View
 	private PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow;
 	private Policy policy = new Policy();
 	private AutocompleteField<Policy> policyNameField;
-	private TextField descriptionField;
+	private TextArea descriptionField;
 	private BeanItem<Policy> policyItem;
 	private Long associatedEntityId;
 	private TextArea linkedEntity;
@@ -157,8 +157,9 @@ public class PolicyManagementPanel extends Panel implements View
 		gridLayout.addComponent(policyNameFieldWrap, 1, 1);
 
 		Label descriptionLabel = new Label("Description");
-		this.descriptionField = new TextField();
+		this.descriptionField = new TextArea();
 		this.descriptionField.setWidth("80%");
+		this.descriptionField.setHeight("60px");
 		gridLayout.addComponent(descriptionLabel, 0, 2);
 		gridLayout.addComponent(descriptionField, 1, 2);
 		
@@ -181,7 +182,7 @@ public class PolicyManagementPanel extends Panel implements View
     	final Label linkedEntityLabel = new Label("Linked to");
 		linkedEntity = new TextArea();
 		linkedEntity.setWidth("80%");
-		linkedEntity.setHeight("30px");
+		linkedEntity.setHeight("60px");
 		
     	gridLayout.addComponent(linkedEntityLabel, 0, 5);
 		gridLayout.addComponent(linkedEntity, 1, 5);
@@ -191,7 +192,7 @@ public class PolicyManagementPanel extends Panel implements View
             // inline close-listener
             public void windowClose(CloseEvent e) {
             	PolicyManagementPanel.this.linkedEntity.setValue
-            		(policyAssociationMappingSearchWindow.getMappingConfiguration().toString());
+            		(policyAssociationMappingSearchWindow.getMappingConfiguration().toStringLite());
             	PolicyManagementPanel.this.associatedEntityId 
             		= PolicyManagementPanel.this.policyAssociationMappingSearchWindow.getMappingConfiguration().getId();
             }
@@ -415,7 +416,7 @@ public class PolicyManagementPanel extends Panel implements View
 		final DragAndDropWrapper policyNameFieldWrap = new DragAndDropWrapper(
 				policyNameField);
 		policyNameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		policyNameFieldWrap.setSizeUndefined();
+		policyNameFieldWrap.setWidth("80%");
 		
 		// In order to have the auto complete work we must add a query listener.
 		// The query listener gets activated when a user begins to type into 
@@ -451,7 +452,7 @@ public class PolicyManagementPanel extends Panel implements View
 				if(PolicyManagementPanel.this.policy.getPolicyLink() != null)
 				{
 					PolicyManagementPanel.this.linkTypeCombo.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getPolicyLinkType());
-					PolicyManagementPanel.this.linkedEntity.setValue(Long.toString(PolicyManagementPanel.this.policy.getPolicyLink().getTargetId()));
+					PolicyManagementPanel.this.linkedEntity.setValue(PolicyManagementPanel.this.policy.getPolicyLink().getName());
 				}
 				else
 				{
@@ -644,7 +645,9 @@ public class PolicyManagementPanel extends Panel implements View
 		if(this.linkTypeCombo.getValue() != null)
 		{
 			PolicyLinkType policyLinkType = (PolicyLinkType)this.linkTypeCombo.getValue();
-			PolicyLink policyLink = new PolicyLink(policyLinkType, this.associatedEntityId);
+			String linkedEntityName = this.linkedEntity.getValue();
+			PolicyLink policyLink = new PolicyLink(policyLinkType, 
+					this.associatedEntityId, linkedEntityName);
 			
 			this.securityService.savePolicyLink(policyLink);
 			
@@ -678,19 +681,32 @@ public class PolicyManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
+		Role selectedRole = (Role)this.rolesCombo.getValue();
+		
+		this.rolesCombo.removeAllItems();
+		
 		for(Role role: roles)
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
+			
+			if(roles.contains(role))
+			{
+				this.rolesCombo.setValue(selectedRole);
+			}
 		}
 		
 		List<PolicyLinkType> policyLinkTypes = this.securityService.getAllPolicyLinkTypes();
+		
+		this.linkTypeCombo.removeAllItems();
 		
 		for(PolicyLinkType policyLinkType: policyLinkTypes)
 		{
 			this.linkTypeCombo.addItem(policyLinkType);
 			this.linkTypeCombo.setItemCaption(policyLinkType, policyLinkType.getName());
 		}
+		
+		this.policyNameField.clearChoices();
 	}
 
 }

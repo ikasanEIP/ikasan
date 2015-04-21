@@ -22,11 +22,9 @@ import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.UserService;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.Navigator;
@@ -57,10 +55,8 @@ public class NavigationPanel extends Panel
 	/** Logger instance */
 	private static Logger logger = Logger.getLogger(NavigationPanel.class);
 
-	private UserService userService;
 	private AuthenticationService authenticationService;
 	private VisibilityGroup visibilityGroup;
-	private UserDetailsHelper userDetailsHelper;
 	private Button loginButton;
 	private Button logoutButton;
 	private EditableGroup editableGroup;
@@ -79,29 +75,25 @@ public class NavigationPanel extends Panel
 	private MenuBar utilityMenu = new MenuBar();
 
 	/**
-	 * Constructor
 	 * 
-	 * @param userService
-	 * @param authProvider
+	 * @param authenticationService
 	 * @param visibilityGroup
-	 * @param userDetailsHelper
 	 * @param editableGroup
 	 * @param newMappingConfigurationFunctionalGroup
 	 * @param existingMappingConfigurationFunctionalGroup
+	 * @param imagePanelLayout
+	 * @param views
 	 */
-	public NavigationPanel(UserService userService,
-			AuthenticationService authenticationService,
+	public NavigationPanel(AuthenticationService authenticationService,
 			VisibilityGroup visibilityGroup,
-			UserDetailsHelper userDetailsHelper, EditableGroup editableGroup,
+			EditableGroup editableGroup,
 			FunctionalGroup newMappingConfigurationFunctionalGroup,
 			FunctionalGroup existingMappingConfigurationFunctionalGroup,
 			VerticalLayout imagePanelLayout,
 			HashMap<String, IkasanUINavigator> views)
 	{
-		this.userService = userService;
 		this.authenticationService = authenticationService;
 		this.visibilityGroup = visibilityGroup;
-		this.userDetailsHelper = userDetailsHelper;
 		this.editableGroup = editableGroup;
 		this.newMappingConfigurationFunctionalGroup = newMappingConfigurationFunctionalGroup;
 		this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;
@@ -134,8 +126,7 @@ public class NavigationPanel extends Panel
 		this.layout.addComponent(actionMenu, 0, 0);
 		this.layout.setComponentAlignment(actionMenu, Alignment.MIDDLE_LEFT);
 
-		final LoginDialog dialog = new LoginDialog(userService,
-				this.authenticationService, visibilityGroup, userDetailsHelper,
+		final LoginDialog dialog = new LoginDialog(this.authenticationService, visibilityGroup,
 				this);
 
 		this.loginButton = new Button("Login");
@@ -306,7 +297,7 @@ public class NavigationPanel extends Panel
 	protected void manageLogout()
 	{
 		LogoutAction action = new LogoutAction(this.visibilityGroup,
-				this.userDetailsHelper, this.editableGroup, this.layout,
+				this.editableGroup, this.layout,
 				this.loginButton, this.utilityMenu, this.loggedInUserLabel);
 
 		IkasanMessageDialog dialog = new IkasanMessageDialog("Logout",

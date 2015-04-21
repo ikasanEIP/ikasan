@@ -52,6 +52,7 @@ public class PolicyLink
 	private Long id;
 	private PolicyLinkType policyLinkType;
 	private Long targetId;
+	private String name;
 	
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -73,11 +74,12 @@ public class PolicyLink
 	 * @param targetId
 	 * @param createdDateTime
 	 */
-	public PolicyLink(PolicyLinkType policyLinkType, Long targetId)
+	public PolicyLink(PolicyLinkType policyLinkType, Long targetId, String name)
 	{
 		super();
 		this.policyLinkType = policyLinkType;
 		this.targetId = targetId;
+		this.name = name;
 		long now = System.currentTimeMillis();
 		this.createdDateTime = new Date(now);
         this.updatedDateTime = new Date(now);
@@ -133,6 +135,22 @@ public class PolicyLink
 	}
 
 	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/**
 	 * @return the createdDateTime
 	 */
 	public Date getCreatedDateTime()
@@ -175,6 +193,7 @@ public class PolicyLink
 		result = prime * result
 				+ ((createdDateTime == null) ? 0 : createdDateTime.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((policyLinkType == null) ? 0 : policyLinkType.hashCode());
 		result = prime * result
@@ -209,6 +228,12 @@ public class PolicyLink
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (name == null)
+		{
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
 		if (policyLinkType == null)
 		{
 			if (other.policyLinkType != null)
@@ -237,8 +262,8 @@ public class PolicyLink
 	public String toString()
 	{
 		return "PolicyLink [id=" + id + ", policyLinkType=" + policyLinkType
-				+ ", targetId=" + targetId + ", createdDateTime="
-				+ createdDateTime + ", updatedDateTime=" + updatedDateTime
-				+ "]";
-	} 
+				+ ", targetId=" + targetId + ", name=" + name
+				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
+				+ updatedDateTime + "]";
+	}
 }

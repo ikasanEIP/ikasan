@@ -60,7 +60,7 @@ import org.ikasan.security.model.Role;
  */
 public class SecurityServiceImpl implements SecurityService
 {
-    /** Logger instance */
+	/** Logger instance */
     private static Logger logger = Logger.getLogger(SecurityServiceImpl.class);
     
     private SecurityDao securityDao;
@@ -321,5 +321,14 @@ public class SecurityServiceImpl implements SecurityService
 	public List<Policy> getAllPoliciesWithRole(String roleName)
 	{
 		return this.securityDao.getAllPoliciesWithRole(roleName);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.SecurityService#getRoleByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<Role> getRoleByNameLike(String name)
+	{
+		return this.securityDao.getRoleByNameLike(name);
 	}
 }

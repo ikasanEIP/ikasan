@@ -17,12 +17,8 @@ import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.ikasan.dashboard.ui.administration.window.NewPolicyWindow;
-import org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow;
-import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.dashboard.ui.administration.window.NewRoleWindow;
 import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
@@ -37,11 +33,10 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
 import com.vaadin.ui.GridLayout;
@@ -51,13 +46,13 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.Table.TableDragMode;
-import com.vaadin.ui.Window.CloseEvent;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.themes.Reindeer;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
@@ -76,21 +71,18 @@ public class RoleManagementPanel extends Panel implements View
 	private UserService userService;
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
-	private ComboBox linkTypeCombo  = new ComboBox();
-	private Panel associatedRolesPanel;
 	private Panel policyDropPanel;
-	private Table roleTable;
-	private Table policyDropTable;
-	private Button linkButton = new Button("Link");
+	private Table policyTable;;
 	private Button newButton = new Button("New");
 	private Button saveButton = new Button("Save");
 	private Button deleteButton = new Button("Delete");
-	private Policy policy = new Policy();
+	private Role role = new Role();
+	private AutocompleteField<Role> roleNameField;
 	private AutocompleteField<Policy> policyNameField;
-	private TextField descriptionField;
-	private BeanItem<Policy> policyItem;
-	private Long associatedEntityId;
-	private TextArea linkedEntity;
+	private TextArea descriptionField;
+	private BeanItem<Role> roleItem;
+	private DragAndDropWrapper policyNameFieldWrap;
+	
 	/**
 	 * Constructor
 	 * 
@@ -119,15 +111,15 @@ public class RoleManagementPanel extends Panel implements View
 	{
 		this.setWidth("100%");
 		this.setHeight("100%");
-		
-		this.createAssociatedRolesPanel();
+
+		this.initPolicyNameField();
 		this.createPolicyDropPanel();
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSizeFull();
 
-		Panel securityAdministrationPanel = new Panel("Policy Management");
+		Panel securityAdministrationPanel = new Panel("Role Management");
 		securityAdministrationPanel.setStyleName("dashboard");
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
@@ -143,95 +135,26 @@ public class RoleManagementPanel extends Panel implements View
 		
     	gridLayout.addComponent(controlLayout, 0, 0, 1, 0);
     	
-    	Label policyNameLabel = new Label("Policy Name");
-		final DragAndDropWrapper policyNameFieldWrap = initPolicyNameField();
+    	Label policyNameLabel = new Label("Role Name");
+		initRoleNameField();
 		
 		gridLayout.addComponent(policyNameLabel, 0, 1);
-		gridLayout.addComponent(policyNameFieldWrap, 1, 1);
+		gridLayout.addComponent(this.roleNameField, 1, 1);
 
 		Label descriptionLabel = new Label("Description");
-		this.descriptionField = new TextField();
+		this.descriptionField = new TextArea();
 		this.descriptionField.setWidth("80%");
+		this.descriptionField.setHeight("60px");
 		gridLayout.addComponent(descriptionLabel, 0, 2);
-		gridLayout.addComponent(descriptionField, 1, 2);
-		
-		Label linkTypeLabel = new Label("Policy Link Type");
-		gridLayout.addComponent(linkTypeLabel, 0, 3);
-		gridLayout.addComponent(this.linkTypeCombo, 1, 3);
-		
-		linkButton.setStyleName(Reindeer.BUTTON_LINK);
-    	linkButton.setVisible(false);
-    	linkButton.addClickListener(new Button.ClickListener() 
-    	{
-            public void buttonClick(ClickEvent event) 
-            {
-            	
-            }
-        });
-    	gridLayout.addComponent(this.linkButton, 1, 4);
-    	
-    	final Label linkedEntityLabel = new Label("Linked to");
-		linkedEntity = new TextArea();
-		linkedEntity.setWidth("80%");
-		linkedEntity.setHeight("30px");
-		
-    	gridLayout.addComponent(linkedEntityLabel, 0, 5);
-		gridLayout.addComponent(linkedEntity, 1, 5);
-		
-		this.linkTypeCombo.addValueChangeListener(new Property.ValueChangeListener() {
-		    public void valueChange(ValueChangeEvent event) {
-		        final PolicyLinkType policyLinkType = (PolicyLinkType)event.getProperty().getValue();
-		        
-		        if(policyLinkType != null)
-		        {		        	
-		        	linkButton.setVisible(true);
-		        	linkedEntityLabel.setVisible(true);
-		        	linkedEntity.setVisible(true);
-		        	
-		        }
-		        else
-		        {
-		        	linkButton.setVisible(false);
-		        	linkedEntityLabel.setVisible(false);
-		        	linkedEntity.setVisible(false);
-		        }
-		    }
-		});
-		
-//		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 5, 1, 5);
-
-		gridLayout.addComponent(this.associatedRolesPanel, 0, 6, 1, 6);
-			
+		gridLayout.addComponent(descriptionField, 1, 2);  	
+					
 		gridLayout.addComponent(this.policyDropPanel, 2, 0, 2, 15);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
 		this.setContent(layout);
-	}
-
-	/**
-	 * Helper method to create the associated roles panel.
-	 */
-	protected void createAssociatedRolesPanel()
-	{
-		this.associatedRolesPanel = new Panel("Roles Associated with this Policy");
-		this.associatedRolesPanel.setStyleName("dashboard");
-		this.associatedRolesPanel.setHeight("600px");
-		this.associatedRolesPanel.setWidth("100%");
 		
-		this.roleTable = new Table();
-		this.roleTable.addContainerProperty("Role", String.class, null);
-		this.roleTable.addContainerProperty("", Button.class, null);
-		this.roleTable.setHeight("400px");
-		this.roleTable.setWidth("300px");
-		
-		VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
-		layout.setWidth("100%");
-		layout.setHeight("100%");
-		layout.addComponent(this.roleTable);
-		
-		this.associatedRolesPanel.setContent(layout);
+		this.rolesCombo.setVisible(false);
 	}
 
 	/**
@@ -246,50 +169,62 @@ public class RoleManagementPanel extends Panel implements View
 		this.policyDropPanel.setWidth("100%");
 		
 		this.rolesCombo = new ComboBox();
-		this.rolesCombo.addValueChangeListener(new Property.ValueChangeListener() {
-		    public void valueChange(ValueChangeEvent event) {
+		this.rolesCombo.addValueChangeListener(new Property.ValueChangeListener() 
+		{
+		    public void valueChange(ValueChangeEvent event)
+		    {		    	
+		    	RoleManagementPanel.this.policyTable.removeAllItems();
 		        final Role role = (Role)event.getProperty().getValue();
 
-		        List<Policy> policies = securityService.getAllPoliciesWithRole(role.getName());
-				
-		        RoleManagementPanel.this.policyDropTable.removeAllItems();
-				
-				
-				for(final Policy policy: policies)
-				{
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-					
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {
-			            	role.getPolicies().remove(policy);			            	
-			            	RoleManagementPanel.this.saveRole(role);
-			            	
-			            	RoleManagementPanel.this.policyDropTable.removeItem(policy.getName());			            	
-			            	RoleManagementPanel.this.roleTable.removeItem(role);
-			            }
-			        });
-					
-					
-					RoleManagementPanel.this.policyDropTable.addItem(new Object[]
-							{ policy.getName(), deleteButton }, policy.getName());
-				}
+		        if(role != null)
+		        {
+			        List<Policy> policies = securityService.getAllPoliciesWithRole(role.getName());
+														
+					for(final Policy policy: policies)
+					{
+						Button deleteButton = new Button();
+						ThemeResource deleteIcon = new ThemeResource(
+								"images/remove-icon.png");
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {
+				            	Policy selectedPolicy = RoleManagementPanel.this.securityService
+										.findPolicyByName(policy.getName());
+				            	
+				            	logger.info("Trying to remove policy: " + selectedPolicy);
+								
+								Role selectedRole = RoleManagementPanel.this.securityService
+										.findRoleByName(role.getName());
+								
+								logger.info("From role: " + selectedRole);
+								
+				            	selectedRole.getPolicies().remove(selectedPolicy);		            	
+				            	RoleManagementPanel.this.saveRole(selectedRole);
+				            	
+				            	RoleManagementPanel.this.policyTable.removeItem(policy.getName());			            	
+				            }
+				        });
+						
+						
+						RoleManagementPanel.this.policyTable.addItem(new Object[]
+								{ policy.getName(), deleteButton }, policy.getName());
+					}
+		        }
 		    }
 		});
 		
-		this.policyDropTable = new Table();
-		this.policyDropTable.addContainerProperty("Role Policies", String.class, null);
-		this.policyDropTable.addContainerProperty("", Button.class, null);
-		this.policyDropTable.setHeight("400px");
-		this.policyDropTable.setWidth("300px");
+		this.policyTable = new Table();
+		this.policyTable.addContainerProperty("Role Policies", String.class, null);
+		this.policyTable.addContainerProperty("", Button.class, null);
+		this.policyTable.setHeight("400px");
+		this.policyTable.setWidth("300px");
 		
-		this.policyDropTable.setDragMode(TableDragMode.ROW);
-		this.policyDropTable.setDropHandler(new DropHandler()
+		this.policyTable.setDragMode(TableDragMode.ROW);
+		this.policyTable.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -309,57 +244,42 @@ public class RoleManagementPanel extends Panel implements View
 				ThemeResource deleteIcon = new ThemeResource(
 						"images/remove-icon.png");
 				deleteButton.setIcon(deleteIcon);
-				deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-				
-				final Policy policy = RoleManagementPanel.this.securityService
-						.findPolicyByName(sourceContainer.getText());
-				
-				final Role selectedRole = RoleManagementPanel.this.securityService
-						.findRoleByName(((Role)rolesCombo.getValue()).getName());
+				deleteButton.setStyleName(Reindeer.BUTTON_LINK);				
 				
 				deleteButton.addClickListener(new Button.ClickListener() 
 		        {
 		            public void buttonClick(ClickEvent event) 
 		            {	
+		            	Policy policy = RoleManagementPanel.this.securityService
+								.findPolicyByName(sourceContainer.getText());
+		            	
+		            	logger.info("Trying to remove policy: " + policy);
+						
+						Role selectedRole = RoleManagementPanel.this.securityService
+								.findRoleByName(((Role)rolesCombo.getValue()).getName());
+						
+						logger.info("From role: " + selectedRole);
+						
 		            	selectedRole.getPolicies().remove(policy);		            	
 		            	RoleManagementPanel.this.saveRole(selectedRole);
 		            	
-		            	policyDropTable.removeItem(policy.getName());
-		            	roleTable.removeItem(selectedRole);
+		            	RoleManagementPanel.this.policyTable.removeItem(policy.getName());
 		            }
 		        });
 				
-				RoleManagementPanel.this.policyDropTable.addItem(new Object[]
-						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
+				Policy policy = RoleManagementPanel.this.securityService
+						.findPolicyByName(sourceContainer.getText());
+				
+				Role selectedRole = RoleManagementPanel.this.securityService
+						.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
 
 				selectedRole.getPolicies().add(policy);
 				
 				RoleManagementPanel.this.saveRole(selectedRole);
-				policy.getRoles().add(selectedRole);
+				
+				RoleManagementPanel.this.policyTable.addItem(new Object[]
+						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
 
-				RoleManagementPanel.this.roleTable.removeAllItems();
-
-				for (final Role role : policy.getRoles())
-				{
-					Button roleDeleteButton = new Button();
-					roleDeleteButton.setIcon(deleteIcon);
-					roleDeleteButton.setStyleName(Reindeer.BUTTON_LINK);
-					
-					roleDeleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {			            	
-			            	selectedRole.getPolicies().remove(policy);
-			            	RoleManagementPanel.this.saveRole(selectedRole);
-			            	
-			            	RoleManagementPanel.this.roleTable.removeItem(role);
-			            	RoleManagementPanel.this.policyDropTable.removeItem(policy.getName());
-			            }
-			        }); 
-					
-					RoleManagementPanel.this.roleTable.addItem(new Object[]
-							{ role.getName(), roleDeleteButton }, role);
-				}
 			}
 
 			@Override
@@ -375,28 +295,110 @@ public class RoleManagementPanel extends Panel implements View
 		layout.setHeight("100%");
 		layout.addComponent(this.rolesCombo);
 		layout.setExpandRatio(this.rolesCombo, 0.05f);
-		layout.addComponent(this.policyDropTable);
-		layout.setExpandRatio(this.policyDropTable, 0.95f);
+		layout.addComponent(this.policyNameFieldWrap);
+		layout.setExpandRatio(this.policyNameFieldWrap, 0.05f);
+		layout.addComponent(this.policyTable);
+		layout.setExpandRatio(this.policyTable, 0.90f);
 		
 		this.policyDropPanel.setContent(layout);
 	}
 
 	/**
-	 * Helper method to initialise behaviour of the policy name field.
+	 * Helper method to initialise behaviour of the role name field.
 	 * 
 	 * @return
 	 */
-	protected DragAndDropWrapper initPolicyNameField()
+	protected void initRoleNameField()
+	{
+		// The policy field name is an autocomplete field.
+		this.roleNameField = new AutocompleteField<Role>();
+		this.roleNameField.setWidth("80%");
+		
+		// In order to have the auto complete work we must add a query listener.
+		// The query listener gets activated when a user begins to type into 
+		// the field and hits the database looking for suggestions.
+		roleNameField.setQueryListener(new AutocompleteQueryListener<Role>()
+		{
+			@Override
+			public void handleUserQuery(AutocompleteField<Role> field,
+					String query)
+			{
+				// Iterate over the returned results and add them as suggestions
+				for (Role role : securityService.getRoleByNameLike(query))
+				{
+					field.addSuggestion(role, role.getName());
+				}
+			}
+		});
+
+		// Once a suggestion is selected the listener below gets fired and we populate
+		// associated fields as required.
+		roleNameField.setSuggestionPickedListener(new AutocompleteSuggestionPickedListener<Role>()
+		{
+			@Override
+			public void onSuggestionPicked(final Role pickedRole)
+			{
+				RoleManagementPanel.this.role = pickedRole;
+				
+				// Populate all the policy related fields.
+				RoleManagementPanel.this.roleItem = new BeanItem<Role>(RoleManagementPanel.this.role);
+				RoleManagementPanel.this.roleNameField.setPropertyDataSource(roleItem.getItemProperty("name"));
+				RoleManagementPanel.this.descriptionField.setPropertyDataSource(roleItem.getItemProperty("description"));
+				
+				RoleManagementPanel.this.policyTable.removeAllItems();
+								
+				for(final Policy policy: role.getPolicies())
+				{
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	Policy selectedPolicy = RoleManagementPanel.this.securityService
+									.findPolicyByName(policy.getName());
+			            	
+			            	logger.info("Trying to remove policy: " + selectedPolicy);
+							
+							Role selectedRole = RoleManagementPanel.this.securityService
+									.findRoleByName(role.getName());
+							
+							logger.info("From role: " + selectedRole);
+							
+			            	selectedRole.getPolicies().remove(selectedPolicy);		            	
+			            	RoleManagementPanel.this.saveRole(selectedRole);
+			            	
+			            	RoleManagementPanel.this.policyTable.removeItem(policy.getName());			            	
+			            }
+			        });
+					
+					
+					RoleManagementPanel.this.policyTable.addItem(new Object[]
+							{ policy.getName(), deleteButton }, policy.getName());
+				}
+	        }
+		});
+	}
+
+	/**
+	 * Helper method to initialise behaviour of the role name field.
+	 * 
+	 * @return
+	 */
+	protected void initPolicyNameField()
 	{
 		// The policy field name is an autocomplete field.
 		this.policyNameField = new AutocompleteField<Policy>();
 		this.policyNameField.setWidth("80%");
-
-		// We also want it to be drag and drop friendly.
-		final DragAndDropWrapper policyNameFieldWrap = new DragAndDropWrapper(
-				policyNameField);
+		
+		policyNameFieldWrap = new DragAndDropWrapper(
+				this.policyNameField);
 		policyNameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		policyNameFieldWrap.setSizeUndefined();
+		policyNameFieldWrap.setWidth("80%");
 		
 		// In order to have the auto complete work we must add a query listener.
 		// The query listener gets activated when a user begins to type into 
@@ -422,62 +424,9 @@ public class RoleManagementPanel extends Panel implements View
 			@Override
 			public void onSuggestionPicked(final Policy pickedPolicy)
 			{
-				RoleManagementPanel.this.policy = pickedPolicy;
-				
-				// Populate all the policy related fields.
-				RoleManagementPanel.this.policyItem = new BeanItem<Policy>(RoleManagementPanel.this.policy);
-				RoleManagementPanel.this.policyNameField.setPropertyDataSource(policyItem.getItemProperty("name"));
-				RoleManagementPanel.this.descriptionField.setPropertyDataSource(policyItem.getItemProperty("description"));
-		        
-				if(RoleManagementPanel.this.policy.getPolicyLink() != null)
-				{
-					RoleManagementPanel.this.linkTypeCombo.setValue(RoleManagementPanel.this.policy.getPolicyLink().getPolicyLinkType());
-					RoleManagementPanel.this.linkedEntity.setValue(Long.toString(RoleManagementPanel.this.policy.getPolicyLink().getTargetId()));
-				}
-				else
-				{
-					RoleManagementPanel.this.linkTypeCombo.setValue(null);
-					RoleManagementPanel.this.linkedEntity.setValue(new String());
-					
-					RoleManagementPanel.this.linkButton.setVisible(false);
-            		RoleManagementPanel.this.linkedEntity.setVisible(false);
-				}
-				
-				roleTable.removeAllItems();
-
-				// Add all the associated roles to the role table.
-				for (final Role role : policy.getRoles())
-				{
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-					
-					// Add the delete functionality to each role that is added
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {		
-			            	// Update the roles associated with policy
-			            	// and update in the DB.
-			            	policy.getRoles().remove(role);			            	
-			            	RoleManagementPanel.this.savePolicy(policy);
-			            	
-			            	// Once we are happy that the DB call was fine
-			            	// update the UI components to reflect the change.
-			            	roleTable.removeItem(role);
-			            	policyDropTable.removeItem(policy.getName());
-			            }
-			        });
-					
-					roleTable.addItem(new Object[]
-							{ role.getName(), deleteButton }, role);
-				}
+				// Nothing to do
 			}
 		});
-		
-		return policyNameFieldWrap;
 	}
 
 	/**
@@ -490,25 +439,18 @@ public class RoleManagementPanel extends Panel implements View
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	final NewPolicyWindow newPolicyWindow = new NewPolicyWindow();
-                UI.getCurrent().addWindow(newPolicyWindow);
+            	final NewRoleWindow newRoleWindow = new NewRoleWindow();
+                UI.getCurrent().addWindow(newRoleWindow);
                 
-                newPolicyWindow.addCloseListener(new Window.CloseListener() {
+                newRoleWindow.addCloseListener(new Window.CloseListener() {
                     // inline close-listener
                     public void windowClose(CloseEvent e) {
-                    	RoleManagementPanel.this.policy = newPolicyWindow.getPolicy();
+                    	RoleManagementPanel.this.role = newRoleWindow.getRole();
                 		
-                    	RoleManagementPanel.this.policyItem = new BeanItem<Policy>(RoleManagementPanel.this.policy);
-                		RoleManagementPanel.this.policyNameField.setText(RoleManagementPanel.this.policy.getName());
-                		RoleManagementPanel.this.policyNameField.setPropertyDataSource(policyItem.getItemProperty("name"));
-                		RoleManagementPanel.this.descriptionField.setPropertyDataSource(policyItem.getItemProperty("description"));
-                		RoleManagementPanel.this.linkTypeCombo.setValue(null);
-                		RoleManagementPanel.this.linkedEntity.setValue(new String());
-                		
-                		RoleManagementPanel.this.linkButton.setVisible(false);
-                		RoleManagementPanel.this.linkedEntity.setVisible(false);
-
-                		RoleManagementPanel.this.roleTable.removeAllItems();
+                    	RoleManagementPanel.this.roleItem = new BeanItem<Role>(RoleManagementPanel.this.role);
+                		RoleManagementPanel.this.roleNameField.setText(RoleManagementPanel.this.role.getName());
+                		RoleManagementPanel.this.roleNameField.setPropertyDataSource(roleItem.getItemProperty("name"));
+                		RoleManagementPanel.this.descriptionField.setPropertyDataSource(roleItem.getItemProperty("description"));
                     }
                 });
             }
@@ -522,6 +464,10 @@ public class RoleManagementPanel extends Panel implements View
             	try
             	{
             		RoleManagementPanel.this.save();
+            		
+            		RoleManagementPanel.this.rolesCombo.addItem(RoleManagementPanel.this.role);
+            		RoleManagementPanel.this.rolesCombo.setItemCaption(RoleManagementPanel.this.role
+            				, RoleManagementPanel.this.role.getName());
             		
             		Notification.show("Saved");
             	}
@@ -544,7 +490,20 @@ public class RoleManagementPanel extends Panel implements View
             {
             	try
             	{
-            		RoleManagementPanel.this.securityService.deletePolicy(policy);
+            		RoleManagementPanel.this.securityService.deleteRole(role);
+            		
+            		RoleManagementPanel.this.roleNameField.setText("");
+            		RoleManagementPanel.this.descriptionField.setValue("");
+            		
+            		logger.info("Combo value: " + RoleManagementPanel.this.rolesCombo.getValue());
+            		logger.info("Role: " + role);
+            		
+            		if(RoleManagementPanel.this.rolesCombo.getValue().equals(role))
+            		{
+            			RoleManagementPanel.this.rolesCombo.setValue(null);
+            		}
+            		
+            		RoleManagementPanel.this.rolesCombo.removeItem(role);
             		
             		Notification.show("Deleted");
             	}
@@ -577,27 +536,6 @@ public class RoleManagementPanel extends Panel implements View
 	
 	/**
 	 * 
-	 * @param policy
-	 */
-	protected void savePolicy(Policy policy)
-	{
-		try
-		{
-			this.securityService.savePolicy(policy);
-		}
-		catch(RuntimeException e)
-		{
-			StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            
-    		Notification.show("Caught exception trying to save a Policy!", sw.toString()
-                , Notification.Type.ERROR_MESSAGE);
-		}
-	}
-	
-	/**
-	 * 
 	 * @param role
 	 */
 	protected void saveRole(Role role)
@@ -622,29 +560,7 @@ public class RoleManagementPanel extends Panel implements View
 	 */
 	protected void save()
 	{
-		if(this.linkTypeCombo.getValue() != null)
-		{
-			PolicyLinkType policyLinkType = (PolicyLinkType)this.linkTypeCombo.getValue();
-			PolicyLink policyLink = new PolicyLink(policyLinkType, this.associatedEntityId);
-			
-			this.securityService.savePolicyLink(policyLink);
-			
-			this.policy.setPolicyLink(policyLink);
-			
-			this.securityService.savePolicy(this.policy);
-		}
-		else
-		{
-			PolicyLink policyLink = this.policy.getPolicyLink();
-			this.policy.setPolicyLink(null);
-			
-			this.securityService.savePolicy(this.policy);
-			
-			if(policyLink != null)
-			{
-				this.securityService.deletePolicyLink(policyLink);
-			}
-		}
+		this.securityService.saveRole(this.role);
 	}
 
 	/*
@@ -659,19 +575,22 @@ public class RoleManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
+		Role selectedRole = (Role)this.rolesCombo.getValue();
+		
+		this.rolesCombo.removeAllItems();
+		
 		for(Role role: roles)
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
+			
+			if(roles.contains(role))
+			{
+				this.rolesCombo.setValue(selectedRole);
+			}
 		}
 		
-		List<PolicyLinkType> policyLinkTypes = this.securityService.getAllPolicyLinkTypes();
-		
-		for(PolicyLinkType policyLinkType: policyLinkTypes)
-		{
-			this.linkTypeCombo.addItem(policyLinkType);
-			this.linkTypeCombo.setItemCaption(policyLinkType, policyLinkType.getName());
-		}
+		this.policyNameField.clearChoices();
+		this.roleNameField.clearChoices();
 	}
-
 }

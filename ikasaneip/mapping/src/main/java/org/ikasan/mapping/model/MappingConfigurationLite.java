@@ -198,6 +198,15 @@ public class MappingConfigurationLite implements Serializable
 				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
 				+ updatedDateTime + "]";
 	}
+	
+	/**
+	 * Light version of string representation
+	 * @return
+	 */
+	public String toStringLite() {
+		return "MappingConfiguration Id =" + id + " " + configurationServiceClient.getName()
+				+ " " + configurationType.getName() + " " + sourceContext.getName()  + " " + targetContext.getName(); 
+	}
 
 	@Override
 	public int hashCode() {

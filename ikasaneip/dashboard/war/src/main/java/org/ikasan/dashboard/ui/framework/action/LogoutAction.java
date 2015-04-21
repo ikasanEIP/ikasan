@@ -14,8 +14,9 @@ package org.ikasan.dashboard.ui.framework.action;
 
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -30,7 +31,6 @@ import com.vaadin.ui.UI;
 public class LogoutAction implements Action
 {
     private VisibilityGroup visibilityGroup;
-    private UserDetailsHelper userDetailsHelper;
     private EditableGroup editableGroup;
     private GridLayout layout;
     private Button loginButton;
@@ -41,18 +41,16 @@ public class LogoutAction implements Action
      * Constructor
      * 
      * @param visibilityGroup
-     * @param userDetailsHelper
      * @param editableGroup
      * @param layout
      * @param loginButton
      */
-    public LogoutAction(VisibilityGroup visibilityGroup, UserDetailsHelper userDetailsHelper,
+    public LogoutAction(VisibilityGroup visibilityGroup,
             EditableGroup editableGroup, GridLayout layout, Button loginButton, Component logOutButton,
             Label userLabel)
     {
         super();
         this.visibilityGroup = visibilityGroup;
-        this.userDetailsHelper = userDetailsHelper;
         this.editableGroup = editableGroup;
         this.layout = layout;
         this.loginButton = loginButton;
@@ -66,7 +64,8 @@ public class LogoutAction implements Action
     @Override
     public void exectuteAction()
     {
-        this.userDetailsHelper.setUserDetails(null);
+    	VaadinService.getCurrentRequest().getWrappedSession()
+        	.setAttribute(MappingConfigurationUISessionValueConstants.USER, null);
         this.visibilityGroup.setVisible(false);
         this.editableGroup.setEditable(false);
 

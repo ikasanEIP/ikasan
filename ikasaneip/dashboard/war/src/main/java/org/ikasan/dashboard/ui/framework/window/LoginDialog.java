@@ -4,10 +4,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.data.LoginFieldGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.UserService;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -43,16 +40,14 @@ public class LoginDialog extends Window
      * @param userService
      * @param authProvider
      * @param visibilityGroup
-     * @param userDetailsHelper
      * @param commitHandler
      */
-    public LoginDialog(UserService userService,
-    		AuthenticationService authenticationService,
-            VisibilityGroup visibilityGroup, UserDetailsHelper userDetailsHelper,
+    public LoginDialog(AuthenticationService authenticationService,
+            VisibilityGroup visibilityGroup,
             NavigationPanel commitHandler)
     {
         super("Login");
-        init(userService, authenticationService, visibilityGroup, userDetailsHelper, commitHandler);
+        init(authenticationService, visibilityGroup, commitHandler);
     }
 
     /**
@@ -64,9 +59,8 @@ public class LoginDialog extends Window
      * @param userDetailsHelper
      * @param commitHandler
      */
-    protected void init(UserService userService, AuthenticationService authenticationService,
-            VisibilityGroup visibilityGroup, UserDetailsHelper userDetailsHelper
-            , final NavigationPanel commitHandler)
+    protected void init(AuthenticationService authenticationService,
+            VisibilityGroup visibilityGroup, final NavigationPanel commitHandler)
     {
         super.setModal(true);
         super.setHeight(20.0f, Unit.PERCENTAGE);
@@ -98,7 +92,7 @@ public class LoginDialog extends Window
         form.addComponent(passwordField);
 
         final LoginFieldGroup binder = new LoginFieldGroup(item, visibilityGroup
-            , userService, authenticationService, userDetailsHelper);
+            , authenticationService);
         binder.bind(userNameField, LoginFieldGroup.USERNAME);
         binder.bind(passwordField, LoginFieldGroup.PASSWORD);
 

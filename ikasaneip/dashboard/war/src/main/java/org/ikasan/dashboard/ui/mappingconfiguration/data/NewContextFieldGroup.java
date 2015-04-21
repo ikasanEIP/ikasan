@@ -17,10 +17,10 @@ import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -91,10 +91,10 @@ public class NewContextFieldGroup extends FieldGroup
         {
             this.mappingConfigurationService.saveConfigurationConext(context);
 
-            UserDetailsHelper userDetailsHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+            IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                     .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-            logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+            logger.info("User: " + principal.getName()
                 + " added a new Mapping Configuration Context:  " 
                     + context);
         }

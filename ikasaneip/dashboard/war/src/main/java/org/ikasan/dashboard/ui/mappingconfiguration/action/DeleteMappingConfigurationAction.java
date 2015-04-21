@@ -17,11 +17,11 @@ import java.io.StringWriter;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.action.Action;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
@@ -70,10 +70,10 @@ public class DeleteMappingConfigurationAction implements Action
             this.mappingConfigurationService.deleteMappingConfiguration(mappingConfiguration);
             this.searchResultsTable.removeItem(this.mappingConfigurationId);
 
-            UserDetailsHelper userDetailsHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+            IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                     .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-            logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+            logger.info("User: " + principal.getName() 
                 + " successfully deleted the following Mapping Configuration: " 
                     + mappingConfiguration);
         }

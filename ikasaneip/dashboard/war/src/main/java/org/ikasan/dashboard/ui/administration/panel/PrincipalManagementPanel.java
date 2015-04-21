@@ -12,8 +12,6 @@
  */
 package org.ikasan.dashboard.ui.administration.panel;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -33,17 +31,17 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
@@ -117,12 +115,13 @@ public class PrincipalManagementPanel extends Panel implements View
 		final DragAndDropWrapper usernameFieldWrap = new DragAndDropWrapper(
 				principalNameField);
 		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		usernameFieldWrap.setSizeUndefined();
+		usernameFieldWrap.setWidth("80%");
 
 		final TextField name = new TextField();
 		name.setWidth("80%");
-		final TextField description = new TextField();
+		final TextArea description = new TextArea();
 		description.setWidth("80%");
+		description.setHeight("60px");
 		
 		final Table roleTable = new Table();
 		roleTable.addContainerProperty("Role", String.class, null);
@@ -351,10 +350,20 @@ public class PrincipalManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
+		Role selectedRole = (Role)this.rolesCombo.getValue();
+		
+		this.rolesCombo.removeAllItems();
+		
 		for(Role role: roles)
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
+			
+			if(roles.contains(role))
+			{
+				this.rolesCombo.setValue(selectedRole);
+			}
 		}
+		
 	}
 }
