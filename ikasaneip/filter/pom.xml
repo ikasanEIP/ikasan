@@ -117,7 +117,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.5.4-Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>

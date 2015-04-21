@@ -47,9 +47,7 @@
         <relativePath />
     </parent>
 
-    <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-techEndpoint</artifactId>
-    <version>1.0.0-rc4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration Sample</name>
 
