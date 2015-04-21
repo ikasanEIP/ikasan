@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.RemoveAllItemsAction;
@@ -44,6 +43,7 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -550,8 +550,8 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     public void save() throws InvalidValueException, Exception
     {
-        UserDetailsHelper userDetailHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
-            .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+    	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
         try 
         {
@@ -609,7 +609,7 @@ public class MappingConfigurationPanel extends Panel implements View
 
             try
             {
-                logger.info("User: " + userDetailHelper.getUserDetails().getUsername() + " saving Mapping Configuration: " +
+                logger.info("User: " + principal.getName() + " saving Mapping Configuration: " +
                 		this.mappingConfiguration);
                 this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
             }
@@ -624,7 +624,7 @@ public class MappingConfigurationPanel extends Panel implements View
             {
                 query.setMappingConfigurationId(this.mappingConfiguration.getId());
 
-                logger.info("User: " + userDetailHelper.getUserDetails().getUsername() + " saving Key Location Query: " +
+                logger.info("User: " + principal.getName() + " saving Key Location Query: " +
                         query);
                 this.mappingConfigurationService.saveKeyLocationQuery(query);
             }

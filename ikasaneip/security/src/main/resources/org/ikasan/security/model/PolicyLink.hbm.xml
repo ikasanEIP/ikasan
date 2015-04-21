@@ -34,6 +34,12 @@
                   column="TargetId"
                   not-null="true" 
                   unique="false"/>
+        
+        <property name="name"
+                  type="java.lang.String"
+                  column="Name"
+                  not-null="true" 
+                  unique="false"/>
 
         <property name="createdDateTime"
                   type="java.util.Date"

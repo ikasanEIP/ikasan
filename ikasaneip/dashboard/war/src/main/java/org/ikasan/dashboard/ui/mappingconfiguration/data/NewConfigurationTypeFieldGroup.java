@@ -14,10 +14,10 @@ package org.ikasan.dashboard.ui.mappingconfiguration.data;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -86,10 +86,10 @@ public class NewConfigurationTypeFieldGroup extends FieldGroup
         {
             this.mappingConfigurationService.saveConfigurationType(type);
 
-            UserDetailsHelper userDetailsHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+            IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                     .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-            logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+            logger.info("User: " + principal.getName() 
                 + " added a new Mapping Configuration Type:  " 
                     + type);
         }

@@ -61,7 +61,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class HibernateSecurityDao extends HibernateDaoSupport implements SecurityDao
 {
 
-    /* (non-Javadoc)
+ 	/* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#addRole(com.mizuho.cmi2.security.model.Role)
      */
     @Override
@@ -275,6 +275,18 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	{
 		@SuppressWarnings("unchecked")
 		List<Policy> results = getHibernateTemplate().find("from Policy where name LIKE ?", name + '%');
+
+        return results;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getRoleByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<Role> getRoleByNameLike(String name)
+	{
+		@SuppressWarnings("unchecked")
+		List<Role> results = getHibernateTemplate().find("from Role where name LIKE ?", name + '%');
 
         return results;
 	}

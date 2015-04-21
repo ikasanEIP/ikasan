@@ -18,12 +18,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.action.Action;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.service.MappingConfigurationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
@@ -67,10 +67,10 @@ public class DeleteRowAction implements Action
     @Override
     public void exectuteAction()
     {
-        UserDetailsHelper userDetailsHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+    	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-        logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+        logger.info("User: " + principal.getName() 
             +" attempting to delete: " + this.sourceConfigurationValues.size() + " configuration values.");
 
         this.mappingConfiguration.getSourceConfigurationValues().removeAll(this.sourceConfigurationValues);
@@ -80,7 +80,7 @@ public class DeleteRowAction implements Action
             this.mappingConfigurationConfigurationValuesTable.save();
             this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
 
-            logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+            logger.info("User: " + principal.getName() 
                 + " successfully deleted the following configuration values: " 
                     + this.sourceConfigurationValues);
         }

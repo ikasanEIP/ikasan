@@ -235,5 +235,12 @@ public interface SecurityService
      * @return
      */
     public List<Policy> getAllPoliciesWithRole(String roleName);
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<Role> getRoleByNameLike(String name);
 }
 

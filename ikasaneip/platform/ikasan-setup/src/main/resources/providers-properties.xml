@@ -499,7 +499,7 @@
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
-					   Description			VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(1024)		    NOT NULL,
 					   CreatedDateTime      DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
@@ -583,6 +583,7 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
 					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   Name				      		VARCHAR(256) NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id), -- clustered index on Id
@@ -1397,7 +1398,7 @@
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
-					   Description			VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(1024)		    NOT NULL,
 					   CreatedDateTime      DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id) -- clustered index on Id
@@ -1494,6 +1495,7 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
 					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   Name				      		VARCHAR(256) NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (PolicyLinkId), -- clustered index on Id
@@ -2630,7 +2632,7 @@
 					   Id               	IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   PrincipalType		VARCHAR(256)		    NOT NULL,
-					   Description			VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(1024)		    NOT NULL,
 					   CreatedDateTime      DATETIME NOT NULL,
 					   UpdatedDateTime      DATETIME NOT NULL,
 					   PRIMARY KEY (Id) 
@@ -2658,9 +2660,10 @@
 				</prop>
 				<prop key="create.policyLink">CREATE TABLE PolicyLink
 					(
-					   Id               		NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
 					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   Name				      		VARCHAR(256) NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
 					   PRIMARY KEY (Id),

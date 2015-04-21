@@ -15,11 +15,9 @@ package org.ikasan.dashboard.ui.framework.data;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.AuthenticationServiceException;
-import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.springframework.security.core.Authentication;
 
@@ -44,9 +42,7 @@ public class LoginFieldGroup extends FieldGroup
     public static final String PASSWORD = "password";
 
     private AuthenticationService authenticationService;
-    private UserService userService;
     private VisibilityGroup visibilityGroup;
-    private UserDetailsHelper userDetailsHelper;
 
     /**
      * Constructor
@@ -54,16 +50,13 @@ public class LoginFieldGroup extends FieldGroup
      * @param visibilityGroup
      * @param userService
      * @param authProvider
-     * @param userDetailsHelper
      */
-    public LoginFieldGroup(VisibilityGroup visibilityGroup, UserService userService,
-    		AuthenticationService authenticationService, UserDetailsHelper userDetailsHelper)
+    public LoginFieldGroup(VisibilityGroup visibilityGroup,
+    		AuthenticationService authenticationService)
     {
         super();
         this.visibilityGroup = visibilityGroup;
-        this.userService = userService;
         this.authenticationService = authenticationService;
-        this.userDetailsHelper = userDetailsHelper;
     }
 
    /**
@@ -73,16 +66,13 @@ public class LoginFieldGroup extends FieldGroup
     * @param visibilityGroup
     * @param userService
     * @param authProvider
-    * @param userDetailsHelper
     */
-    public LoginFieldGroup(Item itemDataSource, VisibilityGroup visibilityGroup, UserService userService,
-    		AuthenticationService authenticationService, UserDetailsHelper userDetailsHelper)
+    public LoginFieldGroup(Item itemDataSource, VisibilityGroup visibilityGroup,
+    		AuthenticationService authenticationService)
     {
         super(itemDataSource);
         this.visibilityGroup = visibilityGroup;
-        this.userService = userService;
         this.authenticationService = authenticationService;
-        this.userDetailsHelper = userDetailsHelper;
     }
 
     /* (non-Javadoc)

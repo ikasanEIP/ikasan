@@ -32,16 +32,20 @@ import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
+import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.zybnet.autocomplete.server.AutocompleteField;
@@ -61,6 +65,8 @@ public class UserManagementPanel extends Panel implements View
 	private UserService userService;
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
+	private AutocompleteField<User> usernameField = new AutocompleteField<User>();
+	private Table dropTable = new Table();
 
 	/**
 	 * Constructor
@@ -108,13 +114,12 @@ public class UserManagementPanel extends Panel implements View
 
 		Label usernameLabel = new Label("Username");
 
-		final AutocompleteField<User> usernameField = new AutocompleteField<User>();
 		usernameField.setWidth("80%");
 
 		final DragAndDropWrapper usernameFieldWrap = new DragAndDropWrapper(
 				usernameField);
 		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		usernameFieldWrap.setSizeUndefined();
+		usernameFieldWrap.setWidth("80%");
 
 		final AutocompleteField<User> firstName = new AutocompleteField<User>();
 		firstName.setWidth("80%");
@@ -126,6 +131,7 @@ public class UserManagementPanel extends Panel implements View
 		email.setWidth("80%");
 		final Table roleTable = new Table();
 		roleTable.addContainerProperty("Role", String.class, null);
+		roleTable.addContainerProperty("", Button.class, null);
 		roleTable.setHeight("400px");
 		roleTable.setWidth("200px");
 
@@ -152,16 +158,35 @@ public class UserManagementPanel extends Panel implements View
 				department.setValue(user.getDepartment());
 				email.setValue(user.getEmail());
 
-				IkasanPrincipal principal;
-				principal = securityService
+				final IkasanPrincipal principal = securityService
 						.findPrincipalByName(user.getUsername());
 
 				roleTable.removeAllItems();
 
-				for (Role role : principal.getRoles())
+				for (final Role role : principal.getRoles())
 				{
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	roleTable.removeItem(role);
+			            	
+			            	principal.getRoles().remove(role);
+			            	
+			            	securityService.savePrincipal(principal);
+			            	
+			            	dropTable.removeItem(principal.getName());
+			            }
+			        });
+					
 					roleTable.addItem(new Object[]
-					{ role.getName() }, role);
+					{ role.getName(), deleteButton }, role);
 				}
 			}
 		});
@@ -190,16 +215,35 @@ public class UserManagementPanel extends Panel implements View
 				department.setValue(user.getDepartment());
 				email.setValue(user.getEmail());
 
-				IkasanPrincipal principal;
-				principal = securityService
+				final IkasanPrincipal principal = securityService
 						.findPrincipalByName(user.getUsername());
 
 				roleTable.removeAllItems();
 
-				for (Role role : principal.getRoles())
+				for (final Role role : principal.getRoles())
 				{
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	roleTable.removeItem(role);
+			            	
+			            	principal.getRoles().remove(role);
+			            	
+			            	securityService.savePrincipal(principal);
+			            	
+			            	dropTable.removeItem(principal.getName());
+			            }
+			        });
+					
 					roleTable.addItem(new Object[]
-					{ role.getName() }, role);
+					{ role.getName(), deleteButton }, role);
 				}
 			}
 		});
@@ -228,16 +272,35 @@ public class UserManagementPanel extends Panel implements View
 				department.setValue(user.getDepartment());
 				email.setValue(user.getEmail());
 
-				IkasanPrincipal principal;
-				principal = securityService
+				final IkasanPrincipal principal = securityService
 						.findPrincipalByName(user.getUsername());
 
 				roleTable.removeAllItems();
 
-				for (Role role : principal.getRoles())
+				for (final Role role : principal.getRoles())
 				{
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	roleTable.removeItem(role);
+			            	
+			            	principal.getRoles().remove(role);
+			            	
+			            	securityService.savePrincipal(principal);
+			            	
+			            	dropTable.removeItem(principal.getName());
+			            }
+			        });
+					
 					roleTable.addItem(new Object[]
-					{ role.getName() }, role);
+					{ role.getName(), deleteButton }, role);
 				}
 			}
 		});
@@ -265,9 +328,8 @@ public class UserManagementPanel extends Panel implements View
 
 		final ClientSideCriterion acceptCriterion = new SourceIs(usernameField);
 
-		final Table dropTable = new Table();
 		dropTable.addContainerProperty("Members", String.class, null);
-//		dropTable.addContainerProperty("", Button.class, null);
+		dropTable.addContainerProperty("", Button.class, null);
 		dropTable.setHeight("400px");
 		dropTable.setWidth("200px");
 
@@ -288,26 +350,63 @@ public class UserManagementPanel extends Panel implements View
 				logger.info("sourceContainer.getText(): "
 						+ sourceContainer.getText());
 
-//				Button deleteButton = new Button();
-//				ThemeResource deleteIcon = new ThemeResource(
-//						"images/remove-icon.png");
-//				deleteButton.setIcon(deleteIcon);
-//				deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+				Button deleteButton = new Button();
+				ThemeResource deleteIcon = new ThemeResource(
+						"images/remove-icon.png");
+				deleteButton.setIcon(deleteIcon);
+				deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+				
+				final IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
+				final Role roleToRemove = (Role)rolesCombo.getValue();
+				
+				deleteButton.addClickListener(new Button.ClickListener() 
+		        {
+		            public void buttonClick(ClickEvent event) 
+		            {
+		            	dropTable.removeItem(principal.getName());
+		            	
+		            	principal.getRoles().remove(roleToRemove);
+		            	
+		            	securityService.savePrincipal(principal);
+		            	
+		            	if(UserManagementPanel.this.usernameField.getText().equals(principal.getName()))
+		            	{
+		            		roleTable.removeItem(roleToRemove);
+		            	}
+		            }
+		        });
 				
 				dropTable.addItem(new Object[]
-						{ sourceContainer.getText()}, sourceContainer.getText());
+						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
 				
-				IkasanPrincipal principal = securityService.findPrincipalByName(sourceContainer.getText());
 				principal.getRoles().add((Role)rolesCombo.getValue());
 				
 				securityService.savePrincipal(principal);
 
 				roleTable.removeAllItems();
 				
-				for (Role role : principal.getRoles())
+				for (final Role role : principal.getRoles())
 				{
+					Button roleDeleteButton = new Button();
+					roleDeleteButton.setIcon(deleteIcon);
+					roleDeleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					roleDeleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	roleTable.removeItem(role);
+			            	
+			            	principal.getRoles().remove(role);
+			            	
+			            	securityService.savePrincipal(principal);
+			            	
+			            	dropTable.removeItem(principal.getName());
+			            }
+			        }); 
+					
 					roleTable.addItem(new Object[]
-					{ role.getName() }, role);
+					{ role.getName(), roleDeleteButton }, role);
 				}
 			}
 
@@ -323,7 +422,7 @@ public class UserManagementPanel extends Panel implements View
 		this.rolesCombo = new ComboBox("Groups");
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
-		        Role role = (Role)event.getProperty().getValue();
+		        final Role role = (Role)event.getProperty().getValue();
 		        
 		        logger.info("Value changed got Role: " + role);
 		        
@@ -331,10 +430,34 @@ public class UserManagementPanel extends Panel implements View
 				
 				dropTable.removeAllItems();
 				
-				for(IkasanPrincipal principal: principals)
+				for(final IkasanPrincipal principal: principals)
 				{
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+					
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {
+			            	dropTable.removeItem(principal.getName());
+			            	
+			            	principal.getRoles().remove(role);
+			            	
+			            	securityService.savePrincipal(principal);
+			            	
+			            	if(UserManagementPanel.this.usernameField.getText().equals(principal.getName()))
+			            	{
+			            		roleTable.removeItem(role);
+			            	}
+			            }
+			        });
+					
+					
 					dropTable.addItem(new Object[]
-							{ principal.getName() }, principal.getName());
+							{ principal.getName(), deleteButton }, principal.getName());
 				}
 		    }
 		});
@@ -359,10 +482,19 @@ public class UserManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
+		Role selectedRole = (Role)this.rolesCombo.getValue();
+		
+		this.rolesCombo.removeAllItems();
+		
 		for(Role role: roles)
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
+			
+			if(roles.contains(role))
+			{
+				this.rolesCombo.setValue(selectedRole);
+			}
 		}
 	}
 }

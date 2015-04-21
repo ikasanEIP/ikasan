@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.DeleteRowAction;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
@@ -29,6 +28,7 @@ import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -186,10 +186,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             }
             else
             {
-                UserDetailsHelper userDetailHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+            	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                         .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-                logger.info("User: " + userDetailHelper.getUserDetails().getUsername() + " saving Target Configuration Value: " +
+                logger.info("User: " + principal.getName() + " saving Target Configuration Value: " +
                         value);
                 this.mappingConfigurationService.saveTargetConfigurationValue(value.getTargetConfigurationValue());
             }
@@ -289,10 +289,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
 
         this.setEditable(true);
 
-        UserDetailsHelper userDetailsHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+        IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-        logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+        logger.info("User: " + principal.getName() 
             + " added new mapping configuration value for Mapping Configuration " 
                 + this.mappingConfiguration);
     }
@@ -332,13 +332,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     BeanItem<SourceConfigurationValue> item = new BeanItem<SourceConfigurationValue>(value);
                     final TextField tf = new TextField(item.getItemProperty("sourceSystemValue"));
                     tf.setWidth(300, Unit.PIXELS);
-//                    tf.addFocusListener(new FieldEvents.FocusListener() {
-//                        @Override
-//                        public void focus(com.vaadin.event.FieldEvents.FocusEvent event)
-//                        {
-//                            tf.selectAll();
-//                        }
-//                    });
 
                     tableCellLayout.addComponent(tf);
                     tf.setReadOnly(true);
@@ -360,14 +353,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                             final TextField stf = new TextField(item.getItemProperty("sourceSystemValue"));
                             stf.setWidth(300, Unit.PIXELS);
 
-//                            stf.addFocusListener(new FieldEvents.FocusListener() {
-//                                @Override
-//                                public void focus(com.vaadin.event.FieldEvents.FocusEvent event)
-//                                {
-//                                    stf.selectAll();
-//                                }
-//                            });
-
                             tableCellLayout.addComponent(stf);
                             stf.setReadOnly(true);
                             usedSourceConfigurationValues.add(partnerSourceConfigurationValue);
@@ -379,13 +364,6 @@ public class MappingConfigurationConfigurationValuesTable extends Table
                     final TextField targetConfigurationTextField = new TextField(targetConfigurationItem.getItemProperty("targetSystemValue"));
                     targetConfigurationTextField.setReadOnly(true);
                     targetConfigurationTextField.setWidth(300, Unit.PIXELS);
-//                    targetConfigurationTextField.addFocusListener(new FieldEvents.FocusListener() {
-//                        @Override
-//                        public void focus(com.vaadin.event.FieldEvents.FocusEvent event)
-//                        {
-//                            targetConfigurationTextField.selectAll();
-//                        }
-//                    });
 
                     final DeleteRowAction action = new DeleteRowAction(groupedSourceSystemValues
                         , this.mappingConfiguration, this, this.mappingConfigurationService);
@@ -433,10 +411,10 @@ public class MappingConfigurationConfigurationValuesTable extends Table
             }
         }
 
-        UserDetailsHelper userDetailsHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
+        IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
                 .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
-        logger.info("User: " + userDetailsHelper.getUserDetails().getUsername() 
+        logger.info("User: " + principal.getName()
             + " deleted all records for Mapping Configuration " + this.mappingConfiguration);
         
         return super.removeAllItems();

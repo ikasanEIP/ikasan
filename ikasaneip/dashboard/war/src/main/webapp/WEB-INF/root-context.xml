@@ -26,7 +26,6 @@
         <constructor-arg ref="localTxUserService"/>
         <constructor-arg ref="localTxAuthenticationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
-        <constructor-arg ref="userDetailsHelper"/>
         <constructor-arg ref="editableGroup"/>
         <constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
@@ -125,10 +124,8 @@
     </bean>
 
 	<bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
-		<constructor-arg ref="localTxUserService"/>
 		<constructor-arg ref="localTxAuthenticationService"/>
 		<constructor-arg ref="adminUserVisibilityGroup"/>
-		<constructor-arg ref="userDetailsHelper"/>
         <constructor-arg ref="editableGroup"/>
 		<constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
@@ -138,9 +135,6 @@
 	
 	<bean id="imagePanelLayout" class="com.vaadin.ui.VerticalLayout" scope="session">
 	</bean>
-
-    <bean id="userDetailsHelper" class="org.ikasan.dashboard.ui.framework.util.UserDetailsHelper" scope="session">
-    </bean>
     
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
     </bean>
