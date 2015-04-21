@@ -331,6 +331,10 @@
 	</pluginRepositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		  <!-- Release Info -->
+        <org.ikasan.release.version>${project.version}</org.ikasan.release.version>
+      
+
 	</properties>
 	<!-- Distribution for releases -->
 	<distributionManagement>
@@ -621,12 +625,14 @@
 			<artifactId>hamcrest-all</artifactId>
 			<version>1.3</version>
 		</dependency>
+	       
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock</artifactId>
 			<version>2.6.0</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-legacy</artifactId>
@@ -641,13 +647,20 @@
 			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<!-- Objenesis, used for testing assitance to jmock -->
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
 			<version>1.2</version>
-			<scope>test</scope>
 		</dependency>
+		
+		 <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+		
 		<!-- Mokito, used for mocking -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -655,6 +668,7 @@
 			<version>1.8.5</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -665,21 +679,613 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-search</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+         <dependency>
+	      <groupId>org.ikasan</groupId>
+	      <artifactId>ikasan-spec-module</artifactId>
+	      <version>1.0.0-rc4-SNAPSHOT</version>
+	    </dependency>
+	    
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-security</artifactId>
+          <version>1.0.0-rc4-SNAPSHOT</version>
+         </dependency>
+        
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-system-event</artifactId>
+          <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-flow</artifactId>
+          <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-module</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-bootstrap</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-configuration</artifactId>
+          <version>1.0.0-rc4-SNAPSHOT</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-exclusion</artifactId>
+          <version>1.0.0-rc4-SNAPSHOT</version>
+      </dependency>
+      
+       <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-recovery-manager</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+      </dependency>
+
+       <dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-spec-monitor</artifactId>
+ 			<version>1.0.0-rc4-SNAPSHOT</version>
+		</dependency>
+            
+         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-event</artifactId>
+             <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+          <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+          </dependency>
+          
+          <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-wiretap</artifactId>
+             <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-scheduler</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+          </dependency>
+          
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-xml-marshaller</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-client</artifactId>
+             <version>1.0.0-rc4-SNAPSHOT</version>
+          </dependency>
+          
+       <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-recovery-manager</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+         </dependency>
+         
+         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-flow-visitorPattern</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+           </dependency>
+           
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-filter</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+       <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-consumer</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+       <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-configuration-service</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+         </dependency>
+        
+       <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+         </dependency>
+         
+         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip-test</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-utility-endpoint</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+         </dependency>
+         
+      <dependency>
+       <groupId>org.ikasan</groupId>
+       <artifactId>ikasan-mongo-endpoint</artifactId>
+       <version>1.0.0-rc4-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-webconsole-jar</artifactId>
+      <version>1.0.0-rc4-SNAPSHOT</version>
+     </dependency>
+               
+    <dependency>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-webconsole-war</artifactId>
+         <version>1.0.0-rc4-SNAPSHOT</version>
+        <type>war</type>
+    </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.5.4-Final</version>
+        </dependency>
+        
+         <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.1</version>
+        </dependency>
+
+        
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-orm</artifactId>
+          <version>3.1.1.RELEASE</version>
+        </dependency>
+        
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>3.1.1.RELEASE</version>
+          </dependency>
+
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-taglibs</artifactId>
+        <version>3.1.3.RELEASE</version>
+    </dependency>
+
+        
+		<dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>3.0.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.3</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.5</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.1</version>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.1</version>
+         </dependency>
+         
+		<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
-			</dependency>
-			<dependency>
+		</dependency>
+			
+		<dependency>
 				<groupId>org.jmock</groupId>
 				<artifactId>jmock</artifactId>
 				<version>2.6.0</version>
-			</dependency>
-			<dependency>
+		</dependency>
+			
+		<dependency>
 				<groupId>org.jmock</groupId>
 				<artifactId>jmock-legacy</artifactId>
 				<version>2.5.1</version>
-			</dependency>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>1.2</version>
+		</dependency>
+		
+		 <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.io7m.xom</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.2.10</version>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+        
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+
+	    <dependency>
+	        <groupId>org.springframework.ldap</groupId>
+	        <artifactId>spring-ldap-core</artifactId>
+	        <version>1.3.1.RELEASE</version>
+	    </dependency>
+
+	    <dependency>
+	        <groupId>org.springframework.ldap</groupId>
+	        <artifactId>spring-ldap-odm</artifactId>
+	        <version>1.3.1.RELEASE</version>
+	    </dependency>
+
+	    <dependency>
+	        <groupId>org.springframework.ldap</groupId>
+	        <artifactId>spring-ldap-ldif-core</artifactId>
+	        <version>1.3.1.RELEASE</version>
+	    </dependency>
+
+	    <dependency>
+	        <groupId>org.springframework.ldap</groupId>
+	        <artifactId>spring-ldap-ldif-batch</artifactId>
+	        <version>1.3.1.RELEASE</version>
+	    </dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>3.2.6.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+			<version>3.2.6.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+
+        <!-- TODO: Upgrade to 1.8.1.2 at some stage -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version> 1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- TODO:  Upgrade to 3.12.0 at some stage -->
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.12.1.GA</version>
+            <scope>test</scope>
+        </dependency>
+	 
+	    <dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-api</artifactId>
+		  <version>1.5.11</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.5.11</version>
+
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-log4j12</artifactId>
+		  <version>1.5.11</version>
+		</dependency>
+	 
+		<dependency>
+		  <groupId>org.apache.directory.server</groupId>
+		  <artifactId>apacheds-all</artifactId>
+		  <version>2.0.0-M18</version>
+		</dependency> 
+
+		<dependency>
+		  <groupId>org.apache.directory.server</groupId>
+		  <artifactId>apacheds-server-integ</artifactId>
+		  <version>2.0.0-M18</version>
+		</dependency> 
+	 
+		<dependency>
+		  <groupId>org.apache.directory.server</groupId>
+		  <artifactId>apacheds-core-integ</artifactId>
+		  <version>2.0.0-M18</version>
+		</dependency> 
+
+		<dependency>
+		  <groupId>org.apache.directory.server</groupId>
+		  <artifactId>apacheds-server-unit</artifactId>
+		  <version>1.5.5</version>
+		</dependency> 
+
+		<dependency>
+			<groupId>com.unboundid</groupId>
+			<artifactId>unboundid-ldapsdk</artifactId>
+			<version>2.3.4</version>
+		</dependency>
+	 
+		<dependency>
+		  <groupId>commons-io</groupId>
+		  <artifactId>commons-io</artifactId>
+		  <version>1.4</version>
+		  <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+		
+		<dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>1.4.178</version>
+          <scope>test</scope>
+      </dependency>
+      
+       <dependency>
+            <groupId>org.subethamail</groupId>
+            <artifactId>subethasmtp-wiser</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+      
+       <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.16.v20140903</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.6.0-3</version>
+        </dependency>
+        
+         <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>2.12.5</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<version>1.46.4</version>
+            <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.7.4</version>
+        </dependency>
+        
+        <dependency>
+		<groupId>org.glassfish.main.external</groupId>
+		<artifactId>jmxremote_optional-repackaged</artifactId>
+		<version>4.0-b72</version>
+		<scope>test</scope>
+	    </dependency>
+
+		<dependency>
+	            <groupId>commons-lang</groupId>
+	            <artifactId>commons-lang</artifactId>
+	            <version>2.5</version>
+        </dependency>
+        
+        <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+     	</dependency>
+    	
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>spring-js</artifactId>
+      <version>2.3.2.RELEASE</version>
+    </dependency>
+    
+        <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-webflow</artifactId>
+        <version>2.3.2.RELEASE</version>
+       </dependency>
+
+    <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-binding</artifactId>
+        <version>2.3.2.RELEASE</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>se.jiderhamn</groupId>
+          <artifactId>classloader-leak-prevention</artifactId>
+          <version>1.10.0</version>
+      </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>3.1.3.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>3.1.3.RELEASE</version>
+    </dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
