@@ -285,7 +285,10 @@ public class FlowBuilder
 		// last element specified
 		FlowElement lastFlowElement;
 
-		/**
+        /** allow FE's to have their invoker behaviour configured */
+        Object flowElementInvokerConfiguration;
+
+        /**
 		 * Constructor
 		 * @param flowBuilder
 		 * @param name
@@ -335,7 +338,19 @@ public class FlowBuilder
 
 		public RouterRootConfigurationBuilder router(String name, Router router) 
 		{
-			this.flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker( DefaultReplicationFactory.getInstance() )));
+            if(flowElementInvokerConfiguration == null)
+            {
+                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+            }
+            else
+            {
+                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                {
+                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                }
+            }
+
+            this.flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker( DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
 			return new RouterRootConfigurationBuilder(this);
 		}
 
@@ -347,7 +362,19 @@ public class FlowBuilder
 
         public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
         {
-            this.flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker( DefaultReplicationFactory.getInstance() )));
+            if(flowElementInvokerConfiguration == null)
+            {
+                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+            }
+            else
+            {
+                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                {
+                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                }
+            }
+
+            this.flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker( DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
             return new RouterRootConfigurationBuilder(this);
         }
 
@@ -445,13 +472,37 @@ public class FlowBuilder
 
             public RouterRootConfigurationBuilder router(String name, Router router) 
             {
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance())));
+                if(flowElementInvokerConfiguration == null)
+                {
+                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+                }
+                else
+                {
+                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                    {
+                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                    }
+                }
+
+                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
             public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
             {
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance())));
+                if(flowElementInvokerConfiguration == null)
+                {
+                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+                }
+                else
+                {
+                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                    {
+                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                    }
+                }
+
+                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration )));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
@@ -566,13 +617,37 @@ public class FlowBuilder
 
             public RouterRootConfigurationBuilder router(String name, Router router) 
             {
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance())));
+                if(flowElementInvokerConfiguration == null)
+                {
+                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+                }
+                else
+                {
+                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                    {
+                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                    }
+                }
+
+                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration)));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
             public RouterRootConfigurationBuilder multiRecipientRouter(String name, MultiRecipientRouter router)
             {
-                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance())));
+                if(flowElementInvokerConfiguration == null)
+                {
+                    flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+                }
+                else
+                {
+                    if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                    {
+                        throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                    }
+                }
+
+                flowElements.add(new FlowElementImpl(name, router, new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration)));
                 return new RouterRootConfigurationBuilder(flowConfigurationBuilder);
             }
 
