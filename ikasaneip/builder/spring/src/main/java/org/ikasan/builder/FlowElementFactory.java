@@ -90,7 +90,10 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     
     /** identifier if the cmoponent supported ConfiguredResource */
     CONFIGURATION configuration;
-    
+
+    /** allow FE's to have their invoker behaviour configured */
+    Object flowElementInvokerConfiguration;
+
     /**
      * Setter for name
      * @param name
@@ -134,6 +137,15 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
     public void setConfiguredResourceId(String configuredResourceId)
     {
         this.configuredResourceId = configuredResourceId;
+    }
+
+    /**
+     * Allow the flow element invoker configuration to be mutated
+     * @param flowElementInvokerConfiguration
+     */
+    public void setFlowElementInvokerConfiguration(Object flowElementInvokerConfiguration)
+    {
+        this.flowElementInvokerConfiguration = flowElementInvokerConfiguration;
     }
 
     /**
@@ -229,11 +241,35 @@ public class FlowElementFactory<COMPONENT,CONFIGURATION> implements FactoryBean<
         }
         else if(component instanceof Router)
         {
-            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance());
+            if(flowElementInvokerConfiguration == null)
+            {
+                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+            }
+            else
+            {
+                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                {
+                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                }
+            }
+
+            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof MultiRecipientRouter)
         {
-            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance());
+            if(flowElementInvokerConfiguration == null)
+            {
+                flowElementInvokerConfiguration = new MultiRecipientRouterConfiguration();
+            }
+            else
+            {
+                if( !(flowElementInvokerConfiguration instanceof MultiRecipientRouterConfiguration) )
+                {
+                    throw new IllegalArgumentException("Invalid MultiRecipientRouter FlowInvoker Configuration. Requires MultiRecipientRouterConfiguration, but found " + flowElementInvokerConfiguration.getClass().getName());
+                }
+            }
+
+            return new MultiRecipientRouterFlowElementInvoker(DefaultReplicationFactory.getInstance(), (MultiRecipientRouterConfiguration)flowElementInvokerConfiguration);
         }
         else if(component instanceof SingleRecipientRouter)
         {
