@@ -51,6 +51,11 @@
                 <entry key="three" value-ref="srRouterFlowElement" />
             </util:map>
         </property>
+        <property name="flowElementInvokerConfiguration" ref="mrRouterFlowElementConfiguration" />
+    </bean>
+
+    <bean id="mrRouterFlowElementConfiguration" class="org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterConfiguration">
+        <property name="cloneEventPerRoute" value="true"/>
     </bean>
 
     <bean id="sequencerAFlowElement" class="org.ikasan.builder.FlowElementFactory">
