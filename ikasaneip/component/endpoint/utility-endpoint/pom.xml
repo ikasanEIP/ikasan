@@ -48,26 +48,16 @@
         <relativePath />
     </parent>
 
-    <groupId>org.ikasan</groupId>
     <artifactId>ikasan-utility-endpoint</artifactId>
-    <version>1.0.0-rc4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration general utility endpoints</name>
 
     <dependencies>
-        <!-- Standard build -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-build</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

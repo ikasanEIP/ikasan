@@ -53,39 +53,33 @@
         <relativePath />
     </parent>
 
-	<groupId>org.ikasan</groupId>
-    <artifactId>ikasan-security</artifactId>
+	<artifactId>ikasan-security</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Security</name>
     <description>The security library for the Ikasan Enterprise Integration Platform</description>
-	<version>1.0.0-rc4-SNAPSHOT</version>
-
+	
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -98,44 +92,37 @@
 	    <dependency>
 	        <groupId>org.springframework.ldap</groupId>
 	        <artifactId>spring-ldap-core</artifactId>
-	        <version>1.3.1.RELEASE</version>
 	    </dependency>
 
 	    <dependency>
 	        <groupId>org.springframework.ldap</groupId>
 	        <artifactId>spring-ldap-odm</artifactId>
-	        <version>1.3.1.RELEASE</version>
 	    </dependency>
 
 	    <dependency>
 	        <groupId>org.springframework.ldap</groupId>
 	        <artifactId>spring-ldap-ldif-core</artifactId>
-	        <version>1.3.1.RELEASE</version>
 	    </dependency>
 
 	    <dependency>
 	        <groupId>org.springframework.ldap</groupId>
 	        <artifactId>spring-ldap-ldif-batch</artifactId>
-	        <version>1.3.1.RELEASE</version>
 	    </dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>3.2.6.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
-			<version>3.2.6.RELEASE</version>
 		</dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.5.4-Final</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -149,35 +136,30 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.4</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
@@ -185,7 +167,6 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version> 1.8.0.10</version>
             <scope>test</scope>
         </dependency>
 
@@ -193,35 +174,30 @@
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.11.0.GA</version>
             <scope>test</scope>
         </dependency>
 
 		<dependency>
 		  <groupId>junit</groupId>
 		  <artifactId>junit</artifactId>
-		  <version>4.7</version>
 		  <scope>provided</scope>
 		</dependency>
 	 
 		<dependency>
 		  <groupId>log4j</groupId>
 		  <artifactId>log4j</artifactId>
-		  <version>1.2.14</version>
 		  <scope>provided</scope>
 		</dependency>
 	 
 		<dependency>
 		  <groupId>org.slf4j</groupId>
 		  <artifactId>slf4j-log4j12</artifactId>
-		  <version>1.5.10</version>
 		  <scope>provided</scope>
 		</dependency>
 	 
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-all</artifactId>
-		  <version>2.0.0-M18</version>
 		  <scope>compile</scope>
 		  <exclusions> 
 				<exclusion> 
@@ -234,34 +210,29 @@
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-server-integ</artifactId>
-		  <version>2.0.0-M18</version>
 		  <scope>provided</scope>
 		</dependency> 
 	 
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-core-integ</artifactId>
-		  <version>2.0.0-M18</version>
 		  <scope>provided</scope>
 		</dependency> 
 
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-server-unit</artifactId>
-		  <version>1.5.5</version>
 		  <scope>provided</scope>
 		</dependency> 
 
 		<dependency>
 			<groupId>com.unboundid</groupId>
 			<artifactId>unboundid-ldapsdk</artifactId>
-			<version>2.3.4</version>
 		</dependency>
 	 
 		<dependency>
 		  <groupId>commons-io</groupId>
 		  <artifactId>commons-io</artifactId>
-		  <version>1.4</version>
 		  <scope>test</scope>
 		</dependency>
 
