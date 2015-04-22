@@ -70,7 +70,6 @@ public class RoleManagementPanel extends Panel implements View
 
 	private UserService userService;
 	private SecurityService securityService;
-	private ComboBox rolesCombo;
 	private Panel policyDropPanel;
 	private Table policyTable;;
 	private Button newButton = new Button("New");
@@ -153,8 +152,6 @@ public class RoleManagementPanel extends Panel implements View
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
 		this.setContent(layout);
-		
-		this.rolesCombo.setVisible(false);
 	}
 
 	/**
@@ -167,56 +164,7 @@ public class RoleManagementPanel extends Panel implements View
 		this.policyDropPanel.setStyleName("dashboard");
 		this.policyDropPanel.setHeight("600px");
 		this.policyDropPanel.setWidth("100%");
-		
-		this.rolesCombo = new ComboBox();
-		this.rolesCombo.addValueChangeListener(new Property.ValueChangeListener() 
-		{
-		    public void valueChange(ValueChangeEvent event)
-		    {		    	
-		    	RoleManagementPanel.this.policyTable.removeAllItems();
-		        final Role role = (Role)event.getProperty().getValue();
-
-		        if(role != null)
-		        {
-			        List<Policy> policies = securityService.getAllPoliciesWithRole(role.getName());
-														
-					for(final Policy policy: policies)
-					{
-						Button deleteButton = new Button();
-						ThemeResource deleteIcon = new ThemeResource(
-								"images/remove-icon.png");
-						deleteButton.setIcon(deleteIcon);
-						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-						
-						deleteButton.addClickListener(new Button.ClickListener() 
-				        {
-				            public void buttonClick(ClickEvent event) 
-				            {
-				            	Policy selectedPolicy = RoleManagementPanel.this.securityService
-										.findPolicyByName(policy.getName());
-				            	
-				            	logger.info("Trying to remove policy: " + selectedPolicy);
-								
-								Role selectedRole = RoleManagementPanel.this.securityService
-										.findRoleByName(role.getName());
-								
-								logger.info("From role: " + selectedRole);
-								
-				            	selectedRole.getPolicies().remove(selectedPolicy);		            	
-				            	RoleManagementPanel.this.saveRole(selectedRole);
-				            	
-				            	RoleManagementPanel.this.policyTable.removeItem(policy.getName());			            	
-				            }
-				        });
-						
-						
-						RoleManagementPanel.this.policyTable.addItem(new Object[]
-								{ policy.getName(), deleteButton }, policy.getName());
-					}
-		        }
-		    }
-		});
-		
+				
 		this.policyTable = new Table();
 		this.policyTable.addContainerProperty("Role Policies", String.class, null);
 		this.policyTable.addContainerProperty("", Button.class, null);
@@ -229,6 +177,13 @@ public class RoleManagementPanel extends Panel implements View
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
+				if(role == null)
+				{
+					// Do nothing if there is no role selected
+					logger.info("Ignoring drop: " + dropEvent);
+					return;
+				}
+				
 				// criteria verify that this is safe
 				logger.info("Trying to drop: " + dropEvent);
 
@@ -256,7 +211,7 @@ public class RoleManagementPanel extends Panel implements View
 		            	logger.info("Trying to remove policy: " + policy);
 						
 						Role selectedRole = RoleManagementPanel.this.securityService
-								.findRoleByName(((Role)rolesCombo.getValue()).getName());
+								.findRoleByName(RoleManagementPanel.this.roleNameField.getText());
 						
 						logger.info("From role: " + selectedRole);
 						
@@ -293,12 +248,10 @@ public class RoleManagementPanel extends Panel implements View
 		layout.setMargin(true);
 		layout.setWidth("100%");
 		layout.setHeight("100%");
-		layout.addComponent(this.rolesCombo);
-		layout.setExpandRatio(this.rolesCombo, 0.05f);
 		layout.addComponent(this.policyNameFieldWrap);
 		layout.setExpandRatio(this.policyNameFieldWrap, 0.05f);
 		layout.addComponent(this.policyTable);
-		layout.setExpandRatio(this.policyTable, 0.90f);
+		layout.setExpandRatio(this.policyTable, 0.95f);
 		
 		this.policyDropPanel.setContent(layout);
 	}
@@ -465,10 +418,6 @@ public class RoleManagementPanel extends Panel implements View
             	{
             		RoleManagementPanel.this.save();
             		
-            		RoleManagementPanel.this.rolesCombo.addItem(RoleManagementPanel.this.role);
-            		RoleManagementPanel.this.rolesCombo.setItemCaption(RoleManagementPanel.this.role
-            				, RoleManagementPanel.this.role.getName());
-            		
             		Notification.show("Saved");
             	}
             	catch(RuntimeException e)
@@ -495,15 +444,7 @@ public class RoleManagementPanel extends Panel implements View
             		RoleManagementPanel.this.roleNameField.setText("");
             		RoleManagementPanel.this.descriptionField.setValue("");
             		
-            		logger.info("Combo value: " + RoleManagementPanel.this.rolesCombo.getValue());
-            		logger.info("Role: " + role);
-            		
-            		if(RoleManagementPanel.this.rolesCombo.getValue().equals(role))
-            		{
-            			RoleManagementPanel.this.rolesCombo.setValue(null);
-            		}
-            		
-            		RoleManagementPanel.this.rolesCombo.removeItem(role);
+            		RoleManagementPanel.this.policyTable.removeAllItems();
             		
             		Notification.show("Deleted");
             	}
@@ -573,23 +514,6 @@ public class RoleManagementPanel extends Panel implements View
 	@Override
 	public void enter(ViewChangeEvent event)
 	{
-		List<Role> roles = this.securityService.getAllRoles();
-		
-		Role selectedRole = (Role)this.rolesCombo.getValue();
-		
-		this.rolesCombo.removeAllItems();
-		
-		for(Role role: roles)
-		{
-			this.rolesCombo.addItem(role);
-			this.rolesCombo.setItemCaption(role, role.getName());
-			
-			if(roles.contains(role))
-			{
-				this.rolesCombo.setValue(selectedRole);
-			}
-		}
-		
 		this.policyNameField.clearChoices();
 		this.roleNameField.clearChoices();
 	}

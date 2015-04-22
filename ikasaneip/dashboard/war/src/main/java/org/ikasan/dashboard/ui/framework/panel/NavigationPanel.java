@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.action.LogoutAction;
+import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
@@ -24,11 +25,14 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -137,7 +141,6 @@ public class NavigationPanel extends Panel
 			@Override
 			public void buttonClick(ClickEvent event)
 			{
-
 				UI.getCurrent().addWindow(dialog);
 			}
 		});
@@ -203,43 +206,53 @@ public class NavigationPanel extends Panel
 	 */
 	protected void createActionMenuItems()
 	{
-		MenuItem dashboards = actionMenu.addItem("Dashboards",
-				new ThemeResource("images/menu-icon.png"), null);
-		dashboards.setStyleName("ikasan");
-
-		MenuBar.Command dashboardCommand = createNavigatorMenuCommand(
-				"dashboard", "dashboardView");
-		dashboards.addItem("Default", dashboardCommand);
-		dashboards.addSeparator();
-		dashboards.addItem("My custom dasboard 1", null, null);
-		dashboards.addItem("My custom dasboard 2", null, null);
+		this.actionMenu.removeItems();
+//		MenuItem dashboards = actionMenu.addItem("Dashboards",
+//				new ThemeResource("images/menu-icon.png"), null);
+//		dashboards.setStyleName("ikasan");
+//
+//		MenuBar.Command dashboardCommand = createNavigatorMenuCommand(
+//				"dashboard", "dashboardView");
+//		dashboards.addItem("Default", dashboardCommand);
+//		dashboards.addSeparator();
+//		dashboards.addItem("My custom dasboard 1", null, null);
+//		dashboards.addItem("My custom dasboard 2", null, null);
 
 		MenuBar.Command mappingCommand = createNavigatorMenuCommand("mapping",
 				"mappingView");
-		MenuBar.Command errorCommand = createNavigatorMenuCommand("error",
-				"errorView");
-		MenuBar.Command replayCommand = createNavigatorMenuCommand("replay",
-				"replayView");
-		MenuBar.Command hospitalCommand = createNavigatorMenuCommand(
-				"hospital", "hospitalView");
-		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
-				"topology", "topologyView");
+//		MenuBar.Command errorCommand = createNavigatorMenuCommand("error",
+//				"errorView");
+//		MenuBar.Command replayCommand = createNavigatorMenuCommand("replay",
+//				"replayView");
+//		MenuBar.Command hospitalCommand = createNavigatorMenuCommand(
+//				"hospital", "hospitalView");
+//		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
+//				"topology", "topologyView");
 
 		// Another top-level item
-		MenuItem service = this.actionMenu.addItem("Services",
-				new ThemeResource("images/menu-icon.png"), null);
-		service.setStyleName("ikasan");
-		service.addItem("Topology", null, topologyCommand);
-		service.addSeparator();
-		service.addItem("Mapping", null, mappingCommand);
-		service.addSeparator();
-		service.addItem("Error", null, errorCommand);
-		service.addItem("Replay", null, replayCommand);
-		service.addItem("Hospital", null, hospitalCommand);
+		
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+	    	
+    	if(authentication != null)
+    	{
+			MenuItem service = this.actionMenu.addItem("Services",
+					new ThemeResource("images/menu-icon.png"), null);
+			service.setStyleName("ikasan");
+	//		service.addItem("Topology", null, topologyCommand);
+	//		service.addSeparator();
+			service.addItem("Mapping", null, mappingCommand);
+	//		service.addSeparator();
+	//		service.addItem("Error", null, errorCommand);
+	//		service.addItem("Replay", null, replayCommand);
+	//		service.addItem("Hospital", null, hospitalCommand);
+    	}
 	}
 
 	protected void createUtilityMenuItems()
 	{
+		utilityMenu.removeItems();
+		
 		MenuBar.Command helpCommand = new MenuBar.Command()
 		{
 			public void menuSelected(MenuItem selectedItem)
@@ -263,15 +276,22 @@ public class NavigationPanel extends Panel
 				"roleManagementView");
 		MenuBar.Command policyManagementCommand = createNavigatorMenuCommand("policyManagement",
 				"policyManagementView");
-
-		MenuItem admin = utilityMenu.addItem("", new ThemeResource(
-				"images/gear.png"), null);
-		admin.setStyleName("ikasan");
-		admin.addItem("Manage Users", null, userCommand);
-		admin.addItem("Manage Principals", null, principalManagementCommand);
-		admin.addItem("Manage Roles", null, roleManagementCommand);
-		admin.addItem("Manage Policies", null, policyManagementCommand);
-		admin.addItem("Security Administration", null, authenticationMethodCommand);		
+		
+		IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+	    	
+    	if(authentication != null 
+    			&& authentication.hasGrantedAuthority(SecurityConstants.ALL_AUTHORITY))
+    	{
+    		MenuItem admin = utilityMenu.addItem("", new ThemeResource(
+    				"images/gear.png"), null);
+    		admin.setStyleName("ikasan");
+    		admin.addItem("Manage Users", null, userCommand);
+    		admin.addItem("Manage Principals", null, principalManagementCommand);
+    		admin.addItem("Manage Roles", null, roleManagementCommand);
+    		admin.addItem("Manage Policies", null, policyManagementCommand);
+    		admin.addItem("Security Administration", null, authenticationMethodCommand);
+    	}		
 
 		MenuBar.Command profileCommand = createNavigatorMenuCommand("profile",
 				"profileView");
@@ -298,7 +318,7 @@ public class NavigationPanel extends Panel
 	{
 		LogoutAction action = new LogoutAction(this.visibilityGroup,
 				this.editableGroup, this.layout,
-				this.loginButton, this.utilityMenu, this.loggedInUserLabel);
+				this.loginButton, this.utilityMenu, this.loggedInUserLabel, this);
 
 		IkasanMessageDialog dialog = new IkasanMessageDialog("Logout",
 				"You are about to log out. Any unsaved data will be lost. "
@@ -328,9 +348,12 @@ public class NavigationPanel extends Panel
 		this.newMappingConfigurationFunctionalGroup.initialiseButtonState();
 		this.existingMappingConfigurationFunctionalGroup
 				.initialiseButtonState();
+		
+		this.createUtilityMenuItems();
+		this.createActionMenuItems();
 	}
 
-	private void loadTopLevelNavigator()
+	public void loadTopLevelNavigator()
 	{
 		Navigator navigator = new Navigator(UI.getCurrent(), views.get(
 				"topLevel").getContainer());
@@ -387,34 +410,11 @@ public class NavigationPanel extends Panel
 		this.currentView = null;
 	}
 	
-//	/**
-//	 * 
-//	 */
-//	public void navigateToCurrentView()
-//	{
-//		logger.info("Loading to level navigator");
-//		loadTopLevelNavigator();
-//		
-//		UI.getCurrent().getNavigator().navigateTo(this.currentViewName);
-//		logger.info("Navigated to: " + this.currentViewName);
-//		List<IkasanUIView> mappingViews = views.get(this.currentNavigator)
-//				.getIkasanViews();
-//		
-//		Navigator navigator = new Navigator(UI.getCurrent(), views
-//				.get(this.currentNavigator).getContainer());
-//
-//		for (IkasanUIView view : mappingViews)
-//		{
-//			navigator.addView(view.getPath(), view.getView());
-//		}
-//	}
-//
-//	/**
-//	 * 
-//	 * @return
-//	 */
-//	public boolean isCurrentViewNull()
-//	{
-//		return this.currentView == null;
-//	}
+	public void reset()
+	{
+		currentView = null;
+		currentViewName = null;
+		this.createActionMenuItems();
+	}
+
 }

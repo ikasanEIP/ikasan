@@ -43,6 +43,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.themes.Reindeer;
@@ -66,7 +67,8 @@ public class UserManagementPanel extends Panel implements View
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
 	private AutocompleteField<User> usernameField = new AutocompleteField<User>();
-	private Table dropTable = new Table();
+	private PasswordField passwordField = new PasswordField();
+	private Table userDropTable = new Table();
 
 	/**
 	 * Constructor
@@ -121,6 +123,9 @@ public class UserManagementPanel extends Panel implements View
 		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
 		usernameFieldWrap.setWidth("80%");
 
+		passwordField = new PasswordField();
+		passwordField.setWidth("80%");
+		
 		final AutocompleteField<User> firstName = new AutocompleteField<User>();
 		firstName.setWidth("80%");
 		final AutocompleteField<User> surname = new AutocompleteField<User>();
@@ -153,6 +158,7 @@ public class UserManagementPanel extends Panel implements View
 			@Override
 			public void onSuggestionPicked(User user)
 			{
+				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
 				department.setValue(user.getDepartment());
@@ -181,7 +187,7 @@ public class UserManagementPanel extends Panel implements View
 			            	
 			            	securityService.savePrincipal(principal);
 			            	
-			            	dropTable.removeItem(principal.getName());
+			            	userDropTable.removeItem(principal.getName());
 			            }
 			        });
 					
@@ -210,6 +216,7 @@ public class UserManagementPanel extends Panel implements View
 			public void onSuggestionPicked(User user)
 			{
 				usernameField.setText(user.getUsername());
+				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
 				department.setValue(user.getDepartment());
@@ -238,7 +245,7 @@ public class UserManagementPanel extends Panel implements View
 			            	
 			            	securityService.savePrincipal(principal);
 			            	
-			            	dropTable.removeItem(principal.getName());
+			            	userDropTable.removeItem(principal.getName());
 			            }
 			        });
 					
@@ -267,6 +274,7 @@ public class UserManagementPanel extends Panel implements View
 			public void onSuggestionPicked(User user)
 			{
 				usernameField.setText(user.getUsername());
+				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
 				department.setValue(user.getDepartment());
@@ -295,7 +303,7 @@ public class UserManagementPanel extends Panel implements View
 			            	
 			            	securityService.savePrincipal(principal);
 			            	
-			            	dropTable.removeItem(principal.getName());
+			            	userDropTable.removeItem(principal.getName());
 			            }
 			        });
 					
@@ -307,38 +315,50 @@ public class UserManagementPanel extends Panel implements View
 
 		gridLayout.addComponent(usernameLabel, 0, 0);
 		gridLayout.addComponent(usernameFieldWrap, 1, 0);
+		
+		Label passwordLabel = new Label("Password");
+		gridLayout.addComponent(passwordLabel, 0, 1);
+		gridLayout.addComponent(passwordField, 1, 1);
+		
 
 		Label firstNameLabel = new Label("First name");
-		gridLayout.addComponent(firstNameLabel, 0, 1);
-		gridLayout.addComponent(firstName, 1, 1);
+		gridLayout.addComponent(firstNameLabel, 0, 2);
+		gridLayout.addComponent(firstName, 1, 2);
 
 		Label surnameLabel = new Label("Surname");
-		gridLayout.addComponent(surnameLabel, 0, 2);
-		gridLayout.addComponent(surname, 1, 2);
+		gridLayout.addComponent(surnameLabel, 0, 3);
+		gridLayout.addComponent(surname, 1, 3);
 
 		Label departmentLabel = new Label("Department");
-		gridLayout.addComponent(departmentLabel, 0, 3);
-		gridLayout.addComponent(department, 1, 3);
+		gridLayout.addComponent(departmentLabel, 0, 4);
+		gridLayout.addComponent(department, 1, 4);
 
 		Label emailLabel = new Label("Email address");
-		gridLayout.addComponent(emailLabel, 0, 4);
-		gridLayout.addComponent(email, 1, 4);
+		gridLayout.addComponent(emailLabel, 0, 5);
+		gridLayout.addComponent(email, 1, 5);
 		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 5, 1, 5);
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 6, 1, 6);
 
 		final ClientSideCriterion acceptCriterion = new SourceIs(usernameField);
 
-		dropTable.addContainerProperty("Members", String.class, null);
-		dropTable.addContainerProperty("", Button.class, null);
-		dropTable.setHeight("400px");
-		dropTable.setWidth("200px");
+		userDropTable.addContainerProperty("Members", String.class, null);
+		userDropTable.addContainerProperty("", Button.class, null);
+		userDropTable.setHeight("400px");
+		userDropTable.setWidth("200px");
 
-		dropTable.setDragMode(TableDragMode.ROW);
-		dropTable.setDropHandler(new DropHandler()
+		userDropTable.setDragMode(TableDragMode.ROW);
+		userDropTable.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
+				if(rolesCombo.getValue() == null)
+				{
+					// Do nothing if there is no role selected
+					logger.info("Ignoring drop: " + dropEvent);
+					return;
+				}
+
 				// criteria verify that this is safe
 				logger.info("Trying to drop: " + dropEvent);
 
@@ -363,7 +383,7 @@ public class UserManagementPanel extends Panel implements View
 		        {
 		            public void buttonClick(ClickEvent event) 
 		            {
-		            	dropTable.removeItem(principal.getName());
+		            	userDropTable.removeItem(principal.getName());
 		            	
 		            	principal.getRoles().remove(roleToRemove);
 		            	
@@ -376,7 +396,7 @@ public class UserManagementPanel extends Panel implements View
 		            }
 		        });
 				
-				dropTable.addItem(new Object[]
+				userDropTable.addItem(new Object[]
 						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
 				
 				principal.getRoles().add((Role)rolesCombo.getValue());
@@ -401,7 +421,7 @@ public class UserManagementPanel extends Panel implements View
 			            	
 			            	securityService.savePrincipal(principal);
 			            	
-			            	dropTable.removeItem(principal.getName());
+			            	userDropTable.removeItem(principal.getName());
 			            }
 			        }); 
 					
@@ -417,53 +437,56 @@ public class UserManagementPanel extends Panel implements View
 			}
 		});
 		
-		gridLayout.addComponent(roleTable, 0, 6, 1, 6);
+		gridLayout.addComponent(roleTable, 0, 7, 1, 7);
 					
 		this.rolesCombo = new ComboBox("Groups");
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
 		        
-		        logger.info("Value changed got Role: " + role);
-		        
-		        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
-				
-				dropTable.removeAllItems();
-				
-				for(final IkasanPrincipal principal: principals)
-				{
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+		        if(role != null)
+		        {		        
+			        logger.info("Value changed got Role: " + role);
+			        
+			        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
 					
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {
-			            	dropTable.removeItem(principal.getName());
-			            	
-			            	principal.getRoles().remove(role);
-			            	
-			            	securityService.savePrincipal(principal);
-			            	
-			            	if(UserManagementPanel.this.usernameField.getText().equals(principal.getName()))
-			            	{
-			            		roleTable.removeItem(role);
-			            	}
-			            }
-			        });
+					userDropTable.removeAllItems();
 					
-					
-					dropTable.addItem(new Object[]
-							{ principal.getName(), deleteButton }, principal.getName());
-				}
+					for(final IkasanPrincipal principal: principals)
+					{
+						Button deleteButton = new Button();
+						ThemeResource deleteIcon = new ThemeResource(
+								"images/remove-icon.png");
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {
+				            	userDropTable.removeItem(principal.getName());
+				            	
+				            	principal.getRoles().remove(role);
+				            	
+				            	securityService.savePrincipal(principal);
+				            	
+				            	if(UserManagementPanel.this.usernameField.getText().equals(principal.getName()))
+				            	{
+				            		roleTable.removeItem(role);
+				            	}
+				            }
+				        });
+						
+						
+						userDropTable.addItem(new Object[]
+								{ principal.getName(), deleteButton }, principal.getName());
+					}
+		        }
 		    }
 		});
 			
 		gridLayout.addComponent(this.rolesCombo, 2, 0);
-		gridLayout.addComponent(dropTable, 2, 1, 2, 15);
+		gridLayout.addComponent(userDropTable, 2, 1, 2, 15);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
@@ -482,19 +505,13 @@ public class UserManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
-		Role selectedRole = (Role)this.rolesCombo.getValue();
-		
 		this.rolesCombo.removeAllItems();
+		this.userDropTable.removeAllItems();
 		
 		for(Role role: roles)
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
-			
-			if(roles.contains(role))
-			{
-				this.rolesCombo.setValue(selectedRole);
-			}
 		}
 	}
 }

@@ -697,6 +697,8 @@ public class MappingConfigurationPanel extends Panel implements View
         this.numberOfParametersTextField.setReadOnly(false);
 
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
+        
+        logger.info("Attempting to populate form with mapping configuration: " + this.mappingConfiguration);
 
         this.clientComboBox.setValue(this.mappingConfiguration.getConfigurationServiceClient());
         this.typeComboBox.setValue(mappingConfiguration.getConfigurationType());
