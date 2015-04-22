@@ -87,16 +87,26 @@
     </build>
 
     <dependencies>
-   
         <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-j2ee</artifactId>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-build</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+            <scope>provided</scope>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-j2ee_1.4_spec</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
+            <version>3.1.1.RELEASE</version>
         </dependency>
 
     </dependencies>
