@@ -62,12 +62,14 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-       <scope>provided</scope>
+      <version>2.4</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.ikasan</groupId>
       <artifactId>ikasan-eip</artifactId>
+      <version>1.0.0-rc4-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
@@ -75,7 +77,8 @@
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-js</artifactId>
-        <scope>provided</scope>
+      <version>2.3.2.RELEASE</version>
+      <scope>provided</scope>
         <exclusions>
             <exclusion>
                 <groupId>org.springframework.webflow</groupId>
@@ -87,13 +90,15 @@
     <dependency>
         <groupId>org.springframework.webflow</groupId>
         <artifactId>spring-webflow</artifactId>
-         <scope>provided</scope>
+        <version>2.3.2.RELEASE</version>
+        <scope>provided</scope>
     </dependency>
 
     <dependency>
         <groupId>org.springframework.webflow</groupId>
         <artifactId>spring-binding</artifactId>
-         <scope>provided</scope>
+        <version>2.3.2.RELEASE</version>
+        <scope>provided</scope>
     </dependency>
 
   </dependencies>
