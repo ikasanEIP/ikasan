@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -65,18 +66,21 @@
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
+            <version>9.6.0-3</version>
         </dependency>
 
         <!-- for jaxb -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
-          </dependency>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
 
         <!-- for testing resolving resources over http -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
+            <version>8.1.16.v20140903</version>
             <scope>test</scope>
         </dependency>
 
