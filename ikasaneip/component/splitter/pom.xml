@@ -56,15 +56,13 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
     </dependencies>
