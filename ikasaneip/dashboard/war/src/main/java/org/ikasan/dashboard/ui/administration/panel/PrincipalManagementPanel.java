@@ -62,6 +62,7 @@ public class PrincipalManagementPanel extends Panel implements View
 	private UserService userService;
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
+	private Table principalDropTable = new Table();
 
 	/**
 	 * Constructor
@@ -129,11 +130,10 @@ public class PrincipalManagementPanel extends Panel implements View
 		roleTable.setHeight("400px");
 		roleTable.setWidth("300px");
 		
-		final Table dropTable = new Table();
-		dropTable.addContainerProperty("Members", String.class, null);
-		dropTable.addContainerProperty("", Button.class, null);
-		dropTable.setHeight("400px");
-		dropTable.setWidth("300px");
+		principalDropTable.addContainerProperty("Members", String.class, null);
+		principalDropTable.addContainerProperty("", Button.class, null);
+		principalDropTable.setHeight("400px");
+		principalDropTable.setWidth("300px");
 
 		principalNameField.setQueryListener(new AutocompleteQueryListener<IkasanPrincipal>()
 		{
@@ -176,7 +176,7 @@ public class PrincipalManagementPanel extends Panel implements View
 			            	
 			            	securityService.savePrincipal(principal);
 			            	
-			            	dropTable.removeItem(principal.getName());
+			            	principalDropTable.removeItem(principal.getName());
 			            }
 			        });
 					
@@ -200,14 +200,21 @@ public class PrincipalManagementPanel extends Panel implements View
 		
 		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 5, 1, 5);
 
-		dropTable.setDragMode(TableDragMode.ROW);
-		dropTable.setDropHandler(new DropHandler()
+		principalDropTable.setDragMode(TableDragMode.ROW);
+		principalDropTable.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
 			{
 				// criteria verify that this is safe
 				logger.info("Trying to drop: " + dropEvent);
+
+				if(rolesCombo.getValue() == null)
+				{
+					// Do nothing if there is no role selected
+					logger.info("Ignoring drop: " + dropEvent);
+					return;
+				}
 
 				final WrapperTransferable t = (WrapperTransferable) dropEvent
 						.getTransferable();
@@ -230,7 +237,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		        {
 		            public void buttonClick(ClickEvent event) 
 		            {
-		            	dropTable.removeItem(principal.getName());
+		            	principalDropTable.removeItem(principal.getName());
 		            	
 		            	principal.getRoles().remove(roleToRemove);
 		            	
@@ -243,7 +250,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		            }
 		        });
 				
-				dropTable.addItem(new Object[]
+				principalDropTable.addItem(new Object[]
 						{ sourceContainer.getText(), deleteButton}, sourceContainer.getText());
 
 				principal.getRoles().add((Role)rolesCombo.getValue());
@@ -268,7 +275,7 @@ public class PrincipalManagementPanel extends Panel implements View
 			            	
 			            	securityService.savePrincipal(principal);
 			            	
-			            	dropTable.removeItem(principal.getName());
+			            	principalDropTable.removeItem(principal.getName());
 			            }
 			        }); 
 					
@@ -290,48 +297,51 @@ public class PrincipalManagementPanel extends Panel implements View
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
-		        
-		        logger.info("Value changed got Role: " + role);
-		        
-		        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
-				
-				dropTable.removeAllItems();
-				
-				
-				for(final IkasanPrincipal principal: principals)
-				{
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+		       
+		        if(role != null)
+		        {
+			        logger.info("Value changed got Role: " + role);
+			        
+			        List<IkasanPrincipal> principals = securityService.getAllPrincipalsWithRole(role.getName());
 					
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {
-			            	dropTable.removeItem(principal.getName());
-			            	
-			            	principal.getRoles().remove(role);
-			            	
-			            	securityService.savePrincipal(principal);
-			            	
-			            	if(principalNameField.getText().equals(principal.getName()))
-			            	{
-			            		roleTable.removeItem(role);
-			            	}
-			            }
-			        });
+					principalDropTable.removeAllItems();
 					
 					
-					dropTable.addItem(new Object[]
-							{ principal.getName(), deleteButton }, principal.getName());
-				}
+					for(final IkasanPrincipal principal: principals)
+					{
+						Button deleteButton = new Button();
+						ThemeResource deleteIcon = new ThemeResource(
+								"images/remove-icon.png");
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {
+				            	principalDropTable.removeItem(principal.getName());
+				            	
+				            	principal.getRoles().remove(role);
+				            	
+				            	securityService.savePrincipal(principal);
+				            	
+				            	if(principalNameField.getText().equals(principal.getName()))
+				            	{
+				            		roleTable.removeItem(role);
+				            	}
+				            }
+				        });
+						
+						
+						principalDropTable.addItem(new Object[]
+								{ principal.getName(), deleteButton }, principal.getName());
+					}
+		        }
 		    }
 		});
 			
 		gridLayout.addComponent(this.rolesCombo, 2, 0);
-		gridLayout.addComponent(dropTable, 2, 1, 2, 15);
+		gridLayout.addComponent(principalDropTable, 2, 1, 2, 15);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
@@ -350,19 +360,12 @@ public class PrincipalManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
-		Role selectedRole = (Role)this.rolesCombo.getValue();
-		
 		this.rolesCombo.removeAllItems();
 		
 		for(Role role: roles)
 		{
 			this.rolesCombo.addItem(role);
 			this.rolesCombo.setItemCaption(role, role.getName());
-			
-			if(roles.contains(role))
-			{
-				this.rolesCombo.setValue(selectedRole);
-			}
 		}
 		
 	}

@@ -40,9 +40,12 @@
  */
 package org.ikasan.security.service;
 
+import org.apache.log4j.Logger;
+import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
+import org.ikasan.security.service.authentication.LocalAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -54,7 +57,8 @@ import org.springframework.security.core.Authentication;
  */
 public class AuthenticationServiceImpl implements AuthenticationService
 {
-
+	private static Logger logger = Logger.getLogger(AuthenticationServiceImpl.class);
+	
 	private AuthenticationProviderFactory<AuthenticationMethod> authenticationProviderFactory;
 	private SecurityService securityService;
 	
@@ -87,23 +91,41 @@ public class AuthenticationServiceImpl implements AuthenticationService
 	{
 		Authentication authentication = null;
 		
+		
+		AuthenticationMethod authMethod = securityService.getAuthenticationMethod();
+		AuthenticationProvider authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
+
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
+		
 		try
 		{
-			AuthenticationMethod authMethod = securityService.getAuthenticationMethod();
-			AuthenticationProvider authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
-	
-			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, password);
-			
-			authentication = authProvider.authenticate(auth);
-
-			if(authentication == null)
-			{
-				throw new AuthenticationServiceException("Error authenticating!");
-			}
+			logger.info("Attempting authentication using method " + authMethod.getMethod() + " for user " + username);
+			authentication = authProvider.authenticate(auth);				
+			logger.info("Authentication successful for user " + username + " authentication = " + authentication);
 		}
 		catch (Exception e)
 		{
-			throw new AuthenticationServiceException(e);
+			// If the the authentication is not local and has failed, this try local authentication. 
+			if(!authMethod.getMethod().equals(SecurityConstants.AUTH_METHOD_LOCAL))
+			{
+				logger.info("Attempting local authentication for user " + username);
+				
+				String currentAuthMethod = authMethod.getMethod();
+				
+				authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+
+				authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
+				
+				authentication = authProvider.authenticate(auth);
+				
+				authMethod.setMethod(currentAuthMethod);
+			}
+		}
+
+		if(authentication == null)
+		{
+			logger.info("Authentication failed for user " + username);
+			throw new AuthenticationServiceException("Error authenticating!");
 		}
 
 		return authentication;

@@ -152,7 +152,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 			{
 				Set<Policy> policies = role.getPolicies();
 				
-				logger.info("User: " + user.getName() + " has role: " + role + " via association wit principal: " + principal);
+				logger.info("User: " + user.getName() + " has role: " + role + " via association with principal: " + principal);
 				
 				for(Policy policy: policies)
 				{

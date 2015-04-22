@@ -51,7 +51,7 @@ public class TypeComboBox extends ComboBox implements Refreshable, FocusListener
     protected void init()
     {
         this.setWidth(140, Unit.PIXELS);
-//        loadClientTypeValues();
+        loadClientTypeValues();
     }
 
     /**

@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -64,6 +65,8 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public class LocalAuthenticationProvider implements AuthenticationProvider
 {
+	private static Logger logger = Logger.getLogger(LocalAuthenticationProvider.class);
+	
 	private SecurityService securityService;
 	private UserService userService;
 
@@ -102,9 +105,12 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 
 		if(user.getPassword().equals(shaPassword))
 		{
-			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 			Set<IkasanPrincipal> principals = user.getPrincipals();
+
+			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 			
+			logger.info("Logging in user: " + user.getName());
+
 			for(IkasanPrincipal principal: principals)
 			{
 				Set<Role> roles = principal.getRoles();
@@ -113,10 +119,15 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 				{
 					Set<Policy> policies = role.getPolicies();
 					
+					logger.info("User: " + user.getName() + " has role: " + role + " via association with principal: " + principal);
+					
 					for(Policy policy: policies)
 					{
+						logger.info("Attempting to add granted authority: " + policy);
+						
 						if(!authorities.contains(policy))
 						{
+							logger.info("Adding granted authority: " + policy);
 							authorities.add(policy);
 						}
 					}

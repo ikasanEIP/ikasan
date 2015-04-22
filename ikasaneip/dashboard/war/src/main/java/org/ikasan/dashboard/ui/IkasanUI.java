@@ -187,18 +187,18 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 //             }
 //        }
 
-        VerticalLayout vlayout = new VerticalLayout();
-
-        Button button = new Button("Start Alerts");
-
-        button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-            	feederThread.start();
-            }
-        });
-        
-        vlayout.addComponent(button);
-        layout.addComponent(vlayout);
+//        VerticalLayout vlayout = new VerticalLayout();
+//
+//        Button button = new Button("Start Alerts");
+//
+//        button.addClickListener(new Button.ClickListener() {
+//            public void buttonClick(ClickEvent event) {
+//            	feederThread.start();
+//            }
+//        });
+//        
+//        vlayout.addComponent(button);
+//        layout.addComponent(vlayout);
     }
     
     static class FeederThread extends Thread {
