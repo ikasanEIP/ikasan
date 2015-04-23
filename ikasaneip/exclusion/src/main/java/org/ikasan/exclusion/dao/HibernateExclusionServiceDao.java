@@ -67,6 +67,10 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     /** batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete ExclusionEvent s where s.identifier in (:event_ids)";
 
+    /** batch delete statement */
+    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.identifier = :event_id";
+
+
     @Override
     public void add(ExclusionEvent exclusionEvent)
     {
@@ -74,9 +78,19 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     }
 
     @Override
-    public void remove(ExclusionEvent exclusionEvent)
+    public void remove(final ExclusionEvent exclusionEvent)
     {
-        this.getHibernateTemplate().delete(exclusionEvent);
+        getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                Query query = session.createQuery(DELETE_QUERY);
+                query.setParameter("event_id", exclusionEvent.getIdentifier());
+                query.executeUpdate();
+                return null;
+            }
+        });
     }
 
     @Override
