@@ -36,7 +36,6 @@
 
     <bean id="xaMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="xaMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="xaMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -64,7 +63,6 @@
 
     <bean id="localTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="localTxMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="localTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -92,7 +90,6 @@
 
     <bean id="noTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="noTxMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="noTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
