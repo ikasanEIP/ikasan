@@ -15,11 +15,11 @@ package org.ikasan.dashboard.ui.administration.panel;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.SecurityServiceException;
 import org.ikasan.security.service.UserService;
 
 import com.vaadin.data.Property;
@@ -34,21 +34,23 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
-import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Reindeer;
 import com.zybnet.autocomplete.server.AutocompleteField;
 import com.zybnet.autocomplete.server.AutocompleteQueryListener;
 import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
@@ -69,13 +71,17 @@ public class UserManagementPanel extends Panel implements View
 	private AutocompleteField<User> usernameField = new AutocompleteField<User>();
 	private PasswordField passwordField = new PasswordField();
 	private Table userDropTable = new Table();
+	private Table associatedPrincipalsTable = new Table();
+	private User user;
+	private AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param ikasanModuleService
 	 */
-	public UserManagementPanel(UserService userService, SecurityService securityService)
+	public UserManagementPanel(UserService userService, SecurityService securityService,
+			AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener)
 	{
 		super();
 		this.userService = userService;
@@ -88,6 +94,12 @@ public class UserManagementPanel extends Panel implements View
 		{
 			throw new IllegalArgumentException(
 					"securityService cannot be null!");
+		}
+		this.associatedPrincipalItemClickListener = associatedPrincipalItemClickListener;
+		if (this.associatedPrincipalItemClickListener == null)
+		{
+			throw new IllegalArgumentException(
+					"associatedPrincipalItemClickListener cannot be null!");
 		}
 
 		init();
@@ -108,12 +120,12 @@ public class UserManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(3, 16);
+		GridLayout gridLayout = new GridLayout(2, 9);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
-
+	
 		Label usernameLabel = new Label("Username");
 
 		usernameField.setWidth("80%");
@@ -158,6 +170,7 @@ public class UserManagementPanel extends Panel implements View
 			@Override
 			public void onSuggestionPicked(User user)
 			{
+				UserManagementPanel.this.user = user;
 				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
 				surname.setText(user.getSurname());
@@ -194,6 +207,17 @@ public class UserManagementPanel extends Panel implements View
 					roleTable.addItem(new Object[]
 					{ role.getName(), deleteButton }, role);
 				}
+				
+				associatedPrincipalsTable.removeAllItems();
+				
+				for(IkasanPrincipal ikasanPrincipal: user.getPrincipals())
+		        {
+		        	if(!ikasanPrincipal.getType().equals("user"))
+		        	{
+			        	associatedPrincipalsTable.addItem(new Object[]
+			        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+		        	}
+		        }
 			}
 		});
 		
@@ -215,6 +239,7 @@ public class UserManagementPanel extends Panel implements View
 			@Override
 			public void onSuggestionPicked(User user)
 			{
+				UserManagementPanel.this.user = user;
 				usernameField.setText(user.getUsername());
 				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
@@ -252,6 +277,17 @@ public class UserManagementPanel extends Panel implements View
 					roleTable.addItem(new Object[]
 					{ role.getName(), deleteButton }, role);
 				}
+				
+				associatedPrincipalsTable.removeAllItems();
+				
+				for(IkasanPrincipal ikasanPrincipal: user.getPrincipals())
+		        {
+		        	if(!ikasanPrincipal.getType().equals("user"))
+		        	{
+			        	associatedPrincipalsTable.addItem(new Object[]
+			        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+		        	}
+		        }
 			}
 		});
 		
@@ -273,6 +309,7 @@ public class UserManagementPanel extends Panel implements View
 			@Override
 			public void onSuggestionPicked(User user)
 			{
+				UserManagementPanel.this.user = user;
 				usernameField.setText(user.getUsername());
 				passwordField.setValue(user.getPassword());
 				firstName.setText(user.getFirstName());
@@ -308,7 +345,18 @@ public class UserManagementPanel extends Panel implements View
 			        });
 					
 					roleTable.addItem(new Object[]
-					{ role.getName(), deleteButton }, role);
+							{ role.getName(), deleteButton }, role);
+					
+					associatedPrincipalsTable.removeAllItems();
+					
+					for(IkasanPrincipal ikasanPrincipal: user.getPrincipals())
+			        {
+			        	if(!ikasanPrincipal.getType().equals("user"))
+			        	{
+				        	associatedPrincipalsTable.addItem(new Object[]
+				        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+			        	}
+			        }
 				}
 			}
 		});
@@ -344,7 +392,7 @@ public class UserManagementPanel extends Panel implements View
 		userDropTable.addContainerProperty("Members", String.class, null);
 		userDropTable.addContainerProperty("", Button.class, null);
 		userDropTable.setHeight("400px");
-		userDropTable.setWidth("200px");
+		userDropTable.setWidth("300px");
 
 		userDropTable.setDragMode(TableDragMode.ROW);
 		userDropTable.setDropHandler(new DropHandler()
@@ -426,7 +474,7 @@ public class UserManagementPanel extends Panel implements View
 			        }); 
 					
 					roleTable.addItem(new Object[]
-					{ role.getName(), roleDeleteButton }, role);
+					 { role.getName(), roleDeleteButton }, role);
 				}
 			}
 
@@ -437,9 +485,16 @@ public class UserManagementPanel extends Panel implements View
 			}
 		});
 		
-		gridLayout.addComponent(roleTable, 0, 7, 1, 7);
+		gridLayout.addComponent(roleTable, 0, 7);
+		
+		this.associatedPrincipalsTable.addContainerProperty("Associated Principals", String.class, null);
+		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
+		associatedPrincipalsTable.setHeight("400px");
+		associatedPrincipalsTable.setWidth("450px");
+		
+		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 7);
 					
-		this.rolesCombo = new ComboBox("Groups");
+		this.rolesCombo = new ComboBox();
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
@@ -484,13 +539,44 @@ public class UserManagementPanel extends Panel implements View
 		        }
 		    }
 		});
-			
-		gridLayout.addComponent(this.rolesCombo, 2, 0);
-		gridLayout.addComponent(userDropTable, 2, 1, 2, 15);
+		
+		Panel roleMemberPanel = new Panel("Role/Member Associations");
+		
+		roleMemberPanel.setStyleName("dashboard");
+		roleMemberPanel.setHeight("100%");
+		roleMemberPanel.setWidth("100%");
+		
+		VerticalLayout roleMemberLayout = new VerticalLayout();
+		roleMemberLayout.setMargin(true);
+		roleMemberLayout.setWidth("100%");
+		roleMemberLayout.setHeight("100%");
+		roleMemberLayout.addComponent(this.rolesCombo);
+		roleMemberLayout.setExpandRatio(this.rolesCombo, 0.05f);
+		roleMemberLayout.addComponent(this.userDropTable);
+		roleMemberLayout.setExpandRatio(this.userDropTable, 0.95f);
+		
+		roleMemberPanel.setContent(roleMemberLayout);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
-		this.setContent(layout);
+		
+		VerticalLayout roleMemberPanelLayout = new VerticalLayout();
+		roleMemberPanelLayout.setWidth("100%");
+		roleMemberPanelLayout.setHeight("100%");
+		roleMemberPanelLayout.setMargin(true);
+		roleMemberPanelLayout.addComponent(roleMemberPanel);
+		roleMemberPanelLayout.setSizeFull();
+		
+		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+		hsplit.setFirstComponent(layout);
+		hsplit.setSecondComponent(roleMemberPanelLayout);
+
+
+		// Set the position of the splitter as percentage
+		hsplit.setSplitPosition(65, Unit.PERCENTAGE);
+		hsplit.setLocked(true);
+		
+		this.setContent(hsplit);
 	}
 
 	/*
@@ -505,6 +591,7 @@ public class UserManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
+		this.usernameField.clearChoices();
 		this.rolesCombo.removeAllItems();
 		this.userDropTable.removeAllItems();
 		

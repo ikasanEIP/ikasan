@@ -122,8 +122,17 @@
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
     </bean>
-
-	<bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
+	
+	<!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="navigationPanelProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="navigationPanel"/></property>
+        </bean>
+      </property>
+    </bean>
+    
+    <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
 		<constructor-arg ref="localTxAuthenticationService"/>
 		<constructor-arg ref="adminUserVisibilityGroup"/>
         <constructor-arg ref="editableGroup"/>
@@ -132,6 +141,10 @@
         <constructor-arg ref="imagePanelLayout"/>
 		<constructor-arg ref="navigatorMap"/>
 	</bean>
+
+    <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">
+        <constructor-arg ref="policyAssociationMappingSearchWindow"/>
+    </bean>
 	
 	<bean id="imagePanelLayout" class="com.vaadin.ui.VerticalLayout" scope="session">
 	</bean>

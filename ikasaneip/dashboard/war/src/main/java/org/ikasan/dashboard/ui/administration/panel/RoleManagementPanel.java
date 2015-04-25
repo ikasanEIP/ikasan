@@ -17,14 +17,14 @@ import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener;
 import org.ikasan.dashboard.ui.administration.window.NewRoleWindow;
+import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
@@ -32,15 +32,17 @@ import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Sizeable;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
@@ -48,7 +50,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -81,13 +82,16 @@ public class RoleManagementPanel extends Panel implements View
 	private TextArea descriptionField;
 	private BeanItem<Role> roleItem;
 	private DragAndDropWrapper policyNameFieldWrap;
+	private Table associatedPrincipalsTable;
+	private AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param ikasanModuleService
 	 */
-	public RoleManagementPanel(UserService userService, SecurityService securityService)
+	public RoleManagementPanel(UserService userService, SecurityService securityService,
+			AssociatedPrincipalItemClickListener associatedPrincipalItemClickListener)
 	{
 		super();
 		this.userService = userService;
@@ -100,6 +104,12 @@ public class RoleManagementPanel extends Panel implements View
 		{
 			throw new IllegalArgumentException(
 					"securityService cannot be null!");
+		}
+		this.associatedPrincipalItemClickListener = associatedPrincipalItemClickListener;
+		if (this.securityService == null)
+		{
+			throw new IllegalArgumentException(
+					"associatedPrincipalItemClickListener cannot be null!");
 		}
 
 		init();
@@ -118,16 +128,20 @@ public class RoleManagementPanel extends Panel implements View
 		layout.setMargin(true);
 		layout.setSizeFull();
 
-		Panel securityAdministrationPanel = new Panel("Role Management");
-		securityAdministrationPanel.setStyleName("dashboard");
-		securityAdministrationPanel.setHeight("100%");
-		securityAdministrationPanel.setWidth("100%");
+		Panel roleAdministrationPanel = new Panel("Role Management");
+		roleAdministrationPanel.setStyleName("dashboard");
+		roleAdministrationPanel.setHeight("100%");
+		roleAdministrationPanel.setWidth("100%");
 
 		GridLayout gridLayout = new GridLayout(3, 16);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
+		gridLayout.setColumnExpandRatio(0, 1);
+		gridLayout.setColumnExpandRatio(1, 3);
+		gridLayout.setColumnExpandRatio(2, 0.25f);
+		gridLayout.setColumnExpandRatio(3, 2);
 		
 		
 		Layout controlLayout = this.initControlLayout();
@@ -145,13 +159,36 @@ public class RoleManagementPanel extends Panel implements View
 		this.descriptionField.setWidth("80%");
 		this.descriptionField.setHeight("60px");
 		gridLayout.addComponent(descriptionLabel, 0, 2);
-		gridLayout.addComponent(descriptionField, 1, 2);  	
-					
-		gridLayout.addComponent(this.policyDropPanel, 2, 0, 2, 15);
+		gridLayout.addComponent(descriptionField, 1, 2);
+		
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 3, 1, 3);
+		
+		this.associatedPrincipalsTable = new Table();
+		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
+		this.associatedPrincipalsTable.addContainerProperty("Associated Principals", String.class, null);
+		this.associatedPrincipalsTable.setHeight("400px");
+		this.associatedPrincipalsTable.setWidth("650px");
+		
+		gridLayout.addComponent(this.associatedPrincipalsTable, 0, 4, 1, 4);
 
-		securityAdministrationPanel.setContent(gridLayout);
-		layout.addComponent(securityAdministrationPanel);
-		this.setContent(layout);
+		roleAdministrationPanel.setContent(gridLayout);
+		layout.addComponent(roleAdministrationPanel);
+		
+		HorizontalLayout policyDropPanelLayout = new HorizontalLayout();
+		policyDropPanelLayout.setMargin(true);
+		policyDropPanelLayout.addComponent(this.policyDropPanel);
+		policyDropPanelLayout.setSizeFull();
+		
+		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+		hsplit.setFirstComponent(layout);
+		hsplit.setSecondComponent(policyDropPanelLayout);
+
+
+		// Set the position of the splitter as percentage
+		hsplit.setSplitPosition(65, Unit.PERCENTAGE);
+		hsplit.setLocked(true);
+
+		this.setContent(hsplit);
 	}
 
 	/**
@@ -159,10 +196,10 @@ public class RoleManagementPanel extends Panel implements View
 	 */
 	protected void createPolicyDropPanel()
 	{
-		this.policyDropPanel = new Panel();
+		this.policyDropPanel = new Panel("Associated Policies");
 		
 		this.policyDropPanel.setStyleName("dashboard");
-		this.policyDropPanel.setHeight("600px");
+		this.policyDropPanel.setHeight("100%");
 		this.policyDropPanel.setWidth("100%");
 				
 		this.policyTable = new Table();
@@ -333,6 +370,21 @@ public class RoleManagementPanel extends Panel implements View
 					RoleManagementPanel.this.policyTable.addItem(new Object[]
 							{ policy.getName(), deleteButton }, policy.getName());
 				}
+				
+				RoleManagementPanel.this.associatedPrincipalsTable.removeAllItems();
+				
+				logger.info("Trying to get pinciplas for role: " + role);
+				
+				List<IkasanPrincipal> principals = RoleManagementPanel.this.securityService
+						.getAllPrincipalsWithRole(role.getName());
+				
+				logger.info("Adding the following number of principals : " + principals.size());
+				
+				for(IkasanPrincipal ikasanPrincipal: principals)
+		        {
+		        		RoleManagementPanel.this.associatedPrincipalsTable.addItem(new Object[]
+			        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+		        }
 	        }
 		});
 	}
@@ -516,5 +568,23 @@ public class RoleManagementPanel extends Panel implements View
 	{
 		this.policyNameField.clearChoices();
 		this.roleNameField.clearChoices();
+		
+		if(this.role != null)
+		{
+			RoleManagementPanel.this.associatedPrincipalsTable.removeAllItems();
+			
+			logger.info("Trying to get pincipals for role: " + role);
+			
+			List<IkasanPrincipal> principals = RoleManagementPanel.this.securityService
+					.getAllPrincipalsWithRole(role.getName());
+			
+			logger.info("Adding the following number of principals : " + principals.size());
+			
+			for(IkasanPrincipal ikasanPrincipal: principals)
+	        {
+	        		RoleManagementPanel.this.associatedPrincipalsTable.addItem(new Object[]
+		        		{ ikasanPrincipal.getName() }, ikasanPrincipal);
+	        }
+		}
 	}
 }

@@ -19,14 +19,12 @@
         			 /WEB-INF/profile-context.xml, 
         			 /WEB-INF/replay-context.xml, 
         			 /WEB-INF/topology-context.xml, 
-        			 /WEB-INF/user-context.xml, 
         			 /WEB-INF/mapping-context.xml, 
         			 /WEB-INF/dashboard-context.xml, 
         			 /WEB-INF/hospital-context.xml, 
         			 /WEB-INF/persistence-setup-context.xml,
         			 /WEB-INF/transaction-context.xml,
-        			 /WEB-INF/principal-context.xml,
-        			 /WEB-INF/role-context.xml,
+        			 /WEB-INF/administration-context.xml,
         			 /WEB-INF/policy-context.xml,
         			 classpath:mappingConfigurationUI-environmentalisation.xml, 
         			 classpath:mapping-conf.xml, 
@@ -81,6 +79,10 @@
 		    <param-name>widgetset</param-name>
 		    <param-value>org.ikasan.dashboard.ui.AppWidgetSet</param-value>
 		</init-param>
+		<init-param>
+	      <param-name>closeIdleSessions</param-name>
+	      <param-value>true</param-value>
+	    </init-param>
         <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>

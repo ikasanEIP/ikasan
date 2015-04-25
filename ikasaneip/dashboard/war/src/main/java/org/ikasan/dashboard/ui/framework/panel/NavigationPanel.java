@@ -23,6 +23,7 @@ import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
+import org.ikasan.dashboard.ui.framework.navigation.Navigation;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.framework.window.LoginDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
@@ -51,7 +52,7 @@ import com.vaadin.ui.themes.BaseTheme;
  * @author CMI2 Development Team
  * 
  */
-public class NavigationPanel extends Panel
+public class NavigationPanel extends Panel implements ViewContext, Navigation
 {
 
 	private static final long serialVersionUID = 5649279357596506519L;
@@ -73,8 +74,8 @@ public class NavigationPanel extends Panel
 	private Label loggedInUserLabel;
 	private HashMap<String, IkasanUINavigator> views;
 	private String currentView;
-	private String currentViewName;
-	private String currentNavigator;
+//	private String currentViewName;
+//	private String currentNavigator;
 	private MenuBar actionMenu = new MenuBar();
 	private MenuBar utilityMenu = new MenuBar();
 
@@ -381,8 +382,8 @@ public class NavigationPanel extends Panel
 					UI.getCurrent().getNavigator().navigateTo(viewName);
 
 					currentView = views.get(navigatorName).getName();
-					currentNavigator = navigatorName;
-					currentViewName = viewName;
+//					currentNavigator = navigatorName;
+//					currentViewName = viewName;
 
 					List<IkasanUIView> mappingViews = views.get(navigatorName)
 							.getIkasanViews();
@@ -405,6 +406,11 @@ public class NavigationPanel extends Panel
 		this.layout.setVisible(visible);
 	}
 
+	public void setCurrentView(String currentView)
+	{
+		this.currentView = currentView;
+	}
+
 	public void resetCurrentView()
 	{
 		this.currentView = null;
@@ -413,7 +419,7 @@ public class NavigationPanel extends Panel
 	public void reset()
 	{
 		currentView = null;
-		currentViewName = null;
+//		currentViewName = null;
 		this.createActionMenuItems();
 	}
 

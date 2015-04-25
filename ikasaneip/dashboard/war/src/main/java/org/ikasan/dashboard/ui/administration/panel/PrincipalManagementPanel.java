@@ -29,6 +29,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -37,6 +38,8 @@ import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
@@ -63,6 +66,11 @@ public class PrincipalManagementPanel extends Panel implements View
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
 	private Table principalDropTable = new Table();
+	private TextField principalTypeField = new TextField();
+	private TextArea descriptionField = new TextArea();
+	private Table roleTable = new Table();
+	private IkasanPrincipal principal;
+	private AutocompleteField<IkasanPrincipal> principalNameField;
 
 	/**
 	 * Constructor
@@ -102,7 +110,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(3, 16);
+		GridLayout gridLayout = new GridLayout(2, 7);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
@@ -110,7 +118,7 @@ public class PrincipalManagementPanel extends Panel implements View
 
 		Label principalName = new Label("Principal Name");
 
-		final AutocompleteField<IkasanPrincipal> principalNameField = new AutocompleteField<IkasanPrincipal>();
+		principalNameField = new AutocompleteField<IkasanPrincipal>();
 		principalNameField.setWidth("80%");
 
 		final DragAndDropWrapper usernameFieldWrap = new DragAndDropWrapper(
@@ -118,13 +126,10 @@ public class PrincipalManagementPanel extends Panel implements View
 		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
 		usernameFieldWrap.setWidth("80%");
 
-		final TextField name = new TextField();
-		name.setWidth("80%");
-		final TextArea description = new TextArea();
-		description.setWidth("80%");
-		description.setHeight("60px");
+		principalTypeField.setWidth("80%");
+		descriptionField.setWidth("80%");
+		descriptionField.setHeight("60px");
 		
-		final Table roleTable = new Table();
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
 		roleTable.setHeight("400px");
@@ -153,36 +158,8 @@ public class PrincipalManagementPanel extends Panel implements View
 			@Override
 			public void onSuggestionPicked(final IkasanPrincipal principal)
 			{
-				name.setValue(principal.getType());
-				description.setValue(principal.getDescription());
-
-				roleTable.removeAllItems();
-
-				for (final Role role : principal.getRoles())
-				{
-					Button deleteButton = new Button();
-					ThemeResource deleteIcon = new ThemeResource(
-							"images/remove-icon.png");
-					deleteButton.setIcon(deleteIcon);
-					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-					
-					deleteButton.addClickListener(new Button.ClickListener() 
-			        {
-			            public void buttonClick(ClickEvent event) 
-			            {
-			            	roleTable.removeItem(role);
-			            	
-			            	principal.getRoles().remove(role);
-			            	
-			            	securityService.savePrincipal(principal);
-			            	
-			            	principalDropTable.removeItem(principal.getName());
-			            }
-			        });
-					
-					roleTable.addItem(new Object[]
-					{ role.getName(), deleteButton }, role);
-				}
+				PrincipalManagementPanel.this.principal = principal;
+				PrincipalManagementPanel.this.setValues();
 			}
 		});
 		
@@ -190,13 +167,13 @@ public class PrincipalManagementPanel extends Panel implements View
 		gridLayout.addComponent(principalName, 0, 0);
 		gridLayout.addComponent(usernameFieldWrap, 1, 0);
 
-		Label nameLabel = new Label("Name");
+		Label nameLabel = new Label("Principal Type");
 		gridLayout.addComponent(nameLabel, 0, 1);
-		gridLayout.addComponent(name, 1, 1);
+		gridLayout.addComponent(principalTypeField, 1, 1);
 
 		Label descriptionLabel = new Label("Description");
 		gridLayout.addComponent(descriptionLabel, 0, 2);
-		gridLayout.addComponent(description, 1, 2);
+		gridLayout.addComponent(descriptionField, 1, 2);
 		
 		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 5, 1, 5);
 
@@ -293,7 +270,7 @@ public class PrincipalManagementPanel extends Panel implements View
 		
 		gridLayout.addComponent(roleTable, 0, 6, 1, 6);
 					
-		this.rolesCombo = new ComboBox("Groups");
+		this.rolesCombo = new ComboBox();
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
 		        final Role role = (Role)event.getProperty().getValue();
@@ -340,12 +317,82 @@ public class PrincipalManagementPanel extends Panel implements View
 		    }
 		});
 			
-		gridLayout.addComponent(this.rolesCombo, 2, 0);
-		gridLayout.addComponent(principalDropTable, 2, 1, 2, 15);
+		Panel roleMemberPanel = new Panel("Role/Member Associations");
+		
+		roleMemberPanel.setStyleName("dashboard");
+		roleMemberPanel.setHeight("100%");
+		roleMemberPanel.setWidth("100%");
+
+		VerticalLayout roleMemberLayout = new VerticalLayout();
+		roleMemberLayout.setMargin(true);
+		roleMemberLayout.setWidth("100%");
+		roleMemberLayout.setHeight("100%");
+		roleMemberLayout.addComponent(this.rolesCombo);
+		roleMemberLayout.setExpandRatio(this.rolesCombo, 0.05f);
+		roleMemberLayout.addComponent(this.principalDropTable);
+		roleMemberLayout.setExpandRatio(this.principalDropTable, 0.95f);
+		
+		roleMemberPanel.setContent(roleMemberLayout);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
-		this.setContent(layout);
+		
+		VerticalLayout roleMemberPanelLayout = new VerticalLayout();
+		roleMemberPanelLayout.setWidth("100%");
+		roleMemberPanelLayout.setHeight("100%");
+		roleMemberPanelLayout.setMargin(true);
+		roleMemberPanelLayout.addComponent(roleMemberPanel);
+		roleMemberPanelLayout.setSizeFull();
+		
+		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+		hsplit.setFirstComponent(layout);
+		hsplit.setSecondComponent(roleMemberPanelLayout);
+
+
+		// Set the position of the splitter as percentage
+		hsplit.setSplitPosition(65, Unit.PERCENTAGE);
+		hsplit.setLocked(true);
+		
+		this.setContent(hsplit);
+	}
+
+	/**
+	 * 
+	 */
+	protected void setValues()
+	{
+		this.principal = this.securityService.findPrincipalByName(this.principal.getName());
+		this.principalNameField.setText(this.principal.getName());
+		this.principalTypeField.setValue(this.principal.getType());
+		this.descriptionField.setValue(this.principal.getDescription());
+
+		this.roleTable.removeAllItems();
+
+		for (final Role role : principal.getRoles())
+		{
+			Button deleteButton = new Button();
+			ThemeResource deleteIcon = new ThemeResource(
+					"images/remove-icon.png");
+			deleteButton.setIcon(deleteIcon);
+			deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+			
+			deleteButton.addClickListener(new Button.ClickListener() 
+	        {
+	            public void buttonClick(ClickEvent event) 
+	            {
+	            	PrincipalManagementPanel.this.roleTable.removeItem(role);
+	            	
+	            	PrincipalManagementPanel.this.principal.getRoles().remove(role);
+	            	
+	            	PrincipalManagementPanel.this.securityService.savePrincipal(principal);
+	            	
+	            	PrincipalManagementPanel.this.principalDropTable.removeItem(principal.getName());
+	            }
+	        });
+			
+			roleTable.addItem(new Object[]
+					{ role.getName(), deleteButton }, role);
+		}
 	}
 
 	/*
@@ -360,7 +407,9 @@ public class PrincipalManagementPanel extends Panel implements View
 	{
 		List<Role> roles = this.securityService.getAllRoles();
 		
+		this.principalNameField.clearChoices();
 		this.rolesCombo.removeAllItems();
+		this.principalDropTable.removeAllItems();
 		
 		for(Role role: roles)
 		{
@@ -368,5 +417,18 @@ public class PrincipalManagementPanel extends Panel implements View
 			this.rolesCombo.setItemCaption(role, role.getName());
 		}
 		
+		if(this.principal != null)
+		{
+			this.setValues();
+		}
+		
+	}
+	
+	/**
+	 * @param principal the principal to set
+	 */
+	public void setPrincipal(IkasanPrincipal principal)
+	{
+		this.principal = principal;
 	}
 }

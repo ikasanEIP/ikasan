@@ -63,8 +63,7 @@ public class LoginDialog extends Window
             VisibilityGroup visibilityGroup, final NavigationPanel commitHandler)
     {
         super.setModal(true);
-        super.setHeight(20.0f, Unit.PERCENTAGE);
-        super.setWidth(21.0f, Unit.PERCENTAGE);
+        super.setResizable(false);
         super.center();
         super.setStyleName("ikasan");
 
@@ -73,6 +72,8 @@ public class LoginDialog extends Window
         item.addItemProperty(LoginFieldGroup.PASSWORD, new ObjectProperty<String>(""));
         
         FormLayout form = new FormLayout();
+        form.setWidth("280px");
+        form.setHeight("140px");
         form.setMargin(true);
         
         final TextField userNameField = new TextField("Username");

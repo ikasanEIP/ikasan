@@ -119,8 +119,8 @@ public class AuthenticationMethodPanel extends Panel implements View
 
         Panel securityAdministrationPanel = new Panel("Security Administration");
         securityAdministrationPanel.setStyleName("dashboard");
-        securityAdministrationPanel.setHeight("500px");
-        securityAdministrationPanel.setWidth("800px");
+        securityAdministrationPanel.setWidth("100%");
+        securityAdministrationPanel.setHeight("100%");
         
         GridLayout gridLayout = new GridLayout(2, 19);
         gridLayout.setWidth("100%");
