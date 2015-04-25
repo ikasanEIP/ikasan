@@ -59,7 +59,7 @@ import com.vaadin.testbench.elements.WindowElement;
  * @author Ikasan Development Team
  *
  */
-//@Ignore
+@Ignore
 public class IkasanUITest extends TestBenchTestCase 
 {
 	   @Before

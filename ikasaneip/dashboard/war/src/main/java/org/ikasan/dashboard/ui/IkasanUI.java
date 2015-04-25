@@ -28,8 +28,6 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -156,8 +154,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         }
         else
         {
-       	 navigator.navigateTo("landingView");  
-       	 navigationPanel.setVisible(true);
+	       	 navigator.navigateTo("landingView");  
+	       	 navigationPanel.setVisible(true);
         }
         
 //        if(!this.navigationPanel.isCurrentViewNull())

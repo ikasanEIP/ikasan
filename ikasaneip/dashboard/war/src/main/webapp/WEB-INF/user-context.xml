@@ -18,6 +18,10 @@
                    <constructor-arg value="userPanel"/>
                    <constructor-arg ref="userPanel"/>
                 </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="userManagementViewComponentContainer"/>
@@ -26,10 +30,15 @@
     <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
     	<constructor-arg ref="localTxUserService"/>
     	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="associatedPrincipalItemClickListener"/>
     </bean>
     
     <bean id="userManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
     </bean>
+    
+    <bean id="associatedPrincipalItemClickListener" class="org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener" scope="session">
+		<constructor-arg ref="principalManagementPanel"/>
+    </bean>   
     
 </beans>

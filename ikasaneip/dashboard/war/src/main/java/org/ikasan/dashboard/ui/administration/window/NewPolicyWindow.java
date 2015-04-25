@@ -49,7 +49,9 @@ import com.vaadin.data.validator.NullValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -86,11 +88,12 @@ public class NewPolicyWindow extends Window
 
 	public void init()
 	{
-		this.setWidth("300px");
-		this.setHeight("200px");
 		this.setModal(true);
+		this.setResizable(false);
 		
 		GridLayout gridLayout = new GridLayout(2, 3);
+		gridLayout.setWidth("280px");
+		gridLayout.setHeight("140px");
 		gridLayout.setMargin(true);
 
 		Label nameLabel = new Label("Name");
@@ -117,8 +120,15 @@ public class NewPolicyWindow extends Window
 		Button createButton = new Button("Create");
 		Button cancelButton = new Button("Cancel");
 		
-		gridLayout.addComponent(createButton, 0, 2);
-		gridLayout.addComponent(cancelButton, 1, 2);
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setWidth("200px");
+		buttonLayout.addComponent(createButton);
+		buttonLayout.setComponentAlignment(createButton, Alignment.MIDDLE_CENTER);
+		buttonLayout.addComponent(cancelButton);
+		buttonLayout.setComponentAlignment(cancelButton, Alignment.MIDDLE_CENTER);
+		
+		gridLayout.addComponent(buttonLayout, 0, 2, 1, 2);
+		gridLayout.setComponentAlignment(buttonLayout, Alignment.MIDDLE_CENTER);
 		
 		BeanItem<Policy> policyItem = new BeanItem<Policy>(this.policy);
 

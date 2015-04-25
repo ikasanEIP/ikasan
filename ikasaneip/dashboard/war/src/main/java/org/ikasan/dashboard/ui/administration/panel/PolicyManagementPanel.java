@@ -36,6 +36,7 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -44,6 +45,7 @@ import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.DragAndDropWrapper.WrapperTransferable;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
@@ -51,7 +53,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
 import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -139,7 +140,7 @@ public class PolicyManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(3, 16);
+		GridLayout gridLayout = new GridLayout(2, 8);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
@@ -186,6 +187,7 @@ public class PolicyManagementPanel extends Panel implements View
 		
     	gridLayout.addComponent(linkedEntityLabel, 0, 5);
 		gridLayout.addComponent(linkedEntity, 1, 5);
+		linkedEntityLabel.setVisible(false);
 		linkedEntity.setVisible(false);
     	
     	this.policyAssociationMappingSearchWindow.addCloseListener(new Window.CloseListener() {
@@ -218,15 +220,29 @@ public class PolicyManagementPanel extends Panel implements View
 		    }
 		});
 		
-//		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 5, 1, 5);
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 6, 1, 6);
 
-		gridLayout.addComponent(this.associatedRolesPanel, 0, 6, 1, 6);
-			
-		gridLayout.addComponent(this.policyDropPanel, 2, 0, 2, 15);
+		gridLayout.addComponent(this.roleTable, 0, 7, 1, 7);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
-		this.setContent(layout);
+
+		
+		HorizontalLayout roleMemberPanelLayout = new HorizontalLayout();
+		roleMemberPanelLayout.setMargin(true);
+		roleMemberPanelLayout.addComponent(this.policyDropPanel);
+		roleMemberPanelLayout.setSizeFull();
+		
+		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+		hsplit.setFirstComponent(layout);
+		hsplit.setSecondComponent(roleMemberPanelLayout);
+
+
+		// Set the position of the splitter as percentage
+		hsplit.setSplitPosition(65, Unit.PERCENTAGE);
+		hsplit.setLocked(true);
+		
+		this.setContent(hsplit);
 	}
 
 	/**
@@ -235,9 +251,9 @@ public class PolicyManagementPanel extends Panel implements View
 	protected void createAssociatedRolesPanel()
 	{
 		this.associatedRolesPanel = new Panel("Roles Associated with this Policy");
-		this.associatedRolesPanel.setStyleName("dashboard");
+
 		this.associatedRolesPanel.setHeight("600px");
-		this.associatedRolesPanel.setWidth("100%");
+		this.associatedRolesPanel.setWidth("500px");
 		
 		this.roleTable = new Table();
 		this.roleTable.addContainerProperty("Role", String.class, null);
@@ -259,10 +275,10 @@ public class PolicyManagementPanel extends Panel implements View
 	 */
 	protected void createPolicyDropPanel()
 	{
-		this.policyDropPanel = new Panel();
+		this.policyDropPanel = new Panel("Role/Policy Associations");
 		
 		this.policyDropPanel.setStyleName("dashboard");
-		this.policyDropPanel.setHeight("600px");
+		this.policyDropPanel.setHeight("100%");
 		this.policyDropPanel.setWidth("100%");
 		
 		this.rolesCombo = new ComboBox();
@@ -575,6 +591,14 @@ public class PolicyManagementPanel extends Panel implements View
             	try
             	{
             		PolicyManagementPanel.this.securityService.deletePolicy(policy);
+            		
+            		PolicyManagementPanel.this.policyNameField.setText("");
+            		PolicyManagementPanel.this.descriptionField.setValue("");
+            		PolicyManagementPanel.this.linkTypeCombo.setValue(null);
+            		PolicyManagementPanel.this.linkedEntity.setValue("");
+            		
+            		PolicyManagementPanel.this.linkedEntity.setVisible(false);
+            		PolicyManagementPanel.this.linkButton.setVisible(false);
             		
             		Notification.show("Deleted");
             	}

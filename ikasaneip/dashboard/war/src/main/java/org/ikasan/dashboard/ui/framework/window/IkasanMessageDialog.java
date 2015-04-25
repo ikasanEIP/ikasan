@@ -43,8 +43,7 @@ public class IkasanMessageDialog extends Window
     protected void init(String message)
     {
         super.setModal(true);
-        super.setHeight(20.0f, Unit.PERCENTAGE);
-        super.setWidth(30.0f, Unit.PERCENTAGE);
+        super.setResizable(false);
         super.center();
         super.setStyleName("ikasan");
         

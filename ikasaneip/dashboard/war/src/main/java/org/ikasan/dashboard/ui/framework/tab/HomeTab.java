@@ -10,11 +10,11 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.BaseTheme;
 
 public class HomeTab extends VerticalLayout implements View
@@ -57,10 +57,20 @@ public class HomeTab extends VerticalLayout implements View
         panel.setSizeFull();
 
         this.leftPanelLayout = getExpandedLeftSplitPanelLayout();
+        
+        HorizontalLayout leftContainer = new HorizontalLayout();
+        leftContainer.setSizeFull();
+        leftContainer.setMargin(true);
+        leftContainer.addComponent(this.leftPanelLayout);
+        HorizontalLayout rightContainer = new HorizontalLayout();
+        rightContainer.setMargin(true);
+        rightContainer.setSizeFull();
+        rightContainer.addComponent(this.viewComponentContainer);
+        
         this.horizontalSplitPanel 
-            = new HorizontalSplitPanel(this.leftPanelLayout, viewComponentContainer);
+            = new HorizontalSplitPanel(leftContainer, rightContainer);
         this.horizontalSplitPanel.setSizeFull();
-        this.horizontalSplitPanel.setSplitPosition(320, Unit.PIXELS);
+        this.horizontalSplitPanel.setSplitPosition(385, Unit.PIXELS);
         this.horizontalSplitPanel.setLocked(true);
         this.horizontalSplitPanel.addStyleName("ikasansplitpanel");
         panel.setContent(horizontalSplitPanel);
@@ -80,13 +90,19 @@ public class HomeTab extends VerticalLayout implements View
         collapseButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 horizontalSplitPanel.setLocked(false);
-                horizontalSplitPanel.setSplitPosition(30, Unit.PIXELS);
+                horizontalSplitPanel.setSplitPosition(70, Unit.PIXELS);
                 horizontalSplitPanel.setLocked(true);
-                horizontalSplitPanel.setFirstComponent(getCollapsedLeftSplitPanelLayout());
+                
+                HorizontalLayout leftContainer = new HorizontalLayout();
+                leftContainer.setSizeFull();
+                leftContainer.setMargin(true);
+                leftContainer.addComponent(getCollapsedLeftSplitPanelLayout());
+                horizontalSplitPanel.setFirstComponent(leftContainer);
             }
         });
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
         layout.addComponent(collapseButton);
         collapseButton.setHeight(15, Unit.PIXELS);
         collapseButton.setWidth(15, Unit.PIXELS);
@@ -114,9 +130,16 @@ public class HomeTab extends VerticalLayout implements View
         expandButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 horizontalSplitPanel.setLocked(false);
-                horizontalSplitPanel.setSplitPosition(320, Unit.PIXELS);
+                horizontalSplitPanel.setSplitPosition(385, Unit.PIXELS);
                 horizontalSplitPanel.setLocked(true);
-                horizontalSplitPanel.setFirstComponent(getExpandedLeftSplitPanelLayout());
+                
+                HorizontalLayout leftContainer = new HorizontalLayout();
+                leftContainer.setSizeFull();
+                leftContainer.setMargin(true);
+                leftContainer.addComponent(getExpandedLeftSplitPanelLayout());
+                horizontalSplitPanel.setFirstComponent(leftContainer);
+                
+                horizontalSplitPanel.setFirstComponent(leftContainer);
             }
         });
 
