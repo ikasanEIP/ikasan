@@ -181,6 +181,10 @@ public class UserManagementPanel extends Panel implements View
 						.findPrincipalByName(user.getUsername());
 
 				roleTable.removeAllItems();
+				
+				logger.info("principal = " + principal);
+				logger.info("user.getUsername() = " + user.getUsername());
+				logger.info("principal.getRoles() = " + principal.getRoles());
 
 				for (final Role role : principal.getRoles())
 				{

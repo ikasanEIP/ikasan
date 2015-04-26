@@ -55,7 +55,7 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
     protected void init()
     {
         this.setWidth(140, Unit.PIXELS);
-        loadContextValues();
+//        loadContextValues();
     }
 
     /**

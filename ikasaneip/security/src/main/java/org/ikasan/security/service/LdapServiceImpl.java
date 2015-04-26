@@ -325,72 +325,77 @@ public class LdapServiceImpl implements LdapService
 			}
 			
 			List<IkasanPrincipal> ikasanPrincipals = new ArrayList<IkasanPrincipal>();
-
+			User user = null;
+			
 			try
 			{				
-				User loadedUser = userService.loadUserByUsername(ldapUser.accountName);
-				
-				IkasanPrincipal principal = securityService
-						.findPrincipalByName(ldapUser.accountName);
-				if (principal == null)
-				{
-					principal = new IkasanPrincipal();
-					principal.setName(ldapUser.accountName);
-					principal.setType("user");
-					principal.setDescription(ldapUser.description);
-				}
-
-				if(principal.getRoles() != null)
-				{
-					principal.getRoles().add(role);
-				}
-				else
-				{
-					Set<Role> roles = new HashSet<Role>();
-					roles.add(role);
-					
-					principal.setRoles(roles);
-				}
-				securityService.savePrincipal(principal);				
-				ikasanPrincipals.add(principal);
-				
-				for(String name: ldapUser.memberOf)
-				{
-					if(name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
-					{
-						DistinguishedName dn = new DistinguishedName(name);
-						String cn = dn.getValue("cn");
-						
-						principal = this.securityService.findPrincipalByName(cn);
-						
-						if(principal != null)
-						{
-							logger.info("Adding app security principal: " + principal + " for user: " + ldapUser);
-							ikasanPrincipals.add(principal);
-						}
-					}
-				}
-
-				loadedUser.setEmail(ldapUser.email);
-				loadedUser.setFirstName(ldapUser.firstName);
-				loadedUser.setSurname(ldapUser.surname);
-				loadedUser.setDepartment(ldapUser.department);
-				loadedUser.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
-
-				logger.info("Attempting to update user: " + loadedUser);
-				this.userService.updateUser(loadedUser);
-				
-			} catch (UsernameNotFoundException e)
+				user = userService.loadUserByUsername(ldapUser.accountName);
+			} 
+			catch (UsernameNotFoundException e)
 			{
 				logger.info("Attempting to create user: " + ldapUser);
-				User user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
+				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
 				user.setDepartment(ldapUser.department);
 				user.setFirstName(ldapUser.firstName);
 				user.setSurname(ldapUser.surname);
 				user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 				
 				this.userService.createUser(user);
+				
+				user = userService.loadUserByUsername(ldapUser.accountName);
 			} 
+				
+			IkasanPrincipal principal = securityService
+					.findPrincipalByName(ldapUser.accountName);
+			if (principal == null)
+			{
+				principal = new IkasanPrincipal();
+				principal.setName(ldapUser.accountName);
+				principal.setType("user");
+				principal.setDescription(ldapUser.description);
+			}
+
+			if(principal.getRoles() != null)
+			{
+				principal.getRoles().add(role);
+			}
+			else
+			{
+				Set<Role> roles = new HashSet<Role>();
+				roles.add(role);
+				
+				principal.setRoles(roles);
+			}
+
+			securityService.savePrincipal(principal);				
+			ikasanPrincipals.add(principal);
+			
+			for(String name: ldapUser.memberOf)
+			{
+				if(name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
+				{
+					DistinguishedName dn = new DistinguishedName(name);
+					String cn = dn.getValue("cn");
+					
+					principal = this.securityService.findPrincipalByName(cn);
+					
+					if(principal != null)
+					{
+						logger.info("Adding app security principal: " + principal + " for user: " + ldapUser);
+						ikasanPrincipals.add(principal);
+					}
+				}
+			}
+
+			user.setEmail(ldapUser.email);
+			user.setFirstName(ldapUser.firstName);
+			user.setSurname(ldapUser.surname);
+			user.setDepartment(ldapUser.department);
+			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
+
+			logger.info("Attempting to update user: " + user);
+			this.userService.updateUser(user);
+				
 		}
 	}
 
@@ -412,8 +417,6 @@ public class LdapServiceImpl implements LdapService
 	
 	protected DefaultSpringSecurityContextSource getContextSource() throws LdapServiceException
 	{
-//		if(this.contextSource == null)
-//		{
 		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(
 					authenticationMethod.getLdapServerUrl());
 			contextSource.setUserDn(authenticationMethod.getLdapBindUserDn());
@@ -428,8 +431,7 @@ public class LdapServiceImpl implements LdapService
 				e.printStackTrace();
 				throw new LdapServiceException();
 			}
-//		}
-//		
+
 		return contextSource;
 	}
 	
@@ -467,13 +469,4 @@ public class LdapServiceImpl implements LdapService
 					+ ", memberOf=" + Arrays.toString(memberOf) + "]";
 		}
 	}
-	
-	public static final void main(String[] args)
-	{
-		DistinguishedName dn = new DistinguishedName("CN=RDL - MHI - Internal Audit,OU=ActiveRoles Dynamic DLs,OU=Distribution Lists,OU=Groups,DC=uk,DC=mizuho-sc,DC=com");
-		String cn = dn.getValue("CN");
-		
-		System.out.println(cn);
-	}
-	
 }

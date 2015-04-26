@@ -52,11 +52,6 @@
                    <constructor-arg value="newMappingConfigurationPanel"/>
                    <constructor-arg ref="newMappingConfigurationPanel"/>
                 </bean>
-                <!--  Removing the Ikasan estate view -->
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="estateViewPanel"/>
-                   <constructor-arg ref="estateViewPanel"/>
-                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="mappingViewComponentContainer"/>
