@@ -11,20 +11,21 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<bean id="securityServiceTransactionManager"
+	<bean id="hibernateTransactionManager"
             class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
     </bean>
 
     <aop:config>
-        <aop:pointcut id="serviceMethods"
-                expression="execution(* org.ikasan.security.service.*.*(..))"/>
-        <!--  aop:pointcut id="serviceMethods"
-                expression="execution(* javax.servlet.http.HttpServlet.service(..))"/ -->
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+        <aop:pointcut id="securityServiceMethods"
+                expression="execution(* org.ikasan.security.service.SecurityService*.*(..))"/>
+        <aop:pointcut id="ldapServiceMethods"
+                expression="execution(* org.ikasan.security.service.LdapService*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
     </aop:config>
 
-    <tx:advice id="txAdvice" transaction-manager="securityServiceTransactionManager">
+    <tx:advice id="txAdvice" transaction-manager="hibernateTransactionManager">
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>

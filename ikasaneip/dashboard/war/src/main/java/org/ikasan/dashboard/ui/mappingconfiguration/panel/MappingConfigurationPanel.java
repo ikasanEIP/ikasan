@@ -746,6 +746,10 @@ public class MappingConfigurationPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
+    	this.clientComboBox.loadClientSelectValues();
+    	this.sourceContextComboBox.loadContextValues();
+    	this.targetContextComboBox.loadContextValues();
+    	this.typeComboBox.loadClientTypeValues();
     }
 
     /**

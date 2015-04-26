@@ -17,7 +17,10 @@ import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.panel.NavigationPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.server.WrappedSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -80,6 +83,14 @@ public class LogoutAction implements Action
         this.navigationPanel.loadTopLevelNavigator();
         this.navigationPanel.reset();
         UI.getCurrent().getNavigator().navigateTo("emptyPanel");
+        
+        VaadinSession vSession = VaadinSession.getCurrent();
+        WrappedSession httpSession = vSession.getSession();
+       //Invalidate HttpSession
+        httpSession.invalidate();
+       //Redirect the user to the login/default Page
+        Page.getCurrent().setLocation("/ikasan-dashboard");
+//        UI.getCurrent().getNavigator().navigateTo("emptyPanel");
     }
 
     /* (non-Javadoc)

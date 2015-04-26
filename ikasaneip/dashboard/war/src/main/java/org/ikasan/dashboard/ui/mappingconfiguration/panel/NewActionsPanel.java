@@ -201,22 +201,6 @@ public class NewActionsPanel extends Panel
         });
         contentLayout.addComponent(this.importMappingConfigurationButton, 1, 4);
 
-        // Add the new type label and button.
-        HorizontalLayout estateViewLayout = new HorizontalLayout();
-        estateViewLayout.setHeight(20, Unit.PIXELS);
-        estateViewLayout.setWidth(180, Unit.PIXELS);
-        estateViewLayout.addComponent(new Label("View Estate"));
-        contentLayout.addComponent(estateViewLayout, 0, 5);
-
-        Button estateViewButton = new Button("View");
-        estateViewButton.setStyleName(BaseTheme.BUTTON_LINK);
-        estateViewButton.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                saveRequiredMonitor.manageSaveRequired("estateViewPanel");
-            }
-        });
-        contentLayout.addComponent(estateViewButton, 1, 5);
-
         this.setContent(contentLayout);
     }
 }
