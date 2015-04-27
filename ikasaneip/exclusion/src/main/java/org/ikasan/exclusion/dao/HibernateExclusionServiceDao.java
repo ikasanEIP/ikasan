@@ -59,13 +59,17 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 public class HibernateExclusionServiceDao extends HibernateDaoSupport
-        implements ExclusionServiceDao<String,ExclusionEvent>
+        implements ExclusionServiceDao<ExclusionEvent>
 {
     /** default batch size */
     private static Integer housekeepingBatchSize = Integer.valueOf(100);
 
     /** batch delete statement */
     private static final String BATCHED_HOUSEKEEP_QUERY = "delete ExclusionEvent s where s.identifier in (:event_ids)";
+
+    /** batch delete statement */
+    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.identifier = :event_id";
+
 
     @Override
     public void add(ExclusionEvent exclusionEvent)
@@ -74,27 +78,26 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     }
 
     @Override
-    public void remove(String moduleName, String flowName, String identifier)
+    public void remove(final ExclusionEvent exclusionEvent)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
-        criteria.add(Restrictions.eq("moduleName", moduleName));
-        criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("identifier", identifier));
-
-        List<ExclusionEvent> results = this.getHibernateTemplate().findByCriteria(criteria);
-        if(results != null && results.size() > 0)
+        getHibernateTemplate().execute(new HibernateCallback()
         {
-            this.getHibernateTemplate().deleteAll(results);
-        }
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                Query query = session.createQuery(DELETE_QUERY);
+                query.setParameter("event_id", exclusionEvent.getIdentifier());
+                query.executeUpdate();
+                return null;
+            }
+        });
     }
 
     @Override
-    public boolean contains(String moduleName, String flowName, String identifier)
+    public boolean contains(ExclusionEvent exclusionEvent)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
-        criteria.add(Restrictions.eq("moduleName", moduleName));
-        criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("identifier", identifier));
+        criteria.add(Restrictions.eq("identifier", exclusionEvent.getIdentifier()));
 
         List<ExclusionEvent> results = this.getHibernateTemplate().findByCriteria(criteria);
         if(results == null || results.size() == 0)
