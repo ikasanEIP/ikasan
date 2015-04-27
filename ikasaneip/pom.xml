@@ -84,6 +84,7 @@
         <module>bootstrap</module>  <!-- TODO - is this still required ? -->
         <module>scheduler</module>
         <module>exclusion</module>
+        <module>error-reporting</module>
         <module>recovery-manager</module>
         <module>flow</module>
         <module>configuration-service</module>

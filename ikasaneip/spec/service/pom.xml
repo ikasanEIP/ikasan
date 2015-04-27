@@ -89,7 +89,7 @@
        <module>management</module>
        <module>wiretap</module>
        <module>search</module>
-       <module>error</module>
+       <module>error-reporting</module>
        <module>exclusion</module>
     </modules>
 </project>

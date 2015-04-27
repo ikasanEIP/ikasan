@@ -47,8 +47,8 @@ package org.ikasan.spec.exclusion;
  */
 public interface ExclusionService<ENTITY>
 {
-    /** one day default time to live */
-    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24);
+    /** five days default time to live */
+    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 5);
 
     /**
      * Is this entity on the blacklist.

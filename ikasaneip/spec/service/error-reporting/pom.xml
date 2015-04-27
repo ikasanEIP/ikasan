@@ -53,8 +53,8 @@
         <relativePath />
     </parent>
 
-    <artifactId>ikasan-spec-error</artifactId>
+    <artifactId>ikasan-spec-error-reporting</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Specification Event Error/Exclusion Management Contracts</name>
-    <description>The specification management contracts for the Ikasan Enterprise Integration Platform event error/exclusions</description>
+    <name>Ikasan Specification Event Error Reporting Contracts</name>
+    <description>The specification management contracts for the Ikasan Enterprise Integration Platform event error reporting</description>
 </project>
