@@ -43,6 +43,7 @@ package org.ikasan.exclusion.service;
 import junit.framework.Assert;
 import org.ikasan.exclusion.dao.ExclusionServiceDao;
 import org.ikasan.exclusion.dao.ListExclusionServiceDao;
+import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.jmock.Expectations;
@@ -79,7 +80,7 @@ public class ExclusionServiceDefaultImplTest
 
     FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
 
-    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao();
+    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(2) );
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_moduleName()
@@ -113,7 +114,7 @@ public class ExclusionServiceDefaultImplTest
         {
             {
                 // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(4).of(flowEvent).getIdentifier();
                 will(returnValue("123456"));
 
                 // when added to the backlist
@@ -125,11 +126,11 @@ public class ExclusionServiceDefaultImplTest
                 will(returnValue("123456"));
 
                 // when removed from the backlist
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue("123456"));
 
                 // when re-checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
+                exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue("123456"));
 
             }
@@ -137,9 +138,15 @@ public class ExclusionServiceDefaultImplTest
 
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
         exclusionService.addBlacklisted(flowEvent);
-
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
 
+        exclusionService.addBlacklisted(flowEvent);
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        exclusionService.addBlacklisted(flowEvent);
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        exclusionService.removeBlacklisted(flowEvent);
         exclusionService.removeBlacklisted(flowEvent);
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
 

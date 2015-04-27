@@ -59,7 +59,7 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     String flowName;
 
     /** handle to the underlying DAO */
-    ExclusionServiceDao<ExclusionEvent> exclusionServiceDao;
+    ExclusionServiceDao<String,ExclusionEvent> exclusionServiceDao;
 
     /** allow override of timeToLive */
     Long timeToLive = ExclusionService.DEFAULT_TIME_TO_LIVE;
@@ -92,8 +92,7 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     @Override
     public boolean isBlackListed(FlowEvent<String,?> event)
     {
-        ExclusionEvent exclusionEvent = new ExclusionEvent(this.moduleName, this.flowName, event.getIdentifier());
-        return this.exclusionServiceDao.contains(exclusionEvent);
+        return this.exclusionServiceDao.contains(this.moduleName, this.flowName, event.getIdentifier());
     }
 
     @Override
@@ -106,8 +105,7 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     @Override
     public void removeBlacklisted(FlowEvent<String,?> event)
     {
-        ExclusionEvent exclusionEvent = new ExclusionEvent(this.moduleName, this.flowName, event.getIdentifier());
-        this.exclusionServiceDao.remove(exclusionEvent);
+        this.exclusionServiceDao.remove(this.moduleName, this.flowName, event.getIdentifier());
     }
 
     @Override
@@ -121,4 +119,5 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     {
         this.exclusionServiceDao.deleteExpired();
     }
+
 }

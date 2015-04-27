@@ -59,7 +59,7 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 public class HibernateExclusionServiceDao extends HibernateDaoSupport
-        implements ExclusionServiceDao<ExclusionEvent>
+        implements ExclusionServiceDao<String,ExclusionEvent>
 {
     /** default batch size */
     private static Integer housekeepingBatchSize = Integer.valueOf(100);
@@ -74,16 +74,27 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     }
 
     @Override
-    public void remove(ExclusionEvent exclusionEvent)
+    public void remove(String moduleName, String flowName, String identifier)
     {
-        this.getHibernateTemplate().delete(exclusionEvent);
+        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+        criteria.add(Restrictions.eq("moduleName", moduleName));
+        criteria.add(Restrictions.eq("flowName", flowName));
+        criteria.add(Restrictions.eq("identifier", identifier));
+
+        List<ExclusionEvent> results = this.getHibernateTemplate().findByCriteria(criteria);
+        if(results != null && results.size() > 0)
+        {
+            this.getHibernateTemplate().deleteAll(results);
+        }
     }
 
     @Override
-    public boolean contains(ExclusionEvent exclusionEvent)
+    public boolean contains(String moduleName, String flowName, String identifier)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
-        criteria.add(Restrictions.eq("identifier", exclusionEvent.getIdentifier()));
+        criteria.add(Restrictions.eq("moduleName", moduleName));
+        criteria.add(Restrictions.eq("flowName", flowName));
+        criteria.add(Restrictions.eq("identifier", identifier));
 
         List<ExclusionEvent> results = this.getHibernateTemplate().findByCriteria(criteria);
         if(results == null || results.size() == 0)

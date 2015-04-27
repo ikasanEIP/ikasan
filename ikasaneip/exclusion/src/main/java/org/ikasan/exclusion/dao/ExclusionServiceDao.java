@@ -44,7 +44,7 @@ package org.ikasan.exclusion.dao;
  * Exclusion Service Data Access Contract.
  * @author Ikasan Development Team
  */
-public interface ExclusionServiceDao<EVENT>
+public interface ExclusionServiceDao<IDENTIFIER,EVENT>
 {
     /**
      * Save the event as one to be excluded in future.
@@ -54,17 +54,21 @@ public interface ExclusionServiceDao<EVENT>
 
     /**
      * Remove the event from excluded
-     * @param event
+     * @param moduleName
+     * @param flowName
+     * @param identifier
      * @return
      */
-    public void remove(EVENT event);
+    public void remove(String moduleName, String flowName, IDENTIFIER identifier);
 
     /**
      * Is this event listed as excluded
-     * @param event
+     * @param moduleName
+     * @param flowName
+     * @param identifier
      * @return
      */
-    public boolean contains(EVENT event);
+    public boolean contains(String moduleName, String flowName, IDENTIFIER identifier);
 
     /**
      * Support delete of expired exclusionEvents

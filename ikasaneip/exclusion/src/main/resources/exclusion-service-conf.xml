@@ -8,18 +8,12 @@
         <constructor-arg ref="exclusionServiceDao"/>
     </bean>
 
-    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.HibernateExclusionServiceDao">
-        <property name="sessionFactory">
-            <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-                <property name="dataSource" ref="ikasan.xads" />
-                <property name="mappingResources">
-                    <list>
-                        <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
-                    </list>
-                </property>
-                <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.ListExclusionServiceDao">
+        <constructor-arg>
+            <bean class="org.ikasan.exclusion.model.BlackListLinkedHashMap">
+                <constructor-arg value="25"/>  <!-- default max entries size -->
             </bean>
-        </property>
+        </constructor-arg>
     </bean>
 
 </beans>

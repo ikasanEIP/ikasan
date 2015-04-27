@@ -9,6 +9,7 @@
     <util:list id="module1-config-files">
         <value>component-conf.xml</value>
         <value>flow-conf.xml</value>
+        <value>exclusion-service-conf.xml</value>
         <value>exclusion-flow-conf.xml</value>
         <value>module-conf.xml</value>
         <value>exception-conf.xml</value>

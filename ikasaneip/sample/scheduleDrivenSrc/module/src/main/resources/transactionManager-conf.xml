@@ -30,4 +30,10 @@
         </tx:attributes>
     </tx:advice>
 
+    <tx:advice id="exceptionHandlerTxAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
+
 </beans>
