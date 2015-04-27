@@ -41,8 +41,6 @@
 
 package org.ikasan.spec.error;
 
-import java.util.List;
-
 /**
  * This contract represents a platform level service for the heavyweight logging of
  * Errors
@@ -50,78 +48,32 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorLoggingService<EVENT,PAGEDRESULT,LISTENER>
+public interface ErrorReportingService<EVENT>
 {
+    /** one week default time to live */
+    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 7);
 
     /**
      * Logs an Error where there is an inflight Event involved in a Flow
      * 
-     * @param throwable
-     * @param moduleName
-     * @param flowName
      * @param flowElementName
-     * @param currentEvent
-     * @param actionTaken
-     */
-    public void logError(Throwable throwable, String moduleName, String flowName, String flowElementName, EVENT currentEvent, String actionTaken);
-
-    /**
-     * Returns a paged listing of errors
-     * 
-     * @param pageNo - 0 or greater, index into the list of all possible results
-     * @param pageSize - 0 or greater, no of errors to return on a page
-     * @param flowName
-     * @param moduleName
-     * 
-     * @return PagedSearchResult<ErrorOccurrence>
-     */
-    public PAGEDRESULT getErrors(int pageNo, int pageSize, String orderBy, boolean orderAscending, String moduleName, String flowName);
-
-    /**
-     * Logs an Error caused before there was an Event
-     * 
+     * @param event
      * @param throwable
-     * @param moduleName
-     * @param initiatorName
-     * @param actionTaken
      */
-    public void logError(Throwable throwable, String moduleName, String initiatorName, String actionTaken);
+    public void notify(String flowElementName, EVENT event, Throwable throwable);
+
 
     /**
-     * Retrieve an ErrorOccurrence specified by its Id
-     * 
-     * @param errorOccurrenceId
-     * @return ErrorOccurrence
+     * Allow entities blacklisted to be marked with a timeToLive.
+     * On expiry of the timeToLive the entity will no longer be blacklisted.
+     *
+     * @param timeToLive
      */
-    public ErrorOccurrence getErrorOccurrence(long errorOccurrenceId);
+    public void setTimeToLive(Long timeToLive);
 
     /**
-     * Causes all <code>ErrorOccurrence</code>s that are deemed to be too old to
-     * be deleted
+     * Housekeep expired exclusionEvents.
      */
     public void housekeep();
 
-    /**
-     * Returns all ErrorOccurrences for the event specified by its id
-     * 
-     * @param eventId
-     * @return List of ErrorOccurrences for the specified event
-     */
-    public List<ErrorOccurrence> getErrorOccurrences(String eventId);
-
-    /**
-     * Registers an <code>ErrorOccurrenceListener</code> as a listener for new
-     * <code>ErrorOccurrence</code>
-     * 
-     * @param errorOccurrenceListener
-     */
-    public void addErrorOccurrenceListener(LISTENER errorOccurrenceListener);
-
-    /**
-     * Deregisters an <code>ErrorOccurrenceListener</code> as a listener for new
-     * <code>ErrorOccurrence</code>
-     * 
-     * @param errorOccurrenceListener
-     */
-    public void removeErrorOccurrenceListener(LISTENER errorOccurrenceListener);
 }
