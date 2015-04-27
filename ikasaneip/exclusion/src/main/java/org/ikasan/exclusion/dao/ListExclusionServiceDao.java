@@ -40,53 +40,77 @@
  */
 package org.ikasan.exclusion.dao;
 
+import org.apache.log4j.Logger;
 import org.ikasan.exclusion.model.ExclusionEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * List implementation of the ExclusionServiceDao.
  * @author Ikasan Development Team
  */
 public class ListExclusionServiceDao
-        implements ExclusionServiceDao<ExclusionEvent>
+        implements ExclusionServiceDao<String,ExclusionEvent>
 {
-    List<ExclusionEvent> blackList = new ArrayList<ExclusionEvent>();
+    /** logger instance */
+    private static Logger logger = Logger.getLogger(ListExclusionServiceDao.class);
+
+    /** actual exclusionEvent instances */
+    LinkedHashMap<String,ExclusionEvent> blackList;
+
+    /**
+     * Constructor
+     * @param blackList
+     */
+    public ListExclusionServiceDao(LinkedHashMap<String,ExclusionEvent> blackList)
+    {
+        this.blackList = blackList;
+        if(blackList == null)
+        {
+            throw new IllegalArgumentException("backlist implementation cannot be 'null'");
+        }
+    }
 
     @Override
     public void add(ExclusionEvent exclusionEvent)
     {
-        this.blackList.add(exclusionEvent);
+        this.blackList.put(exclusionEvent.getIdentifier(), exclusionEvent);
     }
 
     @Override
-    public void remove(ExclusionEvent exclusionEvent)
+    public void remove(String moduleName, String flowName, String identifier)
     {
-        this.blackList.remove(exclusionEvent);
+        this.blackList.remove(identifier);
     }
 
     @Override
-    public boolean contains(ExclusionEvent exclusionEvent)
+    public boolean contains(String moduleName, String flowName, String identifier)
     {
-        return this.blackList.contains(exclusionEvent);
+        return this.blackList.containsKey(identifier);
     }
 
     @Override
     public void deleteExpired()
     {
-        List<ExclusionEvent> expired = new ArrayList<ExclusionEvent>();
+        List<String> expiredIdentifiers = new ArrayList<String>();
 
         long expiryTime = System.currentTimeMillis();
-        for(ExclusionEvent exclusionEvent:blackList)
+        for(Map.Entry<String,ExclusionEvent> entry:blackList.entrySet())
         {
-            if(exclusionEvent.getExpiry().longValue() < expiryTime)
+            if(entry.getValue().getExpiry().longValue() < expiryTime)
             {
-                expired.add(exclusionEvent);
+                expiredIdentifiers.add(entry.getKey());
             }
         }
 
-        blackList.removeAll(expired);
-    }
+        for(String expiredIdentifier:expiredIdentifiers)
+        {
+            blackList.remove(expiredIdentifier);
+        }
 
+        if(logger.isDebugEnabled())
+        {
+            logger.info("Deleted expired blacklist events for identifiers[" + expiredIdentifiers + "]");
+        }
+    }
 }

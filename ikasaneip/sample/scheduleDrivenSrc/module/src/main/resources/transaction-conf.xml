@@ -8,6 +8,16 @@
     <aop:config>
         <aop:pointcut id="scheduledPointcut" expression="execution(* org.quartz.Job.execute(..))" />
         <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="scheduledPointcut" />
-    </aop:config> 
+    </aop:config>
+
+    <!--aop:config>
+        <aop:pointcut id="jmsMessagePointcut1" expression="execution(* org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer.onMessage(..))" />
+        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="jmsMessagePointcut1" />
+    </aop:config-->
+
+    <aop:config>
+        <aop:pointcut id="exceptionHandlerInvocation" expression="execution(* org.ikasan.exclusion.dao.HibernateExclusionServiceDao.add(..))"/>
+        <aop:advisor advice-ref="exceptionHandlerTxAdvice" pointcut-ref="exceptionHandlerInvocation"/>
+    </aop:config>
 
 </beans>

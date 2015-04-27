@@ -60,22 +60,14 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
+        "/exclusion-hibernate-dao-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })
 
 public class HibernateExclusionServiceDaoTest
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private Mockery mockery = new Mockery()
-    {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
     @Resource
-    ExclusionServiceDao<ExclusionEvent> exclusionServiceDao;
+    ExclusionServiceDao<String,ExclusionEvent> exclusionServiceDao;
 
     /**
      * Test exclusion
@@ -85,15 +77,13 @@ public class HibernateExclusionServiceDaoTest
     public void test_contains_add_remove_operations()
     {
         ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "123456");
-        Assert.assertFalse("Should not be found", exclusionServiceDao.contains(exclusionEvent) );
+        Assert.assertFalse("Should not be found", exclusionServiceDao.contains("moduleName", "flowName", "123456") );
 
         exclusionServiceDao.add(exclusionEvent);
-        Assert.assertTrue("Should be found", exclusionServiceDao.contains(exclusionEvent));
+        Assert.assertTrue("Should be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
 
-        exclusionServiceDao.remove(exclusionEvent);
-        Assert.assertFalse("Should not be found", exclusionServiceDao.contains(exclusionEvent) );
-
-        this.mockery.assertIsSatisfied();
+        exclusionServiceDao.remove("moduleName", "flowName", "123456");
+        Assert.assertFalse("Should not be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
     }
 
     /**
@@ -106,18 +96,26 @@ public class HibernateExclusionServiceDaoTest
         // new event with 1 milli expiry
         ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "123456");
         ExclusionEvent exclusionEventExpired = new ExclusionEvent("moduleName", "flowName", "1234567", 1L);
-        Assert.assertFalse("Non expired should not be found", exclusionServiceDao.contains(exclusionEvent) );
-        Assert.assertFalse("Expired should not be found", exclusionServiceDao.contains(exclusionEventExpired) );
+        Assert.assertFalse("Non expired should not be found", exclusionServiceDao.contains("moduleName", "flowName", "123456") );
+        Assert.assertFalse("Expired should not be found", exclusionServiceDao.contains("moduleName", "flowName", "1234567") );
 
         exclusionServiceDao.add(exclusionEvent);
         exclusionServiceDao.add(exclusionEventExpired);
-        Assert.assertTrue("Non expired should be found", exclusionServiceDao.contains(exclusionEvent));
-        Assert.assertTrue("Expired should be found", exclusionServiceDao.contains(exclusionEventExpired));
+        Assert.assertTrue("Non expired should be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertTrue("Expired should be found", exclusionServiceDao.contains("moduleName", "flowName", "1234567"));
+
+        try
+        {
+            Thread.sleep(100);
+        }
+        catch(InterruptedException e)
+        {
+            Assert.fail("sleep woken early!");
+        }
 
         exclusionServiceDao.deleteExpired();
-        Assert.assertTrue("Should be found after deleteAll", exclusionServiceDao.contains(exclusionEvent));
-        Assert.assertFalse("Should not be found after deleteAll", exclusionServiceDao.contains(exclusionEventExpired));
-
-        this.mockery.assertIsSatisfied();
+        Assert.assertTrue("Should be found after deleteAll", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertFalse("Should not be found after deleteAll", exclusionServiceDao.contains("moduleName", "flowName", "123457"));
     }
+
 }

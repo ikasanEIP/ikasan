@@ -43,6 +43,7 @@ package org.ikasan.exclusion.service;
 import junit.framework.Assert;
 import org.ikasan.exclusion.dao.ExclusionServiceDao;
 import org.ikasan.exclusion.dao.ListExclusionServiceDao;
+import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class ExclusionServiceFactoryTest
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
-    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao();
+    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(25) );
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_dao()

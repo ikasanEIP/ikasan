@@ -42,6 +42,7 @@ package org.ikasan.exclusion.service;
 
 import org.ikasan.exclusion.dao.ExclusionServiceDao;
 import org.ikasan.exclusion.dao.ListExclusionServiceDao;
+import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.ikasan.spec.exclusion.ExclusionService;
 
 /**
@@ -71,7 +72,7 @@ public class ExclusionServiceFactory
      */
     private ExclusionServiceFactory()
     {
-        this.exclusionServiceDao = new ListExclusionServiceDao();
+        this.exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(25) );
     }
 
     /**
