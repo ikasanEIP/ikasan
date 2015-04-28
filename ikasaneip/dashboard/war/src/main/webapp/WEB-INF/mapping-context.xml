@@ -154,12 +154,10 @@
     </bean>
 
     <bean id="mappingConfigurationExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper" scope="session">
-        <constructor-arg ref="mappingConfigurationExportSchema"/>
         <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
     </bean>
 
     <bean id="mappingConfigurationValuesExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper" scope="session">
-        <constructor-arg ref="mappingConfigurationValuesExportSchema"/>
     </bean>
 
     <bean id="mappingView" class="org.ikasan.dashboard.ui.framework.tab.HomeTab" scope="session">

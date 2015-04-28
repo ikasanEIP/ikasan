@@ -55,7 +55,6 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private FunctionalGroup existingMappingConfigurationFunctionalGroup;
     private VerticalLayout imagePanelLayout;
     private EventBus eventBus = new EventBus();
-    private PersistenceService persistenceService; 
     private NavigationPanel navigationPanel;
     
     private final Table table = new Table();
@@ -81,11 +80,9 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
      */
 	public IkasanUI(HashMap<String, IkasanUINavigator> views,
 	        ViewComponentContainer viewComponentContainer, UserService userService,
-	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup,
-            EditableGroup editableGroup,
+	        AuthenticationService authenticationService, VisibilityGroup visibilityGroup, EditableGroup editableGroup,
             FunctionalGroup newMappingConfigurationFunctionalGroup, FunctionalGroup existingMappingConfigurationFunctionalGroup,
-            EventBus eventBus, PersistenceServiceFactory<String> persistenceServiceFactory, String persistenceProvider,
-            VerticalLayout imagePanelLayout, NavigationPanel navigationPanel)
+            EventBus eventBus, VerticalLayout imagePanelLayout, NavigationPanel navigationPanel)
 	{
 	    this.views = views;
 	    this.userService = userService;
@@ -96,7 +93,6 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 	    this.newMappingConfigurationFunctionalGroup = newMappingConfigurationFunctionalGroup;
 	    this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;
 	    this.eventBus = eventBus;
-	    this.persistenceService = persistenceServiceFactory.getPersistenceService(persistenceProvider);
 	    this.imagePanelLayout = imagePanelLayout;
 	    this.navigationPanel = navigationPanel;
 	    
@@ -134,7 +130,7 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         layout.addComponent(this.views.get("dashboard").getContainer(), 0, 2);
         layout.setRowExpandRatio(2, 1);
 
-        boolean usersTablesExist = this.persistenceService.userTablesExist();
+        boolean usersTablesExist = true;
 
         Navigator navigator = new Navigator(this, this.views.get("topLevel").getContainer());
 

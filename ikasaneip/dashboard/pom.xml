@@ -25,7 +25,7 @@
 			<plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>cmi2-mappingConfigurationUI-${server}-${env}</finalName>
+                    <finalName>ikasan-dashboard-${server}-${env}</finalName>
                     <filters>
                         <filter>environment/${server}/${env}/environment.properties</filter>
                         <filter>module.properties</filter>
@@ -37,59 +37,5 @@
             </plugin>
 		</plugins>
 	</build>
-	
-	<scm>
-		<connection>scm:svn:https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI</connection>
-		<developerConnection>scm:svn:https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI</developerConnection>
-		<url>https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI</url>
-	</scm>
-
-	<ciManagement>
-		<system>bamboo</system>
-		<url>http://ci.uk.mizuho-sc.com:8085</url>
-	</ciManagement>
-
-	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<name>Mizuho Nexus</name>
-			<url>http://apw-cpm01:8081/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus</id>
-			<name>Mizuho Nexus</name>
-			<uniqueVersion>false</uniqueVersion>
-			<url>http://apw-cpm01:8081/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-	
-	<repositories>
-		<repository>
-			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
-		</repository>
-		<repository>
-			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>vaadin-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>

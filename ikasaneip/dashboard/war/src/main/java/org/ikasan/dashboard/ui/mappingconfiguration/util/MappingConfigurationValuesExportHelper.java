@@ -46,15 +46,12 @@ public class MappingConfigurationValuesExportHelper
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
 
-    private String schemaLocation;
-
     /**
      * @param schemaLocation
      */
-    public MappingConfigurationValuesExportHelper(String schemaLocation)
+    public MappingConfigurationValuesExportHelper()
     {
         super();
-        this.schemaLocation = schemaLocation;
     }
 
     /**
@@ -63,7 +60,8 @@ public class MappingConfigurationValuesExportHelper
      * @param mappingConfiguration
      * @return
      */
-    public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration, boolean includeXmlTag)
+    public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration, boolean includeXmlTag,
+    		String schemaLocation)
     {
         StringBuffer exportString = new StringBuffer();
 
@@ -71,7 +69,7 @@ public class MappingConfigurationValuesExportHelper
         {
             exportString.append(XML_TAG);
             String startTag = START_TAG;
-            exportString.append(startTag.replace("{$schemaLocation}", this.schemaLocation));
+            exportString.append(startTag.replace("{$schemaLocation}", schemaLocation));
             
             exportString.append(EXPORT_DATE_TIME_START_TAG);
             exportString.append(DateFormat.getDateTimeInstance

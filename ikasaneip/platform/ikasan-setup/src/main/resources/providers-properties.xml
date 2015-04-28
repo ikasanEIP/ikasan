@@ -487,10 +487,8 @@
 					UsersAuthorities values ( @userId, @authorityAdminId )
 				</prop>
 
-				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
-				<prop key="find.usersTableExists">SELECT 1 FROM sysobjects WHERE name = 'Users' AND type = 'U'</prop>
-				<prop key="find.authoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'Authorities' AND type = 'U'</prop>
-				<prop key="find.usersAuthoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'UsersAuthorities' AND type = 'U'</prop>
+				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>				
+				<prop key="find.usersTableExists">SELECT * from Users</prop>
 				
 				
 				<!--  Tables required for the security module -->
@@ -635,7 +633,7 @@
 				</prop>
 				
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
-					@securityRoleId numeric(18), @securityPolicyId numeric(18)
+					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
 					
 					INSERT INTO 
 					SecurityPrincipal ( Name, PrincipalType, Description )
@@ -654,6 +652,12 @@
 					select @securityRoleId = Id 
 					from SecurityRole 
 					where Name = 'ADMIN'
+					
+					select @userId = Id from Users where Username = 'admin'
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId )
 					
 					INSERT
 					INTO SecurityPolicy ( Name, Description )
@@ -798,6 +802,9 @@
 					INSERT
 					INTO PolicyLinkType ( Name, TableName )
 					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
+					
+					INSERT INTO AuthenticationMethod (Id, Method)
+					VALUES (1, 'AUTH_METHOD_LOCAL')
 				</prop>
 				
 				<!-- Tables required for the ikasan mapping module -->
@@ -925,6 +932,18 @@
 					   1
 					  ,100)
 				   SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
+				</prop>
+				<prop key="create.platformConfiguration">CREATE TABLE PlatformConfiguration
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name			    			VARCHAR(256) NOT NULL,
+					   Value			    		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id,
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
 				</prop>
 			</props>
 		</property>
@@ -1387,9 +1406,7 @@
 					UsersAuthorities values ( @userId, @authorityAdminId )
 				</prop>
 				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
-				<prop key="find.usersTableExists">SELECT 1 FROM sysobjects WHERE name = 'Users' AND type = 'U'</prop>
-				<prop key="find.authoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'Authorities' AND type = 'U'</prop>
-				<prop key="find.usersAuthoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'UsersAuthorities' AND type = 'U'</prop>
+				<prop key="find.usersTableExists">SELECT * from Users</prop>
 				
 				
 				<!--  Tables required for the security module -->
@@ -1498,7 +1515,7 @@
 					   Name				      		VARCHAR(256) NOT NULL,
 					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
 					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
-					   PRIMARY KEY (PolicyLinkId), -- clustered index on Id
+					   PRIMARY KEY (Id), -- clustered index on Id
 					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
 					) 
 					LOCK DATAROWS
@@ -1533,15 +1550,22 @@
 				</prop>
 				
 				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
-					@securityRoleId numeric(18), @securityPolicyId numeric(18)
+					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
 					
 					INSERT INTO 
-					SecurityPrincipal ( Name, PrincipalType )
-					VALUES ( 'admin', 'user' )
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user')
+					
 					
 					select @securityPrincipalId = Id 
 					from SecurityPrincipal 
 					where Name = 'admin'
+					
+					select @userId = Id from Users where Username = @username
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId )
 					
 					INSERT
 					INTO SecurityRole ( Name, Description )
@@ -1692,6 +1716,12 @@
 					INSERT
 					INTO PolicyLinkType ( Name, TableName )
 					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
+					
+					INSERT INTO AuthenticationMethod (Id, Method)
+					VALUES (1, 'AUTH_METHOD_LOCAL')
+					
+					INSERT INTO AuthenticationMethod (Id, Method)
+					VALUES (1, 'AUTH_METHOD_LOCAL')
 				</prop>
 				
 				<!-- Tables required for the ikasan mapping module -->
@@ -2232,10 +2262,7 @@
                 </prop>
 
                 <prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
-                <!-- TODO make sure these queries run on SQL Server -->
-				<prop key="find.usersTableExists">SELECT 1 FROM sysobjects WHERE name = 'Users' AND type = 'U'</prop>
-				<prop key="find.authoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'Authorities' AND type = 'U'</prop>
-				<prop key="find.usersAuthoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'UsersAuthorities' AND type = 'U'</prop>
+                <prop key="find.usersTableExists">SELECT * from Users</prop>
 
 			</props>
 		</property>
@@ -2618,10 +2645,7 @@
 
 				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
 				
-				<!-- TODO make sure these queries runs on H2 -->
-				<prop key="find.usersTableExists">SELECT 1 FROM sysobjects WHERE name = 'Users' AND type = 'U'</prop>
-				<prop key="find.authoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'Authorities' AND type = 'U'</prop>
-				<prop key="find.usersAuthoritiesTableExists">SELECT 1 FROM sysobjects WHERE name = 'UsersAuthorities' AND type = 'U'</prop>
+				<prop key="find.usersTableExists">SELECT * from Users</prop>
 				<prop key="get.ikasan.version">SELECT Release FROM Version where Component =
 					'ikasan';
 				</prop>

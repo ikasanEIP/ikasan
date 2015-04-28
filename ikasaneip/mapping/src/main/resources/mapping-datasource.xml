@@ -34,6 +34,6 @@
     <bean id="platformHibernateProperties"
         class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="ignoreResourceNotFound" value="true"/>
-        <property name="location" value="classpath:ikasan-hibernate.properties"/>
+        <property name="location" value="classpath:hibernate.properties"/>
     </bean>
 </beans>
