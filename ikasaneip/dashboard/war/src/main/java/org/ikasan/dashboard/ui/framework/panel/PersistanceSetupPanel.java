@@ -23,6 +23,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
@@ -39,19 +40,17 @@ public class PersistanceSetupPanel extends Panel implements View
 
     private Logger logger = Logger.getLogger(PersistanceSetupPanel.class);
     private PersistenceServiceFactory<String> persistenceServiceFactory;
-    private String persistenceProvider;
+    private ComboBox persistanceStoreTypeCombo = new ComboBox("Select database type");
 
     /**
      * Constructor
      * 
      * @param ikasanModuleService
      */
-    public PersistanceSetupPanel(PersistenceServiceFactory<String> persistenceServiceFactory
-    		, String persistenceProvider)
+    public PersistanceSetupPanel(PersistenceServiceFactory<String> persistenceServiceFactory)
     {
         super();
         this.persistenceServiceFactory = persistenceServiceFactory;
-        this.persistenceProvider = persistenceProvider;
         init();
     }
 
@@ -64,6 +63,8 @@ public class PersistanceSetupPanel extends Panel implements View
         verticalLayout.setWidth("100%");
         verticalLayout.setHeight("100%");
         verticalLayout.setMargin(true);
+        
+        initPersistanceStoreTypeCombo();
 
         Label ikasanWelcomeLabel1 = new Label("Welcome to Ikasan!");
         ikasanWelcomeLabel1.setStyleName("xlarge");
@@ -80,12 +81,23 @@ public class PersistanceSetupPanel extends Panel implements View
         verticalLayout.addComponent(ikasanWelcomeLabel1);
         verticalLayout.addComponent(ikasanWelcomeLabel2);
         
+        verticalLayout.addComponent(persistanceStoreTypeCombo);
+        
         Button button = new Button("Create");
         button.setStyleName(Reindeer.BUTTON_SMALL);
 
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) 
             {
+            	String persistenceProvider = (String)PersistanceSetupPanel
+            			.this.persistanceStoreTypeCombo.getValue();
+            	
+            	if(persistenceProvider == null)
+            	{
+            		 Notification.show("Please select a database type!");
+            		 return;
+            	}
+
             	PersistenceService persistanceService 
             		= persistenceServiceFactory.getPersistenceService(persistenceProvider);
 
@@ -110,6 +122,15 @@ public class PersistanceSetupPanel extends Panel implements View
 
         verticalLayout.addComponent(button);
         this.setContent(verticalLayout);
+    }
+    
+    protected void initPersistanceStoreTypeCombo()
+    {
+    	persistanceStoreTypeCombo.addItem("Sybase12");
+    	persistanceStoreTypeCombo.addItem("Sybase15");
+    	persistanceStoreTypeCombo.addItem("MySQL");
+    	persistanceStoreTypeCombo.addItem("SQLServer2008");
+    	persistanceStoreTypeCombo.addItem("H2");
     }
 
     /* (non-Javadoc)

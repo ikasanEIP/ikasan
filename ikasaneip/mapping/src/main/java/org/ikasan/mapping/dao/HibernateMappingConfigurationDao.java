@@ -27,6 +27,7 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -42,7 +43,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  */
 public class HibernateMappingConfigurationDao extends HibernateDaoSupport implements MappingConfigurationDao
 {
-    private static final Long ID = new Long(1);
+	private static final Long ID = new Long(1);
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
@@ -806,5 +807,16 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
             }
         });
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.mapping.dao.MappingConfigurationDao#getPlatformConfigurationByName(java.lang.String)
+	 */
+	@Override
+	public PlatformConfiguration getPlatformConfigurationByName(String name)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(PlatformConfiguration.class);
+        criteria.add(Restrictions.eq("name", name));
+        return (PlatformConfiguration) DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+	}
 
 }

@@ -153,18 +153,16 @@ public class PersistenceServiceImpl implements PersistenceService
     @Override
 	public boolean userTablesExist() 
     {
-    	List<String> usersTableExists = this.providerDAO.find(USERS_TABLE_EXISTS);
-    	List<String> authoritiesTableExists = this.providerDAO.find(AUTHORITIES_TABLE_EXISTS);
-    	List<String> userAuthoritiesTableExists = this.providerDAO.find(USERS_AUTHORITIES_TABLE_EXISTS);
-
-    	if(usersTableExists != null && usersTableExists.size() > 0 &&
-    			authoritiesTableExists != null && authoritiesTableExists.size() > 0 &&
-    					userAuthoritiesTableExists != null && userAuthoritiesTableExists.size() > 0) 
+    	try
     	{
-    		return true;
+    		List<String> usersTableExists = this.providerDAO.find(USERS_TABLE_EXISTS);
     	}
-
-    	return false;
+    	catch(Exception e)
+    	{
+    		return false;
+    	}
+    	
+    	return true;
 	}	
 
     @Override

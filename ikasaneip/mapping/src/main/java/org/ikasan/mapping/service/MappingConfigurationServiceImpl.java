@@ -26,6 +26,7 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -39,7 +40,7 @@ import org.springframework.dao.DataAccessException;
  */
 public class MappingConfigurationServiceImpl implements MappingConfigurationService
 {
-    private Logger logger = Logger.getLogger(MappingConfigurationServiceImpl.class);
+	private Logger logger = Logger.getLogger(MappingConfigurationServiceImpl.class);
 
     /** Access to market data */
     protected final MappingConfigurationDao dao;
@@ -557,4 +558,13 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     {
         return this.dao.getTargetConfigurationContextByClientNameTypeAndSourceContext(clientName, type, sourceContext); 
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.mapping.service.MappingConfigurationService#getPlatformConfigurationByName(java.lang.String)
+	 */
+	@Override
+	public PlatformConfiguration getPlatformConfigurationByName(String name)
+	{
+		return this.dao.getPlatformConfigurationByName(name);
+	}
 }

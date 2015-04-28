@@ -49,17 +49,14 @@ public class MappingConfigurationExportHelper
     private static final String EXPORT_DATE_TIME_START_TAG = "<exportDateTime>";
     private static final String EXPORT_DATE_TIME_END_TAG = "</exportDateTime>";
 
-    private String schemaLocation;
     private MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper;
 
     /**
      * @param schemaLocation
      */
-    public MappingConfigurationExportHelper(String schemaLocation
-            , MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper)
+    public MappingConfigurationExportHelper(MappingConfigurationValuesExportHelper mappingConfigurationValuesExportHelper)
     {
         super();
-        this.schemaLocation = schemaLocation;
         this.mappingConfigurationValuesExportHelper = mappingConfigurationValuesExportHelper;
     }
 
@@ -70,13 +67,13 @@ public class MappingConfigurationExportHelper
      * @return
      */
     public String getMappingConfigurationExportXml(MappingConfiguration mappingConfiguration, 
-            List<KeyLocationQuery> keyLocationQueries)
+            List<KeyLocationQuery> keyLocationQueries, String schemaLocation)
     {
         StringBuffer exportString = new StringBuffer();
 
         exportString.append(XML_TAG);
         String startTag = START_TAG;
-        exportString.append(startTag.replace("{$schemaLocation}", this.schemaLocation));
+        exportString.append(startTag.replace("{$schemaLocation}", schemaLocation));
 
         exportString.append(EXPORT_DATE_TIME_START_TAG);
         exportString.append(DateFormat.getDateTimeInstance
@@ -119,7 +116,7 @@ public class MappingConfigurationExportHelper
         exportString.append(SOURCE_CONFIGURATION_VALUE_QUERIES_END_TAG);
 
         exportString.append(this.mappingConfigurationValuesExportHelper
-            .getMappingConfigurationExportXml(mappingConfiguration, false));
+            .getMappingConfigurationExportXml(mappingConfiguration, false, schemaLocation));
 
         exportString.append(END_TAG);
 

@@ -57,6 +57,7 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/PlatformConfiguration.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
@@ -85,34 +86,7 @@
                <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
                <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
-           </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
-
-    <bean id="noTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
-        <constructor-arg ref="noTxMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
-    </bean>
-
-    <bean id="noTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
-        <property name="sessionFactory" ref="noTxIkasanSessionFactory" />
-    </bean>
-
-    <bean id="noTxIkasanSessionFactory"
-        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.ds" />
-        <property name="mappingResources">
-           <list>
-               <value>/org/ikasan/mapping/model/ConfigurationContext.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/MappingConfiguration.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/MappingConfigurationLite.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/ConfigurationServiceClient.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/ConfigurationType.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/KeyLocationQuery.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/SourceConfigurationValue.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/TargetConfigurationValue.hbm.xml</value>
-               <value>/org/ikasan/mapping/model/SourceConfigurationGroupSequence.hbm.xml</value>
+               <value>/org/ikasan/mapping/model/PlatformConfiguration.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

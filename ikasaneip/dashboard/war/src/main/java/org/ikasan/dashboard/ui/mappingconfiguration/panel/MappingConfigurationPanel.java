@@ -41,6 +41,7 @@ import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -658,7 +659,13 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true);
+        PlatformConfiguration platformConfiguration 
+    		= this.mappingConfigurationService.getPlatformConfigurationByName("mappingValuesExportSchemaLocation");
+        
+        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+
+        String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true,
+        		platformConfiguration.getValue());
 
         out.write(exportXml.getBytes());
 
@@ -675,8 +682,13 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
+        PlatformConfiguration platformConfiguration 
+        	= this.mappingConfigurationService.getPlatformConfigurationByName("mappingExportSchemaLocation");
+
+        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+        
         String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
-            , this.keyLocationQueries);
+            , this.keyLocationQueries, platformConfiguration.getValue());
 
         out.write(exportXml.getBytes());
 
