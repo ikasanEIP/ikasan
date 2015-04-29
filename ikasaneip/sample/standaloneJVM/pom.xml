@@ -47,6 +47,7 @@
         <relativePath />
     </parent>
 
+    <groupId>org.ikasan</groupId>
     <artifactId>ikasan-sample-standaloneJVM</artifactId>
     <version>1.0.0-rc4-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -87,22 +88,25 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-sample-techEndpoint</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
 

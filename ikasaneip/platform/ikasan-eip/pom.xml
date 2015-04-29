@@ -62,90 +62,107 @@
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-           </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
-          </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
-           </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler</artifactId>
-         </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-recovery-manager</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-         </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-flow-visitorPattern</artifactId>
-           </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter</artifactId>
-           </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-consumer</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-configuration-service</artifactId>
-         </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-wiretap</artifactId>
-         </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-security</artifactId>
-         </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
         
         <!-- Hibernate ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-         </dependency>
+            <version>3.5.4-Final</version>
+        </dependency>
         
         <!-- Hibernate dependency -->
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-          </dependency>
+            <version>3.12.1.GA</version>
+        </dependency>
         
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-         </dependency>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-         </dependency>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-             <exclusions>
+            <version>3.1.1.RELEASE</version>
+            <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
@@ -156,34 +173,46 @@
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-orm</artifactId>
-           </dependency>
+          <version>3.1.1.RELEASE</version>
+        </dependency>
 
         <!-- Remove this dependency - it is only on a util class -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
-          </dependency>
+            <version>3.1.1.RELEASE</version>
+        </dependency>
 
         <!-- logging -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
         </dependency>
 
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            </dependency>
+            <version>1.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.5.11</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-         </dependency>
+            <version>1.5.11</version>
+        </dependency>
         
         <!-- For point cut transaction management -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
+            <version>1.7.4</version>
         </dependency>
     </dependencies>
     

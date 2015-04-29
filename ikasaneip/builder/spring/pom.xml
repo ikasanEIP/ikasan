@@ -61,48 +61,56 @@
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-eip</artifactId>
-           <scope>provided</scope>
+          <version>1.0.0-rc4-SNAPSHOT</version>
+          <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-exclusion</artifactId>
-             <scope>provided</scope>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-             <scope>provided</scope>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-utility-endpoint</artifactId>
-          </dependency>
+            <version>1.0.0-rc4-SNAPSHOT</version>
+        </dependency>
 
         <!-- Test -->
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-             <scope>test</scope>
+            <version>3.12.1.GA</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-             <scope>test</scope>
+            <version>3.1.1.RELEASE</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-               <scope>test</scope>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-test</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
