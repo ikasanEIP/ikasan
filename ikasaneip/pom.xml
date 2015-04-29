@@ -110,6 +110,7 @@
         <module>compatibility</module>
 
 	<!-- top level services / applications -->
+        <module>mapping</module>
         <module>management</module>
         <module>webconsole</module>
         <module>console</module>
