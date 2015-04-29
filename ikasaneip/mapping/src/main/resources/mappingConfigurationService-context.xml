@@ -44,7 +44,7 @@
 
     <bean id="xaIkasanSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="xaIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
            <list>
                <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
@@ -71,7 +71,7 @@
 
     <bean id="localTxIkasanSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="localTxIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
            <list>
                <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
@@ -98,7 +98,7 @@
 
     <bean id="noTxIkasanSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="noTxIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
            <list>
                <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
