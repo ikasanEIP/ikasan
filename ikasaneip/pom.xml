@@ -110,9 +110,13 @@
         <module>compatibility</module>
 
 	<!-- top level services / applications -->
+        <module>mapping</module>
         <module>management</module>
         <module>webconsole</module>
         <module>console</module>
+
+        <!-- developer tooling -->
+        <module>developer</module>
 
         <!-- samples -->
         <module>sample</module>

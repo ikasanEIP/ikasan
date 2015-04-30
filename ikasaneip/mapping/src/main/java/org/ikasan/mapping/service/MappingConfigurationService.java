@@ -62,21 +62,6 @@ public interface MappingConfigurationService
     public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
             final String sourceSystemValue);
 
-    /**
-     * This method is responsible for resolving a target system configuration value from the Mapping Configuration Cache
-     * based on the following parameters:
-     * 
-     * @param clientName the name of the Configuration Service Client for whom the the mapping is being performed. 
-     * @param configurationTypeName the name of the configuration type that we are resolving the configuration value for.
-     * @param sourceContext the source context name that we are resolving the configuration value for.
-     * @param targetContext the target context name that we are resolving the configuration value for.
-     * @param payload the payload from where the source configuration values will be resolved from using the associated
-     * key location queries.
-     * @return
-     * @throws MappingConfigurationServiceException 
-     */
-    public String getTargetConfigurationValue(final String clientName, final String configurationTypeName, final String sourceContext, final String targetContext,
-            byte[] payload) throws MappingConfigurationServiceException;
 
     /**
      * This method is responsible for returning all {@link ConfigurationType} hibernate

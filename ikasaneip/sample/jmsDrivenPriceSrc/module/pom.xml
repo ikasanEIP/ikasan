@@ -46,39 +46,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.ikasan</groupId>
+  <!-- standard parent -->
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-build</artifactId>
+        <version>1.0.0-rc4-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+
     <artifactId>sample-jmsDrivenPriceSrc</artifactId>
-    <version>0.9.5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Ikasan Sample Implementation for a jms consumer</name>
     <description>Ikasan EIP sample demonstrating implementation of a flow for a jms consumer</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-build</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
-            <scope>provided</scope>
-            <type>pom</type>
-        </dependency>
-
+    
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder-spring</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee_1.4_spec</artifactId>
-            <version>1.1</version>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -87,77 +83,66 @@
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.12.1.GA</version>
             <scope>test</scope>
         </dependency>
 
 		<dependency>
 		    <groupId>org.apache.activemq</groupId>
 		    <artifactId>activemq-core</artifactId>
-		    <version>5.7.0</version>
-            <scope>test</scope>
+	        <scope>test</scope>
 		</dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>1.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-test</artifactId>
-            <version>0.9.5-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
-            <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
         
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

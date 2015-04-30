@@ -1,0 +1,61 @@
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <files>
+		<!-- Ikasan esb configuration -->
+        <file>
+            <source>module/ikasan-jndi-datasource.properties</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/module.xml</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/hibernate.properties</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/monitor-conf.xml</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/transaction-conf.xml</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/transactionManager-conf.xml</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/ikasan-console.properties</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>module/ikasan-environment.properties</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>cli/domain-h2-ikasan-ds.cli</source>
+            <outputDirectory>jboss-eap/bin</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>cli/standalone-h2-ikasan-ds.cli</source>
+            <outputDirectory>jboss-eap/bin</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+    </files>
+
+</assembly>

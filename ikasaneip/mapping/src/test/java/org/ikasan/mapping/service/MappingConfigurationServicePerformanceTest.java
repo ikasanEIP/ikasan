@@ -53,6 +53,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/substitute-components.xml",
         "/mock-components.xml"
 })
+@Ignore
 public class MappingConfigurationServicePerformanceTest
 {
     /** Object being tested */
@@ -167,21 +168,7 @@ public class MappingConfigurationServicePerformanceTest
     }
 
 
-    @Test
-    @DirtiesContext
-    @Ignore
-    public void test_get_target_system_value_with_payload_and_client_name_success() throws MappingConfigurationServiceException
-    {
-        Date start = new Date();
-        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
-                ("client15001", "Dealer and Product to Account15001", "Tradeweb15001", "Bloomberg15001", CLEAN_JGB_RAW_XML.getBytes());
-        Date end = new Date();
 
-        long timeTaken = end.getTime() - start.getTime();
-        System.out.println(result);
-        System.out.println("Time taken = " + timeTaken);
-        Assert.assertEquals("BARCLON", result);
-    }
 
     /**
      * Helper method to add the configuration type to the database.

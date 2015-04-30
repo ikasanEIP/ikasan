@@ -74,13 +74,6 @@ public class SingleRecipientRouterFlowElementInvokerTest
     private ReplicationFactory replicationFactory = mockery.mock(ReplicationFactory.class, "replicationFactory");
     private Map payload = mockery.mock(Map.class, "payload");
 
-    @Test(expected = IllegalArgumentException.class)
-    @SuppressWarnings("unchecked")
-    public void test_failed_constructor()
-    {
-        new MultiRecipientRouterFlowElementInvoker(null);
-    }
-
     @Test
     @SuppressWarnings("unchecked")
     public void test_router_flowElementInvoker_single_target()
