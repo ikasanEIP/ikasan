@@ -42,12 +42,12 @@ package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.quartz.HashedEventIdentifierServiceImpl;
-import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
@@ -117,7 +117,10 @@ public class ScheduledConsumer<T>
      */
     private MessageProvider<?> messageProvider = new QuartzMessageProvider();
 
-    private ManagedResourceRecoveryManager managedResourceRecoveryManager;
+    /**
+     * Recovery manager for this Managed Resource and any extending implementations of it
+     */
+    protected ManagedResourceRecoveryManager managedResourceRecoveryManager;
 
     /**
      * Constructor
@@ -214,23 +217,41 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            T message = (T) messageProvider.invoke(context);
-            if (message != null)
-            {
-                FlowEvent<?, ?> flowEvent = createFlowEvent(message);
-                this.eventListener.invoke(flowEvent);
-            }
-            else
-            {
-                if(managedResourceRecoveryManager.isRecovering())
-                {
-                    managedResourceRecoveryManager.cancel();
-                }
-            }
+            this.invoke((T) messageProvider.invoke(context));
+        }
+        catch (ForceTransactionRollbackException thrownByRecoveryManager)
+        {
+            throw thrownByRecoveryManager;
         }
         catch (Throwable thr)
         {
             managedResourceRecoveryManager.recover(thr);
+        }
+    }
+
+    /**
+     * Invoke the eventListener with the incoming mes
+     * @param message
+     */
+    public void invoke(T message)
+    {
+        if (message != null)
+        {
+            FlowEvent<?, ?> flowEvent = createFlowEvent(message);
+            this.eventListener.invoke(flowEvent);
+        }
+        else
+        {
+            if(logger.isDebugEnabled())
+            {
+                logger.debug("'null' returned from MessageProvider. Flow not invoked");
+            }
+
+            if(managedResourceRecoveryManager.isRecovering())
+            {
+                // cancel the recovery schedule
+                managedResourceRecoveryManager.cancel();
+            }
         }
     }
 

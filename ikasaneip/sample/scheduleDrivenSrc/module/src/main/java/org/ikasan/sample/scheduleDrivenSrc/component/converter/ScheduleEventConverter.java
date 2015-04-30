@@ -53,7 +53,6 @@ public class ScheduleEventConverter implements Converter<JobExecutionContext,Str
 {
     public StringBuilder convert(JobExecutionContext context) throws TransformationException
     {
-        if(true) throw new TransformationException("Force exception");
         StringBuilder sb = new StringBuilder();
         sb.append("schedule executed at = ");
         sb.append(context.getFireTime());

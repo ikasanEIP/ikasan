@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * $Id: mappingConfigurationService-context.xml 44074 2015-03-17 10:43:23Z stewmi $
+ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationService/api/src/main/resources/mappingConfigurationService-context.xml $
+ *
+ * ====================================================================
+ *
+ * Copyright (c) 2000-2010 by Mizuho International plc.
+ * All Rights Reserved.
+ *
+ * ====================================================================
+ *
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+    <bean id="keyLocationQueryProcessorFactory" class="org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory">
+        <constructor-arg ref="xaMappingConfigurationDao"/>
+        <constructor-arg ref="keyLocationProcessorMap"/>
+    </bean>
+
+    <util:map id="keyLocationProcessorMap">
+        <entry key="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor" 
+            value-ref="xpathKeyLocationQueryProcessor"/>
+    </util:map>
+
+    <bean id="xpathKeyLocationQueryProcessor" 
+        class="org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor"/>
+
+    <bean id="xaMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
+        <constructor-arg ref="xaMappingConfigurationDao"/>
+    </bean>
+
+    <bean id="xaMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
+        <property name="sessionFactory" ref="xaIkasanSessionFactory" />
+    </bean>
+
+    <bean id="xaIkasanSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+           <list>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/MappingConfiguration.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/MappingConfigurationLite.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationServiceClient.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationType.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/KeyLocationQuery.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/SourceConfigurationValue.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/TargetConfigurationValue.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/SourceConfigurationGroupSequence.hbm.xml</value>
+           </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="localTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
+        <constructor-arg ref="localTxMappingConfigurationDao"/>
+    </bean>
+
+    <bean id="localTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
+        <property name="sessionFactory" ref="localTxIkasanSessionFactory" />
+    </bean>
+
+    <bean id="localTxIkasanSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+           <list>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/MappingConfiguration.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/MappingConfigurationLite.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationServiceClient.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationType.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/KeyLocationQuery.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/SourceConfigurationValue.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/TargetConfigurationValue.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/SourceConfigurationGroupSequence.hbm.xml</value>
+           </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <bean id="noTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
+        <constructor-arg ref="noTxMappingConfigurationDao"/>
+    </bean>
+
+    <bean id="noTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
+        <property name="sessionFactory" ref="noTxIkasanSessionFactory" />
+    </bean>
+
+    <bean id="noTxIkasanSessionFactory"
+        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+           <list>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/MappingConfiguration.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/MappingConfigurationLite.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationServiceClient.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationType.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/KeyLocationQuery.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/SourceConfigurationValue.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/TargetConfigurationValue.hbm.xml</value>
+               <value>/com/mizuho/cmi2/mappingConfiguration/model/SourceConfigurationGroupSequence.hbm.xml</value>
+           </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+</beans>

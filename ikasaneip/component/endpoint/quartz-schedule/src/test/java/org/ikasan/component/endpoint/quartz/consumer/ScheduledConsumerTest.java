@@ -355,9 +355,7 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_null_when_in_recovery() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
-        final String identifier = "testId";
 
         // expectations
         mockery.checking(new Expectations()
@@ -366,18 +364,10 @@ public class ScheduledConsumerTest
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(null));
 
-                // schedule the job
-                exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(0).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(0).of(eventListener).invoke(mockFlowEvent);
-
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
 
+                // cancel recovery
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
             }
         });
@@ -388,6 +378,9 @@ public class ScheduledConsumerTest
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setMessageProvider(mockMessageProvider);
+        scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+
         // test
         scheduledConsumer.execute(jobExecutionContext);
         // assert
