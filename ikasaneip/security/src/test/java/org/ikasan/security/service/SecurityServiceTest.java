@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.ikasan.security.dao.HibernateSecurityDao;
+import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -29,7 +29,6 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -69,7 +68,7 @@ public class SecurityServiceTest
    
  
     /** Object being tested */
-    @Resource private HibernateSecurityDao xaSecurityDao;
+    @Resource private SecurityDao xaSecurityDao;
     @Resource private SecurityService xaSecurityService;
 
     @Resource

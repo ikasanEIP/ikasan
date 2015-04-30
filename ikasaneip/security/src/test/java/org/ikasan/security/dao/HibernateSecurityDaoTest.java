@@ -12,7 +12,6 @@
  */
 package org.ikasan.security.dao;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -20,10 +19,8 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.ikasan.security.dao.HibernateSecurityDao;
-import org.ikasan.security.dao.SecurityDaoException;
-import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +49,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class HibernateSecurityDaoTest
 {
     /** Object being tested */
-    @Resource private HibernateSecurityDao xaSecurityDao;
+    @Resource private SecurityDao xaSecurityDao;
 
     /**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation

@@ -133,35 +133,44 @@ public class RoleManagementPanel extends Panel implements View
 		roleAdministrationPanel.setHeight("100%");
 		roleAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(3, 16);
+		GridLayout gridLayout = new GridLayout(2, 4);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
-		gridLayout.setColumnExpandRatio(0, 1);
-		gridLayout.setColumnExpandRatio(1, 3);
-		gridLayout.setColumnExpandRatio(2, 0.25f);
-		gridLayout.setColumnExpandRatio(3, 2);
+		gridLayout.setRowExpandRatio(0, 0.25f);
+		gridLayout.setRowExpandRatio(1, 1.0f);
+		gridLayout.setRowExpandRatio(2, 0.20f);
+		gridLayout.setRowExpandRatio(3, 5.00f);
 		
 		
 		Layout controlLayout = this.initControlLayout();
 		
     	gridLayout.addComponent(controlLayout, 0, 0, 1, 0);
     	
-    	Label policyNameLabel = new Label("Role Name");
+    	Label roleNameLabel = new Label("Role Name");
 		initRoleNameField();
 		
-		gridLayout.addComponent(policyNameLabel, 0, 1);
-		gridLayout.addComponent(this.roleNameField, 1, 1);
+		GridLayout formLayout = new GridLayout(2, 2);
+		formLayout.setWidth("100%");
+		formLayout.setHeight("115px");
+		
+		formLayout.setColumnExpandRatio(0, 1);
+		formLayout.setColumnExpandRatio(1, 5);
+
+		this.roleNameField.setWidth("40%");
+		formLayout.addComponent(roleNameLabel, 0, 0);
+		formLayout.addComponent(this.roleNameField, 1, 0);
 
 		Label descriptionLabel = new Label("Description");
 		this.descriptionField = new TextArea();
-		this.descriptionField.setWidth("80%");
+		this.descriptionField.setWidth("40%");
 		this.descriptionField.setHeight("60px");
-		gridLayout.addComponent(descriptionLabel, 0, 2);
-		gridLayout.addComponent(descriptionField, 1, 2);
+		formLayout.addComponent(descriptionLabel, 0, 1);
+		formLayout.addComponent(descriptionField, 1, 1);
 		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 3, 1, 3);
+		gridLayout.addComponent(formLayout, 0, 1, 1, 1);
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 2, 1, 2);
 		
 		this.associatedPrincipalsTable = new Table();
 		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
@@ -169,7 +178,7 @@ public class RoleManagementPanel extends Panel implements View
 		this.associatedPrincipalsTable.setHeight("400px");
 		this.associatedPrincipalsTable.setWidth("650px");
 		
-		gridLayout.addComponent(this.associatedPrincipalsTable, 0, 4, 1, 4);
+		gridLayout.addComponent(this.associatedPrincipalsTable, 0, 3, 1, 3);
 
 		roleAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(roleAdministrationPanel);
@@ -514,6 +523,7 @@ public class RoleManagementPanel extends Panel implements View
     	
     	HorizontalLayout controlLayout =new HorizontalLayout();
     	controlLayout.setWidth("100%");
+    	controlLayout.setHeight("20px");
     	Label spacerLabel = new Label("");
     	controlLayout.addComponent(spacerLabel);
     	controlLayout.setExpandRatio(spacerLabel, 0.865f);

@@ -110,24 +110,23 @@ public class PrincipalManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 7);
+		GridLayout gridLayout = new GridLayout(2, 3);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
 
-		Label principalName = new Label("Principal Name");
+		Label principalNameLabel = new Label("Principal Name");
 
 		principalNameField = new AutocompleteField<IkasanPrincipal>();
-		principalNameField.setWidth("80%");
+		principalNameField.setWidth("40%");
 
-		final DragAndDropWrapper usernameFieldWrap = new DragAndDropWrapper(
+		final DragAndDropWrapper principalNameFieldWrap = new DragAndDropWrapper(
 				principalNameField);
-		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		usernameFieldWrap.setWidth("80%");
+		principalNameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
 
-		principalTypeField.setWidth("80%");
-		descriptionField.setWidth("80%");
+		principalTypeField.setWidth("40%");
+		descriptionField.setWidth("40%");
 		descriptionField.setHeight("60px");
 		
 		roleTable.addContainerProperty("Role", String.class, null);
@@ -163,19 +162,27 @@ public class PrincipalManagementPanel extends Panel implements View
 			}
 		});
 		
+		GridLayout formLayout = new GridLayout(2, 3);
+		formLayout.setWidth("100%");
+		formLayout.setHeight("135px");
+		
+		formLayout.setColumnExpandRatio(0, 1);
+		formLayout.setColumnExpandRatio(1, 5);
 
-		gridLayout.addComponent(principalName, 0, 0);
-		gridLayout.addComponent(usernameFieldWrap, 1, 0);
+		formLayout.addComponent(principalNameLabel, 0, 0);
+		formLayout.addComponent(principalNameFieldWrap, 1, 0);
 
-		Label nameLabel = new Label("Principal Type");
-		gridLayout.addComponent(nameLabel, 0, 1);
-		gridLayout.addComponent(principalTypeField, 1, 1);
+		Label principalTypeLabel = new Label("Principal Type");
+		formLayout.addComponent(principalTypeLabel, 0, 1);
+		formLayout.addComponent(principalTypeField, 1, 1);
 
 		Label descriptionLabel = new Label("Description");
-		gridLayout.addComponent(descriptionLabel, 0, 2);
-		gridLayout.addComponent(descriptionField, 1, 2);
+		formLayout.addComponent(descriptionLabel, 0, 2);
+		formLayout.addComponent(descriptionField, 1, 2);
 		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 5, 1, 5);
+		gridLayout.addComponent(formLayout, 0, 0, 1, 0);
+		
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 1, 1, 1);
 
 		principalDropTable.setDragMode(TableDragMode.ROW);
 		principalDropTable.setDropHandler(new DropHandler()
@@ -268,7 +275,7 @@ public class PrincipalManagementPanel extends Panel implements View
 			}
 		});
 		
-		gridLayout.addComponent(roleTable, 0, 6, 1, 6);
+		gridLayout.addComponent(roleTable, 0, 2, 1, 2);
 					
 		this.rolesCombo = new ComboBox();
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {

@@ -51,7 +51,7 @@ import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 
 /**
@@ -250,7 +250,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<IkasanPrincipal> getPrincipalByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<IkasanPrincipal> results = getHibernateTemplate().find("from IkasanPrincipal where name LIKE ?", name + '%');
+		List<IkasanPrincipal> results = (List<IkasanPrincipal>) getHibernateTemplate().find("from IkasanPrincipal where name LIKE ?", name + '%');
 
         return results;
 	}
@@ -274,7 +274,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<Policy> getPolicyByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<Policy> results = getHibernateTemplate().find("from Policy where name LIKE ?", name + '%');
+		List<Policy> results = (List<Policy>) getHibernateTemplate().find("from Policy where name LIKE ?", name + '%');
 
         return results;
 	}
@@ -286,7 +286,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<Role> getRoleByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<Role> results = getHibernateTemplate().find("from Role where name LIKE ?", name + '%');
+		List<Role> results = (List<Role>) getHibernateTemplate().find("from Role where name LIKE ?", name + '%');
 
         return results;
 	}

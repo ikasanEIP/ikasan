@@ -18,18 +18,18 @@
                    <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <!--  bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="persistanceSetupPanel"/>
                    <constructor-arg ref="persistanceSetupPanel"/>
-                </bean>
+                </bean -->
             </list>
         </constructor-arg>
         <constructor-arg ref="persistanceSetupComponentContainer"/>
     </bean>
     
-    <bean id="persistanceSetupPanel" class="org.ikasan.dashboard.ui.framework.panel.PersistanceSetupPanel" scope="session">
+    <!-- bean id="persistanceSetupPanel" class="org.ikasan.dashboard.ui.framework.panel.PersistanceSetupPanel" scope="session">
     	<constructor-arg ref="persistenceServiceFactory"/>
-    </bean>
+    </bean --> 
 
 	<bean id="persistanceSetupComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>

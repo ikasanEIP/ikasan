@@ -69,6 +69,8 @@ public class UserManagementPanel extends Panel implements View
 	private SecurityService securityService;
 	private ComboBox rolesCombo;
 	private AutocompleteField<User> usernameField = new AutocompleteField<User>();
+	private AutocompleteField<User> firstName;
+	private AutocompleteField<User> surname;
 	private PasswordField passwordField = new PasswordField();
 	private Table userDropTable = new Table();
 	private Table associatedPrincipalsTable = new Table();
@@ -120,32 +122,29 @@ public class UserManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 9);
-		gridLayout.setWidth("100%");
-		gridLayout.setHeight("100%");
+		GridLayout gridLayout = new GridLayout(2, 3);
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
 	
 		Label usernameLabel = new Label("Username");
-
-		usernameField.setWidth("80%");
+		
+		usernameField.setWidth("40%");
 
 		final DragAndDropWrapper usernameFieldWrap = new DragAndDropWrapper(
 				usernameField);
 		usernameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		usernameFieldWrap.setWidth("80%");
 
 		passwordField = new PasswordField();
-		passwordField.setWidth("80%");
+		passwordField.setWidth("40%");
 		
-		final AutocompleteField<User> firstName = new AutocompleteField<User>();
-		firstName.setWidth("80%");
-		final AutocompleteField<User> surname = new AutocompleteField<User>();
-		surname.setWidth("80%");
+		firstName = new AutocompleteField<User>();
+		firstName.setWidth("40%");
+		surname = new AutocompleteField<User>();
+		surname.setWidth("40%");
 		final TextField department = new TextField();
-		department.setWidth("80%");
+		department.setWidth("40%");
 		final TextField email = new TextField();
-		email.setWidth("80%");
+		email.setWidth("40%");
 		final Table roleTable = new Table();
 		roleTable.addContainerProperty("Role", String.class, null);
 		roleTable.addContainerProperty("", Button.class, null);
@@ -364,32 +363,41 @@ public class UserManagementPanel extends Panel implements View
 				}
 			}
 		});
+		
+		GridLayout formLayout = new GridLayout(2, 6);
+		formLayout.setWidth("100%");
+		formLayout.setHeight("190px");
+		
+		formLayout.setColumnExpandRatio(0, 1);
+		formLayout.setColumnExpandRatio(1, 5);
 
-		gridLayout.addComponent(usernameLabel, 0, 0);
-		gridLayout.addComponent(usernameFieldWrap, 1, 0);
+		formLayout.addComponent(usernameLabel, 0, 0);
+		formLayout.addComponent(usernameFieldWrap, 1, 0);
 		
 		Label passwordLabel = new Label("Password");
-		gridLayout.addComponent(passwordLabel, 0, 1);
-		gridLayout.addComponent(passwordField, 1, 1);
+		formLayout.addComponent(passwordLabel, 0, 1);
+		formLayout.addComponent(passwordField, 1, 1);
 		
 
 		Label firstNameLabel = new Label("First name");
-		gridLayout.addComponent(firstNameLabel, 0, 2);
-		gridLayout.addComponent(firstName, 1, 2);
+		formLayout.addComponent(firstNameLabel, 0, 2);
+		formLayout.addComponent(firstName, 1, 2);
 
 		Label surnameLabel = new Label("Surname");
-		gridLayout.addComponent(surnameLabel, 0, 3);
-		gridLayout.addComponent(surname, 1, 3);
+		formLayout.addComponent(surnameLabel, 0, 3);
+		formLayout.addComponent(surname, 1, 3);
 
 		Label departmentLabel = new Label("Department");
-		gridLayout.addComponent(departmentLabel, 0, 4);
-		gridLayout.addComponent(department, 1, 4);
+		formLayout.addComponent(departmentLabel, 0, 4);
+		formLayout.addComponent(department, 1, 4);
 
 		Label emailLabel = new Label("Email address");
-		gridLayout.addComponent(emailLabel, 0, 5);
-		gridLayout.addComponent(email, 1, 5);
+		formLayout.addComponent(emailLabel, 0, 5);
+		formLayout.addComponent(email, 1, 5);
 		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 6, 1, 6);
+		gridLayout.addComponent(formLayout, 0, 0, 1, 0);
+		
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 1, 1, 1);
 
 		final ClientSideCriterion acceptCriterion = new SourceIs(usernameField);
 
@@ -489,14 +497,14 @@ public class UserManagementPanel extends Panel implements View
 			}
 		});
 		
-		gridLayout.addComponent(roleTable, 0, 7);
+		gridLayout.addComponent(roleTable, 0, 2);
 		
 		this.associatedPrincipalsTable.addContainerProperty("Associated Principals", String.class, null);
 		this.associatedPrincipalsTable.addItemClickListener(this.associatedPrincipalItemClickListener);
 		associatedPrincipalsTable.setHeight("400px");
 		associatedPrincipalsTable.setWidth("450px");
 		
-		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 7);
+		gridLayout.addComponent(this.associatedPrincipalsTable, 1, 2);
 					
 		this.rolesCombo = new ComboBox();
 		this.rolesCombo.addListener(new Property.ValueChangeListener() {
@@ -596,6 +604,8 @@ public class UserManagementPanel extends Panel implements View
 		List<Role> roles = this.securityService.getAllRoles();
 		
 		this.usernameField.clearChoices();
+		this.firstName.clearChoices();
+		this.surname.clearChoices();
 		this.rolesCombo.removeAllItems();
 		this.userDropTable.removeAllItems();
 		

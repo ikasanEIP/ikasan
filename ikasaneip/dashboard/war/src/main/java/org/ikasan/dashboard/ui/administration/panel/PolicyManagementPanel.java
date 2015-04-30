@@ -140,33 +140,56 @@ public class PolicyManagementPanel extends Panel implements View
 		securityAdministrationPanel.setHeight("100%");
 		securityAdministrationPanel.setWidth("100%");
 
-		GridLayout gridLayout = new GridLayout(2, 8);
+		GridLayout gridLayout = new GridLayout(2, 5);
 		gridLayout.setWidth("100%");
 		gridLayout.setHeight("100%");
 		gridLayout.setMargin(true);
 		gridLayout.setSizeFull();
+		gridLayout.setRowExpandRatio(0, 0.25f);
+		gridLayout.setRowExpandRatio(1, 1.5f);
+		gridLayout.setRowExpandRatio(2, 1.5f);
+		gridLayout.setRowExpandRatio(3, 0.20f);
+		gridLayout.setRowExpandRatio(4, 5.00f);
 		
 		
 		Layout controlLayout = this.initControlLayout();
 		
     	gridLayout.addComponent(controlLayout, 0, 0, 1, 0);
     	
+    	GridLayout formLayout = new GridLayout(2, 3);
+    	formLayout.setWidth("100%");
+		formLayout.setHeight("125px");
+		formLayout.setRowExpandRatio(0, 1f);
+		formLayout.setRowExpandRatio(1, 2f);
+		formLayout.setRowExpandRatio(2, 1f);		
+		formLayout.setColumnExpandRatio(0, 1);
+		formLayout.setColumnExpandRatio(1, 5);
+
     	Label policyNameLabel = new Label("Policy Name");
 		final DragAndDropWrapper policyNameFieldWrap = initPolicyNameField();
 		
-		gridLayout.addComponent(policyNameLabel, 0, 1);
-		gridLayout.addComponent(policyNameFieldWrap, 1, 1);
+		formLayout.addComponent(policyNameLabel, 0, 0);
+		formLayout.addComponent(policyNameFieldWrap, 1, 0);
 
 		Label descriptionLabel = new Label("Description");
 		this.descriptionField = new TextArea();
-		this.descriptionField.setWidth("80%");
+		this.descriptionField.setWidth("40%");
 		this.descriptionField.setHeight("60px");
-		gridLayout.addComponent(descriptionLabel, 0, 2);
-		gridLayout.addComponent(descriptionField, 1, 2);
+		formLayout.addComponent(descriptionLabel, 0, 1);
+		formLayout.addComponent(descriptionField, 1, 1);
 		
 		Label linkTypeLabel = new Label("Policy Link Type");
-		gridLayout.addComponent(linkTypeLabel, 0, 3);
-		gridLayout.addComponent(this.linkTypeCombo, 1, 3);
+		formLayout.addComponent(linkTypeLabel, 0, 2);
+		this.linkTypeCombo.setWidth("40%");
+		formLayout.addComponent(this.linkTypeCombo, 1, 2);
+		
+		GridLayout linkLayout = new GridLayout(2, 2);
+		linkLayout.setWidth("100%");
+		linkLayout.setHeight("80px");
+		linkLayout.setRowExpandRatio(0, 1f);
+		linkLayout.setRowExpandRatio(1, 2f);		
+		linkLayout.setColumnExpandRatio(0, 1);
+		linkLayout.setColumnExpandRatio(1, 5);
 		
 		linkButton.setStyleName(Reindeer.BUTTON_LINK);
     	linkButton.setVisible(false);
@@ -178,15 +201,15 @@ public class PolicyManagementPanel extends Panel implements View
                 UI.getCurrent().addWindow(policyAssociationMappingSearchWindow);
             }
         });
-    	gridLayout.addComponent(this.linkButton, 1, 4);
+    	linkLayout.addComponent(this.linkButton, 1, 0);
     	
     	final Label linkedEntityLabel = new Label("Linked to");
 		linkedEntity = new TextArea();
-		linkedEntity.setWidth("80%");
+		linkedEntity.setWidth("40%");
 		linkedEntity.setHeight("60px");
 		
-    	gridLayout.addComponent(linkedEntityLabel, 0, 5);
-		gridLayout.addComponent(linkedEntity, 1, 5);
+		linkLayout.addComponent(linkedEntityLabel, 0, 1);
+		linkLayout.addComponent(linkedEntity, 1, 1);
 		linkedEntityLabel.setVisible(false);
 		linkedEntity.setVisible(false);
     	
@@ -220,9 +243,12 @@ public class PolicyManagementPanel extends Panel implements View
 		    }
 		});
 		
-		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 6, 1, 6);
+		gridLayout.addComponent(formLayout,0, 1, 1, 1);
+		gridLayout.addComponent(linkLayout,0, 2, 1, 2);
+		
+		gridLayout.addComponent(new Label("<hr />",ContentMode.HTML),0, 3, 1, 3);
 
-		gridLayout.addComponent(this.roleTable, 0, 7, 1, 7);
+		gridLayout.addComponent(this.roleTable, 0, 4, 1, 4);
 
 		securityAdministrationPanel.setContent(gridLayout);
 		layout.addComponent(securityAdministrationPanel);
@@ -436,13 +462,12 @@ public class PolicyManagementPanel extends Panel implements View
 	{
 		// The policy field name is an autocomplete field.
 		this.policyNameField = new AutocompleteField<Policy>();
-		this.policyNameField.setWidth("80%");
+		this.policyNameField.setWidth("40%");
 
 		// We also want it to be drag and drop friendly.
 		final DragAndDropWrapper policyNameFieldWrap = new DragAndDropWrapper(
 				policyNameField);
 		policyNameFieldWrap.setDragStartMode(DragStartMode.COMPONENT);
-		policyNameFieldWrap.setWidth("80%");
 		
 		// In order to have the auto complete work we must add a query listener.
 		// The query listener gets activated when a user begins to type into 
