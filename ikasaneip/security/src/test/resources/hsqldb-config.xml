@@ -26,22 +26,18 @@
     <!-- =================================================================== -->
 
     <util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
-        <entry key="hibernate.show_sql" value="false" />
-        <entry key="hibernate.format_sql" value="false" />
-        <entry key="hibernate.use_sql_comments" value="false" />
-        <entry key="hibernate.hbm2ddl.auto" value="create" />
-        <entry key="hibernate.connection.pool_size" value="1"/>
-        <entry key="hibernate.jdbc.factory_class" value="org.hibernate.jdbc.NonBatchingBatcherFactory"/>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+        <entry key="hibernate.show_sql" value="true"/>
+        <entry key="hibernate.hbm2ddl.auto" value="create"/>
+        <entry key="hibernate.flushMode" value="commit"/>
     </util:map>
-
-    <bean id="ikasan.ds"
-          name="ikasan.xads" 
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-            <property name="url" value="jdbc:hsqldb:mem:testdb" />
-            <property name="username" value="sa" />
-            <property name="password" value="" />
+    
+    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
     </bean>
 
 </beans>

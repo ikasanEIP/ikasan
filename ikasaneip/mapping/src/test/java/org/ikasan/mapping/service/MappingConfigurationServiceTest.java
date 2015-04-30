@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import junit.framework.Assert;
 
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
+import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
 import org.ikasan.mapping.model.ConfigurationContext;
@@ -29,9 +30,6 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
-import org.ikasan.mapping.service.MappingConfigurationServiceException;
-import org.ikasan.mapping.service.MappingConfigurationServiceImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -70,7 +68,7 @@ public class MappingConfigurationServiceTest
 
     /** Object being tested */
     @Resource private MappingConfigurationService xaMappingConfigurationService;
-    @Resource private HibernateMappingConfigurationDao xaMappingConfigurationDao;
+    @Resource private MappingConfigurationDao xaMappingConfigurationDao;
     @Resource private KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory; 
     
     private final HibernateMappingConfigurationDao mockMappingConfigurationDao 
@@ -137,6 +135,7 @@ public class MappingConfigurationServiceTest
      */
     @Before public void setup()
     {
+   	
         Long configurationServiceClientId = this.addConfigurationServiceClient("CMI2", 
             "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
         Long dealerToDealerId = this.addConfigurationType("Dealer and Product to Account");

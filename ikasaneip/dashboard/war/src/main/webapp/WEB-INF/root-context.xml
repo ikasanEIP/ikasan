@@ -95,11 +95,11 @@
                 <!--  bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="estateViewPanel"/>
-                </bean -->
+                </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="persistanceSetupView"/>
                    <constructor-arg ref="persistanceSetupPanel"/>
-                </bean>
+                </bean> -->
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="authenticationMethodView"/>
                    <constructor-arg ref="authenticationMethodPanel"/>

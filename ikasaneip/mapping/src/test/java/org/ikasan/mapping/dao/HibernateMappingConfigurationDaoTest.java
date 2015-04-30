@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
-import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
@@ -56,14 +55,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class HibernateMappingConfigurationDaoTest
 {
     /** Object being tested */
-    @Resource private HibernateMappingConfigurationDao xaMappingConfigurationDao;
+    @Resource private MappingConfigurationDao xaMappingConfigurationDao;
 
     /**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
      */
     @Before public void setup()
-    {
+    {    	
     	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2", 
             "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
         ConfigurationType dealerToDealer = this.addConfigurationType("Dealer and Product to Account");
@@ -113,6 +112,7 @@ public class HibernateMappingConfigurationDaoTest
 
         this.addSourceSystemConfiguration("false", configurationContextId3, targetId7);
         this.addSourceSystemConfiguration("true", configurationContextId3, targetId8);
+    
     }
 
     /**
@@ -190,7 +190,7 @@ public class HibernateMappingConfigurationDaoTest
         System.out.println(result);
         Assert.assertNotNull(result);
 
-        this.xaMappingConfigurationDao.deleteMappingConfiguration(result);
+        this.xaMappingConfigurationDao.deleteMappingConfiguration(result);       
 
         result = this.xaMappingConfigurationDao.getMappingConfiguration("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", 
                 "Bloomberg");

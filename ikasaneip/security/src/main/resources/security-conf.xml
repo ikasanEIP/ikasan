@@ -55,7 +55,7 @@
 	</bean>
 
 	<bean id="xaSecuritySessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.xads" />
 		<property name="mappingResources">
 			<list>
@@ -111,7 +111,7 @@
 	</bean>
 
 	<bean id="localTxSecuritySessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ikasan.ds" />
 		<property name="mappingResources">
 			<list>

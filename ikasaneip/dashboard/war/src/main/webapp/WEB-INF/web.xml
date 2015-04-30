@@ -27,11 +27,11 @@
         			 /WEB-INF/policy-context.xml,
         			 classpath:mapping-conf.xml, 
         			 classpath:platform-service-conf.xml, 
-        			 classpath:security-conf.xml,
-        			 classpath:providers-conf.xml,
-        			 classpath:providers-properties.xml
+        			 classpath:security-conf.xml
         </param-value>
     </context-param>
+    <!--  classpath:providers-properties.xml ,
+        			 classpath:providers-conf.xml-->
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
@@ -104,8 +104,8 @@
         <url-pattern>/static/*</url-pattern>
     </servlet-mapping>
 
-    <session-config>
+    <!-- session-config>
         <session-timeout>30</session-timeout>
-    </session-config>
+    </session-config -->
 
 </web-app>

@@ -33,8 +33,11 @@ import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+
+
+
 
 
 /**
@@ -44,6 +47,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class HibernateMappingConfigurationDao extends HibernateDaoSupport implements MappingConfigurationDao
 {
 	private static final Long ID = new Long(1);
+	
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
