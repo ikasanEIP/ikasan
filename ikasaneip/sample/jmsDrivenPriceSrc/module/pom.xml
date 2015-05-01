@@ -49,9 +49,8 @@
   <!-- standard parent -->
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>sample-jmsDrivenSrc-parent</artifactId>
         <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
     </parent>
 
     <artifactId>sample-jmsDrivenPriceSrc</artifactId>

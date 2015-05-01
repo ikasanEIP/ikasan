@@ -6,7 +6,6 @@
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
     </parent>
 	
 	<groupId>org.ikasan</groupId>
@@ -14,7 +13,6 @@
     <packaging>jar</packaging>
     <name>Ikasan Mapping</name>
     <description>A library for managing mapping configurations for the Ikasan platform</description>
-	<version>1.0.0-rc4-SNAPSHOT</version>
 
 	<dependencies>
 		

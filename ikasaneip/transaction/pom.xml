@@ -46,12 +46,10 @@
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-transaction</artifactId>
-    <version>1.0.0-rc4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Transation Parent</name>
     <description>Ikasan Transaction Support Parent</description>

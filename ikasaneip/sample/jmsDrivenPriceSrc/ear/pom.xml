@@ -4,12 +4,10 @@
     <!-- standard parent -->
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>sample-jmsDrivenSrc-parent</artifactId>
         <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
     </parent>
 
-  <version>0.9.5-SNAPSHOT</version>
 	<artifactId>sample-jmsDrivenPriceSrc-ear</artifactId>
 	<packaging>ear</packaging>
 	<name>Sample JMS driven configured EAR</name>
