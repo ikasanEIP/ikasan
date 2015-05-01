@@ -45,7 +45,6 @@
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
     </parent>
 
     <artifactId>console-parent</artifactId>
