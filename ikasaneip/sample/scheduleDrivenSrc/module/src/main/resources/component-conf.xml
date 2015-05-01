@@ -7,15 +7,27 @@
     <!--  ================================================================== -->
     <!--  Sample component implementations for testing                       -->
     <!--  ================================================================== -->
-    <bean id="scheduledConsumer" class="org.ikasan.consumer.quartz.ScheduledConsumer">
+    <bean id="scheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
         <constructor-arg ref="scheduler" />
-        <constructor-arg ref="scheduledJobFactory" />
-        <constructor-arg value="scheduledConsumer"/>
-        <constructor-arg value="sample"/>
-        <property name="configuration" ref="scheduledConsumerConfiguration" />
+        <property name="jobDetail" >
+            <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory" />
+                <property name="targetMethod" value="createJobDetail" />
+                <property name="arguments">
+                    <list>
+                        <ref bean="scheduledConsumer" />
+                        <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
+                        <value>scheduledConsumer</value>
+                        <value>sample-scheduled-flow-consumer</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuredResourceId" value="sample-scheduled-flow-consumer"/>
+        <property name="configuration" ref="scheduledConsumerConfiguration"/>
     </bean>
 
-    <bean id="scheduledConsumerConfiguration" class="org.ikasan.consumer.quartz.ScheduledConsumerConfiguration">
+    <bean id="scheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
         <property name="cronExpression" value="0/5 * * * * ?" />
     </bean>
     
