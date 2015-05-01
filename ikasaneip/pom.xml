@@ -118,6 +118,8 @@
         <module>sample</module>
         <module>transaction</module>
 
+        <module>filetransfer</module>
+
         <!-- documentation -->
         <!--module>documentation</module-->
     </modules>
