@@ -5,17 +5,17 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
         
     <util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         <entry key="hibernate.show_sql" value="true"/>
         <entry key="hibernate.hbm2ddl.auto" value="create"/>
     </util:map>
     
     <bean id="dataSource" name="ikasan.xads ikasan.ds"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-        <property name="url" value="jdbc:hsqldb:mem:testdb" />
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
         <property name="username" value="sa" />
-        <property name="password" value="" />
+        <property name="password" value="sa" />
     </bean>
     
 </beans>

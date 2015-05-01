@@ -48,8 +48,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,13 +79,14 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
         this.getHibernateTemplate().delete(exclusionEvent);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public boolean contains(ExclusionEvent exclusionEvent)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
         criteria.add(Restrictions.eq("identifier", exclusionEvent.getIdentifier()));
 
-        List<ExclusionEvent> results = this.getHibernateTemplate().findByCriteria(criteria);
+        List<ExclusionEvent> results = (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria);
         if(results == null || results.size() == 0)
         {
             return false;
@@ -100,7 +101,7 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
         while(housekeepablesExist()){
             final List<String> housekeepableBatch = getHousekeepableBatch();
 
-            getHibernateTemplate().execute(new HibernateCallback()
+            getHibernateTemplate().execute(new HibernateCallback<Object>()
             {
                 public Object doInHibernate(Session session) throws HibernateException
                 {
@@ -122,7 +123,7 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     @SuppressWarnings("unchecked")
     private List<String> getHousekeepableBatch()
     {
-        return (List<String>) getHibernateTemplate().execute(new HibernateCallback()
+        return (List<String>) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
@@ -144,7 +145,7 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     }
 
     private boolean housekeepablesExist() {
-        return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
+        return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {

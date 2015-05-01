@@ -43,6 +43,8 @@ package org.ikasan.console.pointtopointflow.service;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.ikasan.console.module.Module;
 import org.ikasan.console.pointtopointflow.PointToPointFlowImpl;
 import org.ikasan.console.pointtopointflow.PointToPointFlowProfileImpl;
@@ -50,13 +52,11 @@ import org.ikasan.console.pointtopointflow.dao.StubbedDao;
 import org.ikasan.spec.management.PointToPointFlow;
 import org.ikasan.spec.management.PointToPointFlowProfile;
 import org.junit.After;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * JUnit based test class for testing PointToPointFlowServiceImpl

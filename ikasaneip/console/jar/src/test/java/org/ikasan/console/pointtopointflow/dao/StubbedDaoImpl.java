@@ -2,7 +2,7 @@
  * $Id$
  * $URL$
  * 
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
  * Distributed under the Modified BSD License.
@@ -36,58 +36,43 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
  */
-package org.ikasan.console.module.dao;
+package org.ikasan.console.pointtopointflow.dao;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.ikasan.console.module.Module;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.ikasan.spec.management.PointToPointFlowProfile;
 
 /**
- * Hibernate implementation of the <code>ModuleDao</code>
+ * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
  * @author Ikasan Development Team
  */
-public class HibernateModuleDao extends HibernateDaoSupport implements ModuleDao
+/**
+ * Implementation of the contract for adding test data
+ * @author Ikasan Development Team
+ *
+ */
+public class StubbedDaoImpl extends HibernatePointToPointFlowProfileDao implements StubbedDao
 {
-
-    /** Query for finding all modules based on id */
-    private static final String MODULES_BY_ID = "from Module m where m.id in (:ids) order by name";
-
     /**
-     * @see org.ikasan.console.module.dao.ModuleDao#getModule(Long)
+     * Save the given profile
+     * @param pointToPointFlowProfile
      */
-    public Module getModule(Long moduleId)
+    public void save(PointToPointFlowProfile pointToPointFlowProfile)
     {
-        Module module = (Module)getHibernateTemplate().get(Module.class, moduleId);
-        return module;
-    }
-    
-    /**
-     * @see org.ikasan.console.module.dao.ModuleDao#findAllModules()
-     */
-    @SuppressWarnings("unchecked")
-    public Set<Module> findAllModules()
-    {
-        Set<Module> modules = new LinkedHashSet<Module>();
-        modules.addAll((Collection<? extends Module>) getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(Module.class).addOrder(Order.asc("name"))));
-        return modules;
+        this.getHibernateTemplate().saveOrUpdate(pointToPointFlowProfile);
     }
 
     /**
-     * @see org.ikasan.console.module.dao.ModuleDao#findModules(Set)
+     * Clearout all profiles
      */
-    public Set<Module> findModules(Set<Long> modulesIds)
+    public void deleteAll()
     {
-        Set<Module> modules = new LinkedHashSet<Module>();
-        modules.addAll((Collection<? extends Module>) getHibernateTemplate().findByNamedParam(MODULES_BY_ID, "ids", modulesIds));
-        return modules;
+        DetachedCriteria criteria = DetachedCriteria.forClass(PointToPointFlowProfile.class);
+        List<PointToPointFlowProfile> events = (List<PointToPointFlowProfile>) this.getHibernateTemplate().findByCriteria(criteria);
+        this.getHibernateTemplate().deleteAll(events);
     }
-    
 }
