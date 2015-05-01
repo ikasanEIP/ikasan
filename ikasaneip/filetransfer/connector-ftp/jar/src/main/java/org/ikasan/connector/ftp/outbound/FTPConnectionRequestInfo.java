@@ -105,62 +105,67 @@ public class FTPConnectionRequestInfo extends EISConnectionRequestInfo
     // Mandatory override methods
     // ///////////////////////////
 
+
     @Override
-    public boolean equals(Object object)
-    {
-        if (object instanceof FTPConnectionRequestInfo)
-        {
-            FTPConnectionRequestInfo cri = (FTPConnectionRequestInfo) object;
-            if (this.active.equals(cri.getActive()) && 
-                this.getClientID().equalsIgnoreCase(cri.getClientID()) &&
-                this.cleanupJournalOnComplete.equals(cri.cleanupJournalOnComplete()) &&
-                this.remoteHostname.equalsIgnoreCase(cri.getRemoteHostname()) &&
-                this.maxRetryAttempts.equals(cri.getMaxRetryAttempts()) &&
-                this.password.equals(cri.getPassword()) && 
-                this.pollTime.equals(cri.getPollTime())&&
-                this.remotePort.equals(cri.getRemotePort()) &&
-                this.username.equals(cri.getUsername())&&
-                this.connectionTimeout.equals(cri.getConnectionTimeout()) &&
-                this.dataTimeout.equals(cri.getDataTimeout()) &&
-                this.socketTimeout.equals(cri.getSocketTimeout()) &&
-                this.isFTPS.equals(cri.getIsFTPS()) &&
-                this.ftpsProtocol.equals(cri.getFtpsProtocol()) &&
-                this.ftpsPort.equals(cri.getFtpsPort()) &&
-                this.ftpsIsImplicit.equals(cri.getFtpsIsImplicit()) &&
-                this.ftpsKeyStoreFilePath.equals(cri.getFtpsKeyStoreFilePath()) &&
-                this.ftpsKeyStoreFilePassword.equals(cri.getFtpsKeyStoreFilePassword()) &&
-                this.systemKey.equals(cri.getSystemKey()))
-            {
-                return true;
-            }
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FTPConnectionRequestInfo that = (FTPConnectionRequestInfo) o;
+
+        if (active != null ? !active.equals(that.active) : that.active != null) return false;
+        if (cleanupJournalOnComplete != null ? !cleanupJournalOnComplete.equals(that.cleanupJournalOnComplete) : that.cleanupJournalOnComplete != null)
+            return false;
+        if (connectionTimeout != null ? !connectionTimeout.equals(that.connectionTimeout) : that.connectionTimeout != null)
+            return false;
+        if (dataTimeout != null ? !dataTimeout.equals(that.dataTimeout) : that.dataTimeout != null) return false;
+        if (ftpsIsImplicit != null ? !ftpsIsImplicit.equals(that.ftpsIsImplicit) : that.ftpsIsImplicit != null)
+            return false;
+        if (ftpsKeyStoreFilePassword != null ? !ftpsKeyStoreFilePassword.equals(that.ftpsKeyStoreFilePassword) : that.ftpsKeyStoreFilePassword != null)
+            return false;
+        if (ftpsKeyStoreFilePath != null ? !ftpsKeyStoreFilePath.equals(that.ftpsKeyStoreFilePath) : that.ftpsKeyStoreFilePath != null)
+            return false;
+        if (ftpsPort != null ? !ftpsPort.equals(that.ftpsPort) : that.ftpsPort != null) return false;
+        if (ftpsProtocol != null ? !ftpsProtocol.equals(that.ftpsProtocol) : that.ftpsProtocol != null) return false;
+        if (isFTPS != null ? !isFTPS.equals(that.isFTPS) : that.isFTPS != null) return false;
+        if (maxRetryAttempts != null ? !maxRetryAttempts.equals(that.maxRetryAttempts) : that.maxRetryAttempts != null)
+            return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) return false;
+        if (pollTime != null ? !pollTime.equals(that.pollTime) : that.pollTime != null) return false;
+        if (remoteHostname != null ? !remoteHostname.equals(that.remoteHostname) : that.remoteHostname != null)
+            return false;
+        if (remotePort != null ? !remotePort.equals(that.remotePort) : that.remotePort != null) return false;
+        if (socketTimeout != null ? !socketTimeout.equals(that.socketTimeout) : that.socketTimeout != null)
+            return false;
+        if (systemKey != null ? !systemKey.equals(that.systemKey) : that.systemKey != null) return false;
+        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+
+        return true;
     }
 
     @Override
-    public int hashCode()
-    {
-        int hashCode = this.active.hashCode() 
-        + this.cleanupJournalOnComplete.hashCode() 
-        + this.remoteHostname.hashCode()
-        + this.getClientID().hashCode()
-        + this.maxRetryAttempts.hashCode() 
-        + this.pollTime.hashCode() 
-        + this.password.hashCode()
-        + this.remotePort.hashCode() 
-        + this.username.hashCode()
-        + this.connectionTimeout.hashCode()
-        + this.dataTimeout.hashCode()
-        + this.socketTimeout.hashCode()
-        + this.isFTPS.hashCode()
-        + this.ftpsProtocol.hashCode()
-        + this.ftpsPort.hashCode()
-        + this.ftpsIsImplicit.hashCode()
-        + this.ftpsKeyStoreFilePath.hashCode()
-        + this.ftpsKeyStoreFilePassword.hashCode()
-        + this.systemKey.hashCode();
-        return hashCode;
+    public int hashCode() {
+        int result = active != null ? active.hashCode() : 0;
+        result = 31 * result + (cleanupJournalOnComplete != null ? cleanupJournalOnComplete.hashCode() : 0);
+        result = 31 * result + (remoteHostname != null ? remoteHostname.hashCode() : 0);
+        result = 31 * result + (maxRetryAttempts != null ? maxRetryAttempts.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (pollTime != null ? pollTime.hashCode() : 0);
+        result = 31 * result + (remotePort != null ? remotePort.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (systemKey != null ? systemKey.hashCode() : 0);
+        result = 31 * result + (connectionTimeout != null ? connectionTimeout.hashCode() : 0);
+        result = 31 * result + (dataTimeout != null ? dataTimeout.hashCode() : 0);
+        result = 31 * result + (socketTimeout != null ? socketTimeout.hashCode() : 0);
+        result = 31 * result + (isFTPS != null ? isFTPS.hashCode() : 0);
+        result = 31 * result + (ftpsPort != null ? ftpsPort.hashCode() : 0);
+        result = 31 * result + (ftpsProtocol != null ? ftpsProtocol.hashCode() : 0);
+        result = 31 * result + (ftpsIsImplicit != null ? ftpsIsImplicit.hashCode() : 0);
+        result = 31 * result + (ftpsKeyStoreFilePath != null ? ftpsKeyStoreFilePath.hashCode() : 0);
+        result = 31 * result + (ftpsKeyStoreFilePassword != null ? ftpsKeyStoreFilePassword.hashCode() : 0);
+        return result;
     }
+
 
     // ////////////////////////////////////////////////////////////////
     // Getters/Setters
