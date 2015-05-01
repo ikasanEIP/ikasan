@@ -98,10 +98,10 @@
             <artifactId>ikasan-filter</artifactId>
            </dependency>
         
-       <dependency>
+       <!--dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-consumer</artifactId>
-        </dependency>
+        </dependency-->
         
        <dependency>
             <groupId>org.ikasan</groupId>
