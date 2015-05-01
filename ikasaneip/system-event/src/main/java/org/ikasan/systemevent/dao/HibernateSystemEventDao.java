@@ -55,8 +55,8 @@ import org.hibernate.criterion.Restrictions;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.systemevent.model.ArrayListPagedSearchResult;
 import org.ikasan.systemevent.model.SystemEvent;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>SystemFlowEventDao</code>
@@ -130,7 +130,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
             final Date timestampFrom, final Date timestampTo, final String actor)
     {
 
-        return (PagedSearchResult<SystemEvent>) getHibernateTemplate().execute(new HibernateCallback()
+        return (PagedSearchResult<SystemEvent>) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
@@ -236,7 +236,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
         {
             final List<Long> housekeepableBatch = getHousekeepableBatch();
 
-            getHibernateTemplate().execute(new HibernateCallback()
+            getHibernateTemplate().execute(new HibernateCallback<Object>()
             {
                 public Object doInHibernate(Session session) throws HibernateException
                 {
@@ -260,7 +260,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
     @SuppressWarnings("unchecked")
     private List<Long> getHousekeepableBatch()
     {
-        return (List<Long>) getHibernateTemplate().execute(new HibernateCallback()
+        return (List<Long>) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
@@ -290,7 +290,7 @@ public class HibernateSystemEventDao extends HibernateDaoSupport implements Syst
      */
     private boolean housekeepablesExist()
     {
-        return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
+        return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {

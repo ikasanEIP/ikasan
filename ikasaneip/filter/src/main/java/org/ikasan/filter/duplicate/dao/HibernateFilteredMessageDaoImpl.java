@@ -41,7 +41,6 @@
 
 package org.ikasan.filter.duplicate.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -50,8 +49,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of {@link FilteredMessageDao}
@@ -99,7 +98,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         DetachedCriteria criteria = DetachedCriteria.forClass(FilterEntry.class);
         criteria.add(Restrictions.eq(FilterEntry.CRITERIA_PROP_KEY, message.getCriteria()));
         criteria.add(Restrictions.eq(FilterEntry.CLIENT_ID_PROP_KEY, message.getClientId()));
-        List<FilterEntry> foundMessages = this.getHibernateTemplate().findByCriteria(criteria);
+        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().findByCriteria(criteria);
         if (foundMessages == null || foundMessages.isEmpty())
         {
             return null;
@@ -155,10 +154,10 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @SuppressWarnings("unchecked")
     private List<FilterEntry> findExpiredMessages()
     {
-        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().execute( new HibernateCallback()
+        List<FilterEntry> foundMessages = (List<FilterEntry>) this.getHibernateTemplate().execute( new HibernateCallback<Object>()
         {
             
-            public Object doInHibernate(Session session) throws HibernateException, SQLException
+            public Object doInHibernate(Session session) throws HibernateException
             {
                 Criteria criteria = session.createCriteria(FilterEntry.class);
                 criteria.add(Restrictions.lt(FilterEntry.EXPRIY_PROP_KEY, System.currentTimeMillis()));

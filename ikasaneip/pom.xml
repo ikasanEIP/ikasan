@@ -113,7 +113,7 @@
         <module>mapping</module>
         <module>management</module>
         <module>webconsole</module>
-        <module>console</module>
+        <!-- module>console</module -->
 
         <!-- developer tooling -->
         <module>developer</module>
