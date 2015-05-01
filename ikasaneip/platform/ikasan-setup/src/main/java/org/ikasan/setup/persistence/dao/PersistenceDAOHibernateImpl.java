@@ -40,9 +40,11 @@
  */
 package org.ikasan.setup.persistence.dao;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.ikasan.setup.persistence.service.PersistenceServiceImpl;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
@@ -55,6 +57,8 @@ import java.util.Properties;
  */
 public class PersistenceDAOHibernateImpl extends HibernateDaoSupport implements ProviderDAO
 {
+	private static Logger logger = Logger.getLogger(PersistenceDAOHibernateImpl.class);
+	
     private static String create = "create.";
     private static String delete = "drop.";
     private static String find = "find.";
@@ -93,6 +97,8 @@ public class PersistenceDAOHibernateImpl extends HibernateDaoSupport implements 
     @Override
     public void create(final String resourceName)
     {
+    	logger.info("Creating resource: " + resourceName);
+ 
         getHibernateTemplate().execute(new HibernateCallback() {
             public Object doInHibernate(Session session) throws HibernateException {
 

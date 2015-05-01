@@ -27,7 +27,9 @@
         			 /WEB-INF/policy-context.xml,
         			 classpath:mapping-conf.xml, 
         			 classpath:platform-service-conf.xml, 
-        			 classpath:security-conf.xml
+        			 classpath:security-conf.xml,
+        			 classpath:providers-conf.xml,
+        			 classpath:providers-properties.xml
         </param-value>
     </context-param>
     <!--  classpath:providers-properties.xml ,
