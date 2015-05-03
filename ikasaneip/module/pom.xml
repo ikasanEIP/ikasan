@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
+        <version>1.0.0-rc4</version>
     </parent>
 
     <artifactId>ikasan-module</artifactId>
@@ -55,7 +55,8 @@
 	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/module</connection>
 	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/module</developerConnection>
 	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/module</url>
-	</scm>
+	  <tag>ikasan-1.0.0-rc4</tag>
+  </scm>
 
     <build>
         <plugins>
