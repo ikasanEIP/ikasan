@@ -31,7 +31,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-build</artifactId>
-		<version>1.0.0-rc4</version>
+		<version>1.0.0-rc5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ikasan-test</artifactId>
@@ -43,7 +43,7 @@
 		<connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/test</connection>
 		<developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/test</developerConnection>
 		<url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/test</url>
-	  <tag>ikasan-1.0.0-rc4</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<build>
