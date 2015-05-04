@@ -44,7 +44,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
@@ -275,7 +274,7 @@ public class SecurityServiceImpl implements SecurityService
 	@Override
 	public List<IkasanPrincipal> getPrincipalsByName(List<String> names)
 	{
-		return this.securityDao.getPrincipalsByName(names);
+		return this.securityDao.getPrincipalsByRoleNames(names);
 	}
 
 	/* (non-Javadoc)

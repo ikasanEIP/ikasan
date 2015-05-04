@@ -42,6 +42,7 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.security.model.AuthenticationMethod;
@@ -235,9 +236,10 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IkasanPrincipal> getPrincipalsByName(List<String> names)
+	public List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names)
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		criteria.createCriteria("roles").add(Restrictions.in("name", names));
 
 	    return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
@@ -298,6 +300,15 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
 	{
 		this.getHibernateTemplate().saveOrUpdate(policyLink);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLinkType(org.ikasan.security.model.PolicyLinkType)
+	 */
+	@Override
+	public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType)
+	{
+		this.getHibernateTemplate().saveOrUpdate(policyLinkType);	
 	}
 
 	/* (non-Javadoc)

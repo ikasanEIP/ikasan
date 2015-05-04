@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,49 +38,82 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.service;
+package org.ikasan.security.dao;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.ikasan.security.model.Authority;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public class SecurityServiceException extends Exception
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/security-conf.xml",
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+        "/mock-components.xml"
+})
+public class HibernateAuthorityDaoTest
 {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2463315800294867651L;
 
-    /**
-     * 
+	@Resource
+	private AuthorityDao xaAuthorityDao;
+	
+	/**
+     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
+     * being tested
+     * @throws SecurityDaoException 
      */
-    public SecurityServiceException()
+    @Before public void setup()
     {
-        super();
-    }
+    	for(int i=0; i<10; i++)
+    	{
+    		Authority authority = new Authority("authority" + i);
+    		this.xaAuthorityDao.save(authority);
+    	}
 
-    /**
-     * @param arg0
-     */
-    public SecurityServiceException(String message)
-    {
-        super(message);
     }
+    
+	/**
+	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
+	 */
+	@Test
+	@DirtiesContext
+	public void testGetAuthorities()
+	{
+		List<Authority> authorities = this.xaAuthorityDao.getAuthorities();
+		
+		Assert.assertTrue(authorities.size() == 10);
+	}
 
-    /**
-     * @param arg0
-     */
-    public SecurityServiceException(Throwable throwable)
-    {
-        super(throwable);
-    }
+	/**
+	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthority(java.lang.String)}.
+	 */
+	@Test
+	@DirtiesContext
+	public void testGetAuthority()
+	{
+		Authority authority = this.xaAuthorityDao.getAuthority("authority1");
+		
+		Assert.assertNotNull(authority);
+		
+		authority = this.xaAuthorityDao.getAuthority("does not exist");
+		
+		Assert.assertNull(authority);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public SecurityServiceException(String message, Throwable throwable)
-    {
-        super(message, throwable);
-    }
 }
