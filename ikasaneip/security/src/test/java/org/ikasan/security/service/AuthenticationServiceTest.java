@@ -40,25 +40,315 @@
  */
 package org.ikasan.security.service;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.annotation.Resource;
+
+import org.ikasan.security.dao.SecurityDao;
+import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.security.model.AuthenticationMethod;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldif.LDIFReader;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/security-conf.xml",
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+        "/mock-components.xml"
+})
+@Ignore
 public class AuthenticationServiceTest
 {
 
+	@Resource
+	private InMemoryDirectoryServer inMemoryDirectoryServer;
+	
+	@Resource
+	private AuthenticationService localTxAuthenticationService;
+	
+	@Resource
+	private SecurityDao localTxSecurityDao;
+	
+	@Resource 
+	private UserService localTxUserService; 
+	
+	@Resource
+	private String ldapServerUrl;
+	
 	/**
-	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
-	 */
-	@Test
-	public void testLogin()
+     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
+     * being tested
+     * @throws SecurityDaoException 
+     */
+    @Before public void setup()
+    {
+        HashSet<Role> roles = new HashSet<Role>();
+        HashSet<Policy> policies = new HashSet<Policy>();
+
+        for(int i=0; i<10; i++)
+        {
+            Role role = new Role();
+            role.setName("role" + i);
+
+            for(int j=0; j<10; j++)
+            {
+                Policy policy = new Policy();
+                policy.setName("policy" + j + i);
+                policy.setDescription("description");
+                this.localTxSecurityDao.saveOrUpdatePolicy(policy);
+                policies.add(policy);
+            }
+
+            role.setPolicies(policies);
+            role.setDescription("description");
+            this.localTxSecurityDao.saveOrUpdateRole(role);
+            roles.add(role);
+            policies = new HashSet<Policy>();
+        }
+
+        IkasanPrincipal principalGroup = new IkasanPrincipal();
+        principalGroup.setName("ISD_Middleware");
+        principalGroup.setType("group");
+        principalGroup.setRoles(roles);
+        principalGroup.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principalGroup);
+
+        IkasanPrincipal principal = new IkasanPrincipal();
+        principal.setName("stewmi");
+        principal.setType("user");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+        
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        User user = new User("stewmi", "password", "me@there.com", true);
+        this.localTxUserService.createUser(user);
+        
+        user = this.localTxUserService.loadUserByUsername("stewmi");
+        
+        Set<IkasanPrincipal> principals = new HashSet<IkasanPrincipal>();
+        principals.add(principal);
+        user.setPrincipals(principals);
+        
+        this.localTxUserService.updateUser(user);
+        
+
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal1");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal2");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal3");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal4");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal5");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal6");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        principal = new IkasanPrincipal();
+        principal.setName("anotherPrincipal7");
+        principal.setType("type");
+        principal.setRoles(roles);
+        principal.setDescription("description");
+
+        this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
+    }
+
+	@Before
+	public void setupLdapServer() throws LDAPException, IOException
 	{
 
+		inMemoryDirectoryServer.importFromLDIF(
+				true,
+				new LDIFReader(new File(new File(".").getCanonicalPath() + "/src/test/resources/data.ldif")));
+		
+		inMemoryDirectoryServer.startListening();
+	}
+
+	/**
+	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+	 * @throws AuthenticationServiceException 
+	 */
+	@Test
+	@DirtiesContext
+	public void testLocalLogin() throws AuthenticationServiceException
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password");
+		
+		Assert.assertNotNull(authentication);
+	}
+	
+	@Test (expected=AuthenticationServiceException.class)
+	@DirtiesContext
+	public void testLocalLoginFailBadPassword() throws AuthenticationServiceException
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.localTxAuthenticationService.login("stewmi", "bad password");
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+	 * @throws AuthenticationServiceException 
+	 */
+	@Test
+	@DirtiesContext
+	public void testLdapLoginFallingBackToLocal() throws AuthenticationServiceException
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password");
+		
+		Assert.assertNotNull(authentication);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+	 * @throws AuthenticationServiceException 
+	 */
+	@Test (expected=AuthenticationServiceException.class)
+	@DirtiesContext
+	public void testLdapLoginFallingBackToLocalFailBadPassword() throws AuthenticationServiceException
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.localTxAuthenticationService.login("stewmi", "bad password");
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+	 * @throws AuthenticationServiceException 
+	 */
+	@Test
+	@DirtiesContext
+	public void testLdapLogin() throws AuthenticationServiceException
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+		authMethod.setLdapServerUrl(ldapServerUrl);
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserPassword("password");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password");
+		
+		Assert.assertNotNull(authentication);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+	 * @throws AuthenticationServiceException 
+	 */
+	@Test(expected=AuthenticationServiceException.class)
+	@DirtiesContext
+	public void testLdapLoginFailBadPassword() throws AuthenticationServiceException
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+		authMethod.setLdapServerUrl(ldapServerUrl);
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserPassword("password");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.localTxAuthenticationService.login("stewmi", "bad password");
+	}
+	
+	@After
+	public void teardownLdapServer()
+	{
+		// Disconnect from the server and cause the server to shut down.
+		inMemoryDirectoryServer.clear();
+		inMemoryDirectoryServer.shutDown(true);
 	}
 
 }

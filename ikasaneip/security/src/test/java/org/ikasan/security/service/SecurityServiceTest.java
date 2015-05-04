@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 import junit.framework.Assert;
 
 import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.SecurityDaoException;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
@@ -90,7 +89,7 @@ public class SecurityServiceTest
      * being tested
      * @throws SecurityDaoException 
      */
-    @Before public void setup() throws SecurityDaoException
+    @Before public void setup()
     {
         HashSet<Role> roles = new HashSet<Role>();
         HashSet<Policy> policies = new HashSet<Policy>();
@@ -192,7 +191,7 @@ public class SecurityServiceTest
 //    @Test 
 //    @DirtiesContext
 //    @Ignore
-//    public void test_success_login() throws SecurityServiceException
+//    public void test_success_login() 
 //    {
 //        IkasanPrincipal principal = this.xaSecurityService.login("stewmi", "password");
 //
@@ -201,14 +200,14 @@ public class SecurityServiceTest
 
     @Test(expected = IllegalArgumentException.class)
     @DirtiesContext
-    public void test_exception_null_dao_on_construction() throws SecurityServiceException
+    public void test_exception_null_dao_on_construction() 
     {
         new SecurityServiceImpl(null);
     }
 
     @Test 
     @DirtiesContext
-    public void test_success_get_principal_by_name() throws SecurityServiceException
+    public void test_success_get_principal_by_name() 
     {
         IkasanPrincipal principal = this.xaSecurityService.findPrincipalByName("stewmi");
 
@@ -219,7 +218,7 @@ public class SecurityServiceTest
 
     @Test 
     @DirtiesContext
-    public void test_success_create_new_principal() throws SecurityServiceException
+    public void test_success_create_new_principal() 
     {
         IkasanPrincipal principal = this.xaSecurityService.createNewPrincipal("stewmi2", "type");
 
@@ -230,21 +229,21 @@ public class SecurityServiceTest
 
     @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_create_new_principal_null_name() throws SecurityServiceException
+    public void test_exception_create_new_principal_null_name() 
     {
         this.xaSecurityService.createNewPrincipal(null, "type");
     }
 
     @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_create_new_principal_null_type() throws SecurityServiceException
+    public void test_exception_create_new_principal_null_type() 
     {
         this.xaSecurityService.createNewPrincipal("name", null);
     }
 
     @Test 
     @DirtiesContext
-    public void test_success_add_role() throws SecurityDaoException, SecurityServiceException
+    public void test_success_add_role()
     {
         IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
 
@@ -284,7 +283,7 @@ public class SecurityServiceTest
 
     @Test 
     @DirtiesContext
-    public void test_success_create_new_role() throws SecurityServiceException
+    public void test_success_create_new_role() 
     {
         Role role = this.xaSecurityService.createNewRole("testRole", "description");
 
@@ -293,21 +292,21 @@ public class SecurityServiceTest
 
     @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_create_new_role_null_name() throws SecurityServiceException
+    public void test_exception_create_new_role_null_name() 
     {
         this.xaSecurityService.createNewRole(null, "description");
     }
 
     @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_create_new_role_null_description() throws SecurityServiceException
+    public void test_exception_create_new_role_null_description() 
     {
         this.xaSecurityService.createNewRole("role", null);
     }
 
     @Test 
     @DirtiesContext
-    public void test_success_remove_role() throws SecurityDaoException, SecurityServiceException
+    public void test_success_remove_role()
     {
         IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
 
@@ -331,7 +330,7 @@ public class SecurityServiceTest
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_principal_no_name() throws SecurityDaoException, SecurityServiceException
+    public void test_exception_principal_no_name()
     {
         HashSet<Role> roles = new HashSet<Role>();
         HashSet<Policy> policies = new HashSet<Policy>();
@@ -364,7 +363,7 @@ public class SecurityServiceTest
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_principal_duplicate_name() throws SecurityServiceException
+    public void test_exception_principal_duplicate_name() 
     {
         IkasanPrincipal principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal7");
@@ -375,7 +374,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_get_all_principals() throws SecurityServiceException
+    public void test_get_all_principals() 
     {
         List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipals();
 
@@ -384,7 +383,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_delete_principal() throws SecurityDaoException, SecurityServiceException
+    public void test_delete_principal()
     {
         List<IkasanPrincipal> principals = this.xaSecurityDao.getAllPrincipals();
 
@@ -399,7 +398,7 @@ public class SecurityServiceTest
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_role_no_name() throws SecurityDaoException, SecurityServiceException
+    public void test_exception_role_no_name()
     {
         HashSet<Role> roles = new HashSet<Role>();
         HashSet<Policy> policies = new HashSet<Policy>();
@@ -431,7 +430,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_get_all_roles() throws SecurityServiceException
+    public void test_get_all_roles() 
     {
         List<Role> roles = this.xaSecurityService.getAllRoles();
 
@@ -440,7 +439,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_delete_role() throws SecurityDaoException, SecurityServiceException
+    public void test_delete_role()
     {
         Role role = new Role();
         role.setName("role_new");
@@ -473,7 +472,7 @@ public class SecurityServiceTest
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_principal_policy_name() throws SecurityServiceException
+    public void test_exception_principal_policy_name() 
     {
         Policy policy = new Policy();
         policy.setName("policy11");
@@ -482,7 +481,7 @@ public class SecurityServiceTest
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_policy_no_name() throws SecurityDaoException, SecurityServiceException
+    public void test_exception_policy_no_name()
     {
         HashSet<Role> roles = new HashSet<Role>();
         HashSet<Policy> policies = new HashSet<Policy>();
@@ -514,7 +513,7 @@ public class SecurityServiceTest
 
     @Test 
     @DirtiesContext
-    public void test_success_create_new_policy() throws SecurityServiceException
+    public void test_success_create_new_policy() 
     {
         Policy policy = this.xaSecurityService.createNewPolicy("testPolicy", "description");
 
@@ -523,21 +522,21 @@ public class SecurityServiceTest
 
     @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_create_new_policy_null_name() throws SecurityServiceException
+    public void test_exception_create_new_policy_null_name() 
     {
         this.xaSecurityService.createNewPolicy(null, "description");
     }
 
     @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_create_new_policy_null_description() throws SecurityServiceException
+    public void test_exception_create_new_policy_null_description() 
     {
         this.xaSecurityService.createNewPolicy("role", null);
     }
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     @DirtiesContext
-    public void test_exception_role_name() throws SecurityServiceException
+    public void test_exception_role_name() 
     {
         Role role = new Role();
         role.setName("role1");
@@ -547,7 +546,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_get_all_policies() throws SecurityServiceException
+    public void test_get_all_policies() 
     {
         List<Policy> policies = this.xaSecurityService.getAllPolicies();
 
@@ -556,7 +555,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_delete_policy() throws SecurityDaoException, SecurityServiceException
+    public void test_delete_policy() 
     {
         Policy policy = new Policy();
         policy.setName("blah");

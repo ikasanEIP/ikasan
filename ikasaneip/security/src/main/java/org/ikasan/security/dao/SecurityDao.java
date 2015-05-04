@@ -117,7 +117,7 @@ public interface SecurityDao
      * @param name
      * @return
      */
-    public List<IkasanPrincipal> getPrincipalsByName(List<String> names);
+    public List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names);
 
     /**
      * 
@@ -196,6 +196,13 @@ public interface SecurityDao
      * @return
      */
     public List<PolicyLinkType> getAllPolicyLinkTypes();
+
+    
+    /**
+     * 
+     * @param policyLinkType
+     */
+    public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType);
     
     /**
      * 
