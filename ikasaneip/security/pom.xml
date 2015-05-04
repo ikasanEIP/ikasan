@@ -57,7 +57,7 @@
     <packaging>jar</packaging>
     <name>Ikasan Security</name>
     <description>The security library for the Ikasan Enterprise Integration Platform</description>
-	<version>1.0.0-rc4-SNAPSHOT</version>
+	<version>1.0.0-rc5-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
