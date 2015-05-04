@@ -43,9 +43,8 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <artifactId>ikasan-builder-parent</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-builder</artifactId>
@@ -56,7 +55,8 @@
 	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</connection>
 	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</developerConnection>
 	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</url>
-	</scm>
+	  <tag>HEAD</tag>
+  </scm>
 
     <build>
         <plugins>

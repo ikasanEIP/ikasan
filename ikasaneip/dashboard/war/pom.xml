@@ -11,7 +11,6 @@
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-dashboard</artifactId>
 		<version>1.0.0-rc4-SNAPSHOT</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<properties>
