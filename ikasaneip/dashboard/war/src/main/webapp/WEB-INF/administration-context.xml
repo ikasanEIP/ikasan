@@ -59,14 +59,14 @@
     </bean>
     
     <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RoleManagementPanel" scope="session">
-    	<constructor-arg ref="localTxUserService"/>
-    	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="associatedPrincipalItemClickListener"/>
     </bean>
     
     <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
-    	<constructor-arg ref="localTxUserService"/>
-    	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="associatedPrincipalItemClickListener"/>
     </bean>
     
@@ -76,8 +76,8 @@
     </bean>   
     
     <bean id="principalManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PrincipalManagementPanel" scope="session">
-    	<constructor-arg ref="localTxUserService"/>
-    	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
     </bean>
     
     <bean id="administrationtViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">

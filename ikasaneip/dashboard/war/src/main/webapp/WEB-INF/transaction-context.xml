@@ -13,16 +13,25 @@
 
 	<bean id="hibernateTransactionManager"
             class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
 
     <aop:config>
         <aop:pointcut id="securityServiceMethods"
                 expression="execution(* org.ikasan.security.service.SecurityService*.*(..))"/>
+        <aop:pointcut id="userServiceMethods"
+                expression="execution(* org.ikasan.security.service.UserService*.*(..))"/>
+        <aop:pointcut id="authenticationServiceMethods"
+                expression="execution(* org.ikasan.security.service.AuthenticationService*.*(..))"/>
         <aop:pointcut id="ldapServiceMethods"
-                expression="execution(* org.ikasan.security.service.LdapService*.*(..))"/>
+                expression="execution(* org.ikasan.security.service.LdapService*.synchronize(..))"/>
+        <aop:pointcut id="mappingServiceMethods"
+                expression="execution(* org.ikasan.mapping.service.*.*(..))"/>
+
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="mappingServiceMethods"/>
     </aop:config>
 
     <tx:advice id="txAdvice" transaction-manager="hibernateTransactionManager">

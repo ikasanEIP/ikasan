@@ -24,8 +24,8 @@
     </bean>
     
     <bean id="policyManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PolicyManagementPanel" scope="session">
-    	<constructor-arg ref="localTxUserService"/>
-    	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="policyAssociationMappingSearchWindow"/>
     </bean>
     
@@ -39,12 +39,12 @@
     </bean>
     
     <bean id="policyLinkMappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="policyLinkMappingSearchResultsTable"/>
     </bean>
     
     <bean id="policyLinkSearchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchButtonClickListener" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="policyLinkClientComboBox"/>
         <constructor-arg ref="policyLinkTypeComboBox"/>
         <constructor-arg ref="policyLinkSourceContextComboBox"/>
@@ -66,7 +66,7 @@
     </bean>
     
     <bean id="policyLinkMappingConfigurationSearchPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="policyLinkClientComboBox"/>
         <constructor-arg ref="policyLinkTypeComboBox"/>
         <constructor-arg ref="policyLinkSourceContextComboBox"/>
@@ -79,20 +79,20 @@
     </bean>
 
 	<bean id="policyLinkClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="policyLinkTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="policyLinkSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg value="true"/>
     </bean>
 
     <bean id="policyLinkTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg value="true"/>
     </bean>
     
