@@ -1,14 +1,42 @@
-/*
- * $Id: NavigationPanel.java 44073 2015-03-17 10:38:20Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI/war/src/main/java/org/ikasan/mapping/configuration/ui/panel/NavigationPanel.java $
+ /*
+ * $Id$
+ * $URL$
  *
  * ====================================================================
+ * Ikasan Enterprise Integration Platform
  *
- * Copyright (c) 2000-2011 by Mizuho International plc.
- * All Rights Reserved.
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
  *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
  */
 package org.ikasan.dashboard.ui.framework.panel;
 
@@ -21,6 +49,7 @@ import org.ikasan.dashboard.ui.framework.constants.SecurityConstants;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.group.EditableGroup;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
+import org.ikasan.dashboard.ui.framework.group.RefreshGroup;
 import org.ikasan.dashboard.ui.framework.group.VisibilityGroup;
 import org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator;
 import org.ikasan.dashboard.ui.framework.navigation.Navigation;
@@ -49,7 +78,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  * 
  */
 public class NavigationPanel extends Panel implements ViewContext, Navigation
@@ -74,10 +103,9 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 	private Label loggedInUserLabel;
 	private HashMap<String, IkasanUINavigator> views;
 	private String currentView;
-//	private String currentViewName;
-//	private String currentNavigator;
 	private MenuBar actionMenu = new MenuBar();
 	private MenuBar utilityMenu = new MenuBar();
+	private List<RefreshGroup> refreshGroups;
 
 	/**
 	 * 
@@ -95,7 +123,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 			FunctionalGroup newMappingConfigurationFunctionalGroup,
 			FunctionalGroup existingMappingConfigurationFunctionalGroup,
 			VerticalLayout imagePanelLayout,
-			HashMap<String, IkasanUINavigator> views)
+			HashMap<String, IkasanUINavigator> views,
+			List<RefreshGroup> refreshGroups)
 	{
 		this.authenticationService = authenticationService;
 		this.visibilityGroup = visibilityGroup;
@@ -104,6 +133,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		this.existingMappingConfigurationFunctionalGroup = existingMappingConfigurationFunctionalGroup;
 		this.imagePanelLayout = imagePanelLayout;
 		this.views = views;
+		this.refreshGroups = refreshGroups;
 		init();
 	}
 
@@ -366,7 +396,7 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 		}
 	}
 
-	private MenuBar.Command createNavigatorMenuCommand(
+	protected MenuBar.Command createNavigatorMenuCommand(
 			final String navigatorName, final String viewName)
 	{
 		return new MenuBar.Command()
@@ -377,13 +407,13 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 						|| !currentView.equals(views.get(navigatorName)
 								.getName()))
 				{
+					refresh();
+					
 					loadTopLevelNavigator();
 
 					UI.getCurrent().getNavigator().navigateTo(viewName);
 
 					currentView = views.get(navigatorName).getName();
-//					currentNavigator = navigatorName;
-//					currentViewName = viewName;
 
 					List<IkasanUIView> mappingViews = views.get(navigatorName)
 							.getIkasanViews();
@@ -398,6 +428,14 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 				}
 			}
 		};
+	}
+	
+	protected void refresh()
+	{
+		for(RefreshGroup refreshGroup: this.refreshGroups)
+		{
+			refreshGroup.refresh();
+		}
 	}
 
 	@Override
@@ -419,7 +457,6 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 	public void reset()
 	{
 		currentView = null;
-//		currentViewName = null;
 		this.createActionMenuItems();
 	}
 

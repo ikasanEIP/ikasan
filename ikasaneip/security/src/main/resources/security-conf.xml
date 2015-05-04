@@ -17,8 +17,8 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.5.xsd">
 
 	<bean id="xaLdapService" class="org.ikasan.security.service.LdapServiceImpl">
-		<constructor-arg ref="xaSecurityService" />
-		<constructor-arg ref="xaUserService" />
+		<constructor-arg ref="xaSecurityDao" />
+		<constructor-arg ref="xaUserDao" />
 	</bean>
 	
 	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
@@ -73,8 +73,8 @@
 	</bean>
 
 	<bean id="localTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
-		<constructor-arg ref="localTxSecurityService" />
-		<constructor-arg ref="localTxUserService" />
+		<constructor-arg ref="localTxSecurityDao" />
+		<constructor-arg ref="localTxUserDao" />
 	</bean>
 
 	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">

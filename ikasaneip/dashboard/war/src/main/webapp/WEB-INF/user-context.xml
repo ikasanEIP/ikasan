@@ -28,8 +28,8 @@
     </bean>
     
     <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
-    	<constructor-arg ref="localTxUserService"/>
-    	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="associatedPrincipalItemClickListener"/>
     </bean>
     

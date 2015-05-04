@@ -42,7 +42,6 @@ package org.ikasan.dashboard.ui.administration.window;
 
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel;
-import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
 
 import com.vaadin.ui.HorizontalLayout;

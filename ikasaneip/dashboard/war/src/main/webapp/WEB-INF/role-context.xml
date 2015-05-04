@@ -24,8 +24,8 @@
     </bean>
     
     <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RoleManagementPanel" scope="session">
-    	<constructor-arg ref="localTxUserService"/>
-    	<constructor-arg ref="localTxSecurityService"/>
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
     </bean>
     
     <bean id="roleManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">

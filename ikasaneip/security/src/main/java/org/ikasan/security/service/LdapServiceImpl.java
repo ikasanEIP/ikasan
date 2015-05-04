@@ -51,6 +51,9 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
 import org.apache.log4j.Logger;
+import org.ikasan.security.dao.SecurityDao;
+import org.ikasan.security.dao.UserDao;
+import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Role;
@@ -75,8 +78,8 @@ public class LdapServiceImpl implements LdapService
 {
 	private static Logger logger = Logger.getLogger(LdapServiceImpl.class);
 
-	private SecurityService securityService;
-	private UserService userService;
+	private SecurityDao securityDao;
+	private UserDao userDao;
 	private AuthenticationMethod authenticationMethod;
 	private DefaultSpringSecurityContextSource contextSource;
 
@@ -84,20 +87,20 @@ public class LdapServiceImpl implements LdapService
 	 * @param securityService
 	 * @param userService
 	 */
-	public LdapServiceImpl(SecurityService securityService,
-			UserService userService)
+	public LdapServiceImpl(SecurityDao securityDao,
+			UserDao userDao)
 	{
 		super();
-		this.securityService = securityService;
-		if (this.securityService == null)
+		this.securityDao = securityDao;
+		if (this.securityDao == null)
 		{
 			throw new IllegalArgumentException(
-					"securityService cannot be null!");
+					"securityDao cannot be null!");
 		}
-		this.userService = userService;
-		if (this.userService == null)
+		this.userDao = userDao;
+		if (this.userDao == null)
 		{
-			throw new IllegalArgumentException("userService cannot be null!");
+			throw new IllegalArgumentException("userDao cannot be null!");
 		}
 	}
 
@@ -294,8 +297,8 @@ public class LdapServiceImpl implements LdapService
 		
 		for (String applicationSecurity : applicationSecurities)
 		{
-			IkasanPrincipal principal = securityService
-					.findPrincipalByName(applicationSecurity);
+			IkasanPrincipal principal = securityDao
+					.getPrincipalByName(applicationSecurity);
 
 			if (principal == null)
 			{
@@ -305,13 +308,13 @@ public class LdapServiceImpl implements LdapService
 			if(principal != null)
 			{
 				logger.info("Adding application Principal: " + principal);
-				this.securityService.savePrincipal(principal);
+				this.securityDao.saveOrUpdatePrincipal(principal);
 			}
 		}
 
 		List<String> users = getAllLdapUsers();
 		
-		Role role = securityService.findRoleByName("User");
+		Role role = securityDao.getRoleByName("User");
 
 		for (String username : users)
 		{
@@ -325,13 +328,9 @@ public class LdapServiceImpl implements LdapService
 			}
 			
 			List<IkasanPrincipal> ikasanPrincipals = new ArrayList<IkasanPrincipal>();
-			User user = null;
+			User user = userDao.getUser(ldapUser.accountName);
 			
-			try
-			{				
-				user = userService.loadUserByUsername(ldapUser.accountName);
-			} 
-			catch (UsernameNotFoundException e)
+			if(user == null)
 			{
 				logger.info("Attempting to create user: " + ldapUser);
 				user = new User(ldapUser.accountName, "pa55word", ldapUser.email, true);
@@ -340,13 +339,13 @@ public class LdapServiceImpl implements LdapService
 				user.setSurname(ldapUser.surname);
 				user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 				
-				this.userService.createUser(user);
+				this.userDao.save(user);
 				
-				user = userService.loadUserByUsername(ldapUser.accountName);
+				user = userDao.getUser(ldapUser.accountName);
 			} 
 				
-			IkasanPrincipal principal = securityService
-					.findPrincipalByName(ldapUser.accountName);
+			IkasanPrincipal principal = securityDao
+					.getPrincipalByName(ldapUser.accountName);
 			if (principal == null)
 			{
 				principal = new IkasanPrincipal();
@@ -367,7 +366,7 @@ public class LdapServiceImpl implements LdapService
 				principal.setRoles(roles);
 			}
 
-			securityService.savePrincipal(principal);				
+			securityDao.saveOrUpdatePrincipal(principal);				
 			ikasanPrincipals.add(principal);
 			
 			for(String name: ldapUser.memberOf)
@@ -377,7 +376,7 @@ public class LdapServiceImpl implements LdapService
 					DistinguishedName dn = new DistinguishedName(name);
 					String cn = dn.getValue("cn");
 					
-					principal = this.securityService.findPrincipalByName(cn);
+					principal = this.securityDao.getPrincipalByName(cn);
 					
 					if(principal != null)
 					{
@@ -394,7 +393,7 @@ public class LdapServiceImpl implements LdapService
 			user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
 
 			logger.info("Attempting to update user: " + user);
-			this.userService.updateUser(user);
+			this.userDao.save(user);
 				
 		}
 	}
@@ -404,7 +403,7 @@ public class LdapServiceImpl implements LdapService
 	{
 		if(this.authenticationMethod == null)
 		{
-			this.authenticationMethod = this.securityService.getAuthenticationMethod();
+			this.authenticationMethod = this.securityDao.getAuthenticationMethod(SecurityConstants.AUTH_METHOD_ID);
 		}
 		
 		if(this.authenticationMethod == null)
