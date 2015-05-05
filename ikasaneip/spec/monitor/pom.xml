@@ -48,9 +48,8 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <artifactId>ikasan-spec</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-spec-monitor</artifactId>

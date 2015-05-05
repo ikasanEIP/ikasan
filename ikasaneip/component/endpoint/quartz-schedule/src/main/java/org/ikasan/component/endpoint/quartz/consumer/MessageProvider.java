@@ -47,7 +47,7 @@ import org.quartz.JobExecutionContext;
  *
  * @author Ikasan Development Team
  */
-public interface MessageProvider<T>
+public interface MessageProvider<MESSAGE>
 {
     /**
      * Invokes the underlying tech implementation of message provider.
@@ -55,5 +55,5 @@ public interface MessageProvider<T>
      * @param context
      * @return
      */
-    T invoke(JobExecutionContext context);
+    MESSAGE invoke(JobExecutionContext context);
 }

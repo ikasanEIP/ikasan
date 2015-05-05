@@ -36,7 +36,6 @@
 
     <bean id="xaMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="xaMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="xaMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -45,7 +44,7 @@
 
     <bean id="xaIkasanSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="xaIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources">
            <list>
                <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
@@ -64,7 +63,6 @@
 
     <bean id="localTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="localTxMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="localTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -73,7 +71,7 @@
 
     <bean id="localTxIkasanSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="localTxIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
            <list>
                <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>
@@ -92,7 +90,6 @@
 
     <bean id="noTxMappingConfigurationService" class="org.ikasan.mapping.service.MappingConfigurationServiceImpl">
         <constructor-arg ref="noTxMappingConfigurationDao"/>
-        <constructor-arg ref="keyLocationQueryProcessorFactory"/>
     </bean>
 
     <bean id="noTxMappingConfigurationDao" class="org.ikasan.mapping.dao.HibernateMappingConfigurationDao">
@@ -101,7 +98,7 @@
 
     <bean id="noTxIkasanSessionFactory"
         class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="noTxIkasanDataSource" />
+        <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
            <list>
                <value>/com/mizuho/cmi2/mappingConfiguration/model/ConfigurationContext.hbm.xml</value>

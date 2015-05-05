@@ -49,7 +49,7 @@ import org.ikasan.spec.flow.*;
 import java.util.List;
 
 /**
- * A default implementation of the FlowElementInvoker for a router
+ * A default implementation of the FlowElementInvoker for a multi-recipient router
  *
  * @author Ikasan Development Team
  */
@@ -59,15 +59,31 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
     /** replication factory - requirement for flows where event can undergo a number of sequential routes */
     private ReplicationFactory<FlowEvent<?,?>> replicationFactory;
 
-    public MultiRecipientRouterFlowElementInvoker(ReplicationFactory<FlowEvent<?, ?>> replicationFactory)
+    /** allow the MRR invoker to be configured */
+    private MultiRecipientRouterConfiguration configuration;
+
+    /**
+     * Constructor
+     * @param replicationFactory
+     */
+    public MultiRecipientRouterFlowElementInvoker(ReplicationFactory<FlowEvent<?, ?>> replicationFactory, MultiRecipientRouterConfiguration configuration)
     {
         this.replicationFactory = replicationFactory;
         if(replicationFactory == null)
         {
             throw new IllegalArgumentException("replicationFactory cannot be 'null'");
         }
+
+        this.configuration = configuration;
+        if(configuration == null)
+        {
+            throw new IllegalArgumentException("configuration cannot be 'null'");
+        }
     }
 
+    /**
+     * Constructor
+     */
     public MultiRecipientRouterFlowElementInvoker()
     {
         // default constructor
@@ -124,7 +140,7 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
                 targetCount++;
 
                 // if we are at the last targetName then skip replication of the event as this is expensive
-                if (targetCount < targetNames.size())
+                if (configuration.isCloneEventPerRoute() && targetCount < targetNames.size())
                 {
                     routedFlowEvent = replicationFactory.replicate(flowEvent);
                 }
@@ -137,6 +153,5 @@ public class MultiRecipientRouterFlowElementInvoker extends AbstractFlowElementI
         }
         return null;
     }
-
 }
 

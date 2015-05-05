@@ -1,0 +1,20 @@
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <files>
+        <file>
+            <source>conf/log4j.xml</source>
+            <outputDirectory>jboss-eap/modules/${jbossModuleDir}</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>conf/module.xml</source>
+            <outputDirectory>jboss-eap/modules/${jbossModuleDir}</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+    </files>
+
+</assembly>

@@ -4,9 +4,8 @@
     <!-- standard parent -->
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <artifactId>ikasan-sample-genericTechPriceSrc-parent</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
 	<artifactId>sample-wls-genericTechPriceSrc-ear</artifactId>
@@ -65,38 +64,34 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-genericTechPriceSrc</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>sample-genericTechPriceSrc-war</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-builder-spring</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>1.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
         </dependency>
 
 	</dependencies>

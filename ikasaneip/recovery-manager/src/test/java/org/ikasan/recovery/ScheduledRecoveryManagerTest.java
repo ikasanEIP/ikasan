@@ -524,7 +524,8 @@ public class ScheduledRecoveryManagerTest
         final long delay = 2000;
         final int maxRetries = 2;
         final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
-        
+        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName", "moduleName");
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -602,6 +603,9 @@ public class ScheduledRecoveryManagerTest
                 
                 // cancel the recovery
                 exactly(1).of(scheduler).deleteJob(jobKey);
+                exactly(1).of(scheduler).checkExists(consumerJobKey);
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(scheduler).deleteJob(consumerJobKey);
             }
         });
 
@@ -661,6 +665,7 @@ public class ScheduledRecoveryManagerTest
         final long delay = 2000;
         final int maxRetries = 2;
         final JobKey jobKey = new JobKey("recoveryJob_flowName", "moduleName");
+        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName", "moduleName");
         final List managedResources = new ArrayList();
         managedResources.add(flowElement);
 
@@ -756,6 +761,9 @@ public class ScheduledRecoveryManagerTest
                 
                 // cancel the recovery
                 exactly(1).of(scheduler).deleteJob(jobKey);
+                exactly(1).of(scheduler).checkExists(consumerJobKey);
+                will(returnValue(Boolean.TRUE));
+                exactly(1).of(scheduler).deleteJob(consumerJobKey);
             }
         });
 
