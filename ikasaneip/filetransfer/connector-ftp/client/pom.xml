@@ -49,21 +49,20 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
+        <version>1.0.0-rc5-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-client-ftp-endpoint</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Client Endpoint for FTP</name>
+    <name>Ikasan Enterprise Integration File Transfer / Ikasan Client Endpoint for FTP</name>
     <description>The client endpoint for FTP within the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -99,7 +98,7 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-            <version>2.0.2</version>
+            <version>${version.org.quartz-scheduler}</version>
             <scope>provided</scope>
         </dependency>
       </dependencies>

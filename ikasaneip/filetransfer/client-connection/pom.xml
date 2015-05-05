@@ -49,21 +49,21 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
+        <version>1.0.0-rc5-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-client-connection</artifactId>
     <packaging>jar</packaging>
-    <name>Connector Client</name>
+    <name>Ikasan Enterprise Integration File Transfer / Connector Client</name>
     <description>A client library for a JCA connector that allows safe usage of a Connection, ensuring that it is always closed afterwards.</description>
 
     <dependencies>
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
-            <version>1.4-rc3</version>
+            <version>${version.geronimo.spec}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
