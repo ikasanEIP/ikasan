@@ -104,7 +104,7 @@
   <!-- ================================================ -->
   <!-- Setup the Root category                          -->
   <!-- ================================================ -->
-  <category name="org.ikasan.common.util">
+  <category name="org.ikasan.filetransfer.util">
     <priority value="WARN"/>
   </category>
 

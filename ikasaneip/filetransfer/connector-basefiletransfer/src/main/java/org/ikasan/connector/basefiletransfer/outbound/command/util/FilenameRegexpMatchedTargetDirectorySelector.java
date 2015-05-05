@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.ikasan.common.FilePayloadAttributeNames;
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.FilePayloadAttributeNames;
+import org.ikasan.filetransfer.Payload;
 
 /**
  * <code>TargetDirectorySelector</code> implementation that determines the

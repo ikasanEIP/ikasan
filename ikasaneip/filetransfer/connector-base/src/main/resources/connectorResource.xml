@@ -53,11 +53,11 @@
     <entry key="persistenceImpl.class">org.ikasan.connector.persistence.HibernatePersistence</entry>
     <entry key="xmlParserImpl.class">org.ikasan.connector.xml.parser.DefaultXMLParser</entry>
     <entry key="xmlTransformerImpl.class">org.ikasan.connector.xml.transform.DefaultDOMSerializer</entry>
-    <entry key="stringTransformerImpl.class">org.ikasan.common.transform.DefaultStringTransformer</entry>
+    <entry key="stringTransformerImpl.class">org.ikasan.filetransfer.transform.DefaultStringTransformer</entry>
     <entry key="xslTransformerImpl.class">org.ikasan.connector.xml.transform.DefaultXSLTransformer</entry>
     <entry key="environmentImpl.class">org.ikasan.connector.util.Env</entry>
-    <entry key="payloadImpl.class">org.ikasan.common.component.DefaultPayload</entry>
-    <entry key="envelopeImpl.class">org.ikasan.common.component.DefaultEnvelope</entry>
+    <entry key="payloadImpl.class">org.ikasan.filetransfer.component.DefaultPayload</entry>
+    <entry key="envelopeImpl.class">org.ikasan.filetransfer.component.DefaultEnvelope</entry>
 
     <!-- Ikasan common Appln server Datasources and factories -->
     <entry key="transaction.manager">java:/TransactionManager</entry>

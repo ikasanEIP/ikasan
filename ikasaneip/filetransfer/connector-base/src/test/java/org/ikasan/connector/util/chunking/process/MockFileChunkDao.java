@@ -46,8 +46,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.ikasan.common.util.checksum.DigestChecksum;
-import org.ikasan.common.util.checksum.Md5Checksum;
+import org.ikasan.filetransfer.util.checksum.DigestChecksum;
+import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;

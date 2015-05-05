@@ -47,7 +47,7 @@ import org.ikasan.connector.ConnectorXMLParser;
  * @authro Ikasan Development Team
  */
 public class DefaultXMLParser
-    extends org.ikasan.common.xml.parser.DefaultXMLParser
+    extends org.ikasan.filetransfer.xml.parser.DefaultXMLParser
     implements ConnectorXMLParser
 {
     // TODO Define implementation

@@ -45,7 +45,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.NamingException;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
@@ -53,8 +52,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
-import org.ikasan.common.util.checksum.DigestChecksum;
-import org.ikasan.common.util.checksum.Md5Checksum;
+import org.ikasan.filetransfer.util.checksum.DigestChecksum;
+import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;

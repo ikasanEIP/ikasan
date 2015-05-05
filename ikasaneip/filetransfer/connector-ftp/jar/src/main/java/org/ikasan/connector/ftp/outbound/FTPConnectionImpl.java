@@ -51,9 +51,9 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.Payload;
-import org.ikasan.common.util.checksum.ChecksumSupplier;
-import org.ikasan.common.util.checksum.Md5ChecksumSupplier;
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
+import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
 import org.ikasan.connector.ConnectorException;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;

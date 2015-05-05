@@ -52,7 +52,7 @@ import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.CommonEnvironment;
+import org.ikasan.filetransfer.CommonEnvironment;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalImpl;
@@ -450,7 +450,7 @@ public class FTPManagedConnectionFactory extends EISManagedConnectionFactory
      */
     public void setLocalHostname(String rtLocalHost)
     {
-        CommonEnvironment env = new org.ikasan.common.util.Env();
+        CommonEnvironment env = new org.ikasan.filetransfer.util.Env();
         String localHost = env.expandEnvVar(rtLocalHost);
         logger.debug("Setting localhost to [" + localHost + "].");
         if (localHost != null && localHost.length() > 0)

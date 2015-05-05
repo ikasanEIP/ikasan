@@ -49,7 +49,7 @@ import org.ikasan.connector.ConnectorXSLTransformer;
  *
  */
 public class DefaultXSLTransformer
-    extends org.ikasan.common.xml.transform.DefaultXSLTransformer
+    extends org.ikasan.filetransfer.xml.transform.DefaultXSLTransformer
     implements ConnectorXSLTransformer
 {
     /**

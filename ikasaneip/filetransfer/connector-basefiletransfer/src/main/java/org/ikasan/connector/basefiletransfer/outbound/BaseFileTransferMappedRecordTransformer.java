@@ -43,10 +43,10 @@ package org.ikasan.connector.basefiletransfer.outbound;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.FilePayloadAttributeNames;
-import org.ikasan.common.Payload;
-import org.ikasan.common.factory.PayloadFactory;
-import org.ikasan.common.factory.PayloadFactoryImpl;
+import org.ikasan.filetransfer.FilePayloadAttributeNames;
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.factory.PayloadFactory;
+import org.ikasan.filetransfer.factory.PayloadFactoryImpl;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 
 /**

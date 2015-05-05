@@ -40,8 +40,8 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import org.ikasan.common.util.checksum.DigestChecksum;
-import org.ikasan.common.util.checksum.Md5Checksum;
+import org.ikasan.filetransfer.util.checksum.DigestChecksum;
+import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 
 /**
  * Class representing a constituent chunk of a larger file

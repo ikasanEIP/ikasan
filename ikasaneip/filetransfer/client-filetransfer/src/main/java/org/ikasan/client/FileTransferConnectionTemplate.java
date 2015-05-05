@@ -50,7 +50,7 @@ import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.listener.TransactionCommitFailureObserverable;

@@ -49,9 +49,9 @@ import java.net.URISyntaxException;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.Payload;
-import org.ikasan.common.util.ChecksumUtils;
-import org.ikasan.common.util.checksum.ChecksumSupplier;
+import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.util.ChecksumUtils;
+import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ChecksumFailedException;

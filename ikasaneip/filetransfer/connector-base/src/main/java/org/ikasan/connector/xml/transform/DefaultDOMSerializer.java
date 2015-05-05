@@ -49,7 +49,7 @@ import org.ikasan.connector.ConnectorXMLTransformer;
  * @author Ikasan Development Team
  */
 public class DefaultDOMSerializer
-    extends org.ikasan.common.xml.transform.DefaultDOMSerializer
+    extends org.ikasan.filetransfer.xml.transform.DefaultDOMSerializer
     implements ConnectorXMLTransformer
 {
     // TODO to be defn

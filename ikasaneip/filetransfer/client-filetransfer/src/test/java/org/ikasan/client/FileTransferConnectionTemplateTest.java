@@ -48,7 +48,7 @@ import javax.resource.cci.ConnectionFactory;
 
 import junit.framework.TestCase;
 
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -82,7 +82,7 @@ public class FileTransferConnectionTemplateTest extends TestCase
     
     /**
      * Test method for
-     * {@link org.ikasan.client.FileTransferConnectionTemplate#deliverPayload(org.ikasan.common.Payload, java.lang.String, java.util.Map, boolean, java.lang.String, boolean, boolean, boolean)}.
+     * {@link org.ikasan.client.FileTransferConnectionTemplate#deliverPayload(org.ikasan.filetransfer.Payload, java.lang.String, java.util.Map, boolean, java.lang.String, boolean, boolean, boolean)}.
      * @throws ResourceException Exception thrown by connector
      */
     public void testDeliverPayload() throws ResourceException

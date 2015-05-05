@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.common.CommonXSLTransformer;
+import org.ikasan.filetransfer.CommonXSLTransformer;
 
 /**
  * This interface defines the connector XML Transformer methods to allow support

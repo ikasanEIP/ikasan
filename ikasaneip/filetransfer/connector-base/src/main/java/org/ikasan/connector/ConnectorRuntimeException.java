@@ -40,9 +40,9 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.common.CommonExceptionType;
-import org.ikasan.common.CommonRuntimeException;
-import org.ikasan.common.ExceptionType;
+import org.ikasan.filetransfer.CommonExceptionType;
+import org.ikasan.filetransfer.CommonRuntimeException;
+import org.ikasan.filetransfer.ExceptionType;
 
 /**
  * ConnectorRuntimeException exception extends the CommonRuntimeException and
