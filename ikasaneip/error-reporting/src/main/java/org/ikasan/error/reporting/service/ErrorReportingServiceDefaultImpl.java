@@ -50,7 +50,7 @@ import org.ikasan.spec.flow.FlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingService<EVENT>
+public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingService<EVENT,ErrorOccurrence>
 {
     /** module name */
     String moduleName;
@@ -88,6 +88,12 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         {
             throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
         }
+    }
+
+    @Override
+    public ErrorOccurrence find(String uri)
+    {
+        return this.errorReportingServiceDao.find(uri);
     }
 
     @Override

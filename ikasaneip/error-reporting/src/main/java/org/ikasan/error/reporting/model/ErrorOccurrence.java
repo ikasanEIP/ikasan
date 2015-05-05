@@ -40,6 +40,8 @@
  */
 package org.ikasan.error.reporting.model;
 
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
  * possible about the occurrence of that error
@@ -141,8 +143,8 @@ public class ErrorOccurrence<EVENT>
 
         this.event = event;
         this.timestamp = System.currentTimeMillis();
-
         this.uri = String.valueOf(this.hashCode());
+        this.expiry = System.currentTimeMillis() + ErrorReportingService.DEFAULT_TIME_TO_LIVE;
     }
 
     /**
@@ -232,6 +234,11 @@ public class ErrorOccurrence<EVENT>
     public String getUri()
     {
         return this.uri;
+    }
+
+    private void setUri(String uri)
+    {
+        this.uri = uri;
     }
 
     @Override

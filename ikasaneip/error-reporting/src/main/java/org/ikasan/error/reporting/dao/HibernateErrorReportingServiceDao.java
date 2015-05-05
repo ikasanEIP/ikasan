@@ -59,13 +59,29 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
-        implements ErrorReportingServiceDao<ErrorOccurrence>
+        implements ErrorReportingServiceDao<ErrorOccurrence<byte[]>>
 {
     /** default batch size */
     private static Integer housekeepingBatchSize = Integer.valueOf(100);
 
     /** batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete ErrorOccurrence s where s.identifier in (:event_ids)";
+    private static final String BATCHED_HOUSEKEEP_QUERY = "delete ErrorOccurrence s where s.uri in (:event_uris)";
+
+    @Override
+    public ErrorOccurrence find(String uri)
+    {
+        DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+        criteria.add(Restrictions.eq("uri", uri));
+
+        List<ErrorOccurrence> results = this.getHibernateTemplate().findByCriteria(criteria);
+        if(results == null || results.size() == 0)
+        {
+            return null;
+        }
+
+        return results.get(0);
+
+    }
 
     @Override
     public void save(ErrorOccurrence errorOccurrence)
@@ -85,7 +101,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                 {
 
                     Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
-                    query.setParameterList("event_ids", housekeepableBatch);
+                    query.setParameterList("event_uris", housekeepableBatch);
                     query.executeUpdate();
                     return null;
                 }
@@ -105,7 +121,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                List<Long> ids = new ArrayList<Long>();
+                List<String> ids = new ArrayList<String>();
 
                 Criteria criteria = session.createCriteria(ErrorOccurrence.class);
                 criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
@@ -114,7 +130,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                 for (Object errorOccurrenceObj : criteria.list())
                 {
                     ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorOccurrenceObj;
-                    ids.add(errorOccurrence.getIdentifier());
+                    ids.add(errorOccurrence.getUri());
                 }
 
                 return ids;
