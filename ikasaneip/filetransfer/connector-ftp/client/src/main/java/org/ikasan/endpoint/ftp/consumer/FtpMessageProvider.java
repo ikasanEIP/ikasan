@@ -361,17 +361,16 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         // Finally, update populated configuration with complex objects that cannot be specified by front end clients
         ftpConsumerConfiguration.setSourceDirectoryURLFactory(this.directoryURLFactory);
 
-         getEndpoint(spec, alternateSpec, ftpConsumerConfiguration);
+         getEndpoint(spec, alternateSpec);
     }
 
     /**
      * Internal endpoint creation method allows for easier overriding of the actual endpoint creation and simpler testing.
      * @param spec
      * @param alternateSpec
-     * @param ftpConsumerConfiguration
      * @return
      */
-    private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec, final FtpConsumerConfiguration ftpConsumerConfiguration)
+    private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec)
     {
         activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
        // activeFileTransferConnectionTemplate.addListener(this.listener);
