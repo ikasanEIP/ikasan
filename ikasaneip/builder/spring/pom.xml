@@ -48,9 +48,8 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <artifactId>ikasan-builder-parent</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-builder-spring</artifactId>
@@ -61,56 +60,48 @@
         <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-eip</artifactId>
-          <version>1.0.0-rc4-SNAPSHOT</version>
-          <scope>provided</scope>
+           <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-exclusion</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-utility-endpoint</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-        </dependency>
+          </dependency>
 
         <!-- Test -->
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.12.1.GA</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.1.1.RELEASE</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-            <scope>test</scope>
+               <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-test</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 

@@ -44,8 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-monitor</artifactId>
@@ -56,63 +55,54 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-monitor</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+              <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
-            <scope>provided</scope>
+             <scope>provided</scope>
          </dependency>
 
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.3</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>3.1.1.RELEASE</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.subethamail</groupId>
             <artifactId>subethasmtp-wiser</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.1.1.RELEASE</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
 
     </dependencies>

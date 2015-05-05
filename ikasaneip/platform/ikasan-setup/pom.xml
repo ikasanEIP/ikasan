@@ -48,14 +48,11 @@
 
 	<parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <artifactId>ikasan-platform</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
     
-    <groupId>org.ikasan</groupId>
     <artifactId>ikasan-setup</artifactId>
-    <version>1.0.0-rc4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <build>
@@ -81,14 +78,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
-            <version>1.4-rc3</version>
             <scope>provided</scope>
         </dependency>
 
@@ -96,29 +91,19 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
         </dependency>
 
-	<!-- jdbc driver for Sybase and SQLServer -->
-	<dependency>
-	   <groupId>net.sourceforge.jtds</groupId>
-	   <artifactId>jtds</artifactId>
-	   <version>1.3.1</version>
-       <scope>provided</scope>
-	</dependency>
 
         <!-- test -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.1.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.178</version>
             <scope>test</scope>
         </dependency>
 

@@ -18,16 +18,13 @@
                         <ref bean="scheduledConsumer" />
                         <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
                         <value>scheduledConsumer</value>
-                        <value>sample-scheduled-consumer</value>
+                        <value>sample-scheduled-flow-consumer</value>
                     </list>
                 </property>
             </bean>
         </property>
-        <property name="configuredResourceId" value="sample-scheduled-consumer"/>
+        <property name="configuredResourceId" value="sample-scheduled-flow-consumer"/>
         <property name="configuration" ref="scheduledConsumerConfiguration"/>
-        <property name="managedEventIdentifierService">
-            <bean class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.consumer.MessageProviderImpl"/>
-        </property>
     </bean>
 
     <bean id="scheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
@@ -36,6 +33,6 @@
     
     <bean id="scheduledConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventConverter" />
     
-    <bean id="scheduledProducer" class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.producer.ScheduleEventProducer" />
+    <bean id="scheduledProducer" class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.ScheduleEventProducer" />
 
 </beans>

@@ -5,8 +5,7 @@
 	<parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 	
 	<groupId>org.ikasan</groupId>
@@ -14,19 +13,24 @@
     <packaging>jar</packaging>
     <name>Ikasan Mapping</name>
     <description>A library for managing mapping configurations for the Ikasan platform</description>
-	<version>1.0.0-rc4-SNAPSHOT</version>
 
 	<dependencies>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring</artifactId>
-			<version>2.5.6</version>
+			<artifactId>spring-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<scope>provided</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>3.5.4-Final</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -34,76 +38,67 @@
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock</artifactId>
-			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jmock</groupId>
-			<artifactId>jmock-junit4</artifactId>
-			<version>2.4.0</version>
-			<scope>test</scope>
-		</dependency>
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
+	
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
+	
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
-			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- required for testing daos using in memory dbs -->
+	
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>2.5.6</version>
 			<scope>test</scope>
 		</dependency>
+	
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>2.5.6</version>
 			<scope>test</scope>
 		</dependency>
+	
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
+	
 		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-j2ee_1.4_spec</artifactId>
-			<version>1.1</version>
-			<scope>test</scope>
+				<groupId>geronimo-spec</groupId>
+				<artifactId>geronimo-spec-j2ee</artifactId>
 		</dependency>
+	
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- Hibernate 3.5.x runtime dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.8</version>
 			<scope>test</scope>
 		</dependency>
+	
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.11.0.GA</version>
 			<scope>test</scope>
 		</dependency>
+	
 	</dependencies>
 </project>
