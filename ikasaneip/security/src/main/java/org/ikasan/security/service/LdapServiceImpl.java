@@ -434,7 +434,7 @@ public class LdapServiceImpl implements LdapService
 		return contextSource;
 	}
 	
-	private class ApplicationSecurityGroupAttributeMapper implements AttributesMapper
+	protected class ApplicationSecurityGroupAttributeMapper implements AttributesMapper
 	{
 		@Override
 		public Object mapFromAttributes(Attributes attributes)
@@ -444,7 +444,7 @@ public class LdapServiceImpl implements LdapService
 		}
 	}
 
-	private class LdapUser
+	protected class LdapUser
 	{
 		String accountType;
 		String accountName;
