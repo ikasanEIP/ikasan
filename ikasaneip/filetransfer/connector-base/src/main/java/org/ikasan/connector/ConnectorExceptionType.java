@@ -41,7 +41,7 @@
 package org.ikasan.connector;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.ExceptionType;
+import org.ikasan.filetransfer.ExceptionType;
 
 /**
  * This is an enumeration of connector exception types providing categories

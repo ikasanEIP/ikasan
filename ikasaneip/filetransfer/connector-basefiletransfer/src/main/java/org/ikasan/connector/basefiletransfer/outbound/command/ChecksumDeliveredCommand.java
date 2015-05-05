@@ -46,7 +46,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.resource.ResourceException;
 
 import org.apache.log4j.Logger;
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;

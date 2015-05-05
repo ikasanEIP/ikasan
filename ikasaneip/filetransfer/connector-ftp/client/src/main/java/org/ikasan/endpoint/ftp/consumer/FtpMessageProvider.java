@@ -41,7 +41,7 @@
 package org.ikasan.endpoint.ftp.consumer;
 
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.Payload;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
 import org.ikasan.connector.listener.TransactionCommitFailureListener;

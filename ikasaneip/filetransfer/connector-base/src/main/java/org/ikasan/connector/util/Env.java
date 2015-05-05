@@ -49,7 +49,7 @@ import org.ikasan.connector.ConnectorEnvironment;
  * @author Ikasan Development Team
  */
 public class Env
-    extends org.ikasan.common.util.Env
+    extends org.ikasan.filetransfer.util.Env
     implements ConnectorEnvironment
 {
     // TODO Implement

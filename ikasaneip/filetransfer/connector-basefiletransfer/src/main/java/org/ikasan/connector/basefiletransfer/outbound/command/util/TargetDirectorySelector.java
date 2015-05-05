@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command.util;
 
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.Payload;
 
 /**
  * Simple interface for defining a component that can determine a target directory for a 

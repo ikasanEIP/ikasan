@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.common.CommonEnvironment;
+import org.ikasan.filetransfer.CommonEnvironment;
 
 /**
  * This interface defines the connector environment methods to allow support

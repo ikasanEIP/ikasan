@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.common.CommonStringTransformer;
+import org.ikasan.filetransfer.CommonStringTransformer;
 
 /**
  * This interface defines the connector String Transformer methods to allow support

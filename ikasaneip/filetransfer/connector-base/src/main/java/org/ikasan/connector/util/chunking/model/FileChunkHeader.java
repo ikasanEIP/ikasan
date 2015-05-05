@@ -43,8 +43,8 @@ package org.ikasan.connector.util.chunking.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ikasan.common.xml.serializer.XMLSerializer;
-import org.ikasan.common.xml.serializer.XStreamXmlSerializerImpl;
+import org.ikasan.filetransfer.xml.serializer.XMLSerializer;
+import org.ikasan.filetransfer.xml.serializer.XStreamXmlSerializerImpl;
 
 /**
  * Model class that contains header information common to all related File

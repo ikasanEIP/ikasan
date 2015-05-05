@@ -42,7 +42,7 @@ package org.ikasan.connector.util.chunking.model;
 
 import junit.framework.TestCase;
 
-import org.ikasan.common.util.checksum.Md5Checksum;
+import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.ChunkTestUtils;
 
 /**

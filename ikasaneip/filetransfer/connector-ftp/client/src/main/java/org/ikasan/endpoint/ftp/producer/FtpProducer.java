@@ -14,7 +14,7 @@ package org.ikasan.endpoint.ftp.producer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.client.FileTransferConnectionTemplate;
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -24,7 +24,6 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 

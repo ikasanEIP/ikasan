@@ -46,8 +46,8 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import org.ikasan.common.FilePayloadAttributeNames;
-import org.ikasan.common.Payload;
+import org.ikasan.filetransfer.FilePayloadAttributeNames;
+import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 

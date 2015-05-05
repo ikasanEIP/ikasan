@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector;
 
-import org.ikasan.common.CommonXMLParser;
+import org.ikasan.filetransfer.CommonXMLParser;
 
 /**
  * This interface defines the connector XML Parser methods to allow support
