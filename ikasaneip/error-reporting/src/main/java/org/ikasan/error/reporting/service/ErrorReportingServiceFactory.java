@@ -42,7 +42,7 @@ package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao;
-import org.ikasan.spec.error.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 /**
  * ErrorReportingService Factory.
@@ -54,26 +54,26 @@ public class ErrorReportingServiceFactory
     /** DAO handle */
     ErrorReportingServiceDao errorReportingServiceDao;
 
-    /** singleton instance */
-    private static ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactory();
-
-    /**
-     * Get singleton instance
-     * @return
-     */
-    public static ErrorReportingServiceFactory getInstance()
-    {
-        return errorReportingServiceFactory;
-    }
-
-    /**
-     * Constructor
-     */
-    private ErrorReportingServiceFactory()
-    {
-        this.errorReportingServiceDao = new HibernateErrorReportingServiceDao();
-    }
-
+//    /** singleton instance */
+//    private static ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactory();
+//
+//    /**
+//     * Get singleton instance
+//     * @return
+//     */
+//    public static ErrorReportingServiceFactory getInstance()
+//    {
+//        return errorReportingServiceFactory;
+//    }
+//
+//    /**
+//     * Constructor
+//     */
+//    private ErrorReportingServiceFactory()
+//    {
+//        this.errorReportingServiceDao = new HibernateErrorReportingServiceDao();
+//    }
+//
     /**
      * Constructor
      */

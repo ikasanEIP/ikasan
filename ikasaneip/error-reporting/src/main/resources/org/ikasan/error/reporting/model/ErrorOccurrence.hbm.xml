@@ -52,7 +52,7 @@
 
     <class name="org.ikasan.error.reporting.model.ErrorOccurrence" table="ErrorOccurrence">
 
-        <id name="identifier" type="java.lang.String" column="Identifier">
+        <id name="uri" type="java.lang.String" column="Uri">
             <generator class="assigned" />
         </id>
 
@@ -81,8 +81,13 @@
                   column="EventLifeIdentifier"
                   not-null="false" />
 
+        <property name="eventRelatedIdentifier"
+                  type="java.lang.String"
+                  column="EventRelatedIdentifier"
+                  not-null="false" />
+
         <property name="event"
-                  type="java.lang.Byte[]"
+                  type="byte[]"
                   column="Event"
                   not-null="false" />
 

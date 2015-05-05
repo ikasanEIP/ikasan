@@ -48,10 +48,18 @@ package org.ikasan.spec.error.reporting;
  * @author Ikasan Development Team
  * 
  */
-public interface ErrorReportingService<EVENT>
+public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
 {
     /** one week default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 7);
+
+    /**
+     * Finds the EVENT logged for error reporting based on the provided uri.
+     *
+     * @param uri
+     * @return EVENT for this uri
+     */
+    public ERROR_REPORTING_EVENT find(String uri);
 
     /**
      * Logs an Error where there is an inflight Event involved in a Flow
@@ -61,7 +69,7 @@ public interface ErrorReportingService<EVENT>
      * @param throwable
      * @return uri for this reported error instance
      */
-    public String notify(String flowElementName, EVENT event, Throwable throwable);
+    public String notify(String flowElementName, FAILED_EVENT event, Throwable throwable);
 
     /**
      * Logs an Error where no inflight Event was present.
