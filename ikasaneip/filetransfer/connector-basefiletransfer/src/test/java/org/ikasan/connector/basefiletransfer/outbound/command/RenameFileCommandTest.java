@@ -42,7 +42,6 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import javax.resource.ResourceException;
 
-import junit.framework.TestCase;
 
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -52,36 +51,43 @@ import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for the RenameFileCommand
  * 
  * @author Ikasan Development Team
  */
-public class RenameFileCommandTest extends TestCase
+public class RenameFileCommandTest
 {
+    private final Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+
     /**
      * tests the execute method
      * 
      * @throws ResourceException
      * @throws ClientCommandRenameException
      */
+    @Test
     public void testExecute() throws ResourceException,
             ClientCommandRenameException
     {
-        Mockery clientMockery = new Mockery()
-        {
-            {
-                setImposteriser(ClassImposteriser.INSTANCE);
-            }
-        };
+
 
         // mock the client
-        final FileTransferClient client = clientMockery.mock(FileTransferClient.class);
+        final FileTransferClient client = mockery.mock(FileTransferClient.class);
         final String newPath = "newDir/newFile.new";
         final String oldPath = "oldDir/oldFile.old";
 
-        clientMockery.checking(new Expectations()
+        mockery.checking(new Expectations()
         {
             {
                 one(client).ensureConnection();
@@ -125,27 +131,22 @@ public class RenameFileCommandTest extends TestCase
      * @throws ResourceException
      * @throws ClientCommandRenameException
      */
+    @Test
     public void testRollback() throws ResourceException,
             ClientCommandRenameException
     {
-        Mockery clientMockery = new Mockery()
-        {
-            {
-                setImposteriser(ClassImposteriser.INSTANCE);
-            }
-        };
         // mock the client
-        final FileTransferClient client = clientMockery.mock(FileTransferClient.class);
+        final FileTransferClient client = mockery.mock(FileTransferClient.class);
         final String newPath = "newDir/newFile.new";
         final String oldPath = "oldDir/oldFile.old";
 
-        clientMockery.checking(new Expectations()
+        mockery.checking(new Expectations()
         {
             {
-                one(client).ensureConnection();
-                one(client).rename(newPath, oldPath);
-                one(client).ensureConnection();
-                one(client).rename(oldPath, newPath);
+                exactly(1).of(client).ensureConnection();
+                exactly(1).of(client).rename(newPath, oldPath);
+                exactly(1).of(client).ensureConnection();
+                exactly(1).of(client).rename(oldPath, newPath);
             }
         });
         RenameFileCommand command = new RenameFileCommand();

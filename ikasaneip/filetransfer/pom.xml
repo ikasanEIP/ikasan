@@ -45,20 +45,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
+        <version>1.0.0-rc5-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <artifactId>ikasan-filetransfer</artifactId>
     <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Platform file transfer</name>
-
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>3.1.1.RELEASE</spring.version>
-        <ikasan.version>${project.version}</ikasan.version>
-    </properties>
+    <name>Ikasan Enterprise Integration Platform File Transfer</name>
 
     <modules>
         <module>common</module>
@@ -74,27 +67,26 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <version>${version.org.springframework}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
+            <version>${version.org.springframework}</version>
             <scope>provided</scope>
         </dependency>
         <!-- J2EE -->
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
-            <version>1.4-rc3</version>
             <scope>provided</scope>
         </dependency>
         <!-- For persisting information about the connector such as chunking large messages -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.5.4-Final</version>
+            <version>${version.org.hibernate}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
