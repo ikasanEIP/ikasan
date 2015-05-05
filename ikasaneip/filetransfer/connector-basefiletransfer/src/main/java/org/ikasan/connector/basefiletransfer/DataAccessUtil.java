@@ -92,7 +92,7 @@ public class DataAccessUtil {
 
 			Configuration cfg = generateConfiguration();
 			cfg.setProperty(Environment.DATASOURCE,
-					"java:/datasource/ikasan/ds");
+					"java:/datasource/ikasan/xads");
 			cfg.addClass(FileFilter.class); // this will expect to find
 											// FileFilter.hbm.xml in the fully
 											// qualified package for FileFilter
