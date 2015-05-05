@@ -149,7 +149,7 @@ public class EventGeneratingConsumer extends AbstractConsumer
                 {
                     count++;
                     eventListener.invoke( flowEventFactory.newEvent(consumerConfiguration.getIdentifier(), consumerConfiguration.getPayload()) );
-                    if(consumerConfiguration.getEventLimit() > count && consumerConfiguration.getEventGenerationInterval() > 0 && consumerConfiguration.getBatchsize() % count == 0)
+                    if(consumerConfiguration.getEventGenerationInterval() > 0 && consumerConfiguration.getBatchsize() % count == 0)
                     {
                         try
                         {

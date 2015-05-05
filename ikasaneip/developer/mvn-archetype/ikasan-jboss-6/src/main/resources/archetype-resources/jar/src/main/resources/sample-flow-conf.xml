@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  Flow                                                               -->
+    <!--  ================================================================== -->
+    <bean id="sampleFlow"                   class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         ref="moduleName" />
+        <property name="name"               value="Sample Flow Name" />
+        <property name="description"        value="Sample Flow Description" />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="consumer">
+            <bean class="org.ikasan.builder.FlowElementFactory">
+                <property name="name"       value="Consumer Name"/>
+                <property name="component"  ref="sampleConsumer"/>
+                <property name="transition" ref="sampleProducerFlowElement"/>
+            </bean>
+        </property>
+        <property name="monitor" ref="monitor"/>
+    </bean>
+
+    <!-- Flow Element - Producer -->
+    <bean id="sampleProducerFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Producer Name"/>
+        <property name="component"          ref="sampleProducer" />
+    </bean>
+
+    <!-- Consumer Component -->
+    <bean id="sampleConsumer" class="org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumer">
+        <property name="configuration" ref="sampleConsumerConfiguration"/>
+        <property name="configuredResourceId" value="sample-flow-consumer"/>
+    </bean>
+
+    <!-- Consumer Component Configuration -->
+    <bean id="sampleConsumerConfiguration"
+          class="org.ikasan.component.endpoint.util.consumer.EventGeneratingConsumerConfiguration">
+    </bean>
+
+    <!-- Producer Component -->
+    <bean id="sampleProducer" class="org.ikasan.component.endpoint.util.producer.LogProducer" />
+
+</beans>

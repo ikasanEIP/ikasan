@@ -39,7 +39,7 @@
     </util:map>
 
     <bean id="xaDataSource"
-          name="localTxIkasanDataSource,noTxIkasanDataSource,xaIkasanDataSource" 
+          name="ikasan.ds,ikasan.xads" 
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
             <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
             <property name="url" value="jdbc:hsqldb:mem:testdb" />
