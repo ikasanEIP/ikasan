@@ -12,21 +12,22 @@ O * $Id: SecurityServiceTest.java 43977 2015-03-10 16:06:07Z stewmi $
  */
 package org.ikasan.security.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
+import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.service.authentication.LdapAuthenticationProvider;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,17 +74,6 @@ public class SecurityServiceTest
     @Resource
 	private InMemoryDirectoryServer inMemoryDirectoryServer;
 
-//	@Before
-//	public void setupLdapServer() throws LDAPException, IOException
-//	{
-//
-//		inMemoryDirectoryServer.importFromLDIF(
-//				true,
-//				new LDIFReader(new File(new File(".").getCanonicalPath() + "/src/test/resources/data.ldif")));
-//		
-//		inMemoryDirectoryServer.startListening();
-//	}
-
     /**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
@@ -115,88 +105,82 @@ public class SecurityServiceTest
             policies = new HashSet<Policy>();
         }
 
-        IkasanPrincipal principalGroup = new IkasanPrincipal();
-        principalGroup.setName("ISD_Middleware");
-        principalGroup.setType("group");
-        principalGroup.setRoles(roles);
-        principalGroup.setDescription("description");
+    	IkasanPrincipal principal = new IkasanPrincipal();
+    	principal.setName("stewmi");
+    	principal.setType("type");
+    	principal.setRoles(roles);
+    	principal.setDescription("description");
 
-        this.xaSecurityDao.saveOrUpdatePrincipal(principalGroup);
+    	this.xaSecurityDao.saveOrUpdatePrincipal(principal);
 
-        IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setName("stewmi");
-        principal.setType("user");
-        principal.setRoles(roles);
-        principal.setDescription("description");
-
-        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-
-        principal = new IkasanPrincipal();
+    	principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal1");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal2");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal3");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal4");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal5");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal6");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
         principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal7");
         principal.setType("type");
-        principal.setRoles(roles);
         principal.setDescription("description");
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+        
+        PolicyLinkType policyLinkType = new PolicyLinkType("name1", "table1");
+        
+        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
+        
+        policyLinkType = new PolicyLinkType("name2", "table2");
+        
+        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
+        
+        policyLinkType = new PolicyLinkType("name3", "table3");
+        
+        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
     }
-
-//    @Test 
-//    @DirtiesContext
-//    @Ignore
-//    public void test_success_login() 
-//    {
-//        IkasanPrincipal principal = this.xaSecurityService.login("stewmi", "password");
-//
-//        Assert.assertNotNull(principal);
-//    }
 
     @Test(expected = IllegalArgumentException.class)
     @DirtiesContext
@@ -378,7 +362,7 @@ public class SecurityServiceTest
     {
         List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipals();
 
-        Assert.assertTrue(principals.size() == 9);
+        Assert.assertTrue(principals.size() == 8);
     }
 
     @Test
@@ -387,13 +371,13 @@ public class SecurityServiceTest
     {
         List<IkasanPrincipal> principals = this.xaSecurityDao.getAllPrincipals();
 
-        Assert.assertTrue(principals.size() == 9);
+        Assert.assertTrue(principals.size() == 8);
 
         this.xaSecurityService.deletePrincipal(principals.get(0));
 
         principals = this.xaSecurityDao.getAllPrincipals();
 
-        Assert.assertTrue(principals.size() == 8);
+        Assert.assertTrue(principals.size() == 7);
     }
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
@@ -572,11 +556,136 @@ public class SecurityServiceTest
 
         Assert.assertTrue(policies.size() == 100);
     }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_principal_with_role()
+    {
+    	List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipalsWithRole("role0");
+    	
+    	Assert.assertTrue(principals.size() == 8);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_principal_with_role_bad_role_name()
+    {
+    	List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipalsWithRole("bad name");
+    	
+    	Assert.assertTrue(principals.size() == 0);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_principal_by_name_like()
+    {    	
+    	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalByNameLike("anotherPrincipal");
 
-    @After
-	public void teardownLdapServer()
-	{
-		// Disconnect from the server and cause the server to shut down.
-		inMemoryDirectoryServer.shutDown(true);
-	}
+    	Assert.assertTrue(principals.size() == 7);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_principal_by_name_like_bad_bname()
+    {    	
+    	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalByNameLike("bad name");
+
+    	Assert.assertTrue(principals.size() == 0);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_all_policy_lonk_types()
+    {    	
+    	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
+
+    	Assert.assertTrue(plts.size() == 3);
+    }
+ 
+    @Test
+    @DirtiesContext
+    public void test_success_get_role_by_name_like()
+    {    	
+    	List<Role> roles = this.xaSecurityService.getRoleByNameLike("role");
+
+    	Assert.assertTrue(roles.size() == 10);
+    }
+ 
+    @Test
+    @DirtiesContext
+    public void test_success_get_policy_by_name_like()
+    {    	
+    	List<Policy> policies = this.xaSecurityService.getPolicyByNameLike("policy");
+
+    	Assert.assertTrue(policies.size() == 100);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_save_policy_link()
+    {    	
+    	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
+    	PolicyLink policyLink = new PolicyLink(plts.get(0),new Long(1), "name");
+    	
+    	this.xaSecurityService.savePolicyLink(policyLink);
+    	
+    	Assert.assertNotNull(policyLink.getId());
+    	
+    	this.xaSecurityService.deletePolicyLink(policyLink);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_policies_by_role()
+    {    	
+    	List<Policy> policies = this.xaSecurityService.getAllPoliciesWithRole("role1");
+
+    	Assert.assertTrue(policies.size() == 10);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_principal_by_names()
+    {
+    	ArrayList<String> names = new ArrayList<String>();
+    	names.add("role1");
+    	names.add("role2");
+    	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalsByName(names);
+
+    	Assert.assertTrue(principals.size() == 8);
+    }
+    
+    @Test
+    @DirtiesContext
+    public void test_success_get_principal_by_names_empty_names()
+    {
+    	ArrayList<String> names = new ArrayList<String>();
+
+    	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalsByName(names);
+    	
+    	Assert.assertTrue(principals.size() == 0);
+    }
+
+    @Test 
+    @DirtiesContext
+    public void test_success_get_policy_by_name()
+    {
+        Policy policy = this.xaSecurityService.findPolicyByName("policy11");
+
+        Assert.assertNotNull(policy);
+
+        Assert.assertEquals(policy.getName(), "policy11");
+    }
+
+    @Test 
+    @DirtiesContext
+    public void test_success_get_role_by_name()
+    {
+        Role role = this.xaSecurityService.findRoleByName("role1");
+
+        Assert.assertNotNull(role);
+
+        Assert.assertEquals(role.getName(), "role1");
+    }
+
 }

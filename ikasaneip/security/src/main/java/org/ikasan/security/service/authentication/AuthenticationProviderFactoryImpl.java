@@ -118,7 +118,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 			AuthenticationProvider authProvider = null;
 			try
 			{
-				authProvider =  createLdapAuthenticationProvider(authMethod);
+				authProvider =  createLdapLocalAuthenticationProvider(authMethod);
 			} catch (Exception e)
 			{
 				// TODO Auto-generated catch block
@@ -206,6 +206,35 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 		bindAuthenicator.setUserSearch(userSearch);
 
 		return new LdapAuthenticationProvider(bindAuthenicator, this.securityService, this.userService);
+	}
+	
+	/**
+	 * 
+	 * @param authMethod
+	 * @return
+	 * @throws Exception 
+	 */
+	private LdapLocalAuthenticationProvider createLdapLocalAuthenticationProvider(AuthenticationMethod authMethod) throws Exception
+	{
+		logger.info("authMethod.getLdapServerUrl() = " + authMethod.getLdapServerUrl());
+		logger.info("authMethod.getLdapBindUserDn() = " + authMethod.getLdapBindUserDn());
+		logger.info("authMethod.getLdapBindUserPassword() = " + authMethod.getLdapBindUserPassword());
+		logger.info("authMethod.getLdapUserSearchBaseDn() = " + authMethod.getLdapUserSearchBaseDn());
+		logger.info("authMethod.getLdapUserSearchFilter() = " + authMethod.getLdapUserSearchFilter());
+		
+		// TODO consider making the LDAP stuff a singleton
+		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(authMethod.getLdapServerUrl().trim());
+		contextSource.setUserDn(authMethod.getLdapBindUserDn().trim());
+		contextSource.setPassword(authMethod.getLdapBindUserPassword().trim());
+		contextSource.afterPropertiesSet();
+		
+		FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(authMethod.getLdapUserSearchBaseDn().trim(),
+				authMethod.getLdapUserSearchFilter().trim(), contextSource);
+		
+		BindAuthenticator bindAuthenicator = new BindAuthenticator(contextSource);
+		bindAuthenicator.setUserSearch(userSearch);
+
+		return new LdapLocalAuthenticationProvider(bindAuthenicator, this.securityService, this.userService);
 	}
 
 	/**

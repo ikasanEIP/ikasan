@@ -54,10 +54,10 @@ import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
+import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -67,6 +67,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
 
@@ -83,12 +84,12 @@ import com.unboundid.ldif.LDIFReader;
         "/substitute-components.xml",
         "/mock-components.xml"
 })
-@Ignore
 public class AuthenticationServiceTest
 {
-
-	@Resource
 	private InMemoryDirectoryServer inMemoryDirectoryServer;
+	
+	@Resource 
+	InMemoryDirectoryServerConfig inMemoryDirectoryServerConfig;
 	
 	@Resource
 	private AuthenticationService localTxAuthenticationService;
@@ -101,6 +102,12 @@ public class AuthenticationServiceTest
 	
 	@Resource
 	private String ldapServerUrl;
+	
+	@Resource
+	private SecurityService xaSecurityService;
+	
+	@Resource
+	private AuthenticationProviderFactory xaAuthenticationProviderFactory;
 	
 	/**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
@@ -149,7 +156,7 @@ public class AuthenticationServiceTest
         
         this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
         
-        User user = new User("stewmi", "password", "me@there.com", true);
+        User user = new User("stewmi", "password_local", "me@there.com", true);
         this.localTxUserService.createUser(user);
         
         user = this.localTxUserService.loadUserByUsername("stewmi");
@@ -217,16 +224,30 @@ public class AuthenticationServiceTest
 
         this.localTxSecurityDao.saveOrUpdatePrincipal(principal);
     }
-
-	@Before
+    
+    @Before
 	public void setupLdapServer() throws LDAPException, IOException
 	{
-
+		this.inMemoryDirectoryServer = new InMemoryDirectoryServer(this.inMemoryDirectoryServerConfig);
 		inMemoryDirectoryServer.importFromLDIF(
 				true,
 				new LDIFReader(new File(new File(".").getCanonicalPath() + "/src/test/resources/data.ldif")));
 		
 		inMemoryDirectoryServer.startListening();
+	}
+    
+    @Test (expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testNullAuthenticationProviderFactoryOnConstruction() throws AuthenticationServiceException
+	{
+		new AuthenticationServiceImpl(null, this.xaSecurityService);
+	}
+    
+    @Test (expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testNullSecurityServiceOnConstruction() throws AuthenticationServiceException
+	{
+		new AuthenticationServiceImpl(this.xaAuthenticationProviderFactory, null);
 	}
 
 	/**
@@ -243,7 +264,7 @@ public class AuthenticationServiceTest
 		
 		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
-		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password");
+		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password_local");
 		
 		Assert.assertNotNull(authentication);
 	}
@@ -275,7 +296,7 @@ public class AuthenticationServiceTest
 		
 		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
-		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password");
+		Authentication authentication = this.localTxAuthenticationService.login("stewmi", "password_local");
 		
 		Assert.assertNotNull(authentication);
 	}
@@ -350,5 +371,4 @@ public class AuthenticationServiceTest
 		inMemoryDirectoryServer.clear();
 		inMemoryDirectoryServer.shutDown(true);
 	}
-
 }

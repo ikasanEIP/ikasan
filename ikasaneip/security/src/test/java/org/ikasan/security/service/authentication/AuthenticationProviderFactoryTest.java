@@ -40,32 +40,275 @@
  */
 package org.ikasan.security.service.authentication;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
 
+import javax.annotation.Resource;
+
+import org.ikasan.security.dao.SecurityDao;
+import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.security.model.AuthenticationMethod;
+import org.ikasan.security.service.AuthenticationService;
+import org.ikasan.security.service.AuthenticationServiceException;
+import org.ikasan.security.service.AuthenticationServiceImpl;
+import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.UserService;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldif.LDIFReader;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "/security-conf.xml",
+        "/hsqldb-config.xml",
+        "/substitute-components.xml",
+        "/mock-components.xml"
+})
 public class AuthenticationProviderFactoryTest
 {
+private InMemoryDirectoryServer inMemoryDirectoryServer;
+	
+	@Resource 
+	InMemoryDirectoryServerConfig inMemoryDirectoryServerConfig;
+	
+	@Resource
+	private AuthenticationService localTxAuthenticationService;
+	
+	@Resource
+	private SecurityDao localTxSecurityDao;
+	
+	@Resource 
+	private UserService localTxUserService; 
+	
+	@Resource
+	private String ldapServerUrl;
+	
+	@Resource
+	private SecurityService xaSecurityService;
+	
+	@Resource
+	private AuthenticationProviderFactory xaAuthenticationProviderFactory;
+	
+	@Before
+	public void setupLdapServer() throws LDAPException, IOException
+	{
+		this.inMemoryDirectoryServer = new InMemoryDirectoryServer(this.inMemoryDirectoryServerConfig);
+		inMemoryDirectoryServer.importFromLDIF(
+				true,
+				new LDIFReader(new File(new File(".").getCanonicalPath() + "/src/test/resources/data.ldif")));
+		
+		inMemoryDirectoryServer.startListening();
+	}
+
+	@Test (expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testNullUserServiceOnConstruction() throws AuthenticationServiceException
+	{
+		new AuthenticationProviderFactoryImpl(null, this.xaSecurityService);
+	}
+    
+    @Test (expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testNullSecurityServiceOnConstruction() throws AuthenticationServiceException
+	{
+		new AuthenticationProviderFactoryImpl(this.localTxUserService, null);
+	}
 
 	/**
 	 * Test method for {@link org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl#getAuthenticationProvider(org.ikasan.security.model.AuthenticationMethod)}.
 	 */
 	@Test
-	public void testGetAuthenticationProvider()
+	@DirtiesContext
+	public void testGetAuthenticationProviderLocal()
 	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		AuthenticationProvider authProvider = xaAuthenticationProviderFactory.getAuthenticationProvider(authMethod);
+		
+		Assert.assertTrue(authProvider instanceof LocalAuthenticationProvider);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl#getAuthenticationProvider(org.ikasan.security.model.AuthenticationMethod)}.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testExceptionGetAuthenticationProviderLocalBadAuthMethod()
+	{	
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod("bad method");
+		
+		xaAuthenticationProviderFactory.getAuthenticationProvider(authMethod);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl#getAuthenticationProvider(org.ikasan.security.model.AuthenticationMethod)}.
+	 */
+	@Test
+	@DirtiesContext
+	public void testGetAuthenticationProviderLocalNullAuthMethod()
+	{	
+		AuthenticationProvider authProvider = xaAuthenticationProviderFactory.getAuthenticationProvider(null);
+		
+		Assert.assertTrue(authProvider instanceof LocalAuthenticationProvider);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testGetAuthenticationProviderLdap()
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+		
+		authMethod.setLdapServerUrl(ldapServerUrl);
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserPassword("password");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		AuthenticationProvider authProvider = xaAuthenticationProviderFactory.getAuthenticationProvider(authMethod);
+		
+		Assert.assertTrue(authProvider instanceof LdapAuthenticationProvider);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testGetAuthenticationProviderLdapLocal()
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP_LOCAL);
+		
+		authMethod.setLdapServerUrl(ldapServerUrl);
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserPassword("password");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		AuthenticationProvider authProvider = xaAuthenticationProviderFactory.getAuthenticationProvider(authMethod);
+		
+		Assert.assertTrue(authProvider instanceof LdapLocalAuthenticationProvider);
 	}
 
 	/**
 	 * Test method for {@link org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl#testAuthenticationConnection(org.ikasan.security.model.AuthenticationMethod)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void testTestAuthenticationConnection()
+	@DirtiesContext
+	public void testTestAuthenticationConnectionLocal() throws Exception
 	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.xaAuthenticationProviderFactory.testAuthenticationConnection(authMethod);
+		
+		Assert.assertTrue(true);
+	}
+	
+	/**
+	 * Test method for {@link org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl#testAuthenticationConnection(org.ikasan.security.model.AuthenticationMethod)}.
+	 * @throws Exception 
+	 */
+	@Test
+	@DirtiesContext
+	public void testTestAuthenticationConnectionLdap() throws Exception
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+		
+		authMethod.setLdapServerUrl(ldapServerUrl);
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserPassword("password");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.xaAuthenticationProviderFactory.testAuthenticationConnection(authMethod);
+		
+		Assert.assertTrue(true);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testTestAuthenticationConnectionLdapLocal() throws Exception
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP_LOCAL);
+		
+		authMethod.setLdapServerUrl(ldapServerUrl);
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserPassword("password");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.xaAuthenticationProviderFactory.testAuthenticationConnection(authMethod);
+		
+		Assert.assertTrue(true);
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testTestAuthenticationConnectionNullAuthMethod() throws Exception
+	{
+		this.xaAuthenticationProviderFactory.testAuthenticationConnection(null);
+		
+		Assert.assertTrue(true);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	@DirtiesContext
+	public void testTestAuthenticationConnectionUnsupportedAuthMethod() throws Exception
+	{
+		AuthenticationMethod authMethod = new AuthenticationMethod();
+		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+		authMethod.setMethod("unsupported method");
+		
+		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+		
+		this.xaAuthenticationProviderFactory.testAuthenticationConnection(authMethod);
 	}
 
+	@After
+	public void teardownLdapServer()
+	{
+		// Disconnect from the server and cause the server to shut down.
+		inMemoryDirectoryServer.clear();
+		inMemoryDirectoryServer.shutDown(true);
+	}
 }
