@@ -66,7 +66,7 @@
                   column="CriteriaDescription"
                   not-null="false" />
 
-        <property name="createdDateTime"
+        <property name="timestamp"
                   type="long"
                   column="CreatedDateTime"
                   not-null="true" />

@@ -38,57 +38,47 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.service;
+package org.ikasan.exclusion.model;
 
 import junit.framework.Assert;
-import org.ikasan.exclusion.dao.ExclusionServiceDao;
-import org.ikasan.exclusion.dao.ListExclusionServiceDao;
-import org.ikasan.exclusion.model.BlackListLinkedHashMap;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Test class for ExclusionServiceFactory.
+ * Test class for BlackListLinkedHashMap.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
-        "/h2db-datasource-conf.xml"
-        })
-
-public class ExclusionServiceFactoryTest
+public class BlackListLinkedHashMapTest
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private Mockery mockery = new Mockery()
-    {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
-    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(25) );
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_dao()
-    {
-        new ExclusionServiceFactory(null);
-    }
-
     /**
      * Test exclusion
      */
     @Test
-    public void test_exclusionServiceFactory_operations()
+    public void test_blackList_rolloff()
     {
-        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(exclusionServiceDao);
-        Assert.assertNotNull("Should not be null", exclusionServiceFactory.getExclusionService("moduleName", "flowName") );
-        this.mockery.assertIsSatisfied();
+        BlackListLinkedHashMap<String,String> blackList = new BlackListLinkedHashMap<String,String>(5);
+        blackList.put("1", "one");
+        blackList.put("2", "two");
+        blackList.put("3", "three");
+        blackList.put("4", "four");
+        blackList.put("5", "five");
+
+        Assert.assertTrue("Should be five entries", blackList.size() == 5);
+        Assert.assertTrue("Should contain entry 1", blackList.containsKey("1"));
+        Assert.assertTrue("Should contain entry 2", blackList.containsKey("2"));
+        Assert.assertTrue("Should contain entry 3", blackList.containsKey("3"));
+        Assert.assertTrue("Should contain entry 4", blackList.containsKey("4"));
+        Assert.assertTrue("Should contain entry 5", blackList.containsKey("5"));
+
+        blackList.put("6", "six");
+        Assert.assertTrue("Should be five entries", blackList.size() == 5);
+        Assert.assertFalse("Should not contain entry 1", blackList.containsKey("1"));
+        Assert.assertTrue("Should contain entry 2", blackList.containsKey("2"));
+        Assert.assertTrue("Should contain entry 3", blackList.containsKey("3"));
+        Assert.assertTrue("Should contain entry 4", blackList.containsKey("4"));
+        Assert.assertTrue("Should contain entry 5", blackList.containsKey("5"));
+        Assert.assertTrue("Should contain entry 6", blackList.containsKey("6"));
+
     }
+
 }
