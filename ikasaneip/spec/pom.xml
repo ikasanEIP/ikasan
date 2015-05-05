@@ -52,14 +52,15 @@
     <name>Ikasan Enterprise Integration Specification Contracts</name>
 
     <modules>
-       <module>component</module>
-       <module>event</module>
-       <module>flow</module>
-       <module>module</module>
-       <module>recoveryManager</module>
-       <module>monitor</module>
-       <module>service</module>
-       <module>uber</module>
+        <module>component</module>
+        <module>event</module>
+        <module>flow</module>
+        <module>module</module>
+        <module>recoveryManager</module>
+        <module>monitor</module>
+        <module>service</module>
+        <module>rest</module>
+        <module>uber</module>
     </modules>
 
     <build>

@@ -114,6 +114,7 @@
         <module>management</module>
         <module>webconsole</module>
         <module>console</module>
+        <module>rest</module>
 
         <!-- developer tooling -->
         <module>developer</module>
@@ -936,6 +937,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-wiretap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

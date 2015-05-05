@@ -157,5 +157,9 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-search</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-rest</artifactId>
+        </dependency>
     </dependencies>
 </project>
