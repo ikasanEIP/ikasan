@@ -39,7 +39,7 @@
  * ====================================================================
  */
 
-package org.ikasan.spec.error;
+package org.ikasan.spec.error.reporting;
 
 /**
  * This contract represents a platform level service for the heavyweight logging of
@@ -59,9 +59,18 @@ public interface ErrorReportingService<EVENT>
      * @param flowElementName
      * @param event
      * @param throwable
+     * @return uri for this reported error instance
      */
-    public void notify(String flowElementName, EVENT event, Throwable throwable);
+    public String notify(String flowElementName, EVENT event, Throwable throwable);
 
+    /**
+     * Logs an Error where no inflight Event was present.
+     *
+     * @param flowElementName
+     * @param throwable
+     * @return uri for this reported error instance
+     */
+    public String notify(String flowElementName, Throwable throwable);
 
     /**
      * Allow entities blacklisted to be marked with a timeToLive.

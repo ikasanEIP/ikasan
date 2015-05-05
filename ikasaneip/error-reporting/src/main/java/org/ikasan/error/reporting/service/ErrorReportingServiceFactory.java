@@ -38,19 +38,60 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.dao;
+package org.ikasan.error.reporting.service;
+
+import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao;
+import org.ikasan.spec.error.ErrorReportingService;
 
 /**
- * Exclusion Service Data Access Contract.
+ * ErrorReportingService Factory.
+ *
  * @author Ikasan Development Team
  */
-public interface ErrorReportingServiceDao<EVENT>
+public class ErrorReportingServiceFactory
 {
+    /** DAO handle */
+    ErrorReportingServiceDao errorReportingServiceDao;
 
-    public void save(EVENT event);
+    /** singleton instance */
+    private static ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactory();
 
     /**
-     * Support delete of expired exclusionEvents
+     * Get singleton instance
+     * @return
      */
-    public void deleteExpired();
+    public static ErrorReportingServiceFactory getInstance()
+    {
+        return errorReportingServiceFactory;
+    }
+
+    /**
+     * Constructor
+     */
+    private ErrorReportingServiceFactory()
+    {
+        this.errorReportingServiceDao = new HibernateErrorReportingServiceDao();
+    }
+
+    /**
+     * Constructor
+     */
+    public ErrorReportingServiceFactory(ErrorReportingServiceDao errorReportingServiceDao)
+    {
+        this.errorReportingServiceDao = errorReportingServiceDao;
+        if(errorReportingServiceDao == null)
+        {
+            throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
+        }
+    }
+
+    /**
+     * Get an instance of the ErrorReportingService
+     * @return
+     */
+    public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
+    {
+        return new ErrorReportingServiceDefaultImpl(moduleName, flowName, errorReportingServiceDao);
+    }
 }

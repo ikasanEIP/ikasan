@@ -30,7 +30,7 @@
                   type="java.lang.String"
                   column="Name" />
 
-        <property name="createdDateTime"
+        <property name="timestamp"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="true" />

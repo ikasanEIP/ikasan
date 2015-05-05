@@ -24,7 +24,7 @@
             <key-property name="roleId" column="RoleId"/>
         </composite-id>
 
-        <property name="createdDateTime"
+        <property name="timestamp"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="false" />
