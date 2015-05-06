@@ -41,7 +41,7 @@
 package org.ikasan.spec.serialiser;
 
 /**
- * Serialiser contract for serialiser instances for the serialisation / deserialisation of classes.
+ * Serialiser contract for serialiser instances supporting the serialisation / deserialisation of classes.
  * 
  * @author Ikasan Development Team
  *
@@ -49,7 +49,7 @@ package org.ikasan.spec.serialiser;
 public interface Serialiser<OBJECT,SERIALISED>
 {
     /**
-     * Serialise the incoming onject
+     * Serialise the incoming object
      * @param source
      * @return
      */

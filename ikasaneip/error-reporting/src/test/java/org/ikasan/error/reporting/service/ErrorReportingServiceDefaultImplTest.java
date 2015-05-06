@@ -71,16 +71,6 @@ import javax.annotation.Resource;
 
 public class ErrorReportingServiceDefaultImplTest
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private Mockery mockery = new Mockery()
-    {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
-    FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
-
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
 
@@ -103,46 +93,29 @@ public class ErrorReportingServiceDefaultImplTest
     }
 
     /**
-     * Test exclusion add, contains, remove
+     * Test notify
      */
     @DirtiesContext
     @Test
-    public void test_errorReporting_notify()
+    public void test_errorReporting_notify_no_inflight_event()
     {
         ErrorReportingService<?,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", errorReportingServiceDao);
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                // when checked in the backlist
-                exactly(4).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when added to the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when checked in the backlist
-                exactly(1).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when removed from the backlist
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-                // when re-checked in the backlist
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue("123456"));
-
-            }
-        });
-
         String uri = errorReportingService.notify("flowElementName", new Exception("test"));
         ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be blacklisted", errorOccurrence);
+        Assert.assertNotNull("Should not be null", errorOccurrence);
+    }
 
-        this.mockery.assertIsSatisfied();
+    /**
+     * Test notify
+     */
+    @DirtiesContext
+    @Test
+    public void test_errorReporting_notify_with_inflight_string_event()
+    {
+        ErrorReportingService<String,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", errorReportingServiceDao);
+        String uri = errorReportingService.notify("flowElementName", "string based event", new Exception("test"));
+        ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
+        Assert.assertNotNull("Should not be null", errorOccurrence);
     }
 
     /**
