@@ -170,7 +170,7 @@
     </beans:bean>
 
     <!-- The security session factory -->
-    <beans:bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+    <beans:bean id="securitySessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <beans:property name="dataSource" ref="ikasan.ds" />
         <beans:property name="mappingResources">
             <beans:list>

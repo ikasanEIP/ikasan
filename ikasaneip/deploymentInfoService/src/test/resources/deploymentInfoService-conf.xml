@@ -15,7 +15,7 @@
 
     <!-- the persistence session factory -->
     <bean id="deploymentInfoSessionFactory"
-        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.xads" />
         <property name="mappingResources" ref="deploymentInfoResources" />
         <property name="hibernateProperties" ref="platformHibernateProperties" />
