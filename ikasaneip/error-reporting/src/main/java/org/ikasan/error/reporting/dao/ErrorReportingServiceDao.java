@@ -41,15 +41,26 @@
 package org.ikasan.error.reporting.dao;
 
 /**
- * Exclusion Service Data Access Contract.
+ * Error Reporting Service Data Access Contract.
  * @author Ikasan Development Team
  */
 public interface ErrorReportingServiceDao<EVENT>
 {
-
-    public void save();
     /**
-     * Support delete of expired exclusionEvents
+     * Find an error reporting event instance from the incoming uri.
+     * @param uri
+     * @return EVENT
+     */
+    public EVENT find(String uri);
+
+    /**
+     * Save the incoming EVENT.
+     * @param event
+     */
+    public void save(EVENT event);
+
+    /**
+     * Support delete of expired error reporting events.
      */
     public void deleteExpired();
 }

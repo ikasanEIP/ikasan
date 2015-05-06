@@ -48,9 +48,8 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <artifactId>ikasan-marshaller</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-xml-marshaller</artifactId>
@@ -62,26 +61,22 @@
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
-            <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
 
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>2.8.0</version>
-        </dependency>
+           </dependency>
         
         <dependency>
             <groupId>com.io7m.xom</groupId>
             <artifactId>xom</artifactId>
-            <version>1.2.10</version>
-        </dependency>
+           </dependency>
 
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.5</version>
             <scope>test</scope>
         </dependency>
 

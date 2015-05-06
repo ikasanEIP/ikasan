@@ -49,8 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>1.0.0-rc4-SNAPSHOT</version>
-        <relativePath />
+        <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
     
   <artifactId>ikasan-error-reporting-service</artifactId>
@@ -93,42 +92,36 @@
       <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-spec-error-reporting</artifactId>
-          <version>1.0.0-rc4-SNAPSHOT</version>
-          <scope>provided</scope>
-      </dependency>
-
-      <!--dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-configuration</artifactId>
-          <version>1.0.0-rc4-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spec-management</artifactId>
-          <version>1.0.0-rc4-SNAPSHOT</version>
+          <artifactId>ikasan-spec-event</artifactId>
           <scope>provided</scope>
-      </dependency-->
+      </dependency>
+
+      <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-component</artifactId>
+          <scope>provided</scope>
+      </dependency>
 
       <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-spec-flow</artifactId>
-          <version>1.0.0-rc4-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-core</artifactId>
-          <version>3.5.4-Final</version>
           <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-orm</artifactId>
-          <version>3.1.1.RELEASE</version>
           <scope>provided</scope>
       </dependency>
 
@@ -137,56 +130,48 @@
       <dependency>
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
-          <version>1.1.1</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>org.jmock</groupId>
           <artifactId>jmock</artifactId>
-          <version>2.5.1</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>org.jmock</groupId>
           <artifactId>jmock-legacy</artifactId>
-          <version>2.5.1</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jdk14</artifactId>
-          <version>1.5.11</version>
+          <artifactId>slf4j-log4j12</artifactId>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
-          <version>1.5.11</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-test</artifactId>
-          <version>3.1.1.RELEASE</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-          <version>1.4.178</version>
           <scope>test</scope>
       </dependency>
 
       <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
-          <version>4.8.2</version>
           <scope>test</scope>
       </dependency>
 
@@ -194,7 +179,6 @@
       <dependency>
           <groupId>javassist</groupId>
           <artifactId>javassist</artifactId>
-          <version>3.12.1.GA</version>
           <scope>test</scope>
       </dependency>
 

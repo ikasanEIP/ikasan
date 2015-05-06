@@ -60,7 +60,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/exclusion-service-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/h2db-datasource-conf.xml"
         })
 
 public class ExclusionServiceFactoryTest

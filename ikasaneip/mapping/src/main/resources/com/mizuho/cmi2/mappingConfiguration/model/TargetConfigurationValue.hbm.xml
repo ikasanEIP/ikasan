@@ -31,7 +31,7 @@
                   type="java.lang.String"
                   column="TargetSystemValue" />
 
-        <property name="createdDateTime"
+        <property name="timestamp"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="true" />
