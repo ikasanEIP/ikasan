@@ -40,32 +40,51 @@
  */
 package org.ikasan.serialiser.service;
 
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserService;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Implementation of the ErrorReportingSerialiserService.
+ * Implementation of the SerialiserService.
  * 
  * @author Ikasan Development Team
  * 
  */
-public class SerialiserServiceFSTImpl
+public class SerialiserServiceDefaultImpl implements SerialiserService
 {
-    public void serialise(OutputStream stream, Object cls) throws IOException {
-        FSTObjectOutput out = new FSTObjectOutput(stream);
-        out.writeObject( cls );
-        out.close(); // required !
+    Map<Class,Serialiser> lastResortSerialisers = new HashMap<Class,Serialiser>();
+    Map<Class,Serialiser> serialisers = new HashMap<Class,Serialiser>();
+
+    @Override
+    public Serialiser getSerialiser(Class cls)
+    {
+        Serialiser serialiser = serialisers.get(cls);
+        if(serialiser == null)
+        {
+            serialiser = lastResortSerialisers.get(cls);
+            if(serialiser == null)
+            {
+                for(Map.Entry<Class,Serialiser> entry:serialisers.entrySet())
+                {
+                    Class _cls = entry.getKey();
+                    if(_cls.isAssignableFrom(cls))
+                    {
+                        lastResortSerialisers.put(cls,entry.getValue());
+                        serialiser = entry.getValue();
+                    }
+
+                }
+
+            }
+        }
+
+        return serialiser;
     }
 
-    public Object deserialise(InputStream stream) throws IOException, ClassNotFoundException
-    {
-        FSTObjectInput in = new FSTObjectInput(stream);
-        Object result = in.readObject();
-        in.close(); // required !
-        return result;
+    @Override
+    public void setSerialiser(Serialiser serialiser, Class cls) {
+
     }
 }

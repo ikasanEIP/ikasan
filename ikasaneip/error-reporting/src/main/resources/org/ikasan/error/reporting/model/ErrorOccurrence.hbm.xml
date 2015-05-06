@@ -72,7 +72,7 @@
                   not-null="false" />
 
         <property name="errorDetail"
-                  type="java.lang.String"
+                  type="text"
                   column="ErrorDetail"
                   not-null="false" />
 

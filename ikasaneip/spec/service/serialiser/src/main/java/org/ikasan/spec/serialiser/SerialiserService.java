@@ -41,7 +41,7 @@
 package org.ikasan.spec.serialiser;
 
 /**
- * Serialiser Service contract provisions the management of Serialiser instances for given classes.
+ * Serialiser Service contract provisions the association of Serialiser instances for given classes.
  * 
  * @author Ikasan Development Team
  *

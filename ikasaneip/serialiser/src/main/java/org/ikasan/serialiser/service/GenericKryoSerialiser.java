@@ -43,18 +43,17 @@ package org.ikasan.serialiser.service;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.nustaq.serialization.FSTObjectInput;
-import org.nustaq.serialization.FSTObjectOutput;
+import org.ikasan.spec.serialiser.Serialiser;
 
 import java.io.*;
 
 /**
- * Implementation of the ErrorReportingSerialiserService.
+ * Implementation of the SerialiserService.
  * 
  * @author Ikasan Development Team
  * 
  */
-public class SerialiserServiceKyroImpl
+public class GenericKryoSerialiser implements Serialiser
 {
     public void serialise(OutputStream stream, Object cls) throws IOException
     {

@@ -83,6 +83,7 @@
         <module>module</module>
         <module>bootstrap</module>  <!-- TODO - is this still required ? -->
         <module>scheduler</module>
+        <module>serialiser</module>
         <module>exclusion</module>
         <module>error-reporting</module>
         <module>recovery-manager</module>
@@ -423,6 +424,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.hibernate>3.5.4-Final</version.org.hibernate>
+        <version.kryo>3.0.1</version.kryo>
         <version.org.springframework>3.1.1.RELEASE</version.org.springframework>
         <version.org.springframework.security>3.2.6.RELEASE</version.org.springframework.security>
         <version.org.springframework.security.spring-security-config>3.1.3.RELEASE</version.org.springframework.security.spring-security-config>
@@ -846,6 +848,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-serialiser</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -877,6 +885,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-quartz-endpoint</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-serialiser</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -960,12 +974,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-jms-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-recovery-manager</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1026,12 +1034,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-utility-endpoint</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-mongo-endpoint</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1084,6 +1086,12 @@
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-uber-spec</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${version.kryo}</version>
             </dependency>
 
             <dependency>

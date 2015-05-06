@@ -78,7 +78,7 @@ public class SerialiserServiceDefaultImplTest
     @Test
     public void test_serialise_using_kyro() throws IOException, ClassNotFoundException
     {
-        SerialiserServiceKyroImpl serialiserService = new SerialiserServiceKyroImpl();
+        GenericKryoSerialiser serialiserService = new GenericKryoSerialiser();
 
         PrimitiveClass primitiveClass = new PrimitiveClass();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
