@@ -943,6 +943,12 @@
                 <artifactId>ikasan-spec-wiretap</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
