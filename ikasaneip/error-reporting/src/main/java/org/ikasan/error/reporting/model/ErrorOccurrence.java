@@ -40,7 +40,7 @@
  */
 package org.ikasan.error.reporting.model;
 
-import java.util.Date;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 
 /**
  * This class represents an occurrence of an error in the system encapsulating as much as 
@@ -51,10 +51,8 @@ import java.util.Date;
  */
 public class ErrorOccurrence<EVENT>
 {
-	/**
-	 * Unique identifier, populated by persistence mechanism
-	 */
-	private long id;
+    /** unique identifier for this instance */
+    private String uri;
 
     /**
      * name of the module where this error occurred
@@ -79,7 +77,12 @@ public class ErrorOccurrence<EVENT>
 	/**
 	 * Id of the event associated with this error, if it was event/flow related
 	 */
-	private String eventIdentifier;
+	private String eventLifeIdentifier;
+
+    /**
+     * Related identifier
+     */
+    private String eventRelatedIdentifier;
 
     /**
      * Representation of the Event at the time that the error took place
@@ -89,26 +92,78 @@ public class ErrorOccurrence<EVENT>
     /**
 	 * Time that this error was logged
 	 */
-	private long createdDateTime;
+	private long timestamp;
 
-	/**
-	 * useby date for the errorOccurrence, after which the system may delete it
-	 */
-	private long expiry;
+    /**
+     * useby date for the errorOccurrence, after which the system may delete it
+     */
+    private long expiry;
 
-    public long getId() {
-        return id;
+    /**
+     * Constructor
+     */
+    private ErrorOccurrence()
+    {
+        // required by the ORM
     }
 
-    public void setId(long id) {
-        this.id = id;
+    /**
+     * Constructor
+     * @param moduleName
+     * @param flowName
+     * @param flowElementName
+     * @param errorDetail
+     * @param event
+     */
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, EVENT event)
+    {
+        this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null");
+        }
+
+        this.flowName = flowName;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null");
+        }
+
+        this.flowElementName = flowElementName;
+        if(flowElementName == null)
+        {
+            throw new IllegalArgumentException("flowElementName cannot be 'null");
+        }
+
+        this.errorDetail = errorDetail;
+        if(errorDetail == null)
+        {
+            throw new IllegalArgumentException("errorDetail cannot be 'null");
+        }
+
+        this.event = event;
+        this.timestamp = System.currentTimeMillis();
+        this.uri = String.valueOf(this.hashCode());
+        this.expiry = System.currentTimeMillis() + ErrorReportingService.DEFAULT_TIME_TO_LIVE;
+    }
+
+    /**
+     * Constructor
+     * @param moduleName
+     * @param flowName
+     * @param flowElementName
+     * @param errorDetail
+     */
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail)
+    {
+        this(moduleName, flowName, flowElementName, errorDetail, null);
     }
 
     public String getModuleName() {
         return moduleName;
     }
 
-    public void setModuleName(String moduleName) {
+    private void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -116,7 +171,7 @@ public class ErrorOccurrence<EVENT>
         return flowName;
     }
 
-    public void setFlowName(String flowName) {
+    private void setFlowName(String flowName) {
         this.flowName = flowName;
     }
 
@@ -124,7 +179,7 @@ public class ErrorOccurrence<EVENT>
         return flowElementName;
     }
 
-    public void setFlowElementName(String flowElementName) {
+    private void setFlowElementName(String flowElementName) {
         this.flowElementName = flowElementName;
     }
 
@@ -132,32 +187,32 @@ public class ErrorOccurrence<EVENT>
         return errorDetail;
     }
 
-    public void setErrorDetail(String errorDetail) {
+    private void setErrorDetail(String errorDetail) {
         this.errorDetail = errorDetail;
     }
 
-    public String getEventIdentifier() {
-        return eventIdentifier;
+    public String getEventLifeIdentifier() {
+        return eventLifeIdentifier;
     }
 
-    public void setEventIdentifier(String eventIdentifier) {
-        this.eventIdentifier = eventIdentifier;
+    public void setEventLifeIdentifier(String eventLifeIdentifier) {
+        this.eventLifeIdentifier = eventLifeIdentifier;
     }
 
     public EVENT getEvent() {
         return event;
     }
 
-    public void setEvent(EVENT event) {
+    private void setEvent(EVENT event) {
         this.event = event;
     }
 
-    public long getCreatedDateTime() {
-        return createdDateTime;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setCreatedDateTime(long createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    private void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public long getExpiry() {
@@ -168,26 +223,49 @@ public class ErrorOccurrence<EVENT>
         this.expiry = expiry;
     }
 
-    /**
-	 * @param throwable
-	 * @return
-	 */
-	private String flattenThrowable(Throwable throwable) {
-		StringBuffer flattenedBuffer = new StringBuffer();
-		
-		Throwable cause = throwable;
-		while (cause!=null){
-			flattenedBuffer.append(throwable.toString());
-			flattenedBuffer.append("\n");
-			for (StackTraceElement stackTraceElement : cause.getStackTrace()){
-				flattenedBuffer.append(stackTraceElement.toString());
-				flattenedBuffer.append("\n");
-			}
-			if (cause.getCause()!=null){
-				flattenedBuffer.append("caused by ...\n");
-			}
-			cause = cause.getCause();
-		}
-		return flattenedBuffer.toString();
-	}
+    public String getEventRelatedIdentifier() {
+        return eventRelatedIdentifier;
+    }
+
+    public void setEventRelatedIdentifier(String eventRelatedIdentifier) {
+        this.eventRelatedIdentifier = eventRelatedIdentifier;
+    }
+
+    public String getUri()
+    {
+        return this.uri;
+    }
+
+    private void setUri(String uri)
+    {
+        this.uri = uri;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ErrorOccurrence that = (ErrorOccurrence) o;
+
+        if (timestamp != that.timestamp) return false;
+        if (!errorDetail.equals(that.errorDetail)) return false;
+        if (event != null ? !event.equals(that.event) : that.event != null) return false;
+        if (!flowElementName.equals(that.flowElementName)) return false;
+        if (!flowName.equals(that.flowName)) return false;
+        if (!moduleName.equals(that.moduleName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = moduleName.hashCode();
+        result = 31 * result + flowName.hashCode();
+        result = 31 * result + flowElementName.hashCode();
+        result = 31 * result + errorDetail.hashCode();
+        result = 31 * result + (event != null ? event.hashCode() : 0);
+        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
+        return result;
+    }
 }

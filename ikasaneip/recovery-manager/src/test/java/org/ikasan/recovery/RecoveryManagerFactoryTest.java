@@ -40,18 +40,16 @@
  */
 package org.ikasan.recovery;
 
-import java.util.Map;
-
 import junit.framework.Assert;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
-import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
@@ -84,18 +82,11 @@ public class RecoveryManagerFactoryTest
     /** Mock exclusion service */
     final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
 
+    /** Mock error reporting service */
+    final ErrorReportingService errorReportingService = mockery.mock(ErrorReportingService.class, "mockErrorReportingService");
+
     /** Mock scheduledJobFactory */
     final ScheduledJobFactory scheduledJobFactory = mockery.mock(ScheduledJobFactory.class, "mockScheduledJobFactory");
-
-    /** Mock scheduledJobs */
-    final Map<String,Job> scheduledJobs = mockery.mock(Map.class, "mockScheduledJobs");
-
-    /** Mock job */
-    final Job job = mockery.mock(Job.class, "mockJob");
-
-    /** Mock schedledRecoveryManager */
-    final ScheduledRecoveryManager scheduledRecoveryManager = 
-        mockery.mock(ScheduledRecoveryManager.class, "mockScheduledRecoveryManager");
 
     /**
      * Test failed constructor due to null scheduler.
@@ -123,7 +114,7 @@ public class RecoveryManagerFactoryTest
     public void test_successful_getRecovery_instance() throws SchedulerException
     {
         RecoveryManagerFactory recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
-        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer, exclusionService) instanceof ScheduledRecoveryManager);
+        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer, exclusionService, errorReportingService) instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }
@@ -136,7 +127,7 @@ public class RecoveryManagerFactoryTest
     public void test_successful_getRecovery_instance_with_resolver() throws SchedulerException
     {
         RecoveryManagerFactory recoveryManagerFactory = new RecoveryManagerFactory(scheduler, scheduledJobFactory);
-        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer, exclusionService) instanceof ScheduledRecoveryManager);
+        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName", consumer, exclusionService, errorReportingService) instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }

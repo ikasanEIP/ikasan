@@ -191,18 +191,12 @@ public class MappingConfigurationServiceTest
         this.addSourceSystemConfiguration("true", mappingConfigurationId3, targetId8);
     }
 
-    @Test(expected = IllegalArgumentException.class) 
-    @DirtiesContext
-    public void test_null_keyLocationQueryProcessorFactory() throws KeyLocationQueryProcessorException
-    {
-        new MappingConfigurationServiceImpl(this.xaMappingConfigurationDao, null);
-    }
 
     @Test(expected = IllegalArgumentException.class) 
     @DirtiesContext
     public void test_null_dao() throws KeyLocationQueryProcessorException
     {
-        new MappingConfigurationServiceImpl(null, this.keyLocationQueryProcessorFactory);
+        new MappingConfigurationServiceImpl(null);
     }
 
     @Test 
@@ -339,36 +333,6 @@ public class MappingConfigurationServiceTest
 
         System.out.println(result);
         Assert.assertEquals(1, result.size());
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_get_target_system_value_with_payload_and_client_name_success() throws MappingConfigurationServiceException
-    {
-        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
-                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
-
-        System.out.println(result);
-        Assert.assertEquals("ZEKRAA", result);
-    }
-
-    @Test (expected = MappingConfigurationServiceException.class) 
-    @DirtiesContext
-    public void test_get_target_system_value_with_paylaod_and_client_name_empty_xml_node_fail() throws MappingConfigurationServiceException
-    {
-        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
-                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML_EMPTY_SALESPERSON.getBytes());
-
-        System.out.println(result);
-        Assert.assertEquals("ZEKRAA", result);
-    }
-
-    @Test (expected = MappingConfigurationServiceException.class) 
-    @DirtiesContext
-    public void test_get_target_system_value_with_paylaod_and_client_name_no_xml_node_fail() throws MappingConfigurationServiceException
-    {
-        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
-                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML_NO_SALESPERSON.getBytes());
     }
 
     @Test
@@ -684,60 +648,6 @@ public class MappingConfigurationServiceTest
                 Assert.assertEquals(targetConfigurationValue.getId(), sourceConfigutationValue.getTargetConfigurationValue().getId());
             }
         }
-    }
-
-    @Test (expected = MappingConfigurationServiceException.class) 
-    @DirtiesContext
-    public void test_resolution_of_target_configuration_value_returns_null_string_fail() throws MappingConfigurationServiceException
-    {
-        final List<String> keyLocationQueries = new ArrayList<String>();
-        keyLocationQueries.add("/PTF/SPTM/SLSPRSN");
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                  one(mockMappingConfigurationDao).getKeyLocationQuery(with(any(String.class)), with(any(String.class)), 
-                      with(any(String.class)), with(any(String.class)));
-                  will(returnValue(keyLocationQueries));
-                  one(mockMappingConfigurationDao).getTargetConfigurationValue(with(any(String.class)), with(any(String.class))
-                      , with(any(String.class)), with(any(String.class)), with(any(ArrayList.class)));
-                  will(returnValue(null));
-            }
-        });
-
-        MappingConfigurationService serviceToTest = new MappingConfigurationServiceImpl
-                      (mockMappingConfigurationDao, keyLocationQueryProcessorFactory);
-        serviceToTest.getTargetConfigurationValue
-                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
-
-        mockery.assertIsSatisfied();
-    }
-
-    @Test (expected = MappingConfigurationServiceException.class) 
-    @DirtiesContext
-    public void test_resolution_of_target_configuration_value_returns_empty_string_fail() throws MappingConfigurationServiceException
-    {
-        final List<String> keyLocationQueries = new ArrayList<String>();
-        keyLocationQueries.add("/PTF/SPTM/SLSPRSN");
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                  one(mockMappingConfigurationDao).getKeyLocationQuery(with(any(String.class)), with(any(String.class)), 
-                      with(any(String.class)), with(any(String.class)));
-                  will(returnValue(keyLocationQueries));
-                  one(mockMappingConfigurationDao).getTargetConfigurationValue(with(any(String.class)), with(any(String.class))
-                      , with(any(String.class)), with(any(String.class)), with(any(ArrayList.class)));
-                  will(returnValue(""));
-            }
-        });
-
-        MappingConfigurationService serviceToTest = new MappingConfigurationServiceImpl
-                      (mockMappingConfigurationDao, keyLocationQueryProcessorFactory);
-        serviceToTest.getTargetConfigurationValue
-                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
-
-        mockery.assertIsSatisfied();
     }
 
     /**

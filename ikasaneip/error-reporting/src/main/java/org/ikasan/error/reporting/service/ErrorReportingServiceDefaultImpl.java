@@ -41,7 +41,8 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.spec.error.ErrorReportingService;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
 
 /**
@@ -49,7 +50,7 @@ import org.ikasan.spec.flow.FlowEvent;
  *
  * @author Ikasan Development Team
  */
-public class ErrorReportingServiceDefaultImpl implements ErrorReportingService<FlowEvent<String,?>>
+public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingService<EVENT,ErrorOccurrence>
 {
     /** module name */
     String moduleName;
@@ -58,16 +59,57 @@ public class ErrorReportingServiceDefaultImpl implements ErrorReportingService<F
     String flowName;
 
     /** handle to the underlying DAO */
-    ErrorReportingServiceDao<FlowEvent<String,?>> errorReportingServiceDao;
+    ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao;
 
     /** allow override of timeToLive */
     Long timeToLive = ErrorReportingService.DEFAULT_TIME_TO_LIVE;
 
+    /**
+     * Constructor
+     * @param moduleName
+     * @param flowName
+     */
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    {
+        this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+
+        this.flowName = flowName;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
+
+        this.errorReportingServiceDao = errorReportingServiceDao;
+        if(errorReportingServiceDao == null)
+        {
+            throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
+        }
+    }
 
     @Override
-    public void notify(String flowElementName, FlowEvent<String, ?> stringFlowEvent, Throwable throwable)
+    public ErrorOccurrence find(String uri)
     {
-        this.errorReportingServiceDao.save();
+        return this.errorReportingServiceDao.find(uri);
+    }
+
+    @Override
+    public String notify(String flowElementName, EVENT event, Throwable throwable)
+    {
+        ErrorOccurrence errorOccurrence = newErrorOccurrence(flowElementName, event, throwable);
+        this.errorReportingServiceDao.save(errorOccurrence);
+        return errorOccurrence.getUri();
+    }
+
+    @Override
+    public String notify(String flowElementName, Throwable throwable)
+    {
+        ErrorOccurrence errorOccurrence = newErrorOccurrence(flowElementName, throwable);
+        this.errorReportingServiceDao.save(errorOccurrence);
+        return errorOccurrence.getUri();
     }
 
     @Override
@@ -81,4 +123,60 @@ public class ErrorReportingServiceDefaultImpl implements ErrorReportingService<F
     {
         this.errorReportingServiceDao.deleteExpired();
     }
+
+    /**
+     * Instantiate an ErrorOccurrence
+     * @param flowElementName
+     * @param throwable
+     * @return
+     */
+    private ErrorOccurrence newErrorOccurrence(String flowElementName, Object event, Throwable throwable)
+    {
+        if(event instanceof FlowEvent)
+        {
+            FlowEvent<String,?> flowEvent = (FlowEvent)event;
+            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), event);
+            errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
+            errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
+            return errorOccurrence;
+        }
+
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), event);
+        return errorOccurrence;
+    }
+
+    /**
+     * Instantiate an ErrorOccurrence
+     * @param flowElementName
+     * @param throwable
+     * @return
+     */
+    private ErrorOccurrence newErrorOccurrence(String flowElementName, Throwable throwable)
+    {
+        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable));
+    }
+
+    /**
+     * @param throwable
+     * @return
+     */
+    private String flattenThrowable(Throwable throwable) {
+        StringBuffer flattenedBuffer = new StringBuffer();
+
+        Throwable cause = throwable;
+        while (cause!=null){
+            flattenedBuffer.append(throwable.toString());
+            flattenedBuffer.append("\n");
+            for (StackTraceElement stackTraceElement : cause.getStackTrace()){
+                flattenedBuffer.append(stackTraceElement.toString());
+                flattenedBuffer.append("\n");
+            }
+            if (cause.getCause()!=null){
+                flattenedBuffer.append("caused by ...\n");
+            }
+            cause = cause.getCause();
+        }
+        return flattenedBuffer.toString();
+    }
+
 }
