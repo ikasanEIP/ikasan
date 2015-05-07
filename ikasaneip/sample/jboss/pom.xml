@@ -47,17 +47,12 @@
         <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sample-parent</artifactId>
+    <artifactId>sample-jboss-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Specification Contracts</name>
+    <name>Ikasan Enterprise Integration Jboss samples</name>
 
     <modules>
-        <module>techEndpoint</module>
-        <module>standaloneJVM</module>
-        <module>genericTechPriceSrc</module>
-        <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
-        <module>scheduleDrivenSrc</module>
-        <module>jboss</module>
+        <module>ftp</module>
     </modules>
 
 </project>
