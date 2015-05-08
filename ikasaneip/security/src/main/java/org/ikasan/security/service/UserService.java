@@ -140,4 +140,28 @@ public interface UserService extends UserDetailsManager
      * @param newAuthority
      */
     public void createAuthority(Authority newAuthority);
+
+    /**
+     * Retrieves a List of <code>User</code> whose username like username%
+     * 
+     * @param username
+     * @return specified <code>User</code> or null if does not exist
+     */
+    public List<User> getUserByUsernameLike(String username);
+    
+    /**
+     * Retrieves a List of <code>User</code> whose firstname like firstname%
+     * 
+     * @param username
+     * @return specified <code>User</code> or null if does not exist
+     */
+    public List<User> getUserByFirstnameLike(String firstname);
+    
+    /**
+     * Retrieves a List of <code>User</code> whose surname like surname%
+     * 
+     * @param username
+     * @return specified <code>User</code> or null if does not exist
+     */
+    public List<User> getUserBySurnameLike(String surname);
 }

@@ -10,6 +10,7 @@
 	
 	<groupId>org.ikasan</groupId>
     <artifactId>ikasan-mapping</artifactId>
+	<version>1.0.0-rc5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Ikasan Mapping</name>
     <description>A library for managing mapping configurations for the Ikasan platform</description>
@@ -23,6 +24,12 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
 				<scope>provided</scope>
@@ -31,10 +38,16 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock</artifactId>
@@ -72,10 +85,10 @@
 		</dependency>
 	
 		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<scope>test</scope>
-		</dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+              <scope>test</scope>
+        </dependency>
 	
 		<dependency>
 				<groupId>geronimo-spec</groupId>

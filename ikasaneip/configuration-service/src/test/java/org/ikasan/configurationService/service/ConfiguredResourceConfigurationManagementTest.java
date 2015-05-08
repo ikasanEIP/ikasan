@@ -40,8 +40,20 @@
  */
 package org.ikasan.configurationService.service;
 
-import org.ikasan.configurationService.dao.ConfigurationHibernateImpl;
-import org.ikasan.configurationService.model.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.ikasan.configurationService.dao.ConfigurationDao;
+import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
+import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
+import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -54,15 +66,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
@@ -73,7 +79,8 @@ import java.util.Map;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/configuration-service-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/hsqldb-datasource-conf.xml",
+        "/substitute-components.xml"
         })
 
 public class ConfiguredResourceConfigurationManagementTest
@@ -85,16 +92,9 @@ public class ConfiguredResourceConfigurationManagementTest
     {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
-
-    @Before
-    public void clearDownDb(){
-        setupDao.getHibernateTemplate().deleteAll(
-            setupDao.getHibernateTemplate().find("from org.ikasan.configurationService.model.DefaultConfiguration")
-        );
-    }
     
     @Resource
-    ConfigurationHibernateImpl setupDao;
+    ConfigurationDao configurationServiceDao;
 
     @Resource
     ConfigurationManagement configurationManagement;
@@ -112,6 +112,7 @@ public class ConfiguredResourceConfigurationManagementTest
      * This fails as there is no instance of a configuration class registered with the configuredResource.
      */
     @Test (expected = RuntimeException.class)
+    @DirtiesContext
     public void test_failed_configurationManagement_create_configuration_not_configuration_instance_on_configuredResource()
     {
         // expectations
@@ -137,6 +138,7 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful creation of a dao through the configurationManagement contract implementation.
      */
     @Test
+    @DirtiesContext
     public void test_configurationManagement_create_configuration()
     {
         final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
@@ -164,6 +166,7 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful save of a mixed based dao through the configurationManagement contract implementation.
      */
     @Test
+    @DirtiesContext
     public void test_configurationManagement_save_mixed_based_configuration()
     {
         Configuration<List<ConfigurationParameter>> configuration =
@@ -198,7 +201,7 @@ public class ConfiguredResourceConfigurationManagementTest
         Configuration<List<ConfigurationParameter>> configuration =
                 new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
         configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
-        this.setupDao.save(configuration);
+        this.configurationServiceDao.save(configuration);
 
         configurationManagement.deleteConfiguration(configuration);
         this.mockery.assertIsSatisfied();

@@ -58,8 +58,8 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.wiretap.model.ArrayListPagedSearchResult;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of the <code>WiretapDao</code>
@@ -130,7 +130,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
         // get the WiretapFlowEvent
         WiretapFlowEvent wiretapEvent = (WiretapFlowEvent) getHibernateTemplate().get(WiretapFlowEvent.class, identifier);
         // find any next or previous by eventId
-        List<Long> relatedIds = getHibernateTemplate().find(WIRETAP_IDS_FOR_GROUPED_EVENT_ID, wiretapEvent.getEventId());
+        List<Long> relatedIds = (List<Long>) getHibernateTemplate().find(WIRETAP_IDS_FOR_GROUPED_EVENT_ID, wiretapEvent.getEventId());
         Collections.sort(relatedIds);
         int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getIdentifier());
         Long nextEvent = null;
@@ -171,7 +171,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             final Set<String> moduleNames, final String moduleFlow, final String componentName, final String eventId, final String payloadId, final Date fromDate, final Date untilDate,
             final String payloadContent)
     {
-        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback()
+        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
@@ -291,7 +291,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 		while(housekeepablesExist()){
 			final List<Long> housekeepableBatch = getHousekeepableBatch();
 			
-			getHibernateTemplate().execute(new HibernateCallback()
+			getHibernateTemplate().execute(new HibernateCallback<Object>()
 	        {
 	            public Object doInHibernate(Session session) throws HibernateException
 	            {
@@ -340,7 +340,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 	 * @return true if there is at least 1 expired WiretapFlowEvent 
 	 */
 	private boolean housekeepablesExist() {
-		return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
+		return (Boolean) getHibernateTemplate().execute(new HibernateCallback<Object>()
         {
             public Object doInHibernate(Session session) throws HibernateException
             {

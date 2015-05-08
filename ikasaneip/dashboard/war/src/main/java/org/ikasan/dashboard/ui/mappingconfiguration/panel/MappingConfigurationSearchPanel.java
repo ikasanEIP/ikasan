@@ -1,14 +1,42 @@
-/*
- * $Id: MappingConfigurationSearchPanel.java 40648 2014-11-07 11:12:53Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI/war/src/main/java/org/ikasan/mapping/configuration/ui/panel/MappingConfigurationSearchPanel.java $
+ /*
+ * $Id$
+ * $URL$
  *
  * ====================================================================
+ * Ikasan Enterprise Integration Platform
  *
- * Copyright (c) 2000-2011 by Mizuho International plc.
- * All Rights Reserved.
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
  *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
@@ -16,7 +44,6 @@ import org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox;
-import org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
@@ -27,6 +54,7 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -34,7 +62,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.themes.Reindeer;
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  *
  */
 @SuppressWarnings("serial")
@@ -45,7 +73,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     private SourceContextComboBox sourceContextComboBox;
     private TargetContextComboBox targetContextComboBox;
     private MappingConfigurationService mappingConfigurationService;
-    private SearchButtonClickListener searchButtonClickListener;
+    private ClickListener searchButtonClickListener;
 
     /**
      * Constructor
@@ -59,7 +87,7 @@ public class MappingConfigurationSearchPanel extends Panel implements View
      */
     public MappingConfigurationSearchPanel(MappingConfigurationService mappingConfigurationService,
             ClientComboBox clientComboBox, TypeComboBox typeComboBox, SourceContextComboBox sourceContextComboBox,
-            TargetContextComboBox targetContextComboBox, SearchButtonClickListener searchButtonClickListener)
+            TargetContextComboBox targetContextComboBox, ClickListener searchButtonClickListener)
     {
         super("Mapping Configuration Search");
         this.mappingConfigurationService = mappingConfigurationService;
@@ -194,6 +222,11 @@ public class MappingConfigurationSearchPanel extends Panel implements View
 
         contentLayout.addComponent(button, 1, 4);
         
+        this.clientComboBox.loadClientSelectValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
+        this.typeComboBox.loadClientTypeValues();
+        
         this.setContent(contentLayout);
     }
 
@@ -203,7 +236,21 @@ public class MappingConfigurationSearchPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
-        // TODO Auto-generated method stub
-        
+        this.clientComboBox.loadClientSelectValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
+        this.typeComboBox.loadClientTypeValues();
+    }
+    
+    public void clear()
+    {
+    	this.clientComboBox.setValue(null);
+    	this.sourceContextComboBox.setValue(null);
+    	this.targetContextComboBox.setValue(null);
+    	this.typeComboBox.setValue(null);
+        this.clientComboBox.loadClientSelectValues();
+        this.sourceContextComboBox.loadContextValues();
+        this.targetContextComboBox.loadContextValues();
+        this.typeComboBox.loadClientTypeValues();
     }
 }

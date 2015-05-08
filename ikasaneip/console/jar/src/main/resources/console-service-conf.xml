@@ -119,7 +119,7 @@
 
     <!-- Session Factory for the moduleDao -->
     <bean id="consoleModuleHibernateSessionFactory"
-        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
@@ -131,7 +131,7 @@
 
     <!-- Session Factory for the pointToPointFlowProfileDao -->
     <bean id="pointToPointFlowProfileHibernateSessionFactory"
-        class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="ikasan.ds" />
         <property name="mappingResources">
             <list>
