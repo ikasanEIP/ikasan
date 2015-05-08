@@ -485,11 +485,7 @@ public class User implements UserDetails, Principal
 	@Override
 	public String toString()
 	{
-		return "User [id=" + id + ", username=" + username + ", password="
-				+ password + ", email=" + email + ", firstName=" + firstName
-				+ ", surname=" + surname + ", department=" + department
-				+ ", enabled=" + enabled + ", grantedAuthorities="
-				+ grantedAuthorities + ", principals=" + principals + "]";
+		return username;
 	}
 	   
 }
