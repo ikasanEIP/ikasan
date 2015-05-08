@@ -172,19 +172,14 @@
 		<beans:property name="dataSource" ref="ikasan.ds" />
 		<beans:property name="mappingResources">
 			<beans:list>
-				<beans:value>/org/ikasan/security/model/Principal.hbm.xml
-				</beans:value>
+				<beans:value>/org/ikasan/security/model/Principal.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/Role.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/Policy.hbm.xml</beans:value>
 				<beans:value>/org/ikasan/security/model/User.hbm.xml</beans:value>
-				<beans:value>/org/ikasan/security/model/Authority.hbm.xml
-				</beans:value>
-				<beans:value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml
-				</beans:value>
-				<beans:value>/org/ikasan/security/model/PolicyLink.hbm.xml
-				</beans:value>
-				<beans:value>/org/ikasan/security/model/PolicyLinkType.hbm.xml
-				</beans:value>
+				<beans:value>/org/ikasan/security/model/Authority.hbm.xml</beans:value>
+				<beans:value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</beans:value>
+				<beans:value>/org/ikasan/security/model/PolicyLink.hbm.xml</beans:value>
+				<beans:value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</beans:value>
 			</beans:list>
 		</beans:property>
 		<beans:property name="hibernateProperties" ref="platformHibernateProperties" />
