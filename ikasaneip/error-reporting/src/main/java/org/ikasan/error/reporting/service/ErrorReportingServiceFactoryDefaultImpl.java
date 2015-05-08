@@ -41,44 +41,34 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
- * ErrorReportingService Factory.
+ * ErrorReportingService Factory default implementation.
  *
  * @author Ikasan Development Team
  */
-public class ErrorReportingServiceFactory
+public class ErrorReportingServiceFactoryDefaultImpl implements ErrorReportingServiceFactory
 {
     /** DAO handle */
     ErrorReportingServiceDao errorReportingServiceDao;
 
-//    /** singleton instance */
-//    private static ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactory();
-//
-//    /**
-//     * Get singleton instance
-//     * @return
-//     */
-//    public static ErrorReportingServiceFactory getInstance()
-//    {
-//        return errorReportingServiceFactory;
-//    }
-//
-//    /**
-//     * Constructor
-//     */
-//    private ErrorReportingServiceFactory()
-//    {
-//        this.errorReportingServiceDao = new HibernateErrorReportingServiceDao();
-//    }
-//
+    /** handle to the serialiser factory */
+    SerialiserFactory serialiserFactory;
+
     /**
      * Constructor
      */
-    public ErrorReportingServiceFactory(ErrorReportingServiceDao errorReportingServiceDao)
+    public ErrorReportingServiceFactoryDefaultImpl(SerialiserFactory serialiserFactory, ErrorReportingServiceDao errorReportingServiceDao)
     {
+        this.serialiserFactory = serialiserFactory;
+        if(serialiserFactory == null)
+        {
+            throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
+        }
+
         this.errorReportingServiceDao = errorReportingServiceDao;
         if(errorReportingServiceDao == null)
         {
@@ -92,6 +82,6 @@ public class ErrorReportingServiceFactory
      */
     public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
     {
-        return new ErrorReportingServiceDefaultImpl(moduleName, flowName, errorReportingServiceDao);
+        return new ErrorReportingServiceDefaultImpl(moduleName, flowName, this.serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
     }
 }

@@ -40,16 +40,11 @@
  */
 package org.ikasan.serialiser.service;
 
-import junit.framework.Assert;
-import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Test class for SerialiserServiceDefaultImpl.
+ * Simple class for testing serialisation/deserialisation.
  * 
  * @author Ikasan Development Team
  */
@@ -59,27 +54,34 @@ public class PrimitiveClass
     long two = 2;
     String three = "3";
 
-    public int getOne() {
-        return one;
+    Map<String,String> map = new HashMap<String,String>();
+    {
+        map.put("one", "1");
+        map.put("two", "2");
+        map.put("three", "3");
     }
 
-    public void setOne(int one) {
-        this.one = one;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PrimitiveClass that = (PrimitiveClass) o;
+
+        if (one != that.one) return false;
+        if (two != that.two) return false;
+        if (map != null ? !map.equals(that.map) : that.map != null) return false;
+        if (three != null ? !three.equals(that.three) : that.three != null) return false;
+
+        return true;
     }
 
-    public long getTwo() {
-        return two;
-    }
-
-    public void setTwo(long two) {
-        this.two = two;
-    }
-
-    public String getThree() {
-        return three;
-    }
-
-    public void setThree(String three) {
-        this.three = three;
+    @Override
+    public int hashCode() {
+        int result = one;
+        result = 31 * result + (int) (two ^ (two >>> 32));
+        result = 31 * result + (three != null ? three.hashCode() : 0);
+        result = 31 * result + (map != null ? map.hashCode() : 0);
+        return result;
     }
 }

@@ -41,24 +41,23 @@
 package org.ikasan.spec.serialiser;
 
 /**
- * Serialiser contract for instances supporting the serialisation / deserialisation of classes.
+ * Serialiser Service contract provisions the association of Serialiser instances for given classes.
  * 
  * @author Ikasan Development Team
  *
  */
-public interface Serialiser<OBJECT,SERIALISED>
+public interface SerialiserFactory
 {
     /**
-     * Serialise the incoming object
-     * @param source
+     * Get an instance of the default serialiser.
      * @return
      */
-    public SERIALISED serialise(OBJECT source);
+    public Serialiser getDefaultSerialiser();
 
     /**
-     * Deserialise and return a re-hydrated object.
-     * @param source
+     * Get an instance of a serialiser specifically for the given class.
+     * @param cls
      * @return
      */
-    public OBJECT deserialise(SERIALISED source);
+    public Serialiser getSerialiser(Class cls);
 }

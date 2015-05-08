@@ -1,7 +1,7 @@
-/*
- * $Id$
- * $URL$
- * 
+/* 
+ * $Id: 
+ * $URL: 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,27 +38,24 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.serialiser;
+
+package org.ikasan.spec.error.reporting;
 
 /**
- * Serialiser Service contract provisions the association of Serialiser instances for given classes.
+ * This contract represents the factory contract for returning an ErrorReportingService instance.
  * 
  * @author Ikasan Development Team
- *
+ * 
  */
-public interface SerialiserService
+public interface ErrorReportingServiceFactory
 {
     /**
-     * Get the serialiser/deserialiser for a given class
-     * @param cls
-     * @return Serialiser
+     * Returns an instance of the ErrorReportingService based on the provided module and flow name.
+     *
+     * @param moduleName
+     * @param flowName
+     * @return ErrorReportingService
      */
-    public Serialiser getSerialiser(Class cls);
+    public ErrorReportingService getErrorReportingService(String moduleName, String flowName);
 
-    /**
-     * Associate a serialiser/deserialiser for a given class.
-     * @param serialiser
-     * @param cls
-     */
-    public void setSerialiser(Serialiser serialiser, Class cls);
 }

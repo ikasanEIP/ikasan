@@ -115,7 +115,7 @@ public class ErrorOccurrence<EVENT>
      * @param errorDetail
      * @param event
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, EVENT event)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, long timeToLive, EVENT event)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -144,7 +144,7 @@ public class ErrorOccurrence<EVENT>
         this.event = event;
         this.timestamp = System.currentTimeMillis();
         this.uri = String.valueOf(this.hashCode());
-        this.expiry = System.currentTimeMillis() + ErrorReportingService.DEFAULT_TIME_TO_LIVE;
+        this.expiry = System.currentTimeMillis() + timeToLive;
     }
 
     /**
@@ -154,9 +154,9 @@ public class ErrorOccurrence<EVENT>
      * @param flowElementName
      * @param errorDetail
      */
-    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail)
+    public ErrorOccurrence(String moduleName, String flowName, String flowElementName, String errorDetail, long timeToLive)
     {
-        this(moduleName, flowName, flowElementName, errorDetail, null);
+        this(moduleName, flowName, flowElementName, errorDetail, timeToLive, null);
     }
 
     public String getModuleName() {
@@ -219,7 +219,7 @@ public class ErrorOccurrence<EVENT>
         return expiry;
     }
 
-    public void setExpiry(long expiry) {
+    private void setExpiry(long expiry) {
         this.expiry = expiry;
     }
 

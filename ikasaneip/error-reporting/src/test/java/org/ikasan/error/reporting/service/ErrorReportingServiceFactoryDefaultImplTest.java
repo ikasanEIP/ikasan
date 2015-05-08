@@ -43,7 +43,9 @@ package org.ikasan.error.reporting.service;
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
@@ -57,7 +59,7 @@ import javax.annotation.Resource;
 
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
- * the implementation of a ErrorReportingService contract.
+ * the implementation of a ErrorReportingServiceFactory contract.
  * 
  * @author Ikasan Development Team
  */
@@ -69,7 +71,7 @@ import javax.annotation.Resource;
         "/h2db-datasource-conf.xml"
         })
 
-public class ErrorReportingServiceDefaultImplTest
+public class ErrorReportingServiceFactoryDefaultImplTest
 {
     @Resource
     Mockery mockery;
@@ -78,30 +80,21 @@ public class ErrorReportingServiceDefaultImplTest
     Serialiser serialiser;
 
     @Resource
+    SerialiserFactory serialiserFactory;
+
+    @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_moduleName()
+    public void test_failed_constructor_null_serialiserFactory()
     {
-        new ErrorReportingServiceDefaultImpl(null, null, null, null);
+        new ErrorReportingServiceFactoryDefaultImpl(null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_flowName()
+    public void test_failed_constructor_null_errorReportingServiceDao()
     {
-        new ErrorReportingServiceDefaultImpl("moduleName", null, null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_serialiser()
-    {
-        new ErrorReportingServiceDefaultImpl("moduleName", "flowName", null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_dao()
-    {
-        new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, null);
+        new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, null);
     }
 
     /**
@@ -109,63 +102,20 @@ public class ErrorReportingServiceDefaultImplTest
      */
     @DirtiesContext
     @Test
-    public void test_errorReporting_notify_no_inflight_event()
+    public void test_errorReportingServiceFactory_getErrorReportingService()
     {
-        ErrorReportingService<?,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
-        String uri = errorReportingService.notify("flowElementName", new Exception("test"));
-        ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
-    }
-
-    /**
-     * Test notify
-     */
-    @DirtiesContext
-    @Test
-    public void test_errorReporting_notify_with_inflight_string_event()
-    {
-        final String event = new String("string based event");
-        final byte[] bytes = event.getBytes();
 
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(serialiser).serialise(event);
-                will(returnValue(bytes));
+                exactly(1).of(serialiserFactory).getDefaultSerialiser();
+                will(returnValue(serialiser));
             }
         });
 
-        ErrorReportingService<String,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
-        String uri = errorReportingService.notify("flowElementName", "string based event", new Exception("test"));
-        ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
-    }
-
-    /**
-     * Test error reporting housekeep
-     */
-    @DirtiesContext
-    @Test
-    public void test_exclusionService_housekeep()
-    {
-        final String event = new String("string based event");
-        final byte[] bytes = event.getBytes();
-
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(serialiser).serialise(event);
-                will(returnValue(bytes));
-            }
-        });
-
-        ErrorReportingService<String,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
-        String uri = errorReportingService.notify("flowElementName", "string based event", new Exception("test"));
-        ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
-        errorReportingService.housekeep();
-        errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
+        ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, errorReportingServiceDao);
+        ErrorReportingService errorReportingService = errorReportingServiceFactory.getErrorReportingService("moduleName", "flowName");
+        Assert.assertNotNull("Should not be null", errorReportingService);
     }
 
 }

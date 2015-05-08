@@ -1,7 +1,7 @@
-/*
+/* 
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -41,50 +41,82 @@
 package org.ikasan.serialiser.service;
 
 import org.ikasan.spec.serialiser.Serialiser;
-import org.ikasan.spec.serialiser.SerialiserService;
+import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.junit.Assert;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of the SerialiserService.
+ * Test class for SerialiserFactoryKryoImpl.
  * 
  * @author Ikasan Development Team
- * 
  */
-public class SerialiserServiceDefaultImpl implements SerialiserService
+public class GenericKryoToBytesSerialiserTest
 {
-    Map<Class,Serialiser> lastResortSerialisers = new HashMap<Class,Serialiser>();
-    Map<Class,Serialiser> serialisers = new HashMap<Class,Serialiser>();
+    /** one serialiser service should provide all serialiser instances */
+    SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
 
-    @Override
-    public Serialiser getSerialiser(Class cls)
+    /**
+     * Test
+     */
+    @Test
+    public void test_getSerialiser_for_string_successful()
     {
-        Serialiser serialiser = serialisers.get(cls);
-        if(serialiser == null)
-        {
-            serialiser = lastResortSerialisers.get(cls);
-            if(serialiser == null)
-            {
-                for(Map.Entry<Class,Serialiser> entry:serialisers.entrySet())
-                {
-                    Class _cls = entry.getKey();
-                    if(_cls.isAssignableFrom(cls))
-                    {
-                        lastResortSerialisers.put(cls,entry.getValue());
-                        serialiser = entry.getValue();
-                    }
 
-                }
+        // object for serialise/deserialise test
+        String str = new String("test");
 
-            }
-        }
+        // get a serialiser
+        Serialiser<String,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
 
-        return serialiser;
+        // serialise it
+        byte[] bytes = serialiser.serialise(str);
+
+        // deserialise it
+        String restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(str));
     }
 
-    @Override
-    public void setSerialiser(Serialiser serialiser, Class cls) {
+    /**
+     * Test
+     */
+    @Test
+    public void test_getSerialiser_for_integer_successful()
+    {
+        // object for serialise/deserialise test
+        Integer myInt = new Integer(10);
 
+        // get a serialiser
+        Serialiser<Integer,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(myInt);
+
+        // deserialise it
+        Integer restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(myInt));
+    }
+
+    /**
+     * Test
+     */
+    @Test
+    public void test_getSerialiser_for_primitiveClass_successful()
+    {
+        // object for serialise/deserialise test
+        PrimitiveClass primitiveClass = new PrimitiveClass();
+
+        // get a serialiser
+        Serialiser<PrimitiveClass,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(primitiveClass);
+
+        // deserialise it
+        PrimitiveClass restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(primitiveClass));
     }
 }

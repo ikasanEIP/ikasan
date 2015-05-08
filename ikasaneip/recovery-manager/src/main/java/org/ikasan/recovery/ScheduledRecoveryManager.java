@@ -350,7 +350,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
-        this.errorReportingService.notify(componentName, event, throwable, action.toString());
+        this.errorReportingService.notify(componentName, event, throwable);
 
         if(action instanceof ExcludeEventAction)
         {

@@ -566,8 +566,18 @@ public class ScheduledRecoveryManagerIntegrationTest
     private class StubbedErrorReportingService<T> implements ErrorReportingService
     {
         @Override
-        public void notify(String flowElementName, Object o, Throwable throwable) {
+        public Object find(String uri) {
+            return null;
+        }
 
+        @Override
+        public String notify(String flowElementName, Object o, Throwable throwable) {
+            return null;
+        }
+
+        @Override
+        public String notify(String flowElementName, Throwable throwable) {
+            return null;
         }
 
         @Override

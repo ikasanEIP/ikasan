@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -40,55 +40,83 @@
  */
 package org.ikasan.serialiser.service;
 
-import junit.framework.Assert;
-import org.junit.Test;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.pool.KryoPool;
+import org.ikasan.spec.serialiser.Serialiser;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+
 
 /**
- * Test class for SerialiserServiceDefaultImpl.
+ * Implementation of an Ikasan Serialiser for the serialisation/deserialisation of object to and from byte[].
  * 
  * @author Ikasan Development Team
+ * 
  */
-public class SerialiserServiceDefaultImplTest
+public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
 {
+    /** pool of kryo instanances */
+    private KryoPool pool;
+
     /**
-     * Test exclusion add, contains, remove
+     * Constructor
+     * @param pool
      */
-    @Test
-    public void test_serialise_using_fst() throws IOException, ClassNotFoundException {
-        SerialiserServiceFSTImpl serialiserService = new SerialiserServiceFSTImpl();
-
-        PrimitiveClass primitiveClass = new PrimitiveClass();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // serialise
-        serialiserService.serialise(baos, primitiveClass);
-
-        // deserialise
-        Object rehydrated = serialiserService.deserialise(new ByteArrayInputStream(baos.toByteArray()));
-        Assert.assertTrue(rehydrated instanceof PrimitiveClass);
+    public GenericKryoToBytesSerialiser(KryoPool pool)
+    {
+        this.pool = pool;
+        if(pool == null)
+        {
+            throw new IllegalArgumentException("pool cannot be 'null'");
+        }
     }
 
     /**
-     * Test exclusion add, contains, remove
+     * Serialise the incoming object to a byte[]
+     * @param source
+     * @return
      */
-    @Test
-    public void test_serialise_using_kyro() throws IOException, ClassNotFoundException
+    @Override
+    public byte[] serialise(T source)
     {
-        GenericKryoSerialiser serialiserService = new GenericKryoSerialiser();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Output output = new Output(byteArrayOutputStream);
+        Kryo kryo = pool.borrow();
 
-        PrimitiveClass primitiveClass = new PrimitiveClass();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try
+        {
+            kryo.writeClassAndObject(output, source);
+            output.flush();
+            return byteArrayOutputStream.toByteArray();
+        }
+        finally
+        {
+            pool.release(kryo);
+        }
+    }
 
-        // serialise
-        serialiserService.serialise(baos, primitiveClass);
+    /**
+     * Deserialise the byte[] back to its instantiated object.
+     * @param source
+     * @return
+     */
+    @Override
+    public T deserialise(byte[] source)
+    {
+        Input input = new Input(new ByteArrayInputStream(source));
+        Kryo kryo=pool.borrow();
 
-        // deserialise
-        Object rehydrated = serialiserService.deserialise(new ByteArrayInputStream(baos.toByteArray()));
-        Assert.assertTrue(rehydrated instanceof PrimitiveClass);
+        try
+        {
+            return (T)kryo.readClassAndObject(input);
+        }
+        finally
+        {
+            pool.release(kryo);
+        }
     }
 
 }
