@@ -40,7 +40,7 @@
  */
 package org.ikasan.error.reporting.model;
 
-
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,17 +59,16 @@ public class ErrorOccurrenceTest
     @Test
     public void test_new_errorOccurrence()
     {
-        ErrorOccurrence<String> errorOccurrence = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", "event");
+        ErrorOccurrence<String> errorOccurrence = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", 1000L, "event");
         errorOccurrence.setEventLifeIdentifier("lifeId");
         errorOccurrence.setEventRelatedIdentifier("relatedLifeId");
-        errorOccurrence.setExpiry(1000);
 
         Assert.assertTrue(errorOccurrence.getModuleName().equals("moduleName"));
         Assert.assertTrue(errorOccurrence.getFlowName().equals("flowName"));
         Assert.assertTrue(errorOccurrence.getFlowElementName().equals("componentName"));
         Assert.assertTrue(errorOccurrence.getErrorDetail().equals("failed error occurrence text"));
         Assert.assertTrue(errorOccurrence.getEvent().equals("event"));
-        Assert.assertTrue(errorOccurrence.getExpiry() == 1000);
+        Assert.assertTrue(errorOccurrence.getExpiry() > System.currentTimeMillis());
         Assert.assertTrue(errorOccurrence.getEventLifeIdentifier().equals("lifeId"));
         Assert.assertTrue(errorOccurrence.getEventRelatedIdentifier().equals("relatedLifeId"));
         Assert.assertTrue(errorOccurrence.getTimestamp() > 0);
@@ -82,11 +81,11 @@ public class ErrorOccurrenceTest
     @Test
     public void test_equals()
     {
-        ErrorOccurrence<String> errorOccurrence1 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text");
+        ErrorOccurrence<String> errorOccurrence1 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         pause(1);
-        ErrorOccurrence<String> errorOccurrence2 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text");
+        ErrorOccurrence<String> errorOccurrence2 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         pause(1);
-        ErrorOccurrence<String> errorOccurrence3 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text");
+        ErrorOccurrence<String> errorOccurrence3 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
         Assert.assertFalse(errorOccurrence1.equals(errorOccurrence2));
         Assert.assertFalse(errorOccurrence2.equals(errorOccurrence3));
@@ -99,11 +98,11 @@ public class ErrorOccurrenceTest
     @Test
     public void test_hashcode()
     {
-        ErrorOccurrence<String> errorOccurrence1 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text");
+        ErrorOccurrence<String> errorOccurrence1 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         pause(1);
-        ErrorOccurrence<String> errorOccurrence2 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text");
+        ErrorOccurrence<String> errorOccurrence2 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         pause(1);
-        ErrorOccurrence<String> errorOccurrence3 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text");
+        ErrorOccurrence<String> errorOccurrence3 = new ErrorOccurrence<String>("moduleName", "flowName", "componentName", "failed error occurrence text", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
         HashMap<ErrorOccurrence, String> map = new HashMap<ErrorOccurrence, String>();
         map.put(errorOccurrence1, "1");

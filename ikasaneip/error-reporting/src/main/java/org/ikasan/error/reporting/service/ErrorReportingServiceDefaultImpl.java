@@ -44,6 +44,7 @@ import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.serialiser.Serialiser;
 
 /**
  * Default implementation of the ErrorReportingService.
@@ -64,12 +65,15 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     /** allow override of timeToLive */
     Long timeToLive = ErrorReportingService.DEFAULT_TIME_TO_LIVE;
 
+    /** need a serialiser to serialise the incoming event payload of T */
+    Serialiser<EVENT,byte[]> serialiser;
+
     /**
      * Constructor
      * @param moduleName
      * @param flowName
      */
-    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -81,6 +85,12 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         if(flowName == null)
         {
             throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
+
+        this.serialiser = serialiser;
+        if(serialiser == null)
+        {
+            throw new IllegalArgumentException("serialiser cannot be 'null'");
         }
 
         this.errorReportingServiceDao = errorReportingServiceDao;
@@ -130,18 +140,18 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param throwable
      * @return
      */
-    private ErrorOccurrence newErrorOccurrence(String flowElementName, Object event, Throwable throwable)
+    private ErrorOccurrence newErrorOccurrence(String flowElementName, EVENT event, Throwable throwable)
     {
         if(event instanceof FlowEvent)
         {
             FlowEvent<String,?> flowEvent = (FlowEvent)event;
-            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), event);
+            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
             return errorOccurrence;
         }
 
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), event);
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
         return errorOccurrence;
     }
 
@@ -153,7 +163,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      */
     private ErrorOccurrence newErrorOccurrence(String flowElementName, Throwable throwable)
     {
-        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable));
+        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive);
     }
 
     /**

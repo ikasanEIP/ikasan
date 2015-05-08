@@ -41,43 +41,91 @@
 package org.ikasan.serialiser.service;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.pool.KryoFactory;
+import com.esotericsoftware.kryo.pool.KryoPool;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
-import java.io.*;
+import java.util.Map;
 
 /**
- * Implementation of the SerialiserService.
+ * Kryo Pool Factory for creating pooled kryo instances.
+ * Kryo instances are expensive to craate so managing a pool of them (as they are not thread safe) if the most
+ * efficient option.
  * 
  * @author Ikasan Development Team
  * 
  */
-public class GenericKryoSerialiser implements Serialiser
+public class SerialiserFactoryKryoImpl implements SerialiserFactory
 {
-    public void serialise(OutputStream stream, Object cls) throws IOException
+    /** additional registered serializers */
+    Map<Class,Serializer> serializers;
+
+    /**
+     * Constructor
+     * @param serializers
+     */
+    public SerialiserFactoryKryoImpl(Map<Class, Serializer> serializers)
     {
-        try (Output output = new Output(new FileOutputStream("KryoTest.ser"))) {
-            Kryo kryo=new Kryo();
-            kryo.writeClassAndObject(output, cls);
-        }
-        catch (FileNotFoundException ex)
+        this.serializers = serializers;
+        if(serializers == null)
         {
-            System.out.println(ex.getStackTrace());
+            throw new IllegalArgumentException("serializers cannot be 'null'");
         }
     }
 
-    public Object deserialise(InputStream stream) throws IOException, ClassNotFoundException
+    /**
+     * Constructor
+     */
+    public SerialiserFactoryKryoImpl()
     {
-        try (Input input = new Input( new FileInputStream("KryoTest.ser")))
-        {
-            Kryo kryo=new Kryo();
-            return kryo.readClassAndObject(input);
-        }
-        catch (FileNotFoundException ex)
-        {
-            System.out.println(ex.getStackTrace());
-        }
-        return null;
     }
+
+    @Override
+    public Serialiser getDefaultSerialiser()
+    {
+        return new GenericKryoToBytesSerialiser(getPool());
+    }
+
+    @Override
+    public Serialiser getSerialiser(Class cls)
+    {
+        return getDefaultSerialiser();
+    }
+
+    /**
+     * Get a new pool for kryo instances
+     * @return
+     */
+    protected KryoPool getPool()
+    {
+        KryoFactory factory = new KryoFactory()
+        {
+            public Kryo create ()
+            {
+                Kryo kryo = new Kryo();
+                configure(kryo);
+                return kryo;
+            }
+        };
+
+        return new KryoPool.Builder(factory).softReferences().build();
+    }
+
+    /**
+     * Configure the pooled kryo instance
+     * @param kryo
+     */
+    protected void configure(Kryo kryo)
+    {
+        if(serializers != null && serializers.size() > 0)
+        {
+            for(Map.Entry<Class,Serializer> entry:serializers.entrySet())
+            {
+                kryo.addDefaultSerializer(entry.getKey(),entry.getValue());
+            }
+        }
+    }
+
 }

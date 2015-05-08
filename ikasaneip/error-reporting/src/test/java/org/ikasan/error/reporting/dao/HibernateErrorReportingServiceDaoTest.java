@@ -40,9 +40,8 @@
  */
 package org.ikasan.error.reporting.dao;
 
-
-
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +60,7 @@ import javax.annotation.Resource;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/error-reporting-service-conf.xml",
+        "/mock-conf.xml",
         "/h2db-datasource-conf.xml"
         })
 
@@ -76,7 +76,7 @@ public class HibernateErrorReportingServiceDaoTest
     @Test
     public void test_save_and_find()
     {
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail");
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
         ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
         Assert.assertNull("Should not be found", persistedErrorOccurrence);
@@ -94,8 +94,7 @@ public class HibernateErrorReportingServiceDaoTest
     public void test_deleteExpired_operation()
     {
         // new event with 1 milli expiry
-        ErrorOccurrence errorOccurrenceExpired = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail");
-        errorOccurrenceExpired.setExpiry(1);
+        ErrorOccurrence errorOccurrenceExpired = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", 1L);
 
         try
         {
@@ -106,7 +105,7 @@ public class HibernateErrorReportingServiceDaoTest
             Assert.fail("sleep woken early!");
         }
 
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail");
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence("moduleName", "flowName", "componentName", "error detail", ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         Assert.assertNull("Non expired should not be found", errorReportingServiceDao.find(errorOccurrence.getUri()));
         Assert.assertNull("Expired should not be found", errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) );
 
