@@ -51,13 +51,6 @@
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration builder</name>
 
-	<scm>
-	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</connection>
-	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</developerConnection>
-	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/builder/jar</url>
-	  <tag>HEAD</tag>
-  </scm>
-
     <build>
         <plugins>
               <plugin>
@@ -93,7 +86,6 @@
 	    <dependency>
 	      <groupId>org.ikasan</groupId>
 	      <artifactId>ikasan-eip</artifactId>
-		      <scope>provided</scope>
 	    </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -101,13 +93,27 @@
          </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-serialiser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-serialiser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-exclusion</artifactId>
-               <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-error-reporting</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-error-reporting-service</artifactId>
         </dependency>
     </dependencies>
 </project>

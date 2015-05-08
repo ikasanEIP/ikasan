@@ -55,22 +55,10 @@ public class ExclusionServiceFactory
     /** DAO handle */
     ExclusionServiceDao exclusionServiceDao;
 
-    /** singleton instance */
-    private static ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory();
-
-    /**
-     * Get singleton instance
-     * @return
-     */
-    public static ExclusionServiceFactory getInstance()
-    {
-        return exclusionServiceFactory;
-    }
-
     /**
      * Constructor
      */
-    private ExclusionServiceFactory()
+    public ExclusionServiceFactory()
     {
         this.exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(25) );
     }
