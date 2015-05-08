@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- * $Id$
+	$ * $URL$ 
+	$ * * ==================================================================== 
+	* * Copyright (c) 2000-2010 by Mizuho International plc. * All Rights Reserved. 
+	* * ==================================================================== 
+	* -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.5.xsd">
+
+	<bean id="xaLdapService" class="org.ikasan.security.service.LdapServiceImpl">
+		<constructor-arg ref="xaSecurityDao" />
+		<constructor-arg ref="xaUserDao" />
+	</bean>
+	
+	<bean id="xaAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+		<constructor-arg ref="xaAuthenticationProviderFactory" />
+		<constructor-arg ref="xaSecurityService" />
+	</bean>
+
+	<bean id="xaAuthenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
+		<constructor-arg ref="xaUserService" />
+		<constructor-arg ref="xaSecurityService" />
+	</bean>
+
+	<bean id="xaSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
+		<constructor-arg ref="xaSecurityDao" />
+	</bean>
+	
+	<bean id="xaUserService"
+        class="org.ikasan.security.service.UserServiceImpl">
+        <constructor-arg ref="xaUserDao"/>
+        <constructor-arg ref="xaAuthorityDao"/>
+        <constructor-arg ref="sha1PasswordEncoder"/>
+    </bean>
+    
+    <bean id="xaUserDao" class="org.ikasan.security.dao.HibernateUserDao">
+        <property name="sessionFactory" ref="xaSecuritySessionFactory"/>
+    </bean>
+    
+    <bean id="xaAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
+        <property name="sessionFactory" ref="xaSecuritySessionFactory"/>
+    </bean>
+
+	<bean id="xaSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
+		<property name="sessionFactory" ref="xaSecuritySessionFactory" />
+	</bean>
+
+	<bean id="xaSecuritySessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.xads" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
+				<value>/org/ikasan/security/model/Role.hbm.xml</value>
+				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
+				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+	<bean id="localTxLdapService" class="org.ikasan.security.service.LdapServiceImpl">
+		<constructor-arg ref="localTxSecurityDao" />
+		<constructor-arg ref="localTxUserDao" />
+	</bean>
+
+	<bean id="localTxAuthenticationService" class="org.ikasan.security.service.AuthenticationServiceImpl">
+		<constructor-arg ref="localTxAuthenticationProviderFactory" />
+		<constructor-arg ref="localTxSecurityService" />
+	</bean>
+
+	<bean id="localTxAuthenticationProviderFactory" class="org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl">
+		<constructor-arg ref="localTxUserService" />
+		<constructor-arg ref="localTxSecurityService" />
+	</bean>
+
+	<bean id="localTxSecurityService" class="org.ikasan.security.service.SecurityServiceImpl">
+		<constructor-arg ref="localTxSecurityDao" />
+	</bean>
+	
+	<bean id="localTxUserService"
+        class="org.ikasan.security.service.UserServiceImpl">
+        <constructor-arg ref="localTxUserDao"/>
+        <constructor-arg ref="localTxAuthorityDao"/>
+        <constructor-arg ref="sha1PasswordEncoder"/>
+    </bean>
+    
+    <bean id="localTxUserDao" class="org.ikasan.security.dao.HibernateUserDao">
+        <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
+    </bean>
+    
+    <bean id="localTxAuthorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
+        <property name="sessionFactory" ref="localTxSecuritySessionFactory"/>
+    </bean>
+
+	<bean id="localTxSecurityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
+		<property name="sessionFactory" ref="localTxSecuritySessionFactory" />
+	</bean>
+
+	<bean id="localTxSecuritySessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.ds" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/security/model/Principal.hbm.xml</value>
+				<value>/org/ikasan/security/model/Role.hbm.xml</value>
+				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
+				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+	<bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+	
+</beans>
