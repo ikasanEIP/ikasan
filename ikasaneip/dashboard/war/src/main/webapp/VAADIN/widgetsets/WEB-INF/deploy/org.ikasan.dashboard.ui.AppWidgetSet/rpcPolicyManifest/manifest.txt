@@ -1,0 +1,2 @@
+# Module org.ikasan.dashboard.ui.AppWidgetSet
+# RPC service class, partial path of RPC policy file

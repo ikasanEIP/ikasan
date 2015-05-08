@@ -127,12 +127,18 @@
     </beans:bean>   
 
 
-     <beans:bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+     <beans:bean id="securitySessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <beans:property name="dataSource" ref="ikasan.ds" />
         <beans:property name="mappingResources">
             <beans:list>
-                <beans:value>org/ikasan/security/model/User.hbm.xml</beans:value>
-                <beans:value>org/ikasan/security/model/Authority.hbm.xml</beans:value>
+                <value>/org/ikasan/security/model/Principal.hbm.xml</value>
+				<value>/org/ikasan/security/model/Role.hbm.xml</value>
+				<value>/org/ikasan/security/model/Policy.hbm.xml</value>
+				<value>/org/ikasan/security/model/User.hbm.xml</value>
+				<value>/org/ikasan/security/model/Authority.hbm.xml</value>
+				<value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
+				<value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
             </beans:list>
         </beans:property>
         <beans:property name="hibernateProperties" ref="platformHibernateProperties"/>

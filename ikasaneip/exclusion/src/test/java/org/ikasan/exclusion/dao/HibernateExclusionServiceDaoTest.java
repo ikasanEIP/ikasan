@@ -61,7 +61,8 @@ import javax.annotation.Resource;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/exclusion-service-conf.xml",
-        "/hsqldb-datasource-conf.xml"
+        "/hsqldb-datasource-conf.xml",
+        "/substitute-components.xml"
         })
 
 public class HibernateExclusionServiceDaoTest

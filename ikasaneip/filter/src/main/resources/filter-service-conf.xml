@@ -8,7 +8,7 @@
         <constructor-arg>
             <bean class="org.ikasan.filter.duplicate.dao.HibernateFilteredMessageDaoImpl">
                 <property name="sessionFactory">
-                    <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                    <bean class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
                         <property name="dataSource" ref="ikasan.xads" />
                         <property name="mappingResources">
                             <list>

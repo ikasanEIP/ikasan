@@ -12,12 +12,9 @@ O * $Id: MappingConfigurationServicePerformanceTest.java 40152 2014-10-17 15:57:
  */
 package org.ikasan.mapping.service;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-
-import junit.framework.Assert;
 
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
@@ -26,14 +23,10 @@ import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
-import org.ikasan.mapping.service.MappingConfigurationServiceException;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -48,7 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/mappingConfigurationService-context.xml",
+        "/mapping-conf.xml",
         "/hsqldb-config.xml",
         "/substitute-components.xml",
         "/mock-components.xml"

@@ -50,7 +50,7 @@ import java.util.Set;
 public interface PersistenceServiceFactory<PROVIDER>
 {
     /**
-     * Get the underlying persistence service provider
+     * Get the underlying persistence service providers
      * @return
      */
     public Set<PROVIDER> getProviders();

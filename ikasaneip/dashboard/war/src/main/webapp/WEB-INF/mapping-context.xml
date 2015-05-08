@@ -12,7 +12,7 @@
 
 
     <bean id="mappingConfigurationSearchPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="clientComboBox"/>
         <constructor-arg ref="typeComboBox"/>
         <constructor-arg ref="sourceContextComboBox"/>
@@ -52,11 +52,6 @@
                    <constructor-arg value="newMappingConfigurationPanel"/>
                    <constructor-arg ref="newMappingConfigurationPanel"/>
                 </bean>
-                <!--  Removing the Ikasan estate view -->
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
-                   <constructor-arg value="estateViewPanel"/>
-                   <constructor-arg ref="estateViewPanel"/>
-                </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="mappingViewComponentContainer"/>
@@ -93,25 +88,25 @@
     </bean>
 
     <bean id="mappingConfigurationImportWindow" class="org.ikasan.dashboard.ui.mappingconfiguration.window.MappingConfigurationImportWindow" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
     </bean>
 
     <bean id="newConfigurationTypePanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationTypePanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="typeComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
     </bean>
 
     <bean id="newClientPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewClientPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="clientComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
     </bean>
 
     <bean id="newContextPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.NewMappingConfigurationContextPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="contextComboBoxRefreshGroup"/>
         <constructor-arg ref="saveRequiredMonitor"/>
     </bean>
@@ -122,7 +117,7 @@
         <constructor-arg ref="existingMappingConfigurationTypeComboBox"/>
         <constructor-arg ref="existingMappingConfigurationSourceContextComboBox"/>
         <constructor-arg ref="existingMappingConfigurationTargetContextComboBox"/>
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="existingMappingConfigurationEditButton"/>
         <constructor-arg ref="existingMappingConfigurationSaveButton"/>
@@ -143,7 +138,7 @@
         <constructor-arg ref="newMappingConfigurationTypeComboBox"/>
         <constructor-arg ref="newMappingConfigurationSourceContextComboBox"/>
         <constructor-arg ref="newMappingConfigurationTargetContextComboBox"/>
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="saveRequiredMonitor"/>
         <constructor-arg ref="newMappingConfigurationEditButton"/>
         <constructor-arg ref="newMappingConfigurationSaveButton"/>
@@ -159,12 +154,10 @@
     </bean>
 
     <bean id="mappingConfigurationExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationExportHelper" scope="session">
-        <constructor-arg ref="mappingConfigurationExportSchema"/>
         <constructor-arg ref="mappingConfigurationValuesExportHelper"/>
     </bean>
 
     <bean id="mappingConfigurationValuesExportHelper" class="org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationValuesExportHelper" scope="session">
-        <constructor-arg ref="mappingConfigurationValuesExportSchema"/>
     </bean>
 
     <bean id="mappingView" class="org.ikasan.dashboard.ui.framework.tab.HomeTab" scope="session">
@@ -178,22 +171,22 @@
         <constructor-arg ref="mappingViewComponentContainer"/>
     </bean -->
 
-    <bean id="searchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SearchResultsTable" scope="session">
+    <bean id="searchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationSearchResultsTable" scope="session">
         <constructor-arg ref="searchResultTableItemClickListener"/>
     </bean>
 
     <bean id="mappingConfigurationConfigurationValuesTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
     </bean>
 
     <bean id="newMappingConfigurationConfigurationValuesTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.MappingConfigurationConfigurationValuesTable" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
     </bean>
 
     <bean id="mappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="searchResultsTable"/>
     </bean>
 
@@ -252,55 +245,61 @@
     </bean>
 
     <bean id="clientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="typeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="sourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="true"/>
     </bean>
 
     <bean id="targetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="true"/>
     </bean>
 
     <bean id="existingMappingConfigurationClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="existingMappingConfigurationTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="existingMappingConfigurationSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="existingMappingConfigurationTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="newMappingConfigurationClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="newMappingConfigurationTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
     </bean>
 
     <bean id="newMappingConfigurationSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
     <bean id="newMappingConfigurationTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="false"/>
     </bean>
 
-    <bean id="searchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchButtonClickListener" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+    <bean id="searchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchButtonClickListener" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="clientComboBox"/>
         <constructor-arg ref="typeComboBox"/>
         <constructor-arg ref="sourceContextComboBox"/>
@@ -310,10 +309,11 @@
         <constructor-arg ref="adminUserVisibilityGroup"/>
     </bean>
 
-    <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.SearchResultTableItemClickListener" scope="session">
-        <constructor-arg ref="localTxMappingConfigurationService"/>
+    <bean id="searchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.MappingSearchResultTableItemClickListener" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
         <constructor-arg ref="mappingConfigurationConfigurationValuesTable"/>
         <constructor-arg ref="existingMappingConfigurationPanel"/>
+        <constructor-arg ref="modifyExistingMappingConfigurationVisibilityGroup"/>
     </bean>
 
     <!-- Components -->
@@ -502,4 +502,18 @@
         </property>
     </bean>
     
+    <bean id="modifyExistingMappingConfigurationVisibilityGroup" class="org.ikasan.dashboard.ui.framework.group.VisibilityGroup" scope="session">
+        <property name="components">
+            <list>
+                <ref bean="existingMappingConfigurationEditButton" />
+                <ref bean="existingMappingConfigurationSaveButton" />
+                <ref bean="existingMappingConfigurationCancelButton" />
+                <ref bean="existingMappingConfigurationValueNewRecordButton" />
+                <ref bean="existingMappingConfigurationValueDeleteAllButton" />
+                <ref bean="existingMappingConfigurationValueImportButton" />
+                <ref bean="existingMappingConfigurationValueExportButton" />
+                <ref bean="existingMappingConfigurationExportButton" />
+            </list>
+        </property>
+    </bean>
 </beans>

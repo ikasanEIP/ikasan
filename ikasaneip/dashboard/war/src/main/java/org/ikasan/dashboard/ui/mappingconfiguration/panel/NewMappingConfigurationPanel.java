@@ -1,19 +1,48 @@
-/*
- * $Id: NewMappingConfigurationPanel.java 40648 2014-11-07 11:12:53Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI/war/src/main/java/org/ikasan/mapping/configuration/ui/panel/NewMappingConfigurationPanel.java $
+ /*
+ * $Id$
+ * $URL$
  *
  * ====================================================================
+ * Ikasan Enterprise Integration Platform
  *
- * Copyright (c) 2000-2011 by Mizuho International plc.
- * All Rights Reserved.
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
  *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.Editable;
@@ -49,7 +78,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.themes.BaseTheme;
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  *
  */
 public class NewMappingConfigurationPanel extends MappingConfigurationPanel implements View, Editable
@@ -93,7 +122,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             exportMappingConfigurationButton, cancelButton, newMappingConfigurationFunctionalGroup, mappingConfigurationExportHelper,
             mappingConfigurationValuesExportHelper);
 
-        this.init();
+//        this.init();
         this.registerListeners();
     }
 
@@ -103,6 +132,20 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     @SuppressWarnings("serial")
     protected void init()
     {
+    	this.setStyleName("dashboard");
+    	
+    	this.parameterQueryTextFields = new ArrayList<TextField>();
+    	
+    	this.typeComboBox.setReadOnly(false);
+        this.clientComboBox.setReadOnly(false);
+        this.sourceContextComboBox.setReadOnly(false);
+        this.targetContextComboBox.setReadOnly(false);
+    	super.clientComboBox.unselect(super.clientComboBox.getValue());
+    	super.sourceContextComboBox.unselect(super.sourceContextComboBox.getValue());
+    	super.targetContextComboBox.unselect(super.targetContextComboBox.getValue());
+    	super.typeComboBox.unselect(super.typeComboBox.getValue());
+
+    	
         super.layout = new GridLayout(4, 5);
         logger.info("Setting editButtonPressed!");
         super.mappingConfigurationFunctionalGroup.editButtonPressed();
@@ -136,7 +179,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
         
         contentLayout.addComponent(toolBarLayout);
         contentLayout.addComponent(createMappingConfigurationForm());
-        super.populateMappingConfigurationForm();
+        
 
         VerticalSplitPanel vpanel = new VerticalSplitPanel(contentLayout
             , createTableLayout(false));
@@ -150,6 +193,8 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             }
         });
 
+        logger.info("Trying to add create button! " + addParametersButton);
+        paramQueriesLayout.removeAllComponents();
         paramQueriesLayout.addComponent(addParametersButton);
 
         Panel queryParamsPanel = new Panel("Source Configuration Value Queries");
@@ -218,18 +263,29 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
      */
     public void setEditable(boolean editable)
     {
-        this.saveRequiredMonitor.setSaveRequired(editable);
-        this.mappingConfigurationConfigurationValuesTable.setEditable(editable);
-        this.typeComboBox.setReadOnly(!editable);
-        this.clientComboBox.setReadOnly(!editable);
-        this.sourceContextComboBox.setReadOnly(!editable);
-        this.targetContextComboBox.setReadOnly(!editable);
-        this.descriptionTextArea.setReadOnly(!editable);
-        this.numberOfParametersTextField.setReadOnly(!editable);
+    	if(this.saveRequiredMonitor!= null)
+    		this.saveRequiredMonitor.setSaveRequired(editable);
+        if(this.mappingConfigurationConfigurationValuesTable != null)
+        	this.mappingConfigurationConfigurationValuesTable.setEditable(editable);
+        if(this.typeComboBox != null)
+        	this.typeComboBox.setReadOnly(!editable);
+        if(this.clientComboBox != null)
+        	this.clientComboBox.setReadOnly(!editable);
+        if(this.sourceContextComboBox != null)
+        	this.sourceContextComboBox.setReadOnly(!editable);
+        if(this.targetContextComboBox != null)
+        	this.targetContextComboBox.setReadOnly(!editable);
+        if(this.descriptionTextArea != null)
+        	this.descriptionTextArea.setReadOnly(!editable);
+        if(this.numberOfParametersTextField != null)
+        	this.numberOfParametersTextField.setReadOnly(!editable);
 
-        for(TextField textField: this.parameterQueryTextFields)
+        if(this.parameterQueryTextFields != null)
         {
-            textField.setReadOnly(!editable);
+	        for(TextField textField: this.parameterQueryTextFields)
+	        {
+	            textField.setReadOnly(!editable);
+	        }
         }
     }
 
@@ -271,6 +327,59 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
             paramQueriesLayout.addComponent(tf);
         }
     }
+    
+    /**
+     * Method to populate the mapping configuration form.
+     */
+    public void populateMappingConfigurationForm()
+    {
+        
+        typeComboBox.setReadOnly(false);
+        clientComboBox.setReadOnly(false);
+        sourceContextComboBox.setReadOnly(false);
+        targetContextComboBox.setReadOnly(false);
+        this.descriptionTextArea.setReadOnly(false);
+        this.numberOfParametersTextField.setReadOnly(false);
+
+        BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
+
+        this.clientComboBox.setValue(this.mappingConfiguration.getConfigurationServiceClient());
+        this.typeComboBox.setValue(mappingConfiguration.getConfigurationType());
+        this.sourceContextComboBox.setValue(mappingConfiguration.getSourceContext());
+        this.targetContextComboBox.setValue(mappingConfiguration.getTargetContext());
+        this.descriptionTextArea.setPropertyDataSource(mappingConfigurationItem.getItemProperty("description"));
+        this.numberOfParametersTextField.setPropertyDataSource(mappingConfigurationItem.getItemProperty("numberOfParams"));
+
+        this.keyLocationQueries = this.mappingConfigurationService
+                .getKeyLocationQueriesByMappingConfigurationId(this.mappingConfiguration.getId());
+
+        this.parameterQueryTextFields = new ArrayList<TextField>();
+
+        for(KeyLocationQuery query: this.keyLocationQueries)
+        {
+            BeanItem<KeyLocationQuery> keyLocationQueryItem 
+                = new BeanItem<KeyLocationQuery>(query);
+            TextField tf = new TextField();
+            tf.addValidator(new StringLengthValidator(
+                "The key location query cannot be blank!",
+                1, 256, true));
+            tf.setValidationVisible(false);
+            
+            tf.setWidth(350, Unit.PIXELS);
+         
+            tf.setPropertyDataSource(keyLocationQueryItem.getItemProperty("value"));
+            this.parameterQueryTextFields.add(tf);
+            tf.setReadOnly(true);
+            paramQueriesLayout.addComponent(tf);
+        }
+
+        typeComboBox.setReadOnly(true);
+        clientComboBox.setReadOnly(true);
+        sourceContextComboBox.setReadOnly(true);
+        targetContextComboBox.setReadOnly(true);
+        this.descriptionTextArea.setReadOnly(true);
+        this.numberOfParametersTextField.setReadOnly(true);
+    }
 
     /* (non-Javadoc)
      * @see com.mapping.configuration.ui.panel.MappingConfigurationPanel#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
@@ -279,6 +388,7 @@ public class NewMappingConfigurationPanel extends MappingConfigurationPanel impl
     public void enter(ViewChangeEvent event)
     {
         this.saveRequiredMonitor.setSaveRequired(true);
+        populateMappingConfigurationForm();
     }
 
 }
