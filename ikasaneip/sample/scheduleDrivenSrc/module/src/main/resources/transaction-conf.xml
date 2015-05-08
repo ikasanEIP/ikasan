@@ -7,7 +7,10 @@
         
     <aop:config>
         <aop:pointcut id="scheduledPointcut" expression="execution(* org.quartz.Job.execute(..))" />
+		<aop:pointcut id="securityServiceMethods"
+                expression="execution(* org.ikasan.security.service.*.*(..))"/>
+	
+		<aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="securityServiceMethods" />
         <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="scheduledPointcut" />
     </aop:config> 
-
 </beans>

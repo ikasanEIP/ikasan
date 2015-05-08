@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security 
+        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="policyManagementNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="policyManagement"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="policyManagementPanel"/>
+                   <constructor-arg ref="policyManagementPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="policyManagementViewComponentContainer"/>
+    </bean>
+    
+    <bean id="policyManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PolicyManagementPanel" scope="session">
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
+    	<constructor-arg ref="policyAssociationMappingSearchWindow"/>
+    </bean>
+    
+    <bean id="policyManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+		<constructor-arg value="false"/>
+    </bean>
+    
+    <bean id="policyAssociationMappingSearchWindow" class="org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow" scope="session">
+        <constructor-arg ref="policyLinkMappingConfigurationSearchPanel"/>
+        <constructor-arg ref="policyLinkMappingConfigurationSearchResultsPanel"/>
+    </bean>
+    
+    <bean id="policyLinkMappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg ref="policyLinkMappingSearchResultsTable"/>
+    </bean>
+    
+    <bean id="policyLinkSearchButtonClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchButtonClickListener" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg ref="policyLinkClientComboBox"/>
+        <constructor-arg ref="policyLinkTypeComboBox"/>
+        <constructor-arg ref="policyLinkSourceContextComboBox"/>
+        <constructor-arg ref="policyLinkTargetContextComboBox"/>
+        <constructor-arg ref="policyLinkMappingSearchResultsTable"/>
+    </bean>
+    
+    <!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="policyLinkSearchResultTableItemClickListenerProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="policyLinkSearchResultTableItemClickListener"/></property>
+        </bean>
+      </property>
+    </bean>
+
+    <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">
+        <constructor-arg ref="policyAssociationMappingSearchWindow"/>
+    </bean>
+    
+    <bean id="policyLinkMappingConfigurationSearchPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg ref="policyLinkClientComboBox"/>
+        <constructor-arg ref="policyLinkTypeComboBox"/>
+        <constructor-arg ref="policyLinkSourceContextComboBox"/>
+        <constructor-arg ref="policyLinkTargetContextComboBox"/>
+        <constructor-arg ref="policyLinkSearchButtonClickListener"/>
+    </bean>
+    
+    <bean id="policyLinkMappingSearchResultsTable" class="org.ikasan.dashboard.ui.mappingconfiguration.component.PolicyLinkMappingConfigurationSearchResultsTable" scope="session">
+        <constructor-arg ref="policyLinkSearchResultTableItemClickListenerProxy"/>
+    </bean>
+
+	<bean id="policyLinkClientComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.ClientComboBox" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+    </bean>
+
+    <bean id="policyLinkTypeComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TypeComboBox" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+    </bean>
+
+    <bean id="policyLinkSourceContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.SourceContextComboBox" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="true"/>
+    </bean>
+
+    <bean id="policyLinkTargetContextComboBox" class="org.ikasan.dashboard.ui.mappingconfiguration.component.TargetContextComboBox" scope="session">
+        <constructor-arg ref="mappingConfigurationService"/>
+        <constructor-arg value="true"/>
+    </bean>
+    
+</beans>

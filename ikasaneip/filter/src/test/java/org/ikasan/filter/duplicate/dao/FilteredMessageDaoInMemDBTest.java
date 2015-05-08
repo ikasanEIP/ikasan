@@ -47,7 +47,8 @@ import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.UncategorizedSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -68,17 +69,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FilteredMessageDaoInMemDBTest
 {
     @Autowired
-    private HibernateFilteredMessageDaoImpl daoToTest;
+    private FilteredMessageDao duplicateFilterDao;
 
     /**
      * Test case: DAO must return null since filter entry was not found in database
      */
-    @Test public void filter_entry_not_found_returns_null()
+    @Test 
+    @DirtiesContext
+    public void filter_entry_not_found_returns_null()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
-        this.daoToTest.save(aMessage);
+        this.duplicateFilterDao.save(aMessage);
         FilterEntry messageToBeFound = new DefaultFilterEntry( "test".hashCode(), "find_test", 1);
-        FilterEntry result = this.daoToTest.findMessage(messageToBeFound);
+        FilterEntry result = this.duplicateFilterDao.findMessage(messageToBeFound);
         Assert.assertNull(result);
     }
 
@@ -86,15 +89,17 @@ public class FilteredMessageDaoInMemDBTest
      * Test case: save given filter entry. 
      * Test case: look for newly saved message; it must be found and must be the same!
      */
-    @Test public void save_new_entry_find_returns_same_entry()
+    @Test 
+    @DirtiesContext
+    public void save_new_entry_find_returns_same_entry()
     {
         //Save the entry
         int timeToLive = 1;
         FilterEntry newEntry = new DefaultFilterEntry("save_test".hashCode(), "test", timeToLive);
-        this.daoToTest.save(newEntry);
+        this.duplicateFilterDao.save(newEntry);
 
         //Now lets find it..
-        FilterEntry newEntryReloaded = this.daoToTest.findMessage(newEntry);
+        FilterEntry newEntryReloaded = this.duplicateFilterDao.findMessage(newEntry);
 
         Assert.assertNotNull(newEntryReloaded);
         Assert.assertEquals("test", newEntryReloaded.getClientId());
@@ -112,26 +117,28 @@ public class FilteredMessageDaoInMemDBTest
      * housekept entries will return null.
      * @throws InterruptedException 
      */
-    @Test public void bulk_delete_expired_entries() throws InterruptedException
+    @Test 
+    @DirtiesContext
+    public void bulk_delete_expired_entries() throws InterruptedException
     {
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
-        this.daoToTest.save(one);
+        this.duplicateFilterDao.save(one);
 
         FilterEntry two = new DefaultFilterEntry("two".hashCode(), "bulk_delete_test", 0);
-        this.daoToTest.save(two);
+        this.duplicateFilterDao.save(two);
 
         FilterEntry three = new DefaultFilterEntry("three".hashCode(), "bulk_delete_test", 1);
-        this.daoToTest.save(three);
+        this.duplicateFilterDao.save(three);
         Thread.sleep(10l); // let time move on 
-        this.daoToTest.deleteAllExpired();
+        this.duplicateFilterDao.deleteAllExpired();
 
-        FilterEntry found = this.daoToTest.findMessage(one);
+        FilterEntry found = this.duplicateFilterDao.findMessage(one);
         Assert.assertNull(found);
 
-        found = this.daoToTest.findMessage(two);
+        found = this.duplicateFilterDao.findMessage(two);
         Assert.assertNull(found);
 
-        found = this.daoToTest.findMessage(three);
+        found = this.duplicateFilterDao.findMessage(three);
         Assert.assertNotNull(found);
     }
 
@@ -140,41 +147,45 @@ public class FilteredMessageDaoInMemDBTest
      * housekept entries will return null.
      * @throws InterruptedException 
      */
-    @Test public void batch_delete_expired_entries() throws InterruptedException
+    @Test
+    @DirtiesContext
+    public void batch_delete_expired_entries() throws InterruptedException
     {
-        this.daoToTest.setBatchedHousekeep(true);
-        this.daoToTest.setBatchSize(1);
+        this.duplicateFilterDao.setBatchedHousekeep(true);
+        this.duplicateFilterDao.setBatchSize(1);
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "batch_delete_test", 0);
-        this.daoToTest.save(one);
+        this.duplicateFilterDao.save(one);
 
         FilterEntry two = new DefaultFilterEntry("two".hashCode(), "batch_delete_test", 0);
-        this.daoToTest.save(two);
+        this.duplicateFilterDao.save(two);
 
         FilterEntry three = new DefaultFilterEntry("three".hashCode(), "batch_delete_test", 1);
-        this.daoToTest.save(three);
+        this.duplicateFilterDao.save(three);
         Thread.sleep(10l); // let time move on 
-        this.daoToTest.deleteAllExpired();
+        this.duplicateFilterDao.deleteAllExpired();
 
-        FilterEntry found = this.daoToTest.findMessage(one);
+        FilterEntry found = this.duplicateFilterDao.findMessage(one);
         Assert.assertNull(found);
 
-        found = this.daoToTest.findMessage(two);
+        found = this.duplicateFilterDao.findMessage(two);
         Assert.assertNull(found);
 
-        found = this.daoToTest.findMessage(three);
+        found = this.duplicateFilterDao.findMessage(three);
         Assert.assertNotNull(found);
     }
     /**
      * Test case: try to save an already existing filter entry
      */
-    @Test(expected=UncategorizedSQLException.class) public void save_duplicate_must_fail()
+    @Test(expected=DataIntegrityViolationException.class)
+    @DirtiesContext
+    public void save_duplicate_must_fail()
     {
         //Save the entry
         int timeToLive = 1;
         FilterEntry newEntry = new DefaultFilterEntry("save_duplicate_test".hashCode(), "test", timeToLive);
-        this.daoToTest.save(newEntry);
+        this.duplicateFilterDao.save(newEntry);
 
         //Now try to save it again
-        this.daoToTest.save(newEntry);
+        this.duplicateFilterDao.save(newEntry);
     }
 }

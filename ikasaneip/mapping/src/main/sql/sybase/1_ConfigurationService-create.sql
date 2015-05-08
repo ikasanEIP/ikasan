@@ -17,12 +17,13 @@
 CREATE TABLE MCSConfigurationType
 (
    Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
-   Name		      VARCHAR(256)		   UNIQUE NOT NULL,
+   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
    CreatedDateTime      DATETIME default getdate() NOT NULL,
    UpdatedDateTime      DATETIME default getdate() NOT NULL,
    PRIMARY KEY (Id) -- clustered index on Id
 ) 
 LOCK DATAROWS
+WITH IDENTITY_GAP=1
 
 
 IF OBJECT_ID('MCSConfigurationType') IS NOT NULL 
@@ -58,13 +59,14 @@ go
 CREATE TABLE MCSConfigurationContext
 (
    Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
-   Name		      VARCHAR(256)		   UNIQUE NOT NULL,
-   Description	      VARCHAR(1024)		   NOT NULL,
+   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+   Description	      	VARCHAR(1024)		   NOT NULL,
    CreatedDateTime      DATETIME default getdate() NOT NULL,
    UpdatedDateTime      DATETIME default getdate() NOT NULL,
    PRIMARY KEY (Id) -- clustered index on Id
 ) 
 LOCK DATAROWS
+WITH IDENTITY_GAP=1
 
 
 IF OBJECT_ID('MCSConfigurationContext') IS NOT NULL 
@@ -107,6 +109,7 @@ CREATE TABLE MCSConfigServiceClient
    PRIMARY KEY (Id) -- clustered index on Id
 ) 
 LOCK DATAROWS
+WITH IDENTITY_GAP=1
 
 CREATE NONCLUSTERED INDEX ConfigServiceClient_Name ON MCSConfigServiceClient(Name)
 
@@ -252,9 +255,7 @@ CREATE TABLE MCSSourceConfigValue
 LOCK DATAROWS
 WITH IDENTITY_GAP=1
 
--- This is for TransitionBlockedItem state model id searches
 CREATE NONCLUSTERED INDEX SrcConfigValue_ConfigContextId ON MCSSourceConfigValue(MappingConfigurationId)
--- This is for TransitionBlockedItem state model id searches
 CREATE NONCLUSTERED INDEX SrcConfig_TgtSysConfigValueId ON MCSSourceConfigValue(TargetConfigurationValueId)
 
 IF OBJECT_ID('MCSSourceConfigValue') IS NOT NULL 
@@ -340,6 +341,7 @@ CREATE TABLE MCSSourceConfigGroupSeq
 )
 
 LOCK DATAROWS
+WITH IDENTITY_GAP=1
 
 IF OBJECT_ID('MCSSourceConfigGroupSeq') IS NOT NULL 
    PRINT '<<< CREATED TABLE MCSSourceConfigGroupSeq >>>' 

@@ -1,14 +1,42 @@
 /*
- * $Id: MappingConfigurationServiceImpl.java 44074 2015-03-17 10:43:23Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationService/api/src/main/java/com/mizuho/cmi2/mappingConfiguration/service/MappingConfigurationServiceImpl.java $
+ * $Id$
+ * $URL$
  *
  * ====================================================================
+ * Ikasan Enterprise Integration Platform
  *
- * Copyright (c) 2000-2012 by Mizuho International plc.
- * All Rights Reserved.
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
  *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
  */
 package org.ikasan.mapping.service;
 
@@ -26,6 +54,7 @@ import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationGroupSequence;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
@@ -34,7 +63,7 @@ import org.springframework.dao.DataAccessException;
 
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  *
  */
 public class MappingConfigurationServiceImpl implements MappingConfigurationService
@@ -43,6 +72,7 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
 
     /** Access to market data */
     protected final MappingConfigurationDao dao;
+    protected final KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory;
 
     /**
      * Constructor
@@ -51,12 +81,18 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
      * @param keyLocationQueryProcessorFactory the {@link KeyLocationQueryProcessorFactory}
      * to set on construction of this object.
      */
-    public MappingConfigurationServiceImpl(final MappingConfigurationDao dao)
+    public MappingConfigurationServiceImpl(final MappingConfigurationDao dao,
+            KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory)
     {
         this.dao = dao;
         if (this.dao == null)
         {
             throw new IllegalArgumentException("The MappingConfigurationDao cannot be null.");
+        }
+        this.keyLocationQueryProcessorFactory = keyLocationQueryProcessorFactory;
+        if (this.keyLocationQueryProcessorFactory == null)
+        {
+            throw new IllegalArgumentException("The keyLocationQueryProcessorFactory cannot be null.");
         }
     }
 
@@ -119,6 +155,71 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
         sourceSystemValues.add(sourceSystemValue);
 
         return this.dao.getTargetConfigurationValue(clientName, configurationType, sourceSystem, targetSystem, sourceSystemValues);
+    }
+
+    /* (non-Javadoc)
+     * @see com.mizuho.cmi2.mappingConfiguration.service.MappingConfigurationService#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.lang.String, byte[])
+     */
+    @Override
+    public String getTargetConfigurationValue(final String clientName, final String configurationType, final String sourceContext,
+            final String targetContext, final byte[] payload) throws MappingConfigurationServiceException
+    {
+        String returnValue = null;
+
+        try
+        {
+            // We need to get all the key location queries from the database
+            List<String> keyLocationQueries = this.dao.getKeyLocationQuery(configurationType, sourceContext, targetContext, clientName);
+
+            // We then delegate to the KeyLocationQueryProcessorFactory to get the appropriate KeyLocationQueryProcessor for the
+            // clientName passed in as an argument to this method.
+            KeyLocationQueryProcessor keyLocationQueryProcessor = this.keyLocationQueryProcessorFactory.getKeyLocationQueryProcessor(clientName);
+
+            List<String> sourceSystemValues = new ArrayList<String>();
+
+            // We then want to iterate over the all the key location query strings passed into this method and 
+            // delegate to the KeyLocationQueryProcessor to get the source system values used to get the target
+            // system value related to the mapping configuration.
+            for(String keyLocationQuery: keyLocationQueries)
+            {
+                String queryResult = keyLocationQueryProcessor.getKeyValueFromPayload(keyLocationQuery, payload);
+
+                if(queryResult.length() == 0)
+                {
+                    throw new KeyLocationQueryProcessorException("Evaluation of key location query '" + keyLocationQuery 
+                        +"' returned null or an empty string");
+                }
+                else
+                {
+                    sourceSystemValues.add(queryResult);
+                }
+            }
+
+            // Now delegate to the dao to get the target configuration value from the database.
+            returnValue = this.dao.getTargetConfigurationValue(clientName, configurationType, sourceContext, targetContext, sourceSystemValues);
+
+            if(returnValue == null || returnValue.length() == 0)
+            {
+                StringBuffer sourceSystemValuesSB = new StringBuffer();
+
+                sourceSystemValuesSB.append("[SourceSystemValues = ");
+                for(String sourceSystemValue: sourceSystemValues)
+                {
+                    sourceSystemValuesSB.append(sourceSystemValue).append(" ");
+                }
+                sourceSystemValuesSB.append("]");
+
+                throw new MappingConfigurationServiceException("The Mapping Configuration Service has been unable to resolve a target configuration value. " +
+                        "[Client = " + clientName + "] [MappingConfigurationType = " + configurationType + "] [SourceContext = " + sourceContext + "] " +
+                        "[TargetContext = " + targetContext + "] " + sourceSystemValuesSB.toString());
+            }
+        }
+        catch (KeyLocationQueryProcessorException e)
+        {
+            throw new MappingConfigurationServiceException(e);
+        }
+
+        return returnValue;
     }
 
     /* (non-Javadoc)
@@ -485,4 +586,13 @@ public class MappingConfigurationServiceImpl implements MappingConfigurationServ
     {
         return this.dao.getTargetConfigurationContextByClientNameTypeAndSourceContext(clientName, type, sourceContext); 
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.mapping.service.MappingConfigurationService#getPlatformConfigurationByName(java.lang.String)
+	 */
+	@Override
+	public PlatformConfiguration getPlatformConfigurationByName(String name)
+	{
+		return this.dao.getPlatformConfigurationByName(name);
+	}
 }
