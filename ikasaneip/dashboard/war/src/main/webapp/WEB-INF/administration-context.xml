@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security 
+        http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="userNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="user"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="userPanel"/>
+                   <constructor-arg ref="userPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+    
+    <bean id="principalNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="principalManagement"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+    
+    <bean id="roleNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
+		<constructor-arg value="roleManagement"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="roleManagementPanel"/>
+                   <constructor-arg ref="roleManagementPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="principalManagementPanel"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+                
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="dashboardViewComponentContainer"/>
+    </bean>
+    
+    <bean id="roleManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.RoleManagementPanel" scope="session">
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
+    	<constructor-arg ref="associatedPrincipalItemClickListener"/>
+    </bean>
+    
+    <bean id="userPanel" class="org.ikasan.dashboard.ui.administration.panel.UserManagementPanel" scope="session">
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
+    	<constructor-arg ref="associatedPrincipalItemClickListener"/>
+    </bean>
+    
+    <bean id="associatedPrincipalItemClickListener" class="org.ikasan.dashboard.ui.administration.listener.AssociatedPrincipalItemClickListener" scope="session">
+		<constructor-arg ref="principalManagementPanel"/>
+		<constructor-arg ref="navigationPanelProxy"/>
+    </bean>   
+    
+    <bean id="principalManagementPanel" class="org.ikasan.dashboard.ui.administration.panel.PrincipalManagementPanel" scope="session">
+    	<constructor-arg ref="userService"/>
+    	<constructor-arg ref="securityService"/>
+    </bean>
+    
+    <bean id="administrationtViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
+		<constructor-arg value="false"/>
+    </bean>
+
+</beans>

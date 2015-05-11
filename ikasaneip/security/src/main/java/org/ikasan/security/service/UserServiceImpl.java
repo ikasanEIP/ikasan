@@ -121,11 +121,19 @@ public class UserServiceImpl implements UserService
     {
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
+        
         String email = "";
+        String firstName = "";
+        String surname = "";
+        String department = "";
+        
         if (userDetails instanceof User)
         {
             User tempUser = (User)userDetails;
             email = tempUser.getEmail();
+            firstName = tempUser.getFirstName();
+            surname = tempUser.getSurname();
+            department = tempUser.getDepartment();
         }
         boolean enabled = userDetails.isEnabled();
         if (username == null || "".equals(username))
@@ -140,12 +148,23 @@ public class UserServiceImpl implements UserService
         {
             throw new IllegalArgumentException("user must contain a non empty email address");
         }
+//        if (firstName == null)
+//        {
+//            throw new IllegalArgumentException("user must contain a non empty firstName");
+//        }
+//        if (surname == null)
+//        {
+//            throw new IllegalArgumentException("user must contain a non empty surname");
+//        }
         if (userExists(username))
         {
             throw new IllegalArgumentException("userDetails must contain a unique username");
         }
         String encodedPassword = passwordEncoder.encodePassword(password, null);
         User userToCreate = new User(username, encodedPassword, email, enabled);
+        userToCreate.setFirstName(firstName);
+        userToCreate.setSurname(surname);
+        userToCreate.setDepartment(department);
         userDao.save(userToCreate);
     }
 
@@ -329,4 +348,31 @@ public class UserServiceImpl implements UserService
         }
         authorityDao.save(newAuthority);
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.UserService#getUserByUsernameLike(java.lang.String)
+	 */
+	@Override
+	public List<User> getUserByUsernameLike(String username)
+	{
+		return this.userDao.getUserByUsernameLike(username);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.UserService#getUserByFirstnameLike(java.lang.String)
+	 */
+	@Override
+	public List<User> getUserByFirstnameLike(String firstname)
+	{
+		return this.userDao.getUserByFirstnameLike(firstname);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.service.UserService#getUserBySurnameLike(java.lang.String)
+	 */
+	@Override
+	public List<User> getUserBySurnameLike(String surname)
+	{
+		return this.userDao.getUserBySurnameLike(surname);
+	}
 }

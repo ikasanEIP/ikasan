@@ -21,8 +21,8 @@
 
 	<repositories>
 		<repository>
-			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
+   			<id>vaadin-addons</id>
+   			<url>http://vaadin.com/nexus/content/repositories/vaadin-addons</url>
 		</repository>
 		<repository>
 			<id>vaadin-snapshots</id>
@@ -35,6 +35,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	
 	<pluginRepositories>
 		<pluginRepository>
 			<id>vaadin-snapshots</id>
@@ -47,73 +48,92 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+	
 	<dependencies>
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
-		<!-- Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory). 
-			For widgetset compilation, vaadin-client-compiler is automatically added 
-			on the compilation classpath by vaadin-maven-plugin so normally there is 
-			no need for an explicit dependency. -->
-		<!-- <dependency> <groupId>com.vaadin</groupId> <artifactId>vaadin-client-compiler</artifactId> 
-			<version>${vaadin.version}</version> <scope>provided</scope> </dependency> -->
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client</artifactId>
 			<version>${vaadin.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
+		
+		<dependency>
+		   <groupId>com.vaadin</groupId>
+		   <artifactId>vaadin-testbench</artifactId>
+		   <version>4.0.2</version>
+		   <scope>compile</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>12.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>ru.xpoft.vaadin</groupId>
 			<artifactId>spring-vaadin-integration</artifactId>
 			<version>3.1</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>3.5.4-Final</version>
+			<version>4.3.9.Final</version>
 			<scope>compile</scope>
 		</dependency>
 		
@@ -130,35 +150,20 @@
 			<version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.7</version>
-			<scope>compile</scope>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.7</version>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-setup</artifactId>
+			<version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-			<version>1.7.7</version>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip</artifactId>
+            <version>1.0.0-rc4-SNAPSHOT</version>
 			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.7.7</version>
-			<scope>compile</scope>
-		</dependency>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -166,6 +171,7 @@
 			<version>3.2.6.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
@@ -173,86 +179,106 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<dependency>
+		   <groupId>com.zybnet</groupId>
+		   <artifactId>vaadin-autocomplete</artifactId>
+		   <version>1.1.1</version>
+		   <scope>compile</scope>
+		</dependency>
+		
 		<!-- JBoss and Messaging -->
-			<dependency>
-				<groupId>javax.jms</groupId>
-				<artifactId>jms</artifactId>
-				<version>1.1</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.remoting</groupId>
-				<artifactId>jboss-remoting</artifactId>
-				<version>2.2.3</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>jboss.aop</groupId>
-				<artifactId>jboss-aop-jdk50</artifactId>
-				<version>1.5.5.GA</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>trove</groupId>
-				<artifactId>trove</artifactId>
-				<version>1.0.2</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>jboss.messaging</groupId>
-				<artifactId>jboss-messaging-client</artifactId>
-				<version>1.4.29</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>3.9.0.GA</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>jboss</groupId>
-				<artifactId>jbossall-client</artifactId>
-				<version>4.3.0.GA_CP04</version>
-				<scope>provided</scope>
-			</dependency>
-			<!-- Test dependencies-->
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.remoting</groupId>
+			<artifactId>jboss-remoting</artifactId>
+			<version>2.2.3</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss.aop</groupId>
+			<artifactId>jboss-aop-jdk50</artifactId>
+			<version>1.5.5.GA</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>trove</groupId>
+			<artifactId>trove</artifactId>
+			<version>1.0.2</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss.messaging</groupId>
+			<artifactId>jboss-messaging-client</artifactId>
+			<version>1.4.29</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.9.0.GA</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jbossall-client</artifactId>
+			<version>4.3.0.GA_CP04</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Test dependencies-->
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock</artifactId>
 			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-junit4</artifactId>
 			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
 			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
 			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<!-- required for testing daos using in memory dbs -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -260,23 +286,26 @@
 			<version>2.5.6</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
             <version>2.9.1</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 		
 	</dependencies>
@@ -311,12 +340,12 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<archive>
 						<manifestEntries>
-							<Dependencies>com.mizuho.mappingConfigurationUI.conf</Dependencies>
+							<Dependencies>org.ikasan.configuration</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
-			<!--plugin>
+			<plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-maven-plugin</artifactId>
                 <version>${vaadin.plugin.version}</version>
@@ -340,16 +369,13 @@
                         <configuration>
                         </configuration>
                         <goals>
-                            <goal>clean</goal>
                             <goal>resources</goal>
-                            <goal>update-theme</goal>
                             <goal>update-widgetset</goal>
-                            <goal>compile-theme</goal>
                             <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin -->
+            </plugin>
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
@@ -377,7 +403,6 @@
 										</versionRange>
 										<goals>
 											<goal>resources</goal>
-											<!-- goal>update-widgetset</goal -->
 											<goal>compile</goal>
 											<goal>update-theme</goal>
 											<goal>compile-theme</goal>

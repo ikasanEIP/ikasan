@@ -17,10 +17,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
-import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessor;
-import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
-import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
+import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor;
 import org.ikasan.mapping.model.ConfigurationContext;
 import org.ikasan.mapping.model.ConfigurationServiceClient;
@@ -33,7 +30,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -46,7 +43,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/mappingConfigurationService-context.xml",
+        "/mapping-conf.xml",
         "/hsqldb-config.xml",
         "/substitute-components.xml",
         "/mock-components.xml"
@@ -54,7 +51,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class KeyLocationQueryProcessorFactoryTest
 {
     /** Object being tested */
-    @Resource private HibernateMappingConfigurationDao xaMappingConfigurationDao;
+    @Resource private MappingConfigurationDao xaMappingConfigurationDao;
 
     Map<String, KeyLocationQueryProcessor> keyLocationQueryProcessorImplementations;
     
@@ -68,6 +65,7 @@ public class KeyLocationQueryProcessorFactoryTest
      */
     @Before public void setup()
     {
+   	
     	ConfigurationServiceClient configurationServiceClient = this.addConfigurationServiceClient("CMI2", 
             "org.ikasan.mapping.keyQueryProcessor.impl.XPathKeyLocationQueryProcessor");
         ConfigurationType dealerToDealer = this.addConfigurationType("Dealer and Product to Account");

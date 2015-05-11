@@ -43,7 +43,7 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.ikasan.security.model.User;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of <code>UserDao</code>
@@ -61,7 +61,7 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     @SuppressWarnings("unchecked")
     public User getUser(String username)
     {
-        List<User> results = getHibernateTemplate().find("from User where username  = ?",username);
+        List<User> results = (List<User>) getHibernateTemplate().find("from User where username  = ?",username);
         User result = null;
         if (!results.isEmpty()){
             result = results.get(0);
@@ -92,6 +92,42 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
         getHibernateTemplate().delete(user);
         
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.UserDao#getUserByUsernameLike(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> getUserByUsernameLike(String username)
+	{
+		List<User> results = (List<User>) getHibernateTemplate().find("from User where username LIKE ?", username + '%');
+
+        return results;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.UserDao#getUserByFirstnameLike(java.lang.String)
+	 */
+	@Override
+	public List<User> getUserByFirstnameLike(String firstname)
+	{
+		@SuppressWarnings("unchecked")
+		List<User> results = (List<User>) getHibernateTemplate().find("from User where firstName LIKE ?", firstname + '%');
+
+        return results;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.UserDao#getUserBySurnameLike(java.lang.String)
+	 */
+	@Override
+	public List<User> getUserBySurnameLike(String surname)
+	{
+		@SuppressWarnings("unchecked")
+		List<User> results = (List<User>) getHibernateTemplate().find("from User where surname LIKE ?", surname + '%');
+
+        return results;
+	}
 
 
     

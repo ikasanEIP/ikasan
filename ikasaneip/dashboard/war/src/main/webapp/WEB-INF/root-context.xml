@@ -23,14 +23,18 @@
     <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="prototype">
         <constructor-arg ref="navigatorMap"/>
         <constructor-arg ref="mappingViewComponentContainer"/>
-        <constructor-arg ref="userDetailsService"/>
-        <constructor-arg ref="localTxSecurityService"/>
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="authenticationService"/>
         <constructor-arg ref="adminUserVisibilityGroup"/>
-        <constructor-arg ref="userDetailsHelper"/>
         <constructor-arg ref="editableGroup"/>
         <constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
         <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
+        <constructor-arg ref="eventBus"/>
+        <constructor-arg ref="imagePanelLayout"/>
+        <constructor-arg ref="navigationPanel"/>
     </bean>
+
+	<bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="session"/>
 
 	<util:map id="navigatorMap" value-type="java.util.List" map-class="java.util.HashMap" scope="session">
 	  <entry key="topLevel" value-ref="topLevelNavigator" />
@@ -41,7 +45,11 @@
       <entry key="replay" value-ref="replayNavigator" />
       <entry key="profile" value-ref="profileNavigator" />
       <entry key="hospital" value-ref="hospitalNavigator" />
-      <entry key="topology" value-ref="topologyNavigator" />
+      <!--  entry key="topology" value-ref="topologyNavigator" / -->
+      <entry key="persistanceSetup" value-ref="persistanceSetupNavigator" />
+      <entry key="principalManagement" value-ref="principalNavigator" />
+      <entry key="roleManagement" value-ref="roleNavigator" />
+      <entry key="policyManagement" value-ref="policyManagementNavigator" />
     </util:map>
 
 	<bean id="topLevelNavigator" class="org.ikasan.dashboard.ui.framework.navigation.IkasanUINavigator" scope="session">
@@ -50,6 +58,10 @@
             <list>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="landingView"/>
+                   <constructor-arg ref="emptyPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="emptyPanel"/>
                    <constructor-arg ref="emptyPanel"/>
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
@@ -80,47 +92,75 @@
                    <constructor-arg value="hospitalView"/>
                    <constructor-arg ref="hospitalPanel"/>
                 </bean>
-                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <!--  bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="estateViewPanel"/>
+                </bean>  -->
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="persistanceSetupView"/>
+                   <constructor-arg ref="persistanceSetupPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="authenticationMethodView"/>
+                   <constructor-arg ref="authenticationMethodPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="principalManagementView"/>
+                   <constructor-arg ref="principalManagementPanel"/>
+                </bean>
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="roleManagementView"/>
+                   <constructor-arg ref="roleManagementPanel"/>
+                </bean>
+                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                   <constructor-arg value="policyManagementView"/>
+                   <constructor-arg ref="policyManagementPanel"/>
                 </bean>
             </list>
         </constructor-arg>
         <constructor-arg ref="dashboardViewComponentContainer"/>
     </bean>
-
-
-    <bean id="userDetailsHelper" class="org.ikasan.dashboard.ui.framework.util.UserDetailsHelper" scope="session">
+	
+	<!-- Very Important: We need to use this proxy bean to avoid a circular dependency!! -->
+    <bean id="navigationPanelProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+        <bean class="org.springframework.aop.target.LazyInitTargetSource">
+          <property name="targetBeanName"><idref local="navigationPanel"/></property>
+        </bean>
+      </property>
     </bean>
+    
+    <bean id="navigationPanel" class="org.ikasan.dashboard.ui.framework.panel.NavigationPanel" scope="session">
+		<constructor-arg ref="authenticationService"/>
+		<constructor-arg ref="adminUserVisibilityGroup"/>
+        <constructor-arg ref="editableGroup"/>
+		<constructor-arg ref="newMappingConfigurationFunctionalGroup"/>
+        <constructor-arg ref="existingMappingConfigurationFunctionalGroup"/>
+        <constructor-arg ref="imagePanelLayout"/>
+		<constructor-arg ref="navigatorMap"/>
+		<constructor-arg>
+	        <list>
+	            <ref bean="clientComboBoxRefreshGroup" />
+	            <ref bean="typeComboBoxRefreshGroup" />
+	            <ref bean="contextComboBoxRefreshGroup" />
+	        </list>
+	    </constructor-arg>
+	</bean>
 
+    <bean id="policyLinkSearchResultTableItemClickListener" class="org.ikasan.dashboard.ui.mappingconfiguration.listener.PolicyLinkMappingSearchResultTableItemClickListener" lazy-init="true" scope="session">
+        <constructor-arg ref="policyAssociationMappingSearchWindow"/>
+    </bean>
+	
+	<bean id="imagePanelLayout" class="com.vaadin.ui.VerticalLayout" scope="session">
+	</bean>
+    
     <bean id="emptyPanel" class="com.vaadin.navigator.Navigator.EmptyView" scope="session">
     </bean>
 
-    <bean id="sha1PasswordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
-    
-    <bean id="userDetailsService"
-        class="org.ikasan.security.service.UserServiceImpl">
-        <constructor-arg ref="userDao"/>
-        <constructor-arg ref="authorityDao"/>
-        <constructor-arg ref="sha1PasswordEncoder"/>
+	<bean id="authenticationMethodPanel" class="org.ikasan.dashboard.ui.framework.panel.AuthenticationMethodPanel" scope="session">
+		 <constructor-arg ref="securityService"/>
+		 <constructor-arg ref="authenticationProviderFactory"/>
+		 <constructor-arg ref="ldapService"/>
     </bean>
-    
-    <bean id="userDao" class="org.ikasan.security.dao.HibernateUserDao">
-        <property name="sessionFactory" ref="securitySessionFactory"/>
-    </bean>
-    
-    <bean id="authorityDao" class="org.ikasan.security.dao.HibernateAuthorityDao">
-        <property name="sessionFactory" ref="securitySessionFactory"/>
-    </bean>
-    
-    <bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="localTxIkasanDataSource" />
-        <property name="mappingResources">
-            <list>
-                <value>org/ikasan/security/model/User.hbm.xml</value>
-                <value>org/ikasan/security/model/Authority.hbm.xml</value>
-            </list>
-        </property>
-        <property name="hibernateProperties" ref="platformHibernateProperties"/>
-    </bean>
+
 </beans>

@@ -1679,4 +1679,1809 @@ uSNCreated: 215074110
 whenChanged: 20150317134412.0Z
 whenCreated: 20110601110212.0Z
 
+dn: OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: organizationalUnit
+objectClass: top
+instanceType: 4
+objectCategory: CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=schema,
+ DC=ad
+ou: Groups
+distinguishedName: OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030012.0Z
+dSCorePropagationData: 20130830102706.0Z
+dSCorePropagationData: 20121130040013.0Z
+dSCorePropagationData: 20121129091925.0Z
+dSCorePropagationData: 16010714223649.0Z
+name: Groups
+objectGUID:: uDWuudb2d0CNdeFNV/PjXw==
+uSNChanged: 12964
+uSNCreated: 12964
+whenChanged: 20110702094332.0Z
+whenCreated: 20030612162004.0Z
+
+dn: OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: organizationalUnit
+objectClass: top
+instanceType: 4
+objectCategory: CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=schema,
+ DC=ad
+ou: Security
+distinguishedName: OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+name: Security
+objectGUID:: 8YAyo1l5o0iAf0aL6D0Nsw==
+uSNChanged: 59293212
+uSNCreated: 12965
+whenChanged: 20120831140311.0Z
+whenCreated: 20030612162155.0Z
+
+dn: OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: organizationalUnit
+objectClass: top
+instanceType: 4
+objectCategory: CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=schema,
+ DC=ad
+ou: Application
+distinguishedName: OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,D
+ C=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+name: Application
+objectGUID:: Xl6GrVTtfkC4+exnZKYEsA==
+uSNChanged: 16420
+uSNCreated: 16420
+whenChanged: 20110702094510.0Z
+whenCreated: 20030612162225.0Z
+
+dn: CN=I_APP_DERIVATION_UAT_RO,OU=Application,OU=Security,OU=Groups,DC=uk,DC
+ =mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: I_APP_DERIVATION_UAT_RO
+description: Provides RO Access To \\APC-APPS01\apps\DerivationReport\UAT
+distinguishedName: CN=I_APP_DERIVATION_UAT_RO,OU=Application,OU=Security,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 16010101000417.0Z
+member: CN=Pervez Ahsan,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Farman Daniel,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Hawtin Marcel,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Reeves Anthony,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Guo Zong Hui,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Bird Timothy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Smith Nicola,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: I_APP_DERIVATION_UAT_RO
+objectGUID:: LeeD74liBUOnT3xjhlzVOQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbtcAAAA==
+sAMAccountName: I_APP_DERIVATION_UAT_RO
+sAMAccountType: 268435456
+uSNChanged: 222151578
+uSNCreated: 111264855
+whenChanged: 20150217160051.0Z
+whenCreated: 20130618130718.0Z
+
+dn: CN=App_LPSPRD_Trader,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuh
+ o-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSPRD_Trader
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSPRD_Trader,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Psomas Emmanouil,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Boviatsis Yiannis,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=SHP_ClientOpening_AFG_LPS,OU=Share Point,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSPRD_Trader
+objectGUID:: nzB+XsDrPUeZvRecWUQFHQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb8lYAAA==
+sAMAccountName: App_LPSPRD_Trader
+sAMAccountType: 268435456
+uSNChanged: 148390552
+uSNCreated: 43918
+whenChanged: 20140114163334.0Z
+whenCreated: 20070206170425.0Z
+
+dn: CN=App_Oberon_Users,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_Oberon_Users
+description: Oberon 5 users group
+distinguishedName: CN=App_Oberon_Users,OU=Application,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+info: Redundent?
+member: CN=ClarkT Tony,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Transaction Processor Supervisor_Regular User,OU=RBAC,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Transaction Processor Clerk_Regular User,OU=RBAC,OU=Gr
+ oups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Client Onboarding Senior_Regular User,OU=RBAC,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_ISD AFG Dev_Regular User,OU=RBAC,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=Daniel Lucille,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Harris Karen,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Clark Tony,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Bird Timothy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Radcliffe Guy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Smith Nicola,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Davis Nick,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Jackson Clifford,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Roxburgh Jennifer,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Lloyd Roger,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Hutchinson Garry,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Fordham Victoria,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Bergiers Pascal,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: App_Oberon_Users
+objectGUID:: 7Bch5VYkQUKpS9rCrZ7+DA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbLgQAAA==
+sAMAccountName: App_Oberon_Users
+sAMAccountType: 268435456
+uSNChanged: 211778190
+uSNCreated: 46654
+whenChanged: 20141223125025.0Z
+whenCreated: 20030426141234.0Z
+
+dn: CN=I_APP_DERIVATION_PRD_RO,OU=Application,OU=Security,OU=Groups,DC=uk,DC
+ =mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: I_APP_DERIVATION_PRD_RO
+description: Provides RO Access To \\APC-APPS01\apps\DerivationReport\PRD
+distinguishedName: CN=I_APP_DERIVATION_PRD_RO,OU=Application,OU=Security,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 16010101000417.0Z
+member: CN=Azama Sarah,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Pervez Ahsan,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Farman Daniel,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Hawtin Marcel,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Reeves Anthony,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Guo Zong Hui,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Bird Timothy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Smith Nicola,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: I_APP_DERIVATION_PRD_RO
+objectGUID:: nsGVhDOvkkyLGhkkqstNOw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbtsAAAA==
+sAMAccountName: I_APP_DERIVATION_PRD_RO
+sAMAccountType: 268435456
+uSNChanged: 224100688
+uSNCreated: 111273612
+whenChanged: 20150227185601.0Z
+whenCreated: 20130618135440.0Z
+
+dn: CN=App_LPSPRD_SSDRD,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSPRD_SSDRD
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSPRD_SSDRD,OU=Application,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_SSD - Client Onboarding Senior_Regular User,OU=RBAC,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Client Onboarding Analyst_Regular User,OU=RBAC,OU=Grou
+ ps,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=SHP_ClientOpening_AFG_LPS,OU=Share Point,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSPRD_SSDRD
+objectGUID:: AD9KKlQZfUqXLZ4E7UulMw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb8FYAAA==
+sAMAccountName: App_LPSPRD_SSDRD
+sAMAccountType: 268435456
+uSNChanged: 206771688
+uSNCreated: 45653
+whenChanged: 20141127133751.0Z
+whenCreated: 20070206165941.0Z
+
+dn: CN=SAF_MurexSupportTeam,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mi
+ zuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+accountNameHistory:: PD94bWwgdmVyc2lvbj0iMS4wIj8+PER5bmFtaWNHcm91cFhNTCBDb25
+ kaXRpb25zPSJbMHgxOzllMTc1OTc3LTc0ZWEtNDZlYy05N2RkLThmY2JmMThmNTJmYjsoJmFtcD
+ soJmFtcDsofCgmYW1wOyhvYmplY3RDYXRlZ29yeT1wZXJzb24pKG9iamVjdFNpZD0qKSghKHNBT
+ UFjY291bnRUeXBlOjEuMi44NDAuMTEzNTU2LjEuNC44MDQ6PTMpKSkoJmFtcDsob2JqZWN0Q2F0
+ ZWdvcnk9cGVyc29uKSghKG9iamVjdFNpZD0qKSkpKCZhbXA7KG9iamVjdENhdGVnb3J5PWdyb3V
+ wKShncm91cFR5cGU6MS4yLjg0MC4xMTM1NTYuMS40LjgwNDo9MTQpKSkoISh1c2VyQWNjb3VudE
+ NvbnRyb2w6MS4yLjg0MC4xMTM1NTYuMS40LjgwNDo9MjA0OCkpKSh8KCZhbXA7KFJvbGU9aXNkI
+ G11cmV4IHN1cHBvcnQqKShvYmplY3RDbGFzcz11c2VyKSkoJmFtcDsoUm9sZT1JU0QgLSBSaXNr
+ IFJlcG9ydGluZyopKG9iamVjdENsYXNzPXVzZXIpKSgmYW1wOyhSb2xlPWlzZCAtIG11cmV4IHN
+ 1cHBvcnQqKShvYmplY3RDbGFzcz11c2VyKSkpKV1bMHgzOzRmZjFjMzM3LTcwZmUtNDY2Mi1hN2
+ Q5LWUxOGJhNzJlOGRlMTtdW0RHXSIgT3JpZ2luYXRpbmdTZXJ2aWNlPSI4NDJkZjcyNC05ZmM2L
+ TRkY2UtYWM5Ny1kZTYyODYzYzQzODQiIFRpbWVTdGFtcD0iMjAxNS0wNS0wNVQwMjowMDowMS42
+ MDEwMDIyWiIgSGFzTmVzdGVkR3JvdXBzPSJGQUxTRSIgLz4=
+cn: SAF_MurexSupportTeam
+distinguishedName: CN=SAF_MurexSupportTeam,OU=Application,OU=Security,OU=Gro
+ ups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+info: This group is under the control of ActiveRoles Server. Any changes you
+  make directly to the membership list will be overridden. Use ActiveRoles S
+ erver to view or modify membership rules for this group.
+member: CN=Darby Elodie,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Maquieira Diego,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Kasashima Yuki,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Campbell Martin,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Salem Ihab AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Salem Ihab,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Sampath Dhanajaya,OU=New Joiners,OU=People,OU=Logins,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=Sampath Dhananjaya AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=co
+ m
+member: CN=Sampath Dhananjaya,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Kimber Tim AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Samarasinghe Shanil AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=c
+ om
+member: CN=Kimber Tim,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Samarasinghe Shanil,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Mankodi Ashesh AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Infante Roberto AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Infante Roberto,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ounissi Karim,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Parmar Rajeev,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Vijaykumar Walter AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Vijaykumar Walter,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Dier James,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Guo Zong Hui AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Hawtin Marcel,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Koen Semi,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Koen Semi AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Guo Zong Hui,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: SAF_MurexSupportTeam
+objectGUID:: I1u0MyryvUi9XMFioSBynQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbjbsAAA==
+sAMAccountName: SAF_MurexSupportTeam
+sAMAccountType: 268435456
+uSNChanged: 235841136
+uSNCreated: 29288397
+whenChanged: 20150505020057.0Z
+whenCreated: 20120214133722.0Z
+
+dn: CN=App_LPSPRD_RiskMethodology,OU=Application,OU=Security,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSPRD_RiskMethodology
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSPRD_RiskMethodology,OU=Application,OU=Security,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=SHP_ClientOpening_AFG_LPS,OU=Share Point,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSPRD_RiskMethodology
+objectGUID:: WJmjmnjKwUmeE+RCYzqdQA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb7lYAAA==
+sAMAccountName: App_LPSPRD_RiskMethodology
+sAMAccountType: 268435456
+uSNChanged: 40644
+uSNCreated: 40644
+whenChanged: 20110702094550.0Z
+whenCreated: 20070206165058.0Z
+
+dn: CN=SAF_MiddlewareTeam,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+accountNameHistory:: PD94bWwgdmVyc2lvbj0iMS4wIj8+PER5bmFtaWNHcm91cFhNTCBDb25
+ kaXRpb25zPSJbMHgxOzllMTc1OTc3LTc0ZWEtNDZlYy05N2RkLThmY2JmMThmNTJmYjsoJmFtcD
+ soJmFtcDsofCgmYW1wOyhvYmplY3RDYXRlZ29yeT1wZXJzb24pKG9iamVjdFNpZD0qKSghKHNBT
+ UFjY291bnRUeXBlOjEuMi44NDAuMTEzNTU2LjEuNC44MDQ6PTMpKSkoJmFtcDsob2JqZWN0Q2F0
+ ZWdvcnk9cGVyc29uKSghKG9iamVjdFNpZD0qKSkpKCZhbXA7KG9iamVjdENhdGVnb3J5PWdyb3V
+ wKShncm91cFR5cGU6MS4yLjg0MC4xMTM1NTYuMS40LjgwNDo9MTQpKSkoISh1c2VyQWNjb3VudE
+ NvbnRyb2w6MS4yLjg0MC4xMTM1NTYuMS40LjgwNDo9MjA0OCkpKSgmYW1wOyhkZXBhcnRtZW50P
+ UlTRCAtIE1pZGRsZXdhcmUgRGV2ZWxvcG1lbnQqKShvYmplY3RDbGFzcz11c2VyKSkpXVtER10i
+ IE9yaWdpbmF0aW5nU2VydmljZT0iODQyZGY3MjQtOWZjNi00ZGNlLWFjOTctZGU2Mjg2M2M0Mzg
+ 0IiBIYXNOZXN0ZWRHcm91cHM9IkZBTFNFIiBUaW1lU3RhbXA9IjIwMTUtMDUtMDVUMDI6MDA6MD
+ EuNjAxMDAyMloiIC8+
+cn: SAF_MiddlewareTeam
+distinguishedName: CN=SAF_MiddlewareTeam,OU=Application,OU=Security,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+info: This group is under the control of ActiveRoles Server. Any changes you
+  make directly to the membership list will be overridden. Use ActiveRoles S
+ erver to view or modify membership rules for this group.
+member: CN=cmiuser,OU=Unix Service Accounts,OU=Logins,DC=uk,DC=mizuho-sc,DC=
+ com
+member: CN=Majewski Andrzej AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Rawson Darren AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Majewski Andrzej,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Rawson Darren,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ellis Gavin AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ellis Gavin,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Guler Serkan AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Edwards Kieron AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Stewart Michael AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Edwards Kieron,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Mitchell Jeff AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Guler Serkan,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Mitchell Jeff,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Stoykov Alexander AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Stoykov Alexander,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Donnell Alwyn AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Donnell Alwyn,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Suetake Junichi AD,OU=Local,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Suetake Junichi,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: SAF_MiddlewareTeam
+objectGUID:: 4AgV9yzrlkWWvUHto8NKKw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbjrsAAA==
+sAMAccountName: SAF_MiddlewareTeam
+sAMAccountType: 268435456
+uSNChanged: 235841137
+uSNCreated: 29293800
+whenChanged: 20150505020057.0Z
+whenCreated: 20120214142859.0Z
+
+dn: CN=App_LPSPRD_Regulatory,OU=Application,OU=Security,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSPRD_Regulatory
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSPRD_Regulatory,OU=Application,OU=Security,OU=Gr
+ oups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=SHP_ClientOpening_AFG_LPS,OU=Share Point,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSPRD_Regulatory
+objectGUID:: q3fcV+2GlkC6ovkZ+4FD5A==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb7VYAAA==
+sAMAccountName: App_LPSPRD_Regulatory
+sAMAccountType: 268435456
+uSNChanged: 200867303
+uSNCreated: 44617
+whenChanged: 20141028135032.0Z
+whenCreated: 20070206164954.0Z
+
+dn: CN=I_DIR_FileInput_SwiftDev_CH,OU=Application,OU=Security,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: I_DIR_FileInput_SwiftDev_CH
+description: Change Access to \\ADW-SWIFT01\D$\Apps\Swift\Batch\FileInput
+distinguishedName: CN=I_DIR_FileInput_SwiftDev_CH,OU=Application,OU=Security
+ ,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=SFTPSwiftIntmatchDEV,OU=SFTP,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=SFTPSwiftStratusDEV,OU=SFTP,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Cannar Mark,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=I_DIR_FileInput_SwiftUAT_CH,OU=Application,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: I_DIR_FileInput_SwiftDev_CH
+objectGUID:: JA+aQxkdS0y/2pCTbI+PaA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbCFoAAA==
+sAMAccountName: I_DIR_FileInput_SwiftDev_CH
+sAMAccountType: 536870912
+uSNChanged: 208897239
+uSNCreated: 40199
+whenChanged: 20141209112050.0Z
+whenCreated: 20060815100101.0Z
+
+dn: CN=Apps_IBJL-APPS,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: Apps_IBJL-APPS
+description: Allows Read Access to the Apps on IBJL-APPS
+distinguishedName: CN=Apps_IBJL-APPS,OU=Application,OU=Security,OU=Groups,DC
+ =uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+info: To be Deleted
+member: CN=ROLE_FI - MTN Senior Trader 3_Regular User,OU=RBAC,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=ROLE_FI - MTN Senior Trader 1_Regular User,OU=RBAC,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=ClarkT Tony,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Accounts Payable Senior_Regular User,OU=RBAC,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Transaction Processor Clerk_Regular User,OU=RBAC,OU=Gr
+ oups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Management_Regular User,OU=RBAC,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=ROLE_SSD - Head of Trade Support & Settlements_Regular User,OU=RB
+ AC,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Client Onboarding Senior_Regular User,OU=RBAC,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_Legal - Management_Regular User,OU=RBAC,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+member: CN=ROLE_Primary Debt - MTN Senior Trader 3_Regular User,OU=RBAC,OU=G
+ roups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_Primary Debt - MTN Senior Trader 2_Regular User,OU=RBAC,OU=G
+ roups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_Primary Debt - MTN Senior Trader 1_Regular User,OU=RBAC,OU=G
+ roups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_Finance - Tax_Regular User,OU=RBAC,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=ROLE_ISD - Stratus_Regular User,OU=RBAC,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=Hickling Greg,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_ISD AFG Dev_Regular User,OU=RBAC,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=Strong Yumiko,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Francis Roger,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=McNeela Anne-Marie,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=SQLservice,OU=Service Accounts,OU=Logins,DC=uk,DC=mizuho-sc,DC=co
+ m
+member: CN=Richardson Janet,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Holmes Daniel,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Hart Gavin,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Anderson Ben,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Simmonds Louise,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Tydings Sean,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Patel Alka,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ruddock Matthew,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ilett Sharon,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Holmes Nicola,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Paris Adam,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Salvi Stefano,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Daniel Lucille,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Tarn Richard,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Arora Rajiv,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Clark Tony,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=McDonald Julie,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Bird Timothy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Radcliffe Guy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Cannar Mark,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Jones Graham,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Futurespc,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Smith Nicola,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Moffat Etsuko,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Davis Nick,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Stockdale Geraldine,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Neffar Karen,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Reed Duncan,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ralph Jason,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Jackson Clifford,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Norris Simon,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Till Chris,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Westwood Carly,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=MISBLOOMBERG,OU=Generic Workstations,OU=People,OU=Logins,DC=uk,DC
+ =mizuho-sc,DC=com
+member: CN=Roxburgh Jennifer,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Lloyd Roger,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Wills Andrew,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Tate Richard,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Heijens-Berry Nicole,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=co
+ m
+member: CN=Lanaghan Brian,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=BISLIVE,OU=Generic Workstations,OU=People,OU=Logins,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=Hutchinson Garry,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Fordham Victoria,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Joslin Mark,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Joshi Dinesh,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Bergiers Pascal,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Boyce Brian,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Boyle Mike,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Daden Richard,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Doe Steven,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Fenemore Steven,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Suetake Junichi,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Sayers Wayne,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Brown Angela,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: Apps_IBJL-APPS
+objectGUID:: fhev49lPUEOwNb7r4nvbfQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb6wMAAA==
+sAMAccountName: Apps_IBJL-APPS
+sAMAccountType: 268435456
+uSNChanged: 231700653
+uSNCreated: 46657
+whenChanged: 20150410172610.0Z
+whenCreated: 20030426141229.0Z
+
+dn: CN=App_PasswordManagerClient_Users,OU=Application,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_PasswordManagerClient_Users
+description: Users who can use and are forced to register in Password Manage
+ r
+distinguishedName: CN=App_PasswordManagerClient_Users,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - Oracle Financials Support_Regular User,OU=RBAC,OU=Grou
+ ps,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_ISD - Oracle Financials App DBA_Regular User,OU=RBAC,OU=Grou
+ ps,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Oracle Financials,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_Independent Research,OU=Departments,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=DEP_FI - Structuring,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,
+ DC=com
+member: CN=DEP_FI - Solutions Sales,OU=Departments,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=DEP_FI - Rates Strategy,OU=Departments,OU=Groups,DC=uk,DC=mizuho-
+ sc,DC=com
+member: CN=DEP_FI - Exotic Derivatives,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_FI - Credit Strategy,OU=Departments,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=DEP_FI - MTN Structured,OU=Departments,OU=Groups,DC=uk,DC=mizuho-
+ sc,DC=com
+member: CN=DEP_FI - Visitor,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=c
+ om
+member: CN=DEP_SSD - Visitor,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=
+ com
+member: CN=DEP_Primary Debt - Visitor,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_Equity Sales & Trading - Visitor,OU=Departments,OU=Groups,DC=
+ uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ECM & Advisory - Visitor,OU=Departments,OU=Groups,DC=uk,DC=mi
+ zuho-sc,DC=com
+member: CN=DEP_ISD - Local GVAR,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,
+ DC=com
+member: CN=DEP_Risk Mgmt - Liquidity Risk Management,OU=Departments,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Risk Mgmt - Management,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_Risk Mgmt - Operational Risk,OU=Departments,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=DEP_Strategic Decision Support,OU=Departments,OU=Groups,DC=uk,DC=
+ mizuho-sc,DC=com
+member: CN=DEP_Strategy - Corporate Communications,OU=Departments,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Strategy - Management,OU=Departments,OU=Groups,DC=uk,DC=mizuh
+ o-sc,DC=com
+member: CN=DEP_SSD - Cash & Collateral Management,OU=Departments,OU=Groups,D
+ C=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_SSD - Management,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,
+ DC=com
+member: CN=DEP_SSD - Middle Office Transaction Management,OU=Departments,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_SSD - Accounts Payable,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_Legal - Management,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_FI - JGB Trading,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,
+ DC=com
+member: CN=DEP_FI - Research,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=
+ com
+member: CN=DEP_FI - Repo,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_FI - Special Solutions,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_FI - Management,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,D
+ C=com
+member: CN=DEP_FI - Emerging Markets,OU=Departments,OU=Groups,DC=uk,DC=mizuh
+ o-sc,DC=com
+member: CN=DEP_FI - Credit Trading,OU=Departments,OU=Groups,DC=uk,DC=mizuho-
+ sc,DC=com
+member: CN=DEP_FI - Agent Lending,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_Product Control - Visitor,OU=Departments,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+member: CN=DEP_Product Control - Valuation Control,OU=Departments,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Finance - Visitor,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc
+ ,DC=com
+member: CN=DEP_Finance - Tax,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=
+ com
+member: CN=DEP_Finance - Financial Reporting,OU=Departments,OU=Groups,DC=uk,
+ DC=mizuho-sc,DC=com
+member: CN=DEP_Treasury and Funding,OU=Departments,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=DEP_ISD - StrategicTransformation,OU=Departments,OU=Groups,DC=uk,
+ DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Primary Sales Revenue & Equity,OU=Departments,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Global Var2 Project,OU=Departments,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+member: CN=DEP_ISD - Enterprise Initiatives,OU=Departments,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=DEP_SSD - Client Onboarding,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_Overseas - FIOS,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,D
+ C=com
+member: CN=DEP_Equity Sales & Trading - IR,OU=Departments,OU=Groups,DC=uk,DC
+ =mizuho-sc,DC=com
+member: CN=DEP_ISD - Derivatives,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc
+ ,DC=com
+member: CN=DEP_Non Executive Directors,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_ISD - Stratus Development,OU=Departments,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+member: CN=DEP_ISD - MI Reporting,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_Equity Sales & Trading - CB Trading,OU=Departments,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Equity Sales & Trading - CB Sales,OU=Departments,OU=Groups,DC
+ =uk,DC=mizuho-sc,DC=com
+member: CN=DEP_FI - Rates Sales,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,
+ DC=com
+member: CN=DEP_ISD - Hardware Services,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_Product Control - IPV,OU=Departments,OU=Groups,DC=uk,DC=mizuh
+ o-sc,DC=com
+member: CN=DEP_Primary Debt - DCM,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_Primary Debt - Syndicate,OU=Departments,OU=Groups,DC=uk,DC=mi
+ zuho-sc,DC=com
+member: CN=DEP_ISD - External Vendors,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_Primary Debt Mgmt,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc
+ ,DC=com
+member: CN=DEP_FI - Govt Trading European,OU=Departments,OU=Groups,DC=uk,DC=
+ mizuho-sc,DC=com
+member: CN=DEP_FI - SAS & Yen Trading,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_Legal - MTN & Derivatives,OU=Departments,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+member: CN=DEP_Legal - Primary Debt-Equity & AFG,OU=Departments,OU=Groups,DC
+ =uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Product Control - P&L Reporting,OU=Departments,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=DEP_Product Control - Projects,OU=Departments,OU=Groups,DC=uk,DC=
+ mizuho-sc,DC=com
+member: CN=DEP_Product Control - Management Office,OU=Departments,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Primary Debt - MTN,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_ISD - UNIX Stratus & Scheduling,OU=Departments,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Server Infrastructure Management Mgmt,OU=Departments,OU
+ =Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_FI - Trading Mgmt,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc
+ ,DC=com
+member: CN=DEP_FI - Sales Mgmt,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,D
+ C=com
+member: CN=DEP_MDs Office,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_SSD - Nostro Management & Reference Data Mgmt,OU=Departments,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_SSD - Corporate Actions,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_ISD - Risk,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Regulatory Reporting,OU=Departments,OU=Groups,DC=uk,DC=
+ mizuho-sc,DC=com
+member: CN=DEP_ISD - Rates,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=co
+ m
+member: CN=DEP_ISD - FO & MO & EA Mgmt,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_ISD - Enterprise Architecture,OU=Departments,OU=Groups,DC=uk,
+ DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - BAU Projects,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_FI - Credit Sales,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc
+ ,DC=com
+member: CN=DEP_Equity Sales & Trading Mgmt,OU=Departments,OU=Groups,DC=uk,DC
+ =mizuho-sc,DC=com
+member: CN=DEP_Finance - SOX,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=
+ com
+member: CN=DEP_Finance - Management Reporting,OU=Departments,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+member: CN=DEP_Finance - Regulatory Reporting,OU=Departments,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Data Services Development,OU=Departments,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=DEP_Equity Sales & Trading - Sales Trading,OU=Departments,OU=Grou
+ ps,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Equity Sales & Trading - Planning & Administration,OU=Departm
+ ents,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Windows Storage & VMWare,OU=Departments,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+member: CN=DEP_Internal Audit,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC
+ =com
+member: CN=DEP_ISD - Sharepoint Projects,OU=Departments,OU=Groups,DC=uk,DC=m
+ izuho-sc,DC=com
+member: CN=DEP_ISD - Admin,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=co
+ m
+member: CN=DEP_ISD - Control Mgmt,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_Risk Mgmt - Methodology & Model Validation,OU=Departments,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Equity Sales & Trading - Trading,OU=Departments,OU=Groups,DC=
+ uk,DC=mizuho-sc,DC=com
+member: CN=DEP_SSD - Bond Equity SWAPS Processing,OU=Departments,OU=Groups,D
+ C=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Risk Mgmt - Credit Risk Reporting,OU=Departments,OU=Groups,DC
+ =uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Risk Mgmt - Market Risk Reporting,OU=Departments,OU=Groups,DC
+ =uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Compliance,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Technical Services Mgmt,OU=Departments,OU=Groups,DC=uk,
+ DC=mizuho-sc,DC=com
+member: CN=DEP_Equity Sales & Trading - Equity Sales,OU=Departments,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Middleware Development,OU=Departments,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=DEP_ISD - Mgmt,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ECM & Advisory - Equity Syndication,OU=Departments,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ECM & Advisory - IR,OU=Departments,OU=Groups,DC=uk,DC=mizuho-
+ sc,DC=com
+member: CN=DEP_ECM & Advisory - Mergers & Acquisitions (Advisory),OU=Departm
+ ents,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - SSD Development,OU=Departments,OU=Groups,DC=uk,DC=mizuh
+ o-sc,DC=com
+member: CN=DEP_SSD - Reference Data,OU=Departments,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+member: CN=DEP_SSD - Nostro Management,OU=Departments,OU=Groups,DC=uk,DC=miz
+ uho-sc,DC=com
+member: CN=DEP_Risk Mgmt - Market Risk Management,OU=Departments,OU=Groups,D
+ C=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_Finance Management,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_ISD - System Operators,OU=Departments,OU=Groups,DC=uk,DC=mizu
+ ho-sc,DC=com
+member: CN=DEP_ISD - DBA,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Network & Comms,OU=Departments,OU=Groups,DC=uk,DC=mizuh
+ o-sc,DC=com
+member: CN=DEP_ISD - Infrastructure Projects & Data Centres,OU=Departments,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=DEP_ISD - Service Desk,OU=Departments,OU=Groups,DC=uk,DC=mizuho-s
+ c,DC=com
+member: CN=DEP_ECM & Advisory Mgmt,OU=Departments,OU=Groups,DC=uk,DC=mizuho-
+ sc,DC=com
+member: CN=DEP_Risk Mgmt - Risk Reporting Mgmt,OU=Departments,OU=Groups,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=DEP_Risk Mgmt - Credit Analysis,OU=Departments,OU=Groups,DC=uk,DC
+ =mizuho-sc,DC=com
+member: CN=DEP_Human Resources,OU=Departments,OU=Groups,DC=uk,DC=mizuho-sc,D
+ C=com
+member: CN=DEP_ISD - Information Security,OU=Departments,OU=Groups,DC=uk,DC=
+ mizuho-sc,DC=com
+name: App_PasswordManagerClient_Users
+objectGUID:: ub7B8+/z3UeDF126p2uF7Q==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbmJAAAA==
+sAMAccountName: App_PasswordManagerClient_Users
+sAMAccountType: 268435456
+uSNChanged: 234920245
+uSNCreated: 46929
+whenChanged: 20150429124722.0Z
+whenCreated: 20101015140735.0Z
+
+dn: CN=SAF_ISDAdminTeam,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho
+ -sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+accountNameHistory:: PD94bWwgdmVyc2lvbj0iMS4wIj8+PER5bmFtaWNHcm91cFhNTCBDb25
+ kaXRpb25zPSJbMHgxOzllMTc1OTc3LTc0ZWEtNDZlYy05N2RkLThmY2JmMThmNTJmYjsoJmFtcD
+ soJmFtcDsofCgmYW1wOyhvYmplY3RDYXRlZ29yeT1wZXJzb24pKG9iamVjdFNpZD0qKSghKHNBT
+ UFjY291bnRUeXBlOjEuMi44NDAuMTEzNTU2LjEuNC44MDQ6PTMpKSkoJmFtcDsob2JqZWN0Q2F0
+ ZWdvcnk9cGVyc29uKSghKG9iamVjdFNpZD0qKSkpKCZhbXA7KG9iamVjdENhdGVnb3J5PWdyb3V
+ wKShncm91cFR5cGU6MS4yLjg0MC4xMTM1NTYuMS40LjgwNDo9MTQpKSkoISh1c2VyQWNjb3VudE
+ NvbnRyb2w6MS4yLjg0MC4xMTM1NTYuMS40LjgwNDo9MjA0OCkpKSh8KCZhbXA7KFJvbGU9aXNkI
+ GFkbWluKikob2JqZWN0Q2xhc3M9dXNlcikpKCZhbXA7KFJvbGU9SVNEIC0gQ29udHJhY3RzIGFu
+ ZCBBZG1pbmlzdHJhdGlvbikob2JqZWN0Q2xhc3M9dXNlcikpKSldW0RHXSIgT3JpZ2luYXRpbmd
+ TZXJ2aWNlPSI4NDJkZjcyNC05ZmM2LTRkY2UtYWM5Ny1kZTYyODYzYzQzODQiIFRpbWVTdGFtcD
+ 0iMjAxNS0wNS0wNVQwMjowMDowMS42MDEwMDIyWiIgSGFzTmVzdGVkR3JvdXBzPSJGQUxTRSIgL
+ z4=
+cn: SAF_ISDAdminTeam
+distinguishedName: CN=SAF_ISDAdminTeam,OU=Application,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+info:: VGhpcyBncm91cCBpcyB1bmRlciB0aGUgY29udHJvbCBvZiBBY3RpdmVSb2xlcyBTZXJ2Z
+ XIuIEFueSBjaGFuZ2VzIHlvdSBtYWtlIGRpcmVjdGx5IHRvIHRoZSBtZW1iZXJzaGlwIGxpc3Qg
+ d2lsbCBiZSBvdmVycmlkZGVuLiBVc2UgQWN0aXZlUm9sZXMgU2VydmVyIHRvIHZpZXcgb3IgbW9
+ kaWZ5IG1lbWJlcnNoaXAgcnVsZXMgZm9yIHRoaXMgZ3JvdXAuIA==
+member: CN=Driukaite Daiva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Stainer Stephen,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Doe Steven,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: SAF_ISDAdminTeam
+objectGUID:: MivHsYGYWk2MTwK0Kn88pg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbj7sAAA==
+sAMAccountName: SAF_ISDAdminTeam
+sAMAccountType: 268435456
+uSNChanged: 235841138
+uSNCreated: 29294402
+whenChanged: 20150505020057.0Z
+whenCreated: 20120214143454.0Z
+
+dn: CN=App_LPSPRD_CreditAnalysis,OU=Application,OU=Security,OU=Groups,DC=uk,
+ DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSPRD_CreditAnalysis
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSPRD_CreditAnalysis,OU=Application,OU=Security,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_Risk Mgmt - Credit Risk Management_Regular User,OU=RBAC,OU=G
+ roups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_Risk Mgmt - Liquidity Risk Management_Regular User,OU=RBAC,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Horvath Szabolcs,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Berry Paul,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Robert Gael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Makey Christopher,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=McDonald Julie,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Joslin Mark,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=SHP_ClientOpening_AFG_LPS,OU=Share Point,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSPRD_CreditAnalysis
+objectGUID:: /KeGH8dzm0GG8dve9/YiFg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb6VYAAA==
+sAMAccountName: App_LPSPRD_CreditAnalysis
+sAMAccountType: 268435456
+uSNChanged: 231701707
+uSNCreated: 46157
+whenChanged: 20150410173347.0Z
+whenCreated: 20070206164646.0Z
+
+dn: CN=App_LPSDEV_SSDNostro,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mi
+ zuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSDEV_SSDNostro
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSDEV_SSDNostro,OU=Application,OU=Security,OU=Gro
+ ups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_SSD - Reconciliations Clerk_Regular User,OU=RBAC,OU=Groups,D
+ C=uk,DC=mizuho-sc,DC=com
+member: CN=LPSDEV_SSDNOSTRO,OU=Generic Workstations,OU=People,OU=Logins,DC=u
+ k,DC=mizuho-sc,DC=com
+member: CN=Dawgotra Charanjit,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSDEV_SSDNostro
+objectGUID:: i3vI7UbdTkWf1u/DIQ9UZw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb+lYAAA==
+sAMAccountName: App_LPSDEV_SSDNostro
+sAMAccountType: 268435456
+uSNChanged: 207647521
+uSNCreated: 43043
+whenChanged: 20141202110825.0Z
+whenCreated: 20070206181149.0Z
+
+dn: CN=App_LPSPRD_SSDNostro,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mi
+ zuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483646
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: App_LPSPRD_SSDNostro
+description: Access permissions for Life Products Trading System
+distinguishedName: CN=App_LPSPRD_SSDNostro,OU=Application,OU=Security,OU=Gro
+ ups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_SSD - Reconciliations Supervisor_Regular User,OU=RBAC,OU=Gro
+ ups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Reconciliations Clerk_Regular User,OU=RBAC,OU=Groups,D
+ C=uk,DC=mizuho-sc,DC=com
+member: CN=ROLE_SSD - Nostro Management Manager_Regular User,OU=RBAC,OU=Grou
+ ps,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Moore Nicola,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=McNeela Anne-Marie,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=SHP_ClientOpening_AFG_LPS,OU=Share Point,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+name: App_LPSPRD_SSDNostro
+objectGUID:: h8DATWmZ+UWFDwVC8qOE8g==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlb71YAAA==
+sAMAccountName: App_LPSPRD_SSDNostro
+sAMAccountType: 268435456
+uSNChanged: 224100283
+uSNCreated: 43044
+whenChanged: 20150227185312.0Z
+whenCreated: 20070206165853.0Z
+
+dn: OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=co
+ m
+objectClass: organizationalUnit
+objectClass: top
+instanceType: 4
+objectCategory: CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=schema,
+ DC=ad
+ou: MSP_INT
+distinguishedName: OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=
+ mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+name: MSP_INT
+objectGUID:: i3PN0dqvtUmWDxXAbxdyCQ==
+uSNChanged: 34568
+uSNCreated: 34568
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095519.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_rdm_user,OU=MSP_INT,OU=Application,O
+ U=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_rdm_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_rdm_user,OU=MSP_INT,O
+ U=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_rdm_user,OU=MSP_INT,OU=Application,OU=Security,OU=Gr
+ oups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_rdm_user
+objectGUID:: qk3QdfWOnEO/KXtuYwBCfg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbtZMAAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_rdm_user
+sAMAccountType: 536870912
+uSNChanged: 34569
+uSNCreated: 34569
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095803.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_posrec_reporting_user,OU=MSP_INT,OU=
+ Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_posrec_reporting_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_posrec_reporting_user
+ ,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_posrec_reporting_user,OU=MSP_INT,OU=Application,OU=S
+ ecurity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_posrec_reporting_user
+objectGUID:: P5nuMpiHp0C5squQ2517Lg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbtY0AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_posrec_reporting_user
+sAMAccountType: 536870912
+uSNChanged: 34570
+uSNCreated: 34570
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095745.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_misreporting_user,OU=MSP_INT,OU=Appl
+ ication,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_misreporting_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_misreporting_user,OU=
+ MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_misreporting_user,OU=MSP_INT,OU=Application,OU=Secur
+ ity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_misreporting_user
+objectGUID:: ItCyFs35eUWGyuhSjmv0Ug==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbsY0AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_misreporting_user
+sAMAccountType: 536870912
+uSNChanged: 34571
+uSNCreated: 34571
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095743.0Z
+
+dn: CN=APP_INT_cmi_webapps_int_cmi_bo_admin,OU=MSP_INT,OU=Application,OU=Sec
+ urity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_cmi_webapps_int_cmi_bo_admin
+description:: IE1TUCBJbnQgIEFQUCBSb2xlIC0gQ01JV2ViIEludGVncmF0aW9uIGFkbWluIH
+ JvbGVz
+distinguishedName: CN=APP_INT_cmi_webapps_int_cmi_bo_admin,OU=MSP_INT,OU=App
+ lication,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Jones Graham,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_cmi_webapps_int,OU=MSP_INT,OU=Application,OU=Security,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_cmi_bo_admin,OU=MSP_INT,OU=Application,OU=Security,OU=G
+ roups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_cmi_webapps_int_cmi_bo_admin
+objectGUID:: K9Kb0D4Z0kGX79a7ga4tPw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbmo0AAA==
+sAMAccountName: APP_INT_cmi_webapps_int_cmi_bo_admin
+sAMAccountType: 536870912
+uSNChanged: 64310072
+uSNCreated: 34572
+whenChanged: 20121005171909.0Z
+whenCreated: 20100409095731.0Z
+
+dn: CN=APP_INT_cmi_webapps_int_cmi_bo_user,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_cmi_webapps_int_cmi_bo_user
+description:: IE1TUCBJbnQgIEFQUCBSb2xlIC0gQ01JV2ViIEludGVncmF0aW9uIGFkbWluIH
+ JvbGVz
+distinguishedName: CN=APP_INT_cmi_webapps_int_cmi_bo_user,OU=MSP_INT,OU=Appl
+ ication,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Makey Christopher,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=McDonald Julie,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Joslin Mark,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_cmi_webapps_int,OU=MSP_INT,OU=Application,OU=Security,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_cmi_bo_user,OU=MSP_INT,OU=Application,OU=Security,OU=Gr
+ oups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_cmi_webapps_int_cmi_bo_user
+objectGUID:: DDKlg76UOUuz58erXTs2IA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbnI0AAA==
+sAMAccountName: APP_INT_cmi_webapps_int_cmi_bo_user
+sAMAccountType: 536870912
+uSNChanged: 81003132
+uSNCreated: 34573
+whenChanged: 20130111171922.0Z
+whenCreated: 20100409095731.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_readonly_user,OU=MSP_INT,OU=Applicat
+ ion,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_readonly_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_readonly_user,OU=MSP_
+ INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Wilkinson Jeremy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Salvi Stefano,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_readonly_user,OU=MSP_INT,OU=Application,OU=Security,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_readonly_user
+objectGUID:: qbnY6emSU0i8VfPfI+F33g==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbt40AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_readonly_user
+sAMAccountType: 536870912
+uSNChanged: 34576
+uSNCreated: 34576
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095746.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_regulatory_user,OU=MSP_INT,OU=Applic
+ ation,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_regulatory_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_regulatory_user,OU=MS
+ P_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Roxburgh Jennifer,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_regulatory_user,OU=MSP_INT,OU=Application,OU=Securit
+ y,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_regulatory_user
+objectGUID:: qmu4d1N7zE2r4no4BjJLqg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbuY0AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_regulatory_user
+sAMAccountType: 536870912
+uSNChanged: 34577
+uSNCreated: 34577
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095747.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_bipru_manager,OU=MSP_INT,OU=Applicat
+ ion,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_bipru_manager
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_bipru_manager,OU=MSP_
+ INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_bipru_manager,OU=MSP_INT,OU=Application,OU=Security,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_bipru_manager
+objectGUID:: 7fL09TftO068rUOAFDnYMA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbvY0AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_bipru_manager
+sAMAccountType: 536870912
+uSNChanged: 190552209
+uSNCreated: 34578
+whenChanged: 20140912100117.0Z
+whenCreated: 20100409095748.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_bipru_user,OU=MSP_INT,OU=Application
+ ,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_bipru_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_bipru_user,OU=MSP_INT
+ ,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_bipru_user,OU=MSP_INT,OU=Application,OU=Security,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_bipru_user
+objectGUID:: f12CrT38202xZWEchsCRaw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbv40AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_bipru_user
+sAMAccountType: 536870912
+uSNChanged: 190552205
+uSNCreated: 34579
+whenChanged: 20140912100117.0Z
+whenCreated: 20100409095749.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_creditanalysis_user,OU=MSP_INT,OU=Ap
+ plication,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_creditanalysis_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_creditanalysis_user,O
+ U=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Cooper Nick,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Makey Christopher,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Joslin Mark,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_creditanalysis_user,OU=MSP_INT,OU=Application,OU=Sec
+ urity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_creditanalysis_user
+objectGUID:: xMnn4ge4cU6voi11/4MQCA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbxY0AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_creditanalysis_user
+sAMAccountType: 536870912
+uSNChanged: 231701755
+uSNCreated: 34580
+whenChanged: 20150410173351.0Z
+whenCreated: 20100409095752.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_custody_manager,OU=MSP_INT,OU=Applic
+ ation,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_custody_manager
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_custody_manager,OU=MS
+ P_INT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_custody_manager,OU=MSP_INT,OU=Application,OU=Securit
+ y,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_custody_manager
+objectGUID:: VU5GqM5wIkKR/L5/x1ma6g==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbx40AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_custody_manager
+sAMAccountType: 536870912
+uSNChanged: 155336616
+uSNCreated: 34582
+whenChanged: 20140301084421.0Z
+whenCreated: 20100409095753.0Z
+
+dn: CN=APP_INT_mm_webapp_Integration_mm_custody_user,OU=MSP_INT,OU=Applicati
+ on,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_mm_webapp_Integration_mm_custody_user
+description:: IE1TUCBJTlQgQVBQIFJvbGUgLSBBYnN0cmFjdCByb2xlIHRvIGJlIHVzZWQgaW
+ 4gTU0gSU5UIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_mm_webapp_Integration_mm_custody_user,OU=MSP_I
+ NT,OU=Application,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Boviatsis Yiannis,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Clark Helen,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_webapp_Integration,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_mm_custody_user,OU=MSP_INT,OU=Application,OU=Security,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_mm_webapp_Integration_mm_custody_user
+objectGUID:: oyYeS3Rk0kWqq/0qwWZsEA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbyY0AAA==
+sAMAccountName: APP_INT_mm_webapp_Integration_mm_custody_user
+sAMAccountType: 536870912
+uSNChanged: 141902901
+uSNCreated: 34585
+whenChanged: 20131129100234.0Z
+whenCreated: 20100409095754.0Z
+
+dn: CN=MSP_INT_MTN_INT,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_MTN_INT
+description:: IE1TUCBBcHAgR3JvdXAgLSBNVE4gYXBwbGljYXRpb24gdXNlZCBieSBJbnQgZW
+ 52aXJvbm1lbnQ=
+distinguishedName: CN=MSP_INT_MTN_INT,OU=MSP_INT,OU=Application,OU=Security,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=APP_INT_MTN_INT_mtn_user,OU=MSP_INT,OU=Application,OU=Security,OU
+ =Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_MTN_INT
+objectGUID:: gtkkO7Ggz02YaAFSLMay8w==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbjI0AAA==
+sAMAccountName: MSP_INT_MTN_INT
+sAMAccountType: 536870912
+uSNChanged: 34587
+uSNCreated: 34587
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095359.0Z
+
+dn: CN=APP_INT_MTN_INT_mtn_user,OU=MSP_INT,OU=Application,OU=Security,OU=Gro
+ ups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_MTN_INT_mtn_user
+description:: IE1TUCBJbnQgQVBQIFJvbGUgLSAgQWJzdHJhY3Qgcm9sZSB0byBiZSB1c2VkIG
+ luIEludGVncmF0aW9uIGVudmlyb25tZW50
+distinguishedName: CN=APP_INT_MTN_INT_mtn_user,OU=MSP_INT,OU=Application,OU=
+ Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Hasegawa Yumi,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Senda Sakiko,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Wilkinson Jeremy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=S-1-5-21-429327028-1439241600-318601546-49272,CN=ForeignSecurityP
+ rincipals,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Briscoe Kiyomi,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Radcliffe Guy,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Toyama Kaori,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Tate Richard,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Heijens-Berry Nicole,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=co
+ m
+memberOf: CN=MSP_INT_mtn_user,OU=MSP_INT,OU=Application,OU=Security,OU=Group
+ s,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_MTN_INT,OU=MSP_INT,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_MTN_INT_mtn_user
+objectGUID:: 6RS5t32QWkCjUorE1By7pQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbi40AAA==
+sAMAccountName: APP_INT_MTN_INT_mtn_user
+sAMAccountType: 536870912
+uSNChanged: 198327486
+uSNCreated: 43498
+whenChanged: 20141016130209.0Z
+whenCreated: 20100409095358.0Z
+
+dn: CN=MSP_INT_slr_infosec,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,D
+ C=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_slr_infosec
+description:: IE1TUCBBcHAgUkdyb3VwIC0gSW5mb3JtYXRpb24gU2VjdXJpdHkgYWNjZXNz
+distinguishedName: CN=MSP_INT_slr_infosec,OU=MSP_INT,OU=Application,OU=Secur
+ ity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_infosec,OU=MSP_INT,OU=Application,OU=Security
+ ,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_slr_infosec
+objectGUID:: ofK+r9DbhUqyq8P6kDi2EQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbkI0AAA==
+sAMAccountName: MSP_INT_slr_infosec
+sAMAccountType: 536870912
+uSNChanged: 208897407
+uSNCreated: 34589
+whenChanged: 20141209112050.0Z
+whenCreated: 20100409095726.0Z
+
+dn: CN=APP_INT_SLR_SYS_slr_infosec,OU=MSP_INT,OU=Application,OU=Security,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_SLR_SYS_slr_infosec
+description:: IE1TUCBJbnQgQVBQIFJvbGUgLSBJbmZvcm1hdGlvbiBTZWN1cml0eSBhY2Nlc3
+ M=
+distinguishedName: CN=APP_INT_SLR_SYS_slr_infosec,OU=MSP_INT,OU=Application,
+ OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Woollacott Keith,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ng Chun,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Robinson Aaron,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_SLR_SYS,OU=MSP_INT,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_slr_infosec,OU=MSP_INT,OU=Application,OU=Security,OU=Gr
+ oups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_SLR_SYS_slr_infosec
+objectGUID:: Q5H4kO8NG0mmpcfeu1J7lw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbjo0AAA==
+sAMAccountName: APP_INT_SLR_SYS_slr_infosec
+sAMAccountType: 536870912
+uSNChanged: 208897285
+uSNCreated: 40180
+whenChanged: 20141209112050.0Z
+whenCreated: 20100409095726.0Z
+
+dn: CN=MSP_INT_slr_mis,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_slr_mis
+description:: IE1TUCBBcHAgUkdyb3VwIC0gTUlTIGFjY2Vzcw==
+distinguishedName: CN=MSP_INT_slr_mis,OU=MSP_INT,OU=Application,OU=Security,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_mis,OU=MSP_INT,OU=Application,OU=Security,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_slr_mis
+objectGUID:: V1UneCeaGESJBL69Lq/Wjg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbko0AAA==
+sAMAccountName: MSP_INT_slr_mis
+sAMAccountType: 536870912
+uSNChanged: 208897303
+uSNCreated: 34591
+whenChanged: 20141209112050.0Z
+whenCreated: 20100409095728.0Z
+
+dn: CN=APP_INT_SLR_SYS_slr_mis,OU=MSP_INT,OU=Application,OU=Security,OU=Grou
+ ps,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_SLR_SYS_slr_mis
+description:: IE1TUCBJbnQgQVBQIFJvbGUgLSBJbmZvcm1hdGlvbiBTZWN1cml0eSBhY2Nlc3
+ M=
+distinguishedName: CN=APP_INT_SLR_SYS_slr_mis,OU=MSP_INT,OU=Application,OU=S
+ ecurity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Woollacott Keith,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ng Chun,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Robinson Aaron,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_SLR_SYS,OU=MSP_INT,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_slr_mis,OU=MSP_INT,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_SLR_SYS_slr_mis
+objectGUID:: ntMwMpMi/0KhHPAP2kUQiA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbkY0AAA==
+sAMAccountName: APP_INT_SLR_SYS_slr_mis
+sAMAccountType: 536870912
+uSNChanged: 208897403
+uSNCreated: 40179
+whenChanged: 20141209112050.0Z
+whenCreated: 20100409095727.0Z
+
+dn: CN=MSP_INT_slr_readonly,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,
+ DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_slr_readonly
+description:: IE1TUCBBcHAgUkdyb3VwIC0gU0xSIHJlYWQgb25seSBhY2Nlc3M=
+distinguishedName: CN=MSP_INT_slr_readonly,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_readonly,OU=MSP_INT,OU=Application,OU=Securit
+ y,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_slr_readonly
+objectGUID:: hfMX8I7uRkqFCKUienXI4w==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlblI0AAA==
+sAMAccountName: MSP_INT_slr_readonly
+sAMAccountType: 536870912
+uSNChanged: 195332761
+uSNCreated: 34593
+whenChanged: 20141002125643.0Z
+whenCreated: 20100409095728.0Z
+
+dn: CN=APP_INT_SLR_SYS_slr_readonly,OU=MSP_INT,OU=Application,OU=Security,OU
+ =Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_SLR_SYS_slr_readonly
+description:: IE1TUCBJbnQgQVBQIFJvbGUgLSBJbmZvcm1hdGlvbiBTZWN1cml0eSBhY2Nlc3
+ M=
+distinguishedName: CN=APP_INT_SLR_SYS_slr_readonly,OU=MSP_INT,OU=Application
+ ,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Woollacott Keith,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ng Chun,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Robinson Aaron,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Briggs Gillian,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ilett Sharon,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_SLR_SYS,OU=MSP_INT,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_slr_readonly,OU=MSP_INT,OU=Application,OU=Security,OU=G
+ roups,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_SLR_SYS_slr_readonly
+objectGUID:: c4KiAzzEek2XOtzeXcWJ4g==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbk40AAA==
+sAMAccountName: APP_INT_SLR_SYS_slr_readonly
+sAMAccountType: 536870912
+uSNChanged: 208897335
+uSNCreated: 40178
+whenChanged: 20141209112050.0Z
+whenCreated: 20100409095728.0Z
+
+dn: CN=MSP_INT_SLR_SYS,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=uk
+ ,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_SLR_SYS
+description:: IE1TUCBBcHAgR3JvdXAgLSBTTFIgYXBwbGljYXRpb24gdXNlZCBieSBJbnQgZW
+ 52aXJvbm1lbnQ=
+distinguishedName: CN=MSP_INT_SLR_SYS,OU=MSP_INT,OU=Application,OU=Security,
+ OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_securitieslending,OU=MSP_INT,OU=Application,O
+ U=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_readonly,OU=MSP_INT,OU=Application,OU=Securit
+ y,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_mis,OU=MSP_INT,OU=Application,OU=Security,OU=
+ Groups,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_infosec,OU=MSP_INT,OU=Application,OU=Security
+ ,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_SLR_SYS
+objectGUID:: 2Snns+EuqUCCNkr+fodbQw==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbj40AAA==
+sAMAccountName: MSP_INT_SLR_SYS
+sAMAccountType: 536870912
+uSNChanged: 195332775
+uSNCreated: 34595
+whenChanged: 20141002125643.0Z
+whenCreated: 20100409095726.0Z
+
+dn: CN=APP_INT_SLR_SYS_slr_securitieslending,OU=MSP_INT,OU=Application,OU=Se
+ curity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: APP_INT_SLR_SYS_slr_securitieslending
+description:: IE1TUCBJbnQgQVBQIFJvbGUgLSBJbmZvcm1hdGlvbiBTZWN1cml0eSBhY2Nlc3
+ M=
+distinguishedName: CN=APP_INT_SLR_SYS_slr_securitieslending,OU=MSP_INT,OU=Ap
+ plication,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=ROLE_ISD - SSD Development_Regular User,OU=RBAC,OU=Groups,DC=uk,D
+ C=mizuho-sc,DC=com
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Woollacott Keith,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ng Chun,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Robinson Aaron,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Chitty Paula,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=Ilett Sharon,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_slr_securitieslending,OU=MSP_INT,OU=Application,OU=Secu
+ rity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+memberOf: CN=MSP_INT_SLR_SYS,OU=MSP_INT,OU=Application,OU=Security,OU=Groups
+ ,DC=uk,DC=mizuho-sc,DC=com
+name: APP_INT_SLR_SYS_slr_securitieslending
+objectGUID:: ATBO27l95EGkrs5qoIXsPQ==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlblY0AAA==
+sAMAccountName: APP_INT_SLR_SYS_slr_securitieslending
+sAMAccountType: 536870912
+uSNChanged: 208897197
+uSNCreated: 43262
+whenChanged: 20141209112049.0Z
+whenCreated: 20100409095729.0Z
+
+dn: CN=MSP_INT_slr_securitieslending,OU=MSP_INT,OU=Application,OU=Security,O
+ U=Groups,DC=uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_slr_securitieslending
+description:: IE1TUCBBcHAgUkdyb3VwIC0gU2VjdXJpdGllcyBMZW5kaW5nIFRlYW0gYWNjZX
+ Nz
+distinguishedName: CN=MSP_INT_slr_securitieslending,OU=MSP_INT,OU=Applicatio
+ n,OU=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=Samiappan Jeeva,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com
+member: CN=APP_INT_SLR_SYS_slr_securitieslending,OU=MSP_INT,OU=Application,O
+ U=Security,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_slr_securitieslending
+objectGUID:: O8egqP6OFUSu8bNz2csGXg==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlblo0AAA==
+sAMAccountName: MSP_INT_slr_securitieslending
+sAMAccountType: 536870912
+uSNChanged: 195332751
+uSNCreated: 34596
+whenChanged: 20141002125643.0Z
+whenCreated: 20100409095729.0Z
+
+dn: CN=MSP_INT_cmi_admin,OU=MSP_INT,OU=Application,OU=Security,OU=Groups,DC=
+ uk,DC=mizuho-sc,DC=com
+objectClass: group
+objectClass: top
+groupType: -2147483644
+instanceType: 4
+objectCategory: CN=Group,CN=Schema,CN=Configuration,DC=schema,DC=ad
+cn: MSP_INT_cmi_admin
+description:: IE1TUCBBcHAgUkdyb3VwIC0gQ01JV2ViIEludGVncmF0aW9uIGFkbWluIHJvbG
+ U=
+distinguishedName: CN=MSP_INT_cmi_admin,OU=MSP_INT,OU=Application,OU=Securit
+ y,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+dSCorePropagationData: 20130831030013.0Z
+dSCorePropagationData: 20130830102707.0Z
+dSCorePropagationData: 20121130040015.0Z
+dSCorePropagationData: 20121129091927.0Z
+dSCorePropagationData: 16010714223649.0Z
+member: CN=APP_INT_cmi_webapps_int_cmi_admin,OU=MSP_INT,OU=Application,OU=Se
+ curity,OU=Groups,DC=uk,DC=mizuho-sc,DC=com
+name: MSP_INT_cmi_admin
+objectGUID:: FT/x2Oz3r0e5lXRPHaReLA==
+objectSid:: AQUAAAAAAAUVAAAARXImF3t14HLperlbmY0AAA==
+sAMAccountName: MSP_INT_cmi_admin
+sAMAccountType: 536870912
+uSNChanged: 34598
+uSNCreated: 34598
+whenChanged: 20110702094537.0Z
+whenCreated: 20100409095730.0Z
+
 
