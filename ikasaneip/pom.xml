@@ -913,12 +913,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-utility-endpoint</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-configuration</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -980,12 +974,6 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-xml-marshaller</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-jms-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

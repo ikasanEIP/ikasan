@@ -131,12 +131,6 @@
 		<scope>provided</scope>
 	</dependency>
 	
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-aspects</artifactId>
-		<scope>test</scope>
-	</dependency>
-
       <!-- Test dependencies -->
       <!-- logging -->
       <dependency>
