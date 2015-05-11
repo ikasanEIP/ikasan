@@ -61,8 +61,9 @@ import javax.annotation.Resource;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/exclusion-hibernate-dao-conf.xml",
-        "/h2db-datasource-conf.xml"
-        })
+        "/h2db-datasource-conf.xml",
+        "/substitute-components.xml"
+    })
 
 public class HibernateExclusionServiceDaoTest
 {
@@ -117,5 +118,4 @@ public class HibernateExclusionServiceDaoTest
         Assert.assertTrue("Should be found after deleteAll", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
         Assert.assertFalse("Should not be found after deleteAll", exclusionServiceDao.contains("moduleName", "flowName", "123457"));
     }
-
 }

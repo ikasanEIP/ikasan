@@ -116,7 +116,7 @@
       <dependency>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-core</artifactId>
-          <scope>provided</scope>
+          <scope>compile</scope>
       </dependency>
 
       <dependency>
@@ -124,6 +124,18 @@
           <artifactId>spring-orm</artifactId>
              <scope>provided</scope>
       </dependency>
+	  
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+		<scope>provided</scope>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aspects</artifactId>
+		<scope>test</scope>
+	</dependency>
 
       <!-- Test dependencies -->
       <!-- logging -->
@@ -132,6 +144,12 @@
           <artifactId>commons-logging</artifactId>
            <scope>test</scope>
       </dependency>
+
+	  <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aspects</artifactId>
+		<scope>test</scope>
+	</dependency>
 
       <dependency>
           <groupId>org.jmock</groupId>

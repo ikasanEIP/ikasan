@@ -13,7 +13,7 @@
 -->
 <!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class
         name="org.ikasan.security.model.Policy"
@@ -25,6 +25,16 @@
           unsaved-value="null">
           <generator class="identity" />
         </id>
+        
+        <many-to-one name="policyLink" column="PolicyLinkId" 
+       			  class="org.ikasan.security.model.PolicyLink" not-null="false" lazy="false"
+       			  cascade="all"/>
+       			  
+        <set name="roles" table="RolePolicy" cascade="all" lazy="false" fetch="select" inverse="true">
+            <key column="PolicyId"/>
+            <many-to-many column="RoleId"
+                class="org.ikasan.security.model.Role"/>
+        </set>
 
         <property name="name"
                   type="java.lang.String"

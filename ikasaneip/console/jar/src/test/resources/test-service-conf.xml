@@ -45,12 +45,36 @@
  
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	    <property name="sessionFactory">
+	        <ref bean="pointToPointFlowProfileHibernateSessionFactory"/>
+	    </property>
+	</bean>
+	
+	<aop:config>
+        <aop:pointcut id="daoMethods"
+                expression="execution(* org.ikasan.console.pointtopointflow.dao.*.*(..))"/>
+                
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+    </aop:config>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
 
     <!-- The pointToPointFlowProfileDao definition for the Ikasan console -->
-    <bean id="stubbedDao" class="org.ikasan.console.pointtopointflow.dao.StubbedDao">
+    <bean id="stubbedDao" class="org.ikasan.console.pointtopointflow.dao.StubbedDaoImpl">
         <property name="sessionFactory" ref="pointToPointFlowProfileHibernateSessionFactory" />    
     </bean>
 

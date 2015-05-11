@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -40,39 +40,23 @@
  */
 package org.ikasan.console.pointtopointflow.dao;
 
-import java.util.List;
-
-import org.hibernate.criterion.DetachedCriteria;
 import org.ikasan.spec.management.PointToPointFlowProfile;
 
 /**
- * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
- * @author Ikasan Development Team
- */
-/**
- * Implementation of the contract for adding test data
  * @author Ikasan Development Team
  *
  */
-public class StubbedDao extends HibernatePointToPointFlowProfileDao 
+public interface StubbedDao
 {
-    /**
+	/**
      * Save the given profile
      * @param pointToPointFlowProfile
      */
-    public void save(PointToPointFlowProfile pointToPointFlowProfile)
-    {
-        this.getHibernateTemplate().saveOrUpdate(pointToPointFlowProfile);
-    }
+    public void save(PointToPointFlowProfile pointToPointFlowProfile);
 
     /**
      * Clearout all profiles
      */
-    public void deleteAll()
-    {
-        DetachedCriteria criteria = DetachedCriteria.forClass(PointToPointFlowProfile.class);
-        List<PointToPointFlowProfile> events = this.getHibernateTemplate().findByCriteria(criteria);
-        this.getHibernateTemplate().deleteAll(events);
-    }
+    public void deleteAll();
 }
