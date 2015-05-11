@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.ikasan.filetransfer.util.checksum.DigestChecksum;
 import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.model.FileChunk;

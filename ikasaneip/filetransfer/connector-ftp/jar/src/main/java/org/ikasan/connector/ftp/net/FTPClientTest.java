@@ -13,7 +13,7 @@ public class FTPClientTest {
 
         String server = "adl-cmi10";
         String username = "majean";
-        String password = "Andr00t13";
+        String password = "xxxxxxxx";
         int port = 21;
         int timeoutInMillis = 10000;
 
