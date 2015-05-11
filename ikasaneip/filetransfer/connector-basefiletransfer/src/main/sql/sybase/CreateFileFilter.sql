@@ -57,7 +57,7 @@ CREATE TABLE FTFileFilter
     LastModified    datetime      NOT NULL,
     LastAccessed    datetime      NOT NULL,
     Size            numeric(18,0) NOT NULL,
-    CreatedDateTime datetime      DEFAULT getDate() NOT NULL
+    CreatedDateTime numeric(18, 0) NOT NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1

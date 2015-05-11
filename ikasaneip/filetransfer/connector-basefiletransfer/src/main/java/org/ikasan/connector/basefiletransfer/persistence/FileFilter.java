@@ -78,9 +78,9 @@ public class FileFilter
     
     /** size */
     private int size;
-    
-    /** created date time */
-    private Date createdDateTime;
+
+    /** immutable event creation timestamp */
+    private long createdDateTime;
 
     /** Criteria to filter on */
     private String criteria;
@@ -105,13 +105,14 @@ public class FileFilter
         this.lastModified = lastModified;
         this.lastAccessed = lastAccessed;
         this.size = size;
-        this.createdDateTime = new Date();
+        long now = System.currentTimeMillis();
+        this.createdDateTime = now;
     }
 
     /**
      * @return the createdDateTime
      */
-    public Date getCreatedDateTime()
+    public long getCreatedDateTime()
     {
         logger.debug("Getting createdDateTime = [" + this.createdDateTime + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         return createdDateTime;
@@ -123,7 +124,7 @@ public class FileFilter
      * @param createdDateTime the createdDateTime to set
      */
     @SuppressWarnings("unused")
-    private void setCreatedDateTime(Date createdDateTime)
+    private void setCreatedDateTime(long createdDateTime)
     {
         logger.debug("Setting this.createdDateTime = [" + createdDateTime + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         this.createdDateTime = createdDateTime;

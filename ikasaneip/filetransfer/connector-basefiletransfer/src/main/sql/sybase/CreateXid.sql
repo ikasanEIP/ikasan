@@ -57,8 +57,8 @@ CREATE TABLE FTXid
     BranchQualifier          univarchar (255)  NOT NULL,
     FormatId          numeric(18,0)  NOT NULL,
     ClientId           varchar(255)  NOT NULL,
-    CreatedDateTime  datetime NOT NULL,
-    LastUpdatedDateTime  datetime NOT NULL
+    CreatedDateTime  numeric(18,0) NOT NULL,
+    LastUpdatedDateTime  numeric(18,0) NOT NULL
 )
 LOCK DATAROWS
 WITH IDENTITY_GAP=1

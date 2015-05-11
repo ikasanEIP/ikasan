@@ -84,10 +84,10 @@ public class XidImpl implements Xid
     private Set<TransactionalResourceCommand> commands = new LinkedHashSet<TransactionalResourceCommand>();
 
     /** Created Date Time */
-    private Date createdDateTime;
+    private long createdDateTime;
     
     /** Last Updated Date Time */
-    private Date lastUpdatedDateTime;
+    private long lastUpdatedDateTime;
     
     /**
      * Constructor
@@ -102,8 +102,9 @@ public class XidImpl implements Xid
         this.globalTransactionId = globalTransactionId;
         this.branchQualifier = branchQualifier;
         this.formatId = formatId;
-        this.createdDateTime = new Date();
-        this.lastUpdatedDateTime = new Date();
+        long now = System.currentTimeMillis();
+        this.createdDateTime = now;
+        this.lastUpdatedDateTime = now;
     }
 
     /**
@@ -311,7 +312,7 @@ public class XidImpl implements Xid
      * Get the created date time
      * @return the createdDateTime
      */
-    public Date getCreatedDateTime()
+    public long getCreatedDateTime()
     {
         return createdDateTime;
     }
@@ -320,7 +321,7 @@ public class XidImpl implements Xid
      * Set the created date time
      * @param createdDateTime the createdDateTime to set
      */
-    public void setCreatedDateTime(Date createdDateTime)
+    public void setCreatedDateTime(long createdDateTime)
     {
         this.createdDateTime = createdDateTime;
     }
@@ -329,7 +330,7 @@ public class XidImpl implements Xid
      * Get the last updated date time
      * @return the lastUpdatedDateTime
      */
-    public Date getLastUpdatedDateTime()
+    public long getLastUpdatedDateTime()
     {
         return lastUpdatedDateTime;
     }
@@ -338,7 +339,7 @@ public class XidImpl implements Xid
      * Set the last updated date time
      * @param lastUpdatedDateTime the lastUpdatedDateTime to set
      */
-    public void setLastUpdatedDateTime(Date lastUpdatedDateTime)
+    public void setLastUpdatedDateTime(long lastUpdatedDateTime)
     {
         this.lastUpdatedDateTime = lastUpdatedDateTime;
     }

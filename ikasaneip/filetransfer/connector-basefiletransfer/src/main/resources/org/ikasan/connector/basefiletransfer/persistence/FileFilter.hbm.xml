@@ -62,7 +62,10 @@
       <property name="lastModified" type="java.util.Date" column="LastModified" not-null="true" />
       <property name="lastAccessed" type="java.util.Date" column="LastAccessed" not-null="true" />
       <property name="size" type="int" column="Size" not-null="true" />
-      <property name="createdDateTime" type="java.util.Date" column="CreatedDateTime" not-null="true" />
+      <property name="createdDateTime"
+                  type="long"
+                  column="CreatedDateTime"
+                  not-null="true" />
     </properties>
 
   </class>
