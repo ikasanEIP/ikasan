@@ -424,7 +424,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.hibernate>4.3.9.Final</version.org.hibernate>
-		<version.org.springframework>4.1.6.RELEASE</version.org.springframework>
+        <version.org.hibernate-validator>4.3.2.Final</version.org.hibernate-validator>
+        <version.org.springframework>4.1.6.RELEASE</version.org.springframework>
         <version.org.springframework.security>3.2.6.RELEASE</version.org.springframework.security>
         <version.org.springframework.security.spring-security-config>3.1.3.RELEASE</version.org.springframework.security.spring-security-config>
         <version.org.springframework.security.spring-security-web>3.1.3.RELEASE</version.org.springframework.security.spring-security-web>
@@ -456,6 +457,7 @@
         <version.commons-logging>1.1.1</version.commons-logging>
         <version.org.hsqldb>1.8.0.10</version.org.hsqldb>
         <version.javassist>3.12.1.GA</version.javassist>
+        <version.org.javassist>3.18.1-GA</version.org.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
@@ -763,10 +765,10 @@
     <dependencies>
 
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${version.log4j}</version>
-        </dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${version.log4j}</version>
+    </dependency>
 
         <dependency>
             <groupId>javax.transaction</groupId>
@@ -1094,6 +1096,12 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${version.org.hibernate}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${version.org.hibernate-validator}</version>
             </dependency>
 
             <dependency>
