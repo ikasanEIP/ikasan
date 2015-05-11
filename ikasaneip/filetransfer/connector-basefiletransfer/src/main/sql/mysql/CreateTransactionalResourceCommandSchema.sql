@@ -58,7 +58,7 @@ CREATE TABLE  `Ikasan01`.`FTXid` (
   `BranchQualifier` varchar(255) NOT NULL,
   `FormatId` int(11) NOT NULL,
   `ClientId` varchar(255) NOT NULL,
-  `CreatedDateTime` datetime NOT NULL,
+  `CreatedDateTime` int(11) NOT NULL,
   `LastUpdatedDateTime` datetime NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

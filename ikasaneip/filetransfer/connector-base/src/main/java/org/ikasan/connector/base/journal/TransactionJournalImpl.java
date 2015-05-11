@@ -185,7 +185,8 @@ public class TransactionJournalImpl implements TransactionJournal
             }
 
             xidImpl.setState(state);
-            xidImpl.setLastUpdatedDateTime(new Date());
+            long now = System.currentTimeMillis();
+            xidImpl.setLastUpdatedDateTime(now);
 
             try
             {

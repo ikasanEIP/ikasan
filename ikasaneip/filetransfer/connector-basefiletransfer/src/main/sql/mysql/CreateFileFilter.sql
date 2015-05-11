@@ -43,7 +43,7 @@ CREATE TABLE  `Ikasan01`.`FTFileFilter` (
   `LastModified` datetime NOT NULL,
   `LastAccessed` datetime NOT NULL,
   `Size` int(11) NOT NULL,
-  `CreatedDateTime` datetime NOT NULL,
+  `CreatedDateTime` long NOT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `ClientId` (`ClientId`,`Criteria`,`LastModified`,`LastAccessed`,`Size`,`CreatedDateTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
