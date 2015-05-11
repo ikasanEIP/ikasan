@@ -48,7 +48,7 @@
                   column="Description"
                   not-null="true"/>
 
-        <property name="timestamp"
+        <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="true" />

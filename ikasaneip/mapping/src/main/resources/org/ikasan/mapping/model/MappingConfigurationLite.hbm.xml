@@ -97,7 +97,7 @@
                   lazy="false"
                   unique-key="multicolumn_unique_key"/>
 
-        <property name="timestamp"
+        <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="true" />
