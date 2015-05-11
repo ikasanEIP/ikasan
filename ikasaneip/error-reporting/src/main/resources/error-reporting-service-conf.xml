@@ -10,17 +10,17 @@
     </bean>
 
     <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
-        <property name="sessionFactory">
-            <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-                <property name="dataSource" ref="ikasan.ds" />
-                <property name="mappingResources">
-                    <list>
-                        <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
-                    </list>
-                </property>
-                <property name="hibernateProperties" ref="platformHibernateProperties"/>
-            </bean>
+        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+    </bean>
+
+    <bean id="errorReportingSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
+            </list>
         </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
 </beans>

@@ -42,8 +42,6 @@ package org.ikasan.exclusion.dao;
 
 import junit.framework.Assert;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;

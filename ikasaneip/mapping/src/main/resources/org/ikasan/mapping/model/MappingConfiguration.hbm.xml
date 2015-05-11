@@ -106,7 +106,7 @@
              <one-to-many class="org.ikasan.mapping.model.SourceConfigurationValue"/>
         </set>
 
-        <property name="timestamp"
+        <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"
                   not-null="true" />
