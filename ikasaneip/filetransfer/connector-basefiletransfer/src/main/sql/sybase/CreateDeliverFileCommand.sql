@@ -1,6 +1,6 @@
 --
--- $Id: CreateDeliverFileCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateDeliverFileCommand.sql $
+-- $Id: CreateFTDeliverFileCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTDeliverFileCommand.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,17 +39,17 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('DeliverFileCommand') IS NOT NULL
+IF OBJECT_ID('FTDeliverFileCommand') IS NOT NULL
 BEGIN
-    DROP TABLE DeliverFileCommand
-    IF OBJECT_ID('DeliverFileCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE DeliverFileCommand >>>'
+    DROP TABLE FTDeliverFileCommand
+    IF OBJECT_ID('FTDeliverFileCommand') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTDeliverFileCommand >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE DeliverFileCommand >>>'
+        PRINT '<<< DROPPED TABLE FTDeliverFileCommand >>>'
 END
 go
 
-CREATE TABLE DeliverFileCommand 
+CREATE TABLE FTDeliverFileCommand 
 (
     Id                     numeric(18,0),
     FileName               varchar(255) NULL,
@@ -62,24 +62,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('DeliverFileCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE DeliverFileCommand >>>'
+IF OBJECT_ID('FTDeliverFileCommand') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTDeliverFileCommand >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE DeliverFileCommand >>>'
+    PRINT '<<< FAILED CREATING TABLE FTDeliverFileCommand >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON DeliverFileCommand TO IkasanAdm
---GRANT SELECT ON DeliverFileCommand TO IkasanSup
---GRANT SELECT ON DeliverFileCommand TO IkasanDev
+--GRANT ALL ON FTDeliverFileCommand TO IkasanAdm
+--GRANT SELECT ON FTDeliverFileCommand TO IkasanSup
+--GRANT SELECT ON FTDeliverFileCommand TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX DeliverFileCommand01u
-    ON DeliverFileCommand(Id)
+CREATE UNIQUE INDEX FTDeliverFileCommand01u
+    ON FTDeliverFileCommand(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('DeliverFileCommand') AND name='DeliverFileCommand01u')
-    PRINT '<<< CREATED INDEX DeliverFileCommand.DeliverFileCommand01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTDeliverFileCommand') AND name='FTDeliverFileCommand01u')
+    PRINT '<<< CREATED INDEX FTDeliverFileCommand.FTDeliverFileCommand01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX DeliverFileCommand.DeliverFileCommand01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTDeliverFileCommand.FTDeliverFileCommand01u >>>'
 go

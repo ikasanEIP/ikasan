@@ -50,7 +50,7 @@
 <hibernate-mapping>
 
   <class name="org.ikasan.connector.basefiletransfer.persistence.FileFilter"
-    table="FileFilter">
+    table="FTFileFilter">
 
     <id name="id" type="int" column="Id">
       <generator class="identity" />

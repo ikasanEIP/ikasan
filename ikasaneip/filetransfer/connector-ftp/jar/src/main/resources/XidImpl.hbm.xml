@@ -50,7 +50,7 @@
 <hibernate-mapping>
 
   <class name="org.ikasan.connector.base.command.XidImpl" 
-    table="Xid" >
+    table="FTXid" >
 
     <id name="id" type="long" column="Id">
       <generator class="identity" />

@@ -1,6 +1,6 @@
 --
--- $Id: CreateTransactionalResourceCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateTransactionalResourceCommand.sql $
+-- $Id: CreateFTTransactionalResourceCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTTransactionalResourceCommand.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,21 +39,21 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('TransactionalResourceCommand') IS NOT NULL
+IF OBJECT_ID('FTTransactionalResourceCommand') IS NOT NULL
 BEGIN
-    DROP TABLE TransactionalResourceCommand
-    IF OBJECT_ID('TransactionalResourceCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE TransactionalResourceCommand >>>'
+    DROP TABLE FTTransactionalResourceCommand
+    IF OBJECT_ID('FTTransactionalResourceCommand') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTTransactionalResourceCommand >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE TransactionalResourceCommand >>>'
+        PRINT '<<< DROPPED TABLE FTTransactionalResourceCommand >>>'
 END
 go
 
-CREATE TABLE TransactionalResourceCommand 
+CREATE TABLE FTTransactionalResourceCommand 
 (
     Id              numeric(18,0) IDENTITY,
     State           varchar(255)  NOT NULL,
-    Xid_Id numeric(18,0) NOT NULL references Xid(Id),
+    Xid_Id numeric(18,0) NOT NULL references FTXid(Id),
     Type           varchar(255)  NOT NULL,
     ExecutionTimestamp char(24) NULL
 )
@@ -61,24 +61,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('TransactionalResourceCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE TransactionalResourceCommand >>>'
+IF OBJECT_ID('FTTransactionalResourceCommand') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTTransactionalResourceCommand >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE TransactionalResourceCommand >>>'
+    PRINT '<<< FAILED CREATING TABLE FTTransactionalResourceCommand >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON TransactionalResourceCommand TO IkasanAdm
---GRANT SELECT ON TransactionalResourceCommand TO IkasanSup
---GRANT SELECT ON TransactionalResourceCommand TO IkasanDev
+--GRANT ALL ON FTTransactionalResourceCommand TO IkasanAdm
+--GRANT SELECT ON FTTransactionalResourceCommand TO IkasanSup
+--GRANT SELECT ON FTTransactionalResourceCommand TO IkasanDev
 --go
 
 CREATE UNIQUE INDEX TransResCommand01u
-    ON TransactionalResourceCommand(Id)
+    ON FTTransactionalResourceCommand(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('TransactionalResourceCommand') AND name='TransResCommand01u')
-    PRINT '<<< CREATED INDEX TransactionalResourceCommand.TransResCommand01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTTransactionalResourceCommand') AND name='TransResCommand01u')
+    PRINT '<<< CREATED INDEX FTTransactionalResourceCommand.TransResCommand01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX TransactionalResourceCommand.TransResCommand01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTTransactionalResourceCommand.TransResCommand01u >>>'
 go

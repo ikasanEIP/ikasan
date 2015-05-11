@@ -35,8 +35,8 @@
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
 --
-DROP TABLE IF EXISTS `EAI`.`FileFilter`;
-CREATE TABLE  `EAI`.`FileFilter` (
+DROP TABLE IF EXISTS `Ikasan01`.`FTFileFilter`;
+CREATE TABLE  `Ikasan01`.`FTFileFilter` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `ClientId` varchar(255) NOT NULL,
   `Criteria` varchar(255) NOT NULL,

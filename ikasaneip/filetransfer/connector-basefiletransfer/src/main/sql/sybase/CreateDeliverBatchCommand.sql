@@ -1,6 +1,6 @@
 --
--- $Id: CreateDeliverBatchCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateDeliverBatchCommand.sql $
+-- $Id: CreateFTDeliverBatchCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTDeliverBatchCommand.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,17 +39,17 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('DeliverBatchCommand') IS NOT NULL
+IF OBJECT_ID('FTDeliverBatchCommand') IS NOT NULL
 BEGIN
-    DROP TABLE DeliverBatchCommand
-    IF OBJECT_ID('DeliverBatchCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE DeliverBatchCommand >>>'
+    DROP TABLE FTDeliverBatchCommand
+    IF OBJECT_ID('FTDeliverBatchCommand') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTDeliverBatchCommand >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE DeliverBatchCommand >>>'
+        PRINT '<<< DROPPED TABLE FTDeliverBatchCommand >>>'
 END
 go
 
-CREATE TABLE DeliverBatchCommand 
+CREATE TABLE FTDeliverBatchCommand 
 (
     Id                     numeric(18,0),
     OutputDirectory           varchar(255) NULL,
@@ -61,24 +61,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('DeliverBatchCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE DeliverBatchCommand >>>'
+IF OBJECT_ID('FTDeliverBatchCommand') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTDeliverBatchCommand >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE DeliverBatchCommand >>>'
+    PRINT '<<< FAILED CREATING TABLE FTDeliverBatchCommand >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON DeliverBatchCommand TO IkasanAdm
---GRANT SELECT ON DeliverBatchCommand TO IkasanSup
---GRANT SELECT ON DeliverBatchCommand TO IkasanDev
+--GRANT ALL ON FTDeliverBatchCommand TO IkasanAdm
+--GRANT SELECT ON FTDeliverBatchCommand TO IkasanSup
+--GRANT SELECT ON FTDeliverBatchCommand TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX DeliverBatchCommand01u
-    ON DeliverBatchCommand(Id)
+CREATE UNIQUE INDEX FTDeliverBatchCommand01u
+    ON FTDeliverBatchCommand(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('DeliverBatchCommand') AND name='DeliverBatchCommand01u')
-    PRINT '<<< CREATED INDEX DeliverBatchCommand.DeliverBatchCommand01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTDeliverBatchCommand') AND name='FTDeliverBatchCommand01u')
+    PRINT '<<< CREATED INDEX FTDeliverBatchCommand.FTDeliverBatchCommand01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX DeliverBatchCommand.DeliverBatchCommand01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTDeliverBatchCommand.FTDeliverBatchCommand01u >>>'
 go

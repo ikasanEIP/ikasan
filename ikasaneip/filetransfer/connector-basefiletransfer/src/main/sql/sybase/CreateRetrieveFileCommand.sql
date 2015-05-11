@@ -1,6 +1,6 @@
 --
--- $Id: CreateRetrieveFileCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateRetrieveFileCommand.sql $
+-- $Id: CreateFTRetrieveFileCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTRetrieveFileCommand.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,17 +39,17 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('RetrieveFileCommand') IS NOT NULL
+IF OBJECT_ID('FTRetrieveFileCommand') IS NOT NULL
 BEGIN
-    DROP TABLE RetrieveFileCommand
-    IF OBJECT_ID('RetrieveFileCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE RetrieveFileCommand >>>'
+    DROP TABLE FTRetrieveFileCommand
+    IF OBJECT_ID('FTRetrieveFileCommand') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTRetrieveFileCommand >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE RetrieveFileCommand >>>'
+        PRINT '<<< DROPPED TABLE FTRetrieveFileCommand >>>'
 END
 go
 
-CREATE TABLE RetrieveFileCommand 
+CREATE TABLE FTRetrieveFileCommand 
 (
     Id                   numeric(18,0),
     Destructive          bit NOT NULL,
@@ -63,24 +63,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('RetrieveFileCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE RetrieveFileCommand >>>'
+IF OBJECT_ID('FTRetrieveFileCommand') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTRetrieveFileCommand >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE RetrieveFileCommand >>>'
+    PRINT '<<< FAILED CREATING TABLE FTRetrieveFileCommand >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON RetrieveFileCommand TO IkasanAdm
---GRANT SELECT ON RetrieveFileCommand TO IkasanSup
---GRANT SELECT ON RetrieveFileCommand TO IkasanDev
+--GRANT ALL ON FTRetrieveFileCommand TO IkasanAdm
+--GRANT SELECT ON FTRetrieveFileCommand TO IkasanSup
+--GRANT SELECT ON FTRetrieveFileCommand TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX RetrieveFileCommand01u
-    ON RetrieveFileCommand(Id)
+CREATE UNIQUE INDEX FTRetrieveFileCommand01u
+    ON FTRetrieveFileCommand(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('RetrieveFileCommand') AND name='RetrieveFileCommand01u')
-    PRINT '<<< CREATED INDEX RetrieveFileCommand.RetrieveFileCommand01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTRetrieveFileCommand') AND name='FTRetrieveFileCommand01u')
+    PRINT '<<< CREATED INDEX FTRetrieveFileCommand.FTRetrieveFileCommand01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX RetrieveFileCommand.RetrieveFileCommand01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTRetrieveFileCommand.FTRetrieveFileCommand01u >>>'
 go
