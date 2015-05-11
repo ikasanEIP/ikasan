@@ -1,7 +1,7 @@
 -- 
 --
--- $Id: CreateChecksumCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateChecksumCommand.sql $
+-- $Id: CreateFTChecksumCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTChecksumCommand.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -40,17 +40,17 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('ChecksumCommand') IS NOT NULL
+IF OBJECT_ID('FTChecksumCommand') IS NOT NULL
 BEGIN
-    DROP TABLE ChecksumCommand
-    IF OBJECT_ID('ChecksumCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE ChecksumCommand >>>'
+    DROP TABLE FTChecksumCommand
+    IF OBJECT_ID('FTChecksumCommand') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTChecksumCommand >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE ChecksumCommand >>>'
+        PRINT '<<< DROPPED TABLE FTChecksumCommand >>>'
 END
 go
 
-CREATE TABLE ChecksumCommand 
+CREATE TABLE FTChecksumCommand 
 (
     Id                   numeric(18,0),
     Destructive          bit NOT NULL,
@@ -60,24 +60,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('ChecksumCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE ChecksumCommand >>>'
+IF OBJECT_ID('FTChecksumCommand') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTChecksumCommand >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE ChecksumCommand >>>'
+    PRINT '<<< FAILED CREATING TABLE FTChecksumCommand >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON ChecksumCommand TO IkasanAdm
---GRANT SELECT ON ChecksumCommand TO IkasanSup
---GRANT SELECT ON ChecksumCommand TO IkasanDev
+--GRANT ALL ON FTChecksumCommand TO IkasanAdm
+--GRANT SELECT ON FTChecksumCommand TO IkasanSup
+--GRANT SELECT ON FTChecksumCommand TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX ChecksumCommand01u
-    ON ChecksumCommand(Id)
+CREATE UNIQUE INDEX FTChecksumCommand01u
+    ON FTChecksumCommand(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('ChecksumCommand') AND name='ChecksumCommand01u')
-    PRINT '<<< CREATED INDEX ChecksumCommand.ChecksumCommand01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTChecksumCommand') AND name='FTChecksumCommand01u')
+    PRINT '<<< CREATED INDEX FTChecksumCommand.FTChecksumCommand01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX ChecksumCommand.ChecksumCommand01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTChecksumCommand.FTChecksumCommand01u >>>'
 go

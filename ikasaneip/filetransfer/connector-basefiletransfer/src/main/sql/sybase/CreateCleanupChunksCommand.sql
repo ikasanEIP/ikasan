@@ -1,6 +1,6 @@
 --
--- $Id: CreateCleanupChunksCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateCleanupChunksCommand.sql $
+-- $Id: CreateFTCleanupChunksCommand.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTCleanupChunksCommand.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,17 +39,17 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('CleanupChunksCommand') IS NOT NULL
+IF OBJECT_ID('FTCleanupChunksCommand') IS NOT NULL
 BEGIN
-    DROP TABLE CleanupChunksCommand
-    IF OBJECT_ID('CleanupChunksCommand') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE CleanupChunksCommand >>>'
+    DROP TABLE FTCleanupChunksCommand
+    IF OBJECT_ID('FTCleanupChunksCommand') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTCleanupChunksCommand >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE CleanupChunksCommand >>>'
+        PRINT '<<< DROPPED TABLE FTCleanupChunksCommand >>>'
 END
 go
 
-CREATE TABLE CleanupChunksCommand 
+CREATE TABLE FTCleanupChunksCommand 
 (
     Id              numeric(18,0),
     FileChunkHeaderId           numeric(18,0) NULL
@@ -58,24 +58,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('CleanupChunksCommand') IS NOT NULL
-    PRINT '<<< CREATED TABLE CleanupChunksCommand >>>'
+IF OBJECT_ID('FTCleanupChunksCommand') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTCleanupChunksCommand >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE CleanupChunksCommand >>>'
+    PRINT '<<< FAILED CREATING TABLE FTCleanupChunksCommand >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON CleanupChunksCommand TO IkasanAdm
---GRANT SELECT ON CleanupChunksCommand TO IkasanSup
---GRANT SELECT ON CleanupChunksCommand TO IkasanDev
+--GRANT ALL ON FTCleanupChunksCommand TO IkasanAdm
+--GRANT SELECT ON FTCleanupChunksCommand TO IkasanSup
+--GRANT SELECT ON FTCleanupChunksCommand TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX CleanupChunksCommand01u
-    ON CleanupChunksCommand(Id)
+CREATE UNIQUE INDEX FTCleanupChunksCommand01u
+    ON FTCleanupChunksCommand(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('CleanupChunksCommand') AND name='CleanupChunksCommand01u')
-    PRINT '<<< CREATED INDEX CleanupChunksCommand.CleanupChunksCommand01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTCleanupChunksCommand') AND name='FTCleanupChunksCommand01u')
+    PRINT '<<< CREATED INDEX FTCleanupChunksCommand.FTCleanupChunksCommand01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX CleanupChunksCommand.CleanupChunksCommand01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTCleanupChunksCommand.FTCleanupChunksCommand01u >>>'
 go

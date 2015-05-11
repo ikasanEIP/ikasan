@@ -35,11 +35,11 @@
 -- USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- ====================================================================
 --
-DROP TABLE IF EXISTS `EAI`.`FileChunk`;
-DROP TABLE IF EXISTS `EAI`.`FileChunkHeader`;
+DROP TABLE IF EXISTS `Ikasan01`.`FTFileChunk`;
+DROP TABLE IF EXISTS `Ikasan01`.`FTFileChunkHeader`;
 
 
-CREATE TABLE  `EAI`.`FileChunkHeader` (
+CREATE TABLE  `Ikasan01`.`FTFileChunkHeader` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `SequenceLength` bigint(20) NOT NULL,
   `InternalMd5Hash` varchar(255) DEFAULT NULL,
@@ -51,13 +51,13 @@ CREATE TABLE  `EAI`.`FileChunkHeader` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE  `EAI`.`FileChunk` (
+CREATE TABLE  `Ikasan01`.`FTFileChunk` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Content` tinyblob NOT NULL,
   `Ordinal` bigint(20) NOT NULL,
   `Md5Hash` varchar(255) NOT NULL,
-  `FileChunkHeader_Id` bigint(20) DEFAULT NULL,
+  `FTFileChunkHeader_Id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `FK276D6A31B5789524` (`FileChunkHeader_Id`),
-  CONSTRAINT `FK276D6A31B5789524` FOREIGN KEY (`FileChunkHeader_Id`) REFERENCES `FileChunkHeader` (`Id`)
+  KEY `FK276D6A31B5789524` (`FTFileChunkHeader_Id`),
+  CONSTRAINT `FK276D6A31B5789524` FOREIGN KEY (`FTFileChunkHeader_Id`) REFERENCES `FTFileChunkHeader` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

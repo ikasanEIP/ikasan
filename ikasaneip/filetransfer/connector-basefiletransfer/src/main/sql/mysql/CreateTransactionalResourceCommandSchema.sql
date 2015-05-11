@@ -38,20 +38,20 @@
 
 
 -- drop all the specialist command table
-DROP TABLE IF EXISTS `EAI`.`CheckSumCommand`;
-DROP TABLE IF EXISTS `EAI`.`CleanupChunksCommand`;
-DROP TABLE IF EXISTS `EAI`.`DeliverBatchCommand`;
-DROP TABLE IF EXISTS `EAI`.`DeliverFileCommand`;
-DROP TABLE IF EXISTS `EAI`.`RetrieveFileCommand`;
+DROP TABLE IF EXISTS `Ikasan01`.`CheckSumCommand`;
+DROP TABLE IF EXISTS `Ikasan01`.`CleanupChunksCommand`;
+DROP TABLE IF EXISTS `Ikasan01`.`DeliverBatchCommand`;
+DROP TABLE IF EXISTS `Ikasan01`.`DeliverFileCommand`;
+DROP TABLE IF EXISTS `Ikasan01`.`RetrieveFileCommand`;
 
 -- drop the parent command table
-DROP TABLE IF EXISTS `EAI`.`TransactionalResourceCommand`;
+DROP TABLE IF EXISTS `Ikasan01`.`TransactionalResourceCommand`;
 
--- drop the XID table
-DROP TABLE IF EXISTS `EAI`.`Xid`;
+-- drop the FTXid table
+DROP TABLE IF EXISTS `Ikasan01`.`FTXid`;
 
--- create the XID table
-CREATE TABLE  `EAI`.`Xid` (
+-- create the FTXid table
+CREATE TABLE  `Ikasan01`.`FTXid` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `State` varchar(255) NOT NULL,
   `GlobalTransactionId` varchar(255) NOT NULL,
@@ -64,42 +64,42 @@ CREATE TABLE  `EAI`.`Xid` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- create the parent command table
-CREATE TABLE  `EAI`.`TransactionalResourceCommand` (
+CREATE TABLE  `Ikasan01`.`FTTransactionalResourceCommand` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Type` varchar(255) NOT NULL,
   `State` varchar(255) NOT NULL,
   `Xid_Id` bigint(20) DEFAULT NULL,
   `ExecutionTimestamp` varchar(24) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `FK9936B0B44985F7BE` (`Xid_Id`),
-  CONSTRAINT `FK9936B0B44985F7BE` FOREIGN KEY (`Xid_Id`) REFERENCES `Xid` (`Id`)
+  KEY `FK9936B0B44985F7BE` (`FTXid_Id`),
+  CONSTRAINT `FK9936B0B44985F7BE` FOREIGN KEY (`FTXid_Id`) REFERENCES `FTXid` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 
 -- create the checksum command table
-CREATE TABLE  `EAI`.`CheckSumCommand` (
+CREATE TABLE  `Ikasan01`.`FTCheckSumCommand` (
   `Id` bigint(20) NOT NULL,
   `Destructive` bit(1) DEFAULT NULL,
   `ChecksumFilePath` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FKEC851168692F9C06` (`Id`),
-  CONSTRAINT `FKEC851168692F9C06` FOREIGN KEY (`Id`) REFERENCES `TransactionalResourceCommand` (`Id`)
+  CONSTRAINT `FKEC851168692F9C06` FOREIGN KEY (`Id`) REFERENCES `FTTransactionalResourceCommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 -- create the cleanup chunks command table
-CREATE TABLE  `EAI`.`CleanupChunksCommand` (
+CREATE TABLE  `Ikasan01`.`FTCleanupChunksCommand` (
   `Id` bigint(20) NOT NULL,
   `FileChunkHeaderId` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK1F4EFCA17E0A0E0B` (`Id`),
-  CONSTRAINT `FK1F4EFCA17E0A0E0B` FOREIGN KEY (`Id`) REFERENCES `TransactionalResourceCommand` (`Id`)
+  CONSTRAINT `FK1F4EFCA17E0A0E0B` FOREIGN KEY (`Id`) REFERENCES `FTTransactionalResourceCommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 -- create the deliver batch command table
-CREATE TABLE  `EAI`.`DeliverBatchCommand` (
+CREATE TABLE  `Ikasan01`.`FTDeliverBatchCommand` (
   `Id` bigint(20) NOT NULL,
   `OutputDirectory` varchar(255) DEFAULT NULL,
   `TempDirectory` varchar(255) DEFAULT NULL,
@@ -107,13 +107,13 @@ CREATE TABLE  `EAI`.`DeliverBatchCommand` (
   `PutAttempted` bit(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FKB6D580566F914342` (`Id`),
-  CONSTRAINT `FKB6D580566F914342` FOREIGN KEY (`Id`) REFERENCES `TransactionalResourceCommand` (`Id`)
+  CONSTRAINT `FKB6D580566F914342` FOREIGN KEY (`Id`) REFERENCES `FTTransactionalResourceCommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 
 -- create the deliver file command table
-CREATE TABLE  `EAI`.`DeliverFileCommand` (
+CREATE TABLE  `Ikasan01`.`FTDeliverFileCommand` (
   `Id` bigint(20) NOT NULL,
   `FileName` varchar(255) DEFAULT NULL,
   `TempFileName` varchar(255) DEFAULT NULL,
@@ -122,12 +122,12 @@ CREATE TABLE  `EAI`.`DeliverFileCommand` (
   `PutAttempted` bit(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FKBE913FEAE58F1914` (`Id`),
-  CONSTRAINT `FKBE913FEAE58F1914` FOREIGN KEY (`Id`) REFERENCES `TransactionalResourceCommand` (`Id`)
+  CONSTRAINT `FKBE913FEAE58F1914` FOREIGN KEY (`Id`) REFERENCES `FTTransactionalResourceCommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 -- create the retrieve file command table
-CREATE TABLE  `EAI`.`RetrieveFileCommand` (
+CREATE TABLE  `Ikasan01`.`FTRetrieveFileCommand` (
   `Id` bigint(20) NOT NULL,
   `SourcePath` varchar(255) DEFAULT NULL,
   `RenameOnSuccess` bit(1) DEFAULT NULL,
@@ -137,5 +137,5 @@ CREATE TABLE  `EAI`.`RetrieveFileCommand` (
   `Destructive` bit(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK6C4590332501531F` (`Id`),
-  CONSTRAINT `FK6C459033E706058A` FOREIGN KEY (`Id`) REFERENCES `TransactionalResourceCommand` (`Id`)
+  CONSTRAINT `FK6C459033E706058A` FOREIGN KEY (`Id`) REFERENCES `FTTransactionalResourceCommand` (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

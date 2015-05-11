@@ -1,6 +1,6 @@
 --
--- $Id: CreateXid.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateXid.sql $
+-- $Id: CreateFTXid.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTXid.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,22 +39,22 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('Xid') IS NOT NULL
+IF OBJECT_ID('FTXid') IS NOT NULL
 BEGIN
-    DROP TABLE Xid
-    IF OBJECT_ID('Xid') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE Xid >>>'
+    DROP TABLE FTXid
+    IF OBJECT_ID('FTXid') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTXid >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE Xid >>>'
+        PRINT '<<< DROPPED TABLE FTXid >>>'
 END
 go
 
-CREATE TABLE Xid 
+CREATE TABLE FTXid 
 (
     Id              numeric(18,0) IDENTITY,
     State           varchar(255)  NOT NULL,
-    GlobalTransactionId          varchar(255)  NOT NULL,
-    BranchQualifier          varchar(255)  NOT NULL,
+    GlobalTransactionId          univarchar(255)  NOT NULL,
+    BranchQualifier          univarchar (255)  NOT NULL,
     FormatId          numeric(18,0)  NOT NULL,
     ClientId           varchar(255)  NOT NULL,
     CreatedDateTime  datetime NOT NULL,
@@ -64,28 +64,28 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('Xid') IS NOT NULL
-    PRINT '<<< CREATED TABLE Xid >>>'
+IF OBJECT_ID('FTXid') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTXid >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE Xid >>>'
+    PRINT '<<< FAILED CREATING TABLE FTXid >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON Xid TO IkasanAdm
---GRANT SELECT ON Xid TO IkasanSup
---GRANT SELECT ON Xid TO IkasanDev
+--GRANT ALL ON FTXid TO IkasanAdm
+--GRANT SELECT ON FTXid TO IkasanSup
+--GRANT SELECT ON FTXid TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX Xid01u
-    ON Xid(Id)
+CREATE UNIQUE INDEX FTXid01u
+    ON FTXid(Id)
 go
 
-CREATE UNIQUE INDEX Xid02u
-    ON Xid(GlobalTransactionId, BranchQualifier)
+CREATE UNIQUE INDEX FTXid02u
+    ON FTXid(GlobalTransactionId, BranchQualifier)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('Xid') AND name='Xid01u')
-    PRINT '<<< CREATED INDEX Xid.Xid01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTXid') AND name='FTXid01u')
+    PRINT '<<< CREATED INDEX FTXid.FTXid01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX Xid.Xid01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTXid.FTXid01u >>>'
 go

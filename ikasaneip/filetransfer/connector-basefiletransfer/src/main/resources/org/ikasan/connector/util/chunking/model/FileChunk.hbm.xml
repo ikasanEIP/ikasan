@@ -50,7 +50,7 @@
 <hibernate-mapping>
 
   <class name="org.ikasan.connector.util.chunking.model.FileChunk" 
-    table="FileChunk">
+    table="FTFileChunk">
 
     <id name="id" type="long" column="Id">
       <generator class="identity" />

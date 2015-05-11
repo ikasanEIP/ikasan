@@ -50,7 +50,7 @@
 <hibernate-mapping>
 
   <class name="org.ikasan.connector.base.command.AbstractTransactionalResourceCommand"
-    table="TransactionalResourceCommand" discriminator-value="type">
+    table="FTTransactionalResourceCommand" discriminator-value="type">
 
     <id name="id" type="long" column="Id">
       <generator class="identity" />
@@ -71,7 +71,7 @@
 
     <!-- subclasses with extra fields -->
     <subclass name="org.ikasan.connector.basefiletransfer.outbound.command.ChecksumValidatorCommand" discriminator-value="ChecksumValidator">
-        <join table="ChecksumCommand">
+        <join table="FTChecksumCommand">
             <key column="Id"/>
             <property name="destructive" type="boolean" column="Destructive" not-null="false" />
             <property name="checksumFilePath" type="java.lang.String" column="ChecksumFilePath" not-null="false" />
@@ -79,7 +79,7 @@
     </subclass>
 
 	<subclass name="org.ikasan.connector.basefiletransfer.outbound.command.RetrieveFileCommand" discriminator-value="RetrieveFile" >
-	    <join table="RetrieveFileCommand">
+	    <join table="FTRetrieveFileCommand">
 	        <key column="Id"/>
 	        <property name="sourcePath" type="java.lang.String" column="SourcePath" not-null="false" />
             <property name="renameOnSuccess" type="boolean" column="RenameOnSuccess" not-null="false" />
@@ -91,7 +91,7 @@
 	</subclass>
 
 	<subclass name="org.ikasan.connector.basefiletransfer.outbound.command.ChunkingRetrieveFileCommand" discriminator-value="ChunkingRetrieveFile" >
-	    <join table="RetrieveFileCommand">
+	    <join table="FTRetrieveFileCommand">
 	        <key column="Id"/>
 	        <property name="sourcePath" type="java.lang.String" column="SourcePath" not-null="false" />
             <property name="renameOnSuccess" type="boolean" column="RenameOnSuccess" not-null="false" />
@@ -103,7 +103,7 @@
 	</subclass>
 
     <subclass name="org.ikasan.connector.basefiletransfer.outbound.command.DeliverFileCommand" discriminator-value="DeliverFile" >
-	    <join table="DeliverFileCommand">
+	    <join table="FTDeliverFileCommand">
 	        <key column="Id"/>
 	        <property name="fileName" type="java.lang.String" column="FileName" not-null="false" />
 	        <property name="tempFileName" type="java.lang.String" column="TempFileName" not-null="false" />
@@ -114,7 +114,7 @@
 	</subclass>
 
 	<subclass name="org.ikasan.connector.basefiletransfer.outbound.command.DeliverBatchCommand" discriminator-value="DeliverBatch" >
-	    <join table="DeliverBatchCommand">
+	    <join table="FTDeliverBatchCommand">
 	        <key column="Id"/>
 	        <property name="outputDirectory" type="java.lang.String" column="OutputDirectory" not-null="false" />
 	        <property name="tempDirectory" type="java.lang.String" column="TempDirectory" not-null="false" />
@@ -124,7 +124,7 @@
 	</subclass>
 
 	<subclass name="org.ikasan.connector.basefiletransfer.outbound.command.CleanupChunksCommand" discriminator-value="CleanupChunks" >
-	    <join table="CleanupChunksCommand">
+	    <join table="FTCleanupChunksCommand">
 	        <key column="Id"/>
 	        <property name="fileChunkHeaderId" type="java.lang.Long" column="FileChunkHeaderId" not-null="false" />
 	    </join>

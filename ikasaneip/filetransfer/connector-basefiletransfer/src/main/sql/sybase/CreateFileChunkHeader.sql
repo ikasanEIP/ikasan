@@ -1,6 +1,6 @@
 --
--- $Id: CreateFileChunkHeader.sql 43183 2015-02-06 11:15:54Z stewmi $
--- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFileChunkHeader.sql $
+-- $Id: CreateFTFileChunkHeader.sql 43183 2015-02-06 11:15:54Z stewmi $
+-- $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/sql/sybase/CreateFTFileChunkHeader.sql $
 -- 
 -- ====================================================================
 -- Ikasan Enterprise Integration Platform
@@ -39,17 +39,17 @@
 -- ====================================================================
 --
 
-IF OBJECT_ID('FileChunkHeader') IS NOT NULL
+IF OBJECT_ID('FTFileChunkHeader') IS NOT NULL
 BEGIN
-    DROP TABLE FileChunkHeader
-    IF OBJECT_ID('FileChunkHeader') IS NOT NULL
-        PRINT '<<< FAILED DROPPING TABLE FileChunkHeader >>>'
+    DROP TABLE FTFileChunkHeader
+    IF OBJECT_ID('FTFileChunkHeader') IS NOT NULL
+        PRINT '<<< FAILED DROPPING TABLE FTFileChunkHeader >>>'
     ELSE
-        PRINT '<<< DROPPED TABLE FileChunkHeader >>>'
+        PRINT '<<< DROPPED TABLE FTFileChunkHeader >>>'
 END
 go
 
-CREATE TABLE FileChunkHeader 
+CREATE TABLE FTFileChunkHeader 
 (
     Id              numeric(18,0) IDENTITY,
     SequenceLength  numeric(18,0) NOT NULL,
@@ -64,24 +64,24 @@ LOCK DATAROWS
 WITH IDENTITY_GAP=1
 go
 
-IF OBJECT_ID('FileChunkHeader') IS NOT NULL
-    PRINT '<<< CREATED TABLE FileChunkHeader >>>'
+IF OBJECT_ID('FTFileChunkHeader') IS NOT NULL
+    PRINT '<<< CREATED TABLE FTFileChunkHeader >>>'
 ELSE
-    PRINT '<<< FAILED CREATING TABLE FileChunkHeader >>>'
+    PRINT '<<< FAILED CREATING TABLE FTFileChunkHeader >>>'
 go
 
 -- NOTE: Permissioning needs to be done on a per client basis, we recommend something like the below
---GRANT ALL ON FileChunkHeader TO IkasanAdm
---GRANT SELECT ON FileChunkHeader TO IkasanSup
---GRANT SELECT ON FileChunkHeader TO IkasanDev
+--GRANT ALL ON FTFileChunkHeader TO IkasanAdm
+--GRANT SELECT ON FTFileChunkHeader TO IkasanSup
+--GRANT SELECT ON FTFileChunkHeader TO IkasanDev
 --go
 
-CREATE UNIQUE INDEX FileChunkHeader01u
-    ON FileChunkHeader(Id)
+CREATE UNIQUE INDEX FTFileChunkHeader01u
+    ON FTFileChunkHeader(Id)
 go
 
-IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FileChunkHeader') AND name='FileChunkHeader01u')
-    PRINT '<<< CREATED INDEX FileChunkHeader.FileChunkHeader01u >>>'
+IF EXISTS (SELECT * FROM sysindexes WHERE id=OBJECT_ID('FTFileChunkHeader') AND name='FTFileChunkHeader01u')
+    PRINT '<<< CREATED INDEX FTFileChunkHeader.FTFileChunkHeader01u >>>'
 ELSE
-    PRINT '<<< FAILED CREATING INDEX FileChunkHeader.FileChunkHeader01u >>>'
+    PRINT '<<< FAILED CREATING INDEX FTFileChunkHeader.FTFileChunkHeader01u >>>'
 go
