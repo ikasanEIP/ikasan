@@ -48,8 +48,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +103,7 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
         criteria.add(Restrictions.eq("flowName", flowName));
         criteria.add(Restrictions.eq("identifier", identifier));
 
-        List<ExclusionEvent> results = this.getHibernateTemplate().findByCriteria(criteria);
+        List<ExclusionEvent> results = (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria);
         if(results == null || results.size() == 0)
         {
             return false;

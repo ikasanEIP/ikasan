@@ -48,8 +48,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
         DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
         criteria.add(Restrictions.eq("uri", uri));
 
-        List<ErrorOccurrence> results = this.getHibernateTemplate().findByCriteria(criteria);
+        List<ErrorOccurrence> results = (List<ErrorOccurrence>)this.getHibernateTemplate().findByCriteria(criteria);
         if(results == null || results.size() == 0)
         {
             return null;
