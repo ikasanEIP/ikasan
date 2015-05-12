@@ -364,7 +364,8 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
                 {
                     logger.debug("Connecting to remote host [" + this.remoteHostname + ":" + this.remotePort + "] from local host [" + this.localHostname + ":"
                             + localPort + "].");
-                    ftpClient.connect(InetAddress.getByName(this.remoteHostname), this.remotePort, InetAddress.getByName(this.localHostname), localPort);
+                    //ftpClient.connect(InetAddress.getByName(this.remoteHostname), this.remotePort, InetAddress.getByName(this.localHostname), localPort);
+                    ftpClient.connect(InetAddress.getByName(this.remoteHostname), this.remotePort);
 
                     int reply = ftpClient.getReplyCode();
                     if(!FTPReply.isPositiveCompletion(reply))
