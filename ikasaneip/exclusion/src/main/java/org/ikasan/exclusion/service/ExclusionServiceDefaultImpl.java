@@ -96,9 +96,10 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     }
 
     @Override
-    public void addBlacklisted(FlowEvent<String,?> event)
+    public void addBlacklisted(FlowEvent<String,?> event, String errorUri)
     {
         ExclusionEvent exclusionEvent = new ExclusionEvent(this.moduleName, this.flowName, event.getIdentifier(), timeToLive.longValue());
+        exclusionEvent.setErrorUri(errorUri);
         this.exclusionServiceDao.add(exclusionEvent);
     }
 

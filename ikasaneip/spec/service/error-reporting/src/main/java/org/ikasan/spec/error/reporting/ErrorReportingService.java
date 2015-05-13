@@ -72,6 +72,18 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
     public String notify(String flowElementName, FAILED_EVENT event, Throwable throwable);
 
     /**
+     * Logs an Error where there is an inflight Event involved in a Flow and a
+     * resolved action has been identified
+     *
+     * @param flowElementName
+     * @param event
+     * @param throwable
+     * @param action
+     * @return uri for this reported error instance
+     */
+    public String notify(String flowElementName, FAILED_EVENT event, Throwable throwable, String action);
+
+    /**
      * Logs an Error where no inflight Event was present.
      *
      * @param flowElementName
@@ -79,6 +91,16 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
      * @return uri for this reported error instance
      */
     public String notify(String flowElementName, Throwable throwable);
+
+    /**
+     * Logs an Error where no inflight Event was present.
+     *
+     * @param flowElementName
+     * @param throwable
+     * @param action
+     * @return uri for this reported error instance
+     */
+    public String notify(String flowElementName, Throwable throwable, String action);
 
     /**
      * Allow entities blacklisted to be marked with a timeToLive.

@@ -26,10 +26,11 @@
 		</bean>
 		
 		<aop:config>
-	        <aop:pointcut id="serviceMethods"
-	                expression="execution(* org.ikasan.error.reporting.service*.*(..))"/>
-	                
-	        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+            <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
+            <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
+
+            <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+            <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
 	    </aop:config>
 	
 	    <tx:advice id="txAdvice" transaction-manager="transactionManager">

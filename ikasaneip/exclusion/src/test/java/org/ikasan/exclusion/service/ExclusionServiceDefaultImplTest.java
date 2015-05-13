@@ -137,13 +137,13 @@ public class ExclusionServiceDefaultImplTest
         });
 
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
-        exclusionService.addBlacklisted(flowEvent);
+        exclusionService.addBlacklisted(flowEvent, "uri");
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
 
-        exclusionService.addBlacklisted(flowEvent);
+        exclusionService.addBlacklisted(flowEvent, "uri");
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
 
-        exclusionService.addBlacklisted(flowEvent);
+        exclusionService.addBlacklisted(flowEvent, "uri");
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
 
         exclusionService.removeBlacklisted(flowEvent);
@@ -187,7 +187,7 @@ public class ExclusionServiceDefaultImplTest
 
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
 
-        exclusionService.addBlacklisted(flowEvent);
+        exclusionService.addBlacklisted(flowEvent, "uri");
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
 
         exclusionService.housekeep();

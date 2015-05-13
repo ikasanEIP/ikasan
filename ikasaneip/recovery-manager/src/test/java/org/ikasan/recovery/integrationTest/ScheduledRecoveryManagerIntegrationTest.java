@@ -539,7 +539,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
-        public void addBlacklisted(Object o) {
+        public void addBlacklisted(Object o, String o2) {
 
         }
 
@@ -576,7 +576,17 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
+        public String notify(String flowElementName, Object o, Throwable throwable, String action) {
+            return null;
+        }
+
+        @Override
         public String notify(String flowElementName, Throwable throwable) {
+            return null;
+        }
+
+        @Override
+        public String notify(String flowElementName, Throwable throwable, String action) {
             return null;
         }
 
