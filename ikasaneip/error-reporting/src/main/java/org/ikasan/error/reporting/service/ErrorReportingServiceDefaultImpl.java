@@ -109,7 +109,14 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     @Override
     public String notify(String flowElementName, EVENT event, Throwable throwable)
     {
+        return this.notify(flowElementName, event, throwable, null);
+    }
+
+    @Override
+    public String notify(String flowElementName, EVENT event, Throwable throwable, String resolvedAction)
+    {
         ErrorOccurrence errorOccurrence = newErrorOccurrence(flowElementName, event, throwable);
+        errorOccurrence.setAction(resolvedAction);
         this.errorReportingServiceDao.save(errorOccurrence);
         return errorOccurrence.getUri();
     }
@@ -117,7 +124,14 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     @Override
     public String notify(String flowElementName, Throwable throwable)
     {
+        return this.notify(flowElementName, throwable, null);
+    }
+
+    @Override
+    public String notify(String flowElementName, Throwable throwable, String resolvedAction)
+    {
         ErrorOccurrence errorOccurrence = newErrorOccurrence(flowElementName, throwable);
+        errorOccurrence.setAction(resolvedAction);
         this.errorReportingServiceDao.save(errorOccurrence);
         return errorOccurrence.getUri();
     }

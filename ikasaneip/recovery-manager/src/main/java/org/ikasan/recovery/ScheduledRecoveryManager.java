@@ -335,7 +335,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
-        this.errorReportingService.notify(componentName, throwable);
+        this.errorReportingService.notify(componentName, throwable, action.toString());
         this.recover(action, componentName, throwable);
     }
 
@@ -350,11 +350,11 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
-        this.errorReportingService.notify(componentName, event, throwable);
+        String errorUri = this.errorReportingService.notify(componentName, event, throwable, action.toString());
 
         if(action instanceof ExcludeEventAction)
         {
-            this.exclusionService.addBlacklisted(event);
+            this.exclusionService.addBlacklisted(event, errorUri);
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 

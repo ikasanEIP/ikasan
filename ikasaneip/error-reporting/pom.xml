@@ -152,6 +152,12 @@
       </dependency>
 
       <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-aspects</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
           <groupId>org.jmock</groupId>
           <artifactId>jmock</artifactId>
           <scope>test</scope>

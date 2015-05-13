@@ -86,6 +86,11 @@
                   column="EventRelatedIdentifier"
                   not-null="false" />
 
+        <property name="action"
+                  type="java.lang.String"
+                  column="Action"
+                  not-null="false" />
+
         <property name="event"
                   type="byte[]"
                   column="Event"

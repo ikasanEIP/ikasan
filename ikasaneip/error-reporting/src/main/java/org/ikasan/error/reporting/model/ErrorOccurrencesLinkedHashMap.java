@@ -38,65 +38,37 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.service;
+package org.ikasan.error.reporting.model;
 
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.dao.MapErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrencesLinkedHashMap;
-import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * ErrorReportingService Factory default implementation.
- *
+ * List implementation of the ErrorReportingServiceDao.
  * @author Ikasan Development Team
  */
-public class ErrorReportingServiceFactoryDefaultImpl implements ErrorReportingServiceFactory
+public class ErrorOccurrencesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
 {
-    /** DAO handle */
-    ErrorReportingServiceDao errorReportingServiceDao;
-
-    /** handle to the serialiser factory */
-    SerialiserFactory serialiserFactory;
+    /** max number of entries before the list starts dropping the eldest */
+    int maxEntries;
 
     /**
      * Constructor
+     * @param maxEntries
      */
-    public ErrorReportingServiceFactoryDefaultImpl()
+    public ErrorOccurrencesLinkedHashMap(int maxEntries)
     {
-        this.serialiserFactory = new SerialiserFactoryKryoImpl();
-        this.errorReportingServiceDao = new MapErrorReportingServiceDao( new ErrorOccurrencesLinkedHashMap(100) );
+        this.maxEntries = maxEntries;
     }
 
     /**
-     * Constructor
-     * @param serialiserFactory
-     * @param errorReportingServiceDao
-     */
-    public ErrorReportingServiceFactoryDefaultImpl(SerialiserFactory serialiserFactory, ErrorReportingServiceDao errorReportingServiceDao)
-    {
-        this.serialiserFactory = serialiserFactory;
-        if(serialiserFactory == null)
-        {
-            throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
-        }
-
-        this.errorReportingServiceDao = errorReportingServiceDao;
-        if(errorReportingServiceDao == null)
-        {
-            throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
-        }
-    }
-
-    /**
-     * Get an instance of the ErrorReportingService
+     * Limit the list entries and remove eldest when the limit is hit
+     * @param eldest
      * @return
      */
-    public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
-    {
-        return new ErrorReportingServiceDefaultImpl(moduleName, flowName, this.serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
+    @Override
+    protected boolean removeEldestEntry(Map.Entry eldest) {
+        return size() > this.maxEntries;
     }
 
 }

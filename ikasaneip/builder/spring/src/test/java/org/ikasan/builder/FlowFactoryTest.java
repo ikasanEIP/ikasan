@@ -75,6 +75,8 @@ import javax.annotation.Resource;
         "/recoveryManager-service-conf.xml",
         "/recoveryManager-service-conf.xml",
         "/exclusion-service-conf.xml",
+        "/serialiser-service-conf.xml",
+        "/error-reporting-service-conf.xml",
         "/scheduler-service-conf.xml",
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",

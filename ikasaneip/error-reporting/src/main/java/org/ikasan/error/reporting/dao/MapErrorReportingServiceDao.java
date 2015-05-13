@@ -38,65 +38,76 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.service;
+package org.ikasan.error.reporting.dao;
 
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.dao.MapErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrencesLinkedHashMap;
-import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.apache.log4j.Logger;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * ErrorReportingService Factory default implementation.
- *
+ * Map implementation of the ErrorReportingServiceDao.
  * @author Ikasan Development Team
  */
-public class ErrorReportingServiceFactoryDefaultImpl implements ErrorReportingServiceFactory
+public class MapErrorReportingServiceDao<T>
+        implements ErrorReportingServiceDao<ErrorOccurrence>
 {
-    /** DAO handle */
-    ErrorReportingServiceDao errorReportingServiceDao;
+    /** logger instance */
+    private static Logger logger = Logger.getLogger(MapErrorReportingServiceDao.class);
 
-    /** handle to the serialiser factory */
-    SerialiserFactory serialiserFactory;
-
-    /**
-     * Constructor
-     */
-    public ErrorReportingServiceFactoryDefaultImpl()
-    {
-        this.serialiserFactory = new SerialiserFactoryKryoImpl();
-        this.errorReportingServiceDao = new MapErrorReportingServiceDao( new ErrorOccurrencesLinkedHashMap(100) );
-    }
+    /** actual errorOccurrence instances */
+    LinkedHashMap<String,ErrorOccurrence> errorOccurrences;
 
     /**
      * Constructor
-     * @param serialiserFactory
-     * @param errorReportingServiceDao
+     * @param errorOccurrences
      */
-    public ErrorReportingServiceFactoryDefaultImpl(SerialiserFactory serialiserFactory, ErrorReportingServiceDao errorReportingServiceDao)
+    public MapErrorReportingServiceDao(LinkedHashMap<String, ErrorOccurrence> errorOccurrences)
     {
-        this.serialiserFactory = serialiserFactory;
-        if(serialiserFactory == null)
+        this.errorOccurrences = errorOccurrences;
+        if(errorOccurrences == null)
         {
-            throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
-        }
-
-        this.errorReportingServiceDao = errorReportingServiceDao;
-        if(errorReportingServiceDao == null)
-        {
-            throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
+            throw new IllegalArgumentException("errorOccurrences implementation cannot be 'null'");
         }
     }
 
-    /**
-     * Get an instance of the ErrorReportingService
-     * @return
-     */
-    public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
+    @Override
+    public ErrorOccurrence find(String uri)
     {
-        return new ErrorReportingServiceDefaultImpl(moduleName, flowName, this.serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
+        return this.errorOccurrences.get(uri);
     }
 
+    @Override
+    public void save(ErrorOccurrence errorOccurrence)
+    {
+        this.errorOccurrences.put(errorOccurrence.getUri(), errorOccurrence);
+    }
+
+    @Override
+    public void deleteExpired()
+    {
+        List<String> expiredIdentifiers = new ArrayList<String>();
+
+        long expiryTime = System.currentTimeMillis();
+        for(Map.Entry<String,ErrorOccurrence> entry:errorOccurrences.entrySet())
+        {
+            if(entry.getValue().getExpiry() < expiryTime)
+            {
+                expiredIdentifiers.add(entry.getKey());
+            }
+        }
+
+        for(String expiredIdentifier:expiredIdentifiers)
+        {
+            errorOccurrences.remove(expiredIdentifier);
+        }
+
+        if(logger.isDebugEnabled())
+        {
+            logger.info("Deleted expired errorOccurrences events for identifiers[" + expiredIdentifiers + "]");
+        }
+    }
 }

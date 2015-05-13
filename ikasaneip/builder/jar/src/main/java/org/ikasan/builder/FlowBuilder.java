@@ -114,6 +114,9 @@ public class FlowBuilder
     /** exclusion service */
     ExclusionService exclusionService;
 
+    /** error reporting service factory */
+    ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl();
+
     /** error reporting service */
     ErrorReportingService errorReportingService;
 
@@ -772,6 +775,11 @@ public class FlowBuilder
                     exclusionService = new ExclusionServiceFactory().getExclusionService(moduleName, name);
                 }
 
+                if (errorReportingService == null)
+                {
+                    errorReportingService = errorReportingServiceFactory.getErrorReportingService(moduleName, name);
+                }
+
                 if (recoveryManager == null)
 				{
 					recoveryManager = RecoveryManagerFactory.getInstance()
@@ -780,7 +788,7 @@ public class FlowBuilder
 									moduleName,
 									((FlowElement<Consumer>) nextFlowElement)
 											.getFlowComponent(),
-                                    exclusionService, errorReportingService);   // FIXME - need to set errorReportingService
+                                    exclusionService, errorReportingService);
 				}
 
                 if(exceptionResolver != null)

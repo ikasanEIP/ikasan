@@ -64,6 +64,9 @@ public class ExclusionEvent
     /** expiry of this event */
     long expiry;
 
+    /** error uri reported as part of this excluded event */
+    String errorUri;
+
     /**
      * Constructor
      * Defaults timeToLive to one day
@@ -136,6 +139,14 @@ public class ExclusionEvent
         this.flowName = flowName;
     }
 
+    public String getErrorUri() {
+        return errorUri;
+    }
+
+    public void setErrorUri(String errorUri) {
+        this.errorUri = errorUri;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -166,6 +177,7 @@ public class ExclusionEvent
                 ", identifier='" + identifier + '\'' +
                 ", timestamp=" + timestamp +
                 ", expiry=" + expiry +
+                ", errorUri='" + errorUri + '\'' +
                 '}';
     }
 }

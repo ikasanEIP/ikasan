@@ -84,6 +84,9 @@ public class ErrorOccurrence<EVENT>
      */
     private String eventRelatedIdentifier;
 
+    /** action to be taken on this error incident */
+    private String action;
+
     /**
      * Representation of the Event at the time that the error took place
      */
@@ -241,6 +244,14 @@ public class ErrorOccurrence<EVENT>
         this.uri = uri;
     }
 
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -267,5 +278,22 @@ public class ErrorOccurrence<EVENT>
         result = 31 * result + (event != null ? event.hashCode() : 0);
         result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorOccurrence{" +
+                "uri='" + uri + '\'' +
+                ", moduleName='" + moduleName + '\'' +
+                ", flowName='" + flowName + '\'' +
+                ", flowElementName='" + flowElementName + '\'' +
+                ", errorDetail='" + errorDetail + '\'' +
+                ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
+                ", eventRelatedIdentifier='" + eventRelatedIdentifier + '\'' +
+                ", action='" + action + '\'' +
+                ", event=" + event +
+                ", timestamp=" + timestamp +
+                ", expiry=" + expiry +
+                '}';
     }
 }

@@ -182,7 +182,7 @@ public class ScheduledRecoveryManagerTest
     /**
      * Test successful instantiation.
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void test_failed_instantiation_null_errorReportingService()
     {
         new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService, null);
@@ -213,7 +213,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, stopAction.toString());
+                will(returnValue("errorUri"));
+
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
                 exactly(1).of(consumer).stop();
@@ -254,8 +258,12 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(excludeEventAction));
 
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, excludeEventAction.toString());
+                will(returnValue("errorUri"));
+
                 // add to exclusion list
-                exactly(1).of(exclusionService).addBlacklisted(flowEvent);
+                exactly(1).of(exclusionService).addBlacklisted(flowEvent, "errorUri");
             }
         });
 
@@ -294,7 +302,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, stopAction.toString());
+                will(returnValue("errorUri"));
+
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
                 exactly(1).of(consumer).stop();
@@ -340,6 +352,9 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
+                will(returnValue("errorUri"));
             }
         });
 
@@ -369,6 +384,10 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
+                will(returnValue("errorUri"));
             }
         });
 
@@ -399,7 +418,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -469,7 +492,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -550,7 +577,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -577,7 +608,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -596,7 +631,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -693,7 +732,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -725,7 +768,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -749,7 +796,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -842,6 +893,10 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(unsupportedExceptionAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, unsupportedExceptionAction.toString());
+                will(returnValue("errorUri"));
             }
         });
 

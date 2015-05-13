@@ -61,7 +61,8 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations={
         "/error-reporting-service-conf.xml",
         "/mock-conf.xml",
-        "/h2db-datasource-conf.xml"
+        "/h2db-datasource-conf.xml",
+        "/substitute-components.xml"
         })
 
 public class HibernateErrorReportingServiceDaoTest
