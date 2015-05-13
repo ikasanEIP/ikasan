@@ -130,7 +130,7 @@
         <dependency>
             <groupId>org.jboss.transaction</groupId>
             <artifactId>jboss-jta</artifactId>
-            <version>4.2.3.SP7</version>
+            <version>${version.org.jboss.transaction.jboss-jta}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
