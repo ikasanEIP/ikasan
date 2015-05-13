@@ -76,6 +76,28 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
+  <filter>
+      <filter-name>hibernateFilter</filter-name>
+      <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+      <init-param>
+          <param-name>sessionFactoryBeanName</param-name>
+          <param-value>securitySessionFactory</param-value>
+      </init-param>
+      <init-param>
+        <param-name>singleSession</param-name>
+        <param-value>true</param-value>
+      </init-param>
+      <init-param>
+          <param-name>flushMode</param-name>
+          <param-value>MANUAL</param-value>
+      </init-param>
+  </filter>
+
+  <filter-mapping>
+      <filter-name>hibernateFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <!-- Load the Servlet named console on startup (after the platform Spring contexts are loaded) -->
   <servlet>
