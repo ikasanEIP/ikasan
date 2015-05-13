@@ -53,7 +53,7 @@ public class BusinessStream
 	private Long id;
 	private String name;
 	private String description;
-	private Set<Flow> flows;
+	private Set<BusinessStreamFlow> flows;
 	
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -156,7 +156,7 @@ public class BusinessStream
 	/**
 	 * @return the flows
 	 */
-	public Set<Flow> getFlows()
+	public Set<BusinessStreamFlow> getFlows()
 	{
 		return flows;
 	}
@@ -164,7 +164,7 @@ public class BusinessStream
 	/**
 	 * @param flows the flows to set
 	 */
-	public void setFlows(Set<Flow> flows)
+	public void setFlows(Set<BusinessStreamFlow> flows)
 	{
 		this.flows = flows;
 	}

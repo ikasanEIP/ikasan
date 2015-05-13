@@ -40,6 +40,13 @@
  */
 package org.ikasan.topology.dao;
 
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
@@ -50,6 +57,100 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
  */
 public class HibernateTopologyDao extends HibernateDaoSupport implements TopologyDao
 {
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getAllServers()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Server> getAllServers()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Server.class);
+
+        return (List<Server>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Server)
+	 */
+	@Override
+	public void save(Server server)
+	{
+		this.getHibernateTemplate().saveOrUpdate(server);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getAllModules()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Module> getAllModules()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Module.class);
+
+        return (List<Module>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Module)
+	 */
+	@Override
+	public void save(Module module)
+	{
+		this.getHibernateTemplate().saveOrUpdate(module);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getAllFlows()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Flow> getAllFlows()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
+
+        return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#save(org.ikasan.topology.model.Flow)
+	 */
+	@Override
+	public void save(Flow flow)
+	{
+		this.getHibernateTemplate().saveOrUpdate(flow);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getAllBusinessStreams()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BusinessStream> getAllBusinessStreams()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(BusinessStream.class);
+
+        return (List<BusinessStream>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#saveBusinessStream()
+	 */
+	@Override
+	public void saveBusinessStream(BusinessStream businessStream)
+	{
+		this.getHibernateTemplate().saveOrUpdate(businessStream);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getBusinessStreamsByUserId()
+	 */
+	@Override
+	public List<BusinessStream> getBusinessStreamsByUserId()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     
    

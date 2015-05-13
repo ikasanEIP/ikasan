@@ -16,8 +16,8 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class
-        name="org.ikasan.security.model.PolicyLinkType"
-        table="PolicyLinkType">
+        name="org.ikasan.topology.model.Server"
+        table="Server">
 
         <id name="id"
           type="java.lang.Long"
@@ -32,12 +32,17 @@
                   not-null="true"
                   unique="true"/>
 
-        <property name="tableName"
+        <property name="description"
                   type="java.lang.String"
-                  column="TableName"
+                  column="Description"
                   not-null="true" 
                   unique="false"/>
-
+         
+        <set name="modules" cascade="all" lazy="false">
+         	<key column="ServerId"/>
+         	<one-to-many class="org.ikasan.topology.model.Module"/>
+      	</set>
+       	
         <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"

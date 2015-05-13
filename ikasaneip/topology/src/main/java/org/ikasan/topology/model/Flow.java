@@ -67,14 +67,26 @@ public class Flow implements Principal
     /**
      * Default constructor
      */
-    public Flow()
-    {
-        long now = System.currentTimeMillis();
-        this.createdDateTime = new Date(now);
-        this.updatedDateTime = new Date(now);
-    }
+    private Flow(){}
 
     /**
+	 * @param name
+	 * @param description
+	 * @param module
+	 */
+	public Flow(String name, String description, Module module)
+	{
+		super();
+		this.name = name;
+		this.description = description;
+		this.module = module;
+		
+		long now = System.currentTimeMillis();
+        this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+	}
+
+	/**
      * @return the id
      */
     public Long getId()

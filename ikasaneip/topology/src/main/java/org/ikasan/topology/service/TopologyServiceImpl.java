@@ -41,6 +41,7 @@
 package org.ikasan.topology.service;
 
 import org.apache.log4j.Logger;
+import org.ikasan.topology.dao.TopologyDao;
 
 /**
  * 
@@ -50,5 +51,16 @@ import org.apache.log4j.Logger;
 public class TopologyServiceImpl implements TopologyService
 {
 	private static Logger logger = Logger.getLogger(TopologyServiceImpl.class);
+	
+	private TopologyDao topologyDao;
+	
+	public TopologyServiceImpl(TopologyDao topologyDao)
+	{
+		this.topologyDao = topologyDao;
+		if(this.topologyDao == null)
+		{
+			throw new IllegalArgumentException("topologyDao cannot be null!");
+		}
+	}
 	
 }

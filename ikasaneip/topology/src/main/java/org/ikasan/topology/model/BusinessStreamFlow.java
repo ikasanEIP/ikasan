@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,39 +38,126 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.topology.dao;
+package org.ikasan.topology.model;
 
-import java.util.List;
-
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Server;
-
+import java.util.Date;
+import java.util.Set;
 
 /**
- * Data Access interface for <code>User</code> instances
  * 
  * @author Ikasan Development Team
  *
  */
-public interface TopologyDao
+public class BusinessStreamFlow
 {
-	public List<Server> getAllServers();
-
-	public void save(Server server);
-
-	public List<Module> getAllModules();
-
-	public void save(Module module);
-
-	public List<Flow> getAllFlows();
-
-	public void save(Flow flow);
-
-	public List<BusinessStream> getAllBusinessStreams();
+	private BusinessStreamFlowKey id;
+	private Set<Flow> flows;
+	private Integer order;
 	
-	public void saveBusinessStream(BusinessStream businessStream);
+	/** The data time stamp when an instance was first created */
+    private Date createdDateTime;
 
-	public List<BusinessStream> getBusinessStreamsByUserId();
+    /** The data time stamp when an instance was last updated */
+    private Date updatedDateTime;
+    
+    /**
+     * 
+     */
+    @SuppressWarnings("unused")
+	private BusinessStreamFlow()
+    {
+    	long now = System.currentTimeMillis();
+		this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+    }
+
+	
+
+	/**
+	 * @return the id
+	 */
+	public BusinessStreamFlowKey getId()
+	{
+		return id;
+	}
+
+
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(BusinessStreamFlowKey id)
+	{
+		this.id = id;
+	}
+
+	
+
+	/**
+	 * @return the flows
+	 */
+	public Set<Flow> getFlows()
+	{
+		return flows;
+	}
+
+
+
+	/**
+	 * @param flows the flows to set
+	 */
+	public void setFlows(Set<Flow> flows)
+	{
+		this.flows = flows;
+	}
+
+
+
+	/**
+	 * @return the order
+	 */
+	public Integer getOrder()
+	{
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(Integer order)
+	{
+		this.order = order;
+	}
+
+	/**
+	 * @return the createdDateTime
+	 */
+	public Date getCreatedDateTime()
+	{
+		return createdDateTime;
+	}
+
+	/**
+	 * @param createdDateTime the createdDateTime to set
+	 */
+	public void setCreatedDateTime(Date createdDateTime)
+	{
+		this.createdDateTime = createdDateTime;
+	}
+
+	/**
+	 * @return the updatedDateTime
+	 */
+	public Date getUpdatedDateTime()
+	{
+		return updatedDateTime;
+	}
+
+	/**
+	 * @param updatedDateTime the updatedDateTime to set
+	 */
+	public void setUpdatedDateTime(Date updatedDateTime)
+	{
+		this.updatedDateTime = updatedDateTime;
+	}
 }
