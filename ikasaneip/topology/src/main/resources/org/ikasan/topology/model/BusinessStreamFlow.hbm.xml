@@ -43,33 +43,27 @@
 
  Author:  Ikasan Development Team
  
- Purpose: AuthenticationMethod table hibernate mapping file. * * *
+ Purpose: BusinessStreamFlow table hibernate mapping file. * * *
 -->
 <!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.ikasan.topology.model.BusinessStream"
-		table="BusinessStream">
+	<class name="org.ikasan.topology.model.BusinessStreamFlow"
+		table="BusinessStreamFlow">
 		
-		<id name="id" type="java.lang.Long" column="Id">
-			<generator class="assigned" />
-		</id>
+		<composite-id name="id" class="org.ikasan.topology.model.BusinessStreamFlowKey">
+	        <key-property name="businessStreamId" column="BusinessStreamId"/>
+	        <key-property name="flowId" column="FlowId"/>
+    	</composite-id>
+    	
+    	<many-to-one name="flows" class="org.ikasan.topology.model.Flow" 
+    		column="flowId" not-null="true" insert="false" update="false"/>
 
-		<property name="name" 
+		<property name="order" 
 				  column="Name" 
-				  type="java.lang.String" 
+				  type="java.lang.Integer" 
 				  not-null="true"/>
-
-		<property name="description" 
-				  column="Description" 
-				  type="java.lang.String" 
-				  not-null="true"/>
-	    
-	    <set name="flows" inverse="true">
-		    <key column="businessStreamId"/>
-		    <one-to-many class="org.ikasan.topology.model.BusinessStreamFlow"/>
-		</set>
 		
 		<property name="createdDateTime"
                   type="java.util.Date"

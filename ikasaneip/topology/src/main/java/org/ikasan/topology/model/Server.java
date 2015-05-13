@@ -53,6 +53,8 @@ public class Server
 	private Long id;
 	private String name = "";
 	private String description = "";
+	private String url;
+	private Integer port;
 	private Set<Module> modules;
 	
 	/** The data time stamp when an instance was first created */
@@ -64,12 +66,36 @@ public class Server
 	/**
 	 * 
 	 */
-	public Server()
+	@SuppressWarnings("unused")
+	private Server(){}
+
+
+	/**
+	 * Constructor 
+	 * 
+	 * @param name
+	 * @param description
+	 * @param url
+	 * @param port
+	 */
+	public Server(String name, String description, String url, Integer port)
 	{
+		super();
+		this.name = name;
+		this.description = description;
+		this.url = url;
+		this.port = port;
+		
 		long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
         this.updatedDateTime = new Date(now);
 	}
+
+
+
+
+
+
 
 	/**
 	 * @return the id
@@ -165,5 +191,45 @@ public class Server
 	public void setUpdatedDateTime(Date updatedDateTime)
 	{
 		this.updatedDateTime = updatedDateTime;
+	}
+
+
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl()
+	{
+		return url;
+	}
+
+
+
+	/**
+	 * @param url the url to set
+	 */
+	public void setUrl(String url)
+	{
+		this.url = url;
+	}
+
+
+
+	/**
+	 * @return the port
+	 */
+	public Integer getPort()
+	{
+		return port;
+	}
+
+
+
+	/**
+	 * @param port the port to set
+	 */
+	public void setPort(Integer port)
+	{
+		this.port = port;
 	}	
 }

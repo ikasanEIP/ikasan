@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,39 +38,103 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.topology.dao;
+package org.ikasan.topology.model;
 
-import java.util.List;
-
-import org.ikasan.topology.model.BusinessStream;
-import org.ikasan.topology.model.Flow;
-import org.ikasan.topology.model.Module;
-import org.ikasan.topology.model.Server;
-
+import java.io.Serializable;
 
 /**
- * Data Access interface for <code>User</code> instances
  * 
  * @author Ikasan Development Team
  *
  */
-public interface TopologyDao
+public class UserBusinessStreamKey implements Serializable
 {
-	public List<Server> getAllServers();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6193709427108434867L;
 
-	public void save(Server server);
-
-	public List<Module> getAllModules();
-
-	public void save(Module module);
-
-	public List<Flow> getAllFlows();
-
-	public void save(Flow flow);
-
-	public List<BusinessStream> getAllBusinessStreams();
+	private Long userId;
+	private Long businessStreamId;
+	/**
+	 * @return the userId
+	 */
+	public Long getUserId()
+	{
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+	/**
+	 * @return the businessStreamId
+	 */
+	public Long getBusinessStreamId()
+	{
+		return businessStreamId;
+	}
+	/**
+	 * @param businessStreamId the businessStreamId to set
+	 */
+	public void setBusinessStreamId(Long businessStreamId)
+	{
+		this.businessStreamId = businessStreamId;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((businessStreamId == null) ? 0 : businessStreamId.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserBusinessStreamKey other = (UserBusinessStreamKey) obj;
+		if (businessStreamId == null)
+		{
+			if (other.businessStreamId != null)
+				return false;
+		} else if (!businessStreamId.equals(other.businessStreamId))
+			return false;
+		if (userId == null)
+		{
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "UserBusinessStreamKey [userId=" + userId
+				+ ", businessStreamId=" + businessStreamId + "]";
+	}
 	
-	public void saveBusinessStream(BusinessStream businessStream);
+	
 
-	public List<BusinessStream> getBusinessStreamsByUserId();
 }

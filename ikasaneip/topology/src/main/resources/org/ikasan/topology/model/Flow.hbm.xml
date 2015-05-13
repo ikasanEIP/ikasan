@@ -16,8 +16,8 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class
-        name="org.ikasan.security.model.Policy"
-        table="SecurityPolicy">
+        name="org.ikasan.topology.model.Flow"
+        table="Flow">
 
         <id name="id"
           type="java.lang.Long"
@@ -25,28 +25,26 @@
           unsaved-value="null">
           <generator class="identity" />
         </id>
-        
-        <many-to-one name="policyLink" column="PolicyLinkId" 
-       			  class="org.ikasan.security.model.PolicyLink" not-null="false" lazy="false"
-       			  cascade="all"/>
-       			  
-        <set name="roles" table="RolePolicy" cascade="all" lazy="false" fetch="select" inverse="true">
-            <key column="PolicyId"/>
-            <many-to-many column="RoleId"
-                class="org.ikasan.security.model.Role"/>
-        </set>
 
         <property name="name"
                   type="java.lang.String"
                   column="Name"
                   not-null="true"
-                  unique="true"/>
+                  unique="false"/>
 
         <property name="description"
                   type="java.lang.String"
                   column="Description"
                   not-null="true" 
                   unique="false"/>
+        
+        <many-to-one name="module" column="moduleId" 
+       		class="org.ikasan.topology.model.Module" not-null="true"/>
+       	
+       	<set name="components" cascade="all">
+         	<key column="FlowId"/>
+         	<one-to-many class="org.ikasan.topology.model.Component"/>
+      	</set>
 
         <property name="createdDateTime"
                   type="java.util.Date"

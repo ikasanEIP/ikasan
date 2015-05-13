@@ -40,6 +40,7 @@
  */
 package org.ikasan.topology.model;
 
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -58,10 +59,35 @@ public class Module
     private Server server;
     private Set<Flow> flows;
 
+    /** The data time stamp when an instance was first created */
+    private Date createdDateTime;
+
+    /** The data time stamp when an instance was last updated */
+    private Date updatedDateTime;
+
     /**
-     * No args constructor required by ORM
-     *
-    private Module(){}
+     * Default constructor
+     */
+    private Module() {}
+
+	/**
+	 * Constructor 
+	 * 
+	 * @param name
+	 * @param description
+	 * @param server
+	 */
+	public Module(String name, String description, Server server)
+	{
+		super();
+		this.name = name;
+		this.description = description;
+		this.server = server;
+		
+		long now = System.currentTimeMillis();
+        this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+	}
 
 
 
@@ -161,6 +187,46 @@ public class Module
 	public void setServer(Server server)
 	{
 		this.server = server;
+	}
+
+
+
+	/**
+	 * @return the createdDateTime
+	 */
+	public Date getCreatedDateTime()
+	{
+		return createdDateTime;
+	}
+
+
+
+	/**
+	 * @param createdDateTime the createdDateTime to set
+	 */
+	public void setCreatedDateTime(Date createdDateTime)
+	{
+		this.createdDateTime = createdDateTime;
+	}
+
+
+
+	/**
+	 * @return the updatedDateTime
+	 */
+	public Date getUpdatedDateTime()
+	{
+		return updatedDateTime;
+	}
+
+
+
+	/**
+	 * @param updatedDateTime the updatedDateTime to set
+	 */
+	public void setUpdatedDateTime(Date updatedDateTime)
+	{
+		this.updatedDateTime = updatedDateTime;
 	}
     
     

@@ -49,8 +49,8 @@ import java.util.Date;
  */
 public class UserBusinessStream
 {
-	public Long userId;
-	public BusinessStream name;
+	public UserBusinessStreamKey id;
+	public BusinessStream businessStream;
 
 	/** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -58,36 +58,46 @@ public class UserBusinessStream
     /** The data time stamp when an instance was last updated */
     private Date updatedDateTime;
 
+    /**
+     * Default constructor
+     */
+    public UserBusinessStream()
+    {
+        long now = System.currentTimeMillis();
+        this.createdDateTime = new Date(now);
+        this.updatedDateTime = new Date(now);
+    }
+
 	/**
-	 * @return the userId
+	 * @return the id
 	 */
-	public Long getUserId()
+	public UserBusinessStreamKey getId()
 	{
-		return userId;
+		return id;
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param id the id to set
 	 */
-	public void setUserId(Long userId)
+	public void setId(UserBusinessStreamKey id)
 	{
-		this.userId = userId;
+		this.id = id;
 	}
 
 	/**
-	 * @return the name
+	 * @return the businessStream
 	 */
-	public BusinessStream getName()
+	public BusinessStream getBusinessStream()
 	{
-		return name;
+		return businessStream;
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param businessStream the businessStream to set
 	 */
-	public void setName(BusinessStream name)
+	public void setBusinessStream(BusinessStream businessStream)
 	{
-		this.name = name;
+		this.businessStream = businessStream;
 	}
 
 	/**
@@ -120,7 +130,5 @@ public class UserBusinessStream
 	public void setUpdatedDateTime(Date updatedDateTime)
 	{
 		this.updatedDateTime = updatedDateTime;
-	}
-
-    
+	}    
 }

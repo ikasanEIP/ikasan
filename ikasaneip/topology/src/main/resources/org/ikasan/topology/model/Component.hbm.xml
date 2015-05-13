@@ -49,12 +49,38 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.ikasan.security.model.Authority"
-		table="Authorities">
-		<id name="id" type="java.lang.Long" column="Id">
-			<generator class="identity" />
-		</id>
-		<property name="authority" type="java.lang.String" column="Authority" unique="true"/>
-		<property name="description" column="Description" type="java.lang.String" />
+	<class name="org.ikasan.topology.model.Component"
+		table="Component">
+		<id name="id"
+          type="java.lang.Long"
+          column="Id"
+          unsaved-value="null">
+          <generator class="identity" />
+        </id>
+
+        <property name="name"
+                  type="java.lang.String"
+                  column="Name"
+                  not-null="true"
+                  unique="true"/>
+
+        <property name="description"
+                  type="java.lang.String"
+                  column="Description"
+                  not-null="true" 
+                  unique="false"/>
+         
+        <many-to-one name="flow" column="flowId" 
+       		class="org.ikasan.topology.model.Flow" not-null="true"/>
+       	
+        <property name="createdDateTime"
+                  type="java.util.Date"
+                  column="CreatedDateTime"
+                  not-null="true" />
+
+        <property name="updatedDateTime"
+                  type="java.util.Date"
+                  column="UpdatedDateTime"
+                  not-null="true" />
 	</class>
 </hibernate-mapping>
