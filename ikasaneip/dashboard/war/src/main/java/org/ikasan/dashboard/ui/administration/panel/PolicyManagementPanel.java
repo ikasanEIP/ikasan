@@ -46,7 +46,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.administration.window.NewPolicyWindow;
+import org.ikasan.dashboard.ui.administration.window.PolicyAssociationBusinessStreamSearchWindow;
+import org.ikasan.dashboard.ui.administration.window.PolicyAssociationFlowSearchWindow;
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow;
+import org.ikasan.dashboard.ui.administration.window.PolicyAssociationModuleSearchWindow;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
@@ -113,6 +116,9 @@ public class PolicyManagementPanel extends Panel implements View
 	private Button saveButton = new Button("Save");
 	private Button deleteButton = new Button("Delete");
 	private PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow;
+	private PolicyAssociationModuleSearchWindow policyAssociationModuleSearchWindow;
+	private PolicyAssociationFlowSearchWindow policyAssociationFlowSearchWindow;
+	private PolicyAssociationBusinessStreamSearchWindow policyAssociationBusinessStreamSearchWindow;
 	private Policy policy = new Policy();
 	private AutocompleteField<Policy> policyNameField;
 	private TextArea descriptionField;
@@ -225,8 +231,28 @@ public class PolicyManagementPanel extends Panel implements View
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	policyAssociationMappingSearchWindow.clear();
-                UI.getCurrent().addWindow(policyAssociationMappingSearchWindow);
+            	PolicyLinkType policyLinkType = (PolicyLinkType)PolicyManagementPanel.this.linkTypeCombo.getValue();
+            	
+            	if(policyLinkType.getName().equals("Mapping Configuration"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationMappingSearchWindow);
+            	}
+            	else if(policyLinkType.getName().equals("Module"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationModuleSearchWindow);
+            	}
+            	else if(policyLinkType.getName().equals("Flow"))
+            	{
+//            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationFlowSearchWindow);
+            	}
+            	else if(policyLinkType.getName().equals("Business Stream"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow);
+            	}
             }
         });
     	linkLayout.addComponent(this.linkButton, 1, 0);

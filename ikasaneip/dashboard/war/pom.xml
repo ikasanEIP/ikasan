@@ -4,13 +4,13 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-dashboard-war</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-rc4-SNAPSHOT</version>
+	<version>1.0.0-rc5-SNAPSHOT</version>
 	<name>Ikasan Dashboard</name>
 
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-dashboard</artifactId>
-		<version>1.0.0-rc4-SNAPSHOT</version>
+		<version>1.0.0-rc5-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -112,56 +112,59 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.9.Final</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-mapping</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
+			<version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-topology</artifactId>
+			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-security</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
+			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-setup</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
+			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
+            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
 
@@ -169,14 +172,12 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>3.2.6.RELEASE</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
 			<version>3.2.6.RELEASE</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>

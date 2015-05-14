@@ -40,7 +40,12 @@
  */
 package org.ikasan.topology.service;
 
-import org.springframework.security.core.Authentication;
+import java.util.List;
+
+import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
 
 /**
  * 
@@ -49,5 +54,65 @@ import org.springframework.security.core.Authentication;
  */
 public interface TopologyService
 {
+	/**
+	 * Get all servers
+	 * 
+	 * @return
+	 */
+	public List<Server> getAllServers();
 
+	/**
+	 * Save a server. Will create a new record or update an existing.
+	 * @param server
+	 */
+	public void save(Server server);
+
+	/**
+	 * Get all modules
+	 * 
+	 * @return
+	 */
+	public List<Module> getAllModules();
+
+	/**
+	 * Save a module. Will create a new record or update an existing.
+	 * 
+	 * @param module
+	 */
+	public void save(Module module);
+
+	/**
+	 * Get all flows.
+	 * 
+	 * @return
+	 */
+	public List<Flow> getAllFlows();
+
+	/**
+	 * Save a flow. Will create a new record or update an existing.
+	 * 
+	 * @param flow
+	 */
+	public void save(Flow flow);
+
+	/**
+	 * Get all BusinessStreams
+	 * 
+	 * @return
+	 */
+	public List<BusinessStream> getAllBusinessStreams();
+	
+	/**
+	 * Save a BusinessStream. Will create a new record or update an existing.
+	 * 
+	 * @param businessStream
+	 */
+	public void saveBusinessStream(BusinessStream businessStream);
+
+	/**
+	 * Get all BusinessStreams associated with a given user.
+	 * @param userId
+	 * @return
+	 */
+	public List<BusinessStream> getBusinessStreamsByUserId(Long userId);
 }

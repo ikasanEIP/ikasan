@@ -45,7 +45,7 @@
       <entry key="replay" value-ref="replayNavigator" />
       <entry key="profile" value-ref="profileNavigator" />
       <entry key="hospital" value-ref="hospitalNavigator" />
-      <!--  entry key="topology" value-ref="topologyNavigator" / -->
+      <entry key="topology" value-ref="topologyNavigator" />
       <entry key="persistanceSetup" value-ref="persistanceSetupNavigator" />
       <entry key="principalManagement" value-ref="principalNavigator" />
       <entry key="roleManagement" value-ref="roleNavigator" />
@@ -92,10 +92,10 @@
                    <constructor-arg value="hospitalView"/>
                    <constructor-arg ref="hospitalPanel"/>
                 </bean>
-                <!--  bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
+                <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="topologyView"/>
                    <constructor-arg ref="estateViewPanel"/>
-                </bean>  -->
+                </bean> 
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="persistanceSetupView"/>
                    <constructor-arg ref="persistanceSetupPanel"/>

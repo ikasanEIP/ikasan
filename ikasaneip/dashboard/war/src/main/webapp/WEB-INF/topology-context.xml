@@ -33,7 +33,7 @@
 		<constructor-arg value="false"/>
     </bean>
 
-	<bean id="estateViewPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.EstateViewPanel">
+	<bean id="estateViewPanel" class="org.ikasan.dashboard.ui.topology.panel.EstateViewPanel">
         <constructor-arg ref="ikasanModuleService" />
     </bean>
 
