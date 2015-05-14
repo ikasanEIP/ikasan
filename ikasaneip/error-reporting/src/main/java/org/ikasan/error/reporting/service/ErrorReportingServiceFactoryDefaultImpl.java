@@ -47,6 +47,7 @@ import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.springframework.beans.factory.FactoryBean;
 
 /**
  * ErrorReportingService Factory default implementation.
@@ -96,7 +97,57 @@ public class ErrorReportingServiceFactoryDefaultImpl implements ErrorReportingSe
      */
     public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
     {
-        return new ErrorReportingServiceDefaultImpl(moduleName, flowName, this.serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
+        ErrorReportingServiceSpringFactory factoryBean = new ErrorReportingServiceSpringFactory(moduleName, flowName);
+        return factoryBean.getObject();
     }
 
+    /**
+     * Class providing an instance of an Error Reporting Service as a Spring bean
+     */
+    class ErrorReportingServiceSpringFactory implements FactoryBean<ErrorReportingService>
+    {
+        /** moduleName associated with the error reporting service instance */
+        String moduleName;
+
+        /** flowName associated with the error reporting service instance */
+        String flowName;
+
+        /**
+         * Constructor
+         * @param moduleName
+         * @param flowName
+         */
+        public ErrorReportingServiceSpringFactory(String moduleName, String flowName)
+        {
+            this.moduleName = moduleName;
+            if(moduleName == null)
+            {
+                throw new IllegalArgumentException("moduleName cannot be 'null'");
+            }
+
+            this.flowName = flowName;
+            if(flowName == null)
+            {
+                throw new IllegalArgumentException("flowName cannot be 'null'");
+            }
+        }
+
+        @Override
+        public ErrorReportingService getObject()
+        {
+            return new ErrorReportingServiceDefaultImpl(moduleName, flowName, serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
+        }
+
+        @Override
+        public Class<ErrorReportingService> getObjectType()
+        {
+            return ErrorReportingService.class;
+        }
+
+        @Override
+        public boolean isSingleton()
+        {
+            return false;
+        }
+    }
 }

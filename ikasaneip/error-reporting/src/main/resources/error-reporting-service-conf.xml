@@ -23,4 +23,6 @@
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
+    <bean id="serialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl"/>
+
 </beans>

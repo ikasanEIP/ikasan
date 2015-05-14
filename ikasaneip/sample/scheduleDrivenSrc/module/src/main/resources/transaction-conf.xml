@@ -20,7 +20,7 @@
     </aop:config-->
 
     <aop:config>
-        <aop:pointcut id="exceptionHandlerInvocation" expression="execution(* org.ikasan.exclusion.dao.HibernateExclusionServiceDao.add(..))"/>
+        <aop:pointcut id="exceptionHandlerInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
         <aop:advisor advice-ref="exceptionHandlerTxAdvice" pointcut-ref="exceptionHandlerInvocation"/>
     </aop:config>
 
