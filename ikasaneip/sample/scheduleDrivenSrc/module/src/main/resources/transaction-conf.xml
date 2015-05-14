@@ -19,9 +19,9 @@
         <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="jmsMessagePointcut1" />
     </aop:config-->
 
-    <aop:config>
+    <!--aop:config>
         <aop:pointcut id="exceptionHandlerInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
         <aop:advisor advice-ref="exceptionHandlerTxAdvice" pointcut-ref="exceptionHandlerInvocation"/>
-    </aop:config>
+    </aop:config-->
 
 </beans>
