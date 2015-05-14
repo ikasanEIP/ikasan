@@ -54,7 +54,6 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowElementInvoker;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
@@ -329,6 +328,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             this.exclusionServiceFactory = new ExclusionServiceFactory();
         }
 
+        this.errorReportingServiceFactory = applicationContext.getBean(ErrorReportingServiceFactory.class);
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
     }
 

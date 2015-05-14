@@ -10,6 +10,7 @@
         <value>component-conf.xml</value>
         <value>flow-conf.xml</value>
         <value>exclusion-service-conf.xml</value>
+        <value>error-reporting-service-conf.xml</value>
         <value>exclusion-flow-conf.xml</value>
         <value>module-conf.xml</value>
         <value>exception-conf.xml</value>
