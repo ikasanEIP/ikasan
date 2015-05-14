@@ -257,8 +257,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 //				"replayView");
 //		MenuBar.Command hospitalCommand = createNavigatorMenuCommand(
 //				"hospital", "hospitalView");
-//		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
-//				"topology", "topologyView");
+		MenuBar.Command topologyCommand = createNavigatorMenuCommand(
+				"topology", "topologyView");
 
 		// Another top-level item
 		
@@ -270,8 +270,8 @@ public class NavigationPanel extends Panel implements ViewContext, Navigation
 			MenuItem service = this.actionMenu.addItem("Services",
 					new ThemeResource("images/menu-icon.png"), null);
 			service.setStyleName("ikasan");
-	//		service.addItem("Topology", null, topologyCommand);
-	//		service.addSeparator();
+			service.addItem("Topology", null, topologyCommand);
+			service.addSeparator();
 			service.addItem("Mapping", null, mappingCommand);
 	//		service.addSeparator();
 	//		service.addItem("Error", null, errorCommand);

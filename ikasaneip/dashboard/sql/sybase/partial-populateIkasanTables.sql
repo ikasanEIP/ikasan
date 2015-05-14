@@ -188,6 +188,18 @@
 	INSERT
 	INTO PolicyLinkType ( Name, TableName )
 	VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
+	
+	INSERT
+	INTO PolicyLinkType ( Name, TableName )
+	VALUES ( 'Module',  'IkasanModule' )
+	
+	INSERT
+	INTO PolicyLinkType ( Name, TableName )
+	VALUES ( 'Flow',  'Flow' )
+	
+	INSERT
+	INTO PolicyLinkType ( Name, TableName )
+	VALUES ( 'Business Stream',  'BusinessStream' )
 
 	INSERT INTO AuthenticationMethod (Id, Method)
 	VALUES (1, 'AUTH_METHOD_LOCAL')

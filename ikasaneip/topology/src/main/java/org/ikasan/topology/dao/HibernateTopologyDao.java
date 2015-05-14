@@ -146,7 +146,7 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	 * @see org.ikasan.topology.dao.TopologyDao#getBusinessStreamsByUserId()
 	 */
 	@Override
-	public List<BusinessStream> getBusinessStreamsByUserId()
+	public List<BusinessStream> getBusinessStreamsByUserId(Long userId)
 	{
 		// TODO Auto-generated method stub
 		return null;

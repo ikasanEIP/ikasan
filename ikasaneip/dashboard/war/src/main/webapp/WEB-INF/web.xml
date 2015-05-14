@@ -25,7 +25,8 @@
         			 /WEB-INF/transaction-context.xml,
         			 /WEB-INF/administration-context.xml,
         			 /WEB-INF/policy-context.xml,
-        			 /WEB-INF/service-context.xml, 
+        			 /WEB-INF/service-context.xml,
+        			 /WEB-INF/topology-context.xml, 
         			 classpath:platform-service-conf.xml, 
         			 classpath:providers-conf.xml,
         			 classpath:providers-properties.xml
