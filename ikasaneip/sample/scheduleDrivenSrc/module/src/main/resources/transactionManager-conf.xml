@@ -23,17 +23,10 @@
         </tx:attributes>
     </tx:advice>
 
-    <!-- NOT_SUPPORTED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
-    <tx:advice id="notSupported-TransactionAdvice" transaction-manager="transactionManager">
+    <!--tx:advice id="exceptionHandlerTxAdvice" transaction-manager="transactionManager">
         <tx:attributes>
-            <tx:method name="*" propagation="NOT_SUPPORTED" />
+            <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
-    </tx:advice>
-
-    <tx:advice id="exceptionHandlerTxAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRES_NEW"/>
-        </tx:attributes>
-    </tx:advice>
+    </tx:advice-->
 
 </beans>

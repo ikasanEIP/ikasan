@@ -156,16 +156,14 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      */
     private ErrorOccurrence newErrorOccurrence(String flowElementName, EVENT event, Throwable throwable)
     {
+        ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
         if(event instanceof FlowEvent)
         {
             FlowEvent<String,?> flowEvent = (FlowEvent)event;
-            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
-            return errorOccurrence;
         }
 
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
         return errorOccurrence;
     }
 
