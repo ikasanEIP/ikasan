@@ -14,6 +14,8 @@ package org.ikasan.endpoint.ftp.producer;
 
 import org.apache.log4j.Logger;
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.listener.TransactionCommitEvent;
+import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -33,7 +35,7 @@ import java.util.Map;
  * @author Middleware Team
  */
 public class FtpProducer implements Producer<Payload>,
-        ManagedResource, ConfiguredResource<FtpProducerConfiguration> {
+        ManagedResource, ConfiguredResource<FtpProducerConfiguration>, TransactionCommitFailureListener {
     /**
      * class logger
      */
@@ -70,6 +72,7 @@ public class FtpProducer implements Producer<Payload>,
      */
     protected FileTransferConnectionTemplate alternateFileTransferConnectionTemplate;
 
+    private ManagedResourceRecoveryManager managedResourceRecoveryManager;
 
     /**
      * determines whether this managed resource failure will fail the startup of the flow
@@ -146,7 +149,13 @@ public class FtpProducer implements Producer<Payload>,
     */
     @Override
     public void startManagedResource() {
-        createEndpoint(configuration);
+
+        configuration.validate();
+
+        FTPConnectionSpec spec = createSpec(configuration);
+        FTPConnectionSpec alternateSpec = createSpec(configuration);
+
+        getEndpoint(spec, alternateSpec);
 
     }
 
@@ -165,7 +174,7 @@ public class FtpProducer implements Producer<Payload>,
     }
 
     public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager) {
-        // dont check this by default
+        this.managedResourceRecoveryManager = managedResourceRecoveryManager;
     }
 
     /**
@@ -180,8 +189,7 @@ public class FtpProducer implements Producer<Payload>,
     /* (non-Jsdoc)
     * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
     */
-    private void createEndpoint(FtpProducerConfiguration configuration) {
-        configuration.validate();
+    private FTPConnectionSpec createSpec(FtpProducerConfiguration configuration) {
 
         FTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(configuration.getClientID());
@@ -196,6 +204,10 @@ public class FtpProducer implements Producer<Payload>,
         spec.setDataTimeout(configuration.getDataTimeout());
         spec.setSocketTimeout(configuration.getSocketTimeout());
         spec.setSystemKey(configuration.getSystemKey());
+
+        return spec;
+    }
+    private FTPConnectionSpec createAlternateSpec(FtpProducerConfiguration configuration) {
 
         FTPConnectionSpec alternateSpec = null;
         if (configuration instanceof FtpProducerAlternateConfiguration) {
@@ -215,7 +227,7 @@ public class FtpProducer implements Producer<Payload>,
             alternateSpec.setSystemKey(alternteConfig.getAlternateSystemKey());
         }
 
-        this.getEndpoint(spec, alternateSpec);
+       return alternateSpec;
     }
 
 
@@ -228,13 +240,18 @@ public class FtpProducer implements Producer<Payload>,
      */
     private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec) {
         activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-        // activeFileTransferConnectionTemplate.addListener(this.listener);
-
+        activeFileTransferConnectionTemplate.addListener(this);
 
         if (alternateSpec != null) {
             alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-            // alternateFileTransferConnectionTemplate.addListener(this.listener);
+            alternateFileTransferConnectionTemplate.addListener(this);
 
         }
+    }
+
+    @Override
+    public void commitFailureOccurred(TransactionCommitEvent event) {
+        logger.info("Logging error: " + event.getException().getMessage());
+        this.managedResourceRecoveryManager.recover(event.getException());
     }
 }

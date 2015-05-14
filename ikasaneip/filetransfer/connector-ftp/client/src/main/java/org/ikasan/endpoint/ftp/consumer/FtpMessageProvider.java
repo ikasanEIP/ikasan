@@ -40,7 +40,9 @@
  */
 package org.ikasan.endpoint.ftp.consumer;
 
+import org.apache.log4j.Logger;
 import org.ikasan.client.FileTransferConnectionTemplate;
+import org.ikasan.connector.listener.TransactionCommitEvent;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.connector.ftp.outbound.FTPConnectionSpec;
@@ -61,98 +63,91 @@ import java.util.List;
 
 /**
  * Default implementation on MessageProvider using JobExecutionContext as a message type.
- * 
+ *
  * @author Ikasan Development Team
  */
-public class FtpMessageProvider implements ManagedResource,MessageProvider<Payload>
+public class FtpMessageProvider implements ManagedResource, MessageProvider<Payload>, TransactionCommitFailureListener
 {
-    /** Currently active connection template */
+    private static Logger logger = Logger.getLogger(FtpMessageProvider.class);
+
+    /**
+     * Currently active connection template
+     */
     protected FileTransferConnectionTemplate activeFileTransferConnectionTemplate;
 
-    /** A connection template */
+    /**
+     * A connection template
+     */
     protected FileTransferConnectionTemplate fileTransferConnectionTemplate;
 
-    /** Alternate template to be used in cases of failure */
+    /**
+     * Alternate template to be used in cases of failure
+     */
     protected FileTransferConnectionTemplate alternateFileTransferConnectionTemplate;
 
-    /** Configuration */
+    /**
+     * Configuration
+     */
     protected FtpConsumerConfiguration configuration;
 
-    /** Connection factory */
+    /**
+     * Connection factory
+     */
     private final ConnectionFactory connectionFactory;
-    private FileBasedPasswordHelper fileBasedPasswordHelper;
-    private TransactionCommitFailureListener listener;
 
-    /** Directory URL factory */
+    private FileBasedPasswordHelper fileBasedPasswordHelper;
+
+    /**
+     * Directory URL factory
+     */
     private DirectoryURLFactory directoryURLFactory;
 
+    private ManagedResourceRecoveryManager managedResourceRecoveryManager;
+
     /**
      * Constructor
+     *
      * @param connectionFactory FTP connection factory
      */
     public FtpMessageProvider(final ConnectionFactory connectionFactory,
-                                          FileBasedPasswordHelper fileBasedPasswordHelper, TransactionCommitFailureListener listener)
+            FileBasedPasswordHelper fileBasedPasswordHelper)
     {
         this.connectionFactory = connectionFactory;
-        if(this.connectionFactory == null)
+        if (this.connectionFactory == null)
         {
             throw new IllegalArgumentException("connectionFactory cannot be 'null'");
         }
         this.fileBasedPasswordHelper = fileBasedPasswordHelper;
-        if(this.fileBasedPasswordHelper == null)
+        if (this.fileBasedPasswordHelper == null)
         {
             throw new IllegalArgumentException("fileBasedPasswordHelper cannot be 'null'");
         }
-        this.listener = listener;
-        if(this.listener == null)
-        {
-            throw new IllegalArgumentException("listener cannot be 'null'");
-        }
     }
 
-    /**
-     * Constructor
-     * @param connectionFactory FTP connection factory
-     */
-    public FtpMessageProvider(final ConnectionFactory connectionFactory,
-                              FileBasedPasswordHelper fileBasedPasswordHelper)
+    @Override public Payload invoke(JobExecutionContext context)
     {
-        this.connectionFactory = connectionFactory;
-        if(this.connectionFactory == null)
-        {
-            throw new IllegalArgumentException("connectionFactory cannot be 'null'");
-        }
-        this.fileBasedPasswordHelper = fileBasedPasswordHelper;
-        if(this.fileBasedPasswordHelper == null)
-        {
-            throw new IllegalArgumentException("fileBasedPasswordHelper cannot be 'null'");
-        }
-
-    }
-
-
-    @Override
-    public Payload invoke(JobExecutionContext context)
-    {
-
         Payload payload = null;
         List<String> sourceDirectories = this.getSourceDirectories();
         for (String sourceDirectory : sourceDirectories)
         {
             try
             {
-                payload = this.activeFileTransferConnectionTemplate.getDiscoveredFile(
-                        sourceDirectory,
-                        this.configuration.getFilenamePattern(),
-                        this.configuration.getRenameOnSuccess().booleanValue(), this.configuration.getRenameOnSuccessExtension(),
-                        this.configuration.getMoveOnSuccess().booleanValue(), this.configuration.getMoveOnSuccessNewPath(),
-                        this.configuration.getChunking().booleanValue(), this.configuration.getChunkSize().intValue(),
-                        this.configuration.getChecksum().booleanValue(),
-                        this.configuration.getMinAge().longValue(), this.configuration.getDestructive().booleanValue(),
-                        this.configuration.getFilterDuplicates().booleanValue(), this.configuration.getFilterOnFilename().booleanValue(),
-                        this.configuration.getFilterOnLastModifiedDate().booleanValue(), this.configuration.getChronological().booleanValue());
-
-                if(payload != null)
+                payload = this.activeFileTransferConnectionTemplate
+                    .getDiscoveredFile(sourceDirectory, this.configuration.getFilenamePattern(),
+                         this.configuration.getRenameOnSuccess().booleanValue(),
+                         this.configuration.getRenameOnSuccessExtension(),
+                         this.configuration.getMoveOnSuccess().booleanValue(),
+                         this.configuration.getMoveOnSuccessNewPath(),
+                         this.configuration.getChunking().booleanValue(),
+                         this.configuration.getChunkSize().intValue(),
+                         this.configuration.getChecksum().booleanValue(),
+                         this.configuration.getMinAge().longValue(),
+                         this.configuration.getDestructive().booleanValue(),
+                         this.configuration.getFilterDuplicates().booleanValue(),
+                         this.configuration.getFilterOnFilename().booleanValue(),
+                         this.configuration.getFilterOnLastModifiedDate().booleanValue(),
+                         this.configuration.getChronological().booleanValue());
+                if (payload != null)
                 {
                     return payload;
                 }
@@ -163,16 +158,16 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
                 throw new EndpointException(e);
             }
         }
-
-        try {
+        try
+        {
             this.housekeep();
-        } catch (ResourceException e)
+        }
+        catch (ResourceException e)
         {
             throw new EndpointException(e);
         }
         return payload;
     }
-
 
     /**
      * Apply any configured housekeeping on this connection template.
@@ -183,14 +178,12 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
     {
         int maxRows = this.configuration.getMaxRows().intValue();
         int ageOfFiles = this.configuration.getAgeOfFiles().intValue();
-
         // If the values have been set then housekeep, else don't
-        if(maxRows > -1 && ageOfFiles > -1)
+        if (maxRows > -1 && ageOfFiles > -1)
         {
             this.fileTransferConnectionTemplate.housekeep(maxRows, ageOfFiles);
         }
     }
-
 
     /**
      * Return a list of src directories to be polled.
@@ -204,7 +197,8 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         // poll, starting from this.srcDirectory
         if (this.configuration.getSourceDirectoryURLFactory() != null)
         {
-            dirs = this.configuration.getSourceDirectoryURLFactory().getDirectoriesURLs(this.configuration.getSourceDirectory());
+            dirs = this.configuration.getSourceDirectoryURLFactory()
+                    .getDirectoriesURLs(this.configuration.getSourceDirectory());
         }
         else
         {
@@ -214,7 +208,6 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
     }
 
     /**
-     *
      * @param alternate the {@link FileTransferConnectionTemplate} alternate to use
      */
     public void setAlternateFileTransferConnectionTemplate(final FileTransferConnectionTemplate alternate)
@@ -224,6 +217,7 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
 
     /**
      * This method is only used for testing purposes
+     *
      * @return the alternateFileTransferConnectionTemplate
      */
     FileTransferConnectionTemplate getAlternateFileTransferConnectionTemplate()
@@ -233,6 +227,7 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
 
     /**
      * This method is only used for testing purposes
+     *
      * @return the activeFileTransferConnectionTemplate
      */
     FileTransferConnectionTemplate getActiveFileTransferConnectionTemplate()
@@ -245,9 +240,10 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
      */
     protected void switchActiveConnection()
     {
+        logger.info("Switch Active Connection to " + alternateFileTransferConnectionTemplate);
         if (this.alternateFileTransferConnectionTemplate != null)
         {
-            if(this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate)
+            if (this.activeFileTransferConnectionTemplate == this.fileTransferConnectionTemplate)
             {
                 this.activeFileTransferConnectionTemplate = this.alternateFileTransferConnectionTemplate;
             }
@@ -258,41 +254,47 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         }
     }
 
-    @Override
-    public void startManagedResource() {
-        try {
-            createEndpoint(configuration);
-        } catch (InvalidPropertyException e) {
+    @Override public void startManagedResource()
+    {
+        try
+        {
+            configuration.validate();
+            FTPConnectionSpec spec = createSpec(configuration);
+            FTPConnectionSpec alternateSpec = createAlternateSpec(configuration);
+            // Finally, update populated configuration with complex objects that cannot be specified by front end clients
+            configuration.setSourceDirectoryURLFactory(this.directoryURLFactory);
+            getEndpoint(spec, alternateSpec);
+        }
+        catch (InvalidPropertyException e)
+        {
             throw new EndpointException(e);
         }
     }
 
-    @Override
-    public void stopManagedResource() {
-
+    @Override public void stopManagedResource()
+    {
     }
 
-    @Override
-    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager) {
-
+    @Override public void setManagedResourceRecoveryManager(
+            ManagedResourceRecoveryManager managedResourceRecoveryManager)
+    {
+        this.managedResourceRecoveryManager = managedResourceRecoveryManager;
     }
 
-    @Override
-    public boolean isCriticalOnStartup() {
+    @Override public boolean isCriticalOnStartup()
+    {
         return false;
     }
 
-    @Override
-    public void setCriticalOnStartup(boolean criticalOnStartup) {
-
+    @Override public void setCriticalOnStartup(boolean criticalOnStartup)
+    {
     }
 
     /* (non-Jsdoc)
      * @see org.ikasan.spec.endpoint.EndpointFactory#createEndpoint(java.lang.Object)
      */
-    public void createEndpoint(FtpConsumerConfiguration ftpConsumerConfiguration) throws InvalidPropertyException
+    private FTPConnectionSpec createSpec(FtpConsumerConfiguration ftpConsumerConfiguration)
     {
-        ftpConsumerConfiguration.validate();
         FTPConnectionSpec spec = this.getConnectionSpec();
         spec.setClientID(ftpConsumerConfiguration.getClientID());
         spec.setActive(ftpConsumerConfiguration.getActive());
@@ -300,15 +302,14 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         spec.setConnectionTimeout(ftpConsumerConfiguration.getConnectionTimeout());
         spec.setDataTimeout(ftpConsumerConfiguration.getDataTimeout());
         spec.setMaxRetryAttempts(ftpConsumerConfiguration.getMaxRetryAttempts());
-
         // We get the password from a file if it is so configured.
-        if(ftpConsumerConfiguration.getPasswordFilePath() != null &&
-                ftpConsumerConfiguration.getPasswordFilePath().length() > 0)
+        if (ftpConsumerConfiguration.getPasswordFilePath() != null
+                && ftpConsumerConfiguration.getPasswordFilePath().length() > 0)
         {
             try
             {
-                spec.setPassword(fileBasedPasswordHelper
-                        .getPasswordFromFile(ftpConsumerConfiguration.getPasswordFilePath()));
+                spec.setPassword(
+                        fileBasedPasswordHelper.getPasswordFromFile(ftpConsumerConfiguration.getPasswordFilePath()));
             }
             catch (IOException e)
             {
@@ -319,7 +320,6 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         {
             spec.setPassword(ftpConsumerConfiguration.getPassword());
         }
-
         spec.setRemoteHostname(ftpConsumerConfiguration.getRemoteHost());
         spec.setRemotePort(ftpConsumerConfiguration.getRemotePort());
         spec.setSocketTimeout(ftpConsumerConfiguration.getSocketTimeout());
@@ -331,12 +331,15 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         spec.setFtpsIsImplicit(ftpConsumerConfiguration.getFtpsIsImplicit());
         spec.setFtpsKeyStoreFilePath(ftpConsumerConfiguration.getFtpsKeyStoreFilePath());
         spec.setFtpsKeyStoreFilePassword(ftpConsumerConfiguration.getFtpsKeyStoreFilePassword());
+        return spec;
+    }
 
+    private FTPConnectionSpec createAlternateSpec(FtpConsumerConfiguration ftpConsumerConfiguration)
+    {
         FTPConnectionSpec alternateSpec = null;
         if (ftpConsumerConfiguration instanceof FtpConsumerAlternateConfiguration)
         {
             FtpConsumerAlternateConfiguration alternateConfig = (FtpConsumerAlternateConfiguration) ftpConsumerConfiguration;
-
             alternateSpec = this.getConnectionSpec();
             alternateSpec.setClientID(alternateConfig.getClientID());
             alternateSpec.setActive(alternateConfig.getAlternateActive());
@@ -357,15 +360,12 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
             alternateSpec.setFtpsKeyStoreFilePath(ftpConsumerConfiguration.getFtpsKeyStoreFilePath());
             alternateSpec.setFtpsKeyStoreFilePassword(ftpConsumerConfiguration.getFtpsKeyStoreFilePassword());
         }
-
-        // Finally, update populated configuration with complex objects that cannot be specified by front end clients
-        ftpConsumerConfiguration.setSourceDirectoryURLFactory(this.directoryURLFactory);
-
-         getEndpoint(spec, alternateSpec);
+        return alternateSpec;
     }
 
     /**
      * Internal endpoint creation method allows for easier overriding of the actual endpoint creation and simpler testing.
+     *
      * @param spec
      * @param alternateSpec
      * @return
@@ -373,19 +373,17 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
     private void getEndpoint(final FTPConnectionSpec spec, final FTPConnectionSpec alternateSpec)
     {
         activeFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-       // activeFileTransferConnectionTemplate.addListener(this.listener);
-
-
+        activeFileTransferConnectionTemplate.addListener(this);
         if (alternateSpec != null)
         {
             alternateFileTransferConnectionTemplate = new FileTransferConnectionTemplate(this.connectionFactory, spec);
-           // alternateFileTransferConnectionTemplate.addListener(this.listener);
-
+            alternateFileTransferConnectionTemplate.addListener(this);
         }
     }
 
     /**
      * Utility method to aid testing of this class
+     *
      * @return
      */
     protected FTPConnectionSpec getConnectionSpec()
@@ -401,7 +399,14 @@ public class FtpMessageProvider implements ManagedResource,MessageProvider<Paylo
         this.directoryURLFactory = directoryURLFactory;
     }
 
-    public void setConfiguration(FtpConsumerConfiguration configuration) {
+    public void setConfiguration(FtpConsumerConfiguration configuration)
+    {
         this.configuration = configuration;
+    }
+
+    @Override public void commitFailureOccurred(TransactionCommitEvent event)
+    {
+        logger.info("Logging error: " + event.getException().getMessage());
+        this.managedResourceRecoveryManager.recover(event.getException());
     }
 }

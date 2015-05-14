@@ -40,6 +40,16 @@
                         </bean>
                     </constructor-arg>
                 </bean>
+                <bean class="org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup">
+                    <constructor-arg>
+                        <bean class="org.hamcrest.core.IsInstanceOf">
+                            <constructor-arg value="org.ikasan.connector.listener.TransactionCommitException"/>
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg>
+                        <bean class="org.ikasan.exceptionResolver.action.StopAction"/>
+                    </constructor-arg>
+                </bean>
 
             </list>
         </constructor-arg>
