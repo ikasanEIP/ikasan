@@ -34,8 +34,7 @@
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <!--bean class="org.ikasan.exceptionResolver.action.ExcludeEventAction"/-->
-                        <bean class="org.ikasan.exceptionResolver.action.IgnoreAction"/>
+                        <bean class="org.ikasan.exceptionResolver.action.ExcludeEventAction"/>
                     </constructor-arg>
                 </bean>
             </list>
