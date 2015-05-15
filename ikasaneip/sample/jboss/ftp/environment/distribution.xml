@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>distribution</id>
+    <formats>
+        <format>zip</format>
+        <format>dir</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>cli</directory>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>conf/log4j.xml</source>
+            <outputDirectory>
+                jboss-eap/modules/org/ikasan/ikasan-sample-ftp/conf/main
+            </outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>conf/module.xml</source>
+            <outputDirectory>
+                jboss-eap/modules/org/ikasan/ikasan-sample-ftp/conf/main
+            </outputDirectory>
+            <filtered>false</filtered>
+        </file>
+    </files>
+</assembly>

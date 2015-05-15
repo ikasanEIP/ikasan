@@ -25,7 +25,7 @@
                 <configuration>
                     <finalName>ikasan-sample-ftp-${project.version}</finalName>
                     <descriptors>
-                        <descriptor>distribution.xml</descriptor>
+                        <descriptor>environment/distribution.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
