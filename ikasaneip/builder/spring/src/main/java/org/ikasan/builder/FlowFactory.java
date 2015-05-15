@@ -329,6 +329,8 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         }
 
         this.errorReportingServiceFactory = applicationContext.getBean(ErrorReportingServiceFactory.class);
+        this.errorReportingService = applicationContext.getBean(ErrorReportingService.class);
+        this.errorReportingService = this.errorReportingServiceFactory.getErrorReportingService("moduleName", "name");
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
     }
 

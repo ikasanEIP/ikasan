@@ -45,6 +45,7 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
  * Default implementation of the ErrorReportingService.
@@ -88,6 +89,33 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         }
 
         this.serialiser = serialiser;
+        if(serialiser == null)
+        {
+            throw new IllegalArgumentException("serialiser cannot be 'null'");
+        }
+
+        this.errorReportingServiceDao = errorReportingServiceDao;
+        if(errorReportingServiceDao == null)
+        {
+            throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
+        }
+    }
+
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, SerialiserFactory serialiserFactory, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    {
+        this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+
+        this.flowName = flowName;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
+
+        this.serialiser = serialiserFactory.getDefaultSerialiser();
         if(serialiser == null)
         {
             throw new IllegalArgumentException("serialiser cannot be 'null'");

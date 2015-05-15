@@ -145,11 +145,11 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     FlowElementName VARCHAR(255) NOT NULL,
-                    ErrorDetail TEXT,
-                    EventLifeIdentifier VARCHAR(255),
-                    EventRelatedIdentifier VARCHAR(255),
-                    Action VARCHAR(255),
-                    Event TEXT,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(255) NULL,
+                    EventRelatedIdentifier VARCHAR(255) NULL,
+                    Action VARCHAR(255) NULL,
+                    Event BINARY NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL,
                     Expiry NUMERIC NOT NULL
                     )
@@ -1078,11 +1078,11 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     FlowElementName VARCHAR(255) NOT NULL,
-                    ErrorDetail TEXT,
-                    EventLifeIdentifier VARCHAR(255),
-                    EventRelatedIdentifier VARCHAR(255),
-                    Action VARCHAR(255),
-                    Event TEXT,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(255) NULL,
+                    EventRelatedIdentifier VARCHAR(255) NULL,
+                    Action VARCHAR(255) NULL,
+                    Event BINARY NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL,
                     Expiry NUMERIC NOT NULL
                     )
@@ -2053,11 +2053,11 @@
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
                     [FlowComponentName]     [varchar](255) NOT NULL,
-                    [ErrorDetail]           [text],
-                    [EventLifeIdentifier]   [varchar](255),
-                    [EventRelatedIdentifier] [varchar](255),
-                    [Action]                [varchar](255),
-                    [Event]                 [text],
+                    [ErrorDetail]           [text] NULL,
+                    [EventLifeIdentifier]   [varchar](255) NULL,
+                    [EventRelatedIdentifier] [varchar](255) NULL,
+                    [Action]                [varchar](255) NULL,
+                    [Event]                 [binary] NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     [Expiry]                [numeric] NOT NULL,
                     CONSTRAINT              [PK_ErrorOccurrence_Module_Flow_Uri] PRIMARY KEY CLUSTERED
@@ -2909,11 +2909,11 @@
                     ModuleName VARCHAR(256) NOT NULL,
                     FlowName VARCHAR(256) NOT NULL,
                     FlowComponentName VARCHAR(256) NOT NULL,
-                    ErrorDetail TEXT,
-                    EventLifeIdentifier VARCHAR(256),
-                    EventRelatedIdentifier VARCHAR(256),
-                    Action VARCHAR(256),
-                    Event TEXT,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(256) NULL,
+                    EventRelatedIdentifier VARCHAR(256) NULL,
+                    Action VARCHAR(256) NULL,
+                    Event BINARY NULL,
                     Timestamp NUMERIC NOT NULL,
                     Expiry NUMERIC NOT NULL
                     );
@@ -3447,8 +3447,6 @@
 					);
 				</prop>
 			</props>
-
-
 
 		</property>
 	</bean>
