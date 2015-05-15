@@ -122,6 +122,8 @@
         <module>sample</module>
         <module>transaction</module>
 
+        <module>filetransfer</module>
+
         <!-- documentation -->
         <!--module>documentation</module-->
     </modules>
@@ -422,7 +424,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.hibernate>4.3.9.Final</version.org.hibernate>
-		<version.org.springframework>4.1.6.RELEASE</version.org.springframework>
+        <version.org.hibernate-validator>4.3.2.Final</version.org.hibernate-validator>
+        <version.org.springframework>4.1.6.RELEASE</version.org.springframework>
         <version.org.springframework.security>3.2.6.RELEASE</version.org.springframework.security>
         <version.org.springframework.security.spring-security-config>3.1.3.RELEASE</version.org.springframework.security.spring-security-config>
         <version.org.springframework.security.spring-security-web>3.1.3.RELEASE</version.org.springframework.security.spring-security-web>
@@ -454,6 +457,7 @@
         <version.commons-logging>1.1.1</version.commons-logging>
         <version.org.hsqldb>1.8.0.10</version.org.hsqldb>
         <version.javassist>3.12.1.GA</version.javassist>
+        <version.org.javassist>3.18.1-GA</version.org.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
@@ -472,6 +476,13 @@
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
         <version.org.apache.activemq>5.8.0</version.org.apache.activemq>
         <version.org.apache.activemq.activemq-core>5.7.0</version.org.apache.activemq.activemq-core>
+        <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
+        <version.commons.net>3.3</version.commons.net>
+        <version.com.thoughtworks.xstream>1.3.1</version.com.thoughtworks.xstream>
+        <version.xalan.xalan>2.7.1</version.xalan.xalan>
+        <version.org.jboss.logging.jboss-logging>3.1.0.CR2</version.org.jboss.logging.jboss-logging>
+        <version.org.jboss.logging.jboss-logging-annotations>1.2.0.Beta1</version.org.jboss.logging.jboss-logging-annotations>
+        <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -755,18 +766,6 @@
     </profiles>
 
     <dependencies>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${version.log4j}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-            <version>${version.javax.transaction.jta}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -1091,6 +1090,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${version.org.hibernate-validator}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${version.commons-beanutils}</version>
@@ -1135,7 +1140,7 @@
             <dependency>
                 <groupId>geronimo-spec</groupId>
                 <artifactId>geronimo-spec-j2ee</artifactId>
-                <version>1.4-rc3</version>
+                <version>${version.geronimo.spec}</version>
             </dependency>
 
             <dependency>
@@ -1180,6 +1185,18 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
                 <version>${version.org.hamcrest.hamcrest-library}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${version.log4j}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+                <version>${version.javax.transaction.jta}</version>
             </dependency>
 
             <dependency>

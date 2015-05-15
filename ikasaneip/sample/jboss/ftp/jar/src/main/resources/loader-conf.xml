@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <util:list id="module1-config-files">
+        <!-- Ikasan services -->
+        <value>monitor-service-conf.xml</value>
+
+        <!-- Available outside the ear in the runtime environment -->
+        <value>transaction-conf.xml</value>
+        <value>transactionManager-conf.xml</value>
+        <value>monitor-conf.xml</value>
+        <value>recoveryManager-service-conf.xml</value>
+
+        <!-- available in the binaries -->
+        <value>logger-conf.xml</value>
+        <value>shared-conf.xml</value>
+        <value>exception-conf.xml</value>
+        <value>module-conf.xml</value>
+        <value>exclusion-flow-conf.xml</value>
+        <value>jms-to-ftp-flow-conf.xml</value>
+        <value>ftp-to-log-flow-conf.xml</value>
+    </util:list>
+
+</beans>

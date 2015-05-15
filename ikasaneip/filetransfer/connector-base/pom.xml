@@ -1,0 +1,182 @@
+<!--
+# //
+# //
+# // $Id: pom.xml 43199 2015-02-06 17:18:00Z stewmi $
+# // $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/pom.xml $
+# //
+# // ====================================================================
+# // Ikasan Enterprise Integration Platform
+# //
+# // Distributed under the Modified BSD License.
+# // Copyright notice: The copyright for this software and a full listing
+# // of individual contributors are as shown in the packaged copyright.txt
+# // file.
+# //
+# // All rights reserved.
+# //
+# // Redistribution and use in source and binary forms, with or without
+# // modification, are permitted provided that the following conditions are met:
+# //
+# //  - Redistributions of source code must retain the above copyright notice,
+# //    this list of conditions and the following disclaimer.
+# //
+# //  - Redistributions in binary form must reproduce the above copyright notice,
+# //    this list of conditions and the following disclaimer in the documentation
+# //    and/or other materials provided with the distribution.
+# //
+# //  - Neither the name of the ORGANIZATION nor the names of its contributors may
+# //    be used to endorse or promote products derived from this software without
+# //    specific prior written permission.
+# //
+# // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# // DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# // FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# // DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# // SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# // ====================================================================
+# //
+# // Author:  Ikasan Development Team
+# //
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ikasan</groupId>
+        <artifactId>ikasan-filetransfer</artifactId>
+        <version>1.0.0-rc5-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-connector-base</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration File Transfer / Connector Base</name>
+    <description>The common library for the Ikasan Enterprise Integration Platform</description>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-filetransfer-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- XML serialisation/deserialisation, used for testing -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>${version.com.thoughtworks.xstream}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Test Dependencies -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>${version.xalan.xalan}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- START: Added extra stuff to make it compile without original <parent /> -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- CGLib, used for testing assitance to jmock -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Objenesis, used for testing assitance to jmock -->
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- END: Added extra stuff to make it compile without original <parent /> -->
+    </dependencies>
+
+	
+	<!-- START: Added extra stuff to make it compile without original <parent /> -->
+	<build>
+	<resources>
+      <resource>
+        <!-- We explicitly include and exclude, because we want to know *why* -->
+        <directory>src/main/resources</directory>
+        <includes>
+          <!-- Holds JNDI references and Class names for common connector configuration -->
+          <include>connectorResource.xml</include>
+        </includes>
+        <excludes>
+          <!-- Connector DS file, needs to be external to the JAR -->
+          <exclude>ikasan-connector-default-ds.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+	    <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+            <descriptors>
+                <descriptor>src/main/assemble/distribution.xml</descriptor>
+            </descriptors>
+            <filters>
+                <filter>src/main/assemble/filter.properties</filter>
+            </filters>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
+</project>

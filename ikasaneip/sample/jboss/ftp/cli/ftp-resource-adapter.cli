@@ -1,0 +1,14 @@
+#
+# Creates the FTP resource-adapter if it doesnt already exist
+#
+if (outcome != success) of /profile=eai-default/subsystem=resource-adapters/resource-adapter=ftp-ra:read-resource
+    /profile=eai-default/subsystem=resource-adapters/resource-adapter=ftp-ra:add(module=org.ikasan.ftp.ra,transaction-support=XATransaction)
+    /profile=eai-default/subsystem=resource-adapters/resource-adapter=ftp-ra/connection-definitions=JBossXAConnectionFactory:add(class-name=org.ikasan.connector.ftp.outbound.FTPManagedConnectionFactory,jndi-name=java:/ftp/SimpleFtpConnectionFactory,pad-xid=false,min-pool-size=1,max-pool-size=1,pool-prefill=false,pool-use-strict-min=false,flush-strategy=FailingConnectionOnly,wrap-xa-resource=true,interleaving=false)
+    /profile=eai-default/subsystem=resource-adapters/resource-adapter=ftp-ra:activate
+end-if
+
+#
+# Rollback
+#
+#
+#   /profile=eai-default/subsystem=resource-adapters/resource-adapter=ftp-ra:remove()

@@ -1,0 +1,21 @@
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+        <format>dir</format>
+    </formats>
+
+    <files>
+        <file>
+            <source>conf/log4j.xml</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/ikasan-sample-ftp/conf/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+        <file>
+            <source>conf/module.xml</source>
+            <outputDirectory>jboss-eap/modules/org/ikasan/ikasan-sample-ftp/conf/main</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+    </files>
+
+</assembly>
