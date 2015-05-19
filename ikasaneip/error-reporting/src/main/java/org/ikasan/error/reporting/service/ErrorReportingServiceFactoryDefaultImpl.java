@@ -91,63 +91,69 @@ public class ErrorReportingServiceFactoryDefaultImpl implements ErrorReportingSe
         }
     }
 
-    /**
-     * Get an instance of the ErrorReportingService
-     * @return
-     */
-    public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
+//    /**
+//     * Get an instance of the ErrorReportingService
+//     * @return
+//     */
+//    public ErrorReportingService getErrorReportingService(String moduleName, String flowName)
+//    {
+//        ErrorReportingServiceSpringFactory factoryBean = new ErrorReportingServiceSpringFactory(moduleName, flowName);
+//        return factoryBean.getObject();
+//    }
+
+    @Override
+    public ErrorReportingService getErrorReportingService()
     {
-        ErrorReportingServiceSpringFactory factoryBean = new ErrorReportingServiceSpringFactory(moduleName, flowName);
-        return factoryBean.getObject();
+        return new ErrorReportingServiceDefaultImpl(serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
     }
 
-    /**
-     * Class providing an instance of an Error Reporting Service as a Spring bean
-     */
-    class ErrorReportingServiceSpringFactory implements FactoryBean<ErrorReportingService>
-    {
-        /** moduleName associated with the error reporting service instance */
-        String moduleName;
-
-        /** flowName associated with the error reporting service instance */
-        String flowName;
-
-        /**
-         * Constructor
-         * @param moduleName
-         * @param flowName
-         */
-        public ErrorReportingServiceSpringFactory(String moduleName, String flowName)
-        {
-            this.moduleName = moduleName;
-            if(moduleName == null)
-            {
-                throw new IllegalArgumentException("moduleName cannot be 'null'");
-            }
-
-            this.flowName = flowName;
-            if(flowName == null)
-            {
-                throw new IllegalArgumentException("flowName cannot be 'null'");
-            }
-        }
-
-        @Override
-        public ErrorReportingService getObject()
-        {
-            return new ErrorReportingServiceDefaultImpl(moduleName, flowName, serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
-        }
-
-        @Override
-        public Class<ErrorReportingService> getObjectType()
-        {
-            return ErrorReportingService.class;
-        }
-
-        @Override
-        public boolean isSingleton()
-        {
-            return false;
-        }
-    }
+//    /**
+//     * Class providing an instance of an Error Reporting Service as a Spring bean
+//     */
+//    class ErrorReportingServiceSpringFactory implements FactoryBean<ErrorReportingService>
+//    {
+//        /** moduleName associated with the error reporting service instance */
+//        String moduleName;
+//
+//        /** flowName associated with the error reporting service instance */
+//        String flowName;
+//
+//        /**
+//         * Constructor
+//         * @param moduleName
+//         * @param flowName
+//         */
+//        public ErrorReportingServiceSpringFactory(String moduleName, String flowName)
+//        {
+//            this.moduleName = moduleName;
+//            if(moduleName == null)
+//            {
+//                throw new IllegalArgumentException("moduleName cannot be 'null'");
+//            }
+//
+//            this.flowName = flowName;
+//            if(flowName == null)
+//            {
+//                throw new IllegalArgumentException("flowName cannot be 'null'");
+//            }
+//        }
+//
+//        @Override
+//        public ErrorReportingService getObject()
+//        {
+//            return new ErrorReportingServiceDefaultImpl(moduleName, flowName, serialiserFactory.getDefaultSerialiser(), errorReportingServiceDao);
+//        }
+//
+//        @Override
+//        public Class<ErrorReportingService> getObjectType()
+//        {
+//            return ErrorReportingService.class;
+//        }
+//
+//        @Override
+//        public boolean isSingleton()
+//        {
+//            return false;
+//        }
+//    }
 }

@@ -52,10 +52,9 @@ public interface ErrorReportingServiceFactory
     /**
      * Returns an instance of the ErrorReportingService based on the provided module and flow name.
      *
-     * @param moduleName
-     * @param flowName
      * @return ErrorReportingService
      */
-    public ErrorReportingService getErrorReportingService(String moduleName, String flowName);
+//    public ErrorReportingService getErrorReportingService(String moduleName, String flowName);
+    public ErrorReportingService getErrorReportingService();
 
 }

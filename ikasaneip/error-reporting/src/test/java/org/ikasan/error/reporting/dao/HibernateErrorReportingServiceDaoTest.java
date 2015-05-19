@@ -59,6 +59,7 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
+        "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
         "/mock-conf.xml",
         "/h2db-datasource-conf.xml",

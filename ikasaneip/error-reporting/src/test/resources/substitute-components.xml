@@ -29,14 +29,14 @@
             <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
             <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
 
-            <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
-            <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+            <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="daoMethods"/>
+            <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="serviceMethods"/>
 	    </aop:config>
 	
-	    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+	    <!--tx:advice id="requiresNew-TransactionAdvice" transaction-manager="transactionManager">
 	        <tx:attributes>
 	            <tx:method name="*" propagation="REQUIRES_NEW"/>
 	        </tx:attributes>
-	    </tx:advice>
+	    </tx:advice-->
 
 </beans>

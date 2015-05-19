@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <!-- test -->
-    <bean id="errorReportingServiceInstance" class="org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl">
-        <constructor-arg value="moduleName"/>
-        <constructor-arg value="flowName"/>
-        <constructor-arg ref="serialiserFactory"/>
-        <constructor-arg ref="errorReportingServiceDao"/>
-    </bean>
+    <bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" />
 
     <bean id="errorReportingServiceFactory" class="org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl">
         <constructor-arg ref="serialiserFactory"/>
@@ -33,4 +26,8 @@
 
     <bean id="serialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl"/>
 
+    <aop:config>
+        <aop:pointcut id="errorReportingServiceInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorReportingServiceInvocation"/>
+    </aop:config>
 </beans>

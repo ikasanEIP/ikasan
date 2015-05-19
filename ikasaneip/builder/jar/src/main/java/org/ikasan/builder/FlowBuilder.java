@@ -51,6 +51,7 @@ import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigu
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerRootConfigurationBuilder.Sequence;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
+import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
@@ -777,7 +778,13 @@ public class FlowBuilder
 
                 if (errorReportingService == null)
                 {
-                    errorReportingService = errorReportingServiceFactory.getErrorReportingService(moduleName, name);
+                    errorReportingService = errorReportingServiceFactory.getErrorReportingService();
+                }
+
+                if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
+                {
+                    ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
+                    ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
                 }
 
                 if (recoveryManager == null)

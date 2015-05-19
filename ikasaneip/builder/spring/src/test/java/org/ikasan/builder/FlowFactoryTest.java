@@ -54,7 +54,6 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -73,7 +72,9 @@ import javax.annotation.Resource;
         "/flow-conf.xml", 
         "/sample-component-conf.xml",
         "/recoveryManager-service-conf.xml",
-        "/recoveryManager-service-conf.xml",
+        "/substitute-components.xml",
+        "/ikasan-transaction-conf.xml",
+        "/error-reporting-service-conf.xml",
         "/exclusion-service-conf.xml",
         "/serialiser-service-conf.xml",
         "/error-reporting-service-conf.xml",

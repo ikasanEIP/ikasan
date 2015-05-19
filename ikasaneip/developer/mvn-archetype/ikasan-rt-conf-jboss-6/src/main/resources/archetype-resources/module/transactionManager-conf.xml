@@ -9,25 +9,4 @@
         <property name="transactionManagerName" value="java:/TransactionManager"/>
     </bean>
 
-    <!-- MANDATORY will enroll in an existing transaction; or throw exception if one doesnt exist -->
-    <tx:advice id="mandatory-TransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="MANDATORY" />
-        </tx:attributes>
-    </tx:advice>
-
-    <!-- REQUIRED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
-    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED" />
-        </tx:attributes>
-    </tx:advice>
-
-    <!-- NOT_SUPPORTED will enroll in any existing transaction or create a new transaction if one doesnt exist -->
-    <tx:advice id="notSupported-TransactionAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="NOT_SUPPORTED" />
-        </tx:attributes>
-    </tx:advice>
-
 </beans>
