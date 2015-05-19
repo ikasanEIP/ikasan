@@ -60,10 +60,15 @@
        <!-- Ikasan libraries -->
        <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spring-resource</artifactId>
+       </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-           </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
           </dependency>
@@ -101,9 +106,9 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-flow-visitorPattern</artifactId>
-           </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter</artifactId>
            </dependency>

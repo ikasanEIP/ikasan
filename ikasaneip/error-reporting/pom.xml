@@ -120,6 +120,12 @@
       </dependency>
 
       <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spring-resource</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-core</artifactId>
           <scope>provided</scope>

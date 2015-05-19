@@ -41,12 +41,10 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Test;
@@ -66,8 +64,10 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
+        "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
         "/mock-conf.xml",
+        "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
         })
 
@@ -84,6 +84,9 @@ public class ErrorReportingServiceFactoryDefaultImplTest
 
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
+
+    @Resource
+    ErrorReportingService errorReportingService;
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_serialiserFactory()
@@ -105,17 +108,15 @@ public class ErrorReportingServiceFactoryDefaultImplTest
     public void test_errorReportingServiceFactory_getErrorReportingService()
     {
 
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(serialiserFactory).getDefaultSerialiser();
-                will(returnValue(serialiser));
-            }
-        });
+//        mockery.checking(new Expectations()
+//        {
+//            {
+//                exactly(1).of(serialiserFactory).getDefaultSerialiser();
+//                will(returnValue(serialiser));
+//            }
+//        });
 
-        ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, errorReportingServiceDao);
-        ErrorReportingService errorReportingService = errorReportingServiceFactory.getErrorReportingService("moduleName", "flowName");
-        Assert.assertNotNull("Should not be null", errorReportingService);
+        Assert.assertTrue("errorReportingService not correctly proxied through a pointcut", errorReportingService.getClass().getName().startsWith("com.sun.proxy.$Proxy"));
     }
 
 }

@@ -64,6 +64,8 @@ import javax.annotation.Resource;
         "/sample-component-conf.xml",
         "/exclusion-service-conf.xml",
         "/serialiser-service-conf.xml",
+        "/substitute-components.xml",
+        "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
         "/recoveryManager-service-conf.xml",
         "/scheduler-service-conf.xml", 

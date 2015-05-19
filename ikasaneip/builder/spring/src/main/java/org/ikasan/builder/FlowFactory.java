@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
+import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.visitorPattern.*;
@@ -255,7 +256,13 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
         if(errorReportingService == null)
         {
-            errorReportingService = this.errorReportingServiceFactory.getErrorReportingService(moduleName, name);
+            errorReportingService = this.errorReportingServiceFactory.getErrorReportingService();
+        }
+
+        if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
+        {
+            ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
+            ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
         }
 
         if(recoveryManager == null)
@@ -330,7 +337,6 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
         this.errorReportingServiceFactory = applicationContext.getBean(ErrorReportingServiceFactory.class);
         this.errorReportingService = applicationContext.getBean(ErrorReportingService.class);
-        this.errorReportingService = this.errorReportingServiceFactory.getErrorReportingService("moduleName", "name");
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
     }
 

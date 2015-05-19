@@ -71,22 +71,22 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 
     /**
      * Constructor
-     * @param moduleName
-     * @param flowName
+     * @param serialiser
+     * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
     {
-        this.moduleName = moduleName;
-        if(moduleName == null)
-        {
-            throw new IllegalArgumentException("moduleName cannot be 'null'");
-        }
-
-        this.flowName = flowName;
-        if(flowName == null)
-        {
-            throw new IllegalArgumentException("flowName cannot be 'null'");
-        }
+//        this.moduleName = moduleName;
+//        if(moduleName == null)
+//        {
+//            throw new IllegalArgumentException("moduleName cannot be 'null'");
+//        }
+//
+//        this.flowName = flowName;
+//        if(flowName == null)
+//        {
+//            throw new IllegalArgumentException("flowName cannot be 'null'");
+//        }
 
         this.serialiser = serialiser;
         if(serialiser == null)
@@ -101,31 +101,22 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         }
     }
 
-    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, SerialiserFactory serialiserFactory, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    /**
+     * Allow flowName to be overridden
+     * @param moduleName
+     */
+    public void setModuleName(String moduleName)
     {
         this.moduleName = moduleName;
-        if(moduleName == null)
-        {
-            throw new IllegalArgumentException("moduleName cannot be 'null'");
-        }
+    }
 
+    /**
+     * Allow flowName to be overridden
+     * @param flowName
+     */
+    public void setFlowName(String flowName)
+    {
         this.flowName = flowName;
-        if(flowName == null)
-        {
-            throw new IllegalArgumentException("flowName cannot be 'null'");
-        }
-
-        this.serialiser = serialiserFactory.getDefaultSerialiser();
-        if(serialiser == null)
-        {
-            throw new IllegalArgumentException("serialiser cannot be 'null'");
-        }
-
-        this.errorReportingServiceDao = errorReportingServiceDao;
-        if(errorReportingServiceDao == null)
-        {
-            throw new IllegalArgumentException("errorReportingServiceDao cannot be 'null'");
-        }
     }
 
     @Override
