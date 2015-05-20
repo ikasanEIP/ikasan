@@ -70,7 +70,6 @@
       <scope>provided</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-js</artifactId>
@@ -94,6 +93,12 @@
         <artifactId>spring-binding</artifactId>
          <scope>provided</scope>
     </dependency>
+
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
+      </dependency>
 
   </dependencies>
 
