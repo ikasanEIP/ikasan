@@ -38,7 +38,6 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-
 package org.ikasan.spec.error.reporting;
 
 /**
@@ -50,11 +49,10 @@ package org.ikasan.spec.error.reporting;
 public interface ErrorReportingServiceFactory
 {
     /**
-     * Returns an instance of the ErrorReportingService based on the provided module and flow name.
+     * Returns an instance of the ErrorReportingService.
      *
      * @return ErrorReportingService
      */
-//    public ErrorReportingService getErrorReportingService(String moduleName, String flowName);
     public ErrorReportingService getErrorReportingService();
 
 }

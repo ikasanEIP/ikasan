@@ -92,7 +92,7 @@
       <dependency>
           <groupId>org.ikasan</groupId>
           <artifactId>ikasan-spec-exclusion</artifactId>
-             <scope>provided</scope>
+          <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -114,24 +114,30 @@
       </dependency>
 
       <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-          <scope>compile</scope>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <scope>provided</scope>
       </dependency>
 
       <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+      <dependency>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-orm</artifactId>
-             <scope>provided</scope>
+          <artifactId>spring-context</artifactId>
+          <scope>provided</scope>
       </dependency>
-	  
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-context</artifactId>
-		<scope>provided</scope>
-	</dependency>
-	
-      <!-- Test dependencies -->
+
+    <!-- Test dependencies -->
       <!-- logging -->
       <dependency>
           <groupId>commons-logging</groupId>
@@ -184,7 +190,13 @@
       <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
-             <scope>test</scope>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
       </dependency>
 
       <!-- Hibernate dependency -->

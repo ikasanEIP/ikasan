@@ -120,12 +120,6 @@
       </dependency>
 
       <dependency>
-          <groupId>org.ikasan</groupId>
-          <artifactId>ikasan-spring-resource</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-core</artifactId>
           <scope>provided</scope>
@@ -146,6 +140,12 @@
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-context</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
           <scope>provided</scope>
       </dependency>
 
@@ -172,6 +172,12 @@
       <dependency>
           <groupId>org.jmock</groupId>
           <artifactId>jmock-legacy</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spring-resource</artifactId>
           <scope>test</scope>
       </dependency>
 

@@ -68,6 +68,8 @@ import org.ikasan.platform.IkasanEIPTest;
 @ContextConfiguration(locations={
         "/component-conf.xml",
         "/flow-conf.xml",
+        "/substitute-components.xml",
+        "/ikasan-transaction-conf.xml",
         "/module-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-conf.xml"

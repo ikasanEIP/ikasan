@@ -57,13 +57,6 @@
   <name>Ikasan Filter Core</name>
   <description>The core functional filter module for the Ikasan Enterprise Integration Platform</description>
 
-	<scm>
-	  <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/filter</connection>
-	  <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/filter</developerConnection>
-	  <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/filter</url>
-	  <tag>HEAD</tag>
-  </scm>
-
     <build>
         <plugins>
               <plugin>
@@ -119,16 +112,47 @@
 			<artifactId>spring-context</artifactId>
 			<scope>provided</scope>
 		</dependency>
-	
+
+      <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-        <dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.jmock</groupId>
+          <artifactId>jmock</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.jmock</groupId>
+          <artifactId>jmock-legacy</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-all</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -160,6 +184,7 @@
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- TODO Upgrade these two at some point -->
