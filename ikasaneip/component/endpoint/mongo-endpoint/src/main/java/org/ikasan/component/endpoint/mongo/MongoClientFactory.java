@@ -38,9 +38,9 @@ public class MongoClientFactory
         MongoClientOptions mongoClientOptions = buildMongoClientOptions(configuration);
         if (configuration.isAuthenticated())
         {
-            MongoCredential mongoCredential = MongoCredential.createMongoCRCredential(configuration.getUsername(),
-                    configuration.getDatabaseName(), (configuration.getPassword() != null) ? configuration.getPassword()
-                            .toCharArray() : null);
+            MongoCredential mongoCredential = MongoCredential.createCredential(configuration.getUsername(),
+                configuration.getDatabaseName(), (configuration.getPassword() != null) ? configuration.getPassword()
+                        .toCharArray() : null);
             mongoClient = new MongoClient(addresses, Arrays.asList(mongoCredential), mongoClientOptions);
         }
         else

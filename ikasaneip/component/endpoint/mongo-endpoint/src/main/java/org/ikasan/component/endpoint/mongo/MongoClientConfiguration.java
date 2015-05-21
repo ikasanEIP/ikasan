@@ -99,7 +99,7 @@ public class MongoClientConfiguration
     protected Integer connectionTimeout;
 
     /** Sets whether cursor finalizers are enabled. - overrides default driver options if specified */
-    protected Boolean cursorFinalizerEnabled;
+    protected Boolean cursorFinalizerEnabled = Boolean.TRUE; // Need to specify this our a NPE will result in driver 3.0.0 (https://jira.mongodb.org/browse/JAVA-1798)
 
     /** Sets the description - overrides default driver options if specified */
     protected String description;
@@ -143,6 +143,7 @@ public class MongoClientConfiguration
     /** Sets the multiplier for number of threads allowed to block waiting for a connection - overrides default driver options if specified */
     protected Integer threadsAllowedToBlockForConnectionMultiplier;
 
+    
     public List<String> getConnectionUrls() {
         return connectionUrls;
     }
