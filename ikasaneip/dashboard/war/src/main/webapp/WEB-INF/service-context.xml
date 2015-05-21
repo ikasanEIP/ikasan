@@ -88,6 +88,43 @@
 	<bean id="securityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
+	
+	<bean id="configurationService"
+		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
+		<constructor-arg ref="configurationServiceDao"/>
+		<constructor-arg ref="xaConfigurationServiceDao"/>
+	</bean>
+
+	<bean id="xaConfigurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
+	</bean>
+
+	<bean id="configurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+		<property name="sessionFactory" ref="ikasanSessionFactory"/>
+	</bean>
+	
+	<bean id="xaConfigurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.xads" />
+		<property name="mappingResources">
+			<list>
+				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
+				</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+	
+	<bean id="wiretapDao"
+		class="org.ikasan.wiretap.dao.HibernateWiretapDao">
+        <constructor-arg value="true"/>
+        <constructor-arg value="1000"/>
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="triggerDao"
+		class="org.ikasan.trigger.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -119,6 +156,9 @@
 			   <value>/org/ikasan/topology/model/Module.hbm.xml</value>
 			   <value>/org/ikasan/topology/model/Server.hbm.xml</value>
 			   <value>/org/ikasan/topology/model/UserBusinessStream.hbm.xml</value>
+			   <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+			   <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
+			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

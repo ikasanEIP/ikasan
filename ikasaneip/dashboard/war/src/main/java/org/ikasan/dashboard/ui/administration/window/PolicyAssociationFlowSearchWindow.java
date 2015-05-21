@@ -42,11 +42,13 @@ package org.ikasan.dashboard.ui.administration.window;
 
 import java.util.List;
 
-import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
 import org.ikasan.topology.service.TopologyService;
 
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -56,6 +58,7 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -73,7 +76,7 @@ public class PolicyAssociationFlowSearchWindow extends Window
 
 	private TopologyService topologyService;
 	private HorizontalSplitPanel horizontalSplitPanel;
-	private MappingConfigurationLite mappingConfiguration;
+	private Flow flow;
 	private Panel searchPanel;
 	private Panel resultsPanel;
 	private ComboBox serverCombo;
@@ -107,16 +110,21 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	this.setSizeFull();
     	this.setModal(true);
     	
+    	this.serverCombo = new ComboBox();
+    	this.moduleCombo = new ComboBox();
+    	
     	this.createSearchPanel();
     	this.createResultsPanel();
     	
     	VerticalLayout leftPanelLayout = new VerticalLayout();
+    	leftPanelLayout.setMargin(true);
     	leftPanelLayout.setWidth(320, Unit.PIXELS);
     	leftPanelLayout.setHeight("100%");
     	leftPanelLayout.addComponent(this.searchPanel);
     	
     	HorizontalLayout rightPanelLayout = new HorizontalLayout();
     	rightPanelLayout.setSizeFull();
+    	rightPanelLayout.setMargin(true);
     	rightPanelLayout.addComponent(this.resultsPanel);
     	
     	this.horizontalSplitPanel 
@@ -131,9 +139,13 @@ public class PolicyAssociationFlowSearchWindow extends Window
     private void createSearchPanel()
     {
     	this.searchPanel = new Panel();
-    	this.searchPanel.setWidth("100%");
+    	this.searchPanel.setSizeFull();
+    	this.searchPanel.setStyleName("dashboard");
     	
     	GridLayout layout = new GridLayout(2, 3);
+    	layout.setWidth("100%");
+    	layout.setHeight("180px");
+    	layout.setMargin(true);
     	
     	Label serverLabel = new Label("Server");    	
     	layout.addComponent(serverLabel, 0, 0);
@@ -149,11 +161,34 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	{
             public void buttonClick(ClickEvent event) 
             {
+            	Module module = (Module)moduleCombo.getValue();
+            	Server server = (Server)serverCombo.getValue();
             	
+            	Long moduleId = null;
+            	Long serverId = null;
+            	
+                if(module != null)
+                {
+                	moduleId = module.getId();
+                }
+            	
+            	if(server != null)
+            	{
+            		serverId = server.getId();
+            	}
+            	
+            	List<Flow> flows = topologyService.getFlowsByServerIdAndModuleId(serverId, moduleId);
+            	resultsTable.removeAllItems();
+            	
+            	for(Flow flow: flows)
+            	{
+            		resultsTable.addItem(new Object[]{flow.getModule().getServer().getName(), flow.getModule().getName(), flow.getName()}, flow);
+            	}
             }
         });
     	
     	layout.addComponent(searchButton, 0, 2, 1, 2);
+    	layout.setComponentAlignment(searchButton, Alignment.MIDDLE_CENTER);
     	
     	this.searchPanel.setContent(layout);
     }
@@ -161,6 +196,8 @@ public class PolicyAssociationFlowSearchWindow extends Window
     private void createResultsPanel()
     {
     	this.resultsPanel = new Panel();
+    	this.resultsPanel.setSizeFull();
+    	this.resultsPanel.setStyleName("dashboard");
     	
     	this.resultsTable = new Table();
     	this.resultsTable.setSizeFull();
@@ -168,8 +205,20 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	this.resultsTable.addContainerProperty("Module", String.class,  null);
     	this.resultsTable.addContainerProperty("Flow", String.class,  null);
     	
+    	this.resultsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+    	{
+    	    @Override
+    	    public void itemClick(ItemClickEvent itemClickEvent) 
+    	    {
+    	      flow = (Flow)itemClickEvent.getItemId();
+    	      UI.getCurrent().removeWindow(PolicyAssociationFlowSearchWindow.this);
+    	    }
+    	});
+    	
     	HorizontalLayout layout = new HorizontalLayout();
     	layout.addComponent(this.resultsTable);
+    	layout.setSizeFull();
+    	layout.setMargin(true);
     	
     	this.resultsPanel.setContent(layout);
     }
@@ -177,6 +226,8 @@ public class PolicyAssociationFlowSearchWindow extends Window
     public void clear()
     {
     	this.serverCombo.removeAllItems();
+    	this.moduleCombo.removeAllItems();
+    	this.resultsTable.removeAllItems();
     	
     	List<Server> servers = this.topologyService.getAllServers();
     	
@@ -190,24 +241,17 @@ public class PolicyAssociationFlowSearchWindow extends Window
     	
     	for(Module module: modules)
     	{
-    		this.serverCombo.addItem(module);
-    		this.serverCombo.setItemCaption(module, module.getName());
+    		this.moduleCombo.addItem(module);
+    		this.moduleCombo.setItemCaption(module, module.getName());
     	}
     }
 
 	/**
-	 * @return the mappingConfiguration
+	 * @return the flow
 	 */
-	public MappingConfigurationLite getMappingConfiguration()
+	public Flow getFlow()
 	{
-		return mappingConfiguration;
+		return flow;
 	}
 
-	/**
-	 * @param mappingConfiguration the mappingConfiguration to set
-	 */
-	public void setMappingConfiguration(MappingConfigurationLite mappingConfiguration)
-	{
-		this.mappingConfiguration = mappingConfiguration;
-	}
 }

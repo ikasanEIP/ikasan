@@ -64,10 +64,9 @@ public class Server
     private Date updatedDateTime;
 
 	/**
-	 * 
+	 * Default constructor for Hibernate
 	 */
-	@SuppressWarnings("unused")
-	private Server(){}
+	protected Server(){}
 
 
 	/**

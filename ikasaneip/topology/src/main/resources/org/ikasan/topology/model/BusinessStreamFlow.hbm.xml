@@ -57,11 +57,11 @@
 	        <key-property name="flowId" column="FlowId"/>
     	</composite-id>
     	
-    	<many-to-one name="flows" class="org.ikasan.topology.model.Flow" 
-    		column="flowId" not-null="true" insert="false" update="false"/>
+    	<many-to-one name="flow" class="org.ikasan.topology.model.Flow" 
+    		column="FlowId" not-null="true" insert="false" update="false" lazy="false"/>
 
 		<property name="order" 
-				  column="Name" 
+				  column="FlowOrder" 
 				  type="java.lang.Integer" 
 				  not-null="true"/>
 		

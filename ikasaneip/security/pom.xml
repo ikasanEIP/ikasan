@@ -181,7 +181,7 @@
 
         <!-- TODO:  Upgrade to 3.12.0 at some stage -->
         <dependency>
-            <groupId>javassist</groupId>
+            <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <scope>test</scope>
         </dependency>

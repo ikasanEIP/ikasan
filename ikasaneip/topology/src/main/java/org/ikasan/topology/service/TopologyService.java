@@ -43,6 +43,7 @@ package org.ikasan.topology.service;
 import java.util.List;
 
 import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -115,4 +116,18 @@ public interface TopologyService
 	 * @return
 	 */
 	public List<BusinessStream> getBusinessStreamsByUserId(Long userId);
+	
+	/**
+	 * Get all flows by server id and module id.
+	 * 
+	 * @return
+	 */
+	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId);
+
+	/**
+	 * Delete a business stream flow
+	 * 
+	 * @param businessStreamFlow
+	 */
+	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow);
 }

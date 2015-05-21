@@ -45,6 +45,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.topology.dao.TopologyDao;
 import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -153,6 +154,24 @@ public class TopologyServiceImpl implements TopologyService
 	public List<BusinessStream> getBusinessStreamsByUserId(Long userId)
 	{
 		return this.topologyDao.getBusinessStreamsByUserId(userId);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#getFlowsByServerIdAndModuleId(java.lang.Long, java.lang.Long)
+	 */
+	@Override
+	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId)
+	{
+		return this.topologyDao.getFlowsByServerIdAndModuleId(serverId, moduleId);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.service.TopologyService#deleteBusinessStreamFlow(org.ikasan.topology.model.BusinessStreamFlow)
+	 */
+	@Override
+	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow)
+	{
+		this.topologyDao.deleteBusinessStreamFlow(businessStreamFlow);
 	}
 	
 }

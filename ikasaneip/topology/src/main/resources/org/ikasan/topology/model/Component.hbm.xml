@@ -69,8 +69,20 @@
                   column="Description"
                   not-null="true" 
                   unique="false"/>
-         
-        <many-to-one name="flow" column="flowId" 
+        
+        <property name="configurable"
+                  type="java.lang.Boolean"
+                  column="IsConfigurable"
+                  not-null="true" 
+                  unique="false"/>
+                  
+        <property name="configurationId"
+                  type="java.lang.String"
+                  column="ConfigurationId"
+                  not-null="false" 
+                  unique="false"/>
+           
+        <many-to-one name="flow" column="FlowId" 
        		class="org.ikasan.topology.model.Flow" not-null="true"/>
        	
         <property name="createdDateTime"

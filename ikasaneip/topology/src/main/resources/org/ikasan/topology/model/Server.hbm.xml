@@ -37,8 +37,20 @@
                   column="Description"
                   not-null="true" 
                   unique="false"/>
+                  
+        <property name="url"
+                  type="java.lang.String"
+                  column="Url"
+                  not-null="true" 
+                  unique="false"/>
+        
+        <property name="port"
+                  type="java.lang.Integer"
+                  column="Port"
+                  not-null="true" 
+                  unique="false"/>
          
-        <set name="modules" cascade="all" lazy="false">
+        <set name="modules" cascade="all" lazy="false" order-by="Id asc">
          	<key column="ServerId"/>
          	<one-to-many class="org.ikasan.topology.model.Module"/>
       	</set>
