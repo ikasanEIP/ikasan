@@ -225,11 +225,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected void recover(ExceptionAction action, String componentName, Throwable throwable)
     {
-        if(action instanceof IgnoreAction)
-        {
-            return;
-        }
-        else if(action instanceof StopAction)
+        if(action instanceof StopAction)
         {
             if(isRecovering())
             {
@@ -335,6 +331,11 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
+        if(action instanceof IgnoreAction)
+        {
+            return;
+        }
+
         this.errorReportingService.notify(componentName, throwable, action.toString());
         this.recover(action, componentName, throwable);
     }
@@ -350,8 +351,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
-        String errorUri = this.errorReportingService.notify(componentName, event, throwable, action.toString());
+        if(action instanceof IgnoreAction)
+        {
+            return;
+        }
 
+        String errorUri = this.errorReportingService.notify(componentName, event, throwable, action.toString());
         if(action instanceof ExcludeEventAction)
         {
             this.exclusionService.addBlacklisted(event, errorUri);

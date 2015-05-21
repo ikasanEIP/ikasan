@@ -82,27 +82,15 @@ public class ErrorReportingServiceDefaultImplTest
     ErrorReportingServiceDao errorReportingServiceDao;
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_moduleName()
-    {
-        new ErrorReportingServiceDefaultImpl(null, null, null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_flowName()
-    {
-        new ErrorReportingServiceDefaultImpl("moduleName", null, null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_serialiser()
     {
-        new ErrorReportingServiceDefaultImpl("moduleName", "flowName", null, null);
+        new ErrorReportingServiceDefaultImpl(null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_dao()
     {
-        new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, null);
+        new ErrorReportingServiceDefaultImpl(serialiser, null);
     }
 
     /**

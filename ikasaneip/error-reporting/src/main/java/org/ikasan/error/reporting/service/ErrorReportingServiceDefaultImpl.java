@@ -45,7 +45,6 @@ import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
  * Default implementation of the ErrorReportingService.
@@ -71,23 +70,34 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
 
     /**
      * Constructor
+     * @param moduleName
+     * @param flowName
+     * @param serialiser
+     * @param errorReportingServiceDao
+     */
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    {
+        this(serialiser,errorReportingServiceDao);
+        this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+
+        this.flowName = flowName;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
+    }
+
+    /**
+     * Constructor
      * @param serialiser
      * @param errorReportingServiceDao
      */
     public ErrorReportingServiceDefaultImpl(Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
     {
-//        this.moduleName = moduleName;
-//        if(moduleName == null)
-//        {
-//            throw new IllegalArgumentException("moduleName cannot be 'null'");
-//        }
-//
-//        this.flowName = flowName;
-//        if(flowName == null)
-//        {
-//            throw new IllegalArgumentException("flowName cannot be 'null'");
-//        }
-
         this.serialiser = serialiser;
         if(serialiser == null)
         {

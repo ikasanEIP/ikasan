@@ -45,6 +45,7 @@ import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.exclusion.ExclusionService;
@@ -120,6 +121,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
     /** flow configuration implementation */
     private ExclusionFlowConfiguration exclusionFlowConfiguration;
+
+    /** Error Reporting Service */
+    private ErrorReportingService errorReportingService;
 
     /**
      * Constructor
@@ -516,6 +520,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             if(this.exclusionService.isBlackListed(event))
             {
+                this.exclusionService.exclude(event);
                 invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 this.exclusionService.removeBlacklisted(event);
             }

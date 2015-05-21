@@ -61,8 +61,14 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     /** handle to the underlying DAO */
     ExclusionServiceDao<String,ExclusionEvent> exclusionServiceDao;
 
+    /** handle to the underlying DAO */
+    ExclusionServiceDao<String,ExclusionEvent> exclusionServiceEventDao;
+
     /** allow override of timeToLive */
     Long timeToLive = ExclusionService.DEFAULT_TIME_TO_LIVE;
+
+    /** need a serialiser to serialise the incoming event payload of T */
+    Serialiser<FlowEvent<String,?>,byte[]> serialiser;
 
     /**
      * Constructor
@@ -93,6 +99,16 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     public boolean isBlackListed(FlowEvent<String,?> event)
     {
         return this.exclusionServiceDao.contains(this.moduleName, this.flowName, event.getIdentifier());
+    }
+
+    @Override
+    public void exclude(FlowEvent<String,?> event)
+    {
+        ExclusionEvent exclusionEvent = this.exclusionServiceDao.find(this.moduleName, this.flowName, event.getIdentifier());
+        byte[] bytes = serialiser.serialise(event);
+        exclusionEvent.setEvent(bytes);
+        this.exclusionServiceDao.add(exclusionEvent);
+        return this.exclusionServiceEventDao.save(this.moduleName, this.flowName, event);
     }
 
     @Override

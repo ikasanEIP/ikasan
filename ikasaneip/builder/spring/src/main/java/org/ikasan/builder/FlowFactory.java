@@ -59,6 +59,8 @@ import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -259,10 +261,11 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             errorReportingService = this.errorReportingServiceFactory.getErrorReportingService();
         }
 
-        if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
+        ErrorReportingService proxiedTarget = this.getTargetObject(errorReportingService, ErrorReportingService.class);
+        if(proxiedTarget instanceof ErrorReportingServiceDefaultImpl)
         {
-            ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
-            ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
+            ((ErrorReportingServiceDefaultImpl)proxiedTarget).setModuleName(moduleName);
+            ((ErrorReportingServiceDefaultImpl)proxiedTarget).setFlowName(name);
         }
 
         if(recoveryManager == null)
@@ -340,4 +343,27 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);
     }
 
+    /**
+     * Get the target object of a proxy wrapped class
+     * @param proxy
+     * @param targetClass
+     * @param <T>
+     * @return
+     */
+    protected <T> T getTargetObject(Object proxy, Class<T> targetClass)
+    {
+        try
+        {
+            if(AopUtils.isJdkDynamicProxy(proxy))
+            {
+                return (T) ((Advised)proxy).getTargetSource().getTarget();
+            }
+
+            return (T) proxy;
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -53,6 +53,9 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
             classpath:ikasan-datasource-conf.xml
+            classpath:ikasan-transaction-conf.xml
+            classpath:ikasan-transaction-manager-conf.xml
+            classpath:ikasan-transaction-pointcut-conf.xml
             classpath:platform-service-conf.xml
             classpath:scheduler-service-conf.xml
             classpath:recoveryManager-service-conf.xml
