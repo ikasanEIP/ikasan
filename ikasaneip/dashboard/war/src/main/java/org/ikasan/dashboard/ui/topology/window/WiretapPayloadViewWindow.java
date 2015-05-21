@@ -38,135 +38,65 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.topology.model;
+package org.ikasan.dashboard.ui.topology.window;
 
-import java.util.Date;
-import java.util.Set;
+import org.vaadin.aceeditor.AceEditor;
+import org.vaadin.aceeditor.AceMode;
+import org.vaadin.aceeditor.AceTheme;
+
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-public class BusinessStream
+public class WiretapPayloadViewWindow extends Window
 {
-	private Long id;
-	private String name;
-	private String description;
-	private Set<BusinessStreamFlow> flows;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3347325521531925322L;
 	
-	/** The data time stamp when an instance was first created */
-    private Date createdDateTime;
-
-    /** The data time stamp when an instance was last updated */
-    private Date updatedDateTime;
-    
-    /**
-     * 
-     */
-    @SuppressWarnings("unused")
-	public BusinessStream()
-    {
-    	long now = System.currentTimeMillis();
-		this.createdDateTime = new Date(now);
-        this.updatedDateTime = new Date(now);
-    }
+	private TextField roleName;
+	private TextField roleDescription;
+	private String payload;
+	
 
 	/**
-	 * @return the id
+	 * @param policy
 	 */
-	public Long getId()
+	public WiretapPayloadViewWindow(String payload)
 	{
-		return id;
+		super();
+		this.payload = payload;
+		
+		this.init();
 	}
 
-	/**
-	 * @param id the id to set
-	 */
-	@SuppressWarnings("unused")
-	private void setId(Long id)
-	{
-		this.id = id;
-	}
 
-	/**
-	 * @return the name
-	 */
-	public String getName()
+	public void init()
 	{
-		return name;
+		this.setModal(true);
+		this.setResizable(false);
+		this.setSizeFull();
+		
+		VerticalLayout layout = new VerticalLayout();
+		layout.setSizeFull();
+		layout.setMargin(true);
+		
+		AceEditor editor = new AceEditor();
+		editor.setValue(this.payload);
+		editor.setReadOnly(true);
+		editor.setMode(AceMode.xml);
+		editor.setTheme(AceTheme.eclipse);
+		editor.setSizeFull();
+		layout.addComponent(editor);
+		
+		
+		this.setContent(layout);
 	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription()
-	{
-		return description;
-	}
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-
-	/**
-	 * @return the createdDateTime
-	 */
-	public Date getCreatedDateTime()
-	{
-		return createdDateTime;
-	}
-
-	/**
-	 * @param createdDateTime the createdDateTime to set
-	 */
-	public void setCreatedDateTime(Date createdDateTime)
-	{
-		this.createdDateTime = createdDateTime;
-	}
-
-	/**
-	 * @return the updatedDateTime
-	 */
-	public Date getUpdatedDateTime()
-	{
-		return updatedDateTime;
-	}
-
-	/**
-	 * @param updatedDateTime the updatedDateTime to set
-	 */
-	public void setUpdatedDateTime(Date updatedDateTime)
-	{
-		this.updatedDateTime = updatedDateTime;
-	}
-
-	/**
-	 * @return the flows
-	 */
-	public Set<BusinessStreamFlow> getFlows()
-	{
-		return flows;
-	}
-
-	/**
-	 * @param flows the flows to set
-	 */
-	public void setFlows(Set<BusinessStreamFlow> flows)
-	{
-		this.flows = flows;
-	}
-
 }

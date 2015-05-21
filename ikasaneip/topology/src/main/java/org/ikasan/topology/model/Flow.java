@@ -65,9 +65,9 @@ public class Flow implements Principal
     private Date updatedDateTime;
 
     /**
-     * Default constructor
-     */
-    private Flow(){}
+	 * Default constructor for Hibernate
+	 */
+    protected Flow(){}
 
     /**
 	 * @param name

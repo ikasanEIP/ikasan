@@ -27,6 +27,8 @@
     	<constructor-arg ref="userService"/>
     	<constructor-arg ref="securityService"/>
     	<constructor-arg ref="policyAssociationMappingSearchWindow"/>
+    	<constructor-arg ref="policyAssociationFlowSearchWindow"/>
+    	<constructor-arg ref="policyAssociationModuleSearchWindow"/>
     </bean>
     
     <bean id="policyManagementViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
@@ -36,6 +38,14 @@
     <bean id="policyAssociationMappingSearchWindow" class="org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow" scope="session">
         <constructor-arg ref="policyLinkMappingConfigurationSearchPanel"/>
         <constructor-arg ref="policyLinkMappingConfigurationSearchResultsPanel"/>
+    </bean> 
+    
+    <bean id="policyAssociationFlowSearchWindow" class="org.ikasan.dashboard.ui.administration.window.PolicyAssociationFlowSearchWindow" scope="session">
+        <constructor-arg ref="topologyService"/>
+    </bean>
+    
+    <bean id="policyAssociationModuleSearchWindow" class="org.ikasan.dashboard.ui.administration.window.PolicyAssociationModuleSearchWindow" scope="session">
+        <constructor-arg ref="topologyService"/>
     </bean>
     
     <bean id="policyLinkMappingConfigurationSearchResultsPanel" class="org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel" scope="session">

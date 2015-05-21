@@ -51,6 +51,8 @@ public class Component
 	private Long id;
     private String name = "";
     private String description = "";
+    private Boolean configurable;
+    private String configurationId;
     private Flow flow;
 
     /** The data time stamp when an instance was first created */
@@ -60,9 +62,9 @@ public class Component
     private Date updatedDateTime;
 
     /**
-     * Default constructor
-     */
-    public Component()
+	 * Default constructor for Hibernate
+	 */
+    protected Component()
     {
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
@@ -163,5 +165,37 @@ public class Component
 	public void setFlow(Flow flow)
 	{
 		this.flow = flow;
+	}
+
+	/**
+	 * @return the configurable
+	 */
+	public Boolean isConfigurable()
+	{
+		return configurable;
+	}
+
+	/**
+	 * @param configurable the configurable to set
+	 */
+	public void setConfigurable(Boolean configurable)
+	{
+		this.configurable = configurable;
+	}
+
+	/**
+	 * @return the configurationId
+	 */
+	public String getConfigurationId()
+	{
+		return configurationId;
+	}
+
+	/**
+	 * @param configurationId the configurationId to set
+	 */
+	public void setConfigurationId(String configurationId)
+	{
+		this.configurationId = configurationId;
 	}	
 }

@@ -17,7 +17,7 @@
 <hibernate-mapping>
     <class
         name="org.ikasan.topology.model.Module"
-        table="Module">
+        table="IkasanModule">
 
         <id name="id"
           type="java.lang.Long"
@@ -37,11 +37,17 @@
                   column="Description"
                   not-null="true" 
                   unique="false"/>
+         
+        <property name="diagramUrl"
+                  type="java.lang.String"
+                  column="DiagramUrl"
+                  not-null="true" 
+                  unique="false"/>
         
-        <many-to-one name="server" column="serverId" 
+        <many-to-one name="server" column="ServerId" 
        		class="org.ikasan.topology.model.Server" not-null="true"/>
          
-        <set name="flows" cascade="all">
+        <set name="flows" cascade="all" order-by="Id asc">
          	<key column="ModuleId"/>
          	<one-to-many class="org.ikasan.topology.model.Flow"/>
       	</set>

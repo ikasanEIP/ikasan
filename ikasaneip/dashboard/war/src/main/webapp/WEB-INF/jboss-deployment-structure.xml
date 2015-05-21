@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+  <deployment>
+    <exclusions>
+      <module name="org.javassist"/>
+    </exclusions>
+    <local-last value="true" />
+  </deployment>
+</jboss-deployment-structure>

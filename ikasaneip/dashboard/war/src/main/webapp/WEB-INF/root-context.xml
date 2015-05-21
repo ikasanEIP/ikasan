@@ -94,7 +94,7 @@
                 </bean>
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="topologyView"/>
-                   <constructor-arg ref="estateViewPanel"/>
+                   <constructor-arg ref="topologyViewPanel"/>
                 </bean> 
                 <bean class="org.ikasan.dashboard.ui.framework.display.IkasanUIView" >
                    <constructor-arg value="persistanceSetupView"/>

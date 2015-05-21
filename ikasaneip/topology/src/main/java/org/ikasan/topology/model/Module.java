@@ -56,6 +56,7 @@ public class Module
     private Long id;
     private String name; 
     private String description;
+    private String diagramUrl;
     private Server server;
     private Set<Flow> flows;
 
@@ -66,9 +67,9 @@ public class Module
     private Date updatedDateTime;
 
     /**
-     * Default constructor
-     */
-    private Module() {}
+	 * Default constructor for Hibernate
+	 */
+    protected Module() {}
 
 	/**
 	 * Constructor 
@@ -77,12 +78,13 @@ public class Module
 	 * @param description
 	 * @param server
 	 */
-	public Module(String name, String description, Server server)
+	public Module(String name, String description, Server server, String diagramUrl)
 	{
 		super();
 		this.name = name;
 		this.description = description;
 		this.server = server;
+		this.diagramUrl = diagramUrl;
 		
 		long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
@@ -227,6 +229,22 @@ public class Module
 	public void setUpdatedDateTime(Date updatedDateTime)
 	{
 		this.updatedDateTime = updatedDateTime;
+	}
+
+	/**
+	 * @return the diagramUrl
+	 */
+	public String getDiagramUrl()
+	{
+		return diagramUrl;
+	}
+
+	/**
+	 * @param diagramUrl the diagramUrl to set
+	 */
+	public void setDiagramUrl(String diagramUrl)
+	{
+		this.diagramUrl = diagramUrl;
 	}
     
     

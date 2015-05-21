@@ -42,8 +42,11 @@ package org.ikasan.topology.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -150,6 +153,44 @@ public class HibernateTopologyDao extends HibernateDaoSupport implements Topolog
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#getFlowsByServerIdAndModuleId(java.lang.Long, java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Flow.class);
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		if(serverId != null && moduleId != null)
+		{
+			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId))
+				.createCriteria("server").add(Restrictions.eq("id", serverId));
+		}
+		else if(moduleId != null)
+		{
+			criteria.createCriteria("module").add(Restrictions.eq("id", moduleId));
+		}
+		else if(serverId != null)
+		{
+			criteria.createCriteria("module").createCriteria("server"
+					).add(Restrictions.eq("id", serverId));
+		}
+			
+
+        return (List<Flow>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.topology.dao.TopologyDao#deleteBusinessStreamFlow(org.ikasan.topology.model.BusinessStreamFlow)
+	 */
+	@Override
+	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow)
+	{
+		this.getHibernateTemplate().delete(businessStreamFlow);
 	}
 
     

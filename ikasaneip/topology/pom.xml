@@ -90,35 +90,6 @@
             </exclusions>
         </dependency>
 
-	    <dependency>
-	        <groupId>org.springframework.ldap</groupId>
-	        <artifactId>spring-ldap-core</artifactId>
-	    </dependency>
-
-	    <dependency>
-	        <groupId>org.springframework.ldap</groupId>
-	        <artifactId>spring-ldap-odm</artifactId>
-	    </dependency>
-
-	    <dependency>
-	        <groupId>org.springframework.ldap</groupId>
-	        <artifactId>spring-ldap-ldif-core</artifactId>
-	    </dependency>
-
-	    <dependency>
-	        <groupId>org.springframework.ldap</groupId>
-	        <artifactId>spring-ldap-ldif-batch</artifactId>
-	    </dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-ldap</artifactId>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -179,9 +150,8 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TODO:  Upgrade to 3.12.0 at some stage -->
         <dependency>
-            <groupId>javassist</groupId>
+            <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <scope>test</scope>
         </dependency>
@@ -204,44 +174,6 @@
 		  <scope>provided</scope>
 		</dependency>
 	 
-		<dependency>
-		  <groupId>org.apache.directory.server</groupId>
-		  <artifactId>apacheds-all</artifactId>
-		  <scope>compile</scope>
-		  <exclusions> 
-				<exclusion> 
-					<groupId>org.apache.directory.api</groupId> 
-					<artifactId>api-ldap-schema-data</artifactId> 
-				</exclusion> 
-			</exclusions>
-		</dependency> 
-
-		<dependency>
-		  <groupId>org.apache.directory.server</groupId>
-		  <artifactId>apacheds-server-integ</artifactId>
-		  <version>2.0.0-M18</version>
-		  <scope>provided</scope>
-		</dependency> 
-	 
-		<dependency>
-		  <groupId>org.apache.directory.server</groupId>
-		  <artifactId>apacheds-core-integ</artifactId>
-		  <version>2.0.0-M18</version>
-		  <scope>provided</scope>
-		</dependency> 
-
-		<dependency>
-		  <groupId>org.apache.directory.server</groupId>
-		  <artifactId>apacheds-server-unit</artifactId>
-		  <version>1.5.5</version>
-		  <scope>provided</scope>
-		</dependency> 
-
-		<dependency>
-			<groupId>com.unboundid</groupId>
-			<artifactId>unboundid-ldapsdk</artifactId>
-			<version>2.3.4</version>
-		</dependency>
 	 
 		<dependency>
 		  <groupId>commons-io</groupId>

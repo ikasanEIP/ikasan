@@ -43,6 +43,7 @@ package org.ikasan.topology.dao;
 import java.util.List;
 
 import org.ikasan.topology.model.BusinessStream;
+import org.ikasan.topology.model.BusinessStreamFlow;
 import org.ikasan.topology.model.Flow;
 import org.ikasan.topology.model.Module;
 import org.ikasan.topology.model.Server;
@@ -89,6 +90,13 @@ public interface TopologyDao
 	 * @return
 	 */
 	public List<Flow> getAllFlows();
+	
+	/**
+	 * Get all flows by server id and module id.
+	 * 
+	 * @return
+	 */
+	public List<Flow> getFlowsByServerIdAndModuleId(Long serverId, Long moduleId);
 
 	/**
 	 * Save a flow. Will create a new record or update an existing.
@@ -96,6 +104,7 @@ public interface TopologyDao
 	 * @param flow
 	 */
 	public void save(Flow flow);
+	
 
 	/**
 	 * Get all BusinessStreams
@@ -117,4 +126,11 @@ public interface TopologyDao
 	 * @return
 	 */
 	public List<BusinessStream> getBusinessStreamsByUserId(Long userId);
+
+	/**
+	 * Delete a business stream flow
+	 * 
+	 * @param businessStreamFlow
+	 */
+	public void deleteBusinessStreamFlow(BusinessStreamFlow businessStreamFlow);
 }

@@ -40,14 +40,31 @@
  */
 package org.ikasan.dashboard.ui.administration.window;
 
+import java.util.List;
+
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchPanel;
 import org.ikasan.dashboard.ui.mappingconfiguration.panel.MappingConfigurationSearchResultsPanel;
 import org.ikasan.mapping.model.MappingConfigurationLite;
+import org.ikasan.topology.model.Flow;
+import org.ikasan.topology.model.Module;
+import org.ikasan.topology.model.Server;
+import org.ikasan.topology.service.TopologyService;
 
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Button.ClickEvent;
 
 /**
  * 
@@ -61,22 +78,27 @@ public class PolicyAssociationModuleSearchWindow extends Window
 	 */
 	private static final long serialVersionUID = -7298145261413392839L;
 
-	private MappingConfigurationSearchPanel mappingConfigurationSearchPanel;
-	private MappingConfigurationSearchResultsPanel mappingConfigurationSearchResultsPanel;
+	private TopologyService topologyService;
 	private HorizontalSplitPanel horizontalSplitPanel;
-	private MappingConfigurationLite mappingConfiguration;
+	private Module module;
+	private Panel searchPanel;
+	private Panel resultsPanel;
+	private ComboBox serverCombo;
+	private Table resultsTable;
 
 	/**
 	 * @param mappingConfigurationSearchPanel
 	 * @param mappingConfigurationSearchResultsPanel
 	 */
-	public PolicyAssociationModuleSearchWindow(
-			MappingConfigurationSearchPanel mappingConfigurationSearchPanel,
-			MappingConfigurationSearchResultsPanel mappingConfigurationSearchResultsPanel)
+	public PolicyAssociationModuleSearchWindow(TopologyService topologyService)
 	{
 		super();
-		this.mappingConfigurationSearchPanel = mappingConfigurationSearchPanel;
-		this.mappingConfigurationSearchResultsPanel = mappingConfigurationSearchResultsPanel;
+		
+		this.topologyService = topologyService;
+		if(this.topologyService == null)
+		{
+			throw new IllegalArgumentException("topologyService cannot be null!");
+		}
 		
 		init();
 	}
@@ -91,15 +113,21 @@ public class PolicyAssociationModuleSearchWindow extends Window
     	this.setSizeFull();
     	this.setModal(true);
     	
-    	this.mappingConfigurationSearchPanel.setWidth("100%");
+    	this.serverCombo = new ComboBox();
+    	
+    	this.createSearchPanel();
+    	this.createResultsPanel();
+    	
     	VerticalLayout leftPanelLayout = new VerticalLayout();
+    	leftPanelLayout.setMargin(true);
     	leftPanelLayout.setWidth(320, Unit.PIXELS);
     	leftPanelLayout.setHeight("100%");
-    	leftPanelLayout.addComponent(this.mappingConfigurationSearchPanel);
+    	leftPanelLayout.addComponent(this.searchPanel);
     	
     	HorizontalLayout rightPanelLayout = new HorizontalLayout();
     	rightPanelLayout.setSizeFull();
-    	rightPanelLayout.addComponent(this.mappingConfigurationSearchResultsPanel);
+    	rightPanelLayout.setMargin(true);
+    	rightPanelLayout.addComponent(this.resultsPanel);
     	
     	this.horizontalSplitPanel 
         	= new HorizontalSplitPanel(leftPanelLayout, rightPanelLayout);
@@ -110,25 +138,107 @@ public class PolicyAssociationModuleSearchWindow extends Window
 	    this.setContent(horizontalSplitPanel);
     }
     
+    private void createSearchPanel()
+    {
+    	this.searchPanel = new Panel();
+    	this.searchPanel.setSizeFull();
+    	this.searchPanel.setStyleName("dashboard");
+    	
+    	GridLayout layout = new GridLayout(2, 2);
+    	layout.setWidth("100%");
+    	layout.setHeight("120px");
+    	layout.setMargin(true);
+    	
+    	Label serverLabel = new Label("Server");    	
+    	layout.addComponent(serverLabel, 0, 0);
+    	layout.addComponent(this.serverCombo, 1, 0);
+  
+    	
+    	Button searchButton = new Button("Search");    	
+    	searchButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	Server server = (Server)serverCombo.getValue();
+            	
+            	Long moduleId = null;
+            	Long serverId = null;
+            	
+                if(module != null)
+                {
+                	moduleId = module.getId();
+                }
+            	
+            	if(server != null)
+            	{
+            		serverId = server.getId();
+            	}
+            	
+            	List<Module> modules = topologyService.getAllModules();
+            	resultsTable.removeAllItems();
+            	
+            	for(Module module: modules)
+            	{
+            		resultsTable.addItem(new Object[]{module.getServer().getName(), module.getName(), module.getDescription()}, module);
+            	}
+            }
+        });
+    	
+    	layout.addComponent(searchButton, 0, 1, 1, 1);
+    	layout.setComponentAlignment(searchButton, Alignment.MIDDLE_CENTER);
+    	
+    	this.searchPanel.setContent(layout);
+    }
+    
+    private void createResultsPanel()
+    {
+    	this.resultsPanel = new Panel();
+    	this.resultsPanel.setSizeFull();
+    	this.resultsPanel.setStyleName("dashboard");
+    	
+    	this.resultsTable = new Table();
+    	this.resultsTable.setSizeFull();
+    	this.resultsTable.addContainerProperty("Server", String.class,  null);
+    	this.resultsTable.addContainerProperty("Module", String.class,  null);
+    	this.resultsTable.addContainerProperty("Flow", String.class,  null);
+    	
+    	this.resultsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() 
+    	{
+    	    @Override
+    	    public void itemClick(ItemClickEvent itemClickEvent) 
+    	    {
+    	      module = (Module)itemClickEvent.getItemId();
+    	      UI.getCurrent().removeWindow(PolicyAssociationModuleSearchWindow.this);
+    	    }
+    	});
+    	
+    	HorizontalLayout layout = new HorizontalLayout();
+    	layout.addComponent(this.resultsTable);
+    	layout.setSizeFull();
+    	layout.setMargin(true);
+    	
+    	this.resultsPanel.setContent(layout);
+    }
+    
     public void clear()
     {
-    	this.mappingConfigurationSearchPanel.clear();
-    	this.mappingConfigurationSearchResultsPanel.clear();
+    	this.serverCombo.removeAllItems();
+    	
+    	List<Server> servers = this.topologyService.getAllServers();
+    	
+    	for(Server server: servers)
+    	{
+    		this.serverCombo.addItem(server);
+    		this.serverCombo.setItemCaption(server, server.getName());
+    	}
     }
 
 	/**
-	 * @return the mappingConfiguration
+	 * @return the flow
 	 */
-	public MappingConfigurationLite getMappingConfiguration()
+	public Module getModule()
 	{
-		return mappingConfiguration;
+		return module;
 	}
 
-	/**
-	 * @param mappingConfiguration the mappingConfiguration to set
-	 */
-	public void setMappingConfiguration(MappingConfigurationLite mappingConfiguration)
-	{
-		this.mappingConfiguration = mappingConfiguration;
-	}
 }

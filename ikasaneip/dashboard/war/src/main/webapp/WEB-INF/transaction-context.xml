@@ -27,11 +27,24 @@
                 expression="execution(* org.ikasan.security.service.LdapService*.synchronize(..))"/>
         <aop:pointcut id="mappingServiceMethods"
                 expression="execution(* org.ikasan.mapping.service.*.*(..))"/>
+        <aop:pointcut id="configurationServiceMethods"
+                expression="execution(* org.ikasan.configurationService.service.*.*(..))"/>
+        <aop:pointcut id="topologyServiceMethods"
+                expression="execution(* org.ikasan.topology.service.*.*(..))"/>
+        <aop:pointcut id="wiretapDaoMethods"
+                expression="execution(* org.ikasan.wiretap.dao.*.*(..))"/>
+        <aop:pointcut id="triggerDaoMethods"
+                expression="execution(* org.ikasan.trigger.dao.*.*(..))"/>
 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ldapServiceMethods"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="mappingServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="configurationServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="topologyServiceMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="wiretapDaoMethods"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="triggerDaoMethods"/>
+        
     </aop:config>
 
     <tx:advice id="txAdvice" transaction-manager="hibernateTransactionManager">

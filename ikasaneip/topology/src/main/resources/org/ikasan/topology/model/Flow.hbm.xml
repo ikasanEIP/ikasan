@@ -38,12 +38,12 @@
                   not-null="true" 
                   unique="false"/>
         
-        <many-to-one name="module" column="moduleId" 
+        <many-to-one name="module" column="ModuleId" 
        		class="org.ikasan.topology.model.Module" not-null="true"/>
        	
-       	<set name="components" cascade="all">
+       	<set name="components" cascade="all" order-by="Id asc">
          	<key column="FlowId"/>
-         	<one-to-many class="org.ikasan.topology.model.Component"/>
+         	<one-to-many class="org.ikasan.topology.model.Component" />
       	</set>
 
         <property name="createdDateTime"
