@@ -353,8 +353,8 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
 
-                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
-                will(returnValue("errorUri"));
+//                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
+//                will(returnValue("errorUri"));
             }
         });
 
@@ -386,8 +386,8 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(ignoreAction));
 
                 // report error
-                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
-                will(returnValue("errorUri"));
+//                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
+//                will(returnValue("errorUri"));
             }
         });
 

@@ -211,6 +211,12 @@
           <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <version>${version.org.hamcrest.hamcrest-all}</version>
+      </dependency>
+
       <!-- Hibernate dependency -->
       <dependency>
           <groupId>javassist</groupId>

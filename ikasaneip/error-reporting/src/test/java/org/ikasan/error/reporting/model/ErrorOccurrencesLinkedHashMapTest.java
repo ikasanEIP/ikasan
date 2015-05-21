@@ -38,55 +38,47 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.exclusion;
+package org.ikasan.error.reporting.model;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * ExclusionService contract.
+ * Test class for ErrorOccurrencesLinkedHashMap.
  * 
  * @author Ikasan Development Team
  */
-public interface ExclusionService<ENTITY>
+public class ErrorOccurrencesLinkedHashMapTest
 {
-    /** five days default time to live */
-    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 5);
-
     /**
-     * Is this entity on the blacklist.
-     *
-     * @param entity
-     * @return
+     * Test roilloff
      */
-    public boolean isBlackListed(ENTITY entity);
+    @Test
+    public void test_rolloff()
+    {
+        ErrorOccurrencesLinkedHashMap<String,String> errorOccurrences = new ErrorOccurrencesLinkedHashMap<String,String>(5);
+        errorOccurrences.put("1", "one");
+        errorOccurrences.put("2", "two");
+        errorOccurrences.put("3", "three");
+        errorOccurrences.put("4", "four");
+        errorOccurrences.put("5", "five");
 
-    /**
-     * An this entity to the blacklist
-     * @param entity
-     * @param uri of the associated error
-     */
-    public void addBlacklisted(ENTITY entity, String uri);
+        Assert.assertTrue("Should be five entries", errorOccurrences.size() == 5);
+        Assert.assertTrue("Should contain entry 1", errorOccurrences.containsKey("1"));
+        Assert.assertTrue("Should contain entry 2", errorOccurrences.containsKey("2"));
+        Assert.assertTrue("Should contain entry 3", errorOccurrences.containsKey("3"));
+        Assert.assertTrue("Should contain entry 4", errorOccurrences.containsKey("4"));
+        Assert.assertTrue("Should contain entry 5", errorOccurrences.containsKey("5"));
 
-    /**
-     * Exclude this entity
-     * @param entity
-     */
-    public void exclude(ENTITY entity);
+        errorOccurrences.put("6", "six");
+        Assert.assertTrue("Should be five entries", errorOccurrences.size() == 5);
+        Assert.assertFalse("Should not contain entry 1", errorOccurrences.containsKey("1"));
+        Assert.assertTrue("Should contain entry 2", errorOccurrences.containsKey("2"));
+        Assert.assertTrue("Should contain entry 3", errorOccurrences.containsKey("3"));
+        Assert.assertTrue("Should contain entry 4", errorOccurrences.containsKey("4"));
+        Assert.assertTrue("Should contain entry 5", errorOccurrences.containsKey("5"));
+        Assert.assertTrue("Should contain entry 6", errorOccurrences.containsKey("6"));
 
-    /**
-     * Remove this entity from the blacklist
-     * @param entity
-     */
-    public void removeBlacklisted(ENTITY entity);
+    }
 
-    /**
-     * Allow entities blacklisted to be marked with a timeToLive.
-     * On expiry of the timeToLive the entity will no longer be blacklisted.
-     *
-     * @param timeToLive
-     */
-    public void setTimeToLive(Long timeToLive);
-
-    /**
-     * Housekeep expired exclusionEvents.
-     */
-    public void housekeep();
 }

@@ -9,14 +9,15 @@
     <util:list id="module1-config-files">
         <value>component-conf.xml</value>
         <value>flow-conf.xml</value>
-        <value>exclusion-service-conf.xml</value>
-        <value>error-reporting-service-conf.xml</value>
+        <!--value>exclusion-service-conf.xml</value-->
+        <!--value>ikasan-transaction-conf.xml</value-->
+        <!--value>error-reporting-service-conf.xml</value-->
         <value>exclusion-flow-conf.xml</value>
         <value>module-conf.xml</value>
         <value>exception-conf.xml</value>
         <!--value>hsqldb-datasource-conf.xml</value-->
-        <value>transaction-conf.xml</value>
-        <value>transactionManager-conf.xml</value>
+        <!--value>transaction-conf.xml</value>
+        <value>transactionManager-conf.xml</value-->
     </util:list>
 
 </beans>

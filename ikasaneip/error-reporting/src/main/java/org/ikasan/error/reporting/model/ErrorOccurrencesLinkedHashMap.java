@@ -44,12 +44,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * List implementation of the ErrorReportingServiceDao.
+ * Map implementation of the ErrorReportingServiceDao.
  * @author Ikasan Development Team
  */
 public class ErrorOccurrencesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
 {
-    /** max number of entries before the list starts dropping the eldest */
+    /** max number of entries before the map starts dropping the eldest */
     int maxEntries;
 
     /**
@@ -62,7 +62,7 @@ public class ErrorOccurrencesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
     }
 
     /**
-     * Limit the list entries and remove eldest when the limit is hit
+     * Limit the map entries and remove eldest when the limit is hit
      * @param eldest
      * @return
      */

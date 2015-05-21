@@ -42,7 +42,6 @@ package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
@@ -107,15 +106,6 @@ public class ErrorReportingServiceFactoryDefaultImplTest
     @Test
     public void test_errorReportingServiceFactory_getErrorReportingService()
     {
-
-//        mockery.checking(new Expectations()
-//        {
-//            {
-//                exactly(1).of(serialiserFactory).getDefaultSerialiser();
-//                will(returnValue(serialiser));
-//            }
-//        });
-
         Assert.assertTrue("errorReportingService not correctly proxied through a pointcut", errorReportingService.getClass().getName().startsWith("com.sun.proxy.$Proxy"));
     }
 

@@ -42,6 +42,8 @@ package org.ikasan.exclusion.model;
 
 import org.ikasan.spec.exclusion.ExclusionService;
 
+import java.util.Arrays;
+
 /**
  * Module implementation representing an ExclusionEvent instance.
  *
@@ -57,6 +59,9 @@ public class ExclusionEvent
 
     /** unique identifier for this event instance */
     String identifier;
+
+    /** event being excluded */
+    byte[] event;
 
     /** timestamp indicating when this event was created */
     long timestamp;
@@ -147,6 +152,14 @@ public class ExclusionEvent
         this.errorUri = errorUri;
     }
 
+    public byte[] getEvent() {
+        return event;
+    }
+
+    public void setEvent(byte[] event) {
+        this.event = event;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -175,6 +188,7 @@ public class ExclusionEvent
                 "moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", identifier='" + identifier + '\'' +
+                ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
                 ", expiry=" + expiry +
                 ", errorUri='" + errorUri + '\'' +
