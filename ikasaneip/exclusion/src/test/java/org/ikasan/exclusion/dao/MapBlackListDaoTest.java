@@ -40,9 +40,9 @@
  */
 package org.ikasan.exclusion.dao;
 
-import junit.framework.Assert;
+import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
-import org.ikasan.exclusion.model.ExclusionEvent;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -50,7 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Test class for ListExclusionServiceDao.
+ * Test class for MapBlackListDao.
  * 
  * @author Ikasan Development Team
  */
@@ -61,25 +61,27 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/h2db-datasource-conf.xml"
         })
 
-public class ListExclusionServiceDaoTest
+public class MapBlackListDaoTest
 {
     /**
      * Test exclusion
      */
     @DirtiesContext
     @Test
-    public void test_contains_add_remove_operations()
+    public void test_contains_add_find_remove_operations()
     {
-        ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(2) );
+        BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(2) );
 
-        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "123456");
-        Assert.assertFalse("Should not be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
+        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456", "errorUri");
+        Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456"));
 
-        exclusionServiceDao.add(exclusionEvent);
-        Assert.assertTrue("Should be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
+        blackListDao.add(blackListEvent);
+        Assert.assertTrue("Should be found", blackListDao.contains("moduleName", "flowName", "123456"));
 
-        exclusionServiceDao.remove("moduleName", "flowName", "123456");
-        Assert.assertFalse("Should not be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertTrue("Should match", blackListEvent.equals(blackListDao.find("moduleName", "flowName", "123456")));
+
+        blackListDao.remove("moduleName", "flowName", "123456");
+        Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456"));
     }
 
     /**
@@ -89,22 +91,22 @@ public class ListExclusionServiceDaoTest
     @Test
     public void test_deleteExpired_operation()
     {
-        ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(2) );
+        BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(2) );
 
         // new event with 1 milli expiry
-        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "123456");
-        ExclusionEvent exclusionEventExpired = new ExclusionEvent("moduleName", "flowName", "1234567", -1L);
-        Assert.assertFalse("Non expired should not be found", exclusionServiceDao.contains("moduleName", "flowName", "123456") );
-        Assert.assertFalse("Expired should not be found", exclusionServiceDao.contains("moduleName", "flowName", "1234567") );
+        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456",  "errorUri");
+        BlackListEvent blackListEventExpired = new BlackListEvent("moduleName", "flowName", "1234567",  "errorUri", -1L);
+        Assert.assertFalse("Non expired should not be found", blackListDao.contains("moduleName", "flowName", "123456") );
+        Assert.assertFalse("Expired should not be found", blackListDao.contains("moduleName", "flowName", "1234567") );
 
-        exclusionServiceDao.add(exclusionEvent);
-        exclusionServiceDao.add(exclusionEventExpired);
-        Assert.assertTrue("Non expired should be found", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
-        Assert.assertTrue("Expired should be found", exclusionServiceDao.contains("moduleName", "flowName", "1234567"));
+        blackListDao.add(blackListEvent);
+        blackListDao.add(blackListEventExpired);
+        Assert.assertTrue("Non expired should be found", blackListDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertTrue("Expired should be found", blackListDao.contains("moduleName", "flowName", "1234567"));
 
-        exclusionServiceDao.deleteExpired();
-        Assert.assertTrue("Should be found after deleteAll", exclusionServiceDao.contains("moduleName", "flowName", "123456"));
-        Assert.assertFalse("Should not be found after deleteAll", exclusionServiceDao.contains("moduleName", "flowName", "1234567"));
+        blackListDao.deleteExpired();
+        Assert.assertTrue("Should be found after deleteAll", blackListDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertFalse("Should not be found after deleteAll", blackListDao.contains("moduleName", "flowName", "1234567"));
     }
 
     /**
@@ -114,23 +116,23 @@ public class ListExclusionServiceDaoTest
     @Test
     public void test_roll_operation()
     {
-        ListExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(5) );
+        MapBlackListDao exclusionServiceDao = new MapBlackListDao( new BlackListLinkedHashMap(5) );
 
         // new event with 1 milli expiry
-        ExclusionEvent exclusionEvent1 = new ExclusionEvent("moduleName", "flowName", "1234561");
-        exclusionServiceDao.add(exclusionEvent1);
-        ExclusionEvent exclusionEvent2 = new ExclusionEvent("moduleName", "flowName", "1234562");
-        exclusionServiceDao.add(exclusionEvent2);
-        ExclusionEvent exclusionEvent3 = new ExclusionEvent("moduleName", "flowName", "1234563");
-        exclusionServiceDao.add(exclusionEvent3);
-        ExclusionEvent exclusionEvent4 = new ExclusionEvent("moduleName", "flowName", "1234564");
-        exclusionServiceDao.add(exclusionEvent4);
-        ExclusionEvent exclusionEvent5 = new ExclusionEvent("moduleName", "flowName", "1234565");
-        exclusionServiceDao.add(exclusionEvent5);
-        ExclusionEvent exclusionEvent6 = new ExclusionEvent("moduleName", "flowName", "1234566");
-        exclusionServiceDao.add(exclusionEvent6);
-        ExclusionEvent exclusionEvent7 = new ExclusionEvent("moduleName", "flowName", "1234567");
-        exclusionServiceDao.add(exclusionEvent7);
+        BlackListEvent blackListEvent1 = new BlackListEvent("moduleName", "flowName", "1234561", "errorUri");
+        exclusionServiceDao.add(blackListEvent1);
+        BlackListEvent blackListEvent2 = new BlackListEvent("moduleName", "flowName", "1234562", "errorUri");
+        exclusionServiceDao.add(blackListEvent2);
+        BlackListEvent blackListEvent3 = new BlackListEvent("moduleName", "flowName", "1234563", "errorUri");
+        exclusionServiceDao.add(blackListEvent3);
+        BlackListEvent blackListEvent4 = new BlackListEvent("moduleName", "flowName", "1234564", "errorUri");
+        exclusionServiceDao.add(blackListEvent4);
+        BlackListEvent blackListEvent5 = new BlackListEvent("moduleName", "flowName", "1234565", "errorUri");
+        exclusionServiceDao.add(blackListEvent5);
+        BlackListEvent blackListEvent6 = new BlackListEvent("moduleName", "flowName", "1234566", "errorUri");
+        exclusionServiceDao.add(blackListEvent6);
+        BlackListEvent blackListEvent7 = new BlackListEvent("moduleName", "flowName", "1234567", "errorUri");
+        exclusionServiceDao.add(blackListEvent7);
 
         Assert.assertFalse("blacklisted should not contain exclusionEvent1", exclusionServiceDao.contains("moduleName", "flowName", "1234561"));
         Assert.assertFalse("blacklisted should not contain exclusionEvent2", exclusionServiceDao.contains("moduleName", "flowName", "1234562"));

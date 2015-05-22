@@ -4,7 +4,7 @@
     xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.HibernateExclusionServiceDao">
+    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
         <property name="sessionFactory" ref="exclusionSessionFactory" />
     </bean>
 

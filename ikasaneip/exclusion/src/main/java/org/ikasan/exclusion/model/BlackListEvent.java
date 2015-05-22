@@ -42,14 +42,12 @@ package org.ikasan.exclusion.model;
 
 import org.ikasan.spec.exclusion.ExclusionService;
 
-import java.util.Arrays;
-
 /**
- * ExclusionEvent model instance.
+ * Blacklist event model instance.
  *
  * @author Ikasan Development Team
  */
-public class ExclusionEvent
+public class BlackListEvent
 {
     /** module name */
     String moduleName;
@@ -57,11 +55,8 @@ public class ExclusionEvent
     /** flowName */
     String flowName;
 
-    /** identifier for this event */
+    /** identifier for this event instance */
     String identifier;
-
-    /** original form of the event being excluded */
-    byte[] event;
 
     /** timestamp indicating when this event was created */
     long timestamp;
@@ -77,12 +72,10 @@ public class ExclusionEvent
      * @param moduleName
      * @param flowName
      * @param identifier
-     * @param event
-     * @param errorUri
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri)
+    public BlackListEvent(String moduleName, String flowName, String identifier, String errorUri)
     {
-        this(moduleName, flowName, identifier, event, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
+        this(moduleName, flowName, identifier, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
     }
 
     /**
@@ -90,11 +83,9 @@ public class ExclusionEvent
      * @param moduleName
      * @param flowName
      * @param identifier
-     * @param event
-     * @param errorUri
      * @param timeToLive
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri, long timeToLive)
+    public BlackListEvent(String moduleName, String flowName, String identifier, String errorUri, long timeToLive)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -107,16 +98,13 @@ public class ExclusionEvent
         {
             throw new IllegalArgumentException("flowName cannot be 'null'");
         }
+
         this.identifier = identifier;
         if(identifier == null)
         {
             throw new IllegalArgumentException("identifier cannot be 'null'");
         }
-        this.event = event;
-        if(event == null)
-        {
-            throw new IllegalArgumentException("event cannot be 'null'");
-        }
+
         this.errorUri = errorUri;
         long now = System.currentTimeMillis();
         this.timestamp = now;
@@ -126,7 +114,15 @@ public class ExclusionEvent
     /**
      * Constructor required by the ORM
      */
-    protected ExclusionEvent(){}
+    protected BlackListEvent(){}
+
+    public String getErrorUri() {
+        return errorUri;
+    }
+
+    protected void setErrorUri(String errorUri) {
+        this.errorUri = errorUri;
+    }
 
     public String getModuleName() {
         return moduleName;
@@ -152,14 +148,6 @@ public class ExclusionEvent
         this.identifier = identifier;
     }
 
-    public byte[] getEvent() {
-        return event;
-    }
-
-    protected void setEvent(byte[] event) {
-        this.event = event;
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
@@ -176,20 +164,12 @@ public class ExclusionEvent
         this.expiry = expiry;
     }
 
-    public String getErrorUri() {
-        return errorUri;
-    }
-
-    protected void setErrorUri(String errorUri) {
-        this.errorUri = errorUri;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ExclusionEvent that = (ExclusionEvent) o;
+        BlackListEvent that = (BlackListEvent) o;
 
         if (!flowName.equals(that.flowName)) return false;
         if (!identifier.equals(that.identifier)) return false;
@@ -208,11 +188,10 @@ public class ExclusionEvent
 
     @Override
     public String toString() {
-        return "ExclusionEvent{" +
+        return "BlackListEvent{" +
                 "moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", identifier='" + identifier + '\'' +
-                ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
                 ", expiry=" + expiry +
                 ", errorUri='" + errorUri + '\'' +

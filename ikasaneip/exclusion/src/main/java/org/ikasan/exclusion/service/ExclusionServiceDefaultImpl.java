@@ -40,10 +40,13 @@
  */
 package org.ikasan.exclusion.service;
 
-import org.ikasan.exclusion.dao.ExclusionServiceDao;
+import org.ikasan.exclusion.dao.BlackListDao;
+import org.ikasan.exclusion.dao.ExclusionEventDao;
+import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.serialiser.Serialiser;
 
 /**
  * Default implementation of the ExclusionService.
@@ -59,10 +62,10 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     String flowName;
 
     /** handle to the underlying DAO */
-    ExclusionServiceDao<String,ExclusionEvent> exclusionServiceDao;
+    BlackListDao<String,BlackListEvent> blackListDao;
 
     /** handle to the underlying DAO */
-    ExclusionServiceDao<String,ExclusionEvent> exclusionServiceEventDao;
+    ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
     /** allow override of timeToLive */
     Long timeToLive = ExclusionService.DEFAULT_TIME_TO_LIVE;
@@ -72,9 +75,9 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
 
     /**
      * Constructor
-     * @param exclusionServiceDao
+     * @param blackListDao
      */
-    public ExclusionServiceDefaultImpl(String moduleName, String flowName, ExclusionServiceDao exclusionServiceDao)
+    public ExclusionServiceDefaultImpl(String moduleName, String flowName, BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, Serialiser<FlowEvent<String,?>,byte[]> serialiser)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -88,41 +91,50 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
             throw new IllegalArgumentException("flowName cannot be 'null'");
         }
 
-        this.exclusionServiceDao = exclusionServiceDao;
-        if(exclusionServiceDao == null)
+        this.blackListDao = blackListDao;
+        if(blackListDao == null)
         {
             throw new IllegalArgumentException("exclusionServiceDao cannot be 'null'");
+        }
+
+        this.exclusionEventDao = exclusionEventDao;
+        if(exclusionEventDao == null)
+        {
+            throw new IllegalArgumentException("exclusionEventDao cannot be 'null'");
+        }
+
+        this.serialiser = serialiser;
+        if(serialiser == null)
+        {
+            throw new IllegalArgumentException("serialiser cannot be 'null'");
         }
     }
 
     @Override
     public boolean isBlackListed(FlowEvent<String,?> event)
     {
-        return this.exclusionServiceDao.contains(this.moduleName, this.flowName, event.getIdentifier());
+        return this.blackListDao.contains(this.moduleName, this.flowName, event.getIdentifier());
     }
 
     @Override
-    public void exclude(FlowEvent<String,?> event)
+    public void park(FlowEvent<String,?> event)
     {
-        ExclusionEvent exclusionEvent = this.exclusionServiceDao.find(this.moduleName, this.flowName, event.getIdentifier());
-        byte[] bytes = serialiser.serialise(event);
-        exclusionEvent.setEvent(bytes);
-        this.exclusionServiceDao.add(exclusionEvent);
-        return this.exclusionServiceEventDao.save(this.moduleName, this.flowName, event);
+        BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, event.getIdentifier());
+        ExclusionEvent exclusionEvent = newExclusionEvent(event.getIdentifier(), serialiser.serialise(event), blacklistEvent.getErrorUri());
+        this.exclusionEventDao.save(exclusionEvent);
     }
 
     @Override
     public void addBlacklisted(FlowEvent<String,?> event, String errorUri)
     {
-        ExclusionEvent exclusionEvent = new ExclusionEvent(this.moduleName, this.flowName, event.getIdentifier(), timeToLive.longValue());
-        exclusionEvent.setErrorUri(errorUri);
-        this.exclusionServiceDao.add(exclusionEvent);
+        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, event.getIdentifier(), errorUri, timeToLive.longValue());
+        this.blackListDao.insert(blackListEvent);
     }
 
     @Override
     public void removeBlacklisted(FlowEvent<String,?> event)
     {
-        this.exclusionServiceDao.remove(this.moduleName, this.flowName, event.getIdentifier());
+        this.blackListDao.delete(this.moduleName, this.flowName, event.getIdentifier());
     }
 
     @Override
@@ -134,7 +146,19 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     @Override
     public void housekeep()
     {
-        this.exclusionServiceDao.deleteExpired();
+        this.blackListDao.deleteExpired();
     }
 
+    /**
+     * Factory method for creating new ExclusionEvent instances.
+     * @param identifier
+     * @param eventBytes
+     * @param errorUri
+     * @return
+     */
+    protected ExclusionEvent newExclusionEvent(String identifier, byte[] eventBytes, String errorUri)
+    {
+        return new ExclusionEvent(moduleName, flowName, identifier, eventBytes, errorUri, timeToLive.longValue());
+
+    }
 }

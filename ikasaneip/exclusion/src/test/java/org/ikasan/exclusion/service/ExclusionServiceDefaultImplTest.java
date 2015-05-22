@@ -41,8 +41,8 @@
 package org.ikasan.exclusion.service;
 
 import junit.framework.Assert;
-import org.ikasan.exclusion.dao.ExclusionServiceDao;
-import org.ikasan.exclusion.dao.ListExclusionServiceDao;
+import org.ikasan.exclusion.dao.BlackListDao;
+import org.ikasan.exclusion.dao.MapBlackListDao;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
@@ -80,7 +80,7 @@ public class ExclusionServiceDefaultImplTest
 
     FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
 
-    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(2) );
+    BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(2) );
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_moduleName()
@@ -107,7 +107,7 @@ public class ExclusionServiceDefaultImplTest
     @Test
     public void test_exclusionService_operations()
     {
-        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceDao);
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", blackListDao);
 
         // expectations
         mockery.checking(new Expectations()
@@ -160,7 +160,7 @@ public class ExclusionServiceDefaultImplTest
     @Test
     public void test_exclusionService_housekeep()
     {
-        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceDao);
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", blackListDao);
         exclusionService.setTimeToLive(-1L);
 
         // expectations

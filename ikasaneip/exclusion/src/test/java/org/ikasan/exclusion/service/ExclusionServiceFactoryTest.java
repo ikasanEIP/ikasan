@@ -41,8 +41,8 @@
 package org.ikasan.exclusion.service;
 
 import junit.framework.Assert;
-import org.ikasan.exclusion.dao.ExclusionServiceDao;
-import org.ikasan.exclusion.dao.ListExclusionServiceDao;
+import org.ikasan.exclusion.dao.BlackListDao;
+import org.ikasan.exclusion.dao.MapBlackListDao;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -73,7 +73,7 @@ public class ExclusionServiceFactoryTest
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
-    ExclusionServiceDao exclusionServiceDao = new ListExclusionServiceDao( new BlackListLinkedHashMap(25) );
+    BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(25) );
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_dao()
@@ -87,7 +87,7 @@ public class ExclusionServiceFactoryTest
     @Test
     public void test_exclusionServiceFactory_operations()
     {
-        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(exclusionServiceDao);
+        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(blackListDao);
         Assert.assertNotNull("Should not be null", exclusionServiceFactory.getExclusionService("moduleName", "flowName") );
         this.mockery.assertIsSatisfied();
     }

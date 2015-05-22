@@ -27,7 +27,7 @@
 		
 		<aop:config>
 	        <aop:pointcut id="daoMethods"
-	                expression="execution(* org.ikasan.exclusion.dao.ExclusionServiceDao.*(..))"/>
+	                expression="execution(* org.ikasan.exclusion.dao.BlackListDao.*(..))"/>
 	        <aop:pointcut id="serviceMethods"
 	                expression="execution(* org.ikasan.spec.exclusion.ExclusionService.*(..))"/>
 	                
