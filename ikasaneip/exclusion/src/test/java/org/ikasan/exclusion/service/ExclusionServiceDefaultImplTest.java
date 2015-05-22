@@ -45,6 +45,7 @@ import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -90,7 +91,7 @@ public class ExclusionServiceDefaultImplTest
     ExclusionEventDao exclusionServiceExclusionEventDao;
 
     @Resource
-    Serialiser serialiser;
+    SerialiserFactory serialiserFactory;
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_moduleName()
@@ -129,7 +130,7 @@ public class ExclusionServiceDefaultImplTest
     @Test
     public void test_exclusionService_operations()
     {
-        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiser);
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
 
         // expectations
         mockery.checking(new Expectations()
@@ -182,7 +183,7 @@ public class ExclusionServiceDefaultImplTest
     @Test
     public void test_exclusionService_housekeep()
     {
-        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiser);
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(-1L);
 
         // expectations

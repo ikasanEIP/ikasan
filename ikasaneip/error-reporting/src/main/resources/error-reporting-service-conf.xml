@@ -6,7 +6,7 @@
     <bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" />
 
     <bean id="errorReportingServiceFactory" class="org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl">
-        <constructor-arg ref="serialiserFactory"/>
+        <constructor-arg ref="ikasanSerialiserFactory"/>
         <constructor-arg ref="errorReportingServiceDao"/>
     </bean>
 
@@ -23,8 +23,6 @@
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
-
-    <bean id="serialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl"/>
 
     <aop:config>
         <aop:pointcut id="errorReportingServiceInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
