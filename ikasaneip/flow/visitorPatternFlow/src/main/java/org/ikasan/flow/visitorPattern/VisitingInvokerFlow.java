@@ -122,9 +122,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** flow configuration implementation */
     private ExclusionFlowConfiguration exclusionFlowConfiguration;
 
-    /** Error Reporting Service */
-    private ErrorReportingService errorReportingService;
-
     /**
      * Constructor
      * @param name the flow name
@@ -520,8 +517,8 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             if(this.exclusionService.isBlackListed(event))
             {
-                this.exclusionService.exclude(event);
-                invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
+                this.exclusionService.park(event);
+                //invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 this.exclusionService.removeBlacklisted(event);
             }
             else

@@ -38,37 +38,85 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.model;
+package org.ikasan.exclusion.dao;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.apache.log4j.Logger;
+import org.ikasan.exclusion.model.BlackListEvent;
+
+import java.util.*;
 
 /**
- * Map implementation for maintaining a cache of blacklisted events.
+ * Map implementation of the BlackListDao.
  * @author Ikasan Development Team
  */
-public class BlackListLinkedHashMap<K,V> extends LinkedHashMap<K,V>
+public class MapBlackListDao
+        implements BlackListDao<String,BlackListEvent>
 {
-    /** max number of entries before the map starts dropping the eldest */
-    int maxEntries;
+    /** logger instance */
+    private static Logger logger = Logger.getLogger(MapBlackListDao.class);
+
+    /** blacklist instances */
+    LinkedHashMap<String,BlackListEvent> blackList;
 
     /**
      * Constructor
-     * @param maxEntries
+     * @param blackList
      */
-    public BlackListLinkedHashMap(int maxEntries)
+    public MapBlackListDao(LinkedHashMap<String, BlackListEvent> blackList)
     {
-        this.maxEntries = maxEntries;
+        this.blackList = blackList;
+        if(blackList == null)
+        {
+            throw new IllegalArgumentException("backlist implementation cannot be 'null'");
+        }
     }
 
-    /**
-     * Limit the entries and remove eldest when the limit is hit
-     * @param eldest
-     * @return
-     */
     @Override
-    protected boolean removeEldestEntry(Map.Entry eldest) {
-        return size() > this.maxEntries;
+    public void insert(BlackListEvent blackListEvent)
+    {
+        this.blackList.put(blackListEvent.getIdentifier(), blackListEvent);
     }
 
+    @Override
+    public void delete(String moduleName, String flowName, String identifier)
+    {
+        this.blackList.remove(identifier);
+    }
+
+    @Override
+    public boolean contains(String moduleName, String flowName, String identifier)
+    {
+        return this.blackList.containsKey(identifier);
+    }
+
+    @Override
+    public BlackListEvent find(String moduleName, String flowName, String identifier)
+    {
+        return this.blackList.get(identifier);
+    }
+
+    @Override
+    public void deleteExpired()
+    {
+        List<String> expiredIdentifiers = new ArrayList<String>();
+
+        long expiryTime = System.currentTimeMillis();
+        for(Map.Entry<String,BlackListEvent> entry:blackList.entrySet())
+        {
+            if(entry.getValue().getExpiry() < expiryTime)
+            {
+                expiredIdentifiers.add(entry.getKey());
+            }
+        }
+
+        for(String expiredIdentifier:expiredIdentifiers)
+        {
+            blackList.remove(expiredIdentifier);
+        }
+
+        if(logger.isDebugEnabled())
+        {
+            logger.info("Deleted expired blacklist events for identifiers[" + expiredIdentifiers + "]");
+        }
+    }
 }

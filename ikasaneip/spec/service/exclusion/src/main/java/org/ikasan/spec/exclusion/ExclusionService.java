@@ -66,10 +66,10 @@ public interface ExclusionService<ENTITY>
     public void addBlacklisted(ENTITY entity, String uri);
 
     /**
-     * Exclude this entity
+     * Park this entity
      * @param entity
      */
-    public void exclude(ENTITY entity);
+    public void park(ENTITY entity);
 
     /**
      * Remove this entity from the blacklist

@@ -47,6 +47,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
@@ -55,11 +56,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Hibernate specific implementation of the ExclusionServiceDao.
+ * Hibernate implementation of the ExclusionEventeDao.
  * @author Ikasan Development Team
  */
-public class HibernateExclusionServiceDao extends HibernateDaoSupport
-        implements ExclusionServiceDao<String,ExclusionEvent>
+public class HibernateExclusionEventDao extends HibernateDaoSupport
+        implements ExclusionEventDao<String,ExclusionEvent>
 {
     /** default batch size */
     private static Integer housekeepingBatchSize = Integer.valueOf(100);
@@ -72,13 +73,13 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
 
 
     @Override
-    public void add(ExclusionEvent exclusionEvent)
+    public void save(ExclusionEvent exclusionEvent)
     {
         this.getHibernateTemplate().saveOrUpdate(exclusionEvent);
     }
 
     @Override
-    public void remove(final String moduleName, final String flowName, final String identifier)
+    public void delete(final String moduleName, final String flowName, final String identifier)
     {
         getHibernateTemplate().execute(new HibernateCallback()
         {
@@ -96,20 +97,9 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
     }
 
     @Override
-    public boolean contains(String moduleName, String flowName, String identifier)
+    public ExclusionEvent find(String moduleName, String flowName, String identifier)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
-        criteria.add(Restrictions.eq("moduleName", moduleName));
-        criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("identifier", identifier));
-
-        List<ExclusionEvent> results = (List<ExclusionEvent>) this.getHibernateTemplate().findByCriteria(criteria);
-        if(results == null || results.size() == 0)
-        {
-            return false;
-        }
-
-        return true;
+        return null; //TODO FIXME
     }
 
     @Override
@@ -146,14 +136,14 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
             {
                 List<String> ids = new ArrayList<String>();
 
-                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                Criteria criteria = session.createCriteria(BlackListEvent.class);
                 criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
                 criteria.setMaxResults(housekeepingBatchSize);
 
                 for (Object exclusionEventObj : criteria.list())
                 {
-                    ExclusionEvent exclusionEvent = (ExclusionEvent)exclusionEventObj;
-                    ids.add(exclusionEvent.getIdentifier());
+                    BlackListEvent blackListEvent = (BlackListEvent)exclusionEventObj;
+                    ids.add(blackListEvent.getIdentifier());
                 }
 
                 return ids;
@@ -166,7 +156,7 @@ public class HibernateExclusionServiceDao extends HibernateDaoSupport
         {
             public Object doInHibernate(Session session) throws HibernateException
             {
-                Criteria criteria = session.createCriteria(ExclusionEvent.class);
+                Criteria criteria = session.createCriteria(BlackListEvent.class);
                 criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
                 criteria.setProjection(Projections.rowCount());
                 Long rowCount = new Long(0);

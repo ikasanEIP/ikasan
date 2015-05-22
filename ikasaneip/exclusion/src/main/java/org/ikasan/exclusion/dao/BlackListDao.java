@@ -40,77 +40,47 @@
  */
 package org.ikasan.exclusion.dao;
 
-import org.apache.log4j.Logger;
-import org.ikasan.exclusion.model.ExclusionEvent;
-
-import java.util.*;
-
 /**
- * List implementation of the ExclusionServiceDao.
+ * BlackList Data Access Contract.
  * @author Ikasan Development Team
  */
-public class ListExclusionServiceDao
-        implements ExclusionServiceDao<String,ExclusionEvent>
+public interface BlackListDao<IDENTIFIER,EVENT>
 {
-    /** logger instance */
-    private static Logger logger = Logger.getLogger(ListExclusionServiceDao.class);
-
-    /** actual exclusionEvent instances */
-    LinkedHashMap<String,ExclusionEvent> blackList;
+    /**
+     * Save the event as one to be excluded in future.
+     * @param event
+     */
+    public void insert(EVENT event);
 
     /**
-     * Constructor
-     * @param blackList
+     * Remove the event from excluded
+     * @param moduleName
+     * @param flowName
+     * @param identifier
+     * @return
      */
-    public ListExclusionServiceDao(LinkedHashMap<String,ExclusionEvent> blackList)
-    {
-        this.blackList = blackList;
-        if(blackList == null)
-        {
-            throw new IllegalArgumentException("backlist implementation cannot be 'null'");
-        }
-    }
+    public void delete(String moduleName, String flowName, IDENTIFIER identifier);
 
-    @Override
-    public void add(ExclusionEvent exclusionEvent)
-    {
-        this.blackList.put(exclusionEvent.getIdentifier(), exclusionEvent);
-    }
+    /**
+     * Is this event listed as excluded
+     * @param moduleName
+     * @param flowName
+     * @param identifier
+     * @return
+     */
+    public boolean contains(String moduleName, String flowName, IDENTIFIER identifier);
 
-    @Override
-    public void remove(String moduleName, String flowName, String identifier)
-    {
-        this.blackList.remove(identifier);
-    }
+    /**
+     * Is this event listed as excluded
+     * @param moduleName
+     * @param flowName
+     * @param identifier
+     * @return
+     */
+    public EVENT find(String moduleName, String flowName, IDENTIFIER identifier);
 
-    @Override
-    public boolean contains(String moduleName, String flowName, String identifier)
-    {
-        return this.blackList.containsKey(identifier);
-    }
-
-    @Override
-    public void deleteExpired()
-    {
-        List<String> expiredIdentifiers = new ArrayList<String>();
-
-        long expiryTime = System.currentTimeMillis();
-        for(Map.Entry<String,ExclusionEvent> entry:blackList.entrySet())
-        {
-            if(entry.getValue().getExpiry().longValue() < expiryTime)
-            {
-                expiredIdentifiers.add(entry.getKey());
-            }
-        }
-
-        for(String expiredIdentifier:expiredIdentifiers)
-        {
-            blackList.remove(expiredIdentifier);
-        }
-
-        if(logger.isDebugEnabled())
-        {
-            logger.info("Deleted expired blacklist events for identifiers[" + expiredIdentifiers + "]");
-        }
-    }
+    /**
+     * Support delete of expired exclusionEvents
+     */
+    public void deleteExpired();
 }

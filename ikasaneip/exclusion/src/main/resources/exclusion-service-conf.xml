@@ -8,7 +8,7 @@
         <constructor-arg ref="exclusionServiceDao"/>
     </bean>
 
-    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.ListExclusionServiceDao">
+    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.MapBlackListDao">
         <constructor-arg>
             <bean class="org.ikasan.exclusion.model.BlackListLinkedHashMap">
                 <constructor-arg value="25"/>  <!-- default max entries size -->
