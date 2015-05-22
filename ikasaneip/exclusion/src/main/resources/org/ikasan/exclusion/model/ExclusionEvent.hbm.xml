@@ -46,7 +46,7 @@
 -->
 <!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 
@@ -66,6 +66,11 @@
                   column="FlowName"
                   not-null="true" />
 
+        <property name="event"
+                  type="byte[]"
+                  column="Event"
+                  not-null="true" />
+
         <property name="timestamp"
                   type="long"
                   column="Timestamp"
@@ -75,6 +80,11 @@
                   type="long"
                   column="Expiry"
                   not-null="true" />
+
+        <property name="errorUri"
+                  type="java.lang.String"
+                  column="ErrorUri"
+                  not-null="false" />
     </class>
 
 </hibernate-mapping>

@@ -43,7 +43,7 @@ package org.ikasan.trigger.dao;
 import java.util.List;
 
 import org.ikasan.trigger.model.Trigger;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation for the <code>TriggerDao</code> interface

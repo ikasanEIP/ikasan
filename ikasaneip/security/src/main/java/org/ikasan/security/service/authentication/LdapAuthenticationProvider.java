@@ -40,36 +40,63 @@
  */
 package org.ikasan.security.service.authentication;
 
-import javax.naming.ldap.InitialLdapContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
+import org.ikasan.security.model.User;
+import org.ikasan.security.service.SecurityService;
+import org.ikasan.security.service.UserService;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
 
 /**
  * Custom Spring Security authentication provider which tries to bind to an LDAP server with the passed-in credentials;
- * of note, when used with the custom {@link LdapAuthenticatorImpl}, does <strong>not</strong> require an LDAP username
+ * of note, when used with the custom {@link LdapAuthenticatorImpl}, <strong>does<strong> require an LDAP username
  * and password for initial binding.
  * 
  * @author Ikasan Development Team
  */
 public class LdapAuthenticationProvider implements AuthenticationProvider
 {
-    
+	private static Logger logger = Logger.getLogger(LdapAuthenticationProvider.class);
+
     /** The authenticator we're going to authenticate with */
     private LdapAuthenticator authenticator;
+    private SecurityService securityService;
+    private UserService userService;
 
     /**
      * Constructor - Takes a UserService
      * @param userService
      */
-    public LdapAuthenticationProvider(BindAuthenticator authenticator)
+    public LdapAuthenticationProvider(BindAuthenticator authenticator,
+    		SecurityService securityService, UserService userService)
     {
         this.authenticator = authenticator;
+        if(this.authenticator == null)
+        {
+        	throw new IllegalArgumentException("authenticator cannot be null!");
+        }
+        this.securityService = securityService;
+        if(this.securityService == null)
+        {
+        	throw new IllegalArgumentException("securityService cannot be null!");
+        }
+        this.userService = userService;
+        if(this.userService == null)
+        {
+        	throw new IllegalArgumentException("userService cannot be null!");
+        }
     }
    
 
@@ -95,7 +122,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
      * @see org.springframework.security.providers.AuthenticationProvider#supports(java.lang.Class)
      */
     @Override
-    public boolean supports(Class clazz)
+    public boolean supports(Class<?> clazz)
     {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz));
     }
@@ -110,29 +137,37 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
         // Authenticate, using the passed-in credentials.
         DirContextOperations authAdapter = authenticator.authenticate(auth);
 
-        // Get the users role
-        String role = authAdapter.getStringAttribute("Role");
+		User user = this.userService.loadUserByUsername(auth.getName());
+		Set<IkasanPrincipal> principals = user.getPrincipals();
 
-//        LdapAuthenticationToken ldapAuth = new LdapAuthenticationToken(auth, role);
-//
-//        InitialLdapContext ldapContext = (InitialLdapContext) authAdapter.getObjectAttribute("ldapContext");
-//        if (ldapContext != null)
-//        {
-//            ldapAuth.setContext(ldapContext);
-//        }
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		
+		logger.info("Logging in user: " + user.getName());
 
-        String[] groups = authAdapter.getStringAttributes("memberOf");
+		for(IkasanPrincipal principal: principals)
+		{
+			Set<Role> roles = principal.getRoles();
+			
+			for(Role role: roles)
+			{
+				Set<Policy> policies = role.getPolicies();
+				
+				logger.info("User: " + user.getName() + " has role: " + role + " via association with principal: " + principal);
+				
+				for(Policy policy: policies)
+				{
+					logger.info("Attempting to add granted authority: " + policy);
+					
+					if(!authorities.contains(policy))
+					{
+						logger.info("Adding granted authority: " + policy);
+						authorities.add(policy);
+					}
+				}
+			}
+		}
 
-//        Object[] groups =  authAdapter.
-
-//        for(String group: groups)
-//        {
-//            System.out.println("Group: " + group);
-//        }
-//
-//        System.out.println("Role: " + role);
-
-        return new LdapAuthenticationToken();
+        return new IkasanAuthentication(true, user, authorities);
     }
 
 

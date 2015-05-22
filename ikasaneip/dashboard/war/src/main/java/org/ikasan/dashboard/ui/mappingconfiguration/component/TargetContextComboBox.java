@@ -1,14 +1,42 @@
 /*
- * $Id: TargetContextComboBox.java 40648 2014-11-07 11:12:53Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI/war/src/main/java/org/ikasan/mapping/configuration/ui/component/TargetContextComboBox.java $
+ * $Id$
+ * $URL$
  *
  * ====================================================================
+ * Ikasan Enterprise Integration Platform
  *
- * Copyright (c) 2000-2011 by Mizuho International plc.
- * All Rights Reserved.
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
  *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.component;
 
@@ -23,7 +51,7 @@ import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.ui.ComboBox;
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  *
  */
 public class TargetContextComboBox extends ComboBox implements Refreshable, FocusListener
@@ -34,15 +62,17 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
     private String clientName = null;
     private String type = null;
     private String sourceContext = null;
+    private boolean isFocusRefreshable;
 
     /**
      * Constructor
      * 
      * @param mappingConfigurationService
      */
-    public TargetContextComboBox(MappingConfigurationService mappingConfigurationService)
+    public TargetContextComboBox(MappingConfigurationService mappingConfigurationService, boolean isFocusRefreshable)
     {
         this.mappingConfigurationService = mappingConfigurationService;
+        this.isFocusRefreshable = isFocusRefreshable;
         this.init();
     }
 
@@ -53,13 +83,13 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
     protected void init()
     {
         this.setWidth(140, Unit.PIXELS);
-        loadContextValues();
+//        loadContextValues();
     }
 
     /**
      * Helper method to load context values.
      */
-    private void loadContextValues()
+    public void loadContextValues()
     {
         List<ConfigurationContext> contexts = this.mappingConfigurationService.getAllConfigurationContexts();
 
@@ -123,6 +153,9 @@ public class TargetContextComboBox extends ComboBox implements Refreshable, Focu
     @Override
     public void focus(FocusEvent event)
     {
-        this.refresh(this.clientName, this.type, this.sourceContext);
+    	if(this.isFocusRefreshable)
+    	{
+    		this.refresh(this.clientName, this.type, this.sourceContext);
+    	}
     }
 }

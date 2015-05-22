@@ -26,7 +26,7 @@
 	 	
   	.v-panel .v-panel-caption {
  		background: transparent;
- 		font-family: 'Trebuchet MS';
+ 		font-family: 'Calibri';
   		color: #99141B;
   		font-size: 12px;
   		text-decoration: none;
@@ -62,13 +62,13 @@
 	}
 	
 	.v-panel-content .v-label {
-		font-family: 'Trebuchet MS';
+		font-family: 'Calibri';
 		color:#666;
 		font-size:11px;
 	}
 	
 	.v-caption-ikasan {
-        font-family: 'Trebuchet MS';
+        font-family: 'Calibri';
         color:#666;
         font-size:11px;
     }
@@ -86,7 +86,7 @@
 	}
 
     .v-label-ikasan-maroon {
-        font-family: 'Trebuchet MS';
+        font-family: 'Calibri';
         color: #99141B;
         font-size: 18px;
         font-weight: bold;
@@ -120,22 +120,22 @@
     .v-popupview-popup textarea.v-textarea, .v-filterselect-suggestpopup,
     .v-datefield-popup, .v-contextmenu, .v-notification, .v-menubar-submenu,
     .v-drag-element, .v-customoverlay, .v-button-link .v-button-caption {
-      font-family: 'Trebuchet MS';
+      font-family: 'Calibri';
       font-size:11px;
     }
 
     input[type="text"] {
-      font-family: 'Trebuchet MS';
+      font-family: 'Calibri';
       font-size:11px;
     }
 
     .v-table-cell-content-ikasan {
-      font-family: 'Trebuchet MS';
+      font-family: 'Calibri';
       font-size:11px;
     }
 
     textarea.v-textarea {
-        font-family: 'Trebuchet MS' !important;
+        font-family: 'Calibri' !important;
         font-size:11px !important;  
     }
     
@@ -156,4 +156,49 @@
         height: auto;
         padding: 2px;
     }
+    
+    .mytheme .v-menubar-ikasan {
+		height: 23px;
+		background: #3E3E3E repeat-x;
+		color: #fff;
+		text-shadow: rgba(0, 0, 0.1, 0) 0 0.8px 0;
+		padding: 0 8px;
+	}
+	
+	.mytheme .v-menubar .v-menubar-menuitem-ikasan {
+		padding: 3px 8px;
+		height: 17px;
+		line-height: 16px;
+	}
+	
+	.mytheme .v-menubar .v-menubar-menuitem-ikasan:hover {
+		color: #fff;
+	}
+	
+	.mytheme .v-menubar-submenu-ikasan {
+		background: #f8f8f9;
+		border: none;
+		border-radius: 3px;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		-o-border-radius: 3px;
+		overflow: hidden;
+		padding: 4px 0;
+	}
+	
+	.mytheme .v-menubar-submenu-ikasan .v-menubar-menuitem-ikasan {
+		padding: 1px 26px 1px 10px;
+		line-height: 16px;
+	}
+	
+	.mytheme .v-menubar-submenu-ikasan .v-menubar-menuitem-caption-ikasan .v-icon {
+		vertical-align: middle;
+	}
+	
+	.mytheme .v-menubar-ikasan .v-menubar-menuitem-selected-ikasan, .mytheme .v-menubar-submenu-ikasan .v-menubar-menuitem-selected-ikasan {
+		background: #3E3E3E repeat-x;
+		color: #fff;
+		text-shadow: 0 1px 0 #3E3E3E;
+	}
+    
 }

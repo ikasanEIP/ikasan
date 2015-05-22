@@ -5,21 +5,31 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="exclusionServiceFactory" class="org.ikasan.exclusion.service.ExclusionServiceFactory">
-        <constructor-arg ref="exclusionServiceDao"/>
+        <constructor-arg ref="exclusionServiceBlacklistDao"/>
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+        <constructor-arg ref="ikasanSerialiserFactory"/>
     </bean>
 
-    <bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.HibernateExclusionServiceDao">
-        <property name="sessionFactory">
-            <bean class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-                <property name="dataSource" ref="ikasan.xads" />
-                <property name="mappingResources">
-                    <list>
-                        <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
-                    </list>
-                </property>
-                <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    <bean id="exclusionServiceBlacklistDao" class="org.ikasan.exclusion.dao.MapBlackListDao">
+        <constructor-arg>
+            <bean class="org.ikasan.exclusion.model.BlackListLinkedHashMap">
+                <constructor-arg value="25"/>  <!-- default max entries size -->
             </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
+        <property name="sessionFactory" ref="exclusionEventHibernateSessionFactory"/>
+    </bean>
+
+    <bean id="exclusionEventHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
+            </list>
         </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
     </bean>
 
 </beans>

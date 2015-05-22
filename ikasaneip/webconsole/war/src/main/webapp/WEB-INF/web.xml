@@ -53,6 +53,10 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
             classpath:ikasan-datasource-conf.xml
+            classpath:ikasan-transaction-conf.xml
+            classpath:ikasan-transaction-manager-conf.xml
+            classpath:ikasan-transaction-pointcut-conf.xml
+            classpath:serialiser-service-conf.xml
             classpath:platform-service-conf.xml
             classpath:scheduler-service-conf.xml
             classpath:recoveryManager-service-conf.xml
@@ -60,6 +64,7 @@
             classpath:ikasan-module-bootstrap-conf.xml
             classpath:wiretap-service-conf.xml
             classpath:exclusion-service-conf.xml
+            classpath:error-reporting-service-conf.xml
             classpath:systemevent-service-conf.xml
             classpath:configuration-service-conf.xml
             /WEB-INF/security-service-conf.xml
@@ -87,6 +92,28 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <filter>
+        <filter-name>hibernateFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+        <init-param>
+            <param-name>sessionFactoryBeanName</param-name>
+            <param-value>securitySessionFactory</param-value>
+        </init-param>
+        <init-param>
+          <param-name>singleSession</param-name>
+          <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>flushMode</param-name>
+            <param-value>MANUAL</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>hibernateFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 	<servlet>
 		<servlet-name>springapp</servlet-name>

@@ -42,14 +42,17 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
+import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 
 /**
@@ -59,59 +62,39 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class HibernateSecurityDao extends HibernateDaoSupport implements SecurityDao
 {
 
-    /* (non-Javadoc)
+ 	/* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#addRole(com.mizuho.cmi2.security.model.Role)
      */
     @Override
-    public void saveOrUpdateRole(Role role) throws SecurityDaoException
+    public void saveOrUpdateRole(Role role)
     {
-        try
-        {
-            this.getHibernateTemplate().saveOrUpdate(role);
-        }
-        catch(DataAccessException e)
-        {
-            throw new SecurityDaoException(e);
-        }
+    	this.getHibernateTemplate().saveOrUpdate(role);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#addRole(com.mizuho.cmi2.security.model.Role)
      */
     @Override
-    public void saveOrUpdatePolicy(Policy policy) throws SecurityDaoException
+    public void saveOrUpdatePolicy(Policy policy)
     {
-        try
-        {
-            this.getHibernateTemplate().saveOrUpdate(policy);
-        }
-        catch(DataAccessException e)
-        {
-            throw new SecurityDaoException(e);
-        }
+    	this.getHibernateTemplate().saveOrUpdate(policy);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#addPrincipal(com.mizuho.cmi2.security.model.Principal)
      */
     @Override
-    public void saveOrUpdatePrincipal(IkasanPrincipal principal) throws SecurityDaoException
+    public void saveOrUpdatePrincipal(IkasanPrincipal principal)
     {
-        try
-        {
-            this.getHibernateTemplate().saveOrUpdate(principal);
-        }
-        catch(DataAccessException e)
-        {
-            throw new SecurityDaoException(e);
-        }
+    	this.getHibernateTemplate().saveOrUpdate(principal);
     }
 
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#getPrincipalByName(java.lang.String)
      */
-    @Override 
-    public IkasanPrincipal getPrincipalByName(String name) throws SecurityDaoException
+    @SuppressWarnings("unchecked")
+	@Override 
+    public IkasanPrincipal getPrincipalByName(String name)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
         criteria.add(Restrictions.eq("name", name));
@@ -125,7 +108,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Policy> getAllPolicies() throws SecurityDaoException
+    public List<Policy> getAllPolicies()
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
 
@@ -137,7 +120,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Role> getAllRoles() throws SecurityDaoException
+    public List<Role> getAllRoles()
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
 
@@ -149,7 +132,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<IkasanPrincipal> getAllPrincipals() throws SecurityDaoException
+    public List<IkasanPrincipal> getAllPrincipals()
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
 
@@ -159,8 +142,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#getPolicyByName(java.lang.String)
      */
-    @Override
-    public Policy getPolicyByName(String name) throws SecurityDaoException
+    @SuppressWarnings("unchecked")
+	@Override
+    public Policy getPolicyByName(String name)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
         criteria.add(Restrictions.eq("name", name));
@@ -172,8 +156,9 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
     /* (non-Javadoc)
      * @see com.mizuho.cmi2.security.dao.SecurityDao#getRoleByName(java.lang.String)
      */
-    @Override
-    public Role getRoleByName(String name) throws SecurityDaoException
+    @SuppressWarnings("unchecked")
+	@Override
+    public Role getRoleByName(String name)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(Role.class);
         criteria.add(Restrictions.eq("name", name));
@@ -186,7 +171,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
      * @see com.mizuho.cmi2.security.dao.SecurityDao#deleteRole(com.mizuho.cmi2.security.model.Role)
      */
     @Override
-    public void deleteRole(Role role) throws SecurityDaoException
+    public void deleteRole(Role role)
     {
         this.getHibernateTemplate().delete(role);
     }
@@ -195,7 +180,7 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
      * @see com.mizuho.cmi2.security.dao.SecurityDao#deletePolicy(com.mizuho.cmi2.security.model.Policy)
      */
     @Override
-    public void deletePolicy(Policy policy) throws SecurityDaoException
+    public void deletePolicy(Policy policy)
     {
         this.getHibernateTemplate().delete(policy);
     }
@@ -204,8 +189,148 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
      * @see com.mizuho.cmi2.security.dao.SecurityDao#deletePrincipal(com.mizuho.cmi2.security.model.Principal)
      */
     @Override
-    public void deletePrincipal(IkasanPrincipal principal) throws SecurityDaoException
+    public void deletePrincipal(IkasanPrincipal principal)
     {
         this.getHibernateTemplate().delete(principal);
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateAuthenticationMethod(org.ikasan.security.model.AuthenticationMethod)
+	 */
+	@Override
+	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
+	{
+		this.getHibernateTemplate().saveOrUpdate(authenticationMethod);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethod(java.lang.Long)
+	 */
+	@Override
+	public AuthenticationMethod getAuthenticationMethod(Long id)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(AuthenticationMethod.class);
+        criteria.add(Restrictions.eq("id", id));
+        @SuppressWarnings("unchecked")
+		AuthenticationMethod authenticationMethod = (AuthenticationMethod) DataAccessUtils
+        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+        return authenticationMethod;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAllPrincipalsWithRole(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
+	{
+		 DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
+		 criteria.createCriteria("roles").add(Restrictions.eq("name", roleName));
+
+	     return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getPrincipalsByName(java.util.List)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(IkasanPrincipal.class);
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.createCriteria("roles").add(Restrictions.in("name", names));
+
+	    return (List<IkasanPrincipal>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getPrincipalByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<IkasanPrincipal> getPrincipalByNameLike(String name)
+	{
+		@SuppressWarnings("unchecked")
+		List<IkasanPrincipal> results = (List<IkasanPrincipal>) getHibernateTemplate().find("from IkasanPrincipal where name LIKE ?", name + '%');
+
+        return results;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAllPolicyLinkTypes()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PolicyLinkType> getAllPolicyLinkTypes()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(PolicyLinkType.class);
+
+	    return (List<PolicyLinkType>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getPolicyByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<Policy> getPolicyByNameLike(String name)
+	{
+		@SuppressWarnings("unchecked")
+		List<Policy> results = (List<Policy>) getHibernateTemplate().find("from Policy where name LIKE ?", name + '%');
+
+        return results;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getRoleByNameLike(java.lang.String)
+	 */
+	@Override
+	public List<Role> getRoleByNameLike(String name)
+	{
+		@SuppressWarnings("unchecked")
+		List<Role> results = (List<Role>) getHibernateTemplate().find("from Role where name LIKE ?", name + '%');
+
+        return results;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLink(org.ikasan.security.model.PolicyLink)
+	 */
+	@Override
+	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
+	{
+		this.getHibernateTemplate().saveOrUpdate(policyLink);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLinkType(org.ikasan.security.model.PolicyLinkType)
+	 */
+	@Override
+	public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType)
+	{
+		this.getHibernateTemplate().saveOrUpdate(policyLinkType);	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#deletePolicyLink(org.ikasan.security.model.PolicyLink)
+	 */
+	@Override
+	public void deletePolicyLink(PolicyLink policyLink)
+	{
+		this.getHibernateTemplate().delete(policyLink);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.security.dao.SecurityDao#getAllPoliciessWithRole(java.lang.String)
+	 */
+	@Override
+	public List<Policy> getAllPoliciesWithRole(String roleName)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(Policy.class);
+		 criteria.createCriteria("roles").add(Restrictions.eq("name", roleName));
+
+	     return (List<Policy>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	
 }

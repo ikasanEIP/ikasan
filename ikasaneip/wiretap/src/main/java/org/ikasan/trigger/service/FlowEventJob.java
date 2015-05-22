@@ -40,10 +40,10 @@
  */
 package org.ikasan.trigger.service;
 
+import org.ikasan.spec.flow.FlowEvent;
+
 import java.util.List;
 import java.util.Map;
-
-import org.ikasan.spec.flow.FlowEvent;
 
 
 /**

@@ -56,7 +56,7 @@ public interface SystemEventDao {
 	/**
 	 * Persists a new system event
 	 * 
-	 * @param systemFlowEvent
+	 * @param systemEvent
 	 */
 	public void save(SystemEvent systemEvent);
 
