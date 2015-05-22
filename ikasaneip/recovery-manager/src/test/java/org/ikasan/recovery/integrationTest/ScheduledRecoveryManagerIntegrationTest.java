@@ -544,6 +544,11 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
+        public void park(Object o) {
+
+        }
+
+        @Override
         public void removeBlacklisted(Object o) {
 
         }

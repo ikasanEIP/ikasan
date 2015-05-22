@@ -58,6 +58,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/exclusion-service-conf.xml",
+        "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
         })
 
@@ -75,12 +76,12 @@ public class MapBlackListDaoTest
         BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456", "errorUri");
         Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456"));
 
-        blackListDao.add(blackListEvent);
+        blackListDao.insert(blackListEvent);
         Assert.assertTrue("Should be found", blackListDao.contains("moduleName", "flowName", "123456"));
 
         Assert.assertTrue("Should match", blackListEvent.equals(blackListDao.find("moduleName", "flowName", "123456")));
 
-        blackListDao.remove("moduleName", "flowName", "123456");
+        blackListDao.delete("moduleName", "flowName", "123456");
         Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456"));
     }
 
@@ -99,8 +100,8 @@ public class MapBlackListDaoTest
         Assert.assertFalse("Non expired should not be found", blackListDao.contains("moduleName", "flowName", "123456") );
         Assert.assertFalse("Expired should not be found", blackListDao.contains("moduleName", "flowName", "1234567") );
 
-        blackListDao.add(blackListEvent);
-        blackListDao.add(blackListEventExpired);
+        blackListDao.insert(blackListEvent);
+        blackListDao.insert(blackListEventExpired);
         Assert.assertTrue("Non expired should be found", blackListDao.contains("moduleName", "flowName", "123456"));
         Assert.assertTrue("Expired should be found", blackListDao.contains("moduleName", "flowName", "1234567"));
 
@@ -120,19 +121,19 @@ public class MapBlackListDaoTest
 
         // new event with 1 milli expiry
         BlackListEvent blackListEvent1 = new BlackListEvent("moduleName", "flowName", "1234561", "errorUri");
-        exclusionServiceDao.add(blackListEvent1);
+        exclusionServiceDao.insert(blackListEvent1);
         BlackListEvent blackListEvent2 = new BlackListEvent("moduleName", "flowName", "1234562", "errorUri");
-        exclusionServiceDao.add(blackListEvent2);
+        exclusionServiceDao.insert(blackListEvent2);
         BlackListEvent blackListEvent3 = new BlackListEvent("moduleName", "flowName", "1234563", "errorUri");
-        exclusionServiceDao.add(blackListEvent3);
+        exclusionServiceDao.insert(blackListEvent3);
         BlackListEvent blackListEvent4 = new BlackListEvent("moduleName", "flowName", "1234564", "errorUri");
-        exclusionServiceDao.add(blackListEvent4);
+        exclusionServiceDao.insert(blackListEvent4);
         BlackListEvent blackListEvent5 = new BlackListEvent("moduleName", "flowName", "1234565", "errorUri");
-        exclusionServiceDao.add(blackListEvent5);
+        exclusionServiceDao.insert(blackListEvent5);
         BlackListEvent blackListEvent6 = new BlackListEvent("moduleName", "flowName", "1234566", "errorUri");
-        exclusionServiceDao.add(blackListEvent6);
+        exclusionServiceDao.insert(blackListEvent6);
         BlackListEvent blackListEvent7 = new BlackListEvent("moduleName", "flowName", "1234567", "errorUri");
-        exclusionServiceDao.add(blackListEvent7);
+        exclusionServiceDao.insert(blackListEvent7);
 
         Assert.assertFalse("blacklisted should not contain exclusionEvent1", exclusionServiceDao.contains("moduleName", "flowName", "1234561"));
         Assert.assertFalse("blacklisted should not contain exclusionEvent2", exclusionServiceDao.contains("moduleName", "flowName", "1234562"));

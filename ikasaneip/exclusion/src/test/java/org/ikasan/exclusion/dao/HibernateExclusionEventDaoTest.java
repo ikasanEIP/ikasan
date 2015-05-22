@@ -40,8 +40,8 @@
  */
 package org.ikasan.exclusion.dao;
 
-import junit.framework.Assert;
 import org.ikasan.exclusion.model.BlackListEvent;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -58,7 +58,7 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-        "/exclusion-hibernate-dao-conf.xml",
+        "/exclusion-service-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
     })
@@ -66,7 +66,7 @@ import javax.annotation.Resource;
 public class HibernateExclusionEventDaoTest
 {
     @Resource
-    BlackListDao<String,BlackListEvent> blackListDao;
+    BlackListDao<String,BlackListEvent> exclusionServiceBlacklistDao;
 
     /**
      * Test exclusion
@@ -75,14 +75,14 @@ public class HibernateExclusionEventDaoTest
     @Test
     public void test_contains_add_remove_operations()
     {
-        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456");
-        Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456") );
+        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456", "errorUri");
+        Assert.assertFalse("Should not be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123456"));
 
-        blackListDao.add(blackListEvent);
-        Assert.assertTrue("Should be found", blackListDao.contains("moduleName", "flowName", "123456"));
+        exclusionServiceBlacklistDao.insert(blackListEvent);
+        Assert.assertTrue("Should be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123456"));
 
-        blackListDao.remove("moduleName", "flowName", "123456");
-        Assert.assertFalse("Should not be found", blackListDao.contains("moduleName", "flowName", "123456"));
+        exclusionServiceBlacklistDao.delete("moduleName", "flowName", "123456");
+        Assert.assertFalse("Should not be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123456"));
     }
 
     /**
@@ -93,15 +93,15 @@ public class HibernateExclusionEventDaoTest
     public void test_deleteExpired_operation()
     {
         // new event with 1 milli expiry
-        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456");
-        BlackListEvent blackListEventExpired = new BlackListEvent("moduleName", "flowName", "1234567", 1L);
-        Assert.assertFalse("Non expired should not be found", blackListDao.contains("moduleName", "flowName", "123456") );
-        Assert.assertFalse("Expired should not be found", blackListDao.contains("moduleName", "flowName", "1234567") );
+        BlackListEvent blackListEvent = new BlackListEvent("moduleName", "flowName", "123456", "errorUri");
+        BlackListEvent blackListEventExpired = new BlackListEvent("moduleName", "flowName", "1234567", "errorUri", 1L);
+        Assert.assertFalse("Non expired should not be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123456") );
+        Assert.assertFalse("Expired should not be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "1234567") );
 
-        blackListDao.add(blackListEvent);
-        blackListDao.add(blackListEventExpired);
-        Assert.assertTrue("Non expired should be found", blackListDao.contains("moduleName", "flowName", "123456"));
-        Assert.assertTrue("Expired should be found", blackListDao.contains("moduleName", "flowName", "1234567"));
+        exclusionServiceBlacklistDao.insert(blackListEvent);
+        exclusionServiceBlacklistDao.insert(blackListEventExpired);
+        Assert.assertTrue("Non expired should be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertTrue("Expired should be found", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "1234567"));
 
         try
         {
@@ -112,8 +112,8 @@ public class HibernateExclusionEventDaoTest
             Assert.fail("sleep woken early!");
         }
 
-        blackListDao.deleteExpired();
-        Assert.assertTrue("Should be found after deleteAll", blackListDao.contains("moduleName", "flowName", "123456"));
-        Assert.assertFalse("Should not be found after deleteAll", blackListDao.contains("moduleName", "flowName", "123457"));
+        exclusionServiceBlacklistDao.deleteExpired();
+        Assert.assertTrue("Should be found after deleteAll", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123456"));
+        Assert.assertFalse("Should not be found after deleteAll", exclusionServiceBlacklistDao.contains("moduleName", "flowName", "123457"));
     }
 }

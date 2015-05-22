@@ -61,7 +61,6 @@ import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
-import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -111,6 +110,9 @@ public class FlowBuilder
 
 	/** configuration service */
 	ConfigurationService configurationService;
+
+    /** exclusion service factory */
+    ExclusionServiceFactory exclusionServiceFactory;
 
     /** exclusion service */
     ExclusionService exclusionService;
@@ -222,6 +224,18 @@ public class FlowBuilder
     public FlowBuilder withExclusionService(ExclusionService exclusionService)
     {
         this.exclusionService = exclusionService;
+        return this;
+    }
+
+    /**
+     * Override the default exclusion service factory
+     *
+     * @param exclusionServiceFactory
+     * @return
+     */
+    public FlowBuilder withExclusionServiceFactory(ExclusionServiceFactory exclusionServiceFactory)
+    {
+        this.exclusionServiceFactory = exclusionServiceFactory;
         return this;
     }
 
@@ -773,7 +787,12 @@ public class FlowBuilder
 
                 if (exclusionService == null)
                 {
-                    exclusionService = new ExclusionServiceFactory().getExclusionService(moduleName, name);
+                    if(exclusionServiceFactory == null)
+                    {
+                        throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
+                    }
+
+                    exclusionService = exclusionServiceFactory.getExclusionService(moduleName, name);
                 }
 
                 if (errorReportingService == null)

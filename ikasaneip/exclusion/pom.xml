@@ -143,7 +143,13 @@
           <scope>provided</scope>
       </dependency>
 
-    <!-- Test dependencies -->
+      <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-serialiser</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
+      <!-- Test dependencies -->
       <!-- logging -->
       <dependency>
           <groupId>commons-logging</groupId>
@@ -190,7 +196,7 @@
       <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-               <scope>test</scope>
+          <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -200,9 +206,9 @@
       </dependency>
 
       <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-all</artifactId>
+          <scope>test</scope>
       </dependency>
 
       <!-- Hibernate dependency -->
