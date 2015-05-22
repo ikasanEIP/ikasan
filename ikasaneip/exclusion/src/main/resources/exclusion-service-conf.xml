@@ -7,10 +7,8 @@
     <bean id="exclusionServiceFactory" class="org.ikasan.exclusion.service.ExclusionServiceFactory">
         <constructor-arg ref="exclusionServiceBlacklistDao"/>
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
-        <constructor-arg ref="serialiser"/>
+        <constructor-arg ref="ikasanSerialiserFactory"/>
     </bean>
-
-    <bean id="serialiser" factory-bean="ikasanSerialiserFactory" factory-method="getDefaultSerialiser" />
 
     <bean id="exclusionServiceBlacklistDao" class="org.ikasan.exclusion.dao.MapBlackListDao">
         <constructor-arg>

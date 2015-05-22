@@ -47,6 +47,7 @@ import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
  * ExclusionService Factory.
@@ -61,13 +62,13 @@ public class ExclusionServiceFactory
     /** exclusionEvent DAO handle */
     ExclusionEventDao exclusionEventDao;
 
-    /** handle to the serialiser */
-    Serialiser serialiser;
+    /** handle to the serialiserFactory */
+    SerialiserFactory serialiserFactory;
 
     /**
      * Constructor
      */
-    public ExclusionServiceFactory(BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, Serialiser serialiser)
+    public ExclusionServiceFactory(BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, SerialiserFactory serialiserFactory)
     {
         this.blackListDao = blackListDao;
         if(blackListDao == null)
@@ -81,10 +82,10 @@ public class ExclusionServiceFactory
             throw new IllegalArgumentException("exclusionEventDao cannot be 'null'");
         }
 
-        this.serialiser = serialiser;
-        if(serialiser == null)
+        this.serialiserFactory = serialiserFactory;
+        if(serialiserFactory == null)
         {
-            throw new IllegalArgumentException("serialiser cannot be 'null'");
+            throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
         }
     }
 
@@ -94,6 +95,6 @@ public class ExclusionServiceFactory
      */
     public ExclusionService getExclusionService(String moduleName, String flowName)
     {
-        return new ExclusionServiceDefaultImpl(moduleName, flowName, blackListDao, exclusionEventDao, serialiser);
+        return new ExclusionServiceDefaultImpl(moduleName, flowName, blackListDao, exclusionEventDao, serialiserFactory.getDefaultSerialiser());
     }
 }

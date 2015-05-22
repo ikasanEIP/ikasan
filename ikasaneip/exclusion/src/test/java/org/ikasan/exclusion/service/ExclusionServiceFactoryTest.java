@@ -43,6 +43,7 @@ package org.ikasan.exclusion.service;
 import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
@@ -83,7 +84,7 @@ public class ExclusionServiceFactoryTest
     ExclusionEventDao exclusionEventDao;
 
     @Resource
-    Serialiser serialiser;
+    SerialiserFactory serialiserFactory;
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_blacklist_dao()
@@ -109,7 +110,7 @@ public class ExclusionServiceFactoryTest
     @Test
     public void test_exclusionServiceFactory_operations()
     {
-        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(blackListDao, exclusionEventDao, serialiser);
+        ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(blackListDao, exclusionEventDao, serialiserFactory);
         Assert.assertNotNull("Should not be null", exclusionServiceFactory.getExclusionService("moduleName", "flowName"));
         this.mockery.assertIsSatisfied();
     }

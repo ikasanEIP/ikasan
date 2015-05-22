@@ -24,8 +24,10 @@
 		        <ref bean="errorReportingSessionFactory"/>
 		    </property>
 		</bean>
-		
-		<aop:config>
+
+    <bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl"/>
+
+    <aop:config>
             <aop:pointcut id="daoMethods" expression="execution(* org.ikasan.error.reporting.dao.ErrorReportingServiceDao.*(..))"/>
             <aop:pointcut id="serviceMethods" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.*(..))"/>
 
