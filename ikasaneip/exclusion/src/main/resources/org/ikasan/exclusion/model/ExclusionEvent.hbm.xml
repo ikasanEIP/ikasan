@@ -50,7 +50,7 @@
 
 <hibernate-mapping>
 
-    <class name="org.ikasan.exclusion.model.BlackListEvent" table="ExclusionEvent">
+    <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
 
         <id name="identifier" type="java.lang.String" column="Identifier">
             <generator class="assigned" />

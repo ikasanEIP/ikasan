@@ -518,7 +518,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             if(this.exclusionService.isBlackListed(event))
             {
                 this.exclusionService.park(event);
-                //invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
+                invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 this.exclusionService.removeBlacklisted(event);
             }
             else

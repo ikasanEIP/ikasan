@@ -21,11 +21,13 @@
        
        <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		    <property name="sessionFactory">
-		        <ref bean="exclusionSessionFactory"/>
+		        <ref bean="exclusionEventHibernateSessionFactory"/>
 		    </property>
 		</bean>
-		
-		<aop:config>
+
+    <bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl"/>
+
+    <aop:config>
 	        <aop:pointcut id="daoMethods"
 	                expression="execution(* org.ikasan.exclusion.dao.BlackListDao.*(..))"/>
 	        <aop:pointcut id="serviceMethods"

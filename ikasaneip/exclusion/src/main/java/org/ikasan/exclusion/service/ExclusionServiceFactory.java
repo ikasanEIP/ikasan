@@ -44,6 +44,7 @@ import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.exclusion.dao.MapBlackListDao;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
+import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.serialiser.Serialiser;
 
@@ -62,14 +63,6 @@ public class ExclusionServiceFactory
 
     /** handle to the serialiser */
     Serialiser serialiser;
-
-    /**
-     * Constructor
-     */
-    public ExclusionServiceFactory()
-    {
-        this.blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(25) );
-    }
 
     /**
      * Constructor

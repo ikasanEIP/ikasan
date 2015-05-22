@@ -40,20 +40,22 @@
  */
 package org.ikasan.exclusion.service;
 
-import junit.framework.Assert;
 import org.ikasan.exclusion.dao.BlackListDao;
-import org.ikasan.exclusion.dao.MapBlackListDao;
-import org.ikasan.exclusion.model.BlackListLinkedHashMap;
+import org.ikasan.exclusion.dao.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.serialiser.Serialiser;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
  * Test class for ExclusionServiceDefaultImpl based on
@@ -65,6 +67,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/exclusion-service-conf.xml",
+        "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
         })
 
@@ -80,24 +83,43 @@ public class ExclusionServiceDefaultImplTest
 
     FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
 
-    BlackListDao blackListDao = new MapBlackListDao( new BlackListLinkedHashMap(2) );
+    @Resource
+    BlackListDao exclusionServiceBlacklistDao;
+
+    @Resource
+    ExclusionEventDao exclusionServiceExclusionEventDao;
+
+    @Resource
+    Serialiser serialiser;
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_moduleName()
     {
-        new ExclusionServiceDefaultImpl(null, null, null);
+        new ExclusionServiceDefaultImpl(null, null, null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_flowName()
     {
-        new ExclusionServiceDefaultImpl("moduleName", null, null);
+        new ExclusionServiceDefaultImpl("moduleName", null, null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_dao()
+    public void test_failed_constructor_null_blacklist_dao()
     {
-        new ExclusionServiceDefaultImpl("moduleName", "flowName", null);
+        new ExclusionServiceDefaultImpl("moduleName", "flowName", null, null, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructor_null_exclusionEvent_dao()
+    {
+        new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, null, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_constructor_null_serialiser()
+    {
+        new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, null);
     }
 
     /**
@@ -107,7 +129,7 @@ public class ExclusionServiceDefaultImplTest
     @Test
     public void test_exclusionService_operations()
     {
-        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", blackListDao);
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiser);
 
         // expectations
         mockery.checking(new Expectations()
@@ -160,7 +182,7 @@ public class ExclusionServiceDefaultImplTest
     @Test
     public void test_exclusionService_housekeep()
     {
-        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", blackListDao);
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiser);
         exclusionService.setTimeToLive(-1L);
 
         // expectations

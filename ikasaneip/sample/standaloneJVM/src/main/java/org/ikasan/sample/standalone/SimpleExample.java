@@ -47,6 +47,7 @@ import org.ikasan.sample.component.converter.SimpleConverter;
 import org.ikasan.sample.component.producer.SimpleProducer;
 import org.ikasan.sample.component.router.SimpleRouter;
 import org.ikasan.sample.flow.listener.SimpleFlowListener;
+import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.module.Module;
 
 /**
@@ -68,7 +69,7 @@ public class SimpleExample
     public Module createModule(String moduleName)
     {
         return ModuleBuilder.newModule(moduleName)
-                .addFlow(FlowBuilder.newFlow("flowName", moduleName).withDescription("Simple Module Example")
+                .addFlow(FlowBuilder.newFlow("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService())
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
                         .singleRecipientRouter("routerName", new SimpleRouter())
@@ -76,5 +77,42 @@ public class SimpleExample
                         .otherise().publisher("evenValuePublisher", new SimpleProducer())
                         .build())
             .build();
+    }
+
+    /**
+     * Stub out a dummy exclusion service to use for this module sample.
+     */
+    class StubbedExclusionService implements ExclusionService
+    {
+
+        @Override
+        public boolean isBlackListed(Object o) {
+            return false;
+        }
+
+        @Override
+        public void addBlacklisted(Object o, String uri) {
+
+        }
+
+        @Override
+        public void park(Object o) {
+
+        }
+
+        @Override
+        public void removeBlacklisted(Object o) {
+
+        }
+
+        @Override
+        public void setTimeToLive(Long timeToLive) {
+
+        }
+
+        @Override
+        public void housekeep() {
+
+        }
     }
 }

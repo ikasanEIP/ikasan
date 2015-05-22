@@ -253,6 +253,11 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
         if(exclusionService == null)
         {
+            if(this.exclusionServiceFactory == null)
+            {
+                throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
+            }
+
             exclusionService = this.exclusionServiceFactory.getExclusionService(moduleName, name);
         }
 
@@ -333,11 +338,6 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.configurationService = applicationContext.getBean(ConfigurationService.class);
         this.recoveryManagerFactory = applicationContext.getBean(RecoveryManagerFactory.class);
         this.exclusionServiceFactory = applicationContext.getBean(ExclusionServiceFactory.class);
-        if(this.exclusionServiceFactory == null)
-        {
-            this.exclusionServiceFactory = new ExclusionServiceFactory();
-        }
-
         this.errorReportingServiceFactory = applicationContext.getBean(ErrorReportingServiceFactory.class);
         this.errorReportingService = applicationContext.getBean(ErrorReportingService.class);
         this.flowEventListener = applicationContext.getBean(FlowEventListener.class);

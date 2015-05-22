@@ -123,11 +123,10 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+					Identifier VARCHAR(255) NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					)
@@ -243,7 +242,6 @@
 					ConfigurationParameter(ConfigurationIdentifier, PositionRef)
 				</prop>
 
-				<!-- TODO add other dao tables -->
 				<prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
 					(
 					Id NUMERIC NOT NULL,
@@ -1056,11 +1054,10 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+					Identifier VARCHAR(255) NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					)
@@ -1194,7 +1191,6 @@
 					ConfigurationParameter(ConfigurationIdentifier, PositionRef)
 				</prop>
 
-				<!-- TODO add other dao tables -->
 				<prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
 					(
 					Id NUMERIC NOT NULL,
@@ -2038,6 +2034,7 @@
                     [Identifier]            [varchar](255) NOT NULL,
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
+                    [Event]                 [binary] NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     [Expiry]                [numeric] NOT NULL,
                     CONSTRAINT              [PK_ExclusionEvent_Module_Flow_Id] PRIMARY KEY CLUSTERED
@@ -3139,11 +3136,10 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+					Identifier VARCHAR(255) NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					);
