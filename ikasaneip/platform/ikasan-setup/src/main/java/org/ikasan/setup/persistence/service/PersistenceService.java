@@ -68,4 +68,11 @@ public interface PersistenceService
      * Create the default administration account and associated dependencies
      */
     public void createAdminAccount();
+
+    /**
+     * Method to confirm that the Users, Authorities and UsersAuthorities tables
+     * exist in the underlying data store.
+     * @return boolean
+     */
+    public boolean userTablesExist();
 }

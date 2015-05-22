@@ -40,13 +40,14 @@
  */
 package org.ikasan.console.module.dao;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.ikasan.console.module.Module;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
  * Hibernate implementation of the <code>ModuleDao</code>
@@ -75,7 +76,7 @@ public class HibernateModuleDao extends HibernateDaoSupport implements ModuleDao
     public Set<Module> findAllModules()
     {
         Set<Module> modules = new LinkedHashSet<Module>();
-        modules.addAll(getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(Module.class).addOrder(Order.asc("name"))));
+        modules.addAll((Collection<? extends Module>) getHibernateTemplate().findByCriteria(DetachedCriteria.forClass(Module.class).addOrder(Order.asc("name"))));
         return modules;
     }
 
@@ -85,7 +86,7 @@ public class HibernateModuleDao extends HibernateDaoSupport implements ModuleDao
     public Set<Module> findModules(Set<Long> modulesIds)
     {
         Set<Module> modules = new LinkedHashSet<Module>();
-        modules.addAll(getHibernateTemplate().findByNamedParam(MODULES_BY_ID, "ids", modulesIds));
+        modules.addAll((Collection<? extends Module>) getHibernateTemplate().findByNamedParam(MODULES_BY_ID, "ids", modulesIds));
         return modules;
     }
     

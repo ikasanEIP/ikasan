@@ -1,14 +1,42 @@
-/*
- * $Id: MappingConfigurationPanel.java 40648 2014-11-07 11:12:53Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/mappingConfigurationUI/war/src/main/java/org/ikasan/mapping/configuration/ui/panel/MappingConfigurationPanel.java $
+ /*
+ * $Id$
+ * $URL$
  *
  * ====================================================================
+ * Ikasan Enterprise Integration Platform
  *
- * Copyright (c) 2000-2011 by Mizuho International plc.
- * All Rights Reserved.
+ * Distributed under the Modified BSD License.
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
  *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
  */
 package org.ikasan.dashboard.ui.mappingconfiguration.panel;
 
@@ -24,7 +52,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.group.FunctionalGroup;
 import org.ikasan.dashboard.ui.framework.util.SaveRequiredMonitor;
-import org.ikasan.dashboard.ui.framework.util.UserDetailsHelper;
 import org.ikasan.dashboard.ui.framework.validator.LongValidator;
 import org.ikasan.dashboard.ui.framework.window.IkasanMessageDialog;
 import org.ikasan.dashboard.ui.mappingconfiguration.action.RemoveAllItemsAction;
@@ -42,8 +69,10 @@ import org.ikasan.mapping.model.ConfigurationServiceClient;
 import org.ikasan.mapping.model.ConfigurationType;
 import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
+import org.ikasan.mapping.model.PlatformConfiguration;
 import org.ikasan.mapping.service.MappingConfigurationService;
 import org.ikasan.mapping.service.MappingConfigurationServiceException;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.util.BeanItem;
@@ -72,7 +101,7 @@ import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.themes.Reindeer;
 
 /**
- * @author CMI2 Development Team
+ * @author Ikasan Development Team
  *
  */
 public class MappingConfigurationPanel extends Panel implements View
@@ -550,8 +579,8 @@ public class MappingConfigurationPanel extends Panel implements View
      */
     public void save() throws InvalidValueException, Exception
     {
-        UserDetailsHelper userDetailHelper = (UserDetailsHelper)VaadinService.getCurrentRequest().getWrappedSession()
-            .getAttribute(MappingConfigurationUISessionValueConstants.USER);
+    	IkasanAuthentication principal = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+                .getAttribute(MappingConfigurationUISessionValueConstants.USER);
 
         try 
         {
@@ -583,6 +612,9 @@ public class MappingConfigurationPanel extends Panel implements View
                 throw e;
             }
 
+            logger.info("this.parameterQueryTextFields.size() = " + this.parameterQueryTextFields.size());
+            logger.info("this.mappingConfiguration.getNumberOfParams() = " + this.mappingConfiguration.getNumberOfParams());
+            
             if(this.parameterQueryTextFields.size() != this.mappingConfiguration.getNumberOfParams())
             {
                 throw new Exception("You must define the key location queries!");
@@ -606,7 +638,7 @@ public class MappingConfigurationPanel extends Panel implements View
 
             try
             {
-                logger.info("User: " + userDetailHelper.getUserDetails().getUsername() + " saving Mapping Configuration: " +
+                logger.info("User: " + principal.getName() + " saving Mapping Configuration: " +
                 		this.mappingConfiguration);
                 this.mappingConfigurationService.saveMappingConfiguration(this.mappingConfiguration);
             }
@@ -621,7 +653,7 @@ public class MappingConfigurationPanel extends Panel implements View
             {
                 query.setMappingConfigurationId(this.mappingConfiguration.getId());
 
-                logger.info("User: " + userDetailHelper.getUserDetails().getUsername() + " saving Key Location Query: " +
+                logger.info("User: " + principal.getName() + " saving Key Location Query: " +
                         query);
                 this.mappingConfigurationService.saveKeyLocationQuery(query);
             }
@@ -655,7 +687,13 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true);
+        PlatformConfiguration platformConfiguration 
+    		= this.mappingConfigurationService.getPlatformConfigurationByName("mappingValuesExportSchemaLocation");
+        
+        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+
+        String exportXml = this.mappingConfigurationValuesExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration, true,
+        		platformConfiguration.getValue());
 
         out.write(exportXml.getBytes());
 
@@ -672,8 +710,13 @@ public class MappingConfigurationPanel extends Panel implements View
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
+        PlatformConfiguration platformConfiguration 
+        	= this.mappingConfigurationService.getPlatformConfigurationByName("mappingExportSchemaLocation");
+
+        logger.info("Resolved PlatformConfiguration " + platformConfiguration);
+        
         String exportXml = this.mappingConfigurationExportHelper.getMappingConfigurationExportXml(this.mappingConfiguration
-            , this.keyLocationQueries);
+            , this.keyLocationQueries, platformConfiguration.getValue());
 
         out.write(exportXml.getBytes());
 
@@ -694,6 +737,8 @@ public class MappingConfigurationPanel extends Panel implements View
         this.numberOfParametersTextField.setReadOnly(false);
 
         BeanItem<MappingConfiguration> mappingConfigurationItem = new BeanItem<MappingConfiguration>(this.mappingConfiguration);
+        
+        logger.info("Attempting to populate form with mapping configuration: " + this.mappingConfiguration);
 
         this.clientComboBox.setValue(this.mappingConfiguration.getConfigurationServiceClient());
         this.typeComboBox.setValue(mappingConfiguration.getConfigurationType());
@@ -741,6 +786,10 @@ public class MappingConfigurationPanel extends Panel implements View
     @Override
     public void enter(ViewChangeEvent event)
     {
+    	this.clientComboBox.loadClientSelectValues();
+    	this.sourceContextComboBox.loadContextValues();
+    	this.targetContextComboBox.loadContextValues();
+    	this.typeComboBox.loadClientTypeValues();
     }
 
     /**

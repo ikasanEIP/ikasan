@@ -42,8 +42,11 @@ package org.ikasan.security.service;
 
 import java.util.List;
 
-import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.PolicyLink;
+import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 
 
@@ -55,12 +58,11 @@ public interface SecurityService
 {
     /**
      * 
-     * @param username
-     * @param password
+     * @param name
      * @return
      * @throws SecurityServiceException
      */
-    public IkasanPrincipal login(String username, String password) throws SecurityServiceException;
+    public IkasanPrincipal findPrincipalByName(String name);
 
     /**
      * 
@@ -68,7 +70,15 @@ public interface SecurityService
      * @return
      * @throws SecurityServiceException
      */
-    public IkasanPrincipal findPrincipalByName(String name) throws SecurityServiceException;
+    public Role findRoleByName(String name);
+    
+    /**
+     * 
+     * @param name
+     * @return
+     * @throws SecurityServiceException
+     */
+    public Policy findPolicyByName(String name);
 
     /**
      * 
@@ -77,28 +87,42 @@ public interface SecurityService
      * @return
      * @throws SecurityServiceException
      */
-    public IkasanPrincipal createNewPrincipal(String name, String type) throws SecurityServiceException;
+    public IkasanPrincipal createNewPrincipal(String name, String type);
 
     /**
      * 
      * @param principal
      * @throws SecurityServiceException
      */
-    public void savePrincipal(IkasanPrincipal principal) throws SecurityServiceException;
+    public void savePrincipal(IkasanPrincipal principal);
 
     /**
      * 
      * @return
      * @throws SecurityServiceException
      */
-    public List<IkasanPrincipal> getAllPrincipals() throws SecurityServiceException;
+    public List<IkasanPrincipal> getAllPrincipals();
+
+    /**
+     * 
+     * @return
+     * @throws SecurityDaoException
+     */
+    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<IkasanPrincipal> getPrincipalsByName(List<String> names);
 
     /**
      * 
      * @param principal
      * @throws SecurityServiceException
      */
-    public void deletePrincipal(IkasanPrincipal principal) throws SecurityServiceException;
+    public void deletePrincipal(IkasanPrincipal principal);
 
     /**
      * 
@@ -106,28 +130,28 @@ public interface SecurityService
      * @return
      * @throws SecurityServiceException
      */
-    public Role createNewRole(String name, String description) throws SecurityServiceException;
+    public Role createNewRole(String name, String description);
 
     /**
      * 
      * @param role
      * @throws SecurityServiceException
      */
-    public void saveRole(Role role) throws SecurityServiceException;
+    public void saveRole(Role role);
 
     /**
      * 
      * @param role
      * @throws SecurityServiceException
      */
-    public void deleteRole(Role role) throws SecurityServiceException;
+    public void deleteRole(Role role);
 
     /**
      * 
      * @return
      * @throws SecurityServiceException
      */
-    public List<Role> getAllRoles() throws SecurityServiceException;
+    public List<Role> getAllRoles();
 
     /**
      * 
@@ -135,26 +159,87 @@ public interface SecurityService
      * @return
      * @throws SecurityServiceException
      */
-    public Policy createNewPolicy(String name, String description) throws SecurityServiceException;
+    public Policy createNewPolicy(String name, String description);
 
     /**
      * 
      * @param policy
      * @throws SecurityServiceException
      */
-    public void savePolicy(Policy policy) throws SecurityServiceException;
+    public void savePolicy(Policy policy);
 
     /**
      * 
      * @param policy
      * @throws SecurityServiceException
      */
-    public void deletePolicy(Policy policy)  throws SecurityServiceException;
+    public void deletePolicy(Policy policy);
 
     /**
      * 
      * @return
      * @throws SecurityServiceException
      */
-    public List<Policy> getAllPolicies() throws SecurityServiceException;
+    public List<Policy> getAllPolicies();
+
+    /**
+     * 
+     * @param authenticationMethod
+     * @throws SecurityDaoException
+     */
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
+
+    /**
+     * 
+     * @param id
+     * @return
+     * @throws SecurityDaoException
+     */
+    public AuthenticationMethod getAuthenticationMethod();
+
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<IkasanPrincipal> getPrincipalByNameLike(String name);
+    
+    /**
+     * 
+     * @return
+     */
+    public List<PolicyLinkType> getAllPolicyLinkTypes();
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<Policy> getPolicyByNameLike(String name);
+    
+    /**
+     * 
+     * @param policyLink
+     */
+    public void savePolicyLink(PolicyLink policyLink);
+    
+    /**
+     * 
+     * @param policyLink
+     */
+    public void deletePolicyLink(PolicyLink policyLink);
+    
+    /**
+     * 
+     * @return
+     */
+    public List<Policy> getAllPoliciesWithRole(String roleName);
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public List<Role> getRoleByNameLike(String name);
 }
+

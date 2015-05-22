@@ -37,6 +37,12 @@
               <scope>provided</scope>
         </dependency>
 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			 <scope>provided</scope>
+		</dependency>
+		
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
@@ -50,17 +56,33 @@
               <scope>test</scope>
         </dependency>
 
-
-
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+       <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
               <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
         </dependency>
 

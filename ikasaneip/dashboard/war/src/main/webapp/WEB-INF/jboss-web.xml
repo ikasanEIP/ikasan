@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jboss-web>
-    <context-root>ikasan-dashboard</context-root>
+<jboss-web version="7.2" xmlns="http://www.jboss.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee schema/jboss-web_7_2.xsd">
+	<context-root>ikasan-dashboard</context-root>
 </jboss-web>

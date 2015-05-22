@@ -55,8 +55,23 @@
 				<prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
 				<prop key="drop.version">DROP TABLE Version;</prop>
 				<prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
 				<prop key="drop.filter">DROP TABLE MessageFilter;</prop>
 				<prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+				<prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
+				<prop key="drop.principalRole">DROP TABLE PrincipalRole;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityPolicy;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityRole;</prop>
+				<prop key="drop.securityPrincipal">DROP TABLE SecurityPrincipal;</prop>
+				<prop key="drop.mappingKeyLocationQuery">DROP TABLE MCSKeyLocationQuery;</prop>
+				<prop key="drop.mappingConfiguration">DROP TABLE MCSConfigurationConfiguration;</prop>
+				<prop key="drop.mappingConfigurationClient">DROP TABLE MCSConfigurationClient;</prop>
+				<prop key="drop.mappingConfigurationContext">DROP TABLE MCSConfigurationContext;</prop>
+				<prop key="drop.mappingConfigurationType">DROP TABLE MCSConfigurationType;</prop>			
+				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
+				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
+				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
+
 				<!--prop key="driver">com.sybase.jdbc4.jdbc.SybDataSource</prop -->
 				<!--prop key="url">jdbc:sybase:Tds:HOSTNAME:PORT/DATABASE</prop -->
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
@@ -108,11 +123,10 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+					Identifier VARCHAR(255) NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					)
@@ -124,7 +138,29 @@
 					ExclusionEvent(ModuleName,FlowName,Identifier)
 				</prop>
 
-				<prop key="create.version">CREATE TABLE Version
+                <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
+                    (
+                    Uri VARCHAR(255) NOT NULL,
+                    ModuleName VARCHAR(255) NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    FlowElementName VARCHAR(255) NOT NULL,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(255) NULL,
+                    EventRelatedIdentifier VARCHAR(255) NULL,
+                    Action VARCHAR(255) NULL,
+                    Event BINARY NULL,
+                    Timestamp NUMERIC DEFAULT 0 NOT NULL,
+                    Expiry NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX
+                    IkasanErrorOccurrence01u ON
+                    ErrorOccurrence(ModuleName,FlowName,FlowElementName,Uri,Timestamp)
+                </prop>
+
+                <prop key="create.version">CREATE TABLE Version
 					(
 					Id NUMERIC IDENTITY NOT NULL,
 					Component VARCHAR(256) NOT NULL UNIQUE,
@@ -206,7 +242,6 @@
 					ConfigurationParameter(ConfigurationIdentifier, PositionRef)
 				</prop>
 
-				<!-- TODO add other dao tables -->
 				<prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
 					(
 					Id NUMERIC NOT NULL,
@@ -403,13 +438,14 @@
 
 				<prop key="create.users">CREATE TABLE Users
 					(
-					Id NUMERIC IDENTITY NOT NULL
-					PRIMARY KEY,
-					Username VARCHAR(50) NOT NULL UNIQUE,
-					Password
-					VARCHAR(50) NOT NULL,
-					Email VARCHAR(255) NULL,
-					Enabled BIT NOT NULL
+					Id 					NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+					Username 			VARCHAR(50) NOT NULL UNIQUE,
+					Password			VARCHAR(50) NOT NULL,
+					Email 				VARCHAR(255) NULL,
+					FirstName			VARCHAR(50) NOT NULL,
+					Surname				VARCHAR(50) NOT NULL,
+					Department			VARCHAR(50) NULL,
+					Enabled 			BIT NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -460,9 +496,9 @@
 
 					select @username = 'admin'
 
-					INSERT INTO Users ( Username, Password, Enabled )
+					INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
 					VALUES (
-					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 )
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User')
 					select
 					@userId = Id from Users where Username = @username
 
@@ -471,9 +507,475 @@
 					INSERT INTO
 					UsersAuthorities values ( @userId, @authorityAdminId )
 				</prop>
-				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
-			</props>
 
+				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>				
+				<prop key="find.usersTableExists">SELECT * from Users</prop>
+				
+				
+				<!--  Tables required for the security module -->
+				<prop key="create.securityPrincipal">CREATE TABLE SecurityPrincipal
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   PrincipalType		VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(1024)		    NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX Principal_Name ON SecurityPrincipal(Name)
+					CREATE NONCLUSTERED INDEX Principal_Type ON SecurityPrincipal(PrincipalType)
+				</prop>
+				<prop key="create.securityRole">CREATE TABLE SecurityRole
+					(
+					   Id               	NUMERIC(18, 0) 		       IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
+					   Description	     	VARCHAR(1024)		   	   NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX Role_Name ON SecurityRole(Name)
+				</prop>
+				<prop key="create.securityPolicy">CREATE TABLE SecurityPolicy
+					(
+					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkId               		NUMERIC(18, 0) NULL,
+					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
+					   Description	     				VARCHAR(1024)		   	   NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX Policy_Name ON SecurityPolicy(Name)
+				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
+					(
+					   UserId         				NUMERIC(18, 0) NOT NULL,
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.principalRole">CREATE TABLE PrincipalRole
+					(
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   RoleId         				NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (PrincipalId, RoleId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLinkType">CREATE TABLE PolicyLinkType
+					(
+					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
+					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE PolicyLink
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
+					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   Name				      		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.rolePolicy">CREATE TABLE RolePolicy
+					(
+					   RoleId               	    NUMERIC(18, 0) NOT NULL,
+					   PolicyId               	    NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (RoleId, PolicyId), -- clustered index on Id
+					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
+					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
+					(
+					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Method    		          	VARCHAR(128) NOT NULL,
+					   LdapServerUrl    		  	VARCHAR(256) NULL,
+					   LdapBindUserDn		      	VARCHAR(256) NULL,
+					   LdapBindUserPassword   		VARCHAR(256) NULL,
+					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
+					   LdapUserSearchFilter   		VARCHAR(256) NULL,
+					   EmailAttributeName 			VARCHAR(256) NULL,
+					   UserAccNameAttributeName 	VARCHAR(256) NULL,
+					   AccountTypeAttributeName   	VARCHAR(256) NULL,
+					   AppSecBaseDn   				VARCHAR(256) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(256) NULL,
+					   FirstNameAttributeName 		VARCHAR(256) NULL,
+					   SurnameAttributeName 		VARCHAR(256) NULL,
+					   DepartmentAttributeName	 	VARCHAR(256) NULL,
+					   AppSecDescAttributeName		VARCHAR(256) NULL,
+					   LdapUserDescAttributeName	VARCHAR(256) NULL,
+					   MemberofAttributeName		VARCHAR(256) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<!-- Tables required for the ikasan mapping module -->
+				<prop key="create.mappingConfigurationType">CREATE TABLE MCSConfigurationType
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.mappingConfigurationContext">CREATE TABLE MCSConfigurationContext
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   Description	      	VARCHAR(1024)		   NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.mappingConfigurationClient">CREATE TABLE MCSConfigServiceClient
+					(
+					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      			VARCHAR(256) UNIQUE NOT NULL,
+					   KeyLocationQueryProcessorType		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX ConfigServiceClient_Name ON MCSConfigServiceClient(Name)
+				</prop>
+				
+				<prop key="create.mappingConfiguration">CREATE TABLE MCSMappingConfiguration
+					(
+					   Id               	  		NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SourceContextId         		NUMERIC(18, 0) NOT NULL,
+					   TargetContextId         		NUMERIC(18, 0) NOT NULL,
+					   NumberOfParams       		NUMERIC(18, 0) NOT NULL,
+					   Description         			VARCHAR(1024) NOT NULL,
+					   ConfigurationTypeId  		NUMERIC(18, 0) NOT NULL,
+					   ConfigurationServiceClientId  	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
+					   FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id),
+					   FOREIGN KEY (SourceContextId) REFERENCES MCSConfigurationContext(Id),
+					   FOREIGN KEY (TargetContextId) REFERENCES MCSConfigurationContext(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					-- This is for StateModelHistory state model id searches
+					CREATE NONCLUSTERED INDEX MappingConfig_ConfigTypeId ON MCSMappingConfiguration(ConfigurationTypeId)
+					CREATE UNIQUE INDEX MappingConfig_unique ON MCSMappingConfiguration(ConfigurationServiceClientId, SourceContextId, TargetContextId, ConfigurationTypeId)
+				</prop>
+				
+				<prop key="create.mappingTargetValue">CREATE TABLE MCSTargetConfigValue
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   TargetSystemValue    		VARCHAR(256) NOT NULL,   
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.mappingSourceValue">CREATE TABLE MCSSourceConfigValue
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SourceSystemValue    		VARCHAR(256) NOT NULL,
+					   MappingConfigurationId		NUMERIC(18, 0) NOT NULL,
+					   TargetConfigurationValueId   NUMERIC(18, 0) NOT NULL,
+					   SourceConfigGroupId          NUMERIC(18, 0) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+					   FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX SrcConfigValue_ConfigContextId ON MCSSourceConfigValue(MappingConfigurationId)
+					CREATE NONCLUSTERED INDEX SrcConfig_TgtSysConfigValueId ON MCSSourceConfigValue(TargetConfigurationValueId)
+				</prop>
+				
+				<prop key="create.mappingKeyLocationQuery">CREATE TABLE MCSKeyLocationQuery
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Value			    		VARCHAR(256) NOT NULL,
+					   MappingConfigurationId    		NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX MCSKeyLocQuery_mappingConfId ON MCSKeyLocationQuery(MappingConfigurationId)
+				</prop>
+				
+				<prop key="create.mappingSourceConfigGroupSeq">CREATE TABLE MCSSourceConfigGroupSeq
+					(
+					   Id               NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SequenceNumber   NUMERIC(20, 0) NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					)
+					
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+										
+					SET IDENTITY_INSERT MCSSourceConfigGroupSeq ON
+					insert into MCSSourceConfigGroupSeq (
+					   Id
+					  ,SequenceNumber
+					) VALUES (
+					   1
+					  ,100)
+				   SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
+				</prop>
+				
+				<prop key="create.platformConfiguration">CREATE TABLE PlatformConfiguration
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name			    			VARCHAR(256) NOT NULL,
+					   Value			    		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id,
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
+					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
+					
+					INSERT INTO 
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user')
+					
+					select @securityPrincipalId = Id 
+					from SecurityPrincipal 
+					where Name = 'admin'
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'ADMIN',
+					'Users who may perform administration functions on
+					the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'ADMIN'
+					
+					select @userId = Id from Users where Username = 'admin'
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId )
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'ALL', 'Policy to do everything' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'ALL'
+					
+					INSERT
+					INTO PrincipalRole ( PrincipalId, RoleId )
+					VALUES ( @securityPrincipalId, @securityRoleId )
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'User'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Control'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream User'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
+					
+					INSERT INTO AuthenticationMethod (Id, Method)
+					VALUES (1, 'AUTH_METHOD_LOCAL')
+				</prop>
+			</props>
 		</property>
 	</bean>
 
@@ -506,9 +1008,21 @@
 				<prop key="drop.flowEventTriggerParameters">DROP TABLE FlowEventTriggerParameters;</prop>
 				<prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
 				<prop key="drop.version">DROP TABLE Version;</prop>
-				<prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
 				<prop key="drop.filter">DROP TABLE MessageFilter;</prop>
 				<prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+				<prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
+				<prop key="drop.principalRole">DROP TABLE PrincipalRole;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityPolicy;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityRole;</prop>
+				<prop key="drop.mappingConfiguration">DROP TABLE MCSConfigurationConfiguration;</prop>
+				<prop key="drop.mappingConfigurationClient">DROP TABLE MCSConfigurationClient;</prop>
+				<prop key="drop.mappingConfigurationContext">DROP TABLE MCSConfigurationContext;</prop>
+				<prop key="drop.mappingConfigurationType">DROP TABLE MCSConfigurationType;</prop>			
+				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
+				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
+				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
 				<prop key="driver">net.sourceforge.jtds.jdbc.Driver</prop>
 				<prop key="url">jdbc:jtds:sybase://HOSTNAME:PORT/DATABASE</prop>
 
@@ -540,11 +1054,10 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+					Identifier VARCHAR(255) NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					)
@@ -555,6 +1068,28 @@
 					IkasanExclusionEvent01u ON
 					ExclusionEvent(ModuleName,FlowName,Identifier)
 				</prop>
+
+                <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
+                    (
+                    Uri VARCHAR(255) NOT NULL,
+                    ModuleName VARCHAR(255) NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    FlowElementName VARCHAR(255) NOT NULL,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(255) NULL,
+                    EventRelatedIdentifier VARCHAR(255) NULL,
+                    Action VARCHAR(255) NULL,
+                    Event BINARY NULL,
+                    Timestamp NUMERIC DEFAULT 0 NOT NULL,
+                    Expiry NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX
+                    IkasanErrorOccurrence01u ON
+                    ErrorOccurrence(ModuleName,FlowName,FlowElementName,Uri,Timestamp)
+                </prop>
 
 				<prop key="create.filter">CREATE TABLE MessageFilter
 					(
@@ -656,7 +1191,6 @@
 					ConfigurationParameter(ConfigurationIdentifier, PositionRef)
 				</prop>
 
-				<!-- TODO add other dao tables -->
 				<prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
 					(
 					Id NUMERIC NOT NULL,
@@ -853,13 +1387,14 @@
 
 				<prop key="create.users">CREATE TABLE Users
 					(
-					Id NUMERIC IDENTITY NOT NULL
-					PRIMARY KEY,
-					Username VARCHAR(50) NOT NULL UNIQUE,
-					Password
-					VARCHAR(50) NOT NULL,
-					Email VARCHAR(255) NULL,
-					Enabled BIT NOT NULL
+					Id 					NUMERIC IDENTITY NOT NULL PRIMARY KEY,
+					Username 			VARCHAR(50) NOT NULL UNIQUE,
+					Password			VARCHAR(50) NOT NULL,
+					Email 				VARCHAR(255) NULL,
+					FirstName			VARCHAR(50) NOT NULL,
+					Surname				VARCHAR(50) NOT NULL,
+					Department			VARCHAR(50) NULL,
+					Enabled 			BIT NOT NULL
 					)
 					LOCK DATAROWS
 					WITH IDENTITY_GAP=1
@@ -910,9 +1445,9 @@
 
 					select @username = 'admin'
 
-					INSERT INTO Users ( Username, Password, Enabled )
+					INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
 					VALUES (
-					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 )
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User')
 					select
 					@userId = Id from Users where Username = @username
 
@@ -922,6 +1457,469 @@
 					UsersAuthorities values ( @userId, @authorityAdminId )
 				</prop>
 				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
+				<prop key="find.usersTableExists">SELECT * from Users</prop>
+				
+				
+				<!--  Tables required for the security module -->
+				<prop key="create.securityPrincipal">CREATE TABLE SecurityPrincipal
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   PrincipalType		VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(1024)		    NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX Principal_Name ON SecurityPrincipal(Name)
+					CREATE NONCLUSTERED INDEX Principal_Type ON SecurityPrincipal(PrincipalType)
+				</prop>
+				<prop key="create.securityRole">CREATE TABLE SecurityRole
+					(
+					   Id               	NUMERIC(18, 0) 		       IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
+					   Description	     	VARCHAR(1024)		   	   NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX Role_Name ON SecurityRole(Name)
+				</prop>
+				<prop key="create.securityPolicy">CREATE TABLE SecurityPolicy
+					(
+					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkId               		NUMERIC(18, 0) NULL,
+					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
+					   Description	     				VARCHAR(1024)		   	   NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX Policy_Name ON SecurityPolicy(Name)
+				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
+					(
+					   UserId         				NUMERIC(18, 0) NOT NULL,
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, PrincipalId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.principalRole">CREATE TABLE PrincipalRole
+					(
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   RoleId         				NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (PrincipalId, RoleId), -- clustered index on Id
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.rolePolicy">CREATE TABLE RolePolicy
+					(
+					   RoleId               	    NUMERIC(18, 0) NOT NULL,
+					   PolicyId               	    NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (RoleId, PolicyId), -- clustered index on Id
+					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
+					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLinkType">CREATE TABLE PolicyLinkType
+					(
+					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
+					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE PolicyLink
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
+					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   Name				      		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>				
+				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
+					(
+					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Method    		          	VARCHAR(128) NOT NULL,
+					   LdapServerUrl    		  	VARCHAR(256) NULL,
+					   LdapBindUserDn		      	VARCHAR(256) NULL,
+					   LdapBindUserPassword   		VARCHAR(64) NULL,
+					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
+					   LdapUserSearchFilter   		VARCHAR(64) NULL,
+					   EmailAttributeName 			VARCHAR(64) NULL,
+					   UserAccNameAttributeName 	VARCHAR(64) NULL,
+					   AccountTypeAttributeName   	VARCHAR(64) NULL,
+					   AppSecBaseDn   				VARCHAR(256) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(64) NULL,
+					   FirstNameAttributeName 		VARCHAR(64) NULL,
+					   SurnameAttributeName 		VARCHAR(64) NULL,
+					   DepartmentAttributeName	 	VARCHAR(64) NULL,
+					   AppSecDescAttributeName		VARCHAR(64) NULL,
+					   LdapUserDescAttributeName	VARCHAR(64) NULL,
+					   MemberofAttributeName		VARCHAR(64) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				
+				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
+					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
+					
+					INSERT INTO 
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user')
+					
+					
+					select @securityPrincipalId = Id 
+					from SecurityPrincipal 
+					where Name = 'admin'
+					
+					select @userId = Id from Users where Username = 'admin'
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'Administrators',
+					'Users who may perform administration functions on
+					the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'Administrators'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'ALL', 'Policy to do everything' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'ALL'
+					
+					INSERT
+					INTO PrincipalRole ( PrincipalId, RoleId )
+					VALUES ( @securityPrincipalId, @securityRoleId )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'ALL'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'User'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Control'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream User'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
+					
+					INSERT INTO AuthenticationMethod (Id, Method)
+					VALUES (1, 'AUTH_METHOD_LOCAL')
+				</prop>
+				
+				<!-- Tables required for the ikasan mapping module -->
+				<prop key="create.mappingConfigurationType">CREATE TABLE MCSConfigurationType
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.mappingConfigurationContext">CREATE TABLE MCSConfigurationContext
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   Description	      	VARCHAR(1024)		   NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.mappingConfigurationClient">CREATE TABLE MCSConfigServiceClient
+					(
+					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      			VARCHAR(256) UNIQUE NOT NULL,
+					   KeyLocationQueryProcessorType		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX ConfigServiceClient_Name ON MCSConfigServiceClient(Name)
+				</prop>
+				<prop key="create.mappingConfiguration">CREATE TABLE MCSMappingConfiguration
+					(
+					   Id               	  		NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SourceContextId         		NUMERIC(18, 0) NOT NULL,
+					   TargetContextId         		NUMERIC(18, 0) NOT NULL,
+					   NumberOfParams       		NUMERIC(18, 0) NOT NULL,
+					   Description         			VARCHAR(1024) NOT NULL,
+					   ConfigurationTypeId  		NUMERIC(18, 0) NOT NULL,
+					   ConfigurationServiceClientId  	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
+					   FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id),
+					   FOREIGN KEY (SourceContextId) REFERENCES MCSConfigurationContext(Id),
+					   FOREIGN KEY (TargetContextId) REFERENCES MCSConfigurationContext(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					-- This is for StateModelHistory state model id searches
+					CREATE NONCLUSTERED INDEX MappingConfig_ConfigTypeId ON MCSMappingConfiguration(ConfigurationTypeId)
+					CREATE UNIQUE INDEX MappingConfig_unique ON MCSMappingConfiguration(ConfigurationServiceClientId, SourceContextId, TargetContextId, ConfigurationTypeId)
+				</prop>
+				<prop key="create.mappingTargetValue">CREATE TABLE MCSTargetConfigValue
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   TargetSystemValue    		VARCHAR(256) NOT NULL,   
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+				<prop key="create.mappingSourceValue">CREATE TABLE MCSSourceConfigValue
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SourceSystemValue    		VARCHAR(256) NOT NULL,
+					   MappingConfigurationId		NUMERIC(18, 0) NOT NULL,
+					   TargetConfigurationValueId   NUMERIC(18, 0) NOT NULL,
+					   SourceConfigGroupId          NUMERIC(18, 0) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+					   FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX SrcConfigValue_ConfigContextId ON MCSSourceConfigValue(MappingConfigurationId)
+					CREATE NONCLUSTERED INDEX SrcConfig_TgtSysConfigValueId ON MCSSourceConfigValue(TargetConfigurationValueId)
+				</prop>
+				<prop key="create.mappingKeyLocationQuery">CREATE TABLE MCSKeyLocationQuery
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Value			    		VARCHAR(256) NOT NULL,
+					   MappingConfigurationId    		NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id
+					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+					
+					CREATE NONCLUSTERED INDEX MCSKeyLocQuery_mappingConfId ON MCSKeyLocationQuery(MappingConfigurationId)
+				</prop>
+				<prop key="create.mappingSourceConfigGroupSeq">CREATE TABLE MCSSourceConfigGroupSeq
+					(
+					   Id               NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SequenceNumber   NUMERIC(20, 0) NULL,
+					   PRIMARY KEY (Id) -- clustered index on Id
+					)
+					
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+										
+					SET IDENTITY_INSERT MCSSourceConfigGroupSeq ON
+					insert into MCSSourceConfigGroupSeq (
+					   Id
+					  ,SequenceNumber
+					) VALUES (
+					   1
+					  ,100)
+				   SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
+				</prop>
+				
+				<prop key="create.platformConfiguration">CREATE TABLE PlatformConfiguration
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name			    			VARCHAR(256) NOT NULL,
+					   Value			    		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), -- clustered index on Id,
+					) 
+					LOCK DATAROWS
+					WITH IDENTITY_GAP=1
+				</prop>
+
 			</props>
 
 		</property>
@@ -990,8 +1988,22 @@
                 <prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
                 <prop key="drop.version">DROP TABLE Version;</prop>
                 <prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
                 <prop key="drop.filter">DROP TABLE MessageFilter;</prop>
                 <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+                <prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
+				<prop key="drop.principalRole">DROP TABLE PrincipalRole;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityPolicy;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityRole;</prop>
+				<prop key="drop.securityPrincipal">DROP TABLE SecurityPrincipal;</prop>
+				<prop key="drop.keyLocationQuery">DROP TABLE MCSKeyLocationQuery;</prop>
+				<prop key="drop.mappingConfiguration">DROP TABLE MCSConfigurationConfiguration;</prop>
+				<prop key="drop.mappingConfigurationClient">DROP TABLE MCSConfigurationClient;</prop>
+				<prop key="drop.mappingConfigurationContext">DROP TABLE MCSConfigurationContext;</prop>
+				<prop key="drop.mappingConfigurationType">DROP TABLE MCSConfigurationType;</prop>			
+				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
+				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
+				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
                 <prop key="driver">com.microsoft.sqlserver.jdbc.SQLServerDriver</prop>
                 <prop key="url">jdbc:sqlserver://HOSTNAME:PORT/DATABASE</prop>
 
@@ -1022,11 +2034,32 @@
                     [Identifier]            [varchar](255) NOT NULL,
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
+                    [Event]                 [binary] NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     [Expiry]                [numeric] NOT NULL,
                     CONSTRAINT              [PK_ExclusionEvent_Module_Flow_Id] PRIMARY KEY CLUSTERED
                     (
                     [ModuleName],[FlowName],[Identifier] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.errorOccurrence">CREATE TABLE [ErrorOccurrence]
+                    (
+                    [Uri]                   [varchar](255) NOT NULL,
+                    [ModuleName]            [varchar](255) NOT NULL,
+                    [FlowName]              [varchar](255) NOT NULL,
+                    [FlowComponentName]     [varchar](255) NOT NULL,
+                    [ErrorDetail]           [text] NULL,
+                    [EventLifeIdentifier]   [varchar](255) NULL,
+                    [EventRelatedIdentifier] [varchar](255) NULL,
+                    [Action]                [varchar](255) NULL,
+                    [Event]                 [binary] NULL,
+                    [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
+                    [Expiry]                [numeric] NOT NULL,
+                    CONSTRAINT              [PK_ErrorOccurrence_Module_Flow_Uri] PRIMARY KEY CLUSTERED
+                    (
+                    [ModuleName],[FlowName],[FlowComponentName],[Uri],[Timestamp] ASC
                     )
                     )
                 </prop>
@@ -1265,6 +2298,9 @@
                     [Username] [VARCHAR] (50) NOT NULL UNIQUE,
                     [Password] [VARCHAR] (50) NOT NULL,
                     [Email]    [VARCHAR] (255) NULL,
+                    [FirstName] [VARCHAR] (50) NOT NULL,
+                    [Surname] [VARCHAR] (50) NOT NULL,
+                    [Department] [VARCHAR] (50) NULL,
                     [Enabled]  [BIT] NOT NULL
                     CONSTRAINT [PK_Users_Username] PRIMARY KEY CLUSTERED
                     (
@@ -1308,8 +2344,9 @@
 
                     select @username = 'admin';
 
-                    INSERT INTO Users ( Username, Password, Enabled )
-                    VALUES ( @username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 ) ;
+                    INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
+					VALUES (
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User')
                     select @userId = Id from Users where Username = @username;
 
                     INSERT INTO UsersAuthorities values ( @userId, @authorityUserId );
@@ -1317,7 +2354,486 @@
                 </prop>
 
                 <prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
+                <prop key="find.usersTableExists">SELECT * from Users</prop>
+				
+				
+				<!--  Tables required for the security module -->
+				<prop key="create.securityPrincipal">CREATE TABLE [SecurityPrincipal]
+					(
+					   [Id]               	[NUMERIC](18)				IDENTITY NOT NULL,
+					   [Name]		      	[VARCHAR](256)		   		UNIQUE NOT NULL,
+					   [PrincipalType]		[VARCHAR](256)		    	NOT NULL,
+					   [Description]		[VARCHAR](1024)		    	NOT NULL,
+					   [CreatedDateTime]    [DATETIME] 					default getdate() NOT NULL,
+					   [UpdatedDateTime]    [DATETIME] 					default getdate() NOT NULL,
+					   CONSTRAINT [PK_SecurityPrincipal_Id] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+					
+					CREATE NONCLUSTERED INDEX [IX_Principal_Name] ON [SecurityPrincipal](Name)
+					CREATE NONCLUSTERED INDEX [IX_Principal_Type] ON [SecurityPrincipal](PrincipalType)
+				</prop>
+				<prop key="create.securityRole">CREATE TABLE [SecurityRole]
+					(
+					   [Id]               	  [NUMERIC](18) 		    IDENTITY NOT NULL,
+					   [Name]		      	  [VARCHAR](256)		    UNIQUE NOT NULL,
+					   [Description]	      [VARCHAR](1024)			NOT NULL,
+					   [CreatedDateTime]      [DATETIME] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]      [DATETIME] 				default getdate() NOT NULL,
+					   CONSTRAINT [PK_SecurityRole_Id] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+					
+					CREATE NONCLUSTERED INDEX [IX_Role_Name] ON [SecurityRole](Name)
+				</prop>
+				<prop key="create.securityPolicy">CREATE TABLE [SecurityPolicy]
+					(
+					   [Id]               	  [NUMERIC](18) 		IDENTITY NOT NULL,
+					   [PolicyLinkId]         [NUMERIC](18) 		NULL,
+					   [Name]		      	  [VARCHAR](256) 		UNIQUE NOT NULL,
+					   [Description]	      [VARCHAR](1024)		NOT NULL,
+					   [CreatedDateTime]      [DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]      [DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_SecurityPolicy_Id] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   ),
+	                   CONSTRAINT [FK_SP_PolicyLink_Id] FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id)
+					) 
+					CREATE NONCLUSTERED INDEX [IX_Policy_Name] ON [SecurityPolicy](Name)
+				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE [UserPrincipal]
+					(
+					   [UserId]         		[NUMERIC](18) 	NOT NULL,
+					   [PrincipalId]            [NUMERIC](18) 	NOT NULL,
+					   [CreatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
+					   CONSTRAINT [PK_UserPrincipal] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[UserId], [PrincipalId] ASC
+	                   ),
+	                   CONSTRAINT [FK_UP_Principal_Id] FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+	                   CONSTRAINT [FK_UP_User_Id] FOREIGN KEY (UserId) REFERENCES Users(Id)
+					) 
+				</prop>
+				<prop key="create.principalRole">CREATE TABLE [PrincipalRole]
+					(
+					   [PrincipalId]            [NUMERIC](18) 	NOT NULL,
+					   [RoleId]         		[NUMERIC](18) 	NOT NULL,
+					   [CreatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      	[DATETIME] 		default getdate() NOT NULL,
+					   CONSTRAINT [PK_PrincipalRole] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[PrincipalId], [RoleId] ASC
+	                   ),
+	                   CONSTRAINT [FK_PR_Principal_Id] FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+	                   CONSTRAINT [FK_PR_Role_Id] FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+				</prop>
+				<prop key="create.rolePolicy">CREATE TABLE [RolePolicy]
+					(
+					   [RoleId]               	    [NUMERIC](18) 	NOT NULL,
+					   [PolicyId]               	[NUMERIC](18) 	NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   CONSTRAINT [PK_RolePolicy] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[RoleId], [PolicyId] ASC
+	                   ),
+	                   CONSTRAINT [FK_RP_Policy_Id] FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
+	                   CONSTRAINT [FK_RP_Role_Id] FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					) 
+				</prop>
+				<prop key="create.policyLinkType">CREATE TABLE [PolicyLinkType]
+					(
+					   [Id]             			[NUMERIC](18) 	IDENTITY NOT NULL,
+					   [Name]		      			[VARCHAR](256) 	UNIQUE NOT NULL,
+					   [TableName]		      		[VARCHAR](256) 	UNIQUE NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   CONSTRAINT [PK_PolicyLinkType] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE [PolicyLink]
+					(
+					   [Id]               			[NUMERIC](18) 	IDENTITY NOT NULL,
+					   [PolicyLinkTypeId]     		[NUMERIC](18) 	NOT NULL,
+					   [TargetId]         			[NUMERIC](18) 	NOT NULL,
+					   [Name]				      	[VARCHAR](256) 	NOT NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   CONSTRAINT [PK_PolicyLink] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   ),
+	                   CONSTRAINT [FK_PL_PolicyLinkType_Id] FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
+					) 
 
+				</prop>				
+				<prop key="create.authenticationMethod">CREATE TABLE [AuthenticationMethod]
+					(
+					   [Id]               			[NUMERIC](18) 	IDENTITY NOT NULL,
+					   [Method]    		          	[VARCHAR](128) 	NOT NULL,
+					   [LdapServerUrl]    		  	[VARCHAR](256) 	NULL,
+					   [LdapBindUserDn]		      	[VARCHAR](256) 	NULL,
+					   [LdapBindUserPassword]   	[VARCHAR](64) 	NULL,
+					   [LdapUserSearchBaseDn]   	[VARCHAR](256) 	NULL,
+					   [LdapUserSearchFilter]   	[VARCHAR](64) 	NULL,
+					   [EmailAttributeName] 		[VARCHAR](64) 	NULL,
+					   [UserAccNameAttributeName] 	[VARCHAR](64) 	NULL,
+					   [AccountTypeAttributeName]   [VARCHAR](64) 	NULL,
+					   [AppSecBaseDn]   			[VARCHAR](256) 	NULL,
+					   [AppSecGroupAttributeName] 	[VARCHAR](64) 	NULL,
+					   [FirstNameAttributeName] 	[VARCHAR](64) 	NULL,
+					   [SurnameAttributeName] 		[VARCHAR](64) 	NULL,
+					   [DepartmentAttributeName]	[VARCHAR](64) 	NULL,
+					   [AppSecDescAttributeName]	[VARCHAR](64) 	NULL,
+					   [LdapUserDescAttributeName]	[VARCHAR](64) 	NULL,
+					   [MemberofAttributeName]		[VARCHAR](64) 	NULL,
+					   [CreatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   [UpdatedDateTime]      		[DATETIME] 		default getdate() NOT NULL,
+					   CONSTRAINT [PK_AuthenticationMethod] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+				</prop>
+								
+				<!-- Tables required for the ikasan mapping module -->
+				<prop key="create.mappingConfigurationType">CREATE TABLE [MCSConfigurationType]
+					(
+					   [Id]               	[NUMERIC](18) 		   	IDENTITY NOT NULL,
+					   [Name]		      	[VARCHAR](256)		   	UNIQUE NOT NULL,
+					   [CreatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSConfigurationType] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+				</prop>
+
+				<prop key="create.mappingConfigurationContext">CREATE TABLE [MCSConfigurationContext]
+					(
+					   [Id]               	[NUMERIC](18) 		   	IDENTITY NOT NULL,
+					   [Name]		      	[VARCHAR](256)		   	UNIQUE NOT NULL,
+					   [Description]      	[VARCHAR](1024)		   	NOT NULL,
+					   [CreatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
+					   [UpdatedDateTime]    [DATETIME] 				default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSConfigurationContext] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+				</prop>
+
+				<prop key="create.mappingConfigurationClient">CREATE TABLE [MCSConfigServiceClient]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [Name]		      					[VARCHAR](256)		UNIQUE NOT NULL,
+					   [KeyLocationQueryProcessorType]		[VARCHAR](256) 		NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSConfigServiceClient] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+					CREATE NONCLUSTERED INDEX [IX_ConfigServiceClient_Name] ON [MCSConfigServiceClient](Name)
+				</prop>
+				
+				<prop key="create.mappingConfiguration">CREATE TABLE [MCSMappingConfiguration]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [SourceContextId]         			[NUMERIC](18) 		NOT NULL,
+					   [TargetContextId]         			[NUMERIC](18) 		NOT NULL,
+					   [NumberOfParams]       				[NUMERIC](18) 		NOT NULL,
+					   [Description]         				[VARCHAR](1024) 	NOT NULL,
+					   [ConfigurationTypeId]  				[NUMERIC](18) 		NOT NULL,
+					   [ConfigurationServiceClientId]  		[NUMERIC](18) 		NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSMappingConfiguration] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   ),
+	                   CONSTRAINT [FK_ConfigurationType_Id] FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
+					   CONSTRAINT [FK_ConfigurationServiceClient_Id] FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id)
+					) 
+					CREATE NONCLUSTERED INDEX [IX_ConfigurationType_Id] ON [MCSMappingConfiguration](ConfigurationTypeId)					
+					CREATE UNIQUE INDEX  MappingConfig_unique ON [MCSMappingConfiguration](ConfigurationServiceClientId, SourceContextId, TargetContextId, ConfigurationTypeId)
+				</prop>
+				
+				<prop key="create.mappingTargetValue">CREATE TABLE [MCSTargetConfigValue]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [TargetSystemValue]    				[VARCHAR](256) 		NOT NULL,   
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSTargetConfigValue] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+				</prop>
+				
+				<prop key="create.mappingSourceValue">CREATE TABLE [MCSSourceConfigValue]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [SourceSystemValue]    				[VARCHAR](256)		NOT NULL,
+					   [MappingConfigurationId]				[NUMERIC](18) 		NOT NULL,
+					   [TargetConfigurationValueId]  		[NUMERIC](18) 		NOT NULL,
+					   [SourceConfigGroupId]          		[NUMERIC](18) 		NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSSourceConfigValue] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   ),
+	                   CONSTRAINT [FK_MappingConfiguration_Id] FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+	                   CONSTRAINT [FK_TargetConfigurationValue_Id] FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
+					) 		
+					CREATE NONCLUSTERED INDEX [IX_SrcConfigValue_ConfigContextId] ON [MCSSourceConfigValue](MappingConfigurationId)
+					CREATE NONCLUSTERED INDEX [IX_SrcConfig_TgtSysConfigValueId] ON [MCSSourceConfigValue](TargetConfigurationValueId)
+				</prop>
+				
+				<prop key="create.mappingKeyLocationQuery">CREATE TABLE [MCSKeyLocationQuery]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [Value]			    				[VARCHAR](256) 		NOT NULL,
+					   [MappingConfigurationId]    			[NUMERIC](18) 		NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_MCSKeyLocationQuery] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   ),
+	                   CONSTRAINT [FK_KLQ_MappingConfiguration_Id] FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id)
+					) 
+				</prop>
+				
+				<prop key="create.mappingSourceConfigGroupSeq">CREATE TABLE [MCSSourceConfigGroupSeq]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [SequenceNumber]   					[NUMERIC](18) 		NULL,
+					    CONSTRAINT [PK_MCSSourceConfigGroupSeq] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					)
+															
+					SET IDENTITY_INSERT MCSSourceConfigGroupSeq ON
+					insert into MCSSourceConfigGroupSeq (
+					   Id
+					  ,SequenceNumber
+					) VALUES (
+					   1
+					  ,100)
+				   SET IDENTITY_INSERT MCSSourceConfigGroupSeq OFF
+				</prop>
+				
+				<prop key="create.platformConfiguration">CREATE TABLE [PlatformConfiguration]
+					(
+					   [Id]               					[NUMERIC](18) 		IDENTITY NOT NULL,
+					   [Name]			    				[VARCHAR] 			NOT NULL,
+					   [Value]			    				[VARCHAR] 			NOT NULL,
+					   [CreatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   [UpdatedDateTime]    				[DATETIME] 			default getdate() NOT NULL,
+					   CONSTRAINT [PK_PlatformConfiguration] PRIMARY KEY CLUSTERED
+	                   (
+	                    	[Id] ASC
+	                   )
+					) 
+				</prop>
+                
+				<prop key="create.defaultPrincipal">declare @securityPrincipalId numeric(18),
+					@securityRoleId numeric(18), @securityPolicyId numeric(18), @userId numeric(18)
+					
+					INSERT INTO 
+					SecurityPrincipal ( Name, PrincipalType, Description )
+					VALUES ( 'admin', 'user', 'This administrator user')
+					
+					
+					select @securityPrincipalId = Id 
+					from SecurityPrincipal 
+					where Name = 'admin'
+					
+					select @userId = Id from Users where Username = 'admin'
+					
+					INSERT
+					INTO UserPrincipal ( UserId, PrincipalId )
+					VALUES ( @userId, @securityPrincipalId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'Administrators',
+					'Users who may perform administration functions on
+					the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'Administrators'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'ALL', 'Policy to do everything' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'ALL'
+					
+					INSERT
+					INTO PrincipalRole ( PrincipalId, RoleId )
+					VALUES ( @securityPrincipalId, @securityRoleId )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'ALL'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'User',
+					'Users who have a read only view on the system' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'User'
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'Read Only', 'Read only policy' )
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream Administrator',
+					'Cash Operations Stream Administrators' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream Administrator'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'Read Only'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Control', 'Ability to control COP flows' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Control'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Wiretap', 'Ability to view COP wiretaps' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Errors', 'View COP errors' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Replay', 'Policy to replay COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Replay'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+
+					INSERT
+					INTO SecurityPolicy ( Name, Description )
+					VALUES ( 'COP Hospital', 'Policy to use the hospital for COP data' )
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Hospital'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO SecurityRole ( Name, Description )
+					VALUES ( 'COP Stream User',
+					'Cash Operations Stream User' )
+					
+					select @securityRoleId = Id 
+					from SecurityRole 
+					where Name = 'COP Stream User'
+					
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Wiretap'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+
+					select @securityPolicyId = Id 
+					from SecurityPolicy 
+					where Name = 'COP Errors'
+					
+					INSERT
+					INTO RolePolicy ( RoleId, PolicyId )
+					VALUES ( @securityRoleId,  @securityPolicyId )
+					
+					INSERT
+					INTO PolicyLinkType ( Name, TableName )
+					VALUES ( 'Mapping Configuration',  'MCSMappingConfiguration' )
+					
+					SET IDENTITY_INSERT AuthenticationMethod ON
+					INSERT INTO AuthenticationMethod (Id, Method)
+					VALUES (1, 'AUTH_METHOD_LOCAL')
+					SET IDENTITY_INSERT AuthenticationMethod OFF
+				</prop>
 			</props>
 		</property>
 	</bean>
@@ -1335,7 +2851,7 @@
 				<prop key="drop.consolePointToPointFlowProfile">DROP TABLE PointToPointFlowProfile;</prop>
 				<prop key="drop.consoleModule">DROP TABLE Module;</prop>
 				<prop key="drop.moduleStartup">DROP TABLE StartupControl;</prop>
-				<prop key="drop.systemEvent">DROP TABLE SystemEVent;</prop>
+				<prop key="drop.systemEvent">DROP TABLE SystemEvent;</prop>
 				<prop key="drop.confParamString">DROP TABLE ConfParamString;</prop>
 				<prop key="drop.confParamMapString">DROP TABLE ConfParamMapString;</prop>
 				<prop key="drop.confParamMap">DROP TABLE ConfParamMap;</prop>
@@ -1349,9 +2865,22 @@
 				<prop key="drop.flowEventTriggerParameters">DROP TABLE FlowEventTriggerParameters;</prop>
 				<prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
 				<prop key="drop.version">DROP TABLE Version;</prop>
-				<prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
 				<prop key="drop.filter">DROP TABLE MessageFilter;</prop>
 				<prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
+				<prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
+				<prop key="drop.principalRole">DROP TABLE PrincipalRole;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityPolicy;</prop>
+				<prop key="drop.securityPolicy">DROP TABLE SecurityRole;</prop>
+				<prop key="drop.securityPrincipal">DROP TABLE SecurityPrincipal;</prop>
+				<prop key="drop.mappingConfiguration">DROP TABLE MCSConfigurationConfiguration;</prop>
+				<prop key="drop.mappingConfigurationClient">DROP TABLE MCSConfigurationClient;</prop>
+				<prop key="drop.mappingConfigurationContext">DROP TABLE MCSConfigurationContext;</prop>
+				<prop key="drop.mappingConfigurationType">DROP TABLE MCSConfigurationType;</prop>			
+				<prop key="drop.mappingSourceConfigGroupSeq">DROP TABLE MCSSourceConfigGroupSeq;</prop>
+				<prop key="drop.mappingSourceValue">DROP TABLE MCSSourceConfigValue;</prop>
+				<prop key="drop.mappingTargetValue">DROP TABLE MCSTargetConfigValue;</prop>
 				<prop key="create.wiretap">CREATE TABLE IkasanWiretap
 					(
 					Id IDENTITY NOT NULL,
@@ -1371,8 +2900,25 @@
 					ON IkasanWiretap(Id);
 				</prop>
 
+                <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
+                    (
+                    Uri VARCHAR(256) NOT NULL,
+                    ModuleName VARCHAR(256) NOT NULL,
+                    FlowName VARCHAR(256) NOT NULL,
+                    FlowComponentName VARCHAR(256) NOT NULL,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(256) NULL,
+                    EventRelatedIdentifier VARCHAR(256) NULL,
+                    Action VARCHAR(256) NULL,
+                    Event BINARY NULL,
+                    Timestamp NUMERIC NOT NULL,
+                    Expiry NUMERIC NOT NULL
+                    );
+                    CREATE UNIQUE INDEX ErrorOccurrence01u ON
+                    ErrorOccurrence(ModuleName,FlowName,FlowComponentName,Uri,Timestamp)
+                </prop>
 
-				<prop key="create.filter">CREATE TABLE MessageFilter
+                <prop key="create.filter">CREATE TABLE MessageFilter
 					(
 					Criteria NUMERIC DEFAULT 0
 					NOT NULL,
@@ -1590,11 +3136,10 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+					Identifier VARCHAR(255) NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					);
@@ -1603,16 +3148,19 @@
 					ExclusionEvent(ModuleName,FlowName,Identifier)
 				</prop>
 
-
 				<prop key="create.users">CREATE TABLE Users
 					(
 					Id IDENTITY NOT NULL PRIMARY KEY,
 					Username VARCHAR(50) NOT NULL UNIQUE,
 					Password VARCHAR(50) NOT NULL,
 					Email VARCHAR(255) NULL,
+					FirstName			VARCHAR(50) NOT NULL,
+					Surname				VARCHAR(50) NOT NULL,
+					Department			VARCHAR(50) NULL,
 					Enabled BIT NOT NULL
 					);
 				</prop>
+				
 				<prop key="create.authorities">CREATE TABLE Authorities
 					(
 					Id IDENTITY NOT NULL PRIMARY
@@ -1670,9 +3218,9 @@
 					set @username =
 					'admin';
 
-					INSERT INTO Users ( Username, Password, Enabled )
+					INSERT INTO Users ( Username, Password, Enabled, FirstName, Surname )
 					VALUES (
-					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 );
+					@username, 'd033e22ae348aeb5660fc2140aec35850c4da997', 1 , 'Admin', 'User');
 					set
 					@userId = select Id from Users where Username = @username;
 
@@ -1683,13 +3231,218 @@
 				</prop>
 
 				<prop key="find.anyAdminUser">SELECT * FROM UsersAuthorities</prop>
+				
+				<prop key="find.usersTableExists">SELECT * from Users</prop>
 				<prop key="get.ikasan.version">SELECT Release FROM Version where Component =
 					'ikasan';
 				</prop>
-
+				
+				<!--  Tables required for the security module -->
+				<prop key="create.securityPrincipal">CREATE TABLE SecurityPrincipal
+					(
+					   Id               	IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   PrincipalType		VARCHAR(256)		    NOT NULL,
+					   Description			VARCHAR(1024)		    NOT NULL,
+					   CreatedDateTime      DATETIME NOT NULL,
+					   UpdatedDateTime      DATETIME NOT NULL,
+					   PRIMARY KEY (Id) 
+					);
+				</prop>
+				<prop key="create.securityRole">CREATE TABLE SecurityRole
+					(
+					   Id               	IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		       UNIQUE NOT NULL,
+					   Description	     	VARCHAR(1024)		   	   NOT NULL,
+					   CreatedDateTime      DATETIME NOT NULL,
+					   UpdatedDateTime      DATETIME NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+				</prop>
+				<prop key="create.policyLinkType">CREATE TABLE PolicyLinkType
+					(
+					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
+					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+				</prop>
+				<prop key="create.policyLink">CREATE TABLE PolicyLink
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
+					   TargetId         			NUMERIC(18, 0) NOT NULL,
+					   Name				      		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id),
+					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
+					);
+				</prop>
+				<prop key="create.securityPolicy">CREATE TABLE SecurityPolicy
+					(
+					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   PolicyLinkId               		NUMERIC(18, 0) NULL,
+					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
+					   Description	     				VARCHAR(1024)		   	   NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), 
+					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id) 
+					);
+				</prop>
+				<prop key="create.userPrincipal">CREATE TABLE UserPrincipal
+					(
+					   UserId         				NUMERIC(18, 0) NOT NULL,
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (UserId, PrincipalId), 
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (UserId) REFERENCES Users(Id)
+					);
+				</prop>
+				<prop key="create.principalRole">CREATE TABLE PrincipalRole
+					(
+					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
+					   RoleId         				NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (PrincipalId, RoleId),
+					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
+					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					);
+				</prop>
+				<prop key="create.rolePolicy">CREATE TABLE RolePolicy
+					(
+					   RoleId               	    NUMERIC(18, 0) NOT NULL,
+					   PolicyId               	    NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (RoleId, PolicyId), 
+					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
+					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
+					);
+				</prop>				
+				
+				<!-- Tables required for the ikasan mapping module -->
+				<prop key="create.mappingConfigurationType">CREATE TABLE MCSConfigurationType
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+				</prop>
+				<prop key="create.mappingConfigurationContext">CREATE TABLE MCSConfigurationContext
+					(
+					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
+					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
+					   Description	      	VARCHAR(1024)		   NOT NULL,
+					   CreatedDateTime      DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) 
+					);
+				</prop>
+				<prop key="create.mappingConfigurationClient">CREATE TABLE MCSConfigServiceClient
+					(
+					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Name		      			VARCHAR(256) UNIQUE NOT NULL,
+					   KeyLocationQueryProcessorType		VARCHAR(256) NOT NULL,
+					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) 
+					);
+				</prop>
+				<prop key="create.mappingConfiguration">CREATE TABLE MCSMappingConfiguration
+					(
+					   Id               	  		NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SourceContextId         		NUMERIC(18, 0) NOT NULL,
+					   TargetContextId         		NUMERIC(18, 0) NOT NULL,
+					   NumberOfParams       		NUMERIC(18, 0) NOT NULL,
+					   Description         			VARCHAR(1024) NOT NULL,
+					   ConfigurationTypeId  		NUMERIC(18, 0) NOT NULL,
+					   ConfigurationServiceClientId  	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), 
+					   FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
+					   FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id),
+					   FOREIGN KEY (SourceContextId) REFERENCES MCSConfigurationContext(Id),
+					   FOREIGN KEY (TargetContextId) REFERENCES MCSConfigurationContext(Id)
+					);
+				</prop>
+				<prop key="create.mappingTargetValue">CREATE TABLE MCSTargetConfigValue
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   TargetSystemValue    		VARCHAR(256) NOT NULL,   
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id) 
+					);
+				</prop>
+				<prop key="create.mappingSourceValue">CREATE TABLE MCSSourceConfigValue
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SourceSystemValue    		VARCHAR(256) NOT NULL,
+					   MappingConfigurationId		NUMERIC(18, 0) NOT NULL,
+					   TargetConfigurationValueId   NUMERIC(18, 0) NOT NULL,
+					   SourceConfigGroupId          NUMERIC(18, 0) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), 
+					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+					   FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
+					);
+				</prop>
+				<prop key="create.mappingKeyLocationQuery">CREATE TABLE MCSKeyLocationQuery
+					(
+					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
+					   Value			    		VARCHAR(256) NOT NULL,
+					   MappingConfigurationId    	NUMERIC(18, 0) NOT NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id), 
+					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
+					);
+				</prop>
+				<prop key="create.mappingSourceConfigGroupSeq">CREATE TABLE MCSSourceConfigGroupSeq
+					(
+					   Id               NUMERIC(18, 0) IDENTITY NOT NULL,
+					   SequenceNumber   NUMERIC(20, 0) NULL,
+					   PRIMARY KEY (Id) 
+					);
+				</prop>
+				
+				<prop key="create.authenticationMethod">CREATE TABLE AuthenticationMethod
+					(
+					   Id               			NUMERIC(18, 0) NOT NULL,
+					   Method    		          	VARCHAR(128) NOT NULL,
+					   LdapServerUrl    		  	VARCHAR(256) NULL,
+					   LdapBindUserDn		      	VARCHAR(256) NULL,
+					   LdapBindUserPassword   		VARCHAR(256) NULL,
+					   LdapUserSearchBaseDn   		VARCHAR(256) NULL,
+					   LdapUserSearchFilter   		VARCHAR(256) NULL,
+					   EmailAttributeName 			VARCHAR(256) NULL,
+					   UserAccNameAttributeName 	VARCHAR(256) NULL,
+					   AccountTypeAttributeName   	VARCHAR(256) NULL,
+					   AppSecBaseDn   				VARCHAR(256) NULL,
+					   AppSecGroupAttributeName 	VARCHAR(256) NULL,
+					   FirstNameAttributeName 		VARCHAR(256) NULL,
+					   SurnameAttributeName 		VARCHAR(256) NULL,
+					   DepartmentAttributeName	 	VARCHAR(256) NULL,
+					   AppSecDescAttributeName		VARCHAR(256) NULL,
+					   LdapUserDescAttributeName	VARCHAR(256) NULL, 
+					   MemberofAttributeName		VARCHAR(256) NULL,
+					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
+					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   PRIMARY KEY (Id)
+					);
+				</prop>
 			</props>
-
-
 
 		</property>
 	</bean>

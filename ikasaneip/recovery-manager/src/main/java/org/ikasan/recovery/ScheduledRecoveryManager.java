@@ -45,6 +45,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowElement;
@@ -119,6 +120,9 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     /** Event Exclusion Service */
     private ExclusionService exclusionService;
 
+    /** Error Reporting Service */
+    private ErrorReportingService errorReportingService;
+
     /**
      * Constructor
      * @param scheduler
@@ -127,7 +131,8 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      * @param moduleName
      * @param consumer
      */
-    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName, Consumer<?,?> consumer, ExclusionService exclusionService)
+    public ScheduledRecoveryManager(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory, String flowName, String moduleName,
+                                    Consumer<?,?> consumer, ExclusionService exclusionService, ErrorReportingService errorReportingService)
     {
         this.scheduler = scheduler;
         if(scheduler == null)
@@ -163,6 +168,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
         if(exclusionService == null)
         {
             throw new IllegalArgumentException("exclusionService cannot be null");
+        }
+
+        this.errorReportingService = errorReportingService;
+        if(errorReportingService == null)
+        {
+            throw new IllegalArgumentException("errorReportingService cannot be null");
         }
     }
 
@@ -214,11 +225,7 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
      */
     protected void recover(ExceptionAction action, String componentName, Throwable throwable)
     {
-        if(action instanceof IgnoreAction)
-        {
-            return;
-        }
-        else if(action instanceof StopAction)
+        if(action instanceof StopAction)
         {
             if(isRecovering())
             {
@@ -324,6 +331,12 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
+        if(action instanceof IgnoreAction)
+        {
+            return;
+        }
+
+        this.errorReportingService.notify(componentName, throwable, action.toString());
         this.recover(action, componentName, throwable);
     }
 
@@ -338,9 +351,15 @@ public class ScheduledRecoveryManager implements RecoveryManager<ExceptionResolv
     {
         ExceptionAction action = resolveAction(componentName, throwable);
         logger.info("RecoveryManager resolving to [" + action.toString() + "] for exception ", throwable);
+        if(action instanceof IgnoreAction)
+        {
+            return;
+        }
+
+        String errorUri = this.errorReportingService.notify(componentName, event, throwable, action.toString());
         if(action instanceof ExcludeEventAction)
         {
-            this.exclusionService.addBlacklisted(event);
+            this.exclusionService.addBlacklisted(event, errorUri);
             throw new ForceTransactionRollbackException(action.toString(), throwable);
         }
 

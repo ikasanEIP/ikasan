@@ -7,7 +7,7 @@
     -->
 
     <!-- Inherit DefaultWidgetSet -->
-    <inherits name="com.vaadin.DefaultWidgetSet" /> 
+     
 
     <!--
      Uncomment the following to compile the widgetset for one browser only.
@@ -29,4 +29,8 @@
     -->
     <!-- <set-configuration-property name="devModeRedirectEnabled" value="true" /> -->
 
+
+    <inherits name="com.zybnet.autocomplete.AutocompleteWidgetSet" />
+
+    <inherits name="com.vaadin.DefaultWidgetSet" />
 </module>

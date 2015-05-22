@@ -42,8 +42,10 @@ package org.ikasan.exclusion.model;
 
 import org.ikasan.spec.exclusion.ExclusionService;
 
+import java.util.Arrays;
+
 /**
- * Module implementation representing an ExclusionEvent instance.
+ * ExclusionEvent model instance.
  *
  * @author Ikasan Development Team
  */
@@ -55,8 +57,11 @@ public class ExclusionEvent
     /** flowName */
     String flowName;
 
-    /** unique identifier for this event instance */
+    /** identifier for this event */
     String identifier;
+
+    /** original form of the event being excluded */
+    byte[] event;
 
     /** timestamp indicating when this event was created */
     long timestamp;
@@ -64,14 +69,20 @@ public class ExclusionEvent
     /** expiry of this event */
     long expiry;
 
+    /** error uri reported as part of this excluded event */
+    String errorUri;
+
     /**
      * Constructor
-     * Defaults timeToLive to one day
+     * @param moduleName
+     * @param flowName
      * @param identifier
+     * @param event
+     * @param errorUri
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier)
+    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri)
     {
-        this(moduleName, flowName, identifier, ExclusionService.DEFAULT_TIME_TO_LIVE);
+        this(moduleName, flowName, identifier, event, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
     }
 
     /**
@@ -79,13 +90,34 @@ public class ExclusionEvent
      * @param moduleName
      * @param flowName
      * @param identifier
+     * @param event
+     * @param errorUri
      * @param timeToLive
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, long timeToLive)
+    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri, long timeToLive)
     {
         this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+
         this.flowName = flowName;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
         this.identifier = identifier;
+        if(identifier == null)
+        {
+            throw new IllegalArgumentException("identifier cannot be 'null'");
+        }
+        this.event = event;
+        if(event == null)
+        {
+            throw new IllegalArgumentException("event cannot be 'null'");
+        }
+        this.errorUri = errorUri;
         long now = System.currentTimeMillis();
         this.timestamp = now;
         this.expiry = now + timeToLive;
@@ -95,30 +127,6 @@ public class ExclusionEvent
      * Constructor required by the ORM
      */
     protected ExclusionEvent(){}
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    protected void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    protected void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Long getExpiry() {
-        return expiry;
-    }
-
-    protected void setExpiry(Long expiry) {
-        this.expiry = expiry;
-    }
 
     public String getModuleName() {
         return moduleName;
@@ -134,6 +142,46 @@ public class ExclusionEvent
 
     protected void setFlowName(String flowName) {
         this.flowName = flowName;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    protected void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public byte[] getEvent() {
+        return event;
+    }
+
+    protected void setEvent(byte[] event) {
+        this.event = event;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getExpiry() {
+        return expiry;
+    }
+
+    protected void setExpiry(long expiry) {
+        this.expiry = expiry;
+    }
+
+    public String getErrorUri() {
+        return errorUri;
+    }
+
+    protected void setErrorUri(String errorUri) {
+        this.errorUri = errorUri;
     }
 
     @Override
@@ -164,8 +212,10 @@ public class ExclusionEvent
                 "moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", identifier='" + identifier + '\'' +
+                ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
                 ", expiry=" + expiry +
+                ", errorUri='" + errorUri + '\'' +
                 '}';
     }
 }

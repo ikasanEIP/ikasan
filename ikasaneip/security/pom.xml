@@ -52,11 +52,11 @@
         <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
-	<artifactId>ikasan-security</artifactId>
+    <artifactId>ikasan-security</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Security</name>
     <description>The security library for the Ikasan Enterprise Integration Platform</description>
-	
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -111,25 +111,34 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.transaction</groupId>
+					<artifactId>jta</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -162,10 +171,9 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- TODO: Upgrade to 1.8.1.2 at some stage -->
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -197,7 +205,7 @@
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-all</artifactId>
-		  <scope>compile</scope>
+		  <scope>provided</scope>
 		  <exclusions> 
 				<exclusion> 
 					<groupId>org.apache.directory.api</groupId> 
@@ -209,24 +217,28 @@
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-server-integ</artifactId>
+		  <version>2.0.0-M18</version>
 		  <scope>provided</scope>
 		</dependency> 
 	 
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-core-integ</artifactId>
+		  <version>2.0.0-M18</version>
 		  <scope>provided</scope>
 		</dependency> 
 
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-server-unit</artifactId>
+		  <version>1.5.5</version>
 		  <scope>provided</scope>
 		</dependency> 
 
 		<dependency>
 			<groupId>com.unboundid</groupId>
 			<artifactId>unboundid-ldapsdk</artifactId>
+			<version>2.3.4</version>
 		</dependency>
 	 
 		<dependency>
@@ -234,6 +246,18 @@
 		  <artifactId>commons-io</artifactId>
 		  <scope>test</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

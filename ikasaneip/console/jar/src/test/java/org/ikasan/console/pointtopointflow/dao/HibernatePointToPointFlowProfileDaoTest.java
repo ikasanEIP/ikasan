@@ -81,7 +81,7 @@ public class HibernatePointToPointFlowProfileDaoTest
     };
 
     @Resource
-    HibernatePointToPointFlowProfileDao pointToPointFlowProfileDao;
+    PointToPointFlowProfileDao pointToPointFlowProfileDao;
     
     @Resource
     StubbedDao stubbedDao;

@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import junit.framework.Assert;
 
 import org.ikasan.mapping.dao.HibernateMappingConfigurationDao;
+import org.ikasan.mapping.dao.MappingConfigurationDao;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorException;
 import org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory;
 import org.ikasan.mapping.model.ConfigurationContext;
@@ -29,16 +30,13 @@ import org.ikasan.mapping.model.KeyLocationQuery;
 import org.ikasan.mapping.model.MappingConfiguration;
 import org.ikasan.mapping.model.SourceConfigurationValue;
 import org.ikasan.mapping.model.TargetConfigurationValue;
-import org.ikasan.mapping.service.MappingConfigurationService;
-import org.ikasan.mapping.service.MappingConfigurationServiceException;
-import org.ikasan.mapping.service.MappingConfigurationServiceImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -54,7 +52,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/mappingConfigurationService-context.xml",
+        "/mapping-conf.xml",
         "/hsqldb-config.xml",
         "/substitute-components.xml",
         "/mock-components.xml"
@@ -70,10 +68,10 @@ public class MappingConfigurationServiceTest
 
     /** Object being tested */
     @Resource private MappingConfigurationService xaMappingConfigurationService;
-    @Resource private HibernateMappingConfigurationDao xaMappingConfigurationDao;
+    @Resource private MappingConfigurationDao xaMappingConfigurationDao;
     @Resource private KeyLocationQueryProcessorFactory keyLocationQueryProcessorFactory; 
     
-    private final HibernateMappingConfigurationDao mockMappingConfigurationDao 
+    private final MappingConfigurationDao mockMappingConfigurationDao 
         = this.mockery.mock(HibernateMappingConfigurationDao.class, "mockMappingConfigurationDao");
 
     public static final String CLEAN_JGB_RAW_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><PTF><SOH><VERS>1.00</VERS>" +
@@ -191,12 +189,18 @@ public class MappingConfigurationServiceTest
         this.addSourceSystemConfiguration("true", mappingConfigurationId3, targetId8);
     }
 
+    @Test(expected = IllegalArgumentException.class) 
+    @DirtiesContext
+    public void test_null_keyLocationQueryProcessorFactory() throws KeyLocationQueryProcessorException
+    {
+        new MappingConfigurationServiceImpl(this.xaMappingConfigurationDao, null);
+    }
 
     @Test(expected = IllegalArgumentException.class) 
     @DirtiesContext
     public void test_null_dao() throws KeyLocationQueryProcessorException
     {
-        new MappingConfigurationServiceImpl(null);
+        new MappingConfigurationServiceImpl(null, this.keyLocationQueryProcessorFactory);
     }
 
     @Test 
@@ -333,6 +337,36 @@ public class MappingConfigurationServiceTest
 
         System.out.println(result);
         Assert.assertEquals(1, result.size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_target_system_value_with_payload_and_client_name_success() throws MappingConfigurationServiceException
+    {
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
+                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
+
+        System.out.println(result);
+        Assert.assertEquals("ZEKRAA", result);
+    }
+
+    @Test (expected = MappingConfigurationServiceException.class) 
+    @DirtiesContext
+    public void test_get_target_system_value_with_paylaod_and_client_name_empty_xml_node_fail() throws MappingConfigurationServiceException
+    {
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
+                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML_EMPTY_SALESPERSON.getBytes());
+
+        System.out.println(result);
+        Assert.assertEquals("ZEKRAA", result);
+    }
+
+    @Test (expected = MappingConfigurationServiceException.class) 
+    @DirtiesContext
+    public void test_get_target_system_value_with_paylaod_and_client_name_no_xml_node_fail() throws MappingConfigurationServiceException
+    {
+        String result = this.xaMappingConfigurationService.getTargetConfigurationValue
+                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML_NO_SALESPERSON.getBytes());
     }
 
     @Test
@@ -648,6 +682,60 @@ public class MappingConfigurationServiceTest
                 Assert.assertEquals(targetConfigurationValue.getId(), sourceConfigutationValue.getTargetConfigurationValue().getId());
             }
         }
+    }
+
+    @Test (expected = MappingConfigurationServiceException.class) 
+    @DirtiesContext
+    public void test_resolution_of_target_configuration_value_returns_null_string_fail() throws MappingConfigurationServiceException
+    {
+        final List<String> keyLocationQueries = new ArrayList<String>();
+        keyLocationQueries.add("/PTF/SPTM/SLSPRSN");
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                  one(mockMappingConfigurationDao).getKeyLocationQuery(with(any(String.class)), with(any(String.class)), 
+                      with(any(String.class)), with(any(String.class)));
+                  will(returnValue(keyLocationQueries));
+                  one(mockMappingConfigurationDao).getTargetConfigurationValue(with(any(String.class)), with(any(String.class))
+                      , with(any(String.class)), with(any(String.class)), with(any(ArrayList.class)));
+                  will(returnValue(null));
+            }
+        });
+
+        MappingConfigurationService serviceToTest = new MappingConfigurationServiceImpl
+                      (mockMappingConfigurationDao, keyLocationQueryProcessorFactory);
+        serviceToTest.getTargetConfigurationValue
+                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test (expected = MappingConfigurationServiceException.class) 
+    @DirtiesContext
+    public void test_resolution_of_target_configuration_value_returns_empty_string_fail() throws MappingConfigurationServiceException
+    {
+        final List<String> keyLocationQueries = new ArrayList<String>();
+        keyLocationQueries.add("/PTF/SPTM/SLSPRSN");
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                  one(mockMappingConfigurationDao).getKeyLocationQuery(with(any(String.class)), with(any(String.class)), 
+                      with(any(String.class)), with(any(String.class)));
+                  will(returnValue(keyLocationQueries));
+                  one(mockMappingConfigurationDao).getTargetConfigurationValue(with(any(String.class)), with(any(String.class))
+                      , with(any(String.class)), with(any(String.class)), with(any(ArrayList.class)));
+                  will(returnValue(""));
+            }
+        });
+
+        MappingConfigurationService serviceToTest = new MappingConfigurationServiceImpl
+                      (mockMappingConfigurationDao, keyLocationQueryProcessorFactory);
+        serviceToTest.getTargetConfigurationValue
+                ("CMI2", "Salesperson to Salesperson Mapping", "Tradeweb", "Bloomberg", CLEAN_JGB_RAW_XML.getBytes());
+
+        mockery.assertIsSatisfied();
     }
 
     /**

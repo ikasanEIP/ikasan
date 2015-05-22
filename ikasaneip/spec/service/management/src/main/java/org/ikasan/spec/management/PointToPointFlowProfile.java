@@ -40,7 +40,6 @@
  */
 package org.ikasan.spec.management;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
