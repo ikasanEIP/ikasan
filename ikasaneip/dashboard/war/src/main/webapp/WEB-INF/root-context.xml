@@ -13,12 +13,12 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.ikasan.mapping.configuration.ui"/>
 
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <!--  bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:/locales/messages"/>
         <property name="fallbackToSystemLocale" value="false" />
     </bean>
 
-    <bean class="ru.xpoft.vaadin.VaadinMessageSource" />
+    <bean class="ru.xpoft.vaadin.VaadinMessageSource" / -->
 
     <bean id="ikasanUI" class="org.ikasan.dashboard.ui.IkasanUI" scope="prototype">
         <constructor-arg ref="navigatorMap"/>

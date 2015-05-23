@@ -42,10 +42,12 @@ package org.ikasan.dashboard.ui.topology.panel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
@@ -73,18 +75,22 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.TableDragMode;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.UI;
@@ -103,25 +109,25 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6213301218439409056L;
+	private  final long serialVersionUID = -6213301218439409056L;
 	
 	private Logger logger = Logger.getLogger(TopologyViewPanel.class);
 	
-	private static final Action START = new Action("Start");
-    private static final Action STOP = new Action("Stop");
-    private static final Action VIEW_DIAGRAM = new Action("View Diagram");
-    private static final Action CONFIGURE = new Action("Configure");
-    private static final Action PAUSE = new Action("Pause");
-    private static final Action RESTART = new Action("Re-start");
-    private static final Action DISABLE = new Action("Disable");
-    private static final Action DETAILS = new Action("Details");
-    private static final Action WIRETAP = new Action("Wiretap");
-    private static final Action[] serverActions = new Action[] { DETAILS };
-    private static final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
-    private static final Action[] flowActions = new Action[] { DETAILS, STOP, START, PAUSE, RESTART, DISABLE };
-    private static final Action[] componentActionsConfigurable = new Action[] { DETAILS, CONFIGURE, WIRETAP };
-    private static final Action[] componentActions = new Action[] { DETAILS, WIRETAP };
-    private static final Action[] actionsEmpty = new Action[]{};
+	private final Action START = new Action("Start");
+    private final Action STOP = new Action("Stop");
+    private final Action VIEW_DIAGRAM = new Action("View Diagram");
+    private final Action CONFIGURE = new Action("Configure");
+    private final Action PAUSE = new Action("Pause");
+    private final Action RESTART = new Action("Re-start");
+    private final Action DISABLE = new Action("Disable");
+    private final Action DETAILS = new Action("Details");
+    private final Action WIRETAP = new Action("Wiretap");
+    private final Action[] serverActions = new Action[] { DETAILS };
+    private final Action[] moduleActions = new Action[] { DETAILS, VIEW_DIAGRAM };
+    private final Action[] flowActions = new Action[] { DETAILS, STOP, START, PAUSE, RESTART, DISABLE };
+    private final Action[] componentActionsConfigurable = new Action[] { DETAILS, CONFIGURE, WIRETAP };
+    private final Action[] componentActions = new Action[] { DETAILS, WIRETAP };
+    private final Action[] actionsEmpty = new Action[]{};
 	
 	private ThemeResource serverResource = new ThemeResource("images/server.jpg");
 	private ThemeResource moduleResource = new ThemeResource("images/module.png");
@@ -141,8 +147,19 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private Table wiretapTable;
 	
 	private ComboBox businessStreamCombo;
+	private ComboBox treeViewBusinessStreamCombo;
 	
 	private WiretapDao wiretapDao;
+	
+	private Table modules = new Table("Modules");
+	private Table flows = new Table("Flows");
+	private Table components = new Table("Components");
+	
+	private PopupDateField fromDate;
+	private PopupDateField toDate;
+	
+	private TextField eventId;
+	private TextField payloadContent;
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao)
@@ -174,17 +191,21 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.setWidth("100%");
 		this.setHeight("100%");
 
-		GridLayout layout = new GridLayout(3, 1);
-		layout.setMargin(true);
-		layout.setSizeFull();
-		
-		layout.addComponent(this.topologyTreePanel, 0, 0);
-		layout.addComponent(this.businessStreamPanel, 2, 0);
-		layout.setColumnExpandRatio(0, 0.3725f);
-		layout.setColumnExpandRatio(1, 0.025f);
-		layout.setColumnExpandRatio(2, 0.5725f);
+		HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
 
-		this.setContent(layout);
+		HorizontalLayout leftLayout = new HorizontalLayout();
+		leftLayout.setSizeFull();
+		leftLayout.setMargin(true);
+		leftLayout.addComponent(this.topologyTreePanel);
+		hsplit.setFirstComponent(leftLayout);
+		HorizontalLayout rightLayout = new HorizontalLayout();
+		rightLayout.setSizeFull();
+		rightLayout.setMargin(true);
+		rightLayout.addComponent(this.businessStreamPanel);
+		hsplit.setSecondComponent(rightLayout);
+		hsplit.setSplitPosition(30, Unit.PERCENTAGE);
+
+		this.setContent(hsplit);
 	}
 
 	protected void createModuleTreePanel()
@@ -198,11 +219,131 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.moduleTree.addActionHandler(this);
 		this.moduleTree.setDragMode(TreeDragMode.NODE);
 		
-		HorizontalLayout layout = new HorizontalLayout();
+		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSizeFull();
+		
+		this.treeViewBusinessStreamCombo = new ComboBox("Business Stream");
+		
+		this.treeViewBusinessStreamCombo.addValueChangeListener(new ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                if(event.getProperty() != null && event.getProperty().getValue() != null)
+                {
+                	final BusinessStream businessStream  = (BusinessStream)event.getProperty().getValue();
+                	
+                	logger.info("Value changed to business stream: " + businessStream.getName());
+                
+                	moduleTree.removeAllItems();
+                	
+                	if(businessStream.getName().equals("All"))
+                	{
+                		List<Server> servers = TopologyViewPanel.this.topologyService.getAllServers();
+                		
+                		for(Server server: servers)
+                		{
+                			Set<Module> modules = server.getModules();
 
+                			TopologyViewPanel.this.moduleTree.addItem(server);
+                			TopologyViewPanel.this.moduleTree.setItemCaption(server, server.getName());
+                			TopologyViewPanel.this.moduleTree.setChildrenAllowed(server, true);
+                			TopologyViewPanel.this.moduleTree.setItemIcon(server, serverResource);
+
+                	        for(Module module: modules)
+                	        {
+                	        	TopologyViewPanel.this.moduleTree.addItem(module);
+                	        	TopologyViewPanel.this.moduleTree.setItemCaption(module, module.getName());
+                	        	TopologyViewPanel.this.moduleTree.setParent(module, server);
+                	        	TopologyViewPanel.this.moduleTree.setChildrenAllowed(module, true);
+                	        	TopologyViewPanel.this.moduleTree.setItemIcon(module, moduleResource);
+                	            
+                	            Set<Flow> flows = module.getFlows();
+                	
+                	            for(Flow flow: flows)
+                	            {
+                	            	TopologyViewPanel.this.moduleTree.addItem(flow);
+                	            	TopologyViewPanel.this.moduleTree.setItemCaption(flow, flow.getName());
+                	            	TopologyViewPanel.this.moduleTree.setParent(flow, module);
+                	            	TopologyViewPanel.this.moduleTree.setChildrenAllowed(flow, true);
+                	            	TopologyViewPanel.this.moduleTree.setItemIcon(flow, flowResource);
+                	                
+                	                Set<Component> components = flow.getComponents();
+                	
+                	                for(Component component: components)
+                	                {
+                	                	TopologyViewPanel.this.moduleTree.addItem(component);
+                	                	TopologyViewPanel.this.moduleTree.setParent(component, flow);
+                	                	TopologyViewPanel.this.moduleTree.setItemCaption(component, component.getName());
+                	                	TopologyViewPanel.this.moduleTree.setChildrenAllowed(component, false);
+                	                	
+                	                	if(component.isConfigurable())
+                	                	{
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, TopologyViewPanel.this.componentConfigurableResource);
+                	                	}
+                	                	else
+                	                	{
+                	                		TopologyViewPanel.this.moduleTree.setItemIcon(component, TopologyViewPanel.this.componentResource);
+                	                	}
+                	                }
+                	            }
+                	        }
+                		}
+                	}
+                	else
+                	{
+	                	for(BusinessStreamFlow bsFlow: businessStream.getFlows())
+	                	{
+	                		Server server = bsFlow.getFlow().getModule().getServer();
+	                		Module module = bsFlow.getFlow().getModule();
+	                		Flow flow = bsFlow.getFlow();
+	                		
+	                		if(!moduleTree.containsId(server))
+	                		{
+		                		moduleTree.addItem(server);
+		                        moduleTree.setItemCaption(server, server.getName());
+		                        moduleTree.setChildrenAllowed(server, true);
+		                        moduleTree.setItemIcon(server, serverResource);
+	                		}
+	                        
+	                        moduleTree.addItem(module);
+	    	                moduleTree.setItemCaption(module, module.getName());
+	                        moduleTree.setParent(module, server);
+	    	                moduleTree.setChildrenAllowed(module, true);
+	    	                moduleTree.setItemIcon(module, moduleResource);
+	                        
+	                        moduleTree.addItem(flow);
+	    	                moduleTree.setItemCaption(flow, flow.getName());
+	                        moduleTree.setParent(flow, module);
+	    	                moduleTree.setChildrenAllowed(flow, true);
+	    	                moduleTree.setItemIcon(flow, flowResource);
+	    	                
+	    	                Set<Component> components = flow.getComponents();
+	    	
+	    	                for(Component component: components)
+	    	                {
+	    	                	moduleTree.addItem(component);
+	    	                	moduleTree.setParent(component, flow);
+	    	                	moduleTree.setItemCaption(component, component.getName());
+	    	                	moduleTree.setChildrenAllowed(component, false);
+	    	                	
+	    	                	if(component.isConfigurable())
+	    	                	{
+	    	                		moduleTree.setItemIcon(component, componentConfigurableResource);
+	    	                	}
+	    	                	else
+	    	                	{
+	    	                		moduleTree.setItemIcon(component, componentResource);
+	    	                	}
+	    	                }
+	                	}
+                	}        	
+                }
+            }
+        });
+
+		layout.addComponent(this.treeViewBusinessStreamCombo);
+		layout.setExpandRatio(this.treeViewBusinessStreamCombo, 0.08f);
 		layout.addComponent(this.moduleTree);
+		layout.setExpandRatio(this.moduleTree, 0.92f);
 
 		this.topologyTreePanel.setContent(layout);
 	}
@@ -235,7 +376,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.businessStreamTable.addContainerProperty("Flow Name", String.class,  null);
 		this.businessStreamTable.addContainerProperty("", Button.class,  null);
 		this.businessStreamTable.setSizeFull();
-		
+		this.businessStreamTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
 		this.businessStreamTable.setDragMode(TableDragMode.ROW);
 		this.businessStreamTable.setDropHandler(new DropHandler()
 		{
@@ -491,6 +632,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		this.wiretapTable = new Table();
 		this.wiretapTable.setSizeFull();
+		this.wiretapTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
 		this.wiretapTable.addContainerProperty("Module Name", String.class,  null);
 		this.wiretapTable.addContainerProperty("Flow Name", String.class,  null);
 		this.wiretapTable.addContainerProperty("Component Name", String.class,  null);
@@ -512,8 +654,44 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, null
-            			, null, null, null, null, null, null, null);
+            	wiretapTable.removeAllItems();
+
+            	HashSet<String> modulesNames = null;
+            	
+            	if(modules.getItemIds().size() > 0)
+            	{
+	            	modulesNames = new HashSet<String>();
+	            	for(Object module: modules.getItemIds())
+	            	{
+	            		modulesNames.add(((Module)module).getName());
+	            	}
+            	}
+            	
+            	HashSet<String> flowNames = null;
+            	
+            	if(flows.getItemIds().size() > 0)
+            	{
+            		flowNames = new HashSet<String>();
+            		for(Object flow: flows.getItemIds())
+                	{
+                		flowNames.add(((Flow)flow).getName());
+                	}
+            	}
+            	
+            	HashSet<String> componentNames = null;
+            	
+            	if(components.getItemIds().size() > 0)
+            	{
+            		componentNames = new HashSet<String>();
+	            	for(Object component: components.getItemIds())
+	            	{
+	            		componentNames.add("before " + ((Component)component).getName());
+	            		componentNames.add("after " + ((Component)component).getName());
+	            	}
+            	}
+         
+            	PagedSearchResult<WiretapEvent> events = wiretapDao.findWiretapEvents(0, 10000, "timestamp", false, modulesNames
+            			, flowNames, componentNames, null, null, fromDate.getValue(), toDate.getValue(), null);
 
             	for(WiretapEvent<String> wiretapEvent: events.getPagedResults())
             	{
@@ -526,13 +704,334 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	}
             }
         });
+		
+		Button clearButton = new Button("Clear");
+		clearButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	modules.removeAllItems();
+            	flows.removeAllItems();
+            	components.removeAllItems();
+            }
+        });
 
 		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
 		
-		layout.addComponent(searchButton);
-		layout.setExpandRatio(searchButton, 0.05f);
-		layout.addComponent(wiretapTable);
-		layout.setExpandRatio(wiretapTable, 0.95f);
+		GridLayout listSelectLayout = new GridLayout(3, 1);
+		listSelectLayout.setSizeFull();
+		
+		modules.addContainerProperty("Module Name", String.class,  null);
+		modules.addContainerProperty("", Button.class,  null);
+		modules.setSizeFull();
+		modules.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		modules.setDragMode(TableDragMode.ROW);
+		modules.setDropHandler(new DropHandler()
+		{
+			@Override
+			public void drop(final DragAndDropEvent dropEvent)
+			{
+				// criteria verify that this is safe
+				logger.info("Trying to drop: " + dropEvent);
+
+				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+	                        .getTransferable();
+				
+//				if(t.getItemId() instanceof Server)
+//				{
+//					final Server server = (Server) t
+//							.getItemId();
+//					logger.info("sourceContainer.getText(): "
+//							+ server.getName());
+//
+//					for(final Module module: server.getModules())
+//					{
+//						logger.info("sourceContainer.getText(): "
+//								+ module.getName());
+//						
+//						Button deleteButton = new Button();
+//						ThemeResource deleteIcon = new ThemeResource(
+//								"images/remove-icon.png");
+//						deleteButton.setIcon(deleteIcon);
+//						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+//
+//						
+//						// Add the delete functionality to each role that is added
+//						deleteButton.addClickListener(new Button.ClickListener() 
+//				        {
+//				            public void buttonClick(ClickEvent event) 
+//				            {		
+//				            	modules.removeItem(module);
+//				            }
+//				        });
+//						
+//						modules.addItem(new Object[]{module.getName(), deleteButton}, module);
+//
+//						for(final Flow flow: module.getFlows())
+//						{
+//							deleteButton = new Button();
+//							deleteButton.setIcon(deleteIcon);
+//							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+//							
+//							// Add the delete functionality to each role that is added
+//							deleteButton.addClickListener(new Button.ClickListener() 
+//					        {
+//					            public void buttonClick(ClickEvent event) 
+//					            {		
+//					            	flows.removeItem(flow);
+//					            }
+//					        });
+//							
+//							flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+//							
+//							for(final Component component: flow.getComponents())
+//							{
+//								deleteButton = new Button();
+//								deleteButton.setIcon(deleteIcon);
+//								deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+//								
+//								// Add the delete functionality to each role that is added
+//								deleteButton.addClickListener(new Button.ClickListener() 
+//						        {
+//						            public void buttonClick(ClickEvent event) 
+//						            {		
+//						            	components.removeItem(component);
+//						            }
+//						        });
+//								
+//								components.addItem(new Object[]{component.getName(), deleteButton}, component);
+//							}
+//						}
+//					}
+//				}
+			
+				if(t.getItemId() instanceof Module)
+				{
+					final Module module = (Module) t
+							.getItemId();
+					logger.info("sourceContainer.getText(): "
+							+ module.getName());
+					
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+
+					
+					// Add the delete functionality to each role that is added
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {		
+			            	modules.removeItem(module);
+			            }
+			        });
+					
+					modules.addItem(new Object[]{module.getName(), deleteButton}, module);
+
+					for(final Flow flow: module.getFlows())
+					{
+						deleteButton = new Button();
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						// Add the delete functionality to each role that is added
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {		
+				            	flows.removeItem(flow);
+				            }
+				        });
+						
+						flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+						
+						for(final Component component: flow.getComponents())
+						{
+							deleteButton = new Button();
+							deleteButton.setIcon(deleteIcon);
+							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+							
+							// Add the delete functionality to each role that is added
+							deleteButton.addClickListener(new Button.ClickListener() 
+					        {
+					            public void buttonClick(ClickEvent event) 
+					            {		
+					            	components.removeItem(component);
+					            }
+					        });
+							
+							components.addItem(new Object[]{component.getName(), deleteButton}, component);
+						}
+					}
+				}
+				
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		});
+		
+		listSelectLayout.addComponent(modules, 0, 0);
+		flows.addContainerProperty("Flow Name", String.class,  null);
+		flows.addContainerProperty("", Button.class,  null);
+		flows.setSizeFull();
+		flows.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		flows.setDropHandler(new DropHandler()
+		{
+			@Override
+			public void drop(final DragAndDropEvent dropEvent)
+			{
+				// criteria verify that this is safe
+				logger.info("Trying to drop: " + dropEvent);
+
+				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+	                        .getTransferable();
+			
+				if(t.getItemId() instanceof Flow)
+				{
+					final Flow flow = (Flow) t
+							.getItemId();
+					logger.info("sourceContainer.getText(): "
+							+ flow.getName());
+					
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+
+					
+					// Add the delete functionality to each role that is added
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {		
+			            	flows.removeItem(flow);
+			            }
+			        });
+					
+					flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+						
+					for(final Component component: flow.getComponents())
+					{
+						deleteButton = new Button();
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						// Add the delete functionality to each role that is added
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {		
+				            	components.removeItem(component);
+				            }
+				        });
+						
+						components.addItem(new Object[]{component.getName(), deleteButton}, component);
+					}
+				}
+				
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		});
+
+		listSelectLayout.addComponent(flows, 1, 0);
+		components.setSizeFull();
+		components.addContainerProperty("Component Name", String.class,  null);
+		components.addContainerProperty("", Button.class,  null);
+		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		components.setSizeFull();
+		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		components.setDropHandler(new DropHandler()
+		{
+			@Override
+			public void drop(final DragAndDropEvent dropEvent)
+			{
+				// criteria verify that this is safe
+				logger.info("Trying to drop: " + dropEvent);
+
+				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+	                        .getTransferable();
+			
+				if(t.getItemId() instanceof Component)
+				{
+					final Component component = (Component) t
+							.getItemId();
+					logger.info("sourceContainer.getText(): "
+							+ component.getName());
+					
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+
+					
+					// Add the delete functionality to each role that is added
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {		
+			            	components.removeItem(component);
+			            }
+			        });
+					
+					components.addItem(new Object[]{component.getName(), deleteButton}, component);
+						
+				}
+				
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		});
+		listSelectLayout.addComponent(this.components, 2, 0);
+		
+		GridLayout dateSelectLayout = new GridLayout(2, 2);
+		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
+		dateSelectLayout.setColumnExpandRatio(1, 0.75f);
+		dateSelectLayout.setSizeFull();
+		this.fromDate = new PopupDateField("From date");
+		this.fromDate.setResolution(Resolution.MINUTE);
+		dateSelectLayout.addComponent(this.fromDate, 0, 0);
+		this.toDate = new PopupDateField("To date");
+		this.toDate.setResolution(Resolution.MINUTE);
+		dateSelectLayout.addComponent(this.toDate, 0, 1);
+		
+		this.eventId = new TextField("Event Id");
+		this.eventId.setWidth("80%");
+		this.payloadContent = new TextField("Payload Content");
+		this.payloadContent.setWidth("80%");
+		dateSelectLayout.addComponent(this.eventId, 1, 0);
+		dateSelectLayout.addComponent(this.payloadContent, 1, 1);
+		
+		
+		GridLayout searchLayout = new GridLayout(2, 1);
+		searchLayout.addComponent(searchButton, 0, 0);
+		searchLayout.addComponent(clearButton, 1, 0);
+		
+		layout.addComponent(listSelectLayout);
+		layout.setExpandRatio(listSelectLayout, 0.20f);
+		layout.addComponent(dateSelectLayout);
+		layout.setExpandRatio(dateSelectLayout, 0.15f);
+		layout.addComponent(searchLayout);
+		layout.setExpandRatio(searchLayout, 0.05f);
+		layout.addComponent(this.wiretapTable);
+		layout.setExpandRatio(this.wiretapTable, 0.60f);
 		layout.setSizeFull();
 		
 		return layout;
@@ -606,6 +1105,20 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			this.businessStreamCombo.addItem(businessStream);
 			this.businessStreamCombo.setItemCaption(businessStream, businessStream.getName());
 		}
+		
+		this.treeViewBusinessStreamCombo.removeAllItems();
+		
+		BusinessStream businessStreamAll = new BusinessStream();
+		businessStreamAll.setName("All");
+		
+		this.treeViewBusinessStreamCombo.addItem(businessStreamAll);
+		this.treeViewBusinessStreamCombo.setItemCaption(businessStreamAll, businessStreamAll.getName());
+		
+		for(BusinessStream businessStream: businessStreams)
+		{
+			this.treeViewBusinessStreamCombo.addItem(businessStream);
+			this.treeViewBusinessStreamCombo.setItemCaption(businessStream, businessStream.getName());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -616,25 +1129,25 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	{        
 		if(target instanceof Server)
         {
-            return TopologyViewPanel.serverActions;
+            return serverActions;
         }
 		else if(target instanceof Module)
         {
-            return TopologyViewPanel.moduleActions;
+            return moduleActions;
         }
 		else if(target instanceof Flow)
         {
-            return TopologyViewPanel.flowActions;
+            return flowActions;
         }
 		else if(target instanceof Component)
         {
 			if(((Component)target).isConfigurable())
 			{
-				return TopologyViewPanel.componentActionsConfigurable;
+				return componentActionsConfigurable;
 			}
 			else
 			{
-				return TopologyViewPanel.componentActions;
+				return componentActions;
 			}
         }
         else
@@ -653,7 +1166,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
         logger.info("Target: " + target.getClass().getName());
         logger.info("Sender: " + sender.getClass().getName());
         
-        if(action.equals(TopologyViewPanel.CONFIGURE))
+        if(action.equals(CONFIGURE))
         {
         	this.componentConfigurationWindow.populate(((Component)target).getConfigurationId());
         	UI.getCurrent().addWindow(this.componentConfigurationWindow);

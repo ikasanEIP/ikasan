@@ -27,7 +27,7 @@
         <constructor-arg ref="hospitalViewComponentContainer"/>
     </bean>
     
-    <bean id="topologyPanel" class="org.ikasan.dashboard.ui.service.hospital.panel.HospitalPanel" scope="session" />
+    <bean id="topologyPanel" class="org.ikasan.dashboard.ui.service.hospital.panel.HospitalPanel" scope="session"/>
 
 	<bean id="topologyViewComponentContainer" class="org.ikasan.dashboard.ui.framework.display.ViewComponentContainer" scope="session">
 		<constructor-arg value="false"/>
@@ -37,13 +37,13 @@
         <constructor-arg ref="ikasanModuleService" />
     </bean -->
 
-	<bean id="topologyViewPanel" class="org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel">
+	<bean id="topologyViewPanel" class="org.ikasan.dashboard.ui.topology.panel.TopologyViewPanel" scope="session">
         <constructor-arg ref="topologyService" />
         <constructor-arg ref="componentConfigurationWindow" />
         <constructor-arg ref="wiretapDao" />
     </bean>
     
-    <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow">
+    <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
         <constructor-arg ref="configurationService" />
     </bean>
 
