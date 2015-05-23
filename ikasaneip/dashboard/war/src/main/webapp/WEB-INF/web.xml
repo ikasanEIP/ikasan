@@ -97,7 +97,7 @@
     <context-param>
         <description>Vaadin production mode</description>
         <param-name>productionMode</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
     </context-param>
 
     <!-- Static mapping -->
@@ -106,8 +106,13 @@
         <url-pattern>/static/*</url-pattern>
     </servlet-mapping>
 
-    <!-- session-config>
-        <session-timeout>30</session-timeout>
-    </session-config -->
+	<context-param>
+	  <param-name>heartbeatInterval</param-name>
+	  <param-value>30</param-value>
+	</context-param>
+
+    <session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>
 
 </web-app>

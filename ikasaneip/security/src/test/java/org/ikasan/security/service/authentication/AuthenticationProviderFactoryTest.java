@@ -81,6 +81,7 @@ import com.unboundid.ldif.LDIFReader;
         "/substitute-components.xml",
         "/mock-components.xml"
 })
+
 public class AuthenticationProviderFactoryTest
 {
 private InMemoryDirectoryServer inMemoryDirectoryServer;

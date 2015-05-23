@@ -250,6 +250,91 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
             }
         });
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.wiretap.dao.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public PagedSearchResult<WiretapEvent> findWiretapEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+			final Set<String> moduleNames, final Set<String> moduleFlows, final Set<String> componentNames, final String eventId, final String payloadId,
+			final Date fromDate, final Date untilDate, final String payloadContent)
+	{
+	 	return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Criteria dataCriteria = getCriteria(session);
+                dataCriteria.setMaxResults(pageSize);
+                int firstResult = pageNo * pageSize;
+                dataCriteria.setFirstResult(firstResult);
+                if (orderBy != null)
+                {
+                    if (orderAscending)
+                    {
+                        dataCriteria.addOrder(Order.asc(orderBy));
+                    }
+                    else
+                    {
+                        dataCriteria.addOrder(Order.desc(orderBy));
+                    }
+                }
+                List<WiretapEvent> wiretapResults = dataCriteria.list();
+                
+                Criteria metaDataCriteria = getCriteria(session);
+                metaDataCriteria.setProjection(Projections.rowCount());
+                Long rowCount = new Long(0);
+                List<Long> rowCountList = metaDataCriteria.list();
+                if (!rowCountList.isEmpty())
+                {
+                    rowCount = rowCountList.get(0);
+                }
+                
+                return new ArrayListPagedSearchResult<WiretapEvent>(wiretapResults, firstResult, rowCount);
+            }
+            
+            /**
+             * Create a criteria instance for each invocation of data or metadata queries.
+             * @param session
+             * @return
+             */
+            private Criteria getCriteria(Session session)
+            {
+                Criteria criteria = session.createCriteria(WiretapEvent.class);
+                
+                if (restrictionExists(moduleNames))
+                {
+                    criteria.add(Restrictions.in("moduleName", moduleNames));
+                }
+                if (restrictionExists(moduleFlows))
+                {
+                    criteria.add(Restrictions.in("flowName", moduleFlows));
+                }
+                if (restrictionExists(componentNames))
+                {
+                    criteria.add(Restrictions.in("componentName", componentNames));
+                }
+                if (restrictionExists(eventId))
+                {
+                    criteria.add(Restrictions.eq("eventId", eventId));
+                }
+                if (restrictionExists(payloadContent))
+                {
+                    criteria.add(Restrictions.like("event", payloadContent, MatchMode.ANYWHERE));
+                }
+                if (restrictionExists(fromDate))
+                {
+                    criteria.add(Restrictions.gt("timestamp", fromDate.getTime()));
+                }
+                if (restrictionExists(untilDate))
+                {
+                    criteria.add(Restrictions.lt("timestamp", untilDate.getTime()));
+                }
+
+                return criteria;
+            }
+        });
+	}
 
     /**
      * Check to see if the restriction exists
