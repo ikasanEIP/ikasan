@@ -40,18 +40,21 @@
  */
 package org.ikasan.builder;
 
-import junit.framework.Assert;
 
+import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.annotation.Resource;
+
 import static org.ikasan.builder.FlowBuilder.newFlow;
 
 /**
@@ -77,6 +80,9 @@ public class ModuleBuilderTest
     /** Mock Producer */
     final Producer producer = mockery.mock(Producer.class, "mockProducer");
 
+    /** Mock Producer */
+    final ExclusionServiceFactory exclusionServiceFactory = mockery.mock(ExclusionServiceFactory.class, "mockExclusionServiceFactory");
+
     @Before
     public void setup()
     {
@@ -86,6 +92,10 @@ public class ModuleBuilderTest
             {
                 // set event factory per consumer
                 exactly(2).of(consumer).setEventFactory(with(any(EventFactory.class)));
+
+                // get exclusionService instance per flow
+                exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName1");
+                exactly(1).of(exclusionServiceFactory).getExclusionService("moduleName", "flowName2");
             }
         });
     }
@@ -97,14 +107,14 @@ public class ModuleBuilderTest
     public void test_successful_flowCreation() 
     {
     	Module module = ModuleBuilder.newModule("module name").withDescription("module description")
-    	.addFlow(newFlow("flowName1", "moduleName")
-    			.consumer("consumer", consumer)
-    			.publisher("producer", producer)
-    			.build())
-    	.addFlow(newFlow("flowName2", "moduleName")
-    			.consumer("consumer", consumer)
-    			.publisher("producer", producer)
-    			.build())
+    	.addFlow(newFlow("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory)
+                .consumer("consumer", consumer)
+                .publisher("producer", producer)
+                .build())
+    	.addFlow(newFlow("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory)
+                .consumer("consumer", consumer)
+                .publisher("producer", producer)
+                .build())
     	.build();
 
     	Assert.assertTrue("module name should be 'module name'", "module name".equals(module.getName()));

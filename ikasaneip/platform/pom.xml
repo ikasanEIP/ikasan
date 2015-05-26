@@ -52,6 +52,7 @@
     <name>Ikasan Enterprise Integration Platform</name>
 
     <modules>
+        <module>ikasan-spring-resource</module>
         <module>ikasan-eip</module>
         <module>ikasan-eip-test</module>
         <module>ikasan-setup</module>

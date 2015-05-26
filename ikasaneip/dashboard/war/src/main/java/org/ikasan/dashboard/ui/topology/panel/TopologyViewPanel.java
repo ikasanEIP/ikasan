@@ -41,6 +41,7 @@
 package org.ikasan.dashboard.ui.topology.panel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -49,8 +50,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
+import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
+import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
@@ -146,23 +150,34 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private Panel wiretapPanel;
 	private Table wiretapTable;
 	
+	private Panel errorOccurencePanel;
+	private Table errorOccurenceTable;
+	
 	private ComboBox businessStreamCombo;
 	private ComboBox treeViewBusinessStreamCombo;
 	
 	private WiretapDao wiretapDao;
 	
-	private Table modules = new Table("Modules");
-	private Table flows = new Table("Flows");
-	private Table components = new Table("Components");
+	private Table wiretapModules = new Table("Modules");
+	private Table wiretapFlows = new Table("Flows");
+	private Table wiretapComponents = new Table("Components");
+	
+	private Table errorOccurenceModules = new Table("Modules");
+	private Table errorOccurenceFlows = new Table("Flows");
+	private Table errorOccurenceComponents = new Table("Components");
 	
 	private PopupDateField fromDate;
 	private PopupDateField toDate;
+	private PopupDateField errorFromDate;
+	private PopupDateField errorToDate;
 	
 	private TextField eventId;
 	private TextField payloadContent;
 	
+	private ErrorReportingService errorReportingService;
+	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 WiretapDao wiretapDao)
+			 WiretapDao wiretapDao, ErrorReportingService errorReportingService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -177,7 +192,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.wiretapDao = wiretapDao;
 		if(this.wiretapDao == null)
 		{
-			throw new IllegalArgumentException("componentConfigurationWindow cannot be null!");
+			throw new IllegalArgumentException("wiretapDao cannot be null!");
+		}
+		this.errorReportingService = errorReportingService;
+		if(this.errorReportingService == null)
+		{
+			throw new IllegalArgumentException("errorReportingService cannot be null!");
 		}
 
 		init();
@@ -362,6 +382,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		tab2.setSizeFull();
 		tab2.addComponent(createWiretapPanel());
 		tabsheet.addTab(tab2, "Wiretaps");
+		
+		VerticalLayout tab3 = new VerticalLayout();
+		tab3.setSizeFull();
+		tab3.addComponent(createErrorOccurencePanel());
+		tabsheet.addTab(tab3, "Errors");
 
 		this.businessStreamPanel.setContent(tabsheet);
 	}
@@ -624,6 +649,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		return layout;
 	}
 	
+	
+	
 	protected Layout createWiretapPanel()
 	{
 		this.wiretapPanel = new Panel("Topology Stuff");
@@ -658,10 +685,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
             	HashSet<String> modulesNames = null;
             	
-            	if(modules.getItemIds().size() > 0)
+            	if(wiretapModules.getItemIds().size() > 0)
             	{
 	            	modulesNames = new HashSet<String>();
-	            	for(Object module: modules.getItemIds())
+	            	for(Object module: wiretapModules.getItemIds())
 	            	{
 	            		modulesNames.add(((Module)module).getName());
 	            	}
@@ -669,10 +696,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	
             	HashSet<String> flowNames = null;
             	
-            	if(flows.getItemIds().size() > 0)
+            	if(wiretapFlows.getItemIds().size() > 0)
             	{
             		flowNames = new HashSet<String>();
-            		for(Object flow: flows.getItemIds())
+            		for(Object flow: wiretapFlows.getItemIds())
                 	{
                 		flowNames.add(((Flow)flow).getName());
                 	}
@@ -680,10 +707,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             	
             	HashSet<String> componentNames = null;
             	
-            	if(components.getItemIds().size() > 0)
+            	if(wiretapComponents.getItemIds().size() > 0)
             	{
             		componentNames = new HashSet<String>();
-	            	for(Object component: components.getItemIds())
+	            	for(Object component: wiretapComponents.getItemIds())
 	            	{
 	            		componentNames.add("before " + ((Component)component).getName());
 	            		componentNames.add("after " + ((Component)component).getName());
@@ -710,24 +737,24 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	modules.removeAllItems();
-            	flows.removeAllItems();
-            	components.removeAllItems();
+            	wiretapModules.removeAllItems();
+            	wiretapFlows.removeAllItems();
+            	wiretapComponents.removeAllItems();
             }
         });
 
-		VerticalLayout layout = new VerticalLayout();
+		GridLayout layout = new GridLayout(1, 5);
 		layout.setMargin(true);
 		
 		GridLayout listSelectLayout = new GridLayout(3, 1);
 		listSelectLayout.setSizeFull();
 		
-		modules.addContainerProperty("Module Name", String.class,  null);
-		modules.addContainerProperty("", Button.class,  null);
-		modules.setSizeFull();
-		modules.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		modules.setDragMode(TableDragMode.ROW);
-		modules.setDropHandler(new DropHandler()
+		wiretapModules.addContainerProperty("Module Name", String.class,  null);
+		wiretapModules.addContainerProperty("", Button.class,  null);
+		wiretapModules.setSizeFull();
+		wiretapModules.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		wiretapModules.setDragMode(TableDragMode.ROW);
+		wiretapModules.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -737,74 +764,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
 	                        .getTransferable();
-				
-//				if(t.getItemId() instanceof Server)
-//				{
-//					final Server server = (Server) t
-//							.getItemId();
-//					logger.info("sourceContainer.getText(): "
-//							+ server.getName());
-//
-//					for(final Module module: server.getModules())
-//					{
-//						logger.info("sourceContainer.getText(): "
-//								+ module.getName());
-//						
-//						Button deleteButton = new Button();
-//						ThemeResource deleteIcon = new ThemeResource(
-//								"images/remove-icon.png");
-//						deleteButton.setIcon(deleteIcon);
-//						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-//
-//						
-//						// Add the delete functionality to each role that is added
-//						deleteButton.addClickListener(new Button.ClickListener() 
-//				        {
-//				            public void buttonClick(ClickEvent event) 
-//				            {		
-//				            	modules.removeItem(module);
-//				            }
-//				        });
-//						
-//						modules.addItem(new Object[]{module.getName(), deleteButton}, module);
-//
-//						for(final Flow flow: module.getFlows())
-//						{
-//							deleteButton = new Button();
-//							deleteButton.setIcon(deleteIcon);
-//							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-//							
-//							// Add the delete functionality to each role that is added
-//							deleteButton.addClickListener(new Button.ClickListener() 
-//					        {
-//					            public void buttonClick(ClickEvent event) 
-//					            {		
-//					            	flows.removeItem(flow);
-//					            }
-//					        });
-//							
-//							flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
-//							
-//							for(final Component component: flow.getComponents())
-//							{
-//								deleteButton = new Button();
-//								deleteButton.setIcon(deleteIcon);
-//								deleteButton.setStyleName(Reindeer.BUTTON_LINK);
-//								
-//								// Add the delete functionality to each role that is added
-//								deleteButton.addClickListener(new Button.ClickListener() 
-//						        {
-//						            public void buttonClick(ClickEvent event) 
-//						            {		
-//						            	components.removeItem(component);
-//						            }
-//						        });
-//								
-//								components.addItem(new Object[]{component.getName(), deleteButton}, component);
-//							}
-//						}
-//					}
-//				}
 			
 				if(t.getItemId() instanceof Module)
 				{
@@ -825,11 +784,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	modules.removeItem(module);
+			            	wiretapModules.removeItem(module);
 			            }
 			        });
 					
-					modules.addItem(new Object[]{module.getName(), deleteButton}, module);
+					wiretapModules.addItem(new Object[]{module.getName(), deleteButton}, module);
 
 					for(final Flow flow: module.getFlows())
 					{
@@ -842,11 +801,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				        {
 				            public void buttonClick(ClickEvent event) 
 				            {		
-				            	flows.removeItem(flow);
+				            	wiretapFlows.removeItem(flow);
 				            }
 				        });
 						
-						flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+						wiretapFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
 						
 						for(final Component component: flow.getComponents())
 						{
@@ -859,11 +818,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 					        {
 					            public void buttonClick(ClickEvent event) 
 					            {		
-					            	components.removeItem(component);
+					            	wiretapComponents.removeItem(component);
 					            }
 					        });
 							
-							components.addItem(new Object[]{component.getName(), deleteButton}, component);
+							wiretapComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
 						}
 					}
 				}
@@ -877,12 +836,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			}
 		});
 		
-		listSelectLayout.addComponent(modules, 0, 0);
-		flows.addContainerProperty("Flow Name", String.class,  null);
-		flows.addContainerProperty("", Button.class,  null);
-		flows.setSizeFull();
-		flows.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		flows.setDropHandler(new DropHandler()
+		listSelectLayout.addComponent(wiretapModules, 0, 0);
+		wiretapFlows.addContainerProperty("Flow Name", String.class,  null);
+		wiretapFlows.addContainerProperty("", Button.class,  null);
+		wiretapFlows.setSizeFull();
+		wiretapFlows.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		wiretapFlows.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -912,11 +871,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	flows.removeItem(flow);
+			            	wiretapFlows.removeItem(flow);
 			            }
 			        });
 					
-					flows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+					wiretapFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
 						
 					for(final Component component: flow.getComponents())
 					{
@@ -929,11 +888,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				        {
 				            public void buttonClick(ClickEvent event) 
 				            {		
-				            	components.removeItem(component);
+				            	wiretapComponents.removeItem(component);
 				            }
 				        });
 						
-						components.addItem(new Object[]{component.getName(), deleteButton}, component);
+						wiretapComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
 					}
 				}
 				
@@ -946,14 +905,14 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			}
 		});
 
-		listSelectLayout.addComponent(flows, 1, 0);
-		components.setSizeFull();
-		components.addContainerProperty("Component Name", String.class,  null);
-		components.addContainerProperty("", Button.class,  null);
-		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		components.setSizeFull();
-		components.setCellStyleGenerator(new IkasanCellStyleGenerator());
-		components.setDropHandler(new DropHandler()
+		listSelectLayout.addComponent(wiretapFlows, 1, 0);
+		wiretapComponents.setSizeFull();
+		wiretapComponents.addContainerProperty("Component Name", String.class,  null);
+		wiretapComponents.addContainerProperty("", Button.class,  null);
+		wiretapComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		wiretapComponents.setSizeFull();
+		wiretapComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		wiretapComponents.setDropHandler(new DropHandler()
 		{
 			@Override
 			public void drop(final DragAndDropEvent dropEvent)
@@ -983,11 +942,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 			        {
 			            public void buttonClick(ClickEvent event) 
 			            {		
-			            	components.removeItem(component);
+			            	wiretapComponents.removeItem(component);
 			            }
 			        });
 					
-					components.addItem(new Object[]{component.getName(), deleteButton}, component);
+					wiretapComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
 						
 				}
 				
@@ -999,7 +958,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 				return AcceptAll.get();
 			}
 		});
-		listSelectLayout.addComponent(this.components, 2, 0);
+		listSelectLayout.addComponent(this.wiretapComponents, 2, 0);
 		
 		GridLayout dateSelectLayout = new GridLayout(2, 2);
 		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
@@ -1024,14 +983,375 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		searchLayout.addComponent(searchButton, 0, 0);
 		searchLayout.addComponent(clearButton, 1, 0);
 		
-		layout.addComponent(listSelectLayout);
-		layout.setExpandRatio(listSelectLayout, 0.20f);
-		layout.addComponent(dateSelectLayout);
-		layout.setExpandRatio(dateSelectLayout, 0.15f);
-		layout.addComponent(searchLayout);
-		layout.setExpandRatio(searchLayout, 0.05f);
-		layout.addComponent(this.wiretapTable);
-		layout.setExpandRatio(this.wiretapTable, 0.60f);
+		
+		HorizontalLayout hListSelectLayout = new HorizontalLayout();
+		hListSelectLayout.setHeight(100 , Unit.PIXELS);
+		hListSelectLayout.setWidth("100%");
+		hListSelectLayout.addComponent(listSelectLayout);
+		layout.addComponent(hListSelectLayout);
+		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
+		hDateSelectLayout.setHeight(100 , Unit.PIXELS);
+		hDateSelectLayout.setWidth("100%");
+		hDateSelectLayout.addComponent(dateSelectLayout);
+		layout.addComponent(hDateSelectLayout);
+		HorizontalLayout hSearchLayout = new HorizontalLayout();
+		hSearchLayout.setHeight(30 , Unit.PIXELS);
+		hSearchLayout.setWidth("100%");
+		hSearchLayout.addComponent(searchLayout);
+		layout.addComponent(hSearchLayout);
+		HorizontalLayout hWiretapTable = new HorizontalLayout();
+		hWiretapTable.setWidth("100%");
+		hWiretapTable.setHeight(420, Unit.PIXELS);
+		hWiretapTable.addComponent(this.wiretapTable);
+		layout.addComponent(hWiretapTable);
+		layout.setSizeFull();
+		
+		return layout;
+	}
+	
+	protected Layout createErrorOccurencePanel()
+	{
+		this.errorOccurenceTable = new Table();
+		this.errorOccurenceTable.setSizeFull();
+		this.errorOccurenceTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.errorOccurenceTable.addContainerProperty("Module Name", String.class,  null);
+		this.errorOccurenceTable.addContainerProperty("Flow Name", String.class,  null);
+		this.errorOccurenceTable.addContainerProperty("Component Name", String.class,  null);
+		this.errorOccurenceTable.addContainerProperty("Timestamp", String.class,  null);
+		
+		this.errorOccurenceTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		    @Override
+		    public void itemClick(ItemClickEvent itemClickEvent) {
+		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)itemClickEvent.getItemId();
+		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
+		    
+		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    }
+		});
+		
+		
+		Button searchButton = new Button("Search");
+		searchButton.addClickListener(new Button.ClickListener() 
+    	{
+            @SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event) 
+            {
+            	errorOccurenceTable.removeAllItems();
+
+            	ArrayList<String> modulesNames = null;
+            	
+            	if(errorOccurenceModules.getItemIds().size() > 0)
+            	{
+	            	modulesNames = new ArrayList<String>();
+	            	for(Object module: errorOccurenceModules.getItemIds())
+	            	{
+	            		modulesNames.add(((Module)module).getName());
+	            	}
+            	}
+            	
+            	ArrayList<String> flowNames = null;
+            	
+            	if(errorOccurenceFlows.getItemIds().size() > 0)
+            	{
+            		flowNames = new ArrayList<String>();
+            		for(Object flow: errorOccurenceFlows.getItemIds())
+                	{
+                		flowNames.add(((Flow)flow).getName());
+                	}
+            	}
+            	
+            	ArrayList<String> componentNames = null;
+            	
+            	if(errorOccurenceComponents.getItemIds().size() > 0)
+            	{
+            		componentNames = new ArrayList<String>();
+	            	for(Object component: errorOccurenceComponents.getItemIds())
+	            	{
+	            		componentNames.add("before " + ((Component)component).getName());
+	            		componentNames.add("after " + ((Component)component).getName());
+	            	}
+            	}
+         
+            	List<ErrorOccurrence> errorOccurences = errorReportingService
+            			.find(modulesNames, flowNames, componentNames, errorFromDate.getValue(), errorToDate.getValue());
+
+            	for(ErrorOccurrence errorOccurrence: errorOccurences)
+            	{
+            		Date date = new Date(errorOccurrence.getTimestamp());
+            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            	    String timestamp = format.format(date);
+            	    
+            	    errorOccurenceTable.addItem(new Object[]{errorOccurrence.getModuleName(), errorOccurrence.getFlowName()
+            				, errorOccurrence.getFlowElementName(), timestamp}, errorOccurrence);
+            	}
+            }
+        });
+		
+		Button clearButton = new Button("Clear");
+		clearButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+            	errorOccurenceModules.removeAllItems();
+            	errorOccurenceFlows.removeAllItems();
+            	errorOccurenceComponents.removeAllItems();
+            }
+        });
+
+		GridLayout layout = new GridLayout(1, 5);
+		layout.setMargin(true);
+		
+		GridLayout listSelectLayout = new GridLayout(3, 1);
+		listSelectLayout.setSizeFull();
+		
+		errorOccurenceModules.addContainerProperty("Module Name", String.class,  null);
+		errorOccurenceModules.addContainerProperty("", Button.class,  null);
+		errorOccurenceModules.setSizeFull();
+		errorOccurenceModules.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		errorOccurenceModules.setDragMode(TableDragMode.ROW);
+		errorOccurenceModules.setDropHandler(new DropHandler()
+		{
+			@Override
+			public void drop(final DragAndDropEvent dropEvent)
+			{
+				// criteria verify that this is safe
+				logger.info("Trying to drop: " + dropEvent);
+
+				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+	                        .getTransferable();
+			
+				if(t.getItemId() instanceof Module)
+				{
+					final Module module = (Module) t
+							.getItemId();
+					logger.info("sourceContainer.getText(): "
+							+ module.getName());
+					
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+
+					
+					// Add the delete functionality to each role that is added
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {		
+			            	errorOccurenceModules.removeItem(module);
+			            }
+			        });
+					
+					errorOccurenceModules.addItem(new Object[]{module.getName(), deleteButton}, module);
+
+					for(final Flow flow: module.getFlows())
+					{
+						deleteButton = new Button();
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						// Add the delete functionality to each role that is added
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {		
+				            	errorOccurenceFlows.removeItem(flow);
+				            }
+				        });
+						
+						errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+						
+						for(final Component component: flow.getComponents())
+						{
+							deleteButton = new Button();
+							deleteButton.setIcon(deleteIcon);
+							deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+							
+							// Add the delete functionality to each role that is added
+							deleteButton.addClickListener(new Button.ClickListener() 
+					        {
+					            public void buttonClick(ClickEvent event) 
+					            {		
+					            	errorOccurenceComponents.removeItem(component);
+					            }
+					        });
+							
+							errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
+						}
+					}
+				}
+				
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		});
+		
+		listSelectLayout.addComponent(errorOccurenceModules, 0, 0);
+		errorOccurenceFlows.addContainerProperty("Flow Name", String.class,  null);
+		errorOccurenceFlows.addContainerProperty("", Button.class,  null);
+		errorOccurenceFlows.setSizeFull();
+		errorOccurenceFlows.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		errorOccurenceFlows.setDropHandler(new DropHandler()
+		{
+			@Override
+			public void drop(final DragAndDropEvent dropEvent)
+			{
+				// criteria verify that this is safe
+				logger.info("Trying to drop: " + dropEvent);
+
+				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+	                        .getTransferable();
+			
+				if(t.getItemId() instanceof Flow)
+				{
+					final Flow flow = (Flow) t
+							.getItemId();
+					logger.info("sourceContainer.getText(): "
+							+ flow.getName());
+					
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+
+					
+					// Add the delete functionality to each role that is added
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {		
+			            	errorOccurenceFlows.removeItem(flow);
+			            }
+			        });
+					
+					errorOccurenceFlows.addItem(new Object[]{flow.getName(), deleteButton}, flow);
+						
+					for(final Component component: flow.getComponents())
+					{
+						deleteButton = new Button();
+						deleteButton.setIcon(deleteIcon);
+						deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+						
+						// Add the delete functionality to each role that is added
+						deleteButton.addClickListener(new Button.ClickListener() 
+				        {
+				            public void buttonClick(ClickEvent event) 
+				            {		
+				            	errorOccurenceComponents.removeItem(component);
+				            }
+				        });
+						
+						errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
+					}
+				}
+				
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		});
+
+		listSelectLayout.addComponent(errorOccurenceFlows, 1, 0);
+		errorOccurenceComponents.setSizeFull();
+		errorOccurenceComponents.addContainerProperty("Component Name", String.class,  null);
+		errorOccurenceComponents.addContainerProperty("", Button.class,  null);
+		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		errorOccurenceComponents.setSizeFull();
+		errorOccurenceComponents.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		errorOccurenceComponents.setDropHandler(new DropHandler()
+		{
+			@Override
+			public void drop(final DragAndDropEvent dropEvent)
+			{
+				// criteria verify that this is safe
+				logger.info("Trying to drop: " + dropEvent);
+
+				final DataBoundTransferable t = (DataBoundTransferable) dropEvent
+	                        .getTransferable();
+			
+				if(t.getItemId() instanceof Component)
+				{
+					final Component component = (Component) t
+							.getItemId();
+					logger.info("sourceContainer.getText(): "
+							+ component.getName());
+					
+					Button deleteButton = new Button();
+					ThemeResource deleteIcon = new ThemeResource(
+							"images/remove-icon.png");
+					deleteButton.setIcon(deleteIcon);
+					deleteButton.setStyleName(Reindeer.BUTTON_LINK);
+
+					
+					// Add the delete functionality to each role that is added
+					deleteButton.addClickListener(new Button.ClickListener() 
+			        {
+			            public void buttonClick(ClickEvent event) 
+			            {		
+			            	errorOccurenceComponents.removeItem(component);
+			            }
+			        });
+					
+					errorOccurenceComponents.addItem(new Object[]{component.getName(), deleteButton}, component);
+						
+				}
+				
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		});
+		listSelectLayout.addComponent(this.errorOccurenceComponents, 2, 0);
+		
+		GridLayout dateSelectLayout = new GridLayout(2, 2);
+		dateSelectLayout.setColumnExpandRatio(0, 0.25f);
+		dateSelectLayout.setColumnExpandRatio(1, 0.75f);
+		dateSelectLayout.setSizeFull();
+		errorFromDate = new PopupDateField("From date");
+		fromDate.setResolution(Resolution.MINUTE);
+		dateSelectLayout.addComponent(fromDate, 0, 0);
+		errorToDate = new PopupDateField("To date");
+		toDate.setResolution(Resolution.MINUTE);
+		dateSelectLayout.addComponent(toDate, 1, 0);
+				
+		
+		GridLayout searchLayout = new GridLayout(2, 1);
+		searchLayout.addComponent(searchButton, 0, 0);
+		searchLayout.addComponent(clearButton, 1, 0);
+		
+		
+		HorizontalLayout hListSelectLayout = new HorizontalLayout();
+		hListSelectLayout.setHeight(100 , Unit.PIXELS);
+		hListSelectLayout.setWidth("100%");
+		hListSelectLayout.addComponent(listSelectLayout);
+		layout.addComponent(hListSelectLayout);
+		HorizontalLayout hDateSelectLayout = new HorizontalLayout();
+		hDateSelectLayout.setHeight(30, Unit.PIXELS);
+		hDateSelectLayout.setWidth("100%");
+		hDateSelectLayout.addComponent(dateSelectLayout);
+		layout.addComponent(hDateSelectLayout);
+		HorizontalLayout hSearchLayout = new HorizontalLayout();
+		hSearchLayout.setHeight(30 , Unit.PIXELS);
+		hSearchLayout.setWidth("100%");
+		hSearchLayout.addComponent(searchLayout);
+		layout.addComponent(hSearchLayout);
+		HorizontalLayout hErrorTable = new HorizontalLayout();
+		hErrorTable.setWidth("100%");
+		hErrorTable.setHeight(420, Unit.PIXELS);
+		hErrorTable.addComponent(this.errorOccurenceTable);
+		layout.addComponent(hErrorTable);
 		layout.setSizeFull();
 		
 		return layout;

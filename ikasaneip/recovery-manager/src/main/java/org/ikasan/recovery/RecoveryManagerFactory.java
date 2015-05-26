@@ -44,6 +44,7 @@ import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.Scheduler;
@@ -100,9 +101,9 @@ public class RecoveryManagerFactory
      * @param consumer
      * @return RecoveryManager
      */
-    public RecoveryManager getRecoveryManager(String flowName, String moduleName, Consumer consumer, ExclusionService exclusionService)
+    public RecoveryManager getRecoveryManager(String flowName, String moduleName, Consumer consumer, ExclusionService exclusionService, ErrorReportingService errorReportingService)
     {
-        return new ScheduledRecoveryManager(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService);
+        return new ScheduledRecoveryManager(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService, errorReportingService);
     }
     
 }

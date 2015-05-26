@@ -45,6 +45,7 @@ import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.exclusion.ExclusionService;
@@ -282,18 +283,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                 }
             }
 
+            // configure exclusion flow resources that are marked as configurable
+            // TODO - Lets see if these really need to be configurable before we start allowing this
+            //configure(this.exclusionFlowConfiguration.getConfiguredResourceFlowElements());
 
-            // configure resources that are marked as configurable
-            for(FlowElement<ConfiguredResource> flowElement:this.flowConfiguration.getConfiguredResourceFlowElements())
-            {
-                // set the default configured resource id if none previously set.
-                if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
-                {
-                    flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
-                }
-
-                this.flowConfiguration.configure(flowElement.getFlowComponent());
-            }
+            // configure business flow resources that are marked as configurable
+            configure(this.flowConfiguration.getConfiguredResourceFlowElements());
         }
         catch(RuntimeException e)
         {
@@ -304,12 +299,31 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         try
         {
             startManagedResources();
+
         }
         catch(RuntimeException e)
         {
             this.flowInitialisationFailure = true;
             this.stopManagedResources();
             throw e;
+        }
+    }
+
+    /**
+     * Configure the given list of configured flowElements
+     * @param flowElements
+     */
+    private void configure(List<FlowElement<ConfiguredResource>> flowElements)
+    {
+        for(FlowElement<ConfiguredResource> flowElement:flowElements)
+        {
+            // set the default configured resource id if none previously set.
+            if(flowElement.getFlowComponent().getConfiguredResourceId() == null)
+            {
+                flowElement.getFlowComponent().setConfiguredResourceId(this.moduleName + this.name + flowElement.getComponentName());
+            }
+
+            this.flowConfiguration.configure(flowElement.getFlowComponent());
         }
     }
 
@@ -409,7 +423,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     protected void stopManagedResources()
     {
-        for(FlowElement<ManagedResource> flowElement:this.flowConfiguration.getManagedResourceFlowElements())
+        stopManagedResourceFlowElements(this.flowConfiguration.getManagedResourceFlowElements());
+        stopManagedResourceFlowElements(this.exclusionFlowConfiguration.getManagedResourceFlowElements());
+    }
+
+    private void stopManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements) {
+        for(FlowElement<ManagedResource> flowElement:flowElements)
         {
             logger.info("Stopping managed component             ["
                     + flowElement.getComponentName() + "]...");
@@ -418,15 +437,22 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
                     + flowElement.getComponentName() + "]");
         }
     }
-    
+
     /**
      * Start the components marked as including Managed Resources.
      * These component are started from right to left in the flow.
      */
     protected void startManagedResources()
     {
+        List<FlowElement<ManagedResource>> exclusionFlowElements = this.exclusionFlowConfiguration.getManagedResourceFlowElements();
+        startManagedResourceFlowElements(exclusionFlowElements);
+
         List<FlowElement<ManagedResource>> flowElements = this.flowConfiguration.getManagedResourceFlowElements();
         this.recoveryManager.setManagedResources(flowElements);
+        startManagedResourceFlowElements(flowElements);
+    }
+
+    private void startManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements) {
         for(int index=flowElements.size()-1; index >= 0; index--)
         {
             FlowElement<ManagedResource> flowElement = flowElements.get(index);
@@ -444,21 +470,21 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             {
                 if(flowElement.getFlowComponent().isCriticalOnStartup())
                 {
-                    // log issues as these may get resolved by the recovery manager 
-                    logger.warn("Failed to start critical component [" 
+                    // log issues as these may get resolved by the recovery manager
+                    logger.warn("Failed to start critical component ["
                             + flowElement.getComponentName() + "] " + e.getMessage(), e);
                     throw e;
                 }
                 else
                 {
-                    // just log any issues as these may get resolved by the recovery manager 
-                    logger.warn("Failed to start managed component [" 
+                    // just log any issues as these may get resolved by the recovery manager
+                    logger.warn("Failed to start managed component ["
                             + flowElement.getComponentName() + "] " + e.getMessage(), e);
                 }
             }
         }
     }
-    
+
     /**
      * Stop this flow
      */
@@ -491,6 +517,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
             if(this.exclusionService.isBlackListed(event))
             {
+                this.exclusionService.park(event);
                 invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
                 this.exclusionService.removeBlacklisted(event);
             }

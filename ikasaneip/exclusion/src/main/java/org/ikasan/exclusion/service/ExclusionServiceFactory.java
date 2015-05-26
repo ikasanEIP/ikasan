@@ -40,9 +40,14 @@
  */
 package org.ikasan.exclusion.service;
 
-import org.ikasan.exclusion.dao.ExclusionServiceDao;
-import org.ikasan.exclusion.dao.ListExclusionServiceDao;
+import org.ikasan.exclusion.dao.BlackListDao;
+import org.ikasan.exclusion.dao.ExclusionEventDao;
+import org.ikasan.exclusion.dao.MapBlackListDao;
+import org.ikasan.exclusion.model.BlackListLinkedHashMap;
+import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
  * ExclusionService Factory.
@@ -51,38 +56,36 @@ import org.ikasan.spec.exclusion.ExclusionService;
  */
 public class ExclusionServiceFactory
 {
-    /** DAO handle */
-    ExclusionServiceDao exclusionServiceDao;
+    /** blacklist DAO handle */
+    BlackListDao blackListDao;
 
-    /** singleton instance */
-    private static ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory();
+    /** exclusionEvent DAO handle */
+    ExclusionEventDao exclusionEventDao;
 
-    /**
-     * Get singleton instance
-     * @return
-     */
-    public static ExclusionServiceFactory getInstance()
-    {
-        return exclusionServiceFactory;
-    }
+    /** handle to the serialiserFactory */
+    SerialiserFactory serialiserFactory;
 
     /**
      * Constructor
      */
-    private ExclusionServiceFactory()
+    public ExclusionServiceFactory(BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, SerialiserFactory serialiserFactory)
     {
-        this.exclusionServiceDao = new ListExclusionServiceDao();
-    }
-
-    /**
-     * Constructor
-     */
-    public ExclusionServiceFactory(ExclusionServiceDao exclusionServiceDao)
-    {
-        this.exclusionServiceDao = exclusionServiceDao;
-        if(exclusionServiceDao == null)
+        this.blackListDao = blackListDao;
+        if(blackListDao == null)
         {
             throw new IllegalArgumentException("exclusionServiceDao cannot be 'null'");
+        }
+
+        this.exclusionEventDao = exclusionEventDao;
+        if(exclusionEventDao == null)
+        {
+            throw new IllegalArgumentException("exclusionEventDao cannot be 'null'");
+        }
+
+        this.serialiserFactory = serialiserFactory;
+        if(serialiserFactory == null)
+        {
+            throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
         }
     }
 
@@ -92,6 +95,6 @@ public class ExclusionServiceFactory
      */
     public ExclusionService getExclusionService(String moduleName, String flowName)
     {
-        return new ExclusionServiceDefaultImpl(moduleName, flowName, exclusionServiceDao);
+        return new ExclusionServiceDefaultImpl(moduleName, flowName, blackListDao, exclusionEventDao, serialiserFactory.getDefaultSerialiser());
     }
 }

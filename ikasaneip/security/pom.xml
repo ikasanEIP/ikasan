@@ -52,12 +52,10 @@
         <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ikasan</groupId>
     <artifactId>ikasan-security</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Security</name>
     <description>The security library for the Ikasan Enterprise Integration Platform</description>
-	<version>1.0.0-rc5-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -133,7 +131,7 @@
         <dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<scope>compile</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.transaction</groupId>
@@ -207,7 +205,7 @@
 		<dependency>
 		  <groupId>org.apache.directory.server</groupId>
 		  <artifactId>apacheds-all</artifactId>
-		  <scope>compile</scope>
+		  <scope>provided</scope>
 		  <exclusions> 
 				<exclusion> 
 					<groupId>org.apache.directory.api</groupId> 
@@ -248,6 +246,18 @@
 		  <artifactId>commons-io</artifactId>
 		  <scope>test</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
