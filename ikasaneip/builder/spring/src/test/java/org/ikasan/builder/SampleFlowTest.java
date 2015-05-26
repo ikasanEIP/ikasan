@@ -71,6 +71,8 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations = { 
         "/sample-flow-conf.xml",
         "/sample-component-conf.xml",
+        "/substitute-components.xml",
+        "/ikasan-transaction-conf.xml",
         "/exception-conf.xml",
         "/hsqldb-datasource-conf.xml"
         })

@@ -123,6 +123,7 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
+            <scope>provided</scope>
         </dependency>
 		
 		<dependency>
@@ -137,6 +138,18 @@
 			<scope>test</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>log4j</groupId>
@@ -147,6 +160,7 @@
         <dependency>
 		  <groupId>org.slf4j</groupId>
 		  <artifactId>slf4j-log4j12</artifactId>
+          <scope>provided</scope>
 		</dependency>
 		
         <dependency>
@@ -159,6 +173,18 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
               <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Hibernate dependency -->

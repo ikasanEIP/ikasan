@@ -58,6 +58,7 @@ public class ScheduleEventConverter implements Converter<JobExecutionContext,Str
         sb.append(context.getFireTime());
         sb.append(" name = ");
         sb.append(context.getJobDetail().getKey().getName());
+        if(true) throw new TransformationException("test exception");
         return sb;
     }
 }

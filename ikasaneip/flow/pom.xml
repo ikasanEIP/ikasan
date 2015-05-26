@@ -51,13 +51,6 @@
     <packaging>pom</packaging>
     <name>Ikasan Flow Implementation</name>
 
-    <scm>
-      <connection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/flow</connection>
-      <developerConnection>scm:svn:https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/flow</developerConnection>
-      <url>https://open.jira.com/svn/IKASAN/branches/ikasaneip-0.9.x/flow</url>
-      <tag>HEAD</tag>
-  </scm>
-
     <build>
         <plugins>
               <plugin>

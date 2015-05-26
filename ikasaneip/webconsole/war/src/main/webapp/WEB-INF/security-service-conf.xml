@@ -114,6 +114,13 @@
 		</beans:property>
 	</beans:bean>
 
+	<beans:bean id="moduleServiceTransactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory">
+			<beans:ref bean="moduleStartupControlHibernateSessionFactory" />
+		</beans:property>
+	</beans:bean>
+
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
 			expression="execution(* org.ikasan.security.service.*.*(..))" />
@@ -121,6 +128,8 @@
 			expression="execution(* org.ikasan.systemevent.service.*.*(..))" />
 		<aop:pointcut id="configurationServiceServiceMethods"
 			expression="execution(* org.ikasan.configurationService.service.*.*(..))" />
+		<aop:pointcut id="moduleServiceServiceMethods"
+			expression="execution(* org.ikasan.module.startup.dao.*.*(..))" />
 			
 		<aop:advisor advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
@@ -128,6 +137,8 @@
 			pointcut-ref="systemEventServiceMethods" />
 	    <aop:advisor advice-ref="configuration-service-required-TransactionAdvice"
 			pointcut-ref="configurationServiceServiceMethods" />
+		<aop:advisor advice-ref="module-service-required-TransactionAdvice"
+			pointcut-ref="moduleServiceServiceMethods" />
 	</aop:config>
 
 	<tx:advice id="security-required-TransactionAdvice"
@@ -146,6 +157,13 @@
 	
 	<tx:advice id="configuration-service-required-TransactionAdvice"
 		transaction-manager="configurationServiceTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<tx:advice id="module-service-required-TransactionAdvice"
+		transaction-manager="moduleServiceTransactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>

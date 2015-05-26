@@ -125,6 +125,17 @@
 		class="org.ikasan.trigger.dao.HibernateTriggerDao">
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
+	
+	<bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" />
+
+    <bean id="errorReportingServiceFactory" class="org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl">
+        <constructor-arg ref="ikasanSerialiserFactory"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
+
+    <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -159,6 +170,7 @@
 			   <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
 			   <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
 			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

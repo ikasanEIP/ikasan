@@ -40,7 +40,12 @@
  */
 package org.ikasan.flow.visitorPattern;
 
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.management.ManagedResource;
+
+import java.util.List;
 
 /**
  * Contract for an exclusion flow which handles events marked for exclusion from the normal business flow.
@@ -54,4 +59,9 @@ public interface ExclusionFlowConfiguration
      * @return
      */
     public FlowElement<?> getLeadFlowElement();
+
+    public List<FlowElement<?>> getFlowElements();
+    public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
+    public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
+    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
 }

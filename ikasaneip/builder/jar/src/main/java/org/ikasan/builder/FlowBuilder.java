@@ -51,6 +51,8 @@ import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.RouterRootConfigu
 import org.ikasan.builder.FlowBuilder.FlowConfigurationBuilder.SequencerRootConfigurationBuilder.Sequence;
 import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
+import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
+import org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
@@ -69,6 +71,8 @@ import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
@@ -107,8 +111,17 @@ public class FlowBuilder
 	/** configuration service */
 	ConfigurationService configurationService;
 
+    /** exclusion service factory */
+    ExclusionServiceFactory exclusionServiceFactory;
+
     /** exclusion service */
     ExclusionService exclusionService;
+
+    /** error reporting service factory */
+    ErrorReportingServiceFactory errorReportingServiceFactory = new ErrorReportingServiceFactoryDefaultImpl();
+
+    /** error reporting service */
+    ErrorReportingService errorReportingService;
 
     /** flow monitor */
     Monitor monitor;
@@ -211,6 +224,30 @@ public class FlowBuilder
     public FlowBuilder withExclusionService(ExclusionService exclusionService)
     {
         this.exclusionService = exclusionService;
+        return this;
+    }
+
+    /**
+     * Override the default exclusion service factory
+     *
+     * @param exclusionServiceFactory
+     * @return
+     */
+    public FlowBuilder withExclusionServiceFactory(ExclusionServiceFactory exclusionServiceFactory)
+    {
+        this.exclusionServiceFactory = exclusionServiceFactory;
+        return this;
+    }
+
+    /**
+     * Override the default error reporting service
+     *
+     * @param errorReportingService
+     * @return
+     */
+    public FlowBuilder withErrorReportingService(ErrorReportingService errorReportingService)
+    {
+        this.errorReportingService = errorReportingService;
         return this;
     }
 
@@ -750,7 +787,23 @@ public class FlowBuilder
 
                 if (exclusionService == null)
                 {
-                    exclusionService = ExclusionServiceFactory.getInstance().getExclusionService(moduleName, name);
+                    if(exclusionServiceFactory == null)
+                    {
+                        throw new IllegalArgumentException("exclusionServiceFactory cannot be 'null'");
+                    }
+
+                    exclusionService = exclusionServiceFactory.getExclusionService(moduleName, name);
+                }
+
+                if (errorReportingService == null)
+                {
+                    errorReportingService = errorReportingServiceFactory.getErrorReportingService();
+                }
+
+                if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
+                {
+                    ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
+                    ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(name);
                 }
 
                 if (recoveryManager == null)
@@ -761,7 +814,7 @@ public class FlowBuilder
 									moduleName,
 									((FlowElement<Consumer>) nextFlowElement)
 											.getFlowComponent(),
-                                    exclusionService);
+                                    exclusionService, errorReportingService);
 				}
 
                 if(exceptionResolver != null)
@@ -798,6 +851,7 @@ public class FlowBuilder
 
                 logger.info("Instantiated flow - name[" + name + "] module[" + moduleName
                         + "] with ExclusionService[" + exclusionService.getClass().getSimpleName()
+                        + "] with ErrorReportingService[" + errorReportingService.getClass().getSimpleName()
                         + "] with RecoveryManager[" + recoveryManager.getClass().getSimpleName()
                         + "]; ExceptionResolver[" + ((exceptionResolver != null) ? exceptionResolver.getClass().getSimpleName() : "none")
                         + "]; Monitor[" + ((monitor != null && flow instanceof MonitorSubject) ? monitor.getClass().getSimpleName() : "none")
