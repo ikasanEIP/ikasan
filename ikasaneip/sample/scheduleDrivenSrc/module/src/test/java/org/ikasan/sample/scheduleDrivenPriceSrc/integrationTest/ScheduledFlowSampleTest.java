@@ -63,7 +63,6 @@ import org.ikasan.platform.IkasanEIPTest;
         "/flow-conf.xml",
         "/substitute-components.xml",
         "/ikasan-transaction-conf.xml",
-        "/exclusion-flow-conf.xml",
         "/module-conf.xml",
         "/exception-conf.xml", 
         "/hsqldb-conf.xml"

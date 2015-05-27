@@ -52,8 +52,8 @@
 
     <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
 
-        <id name="identifier" type="java.lang.String" column="Identifier">
-            <generator class="assigned" />
+        <id name="id" type="long" column="Identifier">
+            <generator class="native" />
         </id>
 
         <property name="moduleName"
@@ -64,6 +64,11 @@
         <property name="flowName"
                   type="java.lang.String"
                   column="FlowName"
+                  not-null="true" />
+
+        <property name="eventLifeIdentifier"
+                  type="java.lang.String"
+                  column="EventLifeIdentifier"
                   not-null="true" />
 
         <property name="event"

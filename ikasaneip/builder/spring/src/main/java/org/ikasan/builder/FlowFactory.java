@@ -41,12 +41,10 @@
 package org.ikasan.builder;
 
 import org.apache.log4j.Logger;
-import org.ikasan.component.endpoint.util.producer.LogProducer;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
 import org.ikasan.flow.visitorPattern.*;
-import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -244,13 +242,6 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     {
         FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumer, configurationService);
 
-        if(this.exclusionFlowHeadElement == null)
-        {
-            this.exclusionFlowHeadElement = new FlowElementImpl("Exclusion Logger", new LogProducer("ExcludedEvent [EVENT]", "EVENT"), new ProducerFlowElementInvoker());
-        }
-
-        ExclusionFlowConfiguration exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, configurationService);
-
         if(exclusionService == null)
         {
             if(this.exclusionServiceFactory == null)
@@ -281,6 +272,12 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         if(exceptionResolver != null)
         {
             recoveryManager.setResolver(exceptionResolver);
+        }
+
+        ExclusionFlowConfiguration exclusionFlowConfiguration = null;
+        if(exclusionFlowHeadElement != null)
+        {
+            exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, configurationService);
         }
 
         Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
