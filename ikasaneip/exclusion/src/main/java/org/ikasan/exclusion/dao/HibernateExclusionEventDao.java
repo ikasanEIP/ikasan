@@ -40,19 +40,22 @@
  */
 package org.ikasan.exclusion.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Hibernate implementation of the ExclusionEventeDao.
@@ -93,12 +96,6 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 return null;
         }
         });
-    }
-
-    @Override
-    public ExclusionEvent find(String moduleName, String flowName, String identifier)
-    {
-        return null; //TODO FIXME
     }
 
     @Override
@@ -168,5 +165,43 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 
             }
         });
+    }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#findAll()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ExclusionEvent> findAll()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+
+        return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	@Override
+    public ExclusionEvent find(String moduleName, String flowName, String identifier)
+    {
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		
+		if(moduleName != null && moduleName.length() > 0)
+		{
+			criteria.add(Restrictions.eq("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.length() > 0)
+		{
+			criteria.add(Restrictions.eq("flowName", flowName));
+		}
+		
+		if(identifier != null && identifier.length() > 0)
+		{
+			criteria.add(Restrictions.eq("flowElementName", moduleName));
+		}
+
+		
+		criteria.addOrder(Order.desc("timestamp"));
+
+        return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
     }
 }

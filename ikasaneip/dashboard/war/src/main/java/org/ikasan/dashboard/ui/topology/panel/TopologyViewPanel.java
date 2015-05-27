@@ -54,7 +54,9 @@ import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
@@ -144,14 +146,12 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private Tree moduleTree;
 	private ComponentConfigurationWindow componentConfigurationWindow;
 
-	private Panel businessStreamPanel;
+	private Panel tabsheetPanel;
+	
 	private Table businessStreamTable;
-	
-	private Panel wiretapPanel;
-	private Table wiretapTable;
-	
-	private Panel errorOccurencePanel;
+	private Table wiretapTable;	
 	private Table errorOccurenceTable;
+	private Table exclusionsTable;
 	
 	private ComboBox businessStreamCombo;
 	private ComboBox treeViewBusinessStreamCombo;
@@ -175,9 +175,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private TextField payloadContent;
 	
 	private ErrorReportingService errorReportingService;
+	private ExclusionManagementService<ExclusionEvent> exclusionManagementService;
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 WiretapDao wiretapDao, ErrorReportingService errorReportingService)
+			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent> exclusionManagementService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -198,6 +199,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.errorReportingService == null)
 		{
 			throw new IllegalArgumentException("errorReportingService cannot be null!");
+		}
+		this.exclusionManagementService = exclusionManagementService;
+		if(this.exclusionManagementService == null)
+		{
+			throw new IllegalArgumentException("exclusionManagementService cannot be null!");
 		}
 
 		init();
@@ -221,11 +227,43 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		HorizontalLayout rightLayout = new HorizontalLayout();
 		rightLayout.setSizeFull();
 		rightLayout.setMargin(true);
-		rightLayout.addComponent(this.businessStreamPanel);
+		rightLayout.addComponent(this.tabsheetPanel);
 		hsplit.setSecondComponent(rightLayout);
 		hsplit.setSplitPosition(30, Unit.PERCENTAGE);
 
 		this.setContent(hsplit);
+	}
+	
+	protected void createTabSheet()
+	{	
+		this.tabsheetPanel = new Panel("Topology Stuff");
+		this.tabsheetPanel.setStyleName("dashboard");
+		this.tabsheetPanel.setSizeFull();
+		
+		TabSheet tabsheet = new TabSheet();
+		tabsheet.setSizeFull();
+
+		VerticalLayout tab1 = new VerticalLayout();
+		tab1.setSizeFull();
+		tab1.addComponent(createBusinessStreamPanel());
+		tabsheet.addTab(tab1, "Business Stream");
+		
+		VerticalLayout tab2 = new VerticalLayout();
+		tab2.setSizeFull();
+		tab2.addComponent(createWiretapPanel());
+		tabsheet.addTab(tab2, "Wiretaps");
+		
+		VerticalLayout tab3 = new VerticalLayout();
+		tab3.setSizeFull();
+		tab3.addComponent(createErrorOccurencePanel());
+		tabsheet.addTab(tab3, "Errors");
+
+		VerticalLayout tab4 = new VerticalLayout();
+		tab4.setSizeFull();
+		tab4.addComponent(createExclusionPanel());
+		tabsheet.addTab(tab4, "Exclusions");
+
+		this.tabsheetPanel.setContent(tabsheet);
 	}
 
 	protected void createModuleTreePanel()
@@ -367,36 +405,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 
 		this.topologyTreePanel.setContent(layout);
 	}
-	
-	protected void createTabSheet()
-	{		
-		TabSheet tabsheet = new TabSheet();
-		tabsheet.setSizeFull();
-
-		VerticalLayout tab1 = new VerticalLayout();
-		tab1.setSizeFull();
-		tab1.addComponent(createBusinessStreamPanel());
-		tabsheet.addTab(tab1, "Business Stream");
-		
-		VerticalLayout tab2 = new VerticalLayout();
-		tab2.setSizeFull();
-		tab2.addComponent(createWiretapPanel());
-		tabsheet.addTab(tab2, "Wiretaps");
-		
-		VerticalLayout tab3 = new VerticalLayout();
-		tab3.setSizeFull();
-		tab3.addComponent(createErrorOccurencePanel());
-		tabsheet.addTab(tab3, "Errors");
-
-		this.businessStreamPanel.setContent(tabsheet);
-	}
 
 	protected Layout createBusinessStreamPanel()
 	{
-		this.businessStreamPanel = new Panel("Topology Stuff");
-		this.businessStreamPanel.setStyleName("dashboard");
-		this.businessStreamPanel.setSizeFull();
-
 		this.businessStreamTable = new Table();
 		this.businessStreamTable.addContainerProperty("Flow Name", String.class,  null);
 		this.businessStreamTable.addContainerProperty("", Button.class,  null);
@@ -653,10 +664,6 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	protected Layout createWiretapPanel()
 	{
-		this.wiretapPanel = new Panel("Topology Stuff");
-		this.wiretapPanel.setStyleName("dashboard");
-		this.wiretapPanel.setSizeFull();
-
 		this.wiretapTable = new Table();
 		this.wiretapTable.setSizeFull();
 		this.wiretapTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
@@ -669,7 +676,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) {
 		    	WiretapEvent<String> wiretapEvent = (WiretapEvent<String>)itemClickEvent.getItemId();
-		    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent.getEvent());
+		    	WiretapPayloadViewWindow wiretapPayloadViewWindow = new WiretapPayloadViewWindow(wiretapEvent);
 		    
 		    	UI.getCurrent().addWindow(wiretapPayloadViewWindow);
 		    }
@@ -1320,11 +1327,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		dateSelectLayout.setColumnExpandRatio(1, 0.75f);
 		dateSelectLayout.setSizeFull();
 		errorFromDate = new PopupDateField("From date");
-		fromDate.setResolution(Resolution.MINUTE);
-		dateSelectLayout.addComponent(fromDate, 0, 0);
+		errorFromDate.setResolution(Resolution.MINUTE);
+		dateSelectLayout.addComponent(errorFromDate, 0, 0);
 		errorToDate = new PopupDateField("To date");
-		toDate.setResolution(Resolution.MINUTE);
-		dateSelectLayout.addComponent(toDate, 1, 0);
+		errorToDate.setResolution(Resolution.MINUTE);
+		dateSelectLayout.addComponent(errorToDate, 1, 0);
 				
 		
 		GridLayout searchLayout = new GridLayout(2, 1);
@@ -1351,6 +1358,68 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		hErrorTable.setWidth("100%");
 		hErrorTable.setHeight(420, Unit.PIXELS);
 		hErrorTable.addComponent(this.errorOccurenceTable);
+		layout.addComponent(hErrorTable);
+		layout.setSizeFull();
+		
+		return layout;
+	}
+
+	protected Layout createExclusionPanel()
+	{
+		this.exclusionsTable = new Table();
+		this.exclusionsTable.setSizeFull();
+		this.exclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
+		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
+		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
+		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
+		
+		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		    @Override
+		    public void itemClick(ItemClickEvent itemClickEvent) {
+		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
+//		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
+//		    
+//		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    }
+		});
+		
+		
+		Button refreshButton = new Button("Refresh");
+		refreshButton.addClickListener(new Button.ClickListener() 
+    	{
+            @SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event) 
+            {
+            	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
+
+            	for(ExclusionEvent exclusionEvent: exclusionEvents)
+            	{
+            		Date date = new Date(exclusionEvent.getTimestamp());
+            		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+            	    String timestamp = format.format(date);
+            	    
+            	    errorOccurenceTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
+            				timestamp}, exclusionEvent);
+            	}
+            }
+        });
+		
+
+		GridLayout layout = new GridLayout(1, 2);
+		layout.setMargin(true);				
+		
+		GridLayout searchLayout = new GridLayout(1, 1);
+		searchLayout.addComponent(refreshButton, 0, 0);
+
+		HorizontalLayout hSearchLayout = new HorizontalLayout();
+		hSearchLayout.setHeight(30 , Unit.PIXELS);
+		hSearchLayout.setWidth("100%");
+		hSearchLayout.addComponent(searchLayout);
+		layout.addComponent(hSearchLayout);
+		HorizontalLayout hErrorTable = new HorizontalLayout();
+		hErrorTable.setWidth("100%");
+		hErrorTable.setHeight(600, Unit.PIXELS);
+		hErrorTable.addComponent(this.exclusionsTable);
 		layout.addComponent(hErrorTable);
 		layout.setSizeFull();
 		

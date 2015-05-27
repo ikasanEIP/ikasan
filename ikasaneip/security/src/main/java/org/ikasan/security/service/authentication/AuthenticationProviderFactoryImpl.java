@@ -105,10 +105,10 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 			try
 			{
 				authProvider =  createLdapAuthenticationProvider(authMethod);
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			
 			return authProvider;
@@ -119,10 +119,10 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 			try
 			{
 				authProvider =  createLdapLocalAuthenticationProvider(authMethod);
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			
 			return authProvider;

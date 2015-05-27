@@ -136,6 +136,14 @@
     <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
         <property name="sessionFactory" ref="ikasanSessionFactory"/>
     </bean>
+    
+    <bean id="exclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+    </bean>
+
+    <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -171,6 +179,7 @@
 			   <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
 			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
 			   <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
+			   <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

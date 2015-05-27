@@ -40,10 +40,20 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
+import java.util.Date;
+
+import org.ikasan.spec.wiretap.WiretapEvent;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -63,16 +73,16 @@ public class WiretapPayloadViewWindow extends Window
 	
 	private TextField roleName;
 	private TextField roleDescription;
-	private String payload;
+	private WiretapEvent<String> wiretapEvent;
 	
 
 	/**
 	 * @param policy
 	 */
-	public WiretapPayloadViewWindow(String payload)
+	public WiretapPayloadViewWindow(WiretapEvent<String> wiretapEvent)
 	{
 		super();
-		this.payload = payload;
+		this.wiretapEvent = wiretapEvent;
 		
 		this.init();
 	}
@@ -88,15 +98,80 @@ public class WiretapPayloadViewWindow extends Window
 		layout.setSizeFull();
 		layout.setMargin(true);
 		
-		AceEditor editor = new AceEditor();
-		editor.setValue(this.payload);
-		editor.setReadOnly(true);
-		editor.setMode(AceMode.xml);
-		editor.setTheme(AceTheme.eclipse);
-		editor.setSizeFull();
-		layout.addComponent(editor);
+		layout.addComponent( createWiretapDetailsPanel());
 		
 		
 		this.setContent(layout);
+	}
+
+	protected Panel createWiretapDetailsPanel()
+	{
+		Panel errorOccurrenceDetailsPanel = new Panel("Wiretap");
+		errorOccurrenceDetailsPanel.setSizeFull();
+		errorOccurrenceDetailsPanel.setStyleName("dashboard");
+		
+		GridLayout layout = new GridLayout(2, 4);
+		layout.setSizeFull();
+		layout.setMargin(true);
+		layout.setColumnExpandRatio(0, 0.3f);
+		layout.setColumnExpandRatio(1, 0.7f);
+		layout.addComponent(new Label("Module Name"), 0, 0);
+		
+		TextField tf1 = new TextField();
+		tf1.setValue(this.wiretapEvent.getModuleName());
+		tf1.setReadOnly(true);
+		tf1.setWidth("80%");
+		layout.addComponent(tf1, 1, 0);
+		
+		layout.addComponent(new Label("Flow Name"), 0, 1);
+		
+		TextField tf2 = new TextField();
+		tf2.setValue(this.wiretapEvent.getFlowName());
+		tf2.setReadOnly(true);
+		tf2.setWidth("80%");
+		layout.addComponent(tf2, 1, 1);
+		
+		layout.addComponent(new Label("Component Name"), 0, 2);
+		
+		TextField tf3 = new TextField();
+		tf3.setValue(this.wiretapEvent.getComponentName());
+		tf3.setReadOnly(true);
+		tf3.setWidth("80%");
+		layout.addComponent(tf3, 1, 2);
+		
+		layout.addComponent(new Label("Date/Time"), 0, 3);
+		
+		TextField tf4 = new TextField();
+		tf4.setValue(new Date(this.wiretapEvent.getTimestamp()).toString());
+		tf4.setReadOnly(true);
+		tf4.setWidth("80%");
+		layout.addComponent(tf4, 1, 3);
+		
+		GridLayout wrapperLayout = new GridLayout(1, 3);
+		wrapperLayout.setMargin(true);
+		wrapperLayout.setSizeFull();
+		
+		AceEditor editor = new AceEditor();
+		editor.setCaption("Event");
+		editor.setValue(this.wiretapEvent.getEvent());
+		editor.setReadOnly(true);
+		editor.setMode(AceMode.xml);
+		editor.setTheme(AceTheme.eclipse);
+		editor.setWidth("100%");
+		editor.setHeight(600, Unit.PIXELS);
+		
+
+		HorizontalLayout formLayout = new HorizontalLayout();
+		formLayout.setWidth("100%");
+		formLayout.setHeight(100, Unit.PIXELS);
+		formLayout.addComponent(layout);
+		wrapperLayout.addComponent(formLayout, 0, 0);
+		Label seperator = new Label("<hr />",ContentMode.HTML);
+		wrapperLayout.addComponent(seperator, 0, 1);
+		wrapperLayout.addComponent(editor, 0, 2);
+		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
+
+		errorOccurrenceDetailsPanel.setContent(wrapperLayout);
+		return errorOccurrenceDetailsPanel;
 	}
 }
