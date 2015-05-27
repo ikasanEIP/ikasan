@@ -38,9 +38,9 @@ public class MongoClientFactory
         MongoClientOptions mongoClientOptions = buildMongoClientOptions(configuration);
         if (configuration.isAuthenticated())
         {
-            MongoCredential mongoCredential = MongoCredential.createMongoCRCredential(configuration.getUsername(),
-                    configuration.getDatabaseName(), (configuration.getPassword() != null) ? configuration.getPassword()
-                            .toCharArray() : null);
+            MongoCredential mongoCredential = MongoCredential.createCredential(configuration.getUsername(),
+                configuration.getDatabaseName(), (configuration.getPassword() != null) ? configuration.getPassword()
+                        .toCharArray() : null);
             mongoClient = new MongoClient(addresses, Arrays.asList(mongoCredential), mongoClientOptions);
         }
         else
@@ -56,9 +56,9 @@ public class MongoClientFactory
     private static MongoClientOptions buildMongoClientOptions(MongoClientConfiguration configuration)
     {
         MongoClientOptions.Builder builder = MongoClientOptions.builder();
-        if (configuration.getAcceptableLatencyDiff() != null)
+        if (configuration.getLocalThreshold() != null)
         {
-            builder.acceptableLatencyDifference(configuration.getAcceptableLatencyDiff());
+            builder.localThreshold(configuration.getLocalThreshold());
         }
         if (configuration.getAlwaysUseMBeans() != null)
         {
@@ -80,9 +80,9 @@ public class MongoClientFactory
         {
             builder.description(configuration.getDescription());
         }
-        if (configuration.getHeartbeatConnectRetryFrequency() != null)
+        if (configuration.getMinHeartbeatFrequency() != null)
         {
-            builder.heartbeatConnectRetryFrequency(configuration.getHeartbeatConnectRetryFrequency());
+            builder.minHeartbeatFrequency(configuration.getMinHeartbeatFrequency());
         }
         if (configuration.getHeartbeatConnectTimeout() != null)
         {
@@ -99,10 +99,6 @@ public class MongoClientFactory
         if (configuration.getLegacyDefaults() != null && configuration.getLegacyDefaults())
         {
             builder.legacyDefaults();
-        }
-        if (configuration.getHeartbeatThreadCount() != null)
-        {
-            builder.heartbeatThreadCount(configuration.getHeartbeatThreadCount());
         }
         if (configuration.getMaxConnectionIdleTime() != null)
         {

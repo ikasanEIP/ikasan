@@ -86,8 +86,8 @@ public class MongoClientConfiguration
      /** Controls the acknowledgment of write operations */
     protected WriteConcern writeConcern = WriteConcern.ACKNOWLEDGED;
 
-    /** Sets the acceptable latency difference - overrides default driver options if specified */
-    protected Integer acceptableLatencyDiff;
+    /** Sets the localThreshold - overrides default driver options if specified */
+    protected Integer localThreshold;
 
     /** Sets whether JMX beans registered by the driver should always be MBeans, regardless of whether the VM is Java 6 or greater - overrides default driver options if specified */
     protected Boolean alwaysUseMBeans;
@@ -99,13 +99,13 @@ public class MongoClientConfiguration
     protected Integer connectionTimeout;
 
     /** Sets whether cursor finalizers are enabled. - overrides default driver options if specified */
-    protected Boolean cursorFinalizerEnabled;
+    protected Boolean cursorFinalizerEnabled = Boolean.TRUE; // Need to specify this our a NPE will result in driver 3.0.0 (https://jira.mongodb.org/browse/JAVA-1798)
 
     /** Sets the description - overrides default driver options if specified */
     protected String description;
 
-    /** Sets the heartbeat connect retry frequency - overrides default driver options if specified */
-    protected Integer heartbeatConnectRetryFrequency;
+    /** Sets the min heart beat frequency - overrides default driver options if specified */
+    protected Integer minHeartbeatFrequency;
 
     /** Sets the heartbeat connect timeout - overrides default driver options if specified */
     protected Integer heartbeatConnectTimeout;
@@ -118,9 +118,6 @@ public class MongoClientConfiguration
 
     /** Sets defaults to be what they are in MongoOptions - overrides default driver options if specified */
     protected Boolean legacyDefaults = Boolean.FALSE;
-
-    /** Sets the heartbeat thread count - overrides default driver options if specified */
-    protected Integer heartbeatThreadCount;
 
     /** Sets the maximum idle time for a pooled connection - overrides default driver options if specified */
     protected Integer maxConnectionIdleTime;
@@ -146,6 +143,7 @@ public class MongoClientConfiguration
     /** Sets the multiplier for number of threads allowed to block waiting for a connection - overrides default driver options if specified */
     protected Integer threadsAllowedToBlockForConnectionMultiplier;
 
+    
     public List<String> getConnectionUrls() {
         return connectionUrls;
     }
@@ -214,12 +212,12 @@ public class MongoClientConfiguration
         this.writeConcern = writeConcern;
     }
 
-    public Integer getAcceptableLatencyDiff() {
-        return acceptableLatencyDiff;
+    public Integer getLocalThreshold() {
+        return localThreshold;
     }
 
-    public void setAcceptableLatencyDiff(Integer acceptableLatencyDiff) {
-        this.acceptableLatencyDiff = acceptableLatencyDiff;
+    public void setLocalThreshold(Integer localThreshold) {
+        this.localThreshold = localThreshold;
     }
 
     public Boolean getAlwaysUseMBeans() {
@@ -262,12 +260,12 @@ public class MongoClientConfiguration
         this.description = description;
     }
 
-    public Integer getHeartbeatConnectRetryFrequency() {
-        return heartbeatConnectRetryFrequency;
+    public Integer getMinHeartbeatFrequency() {
+        return minHeartbeatFrequency;
     }
 
-    public void setHeartbeatConnectRetryFrequency(Integer heartbeatConnectRetryFrequency) {
-        this.heartbeatConnectRetryFrequency = heartbeatConnectRetryFrequency;
+    public void setMinHeartbeatFrequency(Integer minHeartbeatFrequency) {
+        this.minHeartbeatFrequency = minHeartbeatFrequency;
     }
 
     public Integer getHeartbeatConnectTimeout() {
@@ -300,14 +298,6 @@ public class MongoClientConfiguration
 
     public void setLegacyDefaults(Boolean legacyDefaults) {
         this.legacyDefaults = legacyDefaults;
-    }
-
-    public Integer getHeartbeatThreadCount() {
-        return heartbeatThreadCount;
-    }
-
-    public void setHeartbeatThreadCount(Integer heartbeatThreadCount) {
-        this.heartbeatThreadCount = heartbeatThreadCount;
     }
 
     public Integer getMaxConnectionIdleTime() {
@@ -390,7 +380,7 @@ public class MongoClientConfiguration
             {
                 serverAddresses.add( new ServerAddress(properties[0], Integer.valueOf(properties[1])) );
             }
-            catch(NumberFormatException | NullPointerException | UnknownHostException e)
+            catch(NumberFormatException | NullPointerException e)
             {
                 logger.warn("connectionUrl is not valid [" + connectionUrl + "]");
             }
@@ -427,36 +417,21 @@ public class MongoClientConfiguration
     }
 
     @Override
-    public String toString() {
-        return "MongoClientConfiguration{" +
-                "connectionUrls=" + connectionUrls +
-                ", authenticated=" + authenticated +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", databaseName='" + databaseName + '\'' +
-                ", collectionNames=" + collectionNames +
-                ", readPreference=" + readPreference +
-                ", writeConcern=" + writeConcern +
-                ", acceptableLatencyDiff=" + acceptableLatencyDiff +
-                ", alwaysUseMBeans=" + alwaysUseMBeans +
-                ", connectionsPerHost=" + connectionsPerHost +
-                ", connectionTimeout=" + connectionTimeout +
-                ", cursorFinalizerEnabled=" + cursorFinalizerEnabled +
-                ", description='" + description + '\'' +
-                ", heartbeatConnectRetryFrequency=" + heartbeatConnectRetryFrequency +
-                ", heartbeatConnectTimeout=" + heartbeatConnectTimeout +
-                ", heartbeatFrequency=" + heartbeatFrequency +
-                ", heartbeatSocketTimeout=" + heartbeatSocketTimeout +
-                ", legacyDefaults=" + legacyDefaults +
-                ", heartbeatThreadCount=" + heartbeatThreadCount +
-                ", maxConnectionIdleTime=" + maxConnectionIdleTime +
-                ", maxConnectionLifeTime=" + maxConnectionLifeTime +
-                ", maxWaitTime=" + maxWaitTime +
-                ", minConnectionsPerHost=" + minConnectionsPerHost +
-                ", requiredReplicaSetName='" + requiredReplicaSetName + '\'' +
-                ", socketKeepAlive=" + socketKeepAlive +
-                ", socketTimeout=" + socketTimeout +
-                ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier +
-                '}';
+    public String toString()
+    {
+        return "MongoClientConfiguration [connectionUrls=" + connectionUrls + ", authenticated=" + authenticated
+                + ", username=" + username + ", password=" + password + ", databaseName=" + databaseName
+                + ", collectionNames=" + collectionNames + ", readPreference=" + readPreference + ", writeConcern="
+                + writeConcern + ", localThreshold=" + localThreshold + ", alwaysUseMBeans=" + alwaysUseMBeans
+                + ", connectionsPerHost=" + connectionsPerHost + ", connectionTimeout=" + connectionTimeout
+                + ", cursorFinalizerEnabled=" + cursorFinalizerEnabled + ", description=" + description
+                + ", minHeartbeatFrequency=" + minHeartbeatFrequency + ", heartbeatConnectTimeout="
+                + heartbeatConnectTimeout + ", heartbeatFrequency=" + heartbeatFrequency + ", heartbeatSocketTimeout="
+                + heartbeatSocketTimeout + ", legacyDefaults=" + legacyDefaults + ", maxConnectionIdleTime="
+                + maxConnectionIdleTime + ", maxConnectionLifeTime=" + maxConnectionLifeTime + ", maxWaitTime="
+                + maxWaitTime + ", minConnectionsPerHost=" + minConnectionsPerHost + ", requiredReplicaSetName="
+                + requiredReplicaSetName + ", socketKeepAlive=" + socketKeepAlive + ", socketTimeout=" + socketTimeout
+                + ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier
+                + "]";
     }
 }
