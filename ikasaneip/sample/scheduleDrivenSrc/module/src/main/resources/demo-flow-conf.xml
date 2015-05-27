@@ -6,27 +6,27 @@
     <!--  ================================================================== -->
     <!--  Flow                                                               -->
     <!--  ================================================================== -->
-    <bean id="scheduledConverterFlow"       class="org.ikasan.builder.FlowFactory">
-        <property name="moduleName"         value="Sample Scheduled Module" />
-        <property name="name"               value="Scheduled Flow" />
+    <bean id="demoScheduledConverterFlow"   class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         value="Demo Sample Scheduled Module" />
+        <property name="name"               value="Demo Scheduled Flow" />
         <property name="description"        value="Demonstrates scheduled callbacks for a flow." />
         <property name="exceptionResolver"  ref="exceptionResolver" />
-        <property name="consumer"           ref="scheduledConsumerFlowElement" />
+        <property name="consumer"           ref="demoScheduledConsumerFlowElement" />
     </bean>
 
-    <bean id="scheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+    <bean id="demoScheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"               value="Scheduled Consumer"/>
-        <property name="component"          ref="scheduledConsumer"/>
-        <property name="transition"         ref="scheduledConverterFlowElement"/>
+        <property name="component"          ref="demoScheduledConsumer"/>
+        <property name="transition"         ref="demoScheduledConverterFlowElement"/>
     </bean>
 
-    <bean id="scheduledConverterFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+    <bean id="demoScheduledConverterFlowElement"    class="org.ikasan.builder.FlowElementFactory">
         <property name="name"               value="Scheduled Converter"/>
         <property name="component"          ref="scheduledConverter"/>
-        <property name="transition"         ref="scheduledPublisherFlowElement"/>
+        <property name="transition"         ref="demoScheduledPublisherFlowElement"/>
     </bean>
 
-    <bean id="scheduledPublisherFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+    <bean id="demoScheduledPublisherFlowElement"    class="org.ikasan.builder.FlowElementFactory">
         <property name="name"               value="Scheduled Publisher"/>
         <property name="component"          ref="scheduledProducer"/>
     </bean>
