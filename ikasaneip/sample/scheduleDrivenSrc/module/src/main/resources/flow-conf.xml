@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-        
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
     <!--  ================================================================== -->
     <!--  Flow                                                               -->
     <!--  ================================================================== -->
@@ -12,14 +11,7 @@
         <property name="name"               value="Scheduled Flow" />
         <property name="description"        value="Demonstrates scheduled callbacks for a flow." />
         <property name="exceptionResolver"  ref="exceptionResolver" />
-        <property name="exclusionService"   ref="exclusionService" />
-        <property name="exclusionFlowHeadElement" ref="exclusionProducerFlowElement" />
         <property name="consumer"           ref="scheduledConsumerFlowElement" />
-    </bean>
-
-    <bean id="exclusionService" factory-bean="exclusionServiceFactory" factory-method="getExclusionService">
-        <constructor-arg value="Sample Scheduled Module"/>
-        <constructor-arg value="Scheduled Flow"/>
     </bean>
 
     <bean id="scheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">

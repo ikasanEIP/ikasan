@@ -55,7 +55,6 @@
             classpath:ikasan-datasource-conf.xml
             classpath:ikasan-transaction-conf.xml
             classpath:ikasan-transaction-manager-conf.xml
-            classpath:ikasan-transaction-pointcut-conf.xml
             classpath:serialiser-service-conf.xml
             classpath:platform-service-conf.xml
             classpath:scheduler-service-conf.xml

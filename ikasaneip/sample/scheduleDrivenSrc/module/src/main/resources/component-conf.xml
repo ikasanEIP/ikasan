@@ -25,6 +25,9 @@
         </property>
         <property name="configuredResourceId" value="sample-scheduled-flow-consumer"/>
         <property name="configuration" ref="scheduledConsumerConfiguration"/>
+        <property name="managedEventIdentifierService">
+            <bean class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.SimpleEventIdentifierServiceImpl"/>
+        </property>
     </bean>
 
     <bean id="scheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration">
