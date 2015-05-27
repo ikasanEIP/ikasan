@@ -51,6 +51,9 @@ import java.util.Arrays;
  */
 public class ExclusionEvent
 {
+    /** surrogate id assigned from ORM */
+    long id;
+
     /** module name */
     String moduleName;
 
@@ -58,7 +61,7 @@ public class ExclusionEvent
     String flowName;
 
     /** identifier for this event */
-    String identifier;
+    String eventLifeIdentifier;
 
     /** original form of the event being excluded */
     byte[] event;
@@ -76,25 +79,25 @@ public class ExclusionEvent
      * Constructor
      * @param moduleName
      * @param flowName
-     * @param identifier
+     * @param eventLifeIdentifier
      * @param event
      * @param errorUri
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri)
+    public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri)
     {
-        this(moduleName, flowName, identifier, event, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
+        this(moduleName, flowName, eventLifeIdentifier, event, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
     }
 
     /**
      * Constructor
      * @param moduleName
      * @param flowName
-     * @param identifier
+     * @param eventLifeIdentifier
      * @param event
      * @param errorUri
      * @param timeToLive
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri, long timeToLive)
+    public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri, long timeToLive)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -107,10 +110,10 @@ public class ExclusionEvent
         {
             throw new IllegalArgumentException("flowName cannot be 'null'");
         }
-        this.identifier = identifier;
-        if(identifier == null)
+        this.eventLifeIdentifier = eventLifeIdentifier;
+        if(eventLifeIdentifier == null)
         {
-            throw new IllegalArgumentException("identifier cannot be 'null'");
+            throw new IllegalArgumentException("eventLifeIdentifier cannot be 'null'");
         }
         this.event = event;
         if(event == null)
@@ -128,6 +131,14 @@ public class ExclusionEvent
      */
     protected ExclusionEvent(){}
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getModuleName() {
         return moduleName;
     }
@@ -144,12 +155,12 @@ public class ExclusionEvent
         this.flowName = flowName;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getEventLifeIdentifier() {
+        return eventLifeIdentifier;
     }
 
-    protected void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    protected void setEventLifeIdentifier(String eventLifeIdentifier) {
+        this.eventLifeIdentifier = eventLifeIdentifier;
     }
 
     public byte[] getEvent() {
@@ -192,7 +203,7 @@ public class ExclusionEvent
         ExclusionEvent that = (ExclusionEvent) o;
 
         if (!flowName.equals(that.flowName)) return false;
-        if (!identifier.equals(that.identifier)) return false;
+        if (!eventLifeIdentifier.equals(that.eventLifeIdentifier)) return false;
         if (!moduleName.equals(that.moduleName)) return false;
 
         return true;
@@ -202,16 +213,17 @@ public class ExclusionEvent
     public int hashCode() {
         int result = moduleName.hashCode();
         result = 31 * result + flowName.hashCode();
-        result = 31 * result + identifier.hashCode();
+        result = 31 * result + eventLifeIdentifier.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         return "ExclusionEvent{" +
-                "moduleName='" + moduleName + '\'' +
+                "id='" + id + '\'' +
+                ", moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
-                ", identifier='" + identifier + '\'' +
+                ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
                 ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
                 ", expiry=" + expiry +

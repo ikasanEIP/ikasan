@@ -124,10 +124,27 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
     /**
      * Constructor
-     * @param name the flow name
-     * @param moduleName name of module this flow exists for
+     * @param name
+     * @param moduleName
      * @param flowConfiguration
      * @param recoveryManager
+     * @param exclusionService
+     */
+    public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
+                               RecoveryManager<FlowEvent<?,?>> recoveryManager,
+                               ExclusionService exclusionService)
+    {
+        this(name, moduleName, flowConfiguration, null, recoveryManager, exclusionService);
+    }
+
+    /**
+     * Constructor
+     * @param name
+     * @param moduleName
+     * @param flowConfiguration
+     * @param exclusionFlowConfiguration
+     * @param recoveryManager
+     * @param exclusionService
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
                                RecoveryManager<FlowEvent<?,?>> recoveryManager,
@@ -152,10 +169,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         }
 
         this.exclusionFlowConfiguration = exclusionFlowConfiguration;
-        if(exclusionFlowConfiguration == null)
-        {
-            throw new IllegalArgumentException("exclusionFlowConfiguration cannot be 'null'");
-        }
 
         this.recoveryManager = recoveryManager;
         if(recoveryManager == null)
@@ -424,7 +437,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     protected void stopManagedResources()
     {
         stopManagedResourceFlowElements(this.flowConfiguration.getManagedResourceFlowElements());
-        stopManagedResourceFlowElements(this.exclusionFlowConfiguration.getManagedResourceFlowElements());
+        if(this.exclusionFlowConfiguration != null)
+        {
+            stopManagedResourceFlowElements(this.exclusionFlowConfiguration.getManagedResourceFlowElements());
+        }
     }
 
     private void stopManagedResourceFlowElements(List<FlowElement<ManagedResource>> flowElements) {
@@ -444,8 +460,11 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     protected void startManagedResources()
     {
-        List<FlowElement<ManagedResource>> exclusionFlowElements = this.exclusionFlowConfiguration.getManagedResourceFlowElements();
-        startManagedResourceFlowElements(exclusionFlowElements);
+        if(this.exclusionFlowConfiguration != null)
+        {
+            List<FlowElement<ManagedResource>> exclusionFlowElements = this.exclusionFlowConfiguration.getManagedResourceFlowElements();
+            startManagedResourceFlowElements(exclusionFlowElements);
+        }
 
         List<FlowElement<ManagedResource>> flowElements = this.flowConfiguration.getManagedResourceFlowElements();
         this.recoveryManager.setManagedResources(flowElements);
@@ -518,7 +537,10 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             if(this.exclusionService.isBlackListed(event))
             {
                 this.exclusionService.park(event);
-                invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
+                if(this.exclusionFlowConfiguration != null)
+                {
+                    invoke(moduleName, name, flowInvocationContext, event, this.exclusionFlowConfiguration.getLeadFlowElement());
+                }
                 this.exclusionService.removeBlacklisted(event);
             }
             else

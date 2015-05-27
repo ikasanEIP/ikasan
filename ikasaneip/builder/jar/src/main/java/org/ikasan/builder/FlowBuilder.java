@@ -824,12 +824,11 @@ public class FlowBuilder
 
                 FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(nextFlowElement, configurationService);
 
-                if(exclusionFlowHeadElement == null)
+                ExclusionFlowConfiguration exclusionFlowConfiguration = null;
+                if(exclusionFlowHeadElement != null)
                 {
-                    exclusionFlowHeadElement = new FlowElementImpl("Exclusion Logger", new LogProducer("ExcludedEvent [EVENT]", "EVENT"), new ProducerFlowElementInvoker());
+                    exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService);
                 }
-                
-                ExclusionFlowConfiguration exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(exclusionFlowHeadElement, configurationService);
 
                 Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
                 flow.setFlowListener(flowEventListener);
