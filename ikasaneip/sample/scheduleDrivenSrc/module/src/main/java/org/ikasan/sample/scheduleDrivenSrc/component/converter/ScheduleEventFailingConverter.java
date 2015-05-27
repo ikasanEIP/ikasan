@@ -38,64 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
+package org.ikasan.sample.scheduleDrivenSrc.component.converter;
 
-import javax.annotation.Resource;
-
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.quartz.SchedulerException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.ikasan.platform.IkasanEIPTest;
+import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
+import org.quartz.JobExecutionContext;
 
 /**
- * Test class for <code>PriceFlowSample</code>.
+ * This class provides a sample implementation of a converter for quartz contexts.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/demo-flow-conf.xml",
-        "/demo-component-conf.xml",
-        "/demo-exclusion-flow-conf.xml",
-        "/demo-exclusion-component-conf.xml",
-        "/exclusion-flow-conf.xml",
-        "/substitute-components.xml",
-        "/ikasan-transaction-conf.xml",
-        "/module-conf.xml",
-        "/exception-conf.xml", 
-        "/hsqldb-conf.xml"
-      })
-      
-public class ScheduledFlowSampleTest extends IkasanEIPTest
+public class ScheduleEventFailingConverter implements Converter<JobExecutionContext,StringBuilder>
 {
-    @Resource
-    Module<Flow> module;
-    
-    @Test
-    public void test_flow_consumer_translator_producer() throws SchedulerException
+    public StringBuilder convert(JobExecutionContext context) throws TransformationException
     {
-        for(Flow flow:module.getFlows())
-        {
-            flow.start();
-        }
-        
-        try
-        {
-            Thread.sleep(5000);
-        }
-        catch(InterruptedException e)
-        {
-            // dont care
-        }
-        
-        for(Flow flow:module.getFlows())
-        {
-            flow.stop();
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("schedule executed at = ");
+        sb.append(context.getFireTime());
+        sb.append(" name = ");
+        sb.append(context.getJobDetail().getKey().getName());
+        if(true) throw new TransformationException("test exception");
+        return sb;
     }
 }

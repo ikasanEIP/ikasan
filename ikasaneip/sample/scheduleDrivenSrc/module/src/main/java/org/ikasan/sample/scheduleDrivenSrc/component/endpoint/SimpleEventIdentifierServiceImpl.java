@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,64 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.scheduleDrivenPriceSrc.integrationTest;
+package org.ikasan.sample.scheduleDrivenSrc.component.endpoint;
 
-import javax.annotation.Resource;
+import org.apache.log4j.Logger;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.quartz.SchedulerException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.ikasan.platform.IkasanEIPTest;
 
 /**
- * Test class for <code>PriceFlowSample</code>.
- * 
+ * Implementation of the HashedEventIdentifierServiceImpl available for any type of message.
+ * Uses hashCode of a message as identifier.
+ *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/demo-flow-conf.xml",
-        "/demo-component-conf.xml",
-        "/demo-exclusion-flow-conf.xml",
-        "/demo-exclusion-component-conf.xml",
-        "/exclusion-flow-conf.xml",
-        "/substitute-components.xml",
-        "/ikasan-transaction-conf.xml",
-        "/module-conf.xml",
-        "/exception-conf.xml", 
-        "/hsqldb-conf.xml"
-      })
-      
-public class ScheduledFlowSampleTest extends IkasanEIPTest
+public class SimpleEventIdentifierServiceImpl<T> implements ManagedEventIdentifierService<String, T>
 {
-    @Resource
-    Module<Flow> module;
-    
-    @Test
-    public void test_flow_consumer_translator_producer() throws SchedulerException
+    /**
+     * class logger
+     */
+    private static Logger logger = Logger.getLogger(SimpleEventIdentifierServiceImpl.class);
+
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.spec.event.EventLifeIdentifierService#getLifeIdentifier(java.lang.Object)
+     */
+    public String getEventIdentifier(T message)
     {
-        for(Flow flow:module.getFlows())
-        {
-            flow.start();
-        }
-        
-        try
-        {
-            Thread.sleep(5000);
-        }
-        catch(InterruptedException e)
-        {
-            // dont care
-        }
-        
-        for(Flow flow:module.getFlows())
-        {
-            flow.stop();
-        }
+        return String.valueOf("1");
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.ikasan.spec.event.EventLifeIdentifierService#setLifeIdentifier(java.lang.Object, java.lang.Object)
+     */
+    public void setEventIdentifier(String identifier, T message)
+    {
+        // do nothing
     }
 }
