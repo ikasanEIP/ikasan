@@ -52,7 +52,7 @@
 
     <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
 
-        <id name="id" type="long" column="Identifier">
+        <id name="id" type="long" column="Id">
             <generator class="native" />
         </id>
 
