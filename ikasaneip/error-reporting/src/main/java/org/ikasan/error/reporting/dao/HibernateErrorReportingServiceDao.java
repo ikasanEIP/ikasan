@@ -106,7 +106,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
 		
 		if(flowElementname != null && flowElementname.size() > 0)
 		{
-			criteria.add(Restrictions.in("flowElementName", moduleName));
+			criteria.add(Restrictions.in("flowElementName", flowElementname));
 		}
 		
 		if(startDate != null)

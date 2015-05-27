@@ -40,6 +40,8 @@
  */
 package org.ikasan.exclusion.dao;
 
+import java.util.List;
+
 /**
  * Exclusion Event Data Access Contract.
  * @author Ikasan Development Team
@@ -70,6 +72,13 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public EVENT find(String moduleName, String flowName, IDENTIFIER identifier);
+
+    /**
+     * Find all excluded events
+     * 
+     * @return
+     */
+    public List<EVENT> findAll();
 
     /**
      * Support delete of expired exclusionEvents
