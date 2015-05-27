@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!--  ================================================================== -->
+    <!--  Flow                                                               -->
+    <!--  ================================================================== -->
+    <bean id="demoExclusionScheduledConverterFlow"   class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         value="Demo Exclusion Sample Scheduled Module" />
+        <property name="name"               value="Demo Exclusion Scheduled Flow" />
+        <property name="description"        value="Demonstrates exclusion scheduled callbacks for a flow." />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="exclusionFlowHeadElement"  ref="exclusionProducerFlowElement" />
+        <property name="consumer"           ref="demoExclusionScheduledConsumerFlowElement" />
+    </bean>
+
+    <bean id="demoExclusionScheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Scheduled Consumer"/>
+        <property name="component"          ref="demoExclusionScheduledConsumer"/>
+        <property name="transition"         ref="demoExclusionScheduledConverterFlowElement"/>
+    </bean>
+
+    <bean id="demoExclusionScheduledConverterFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Scheduled Converter"/>
+        <property name="component"          ref="scheduledFailingConverter"/>
+        <property name="transition"         ref="demoExclusionScheduledPublisherFlowElement"/>
+    </bean>
+
+    <bean id="demoExclusionScheduledPublisherFlowElement"    class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"               value="Scheduled Publisher"/>
+        <property name="component"          ref="scheduledProducer"/>
+    </bean>
+    
+</beans>
