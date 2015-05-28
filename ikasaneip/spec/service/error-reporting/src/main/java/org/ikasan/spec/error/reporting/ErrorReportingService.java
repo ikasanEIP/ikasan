@@ -50,8 +50,8 @@ package org.ikasan.spec.error.reporting;
  */
 public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
 {
-    /** one week default time to live */
-    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 7);
+    /** one year default time to live */
+    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
 
     /**
      * Finds the EVENT logged for error reporting based on the provided uri.
