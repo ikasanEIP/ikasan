@@ -91,5 +91,6 @@
        <module>serialiser</module>
        <module>error-reporting</module>
        <module>exclusion</module>
+       <module>resubmission</module>
     </modules>
 </project>

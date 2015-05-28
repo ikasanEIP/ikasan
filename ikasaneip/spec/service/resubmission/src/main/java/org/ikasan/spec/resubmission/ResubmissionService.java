@@ -1,4 +1,4 @@
- /* 
+/* 
  * $Id$
  * $URL$
  *
@@ -38,29 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern;
+package org.ikasan.spec.resubmission;
 
 /**
- * Exception representing an invalid Flow configuration
+ * ResubmissionService contract.
  * 
  * @author Ikasan Development Team
- *
  */
-public class InvalidFlowException extends RuntimeException
+public interface ResubmissionService<EVENT>
 {
-
     /**
-     * Constructor
-     * 
-     * @param message
+     * Entry point for submission of an event.
+     * @param event
      */
-    public InvalidFlowException(String message)
-    {
-        super(message);
-    }
-
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = 303376919145399965L;
+    public void submit(EVENT event);
 }
