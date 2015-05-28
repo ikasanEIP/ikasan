@@ -46,6 +46,7 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.exclusion.ExclusionService;
@@ -66,7 +67,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
-public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject
+public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>, MonitorSubject, IsErrorReportingServiceAware
 {
     /** logger instance */
     private static Logger logger = Logger.getLogger(VisitingInvokerFlow.class);
@@ -121,6 +122,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 
     /** flow configuration implementation */
     private ExclusionFlowConfiguration exclusionFlowConfiguration;
+
+    /** errorReportingService handle */
+    private ErrorReportingService errorReportingService;
 
     /**
      * Constructor
@@ -297,11 +301,20 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
 
             // configure exclusion flow resources that are marked as configurable
-            // TODO - Lets see if these really need to be configurable before we start allowing this
-            //configure(this.exclusionFlowConfiguration.getConfiguredResourceFlowElements());
+            if(this.exclusionFlowConfiguration != null)
+            {
+                configure(this.exclusionFlowConfiguration.getConfiguredResourceFlowElements());
+            }
 
             // configure business flow resources that are marked as configurable
             configure(this.flowConfiguration.getConfiguredResourceFlowElements());
+
+            // register the errorReportingService with those components requiring it
+            for(FlowElement<IsErrorReportingServiceAware> flowElement:this.flowConfiguration.getErrorReportingServiceAwareFlowElements())
+            {
+                IsErrorReportingServiceAware component = flowElement.getFlowComponent();
+                component.setErrorReportingService(this.errorReportingService);
+            }
         }
         catch(RuntimeException e)
         {
@@ -312,7 +325,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         try
         {
             startManagedResources();
-
         }
         catch(RuntimeException e)
         {
@@ -708,6 +720,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
 	{
 		this.flowEventListener = flowEventListener;
 	}
+
+    @Override
+    public void setErrorReportingService(ErrorReportingService errorReportingService)
+    {
+        this.errorReportingService = errorReportingService;
+    }
 
     /**
      * Managed Resource Recovery Manager factory used to create MR recovery manager 
