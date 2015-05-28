@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0"?>
 <!-- 
 
 
@@ -43,53 +43,18 @@
 
  Author:  Ikasan Development Team
  
+ Purpose: Authority table hibernate mapping file. * * *
 -->
 <!DOCTYPE hibernate-mapping PUBLIC
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
 <hibernate-mapping>
-
-    <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
-
-        <id name="id" type="long" column="Id">
-            <generator class="native" />
-        </id>
-
-        <property name="moduleName"
-                  type="java.lang.String"
-                  column="ModuleName"
-                  not-null="true" />
-
-        <property name="flowName"
-                  type="java.lang.String"
-                  column="FlowName"
-                  not-null="true" />
-
-        <property name="eventLifeIdentifier"
-                  type="java.lang.String"
-                  column="EventLifeIdentifier"
-                  not-null="true" />
-
-        <property name="event"
-                  type="byte[]"
-                  column="Event"
-                  not-null="true" />
-
-        <property name="timestamp"
-                  type="long"
-                  column="Timestamp"
-                  not-null="true" />
-
-        <property name="expiry"
-                  type="long"
-                  column="Expiry"
-                  not-null="true" />
-
-        <property name="errorUri"
-                  type="java.lang.String"
-                  column="ErrorUri"
-                  not-null="false" />
-    </class>
-
+	<class name="org.ikasan.security.model.Authority"
+		table="Authorities">
+		<id name="id" type="java.lang.Long" column="Id">
+			<generator class="identity" />
+		</id>
+		<property name="authority" type="java.lang.String" column="Authority" unique="true"/>
+		<property name="description" column="Description" type="java.lang.String" />
+	</class>
 </hibernate-mapping>

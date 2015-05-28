@@ -175,6 +175,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 	public List<ExclusionEvent> findAll()
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		criteria.addOrder(Order.desc("timestamp"));
 
         return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
@@ -196,7 +197,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 		
 		if(identifier != null && identifier.length() > 0)
 		{
-			criteria.add(Restrictions.eq("flowElementName", moduleName));
+			criteria.add(Restrictions.eq("eventLifeIdentifier", identifier));
 		}
 
 		

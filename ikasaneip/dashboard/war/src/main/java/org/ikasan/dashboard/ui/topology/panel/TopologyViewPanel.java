@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.mappingconfiguration.component.IkasanCellStyleGenerator;
 import org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow;
 import org.ikasan.dashboard.ui.topology.window.ErrorOccurrenceViewWindow;
+import org.ikasan.dashboard.ui.topology.window.ExclusionEventViewWindow;
 import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -1377,9 +1378,10 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    @Override
 		    public void itemClick(ItemClickEvent itemClickEvent) {
 		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
-//		    	ErrorOccurrenceViewWindow errorOccurrenceViewWindow = new ErrorOccurrenceViewWindow(errorOccurrence);
-//		    
-//		    	UI.getCurrent().addWindow(errorOccurrenceViewWindow);
+		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
+		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence);
+		    
+		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    }
 		});
 		
@@ -1398,7 +1400,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             	    String timestamp = format.format(date);
             	    
-            	    errorOccurenceTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
+            	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
             				timestamp}, exclusionEvent);
             	}
             }
