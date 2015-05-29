@@ -47,8 +47,6 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import junit.framework.TestCase;
-
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -67,12 +65,18 @@ import org.jmock.Mockery;
 import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Test class for the ChunkingRetrieveFileCommand
  * 
  * @author Ikasan Development Team
  */
-public class ChunkingRetrieveFileCommandTest extends TestCase
+public class ChunkingRetrieveFileCommandTest
 {
 
     /**
@@ -83,6 +87,7 @@ public class ChunkingRetrieveFileCommandTest extends TestCase
      * @throws URISyntaxException Exception if the URI is invalid
      * @throws ClientCommandLsException Exception if we can't list a a directory
      */
+    @Test
     public void testExecute() throws ResourceException, ClientCommandGetException, 
         URISyntaxException, ClientCommandLsException
     {

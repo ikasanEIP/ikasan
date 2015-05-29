@@ -43,16 +43,18 @@ package org.ikasan.connector.base.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Test the ExecutionOutput class
  * 
  * @author Ikasan Development Team
  */
-public class ExecutionOutputTest extends TestCase
+public class ExecutionOutputTest
 {
 
     /**

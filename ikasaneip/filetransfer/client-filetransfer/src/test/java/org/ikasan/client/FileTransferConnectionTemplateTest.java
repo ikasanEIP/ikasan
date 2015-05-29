@@ -46,18 +46,24 @@ import java.util.Map;
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 
-import junit.framework.TestCase;
-
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * @author Ikasan Development Team
  * 
  */
-public class FileTransferConnectionTemplateTest extends TestCase
+public class FileTransferConnectionTemplateTest
 {
     
     /**
@@ -85,6 +91,7 @@ public class FileTransferConnectionTemplateTest extends TestCase
      * {@link org.ikasan.client.FileTransferConnectionTemplate#deliverPayload(org.ikasan.filetransfer.Payload, java.lang.String, java.util.Map, boolean, java.lang.String, boolean, boolean, boolean)}.
      * @throws ResourceException Exception thrown by connector
      */
+    @Test
     public void testDeliverPayload() throws ResourceException
     {
         final String outputDir="outputDir";
@@ -115,6 +122,7 @@ public class FileTransferConnectionTemplateTest extends TestCase
      * {@link org.ikasan.client.FileTransferConnectionTemplate#getDiscoveredFile(java.lang.String, java.lang.String, boolean, java.lang.String, boolean, java.lang.String, boolean, int, boolean, long, boolean, boolean, boolean, boolean, boolean)}.
      * @throws ResourceException Exception thrown by connector
      */
+    @Test
     public void testGetDiscoveredFile() throws ResourceException
     {
         
@@ -155,6 +163,7 @@ public class FileTransferConnectionTemplateTest extends TestCase
      * {@link org.ikasan.client.FileTransferConnectionTemplate#housekeep(int, int) }.
      * @throws ResourceException Exception thrown by connector 
      */
+    @Test
     public void testHousekeep() throws ResourceException
     {
         mockery.checking(new Expectations()

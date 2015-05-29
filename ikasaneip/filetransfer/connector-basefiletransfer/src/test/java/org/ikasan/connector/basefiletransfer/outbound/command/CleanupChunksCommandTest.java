@@ -45,8 +45,6 @@ import java.util.Map;
 import javax.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
-import junit.framework.TestCase;
-
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.base.command.XidImpl;
@@ -59,12 +57,20 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Test class for the CleanupChunksCommand
  * 
  * @author Ikasan Development Team 
  */
-public class CleanupChunksCommandTest extends TestCase
+public class CleanupChunksCommandTest
 {
     /**
      * Test that when the commit method is called, it in turn calls the 
@@ -74,6 +80,7 @@ public class CleanupChunksCommandTest extends TestCase
      * @throws ResourceException
      * @throws TransactionJournalingException 
      */
+    @Test
     public void testExecuteAndCommit() throws ResourceException, TransactionJournalingException{
         
         Mockery interfaceMockery = new Mockery();

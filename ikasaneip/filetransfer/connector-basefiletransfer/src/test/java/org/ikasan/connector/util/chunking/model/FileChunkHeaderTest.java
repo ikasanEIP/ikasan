@@ -40,19 +40,25 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 /**
  * Test class for FileChunkHeader
  * 
  * @author Ikasan Development Team
  */
-public class FileChunkHeaderTest extends TestCase
+public class FileChunkHeaderTest
 {
 
     /**
      * Tests the constructor and accessors
      */
+    @Test
     public void testConstructor()
     {
         String fileName = "fileName";
@@ -74,6 +80,7 @@ public class FileChunkHeaderTest extends TestCase
     /**
      * Trivially tests that the toString has been implemented
      */
+    @Test
     public void testToString()
     {
         String fileName = "fileName";

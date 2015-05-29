@@ -40,14 +40,17 @@
  */
 package org.ikasan.connector.util.chunking.io;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Base Test class for IO testing
  * 
  * @author Ikasan Development Team
  */
-public abstract class IoJUnitHelper extends TestCase
+public abstract class IoJUnitHelper
 {
 
     /**
