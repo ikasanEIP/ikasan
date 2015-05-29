@@ -57,6 +57,7 @@
         <module>genericTechPriceSrc</module>
         <!--module>jmsDrivenPriceSrc</module--> <!-- FIXME -->
         <module>scheduleDrivenSrc</module>
+        <module>jboss</module>
     </modules>
 
 </project>
