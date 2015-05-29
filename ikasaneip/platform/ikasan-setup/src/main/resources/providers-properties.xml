@@ -3272,8 +3272,8 @@
 					   Id             				NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name		      				VARCHAR(256) UNIQUE NOT NULL,
 					   TableName		      		VARCHAR(256) UNIQUE NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -3283,8 +3283,8 @@
 					   PolicyLinkTypeId     		NUMERIC(18, 0) NOT NULL,
 					   TargetId         			NUMERIC(18, 0) NOT NULL,
 					   Name				      		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id),
 					   FOREIGN KEY (PolicyLinkTypeId) REFERENCES PolicyLinkType(Id)
 					);
@@ -3295,8 +3295,8 @@
 					   PolicyLinkId               		NUMERIC(18, 0) NULL,
 					   Name		      					VARCHAR(256) UNIQUE NOT NULL,
 					   Description	     				VARCHAR(1024)		   	   NOT NULL,
-					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      			DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      			DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id), 
 					   FOREIGN KEY (PolicyLinkId) REFERENCES PolicyLink(Id) 
 					);
@@ -3305,8 +3305,8 @@
 					(
 					   UserId         				NUMERIC(18, 0) NOT NULL,
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (UserId, PrincipalId), 
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (UserId) REFERENCES Users(Id)
@@ -3316,8 +3316,8 @@
 					(
 					   PrincipalId               	NUMERIC(18, 0) NOT NULL,
 					   RoleId         				NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (PrincipalId, RoleId),
 					   FOREIGN KEY (PrincipalId) REFERENCES SecurityPrincipal(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
@@ -3327,8 +3327,8 @@
 					(
 					   RoleId               	    NUMERIC(18, 0) NOT NULL,
 					   PolicyId               	    NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (RoleId, PolicyId), 
 					   FOREIGN KEY (PolicyId) REFERENCES SecurityPolicy(Id),
 					   FOREIGN KEY (RoleId) REFERENCES SecurityRole(Id)
@@ -3340,8 +3340,8 @@
 					(
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
-					   CreatedDateTime      DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
@@ -3350,8 +3350,8 @@
 					   Id               	NUMERIC(18, 0) 		   IDENTITY NOT NULL,
 					   Name		      		VARCHAR(256)		   UNIQUE NOT NULL,
 					   Description	      	VARCHAR(1024)		   NOT NULL,
-					   CreatedDateTime      DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id) 
 					);
 				</prop>
@@ -3360,8 +3360,8 @@
 					   Id               				NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Name		      			VARCHAR(256) UNIQUE NOT NULL,
 					   KeyLocationQueryProcessorType		VARCHAR(256) NOT NULL,
-					   CreatedDateTime      			DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      			DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      			DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      			DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id) 
 					);
 				</prop>
@@ -3374,8 +3374,8 @@
 					   Description         			VARCHAR(1024) NOT NULL,
 					   ConfigurationTypeId  		NUMERIC(18, 0) NOT NULL,
 					   ConfigurationServiceClientId  	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id), 
 					   FOREIGN KEY (ConfigurationTypeId) REFERENCES MCSConfigurationType(Id),
 					   FOREIGN KEY (ConfigurationServiceClientId) REFERENCES MCSConfigServiceClient(Id),
@@ -3387,8 +3387,8 @@
 					(
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   TargetSystemValue    		VARCHAR(256) NOT NULL,   
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id) 
 					);
 				</prop>
@@ -3399,8 +3399,8 @@
 					   MappingConfigurationId		NUMERIC(18, 0) NOT NULL,
 					   TargetConfigurationValueId   NUMERIC(18, 0) NOT NULL,
 					   SourceConfigGroupId          NUMERIC(18, 0) NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id), 
 					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
 					   FOREIGN KEY (TargetConfigurationValueId) REFERENCES MCSTargetConfigValue(Id)
@@ -3411,8 +3411,8 @@
 					   Id               			NUMERIC(18, 0) IDENTITY NOT NULL,
 					   Value			    		VARCHAR(256) NOT NULL,
 					   MappingConfigurationId    	NUMERIC(18, 0) NOT NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id), 
 					   FOREIGN KEY (MappingConfigurationId) REFERENCES MCSMappingConfiguration(Id),
 					);
@@ -3445,8 +3445,8 @@
 					   AppSecDescAttributeName		VARCHAR(256) NULL,
 					   LdapUserDescAttributeName	VARCHAR(256) NULL, 
 					   MemberofAttributeName		VARCHAR(256) NULL,
-					   CreatedDateTime      		DATETIME default getdate() NOT NULL,
-					   UpdatedDateTime      		DATETIME default getdate() NOT NULL,
+					   CreatedDateTime      		DATETIME default current_date() NOT NULL,
+					   UpdatedDateTime      		DATETIME default current_date() NOT NULL,
 					   PRIMARY KEY (Id)
 					);
 				</prop>
