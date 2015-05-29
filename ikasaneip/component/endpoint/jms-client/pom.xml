@@ -53,7 +53,6 @@
 
     <dependencies>
         
-
         <!-- Standard J2ee spec -->
         <dependency>
             <groupId>geronimo-spec</groupId>
@@ -72,6 +71,7 @@
             <artifactId>ikasan-uber-spec</artifactId>
             <scope>provided</scope>
         </dependency>
+
 
     </dependencies>
 </project>

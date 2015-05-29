@@ -45,6 +45,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEvent;
@@ -118,6 +119,9 @@ public class ScheduledRecoveryManagerTest
     /** Mock exclusion service */
     final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
 
+    /** Mock error reporting service */
+    final ErrorReportingService errorReportingService = mockery.mock(ErrorReportingService.class, "mockErrorReportingService");
+
     /** Mock flowEvent */
     final FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
 
@@ -127,7 +131,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManager(null, null, null, null, null, null);
+        new ScheduledRecoveryManager(null, null, null, null, null, null, null);
     }
 
     /**
@@ -136,7 +140,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullScheduledJobFactory()
     {
-        new ScheduledRecoveryManager(scheduler, null, null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, null, null, null, null, null, null);
     }
 
     /**
@@ -145,7 +149,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null, null, null, null);
     }
 
     /**
@@ -154,7 +158,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null, null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null, null, null, null);
     }
 
     /**
@@ -163,7 +167,7 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullConsumer()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", null, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", null, null, null);
     }
 
     /**
@@ -172,7 +176,16 @@ public class ScheduledRecoveryManagerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDieToNullExclusionService()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, null);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, null, null);
+    }
+
+    /**
+     * Test successful instantiation.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void test_failed_instantiation_null_errorReportingService()
+    {
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService, null);
     }
 
     /**
@@ -181,7 +194,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_successful_instantiation()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService);
+        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName", consumer, exclusionService, errorReportingService);
     }
 
     /**
@@ -200,7 +213,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, stopAction.toString());
+                will(returnValue("errorUri"));
+
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
                 exactly(1).of(consumer).stop();
@@ -241,8 +258,12 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(excludeEventAction));
 
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", flowEvent, exception, excludeEventAction.toString());
+                will(returnValue("errorUri"));
+
                 // add to exclusion list
-                exactly(1).of(exclusionService).addBlacklisted(flowEvent);
+                exactly(1).of(exclusionService).addBlacklisted(flowEvent, "errorUri");
             }
         });
 
@@ -281,7 +302,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, stopAction.toString());
+                will(returnValue("errorUri"));
+
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
                 exactly(1).of(consumer).stop();
@@ -327,6 +352,9 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
+
+//                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
+//                will(returnValue("errorUri"));
             }
         });
 
@@ -356,6 +384,10 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
+
+                // report error
+//                exactly(1).of(errorReportingService).notify("componentName", exception, ignoreAction.toString());
+//                will(returnValue("errorUri"));
             }
         });
 
@@ -386,7 +418,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -456,7 +492,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -537,7 +577,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -564,7 +608,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -583,7 +631,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -680,7 +732,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // firstly stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -712,7 +768,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -736,7 +796,11 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
-                
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
                 // stop the consumer
                 exactly(1).of(consumer).stop();
 
@@ -829,6 +893,10 @@ public class ScheduledRecoveryManagerTest
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(unsupportedExceptionAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, unsupportedExceptionAction.toString());
+                will(returnValue("errorUri"));
             }
         });
 
@@ -849,7 +917,7 @@ public class ScheduledRecoveryManagerTest
 
         public StubbedScheduledRecoveryManager(Scheduler scheduler, String flowName, String moduleName, Consumer consumer)
         {
-            super(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService);
+            super(scheduler, scheduledJobFactory, flowName, moduleName, consumer, exclusionService, errorReportingService);
         }
         
         @Override

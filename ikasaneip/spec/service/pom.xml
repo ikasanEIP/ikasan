@@ -88,7 +88,9 @@
        <module>management</module>
        <module>wiretap</module>
        <module>search</module>
-       <module>error</module>
+       <module>serialiser</module>
+       <module>error-reporting</module>
        <module>exclusion</module>
+       <module>resubmission</module>
     </modules>
 </project>

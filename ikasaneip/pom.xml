@@ -71,11 +71,6 @@
         <!--
             You have to keep the order correct here, dependent projects first, not alphabetical!
         -->
-        <!--
-             The build module acts the parent of the rest of the modules,
-             controlling the repos, dependencies etc.
-         -->
-        <!--module>build</module-->
 
         <!-- ikasan eip core -->
         <module>spec</module>
@@ -83,19 +78,21 @@
         <module>module</module>
         <module>bootstrap</module>  <!-- TODO - is this still required ? -->
         <module>scheduler</module>
+        <module>serialiser</module>
         <module>exclusion</module>
+        <module>error-reporting</module>
         <module>recovery-manager</module>
         <module>flow</module>
         <module>configuration-service</module>
         <module>wiretap</module>
         <module>security</module>
+        <module>filter</module>
 
         <!-- ikasan test harness -->
         <module>test</module>
 
         <!-- add ons -->
         <module>monitor</module>
-        <module>filter</module>
         <module>marshaller</module>
         <module>component</module>
         <module>jca</module>
@@ -109,11 +106,11 @@
         <!-- version compatibility glue -->
         <module>compatibility</module>
 
-	<!-- top level services / applications -->
+	    <!-- top level services / applications -->
         <module>mapping</module>
         <module>management</module>
         <module>webconsole</module>
-        <!-- module>console</module -->
+        <module>console</module>
 
         <!-- developer tooling -->
         <module>developer</module>
@@ -122,23 +119,16 @@
         <module>sample</module>
         <module>transaction</module>
 
-        <module>filetransfer</module>
-
         <!-- documentation -->
         <!--module>documentation</module-->
     </modules>
 
-    <!--
-         SCM details
-         TODO: Not sure if this is strictly required here, either this or <distributionManagement> is needed
-         Figure this out when 0.8.1 rolls around
-     -->
     <scm>
         <connection>scm:git:https://github.com/ikasanEIP/ikasan.git</connection>
         <developerConnection>scm:git:https://github.com/ikasanEIP/ikasan.git</developerConnection>
         <url>scm:git:https://github.com/ikasanEIP/ikasan.git</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <!-- List the core committers -->
     <developers>
@@ -423,9 +413,9 @@
     </pluginRepositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.kryo>3.0.1</version.kryo>
         <version.org.hibernate>4.3.9.Final</version.org.hibernate>
-        <version.org.hibernate-validator>4.3.2.Final</version.org.hibernate-validator>
-        <version.org.springframework>4.1.6.RELEASE</version.org.springframework>
+		<version.org.springframework>4.1.6.RELEASE</version.org.springframework>
         <version.org.springframework.security>3.2.6.RELEASE</version.org.springframework.security>
         <version.org.springframework.security.spring-security-config>3.1.3.RELEASE</version.org.springframework.security.spring-security-config>
         <version.org.springframework.security.spring-security-web>3.1.3.RELEASE</version.org.springframework.security.spring-security-web>
@@ -457,7 +447,6 @@
         <version.commons-logging>1.1.1</version.commons-logging>
         <version.org.hsqldb>1.8.0.10</version.org.hsqldb>
         <version.javassist>3.12.1.GA</version.javassist>
-        <version.org.javassist>3.18.1-GA</version.org.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
@@ -467,7 +456,7 @@
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>8.1.16.v20140903</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-3</version.net.sf.saxon>
-        <version.org.mongodb.mongo-java-driver>2.12.5</version.org.mongodb.mongo-java-driver>
+        <version.org.mongodb.mongo-java-driver>3.0.0</version.org.mongodb.mongo-java-driver>
         <version.de.flapdoodle.embed>1.46.4</version.de.flapdoodle.embed>
         <version.org.aspectj>1.7.4</version.org.aspectj>
         <version.org.glassfish.main.external.jmxremote_optional-repackaged>4.0-b72</version.org.glassfish.main.external.jmxremote_optional-repackaged>
@@ -476,13 +465,6 @@
         <version.se.jiderhamn.classloader-leak-prevention>1.10.0</version.se.jiderhamn.classloader-leak-prevention>
         <version.org.apache.activemq>5.8.0</version.org.apache.activemq>
         <version.org.apache.activemq.activemq-core>5.7.0</version.org.apache.activemq.activemq-core>
-        <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
-        <version.commons.net>3.3</version.commons.net>
-        <version.com.thoughtworks.xstream>1.3.1</version.com.thoughtworks.xstream>
-        <version.xalan.xalan>2.7.1</version.xalan.xalan>
-        <version.org.jboss.logging.jboss-logging>3.1.0.CR2</version.org.jboss.logging.jboss-logging>
-        <version.org.jboss.logging.jboss-logging-annotations>1.2.0.Beta1</version.org.jboss.logging.jboss-logging-annotations>
-        <version.org.jboss.transaction.jboss-jta>4.2.3.SP7</version.org.jboss.transaction.jboss-jta>
     </properties>
     <!-- Distribution for releases -->
     <distributionManagement>
@@ -765,60 +747,6 @@
         </profile>
     </profiles>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>${version.org.hamcrest.hamcrest-all}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock</artifactId>
-            <version>${version.org.jmock}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
-            <version>${version.org.jmock.jmock-legacy}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- CGLib, used for testing assitance to jmock -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${version.cglib.cglib-nodep}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Objenesis, used for testing assitance to jmock -->
-        <dependency>
-            <groupId>org.objenesis</groupId>
-            <artifactId>objenesis</artifactId>
-            <version>${version.org.objenesis}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Mokito, used for mocking -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>${version.org.mockito}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <dependencyManagement>
 
         <dependencies>
@@ -844,6 +772,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-serialiser</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -885,6 +819,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-serialiser</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-jms-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -897,12 +837,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-utility-endpoint</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-configuration</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -910,6 +844,18 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-exclusion</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-error-reporting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-error-reporting-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -957,12 +903,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-jms-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-recovery-manager</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1000,6 +940,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-wiretap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spring-resource</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1084,15 +1030,15 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${version.org.hibernate}</version>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${version.kryo}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>${version.org.hibernate-validator}</version>
+                <artifactId>hibernate-core</artifactId>
+                <version>${version.org.hibernate}</version>
             </dependency>
 
             <dependency>
@@ -1140,7 +1086,7 @@
             <dependency>
                 <groupId>geronimo-spec</groupId>
                 <artifactId>geronimo-spec-j2ee</artifactId>
-                <version>${version.geronimo.spec}</version>
+                <version>1.4-rc3</version>
             </dependency>
 
             <dependency>
@@ -1185,18 +1131,6 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
                 <version>${version.org.hamcrest.hamcrest-library}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${version.log4j}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-                <version>${version.javax.transaction.jta}</version>
             </dependency>
 
             <dependency>
@@ -1336,6 +1270,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${version.org.springframework}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${version.org.hamcrest.hamcrest-all}</version>
             </dependency>
 
             <dependency>

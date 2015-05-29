@@ -87,22 +87,11 @@
     </build>
 
     <dependencies>
+
        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-search</artifactId>
             <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-orm</artifactId>
-          <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -111,6 +100,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-orm</artifactId>
+          <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 </project>

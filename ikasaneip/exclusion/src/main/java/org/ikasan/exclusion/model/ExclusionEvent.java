@@ -42,21 +42,29 @@ package org.ikasan.exclusion.model;
 
 import org.ikasan.spec.exclusion.ExclusionService;
 
+import java.util.Arrays;
+
 /**
- * Module implementation representing an ExclusionEvent instance.
+ * ExclusionEvent model instance.
  *
  * @author Ikasan Development Team
  */
 public class ExclusionEvent
 {
+    /** surrogate id assigned from ORM */
+    long id;
+
     /** module name */
     String moduleName;
 
     /** flowName */
     String flowName;
 
-    /** unique identifier for this event instance */
-    String identifier;
+    /** identifier for this event */
+    String eventLifeIdentifier;
+
+    /** original form of the event being excluded */
+    byte[] event;
 
     /** timestamp indicating when this event was created */
     long timestamp;
@@ -64,28 +72,55 @@ public class ExclusionEvent
     /** expiry of this event */
     long expiry;
 
+    /** error uri reported as part of this excluded event */
+    String errorUri;
+
     /**
      * Constructor
-     * Defaults timeToLive to one day
-     * @param identifier
+     * @param moduleName
+     * @param flowName
+     * @param eventLifeIdentifier
+     * @param event
+     * @param errorUri
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier)
+    public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri)
     {
-        this(moduleName, flowName, identifier, ExclusionService.DEFAULT_TIME_TO_LIVE);
+        this(moduleName, flowName, eventLifeIdentifier, event, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
     }
 
     /**
      * Constructor
      * @param moduleName
      * @param flowName
-     * @param identifier
+     * @param eventLifeIdentifier
+     * @param event
+     * @param errorUri
      * @param timeToLive
      */
-    public ExclusionEvent(String moduleName, String flowName, String identifier, long timeToLive)
+    public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri, long timeToLive)
     {
         this.moduleName = moduleName;
+        if(moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+
         this.flowName = flowName;
-        this.identifier = identifier;
+        if(flowName == null)
+        {
+            throw new IllegalArgumentException("flowName cannot be 'null'");
+        }
+        this.eventLifeIdentifier = eventLifeIdentifier;
+        if(eventLifeIdentifier == null)
+        {
+            throw new IllegalArgumentException("eventLifeIdentifier cannot be 'null'");
+        }
+        this.event = event;
+        if(event == null)
+        {
+            throw new IllegalArgumentException("event cannot be 'null'");
+        }
+        this.errorUri = errorUri;
         long now = System.currentTimeMillis();
         this.timestamp = now;
         this.expiry = now + timeToLive;
@@ -96,28 +131,12 @@ public class ExclusionEvent
      */
     protected ExclusionEvent(){}
 
-    public String getIdentifier() {
-        return identifier;
+    public long getId() {
+        return id;
     }
 
-    protected void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    protected void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Long getExpiry() {
-        return expiry;
-    }
-
-    protected void setExpiry(Long expiry) {
-        this.expiry = expiry;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getModuleName() {
@@ -136,6 +155,46 @@ public class ExclusionEvent
         this.flowName = flowName;
     }
 
+    public String getEventLifeIdentifier() {
+        return eventLifeIdentifier;
+    }
+
+    protected void setEventLifeIdentifier(String eventLifeIdentifier) {
+        this.eventLifeIdentifier = eventLifeIdentifier;
+    }
+
+    public byte[] getEvent() {
+        return event;
+    }
+
+    protected void setEvent(byte[] event) {
+        this.event = event;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    protected void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getExpiry() {
+        return expiry;
+    }
+
+    protected void setExpiry(long expiry) {
+        this.expiry = expiry;
+    }
+
+    public String getErrorUri() {
+        return errorUri;
+    }
+
+    protected void setErrorUri(String errorUri) {
+        this.errorUri = errorUri;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,7 +203,7 @@ public class ExclusionEvent
         ExclusionEvent that = (ExclusionEvent) o;
 
         if (!flowName.equals(that.flowName)) return false;
-        if (!identifier.equals(that.identifier)) return false;
+        if (!eventLifeIdentifier.equals(that.eventLifeIdentifier)) return false;
         if (!moduleName.equals(that.moduleName)) return false;
 
         return true;
@@ -154,18 +213,21 @@ public class ExclusionEvent
     public int hashCode() {
         int result = moduleName.hashCode();
         result = 31 * result + flowName.hashCode();
-        result = 31 * result + identifier.hashCode();
+        result = 31 * result + eventLifeIdentifier.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         return "ExclusionEvent{" +
-                "moduleName='" + moduleName + '\'' +
+                "id='" + id + '\'' +
+                ", moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
-                ", identifier='" + identifier + '\'' +
+                ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
+                ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
                 ", expiry=" + expiry +
+                ", errorUri='" + errorUri + '\'' +
                 '}';
     }
 }

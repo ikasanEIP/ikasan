@@ -108,7 +108,8 @@ public class PersistenceServiceImpl implements PersistenceService
     private static String VERSION = "version";
     private static String VERSION_ENTRY = "version.entry";
     private static String EXCLUSION_EVENT = "exclusionEvent";
-    
+    private static String ERROR_OCCURRENCE = "errorOccurrence";
+
     private static String USERS_TABLE_EXISTS = "usersTableExists";
     private static String AUTHORITIES_TABLE_EXISTS = "authoritiesTableExists";
     private static String USERS_AUTHORITIES_TABLE_EXISTS = "usersAuthoritiesTableExists";
@@ -199,6 +200,7 @@ public class PersistenceServiceImpl implements PersistenceService
         this.providerDAO.create(AUTHORITIES);
         this.providerDAO.create(USERS_AUTHORITIES);
         this.providerDAO.create(EXCLUSION_EVENT);
+        this.providerDAO.create(ERROR_OCCURRENCE);
         this.providerDAO.create(SECURITY_PRINCIAL);
         this.providerDAO.create(SECURITY_ROLE);
         this.providerDAO.create(POLICY_LINK_TYPE);

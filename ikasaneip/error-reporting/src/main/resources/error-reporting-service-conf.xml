@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" />
+
+    <bean id="errorReportingServiceFactory" class="org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl">
+        <constructor-arg ref="ikasanSerialiserFactory"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
+
+    <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
+        <property name="sessionFactory" ref="errorReportingSessionFactory"/>
+    </bean>
+
+    <bean id="errorReportingSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.ds" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+    <aop:config>
+        <aop:pointcut id="errorReportingServiceInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorReportingServiceInvocation"/>
+    </aop:config>
+</beans>

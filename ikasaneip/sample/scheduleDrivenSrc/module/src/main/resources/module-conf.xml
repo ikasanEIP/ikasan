@@ -11,7 +11,8 @@
         <property name="description"    value="Sample showing a simple schedule driven module." />
         <property name="flows">
             <util:list>
-                <ref bean="scheduledConverterFlow" />
+                <ref bean="demoScheduledConverterFlow" />
+                <ref bean="demoExclusionScheduledConverterFlow" />
             </util:list>
         </property>
 	</bean>

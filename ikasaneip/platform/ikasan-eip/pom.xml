@@ -60,10 +60,15 @@
        <!-- Ikasan libraries -->
        <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spring-resource</artifactId>
+       </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-uber-spec</artifactId>
-           </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-system-event</artifactId>
           </dependency>
@@ -86,17 +91,27 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
-         </dependency>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-serialiser</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-error-reporting-service</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-flow-visitorPattern</artifactId>
-           </dependency>
-        
-       <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-filter</artifactId>
-           </dependency>
+        </dependency>
         
        <!--dependency>
             <groupId>org.ikasan</groupId>
@@ -163,6 +178,11 @@
             <artifactId>spring-jms</artifactId>
           </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-utility-endpoint</artifactId>
+        </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>log4j</groupId>
@@ -172,18 +192,29 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
          </dependency>
-        
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
         <!-- For point cut transaction management -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+
     </dependencies>
-    
+
 </project>
