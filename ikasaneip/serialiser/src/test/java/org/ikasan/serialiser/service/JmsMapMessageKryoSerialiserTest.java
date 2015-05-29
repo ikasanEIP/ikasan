@@ -41,11 +41,13 @@
 package org.ikasan.serialiser.service;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.jms.JMSException;
@@ -78,9 +80,12 @@ public class JmsMapMessageKryoSerialiserTest
 
     private final Output output = mockery.mock(Output.class);
 
+    private final Input input = mockery.mock(Input.class);
+
     private final MapMessage textMessage = mockery.mock(MapMessage.class);
 
-    @Test public void write_when_input_is_mapMessage_has_no_keys() throws JMSException
+    @Test
+    public void write_when_input_is_mapMessage_has_no_keys() throws JMSException
     {
         // Expectations
         mockery.checking(new Expectations()
@@ -97,7 +102,8 @@ public class JmsMapMessageKryoSerialiserTest
         mockery.assertIsSatisfied();
     }
 
-    @Test public void write_when_input_is_mapMessage_has_single_value_in_map() throws JMSException
+    @Test
+    public void write_when_input_is_mapMessage_has_single_value_in_map() throws JMSException
     {
         HashMap<Object,Object> hashMap = new HashMap<Object,Object>();
         hashMap.put("key","value");
@@ -122,7 +128,8 @@ public class JmsMapMessageKryoSerialiserTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = RuntimeException.class) public void write_when_mapMessage_throws_JMSException() throws JMSException
+    @Test(expected = RuntimeException.class)
+    public void write_when_mapMessage_throws_JMSException() throws JMSException
     {
         // Expectations
         mockery.checking(new Expectations()
@@ -137,4 +144,28 @@ public class JmsMapMessageKryoSerialiserTest
         // assert
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void read_when_input_is_a_map() throws JMSException
+    {
+        String key= "key1";
+        String value= "testValue";
+        final Map<Object,Object> payload = new HashMap<Object,Object>();
+        payload.put(key,value);
+        // Expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(kryo).readClassAndObject(input);
+                will(returnValue(payload));
+            }
+        });
+        //do test
+        MapMessage result = uut.read(kryo, input, MapMessage.class);
+        // assert
+        mockery.assertIsSatisfied();
+
+        Assert.assertEquals(value, result.getString(key));
+    }
+
 }
