@@ -41,6 +41,7 @@
 package org.ikasan.serialiser.service;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -76,9 +77,12 @@ public class JmsTextMessageKryoSerialiserTest
 
     private final Output output = mockery.mock(Output.class);
 
+    private final Input input = mockery.mock(Input.class);
+
     private final TextMessage textMessage = mockery.mock(TextMessage.class);
 
-    @Test public void write_when_input_is_textMessage() throws JMSException
+    @Test
+    public void write_when_input_is_textMessage() throws JMSException
     {
         // Expectations
         mockery.checking(new Expectations()
@@ -95,7 +99,8 @@ public class JmsTextMessageKryoSerialiserTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = RuntimeException.class) public void write_when_textMessage_throws_JMSException()
+    @Test(expected = RuntimeException.class)
+    public void write_when_textMessage_throws_JMSException()
             throws JMSException
     {
         // Expectations
@@ -111,4 +116,26 @@ public class JmsTextMessageKryoSerialiserTest
         // assert
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void read_when_input_is_a_string() throws JMSException
+    {
+        final String payload ="testPayload";
+        // Expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(kryo).readClassAndObject(input);
+                will(returnValue(payload));
+            }
+        });
+        //do test
+        TextMessage result = uut.read(kryo, input, TextMessage.class);
+        // assert
+        mockery.assertIsSatisfied();
+
+        Assert.assertEquals(payload,result.getText());
+    }
+
 }
+

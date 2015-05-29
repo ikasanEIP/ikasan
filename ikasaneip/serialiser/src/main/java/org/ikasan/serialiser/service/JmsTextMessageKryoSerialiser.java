@@ -44,15 +44,15 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import org.apache.activemq.command.ActiveMQTextMessage;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-
 public class JmsTextMessageKryoSerialiser extends Serializer<TextMessage>
 {
-
-    public void write (Kryo kryo, Output output, TextMessage message) {
+    public void write(Kryo kryo, Output output, TextMessage message)
+    {
         try
         {
             kryo.writeClassAndObject(output, message.getText());
@@ -63,8 +63,18 @@ public class JmsTextMessageKryoSerialiser extends Serializer<TextMessage>
         }
     }
 
-    public TextMessage read (Kryo kryo, Input input, Class<TextMessage> message) {
-
-        return null;
+    public TextMessage read(Kryo kryo, Input input, Class<TextMessage> message)
+    {
+        TextMessage textMessage = new ActiveMQTextMessage();
+        try
+        {
+            String deserialisedPayload = (String) kryo.readClassAndObject(input);
+            textMessage.setText(deserialisedPayload);
+            return textMessage;
+        }
+        catch (JMSException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
