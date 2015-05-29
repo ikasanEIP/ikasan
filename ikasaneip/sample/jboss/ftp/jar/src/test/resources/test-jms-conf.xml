@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="jndiBinder"
+          class="org.springframework.mock.jndi.SimpleNamingContextBuilder"
+          factory-method="emptyActivatedContextBuilder"/>
+
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="jndiBinder"/>
+        <property name="targetMethod" value="bind"/>
+        <property name="arguments">
+            <array>
+                <value type="java.lang.String">java:/ftp/SimpleFtpConnectionFactory</value>
+                <bean id="connectionFactory" class="org.ikasan.connector.ftp.outbound.FTPConnectionFactory">
+                    <constructor-arg name="connectionManager" ref="ftpConnectionManager"/>
+                    <constructor-arg name="managedConnectionFactory" ref="ftpManagedConnectionFactory"/>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="ftpConnectionManager"
+          class="org.ikasan.connector.ftp.outbound.FTPConnectionManager"/>
+    <bean id="ftpManagedConnectionFactory"
+          class="org.ikasan.connector.ftp.outbound.FTPManagedConnectionFactory"/>
+
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="jndiBinder"/>
+        <property name="targetMethod" value="bind"/>
+        <property name="arguments">
+            <array>
+                <value type="java.lang.String">java:/JmsXA</value>
+                <ref bean="atomikosConnectionFactory"/>
+            </array>
+        </property>
+    </bean>
+
+    <!--<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+        <!--<property name="targetObject" ref="jndiBinder"/>-->
+        <!--<property name="targetMethod" value="bind"/>-->
+        <!--<property name="arguments">-->
+            <!--<array>-->
+                <!--<value type="java.lang.String">java:/Jms</value>-->
+                <!--<ref bean="mqConnectionFactory"/>-->
+            <!--</array>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+
+    <bean id="mqXaConnectionFactory" class="org.apache.activemq.ActiveMQXAConnectionFactory">
+        <!-- use local VM URL for efficiency -->
+        <!--<property name="brokerURL" value="tcp://127.0.0.1:61617"/>-->
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+
+    </bean>
+
+    <!--<bean id="mqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">-->
+        <!--&lt;!&ndash; use local VM URL for efficiency &ndash;&gt;-->
+        <!--<property name="brokerURL" value="tcp://localhost:61616"/>-->
+
+    <!--</bean>-->
+
+    <bean id="atomikosConnectionFactory" class="com.atomikos.jms.AtomikosConnectionFactoryBean" init-method="init"
+          destroy-method="close">
+        <property name="uniqueResourceName" value="amq1"/>
+        <property name="xaConnectionFactory" ref="mqXaConnectionFactory"/>
+        <property name="maxPoolSize" value="10"/>
+    </bean>
+
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="jndiBinder"/>
+        <property name="targetMethod" value="bind"/>
+        <property name="arguments">
+            <array>
+                <value type="java.lang.String">java:jboss/exported/jms/topic/test.file</value>
+                <bean class="org.apache.activemq.command.ActiveMQTopic">
+                    <constructor-arg value="java:jboss/exported/jms/topic/test.file"/>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!--<bean id="jmsTestProducerConfiguration"-->
+          <!--class="org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration">-->
+        <!--<property name="destinationJndiName" value="java:jboss/exported/jms/topic/test.file"/>-->
+        <!--<property name="connectionFactoryName" value="java:/Jms"/>-->
+        <!--<property name="pubSubDomain" value="true"/>-->
+        <!--<property name="sessionTransacted" value="false"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jmsTestProducer" class="org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer">-->
+        <!--<constructor-arg>-->
+            <!--<bean class="org.springframework.jms.core.IkasanJmsTemplate"/>-->
+        <!--</constructor-arg>-->
+        <!--<property name="configuration" ref="jmsTestProducerConfiguration"/>-->
+        <!--<property name="configuredResourceId" value="jmsTestProducerConfiguration"/>-->
+    <!--</bean>-->
+
+
+</beans>
