@@ -48,15 +48,20 @@ import java.io.InputStream;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class for UnzippingFileProvider
  * 
  * @author Ikasan Development Team
  */
-public class UnzippingFileProviderTest extends TestCase
+public class UnzippingFileProviderTest
 {
     /**
      * File name for the zip entry
@@ -121,6 +126,7 @@ public class UnzippingFileProviderTest extends TestCase
      * Simply tests the contructor
      * @throws UnzipNotSupportedException 
      */
+    @Test
     public void testUnzippingFileProvider() throws UnzipNotSupportedException
     {
         createUnzippingFileProvider();
@@ -144,6 +150,7 @@ public class UnzippingFileProviderTest extends TestCase
      * Tests the hasNext method
      * @throws UnzipNotSupportedException 
      */
+    @Test
     public void testHasNext() throws UnzipNotSupportedException
     {
         UnzippingFileProvider fileProvider = createUnzippingFileProvider();
@@ -154,6 +161,7 @@ public class UnzippingFileProviderTest extends TestCase
      * Tests the next method
      * @throws UnzipNotSupportedException 
      */
+    @Test
     public void testNext() throws UnzipNotSupportedException
     {
         UnzippingFileProvider fileProvider = createUnzippingFileProvider();
@@ -168,6 +176,7 @@ public class UnzippingFileProviderTest extends TestCase
     /**
      * Test the illegal Input Stream
      */
+    @Test
     public void testIlleagalInputStream(){
         byte[] bytes = new byte[] {1,2,3,4,5,6,7,8};
         

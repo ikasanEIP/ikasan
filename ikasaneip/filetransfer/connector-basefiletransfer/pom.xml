@@ -123,6 +123,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -132,6 +133,11 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- CGLib, used for testing assitance to jmock -->
@@ -152,5 +158,7 @@
             <version>${version.org.hamcrest.hamcrest-all}</version>
             <scope>test</scope>
         </dependency>
+
+
     </dependencies>
 </project>

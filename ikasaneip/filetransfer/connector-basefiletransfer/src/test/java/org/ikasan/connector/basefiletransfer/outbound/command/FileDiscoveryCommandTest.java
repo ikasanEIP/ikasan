@@ -47,8 +47,6 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import junit.framework.TestCase;
-
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.base.command.XidImpl;
@@ -62,12 +60,16 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 /**
  * Test class for FileDiscoveryCommand
  * 
  * @author Ikasan Development Team
  */
-public class FileDiscoveryCommandTest extends TestCase
+public class FileDiscoveryCommandTest
 {
     /**
      * Tests the execute method
@@ -77,6 +79,7 @@ public class FileDiscoveryCommandTest extends TestCase
      * @throws ClientCommandLsException Exception if we can't list directory
      * @throws URISyntaxException Exception if the URI is invalid
      */
+    @Test
     public void testExecute() throws ResourceException,
             ClientCommandCdException, ClientCommandLsException,
             URISyntaxException

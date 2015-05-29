@@ -49,8 +49,6 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
-import junit.framework.TestCase;
-
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -71,13 +69,15 @@ import org.ikasan.connector.basefiletransfer.outbound.command.util.UniqueIdGener
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the function of the DeliverBatchCommand
  * 
  * @author Ikasan Development Team
  */
-public class DeliverBatchCommandTest extends TestCase
+public class DeliverBatchCommandTest
 {
     /** we are dealing with pathnames so make sure we stay platform independent */
     final String FILE_SEPARATOR = System.getProperty("file.separator");
@@ -147,7 +147,7 @@ public class DeliverBatchCommandTest extends TestCase
      */
     final List<ClientListEntry> tempDirectoryListing = new ArrayList<ClientListEntry>();
 
-    @Override
+    @Before
     public void setUp() throws URISyntaxException
     {
         fileHandles.add(new FileHandle(nestedFile1.getPath(), new ByteArrayInputStream(content)));
@@ -171,6 +171,7 @@ public class DeliverBatchCommandTest extends TestCase
      * @throws ClientCommandPutException
      * @throws URISyntaxException
      */
+    @Test
     public void testExecute() throws ClientCommandPwdException, ClientCommandCdException, ResourceException,
             ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
             URISyntaxException
@@ -246,6 +247,7 @@ public class DeliverBatchCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ClientCommandRenameException
      */
+    @Test
     public void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
             ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
             ResourceException, URISyntaxException, ClientCommandRenameException
@@ -351,6 +353,7 @@ public class DeliverBatchCommandTest extends TestCase
      * @throws ClientCommandPwdException
      * @throws URISyntaxException
      */
+    @Test
     public void testRollback() throws ResourceException, ClientCommandPwdException, ClientCommandCdException,
             ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
             ClientException, URISyntaxException

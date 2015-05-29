@@ -40,22 +40,28 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import junit.framework.TestCase;
-
 import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 import org.ikasan.connector.util.chunking.ChunkTestUtils;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class for FileChunk
  * 
  * @author Ikasan Development Team
  */
-public class FileChunkTest extends TestCase
+public class FileChunkTest
 {
 
     /**
      * Tests that the internal Md5 hash works
      */
+    @Test
     public void testGetMd5Hash()
     {
         byte[] testData = ChunkTestUtils.getTestData();
@@ -81,6 +87,7 @@ public class FileChunkTest extends TestCase
     /**
      * Tests that the constructor and accessors work correctly
      */
+    @Test
     public void testConstruction()
     {
         byte[] content = new byte[] { 1, 2, 3 };
@@ -98,6 +105,7 @@ public class FileChunkTest extends TestCase
     /**
      * asserts the toString has some implementation
      */
+    @Test
     public void testToString()
     {
         byte[] content = new byte[] { 1, 2, 3 };
@@ -113,6 +121,7 @@ public class FileChunkTest extends TestCase
      * Checks that the compareTo method simply defers to a compare to on the
      * ordinal
      */
+    @Test
     public void testCompareTo()
     {
         assertOrdinalCompareTo(1l, 2l);

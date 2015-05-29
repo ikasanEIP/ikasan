@@ -45,8 +45,6 @@ import java.net.URISyntaxException;
 
 import javax.resource.ResourceException;
 
-import junit.framework.TestCase;
-
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -62,15 +60,24 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * @author Ikasan Development Team
  */
-public class RetrieveFileCommandTest extends TestCase
+public class RetrieveFileCommandTest
 {
     /**
      * Testing the constructor with moveOnSuccess, renameOnSuccess, and destructive, all set to false.
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
+    @Test
     public void testConstructor_FalseAllFlags()
     {
         Mockery interfaceMockery = new Mockery();
@@ -100,6 +107,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with only renameOnSuccess set to true.
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
+    @Test
     public void testConstructor_TrueRename()
     {
         Mockery interfaceMockery = new Mockery();
@@ -129,6 +137,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with only destructive set to true.
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
+    @Test
     public void testConstructor_TrueDestructive()
     {
         Mockery interfaceMockery = new Mockery();
@@ -158,6 +167,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with only moveOnSuccess set to true.
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
+    @Test
     public void testConstructor_TrueMove()
     {
         Mockery interfaceMockery = new Mockery();
@@ -187,6 +197,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with moveOnSuccess, renameOnSuccess, and destructive all set to true.
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
+    @Test
     public void testConstructor_TrueRenameAndMoveAndDestructive()
     {
         Mockery interfaceMockery = new Mockery();
@@ -206,13 +217,16 @@ public class RetrieveFileCommandTest extends TestCase
         {
             exception = e;
         }
-        assertNotNull("When moveOnSuccess, renameOnSuccess, and destructive are all true,an IllegalArgumentException should be thrown.", exception); //$NON-NLS-1$
+        assertNotNull(
+                "When moveOnSuccess, renameOnSuccess, and destructive are all true,an IllegalArgumentException should be thrown.",
+                exception); //$NON-NLS-1$
     }
 
     /**
      * Testing the constructor with renameOnSuccess true but a null renameOnSuccessExtention
      * Expected to throw an IllegalArgumentException.
      */
+    @Test
     public void testConstructor_RenameNullExtention()
     {
         Mockery interfaceMockery = new Mockery();
@@ -239,6 +253,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with moveOnSuccess true but a null moveOnSuccessNewPath
      * Expected to throw an IllegalArgumentException.
      */
+    @Test
     public void testConstructor_MoveNullNewPath()
     {
         Mockery interfaceMockery = new Mockery();
@@ -265,6 +280,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with both moveOnSuccess and renameOnSuccess set to true.
      * Expected to throw an IllegalArgumentException
      */
+    @Test
     public void testConstructor_TrueMoveAndRename()
     {
         Mockery interfaceMockery = new Mockery();
@@ -291,6 +307,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with both moveOnSuccess and destructive set to true.
      * Expected to throw an IllegalArgumentExcepton
      */
+    @Test
     public void testConstructor_TrueMoveAndDestrucive()
     {
         Mockery interfaceMockery = new Mockery();
@@ -317,6 +334,7 @@ public class RetrieveFileCommandTest extends TestCase
      * Testing the constructor with both renameOnSuccess and destructive set to true.
      * Expected to throw an IllegalArgumentException.
      */
+    @Test
     public void testConstructor_TrueRenameAndDestrucive()
     {
         Mockery interfaceMockery = new Mockery();
@@ -341,12 +359,13 @@ public class RetrieveFileCommandTest extends TestCase
 
     /**
      * Tests just the execute method of the RetrieveFileCommand
-     * 
-     * @throws ResourceException - 
+     *
+     * @throws ResourceException -
      * @throws ClientCommandCdException -
      * @throws ClientCommandGetException -
      * @throws URISyntaxException -
      */
+    @Test
     public void testExecute() throws ResourceException, ClientCommandCdException,
             ClientCommandGetException, URISyntaxException
     {
@@ -363,7 +382,7 @@ public class RetrieveFileCommandTest extends TestCase
         final String fileName = "fileName";//$NON-NLS-1$
         final ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry(sourceDir + "/" + fileName);//$NON-NLS-1$
         final BaseFileTransferMappedRecord file = new BaseFileTransferMappedRecord();
- 
+
         context.checking(new Expectations()
         {
             {
@@ -390,10 +409,10 @@ public class RetrieveFileCommandTest extends TestCase
         //create the ExecutionContext
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
-        
+
         command.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(command, 3));
         command.setExecutionContext(executionContext);
-        
+
         // execute the command
         ExecutionOutput output = command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         BaseFileTransferMappedRecord result = (BaseFileTransferMappedRecord) output.getResult();
@@ -406,14 +425,15 @@ public class RetrieveFileCommandTest extends TestCase
 
     /**
      * Tests that the commit function works correctly with renaming the file.
-     * 
+     *
      * @throws ResourceException -
      * @throws ClientCommandCdException -
      * @throws ClientCommandGetException -
      * @throws URISyntaxException -
      * @throws ClientCommandRenameException -
      */
-    public void testCommit_Rename() throws 
+    @Test
+    public void testCommit_Rename() throws
             ResourceException, ClientCommandCdException,
             ClientCommandGetException, URISyntaxException,
             ClientCommandRenameException
@@ -436,7 +456,7 @@ public class RetrieveFileCommandTest extends TestCase
         final String srcPath = entry.getUri().getPath();
         final String renamePath = srcPath + renameExtension;
         final String movePath = archiveDir + File.separator + fileName;//$NON-NLS-1$
-        
+
 
         context.checking(new Expectations()
         {
@@ -465,12 +485,12 @@ public class RetrieveFileCommandTest extends TestCase
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
         command.setExecutionContext(executionContext);
-        
+
         command.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(command, 5));
 
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
-       
+
         assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
 
         assertEquals("command state should be executed", //$NON-NLS-1$
@@ -486,7 +506,7 @@ public class RetrieveFileCommandTest extends TestCase
 
     /**
      * Fix paths to allow tests to run on Windows or UNIX
-     * 
+     *
      * @param path
      * @return
      */
@@ -496,14 +516,15 @@ public class RetrieveFileCommandTest extends TestCase
 
 	/**
      * Tests that the commit function works correctly with moving the file.
-     * 
+     *
      * @throws ResourceException -
      * @throws ClientCommandCdException-
      * @throws ClientCommandGetException -
      * @throws URISyntaxException -
      * @throws ClientCommandRenameException -
      */
-    public void testCommit_Move() throws 
+    @Test
+    public void testCommit_Move() throws
         ResourceException, ClientCommandCdException,
         ClientCommandGetException, URISyntaxException,
         ClientCommandRenameException
@@ -558,7 +579,7 @@ public class RetrieveFileCommandTest extends TestCase
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
 
         assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
-        
+
         assertEquals("command state should be executed", //$NON-NLS-1$
             AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command.getState());
         // commit the command
@@ -570,14 +591,15 @@ public class RetrieveFileCommandTest extends TestCase
 
     /**
      * Tests that the rollback function works correctly
-     * 
+     *
      * @throws ResourceException -
      * @throws ClientCommandCdException -
      * @throws ClientCommandGetException -
      * @throws URISyntaxException -
      * @throws ClientCommandRenameException -
      */
-    public void testRollback() throws 
+    @Test
+    public void testRollback() throws
             ResourceException, ClientCommandCdException,
             ClientCommandGetException, URISyntaxException,
             ClientCommandRenameException
@@ -629,14 +651,14 @@ public class RetrieveFileCommandTest extends TestCase
         command.setExecutionContext(executionContext);
 
         command.setTransactionJournal(BaseFileTransferCommandJUnitHelper.getTransactionJournal(command, 5));
-        
+
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
-        
+
         assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
-        
+
         command.rollback();
-        
+
         assertEquals("command state should be rolledback", //$NON-NLS-1$
             AbstractTransactionalResourceCommand.ROLLED_BACK_STATE.getName(),
             command.getState());

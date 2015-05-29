@@ -46,8 +46,6 @@ import java.util.Map;
 
 import javax.transaction.xa.Xid;
 
-import junit.framework.TestCase;
-
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.base.command.TransactionalResourceCommandPersistenceException;
@@ -56,12 +54,16 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+
+
 /**
  * Test class for the basic TrasactionJournal
  * 
  * @author Ikasan Development Team
  */
-public class TransactionJournalImplTest extends TestCase
+public class TransactionJournalImplTest
 {
     
     /**

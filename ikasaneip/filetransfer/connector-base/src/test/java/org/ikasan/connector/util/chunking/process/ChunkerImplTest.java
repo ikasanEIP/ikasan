@@ -44,7 +44,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+
 
 import org.ikasan.connector.util.chunking.model.FileChunk;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
@@ -57,6 +57,13 @@ import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class for ChunkerImpl
@@ -64,7 +71,8 @@ import org.jmock.Sequence;
  * @author Ikasan Development Team
  * 
  */
-public class ChunkerImplTest extends TestCase {
+public class ChunkerImplTest
+{
 
 	/**
 	 * no of bytes in 1MB
@@ -133,6 +141,7 @@ public class ChunkerImplTest extends TestCase {
 	 * test the chunkFile method
 	 * @throws ChunkableDataProviderAccessException 
 	 */
+    @Test
 	public void testChunkFile_CannotConnect() throws ChunkableDataProviderAccessException {
 	      Mockery interfaceMockery = new Mockery();
 	        final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -168,6 +177,7 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataSourceException 
 	 * @throws ChunkableDataProviderAccessException 
 	 */
+    @Test
 	public void testChunkFile_CannotDisconnect() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 	    
 	        Mockery interfaceMockery = new Mockery();
@@ -209,7 +219,8 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataProviderAccessException 
 	 * @throws ChunkLoadException 
 	 */
-	public void testChunkFile_ExceptionDuringReplaying() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
+    @Test
+   public void testChunkFile_ExceptionDuringReplaying() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
 	    
         Mockery interfaceMockery = new Mockery();
         final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -241,6 +252,7 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataSourceException 
 	 * @throws ChunkableDataProviderAccessException 
 	 */
+    @Test
 	public void testChunkFile_ExceptionDuringSourcing() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 	    
         Mockery interfaceMockery = new Mockery();
@@ -278,6 +290,7 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataProviderAccessException 
 	 * @throws ChunkLoadException 
 	 */
+    @Test
 	public void testChunkFile_ExceptionUnsupportedResume() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
 	    
         Mockery interfaceMockery = new Mockery();
@@ -316,6 +329,7 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataProviderAccessException 
 	 * 
 	 */
+    @Test
 	public void testChunkFile_InvalidMode() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 
 	       Mockery interfaceMockery = new Mockery();
@@ -352,6 +366,7 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataProviderAccessException 
 	 * @throws ChunkableDataSourceException 
 	 */
+    @Test
 	public void testChunkFile_UsingInputStream() throws ChunkException, ChunkableDataSourceException, ChunkableDataProviderAccessException {
 	   
 	    Mockery interfaceMockery = new Mockery();
@@ -382,6 +397,7 @@ public class ChunkerImplTest extends TestCase {
      * @throws ChunkableDataProviderAccessException 
      * 
      */
+    @Test
     public void testChunkFile_InvalidChunkSize() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 
            Mockery interfaceMockery = new Mockery();
@@ -416,6 +432,7 @@ public class ChunkerImplTest extends TestCase {
 	 * @throws ChunkableDataSourceException 
 	 * @throws ChunkableDataProviderAccessException 
 	 */
+    @Test
 	public void testChunkFile_UsingOuputStream() throws ChunkException, ChunkableDataProviderAccessException, ChunkableDataSourceException {
 
         Mockery interfaceMockery = new Mockery();
@@ -442,6 +459,7 @@ public class ChunkerImplTest extends TestCase {
     /**
 	 * test the handleChunk method
 	 */
+    @Test
 	public void testHandleChunk() {
 
 		FileChunkDao dao = new MockFileChunkDao(new ArrayList<FileChunk>());

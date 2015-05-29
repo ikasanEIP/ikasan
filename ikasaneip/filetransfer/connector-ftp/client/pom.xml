@@ -109,6 +109,31 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- TODO: Update to 2.5.1, Used for creating test objects -->
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${version.org.hamcrest.hamcrest-all}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

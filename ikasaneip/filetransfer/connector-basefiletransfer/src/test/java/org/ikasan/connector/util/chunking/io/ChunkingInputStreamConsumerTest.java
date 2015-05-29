@@ -48,7 +48,11 @@ import org.ikasan.connector.util.chunking.ChunkTestUtils;
 import org.ikasan.connector.util.chunking.process.ChunkHandleException;
 import org.ikasan.connector.util.chunking.process.ChunkHandler;
 import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 /**
  * Tests the ChunkingInputStreamConsumer class
  * 
@@ -62,6 +66,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
      * 
      * @throws ChunkableDataSourceException
      */
+    @Test
     public void testConsumeInputStream() throws ChunkableDataSourceException
     {
         MockChunkHandler mockChunkHandler = new MockChunkHandler();
@@ -80,6 +85,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
      * Test to ensure that IOExceptions thrown by underlying InputStream are
      * caught, wrapped and thrown as ChunkableDataSourceException
      */
+    @Test
     public void testConsumeInputStream_catchingIoException()
     {
         MockChunkHandler mockChunkHandler = new MockChunkHandler();
@@ -104,6 +110,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
      * chunk handler are caught, wrapped and thrown as
      * ChunkableDataSourceException
      */
+    @Test
     public void testConsumeInputStream_catchingChunkHandleException()
     {
 

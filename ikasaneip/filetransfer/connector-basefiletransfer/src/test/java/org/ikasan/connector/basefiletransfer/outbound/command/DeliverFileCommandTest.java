@@ -43,15 +43,12 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.resource.ResourceException;
-
-import junit.framework.TestCase;
 
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -69,13 +66,19 @@ import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Test class for the DeliverFileCommand
  * 
  * @author Ikasan Development Team
  */
-public class DeliverFileCommandTest extends TestCase
+public class DeliverFileCommandTest
 {
     /** we are dealing with pathnames so make sure we stay platform independent */
     final String FILE_SEPARATOR = System.getProperty("file.separator");
@@ -149,7 +152,7 @@ public class DeliverFileCommandTest extends TestCase
     /** Mocked fileTransferClient */
     final FileTransferClient client = classMockery.mock(FileTransferClient.class);
 
-    @Override
+    @Before
     public void setUp()
     {
         try
@@ -176,6 +179,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ClientCommandLsException
      * @throws URISyntaxException
      */
+    @Test
     public void testExecute_withMappedRecordWithOverwrite() throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
             URISyntaxException
@@ -224,6 +228,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ClientCommandLsException
      * @throws URISyntaxException
      */
+    @Test
     public void testExecute_withMappedRecordToDefaultDotDirectory() 
         throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
@@ -276,6 +281,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ClientCommandLsException
      * @throws URISyntaxException
      */
+    @Test
     public void testExecute_withMappedRecordToDefaultDirectory() 
         throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
@@ -328,6 +334,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ClientCommandRenameException
      * @throws ClientException 
      */
+    @Test
     public void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
             ClientCommandPutException, ClientCommandLsException, URISyntaxException, ResourceException,
             ClientCommandRenameException, ClientException
@@ -399,6 +406,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ResourceException
      * @throws ClientException
      */
+    @Test
     public void testRollback_PutFileAttemptedSuccessfully() throws ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
             URISyntaxException, ResourceException, ClientException
@@ -465,6 +473,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ResourceException
      */
+    @Test
     public void testRollback_PutFileAttemptedUnsuccessfully() throws ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
             URISyntaxException, ResourceException
@@ -522,6 +531,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws ClientCommandCdException
      * @throws ResourceException
      */
+    @Test
     public void testRollback_PutFileNotAttempted() throws ClientCommandPwdException, ClientCommandCdException,
             ResourceException
     {
@@ -579,6 +589,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ClientCommandMkdirException
      */
+    @Test
     public void testExecute_withInputStream() throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
             URISyntaxException, ClientCommandMkdirException
@@ -628,6 +639,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ClientCommandMkdirException
      */
+    @Test
     public void testExecute_withInputStream_toDefaultDirectory() 
         throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
@@ -676,6 +688,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ClientCommandMkdirException
      */
+    @Test
     public void testExecute_withInputStream_toDefaultDotDirectory() 
         throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
@@ -725,6 +738,7 @@ public class DeliverFileCommandTest extends TestCase
      * @throws URISyntaxException
      * @throws ClientCommandMkdirException
      */
+    @Test
     public void testExecute_withInputStream_toNonExistentParentDirectory_with_createParentDirectory_true() 
         throws ResourceException, ClientCommandPwdException,
             ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,

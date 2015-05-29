@@ -45,7 +45,10 @@ import java.io.IOException;
 import org.ikasan.connector.util.chunking.ChunkTestUtils;
 import org.ikasan.connector.util.chunking.process.ChunkHandleException;
 import org.ikasan.connector.util.chunking.process.ChunkHandler;
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 /**
  * Test for ChunkingOutputStream
  * 
@@ -59,6 +62,7 @@ public class ChunkingOutputStreamTest extends IoJUnitHelper
      * 
      * @throws IOException
      */
+    @Test
     public void testWriteInt() throws IOException
     {
         MockChunkHandler chunkHandler = new MockChunkHandler();
@@ -83,6 +87,7 @@ public class ChunkingOutputStreamTest extends IoJUnitHelper
     /**
      * tests that handle exceptions are caught and properly wrapped
      */
+    @Test
     public void testWriteInt_catchingHandleException()
     {
 

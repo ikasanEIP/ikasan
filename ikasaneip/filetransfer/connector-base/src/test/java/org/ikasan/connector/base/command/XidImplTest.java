@@ -42,18 +42,19 @@ package org.ikasan.connector.base.command;
 
 import javax.transaction.xa.Xid;
 
-import junit.framework.TestCase;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Test;
 
+
+import static org.junit.Assert.assertEquals;
 /**
  * Test class for XidImpl 
  * @author Ikasan Development Team
  *
  */
-public class XidImplTest extends TestCase
+public class XidImplTest
 {
     /**
      * arbitrary global transaction id
