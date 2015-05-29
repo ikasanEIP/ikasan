@@ -4,6 +4,18 @@
     xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl"/>
+    <bean id="ikasanSerialiserFactory" class="org.ikasan.serialiser.service.SerialiserFactoryKryoImpl">
+        <constructor-arg name="serializers">
+            <map>
+                <entry key="javax.jms.TextMessage">
+                    <bean class="org.ikasan.serialiser.service.JmsTextMessageKryoSerialiser"/>
+                </entry>
+                <entry key="javax.jms.MapMessage">
+                    <bean class="org.ikasan.serialiser.service.JmsMapMessageKryoSerialiser"/>
+                </entry>
+
+            </map>
+        </constructor-arg>
+    </bean>
 
 </beans>
