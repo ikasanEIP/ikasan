@@ -304,6 +304,13 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             if(this.exclusionFlowConfiguration != null)
             {
                 configure(this.exclusionFlowConfiguration.getConfiguredResourceFlowElements());
+
+                // register the errorReportingService with those components in the exclusion flow requiring it
+                for(FlowElement<IsErrorReportingServiceAware> flowElement:this.exclusionFlowConfiguration.getErrorReportingServiceAwareFlowElements())
+                {
+                    IsErrorReportingServiceAware component = flowElement.getFlowComponent();
+                    component.setErrorReportingService(this.errorReportingService);
+                }
             }
 
             // configure business flow resources that are marked as configurable
