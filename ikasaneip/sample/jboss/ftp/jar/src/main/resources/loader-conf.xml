@@ -11,10 +11,9 @@
         <value>monitor-service-conf.xml</value>
 
         <!-- Available outside the ear in the runtime environment -->
-        <value>transaction-conf.xml</value>
-        <value>transactionManager-conf.xml</value>
+        <value>ikasan-transaction-pointcut-jms.xml</value>
+        <value>ikasan-transaction-pointcut-quartz.xml</value>
         <value>monitor-conf.xml</value>
-        <value>recoveryManager-service-conf.xml</value>
 
         <!-- available in the binaries -->
         <value>logger-conf.xml</value>
