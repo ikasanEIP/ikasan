@@ -40,19 +40,30 @@
  */
 package org.ikasan.dashboard.ui.topology.window;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -60,7 +71,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.Button.ClickEvent;
 
 /**
  * 
@@ -165,6 +175,17 @@ public class ExclusionEventViewWindow extends Window
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+        	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+            	
+            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
+            	
+            	ClientConfig clientConfig = new ClientConfig();
+            	clientConfig.register(feature) ;
+            	
+            	Client client = ClientBuilder.newClient(clientConfig);
+        	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/submit/testFlowName");
+        	    Response response = webTarget.request().put(Entity.entity("this is a test!", MediaType.APPLICATION_OCTET_STREAM));
             }
         });
 		

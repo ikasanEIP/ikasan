@@ -66,6 +66,7 @@
             classpath:error-reporting-service-conf.xml
             classpath:systemevent-service-conf.xml
             classpath:configuration-service-conf.xml
+            classpath:rest-service-conf.xml
             /WEB-INF/security-service-conf.xml
         </param-value>
 	</context-param>
@@ -129,6 +130,27 @@
         <servlet-name>springapp</servlet-name>
         <url-pattern>/dwr/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+		<servlet-name>jersey-servlet</servlet-name>
+		<servlet-class>
+			com.sun.jersey.spi.spring.container.servlet.SpringServlet
+		</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>org.ikasan.rest.submit;org.ikasan.rest.security</param-value>
+		</init-param>
+		 <init-param>
+	        <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+	        <param-value>org.ikasan.rest.security.SecurityFilter</param-value>
+	    </init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+ 
+	<servlet-mapping>
+		<servlet-name>jersey-servlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
     
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
