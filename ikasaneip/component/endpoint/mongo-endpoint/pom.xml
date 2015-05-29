@@ -60,7 +60,13 @@
             <artifactId>ikasan-uber-spec</artifactId>
                <scope>provided</scope>
         </dependency>
-        
+
+        <!-- logging -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- MongoDB Java Driver is a tight dependency -->
         <dependency>
@@ -97,6 +103,12 @@
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
             <classifier>jdk15</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

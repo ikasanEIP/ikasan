@@ -51,6 +51,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations={
         "/recoveryManager-service-conf.xml",
         "/exclusion-service-conf.xml",
+        "/serialiser-service-conf.xml",
+        "/error-reporting-service-conf.xml",
         "/scheduler-service-conf.xml",
         "/configuration-service-conf.xml",
         "/systemevent-service-conf.xml",

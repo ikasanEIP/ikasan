@@ -52,8 +52,8 @@
 
     <class name="org.ikasan.exclusion.model.ExclusionEvent" table="ExclusionEvent">
 
-        <id name="identifier" type="java.lang.String" column="Identifier">
-            <generator class="assigned" />
+        <id name="id" type="long" column="Id">
+            <generator class="native" />
         </id>
 
         <property name="moduleName"
@@ -66,6 +66,16 @@
                   column="FlowName"
                   not-null="true" />
 
+        <property name="eventLifeIdentifier"
+                  type="java.lang.String"
+                  column="EventLifeIdentifier"
+                  not-null="true" />
+
+        <property name="event"
+                  type="byte[]"
+                  column="Event"
+                  not-null="true" />
+
         <property name="timestamp"
                   type="long"
                   column="Timestamp"
@@ -75,6 +85,11 @@
                   type="long"
                   column="Expiry"
                   not-null="true" />
+
+        <property name="errorUri"
+                  type="java.lang.String"
+                  column="ErrorUri"
+                  not-null="false" />
     </class>
 
 </hibernate-mapping>

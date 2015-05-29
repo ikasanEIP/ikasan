@@ -43,6 +43,7 @@ package org.ikasan.flow.visitorPattern;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 
@@ -60,6 +61,7 @@ public interface FlowConfiguration
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
+    public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
 
     /**
      * Provision for the configuration of anything passed as a configuredResource

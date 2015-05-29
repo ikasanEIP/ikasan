@@ -55,6 +55,7 @@
 				<prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
 				<prop key="drop.version">DROP TABLE Version;</prop>
 				<prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
 				<prop key="drop.filter">DROP TABLE MessageFilter;</prop>
 				<prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
 				<prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
@@ -122,11 +123,12 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
-					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    Id NUMERIC IDENTITY NOT NULL,
+                    ModuleName VARCHAR(255) NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    EventLifeIdentifier VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
+                    ErrorUri VARCHAR(255) NOT NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					)
@@ -135,10 +137,32 @@
 
 					CREATE UNIQUE INDEX
 					IkasanExclusionEvent01u ON
-					ExclusionEvent(ModuleName,FlowName,Identifier)
+					ExclusionEvent(Id,ModuleName,FlowName,EventLifeIdentifier)
 				</prop>
 
-				<prop key="create.version">CREATE TABLE Version
+                <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
+                    (
+                    Uri VARCHAR(255) NOT NULL,
+                    ModuleName VARCHAR(255) NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    FlowElementName VARCHAR(255) NOT NULL,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(255) NULL,
+                    EventRelatedIdentifier VARCHAR(255) NULL,
+                    Action VARCHAR(255) NULL,
+                    Event BINARY NULL,
+                    Timestamp NUMERIC DEFAULT 0 NOT NULL,
+                    Expiry NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX
+                    IkasanErrorOccurrence01u ON
+                    ErrorOccurrence(ModuleName,FlowName,FlowElementName,Uri,Timestamp)
+                </prop>
+
+                <prop key="create.version">CREATE TABLE Version
 					(
 					Id NUMERIC IDENTITY NOT NULL,
 					Component VARCHAR(256) NOT NULL UNIQUE,
@@ -220,7 +244,6 @@
 					ConfigurationParameter(ConfigurationIdentifier, PositionRef)
 				</prop>
 
-				<!-- TODO add other dao tables -->
 				<prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
 					(
 					Id NUMERIC NOT NULL,
@@ -987,7 +1010,8 @@
 				<prop key="drop.flowEventTriggerParameters">DROP TABLE FlowEventTriggerParameters;</prop>
 				<prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
 				<prop key="drop.version">DROP TABLE Version;</prop>
-				<prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
 				<prop key="drop.filter">DROP TABLE MessageFilter;</prop>
 				<prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
 				<prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
@@ -1032,12 +1056,13 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
+                    Id NUMERIC IDENTITY NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
-					Timestamp NUMERIC DEFAULT 0 NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    EventLifeIdentifier VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
+                    ErrorUri VARCHAR(255) NOT NULL,
+                    Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					)
 					LOCK DATAROWS
@@ -1045,8 +1070,30 @@
 
 					CREATE UNIQUE INDEX
 					IkasanExclusionEvent01u ON
-					ExclusionEvent(ModuleName,FlowName,Identifier)
+					ExclusionEvent(Id,ModuleName,FlowName,EventLifeIdentifier)
 				</prop>
+
+                <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
+                    (
+                    Uri VARCHAR(255) NOT NULL,
+                    ModuleName VARCHAR(255) NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    FlowElementName VARCHAR(255) NOT NULL,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(255) NULL,
+                    EventRelatedIdentifier VARCHAR(255) NULL,
+                    Action VARCHAR(255) NULL,
+                    Event BINARY NULL,
+                    Timestamp NUMERIC DEFAULT 0 NOT NULL,
+                    Expiry NUMERIC NOT NULL
+                    )
+                    LOCK DATAROWS
+                    WITH IDENTITY_GAP=1
+
+                    CREATE UNIQUE INDEX
+                    IkasanErrorOccurrence01u ON
+                    ErrorOccurrence(ModuleName,FlowName,FlowElementName,Uri,Timestamp)
+                </prop>
 
 				<prop key="create.filter">CREATE TABLE MessageFilter
 					(
@@ -1148,7 +1195,6 @@
 					ConfigurationParameter(ConfigurationIdentifier, PositionRef)
 				</prop>
 
-				<!-- TODO add other dao tables -->
 				<prop key="create.confParamBoolean">CREATE TABLE ConfParamBoolean
 					(
 					Id NUMERIC NOT NULL,
@@ -1946,6 +1992,7 @@
                 <prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
                 <prop key="drop.version">DROP TABLE Version;</prop>
                 <prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
                 <prop key="drop.filter">DROP TABLE MessageFilter;</prop>
                 <prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
                 <prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
@@ -1988,14 +2035,37 @@
 
                 <prop key="create.exclusionEvent">CREATE TABLE [ExclusionEvent]
                     (
-                    [Identifier]            [varchar](255) NOT NULL,
+                    [Id]                    [numeric](18)  IDENTITY NOT NULL,
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
+                    [EventLifeIdentifier]   [varchar](255) NOT NULL,
+                    [Event]                 [binary] NULL,
+                    [ErrorUri]              [varchar](255) NOT NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     [Expiry]                [numeric] NOT NULL,
                     CONSTRAINT              [PK_ExclusionEvent_Module_Flow_Id] PRIMARY KEY CLUSTERED
                     (
-                    [ModuleName],[FlowName],[Identifier] ASC
+                    [Id],[ModuleName],[FlowName],[Identifier] ASC
+                    )
+                    )
+                </prop>
+
+                <prop key="create.errorOccurrence">CREATE TABLE [ErrorOccurrence]
+                    (
+                    [Uri]                   [varchar](255) NOT NULL,
+                    [ModuleName]            [varchar](255) NOT NULL,
+                    [FlowName]              [varchar](255) NOT NULL,
+                    [FlowComponentName]     [varchar](255) NOT NULL,
+                    [ErrorDetail]           [text] NULL,
+                    [EventLifeIdentifier]   [varchar](255) NULL,
+                    [EventRelatedIdentifier] [varchar](255) NULL,
+                    [Action]                [varchar](255) NULL,
+                    [Event]                 [binary] NULL,
+                    [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
+                    [Expiry]                [numeric] NOT NULL,
+                    CONSTRAINT              [PK_ErrorOccurrence_Module_Flow_Uri] PRIMARY KEY CLUSTERED
+                    (
+                    [ModuleName],[FlowName],[FlowComponentName],[Uri],[Timestamp] ASC
                     )
                     )
                 </prop>
@@ -2801,7 +2871,8 @@
 				<prop key="drop.flowEventTriggerParameters">DROP TABLE FlowEventTriggerParameters;</prop>
 				<prop key="drop.flowEVentTrigger">DROP TABLE FlowEventTrigger;</prop>
 				<prop key="drop.version">DROP TABLE Version;</prop>
-				<prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.exclusionEvent">DROP TABLE ExclusionEvent;</prop>
+                <prop key="drop.errorOccurrence">DROP TABLE ErrorOccurrence;</prop>
 				<prop key="drop.filter">DROP TABLE MessageFilter;</prop>
 				<prop key="drop.wiretap">DROP TABLE IkasanWiretap;</prop>
 				<prop key="drop.rolePolicy">DROP TABLE RolePolicy;</prop>
@@ -2835,8 +2906,25 @@
 					ON IkasanWiretap(Id);
 				</prop>
 
+                <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
+                    (
+                    Uri VARCHAR(256) NOT NULL,
+                    ModuleName VARCHAR(256) NOT NULL,
+                    FlowName VARCHAR(256) NOT NULL,
+                    FlowComponentName VARCHAR(256) NOT NULL,
+                    ErrorDetail TEXT NULL,
+                    EventLifeIdentifier VARCHAR(256) NULL,
+                    EventRelatedIdentifier VARCHAR(256) NULL,
+                    Action VARCHAR(256) NULL,
+                    Event BINARY NULL,
+                    Timestamp NUMERIC NOT NULL,
+                    Expiry NUMERIC NOT NULL
+                    );
+                    CREATE UNIQUE INDEX ErrorOccurrence01u ON
+                    ErrorOccurrence(ModuleName,FlowName,FlowComponentName,Uri,Timestamp)
+                </prop>
 
-				<prop key="create.filter">CREATE TABLE MessageFilter
+                <prop key="create.filter">CREATE TABLE MessageFilter
 					(
 					Criteria NUMERIC DEFAULT 0
 					NOT NULL,
@@ -3054,17 +3142,18 @@
 
 				<prop key="create.exclusionEvent">CREATE TABLE ExclusionEvent
 					(
-					Identifier VARCHAR(255)
-					NOT NULL,
-					ModuleName VARCHAR(255) NOT NULL,
-					FlowName VARCHAR(255) NOT
-					NULL,
+                    Id IDENTITY NOT NULL PRIMARY KEY,
+                    ModuleName VARCHAR(255) NOT NULL,
+                    FlowName VARCHAR(255) NOT NULL,
+                    EventLifeIdentifier VARCHAR(255) NOT NULL,
+                    Event BINARY NULL,
+                    ErrorUri VARCHAR(255) NOT NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL,
 					Expiry NUMERIC NOT NULL
 					);
 
 					CREATE UNIQUE INDEX IkasanExclusionEvent01u ON
-					ExclusionEvent(ModuleName,FlowName,Identifier)
+					ExclusionEvent(Id,ModuleName,FlowName,EventLifeIdentifier)
 				</prop>
 
 				<prop key="create.users">CREATE TABLE Users
@@ -3362,8 +3451,6 @@
 					);
 				</prop>
 			</props>
-
-
 
 		</property>
 	</bean>

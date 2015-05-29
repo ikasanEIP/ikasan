@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<bean id="exclusionServiceFactory" class="org.ikasan.exclusion.service.ExclusionServiceFactory">
-		<constructor-arg ref="exclusionServiceDao" />
-	</bean>
+    <bean id="exclusionServiceFactory" class="org.ikasan.exclusion.service.ExclusionServiceFactory">
+        <constructor-arg ref="exclusionServiceBlacklistDao"/>
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+        <constructor-arg ref="ikasanSerialiserFactory"/>
+    </bean>
 
-	<bean id="exclusionServiceDao" class="org.ikasan.exclusion.dao.HibernateExclusionServiceDao">
-		<property name="sessionFactory" ref="exclusionSessionFactory"/>
-	</bean>
+    <bean id="exclusionServiceBlacklistDao" class="org.ikasan.exclusion.dao.MapBlackListDao">
+        <constructor-arg>
+            <bean class="org.ikasan.exclusion.model.BlackListLinkedHashMap">
+                <constructor-arg value="25"/>  <!-- default max entries size -->
+            </bean>
+        </constructor-arg>
+    </bean>
 
-	<bean id="exclusionSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.xads" />
-		<property name="mappingResources">
-			<list>
-				<value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties" />
-	</bean>
+    <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
+        <property name="sessionFactory" ref="exclusionEventHibernateSessionFactory"/>
+    </bean>
+
+    <bean id="exclusionEventHibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
 
 </beans>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  Sample component implementations for testing                       -->
+    <!--  ================================================================== -->
+    <bean id="demoScheduledConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <constructor-arg ref="scheduler" />
+        <property name="jobDetail" >
+            <bean  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory" />
+                <property name="targetMethod" value="createJobDetail" />
+                <property name="arguments">
+                    <list>
+                        <ref bean="demoScheduledConsumer" />
+                        <value type="java.lang.Class">org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer</value>
+                        <value>demoScheduledConsumer</value>
+                        <value>sample-demo-scheduled-flow-consumer</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuredResourceId" value="sample-demo-scheduled-flow-consumer"/>
+        <property name="configuration" ref="scheduledConsumerConfiguration"/>
+    </bean>
+
+    <bean id="scheduledConsumerConfiguration" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration" scope="prototype">
+        <property name="cronExpression" value="0/5 * * * * ?" />
+    </bean>
+    
+    <bean id="scheduledConverter" class="org.ikasan.sample.scheduleDrivenSrc.component.converter.ScheduleEventConverter" scope="prototype" />
+    
+    <bean id="scheduledProducer" class="org.ikasan.sample.scheduleDrivenSrc.component.endpoint.ScheduleEventProducer" scope="prototype" />
+
+</beans>
