@@ -134,7 +134,7 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 				}
 			}
 
-	        return new IkasanAuthentication(true, user, authorities);
+	        return new IkasanAuthentication(true, user, authorities, user.getPassword());
 		}
 		else
 		{

@@ -55,7 +55,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ikasan-rest</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -65,7 +65,17 @@
         </dependency>
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-resubmission</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-module</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security</artifactId>
             <version>1.0.0-rc5-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -112,6 +122,40 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
+        <dependency>
+	        <groupId>com.sun.jersey.contribs</groupId>
+	        <artifactId>jersey-spring</artifactId>
+	        <version>1.19</version>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.springframework</groupId>
+	                <artifactId>spring</artifactId>
+	            </exclusion>
+	            <exclusion>
+	                <groupId>org.springframework</groupId>
+	                <artifactId>spring-core</artifactId>
+	            </exclusion>
+	            <exclusion>
+	                <groupId>org.springframework</groupId>
+	                <artifactId>spring-web</artifactId>
+	            </exclusion>
+	            <exclusion>
+	                <groupId>org.springframework</groupId>
+	                <artifactId>spring-beans</artifactId>
+	            </exclusion>
+	            <exclusion>
+	                <groupId>org.springframework</groupId>
+	                <artifactId>spring-context</artifactId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+        
+        <dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.4</version>
+		</dependency>
 
         <!-- spring web -->
         <dependency>
