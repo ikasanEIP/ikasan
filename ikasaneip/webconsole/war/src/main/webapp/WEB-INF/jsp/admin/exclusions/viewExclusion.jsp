@@ -169,7 +169,7 @@
 		</tr>
 		</table>
 		<c:forEach items="${excludedEvent.event.payloads}" var="payload" varStatus="status">
-		<jsp:useBean id="payload" type="org.ikasan.common.Payload" />
+		<jsp:useBean id="payload" type="org.ikasan.filetransfer.Payload" />
 		<h4 id="enumerator">Payload(<c:out value="${status.count}" />)</h4>  
 			<table id="currentEventPayloadDetails" class="keyValueTable">
 			<tr>

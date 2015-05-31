@@ -27,12 +27,7 @@
             <filtered>false</filtered>
         </file>
         <file>
-            <source>module/transaction-conf.xml</source>
-            <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
-            <filtered>false</filtered>
-        </file>
-        <file>
-            <source>module/transactionManager-conf.xml</source>
+            <source>module/ikasan-transaction-manager-conf.xml</source>
             <outputDirectory>jboss-eap/modules/org/ikasan/configuration/main</outputDirectory>
             <filtered>false</filtered>
         </file>

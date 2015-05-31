@@ -71,13 +71,13 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     Long timeToLive = ExclusionService.DEFAULT_TIME_TO_LIVE;
 
     /** need a serialiser to serialise the incoming event payload of T */
-    Serialiser<FlowEvent<String,?>,byte[]> serialiser;
+    Serialiser<Object,byte[]> serialiser;
 
     /**
      * Constructor
      * @param blackListDao
      */
-    public ExclusionServiceDefaultImpl(String moduleName, String flowName, BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, Serialiser<FlowEvent<String,?>,byte[]> serialiser)
+    public ExclusionServiceDefaultImpl(String moduleName, String flowName, BlackListDao blackListDao, ExclusionEventDao exclusionEventDao, Serialiser<Object,byte[]> serialiser)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -120,7 +120,7 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     public void park(FlowEvent<String,?> event)
     {
         BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, event.getIdentifier());
-        ExclusionEvent exclusionEvent = newExclusionEvent(event.getIdentifier(), serialiser.serialise(event), blacklistEvent.getErrorUri());
+        ExclusionEvent exclusionEvent = newExclusionEvent(event.getIdentifier(), serialiser.serialise(event.getPayload()), blacklistEvent.getErrorUri());
         this.exclusionEventDao.save(exclusionEvent);
     }
 

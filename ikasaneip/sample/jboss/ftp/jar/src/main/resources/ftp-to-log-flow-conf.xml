@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        
+    <!--  ================================================================== -->
+    <!--  FTP to Log Flow                                         -->
+    <!--  ================================================================== -->
+    <bean id="ftpToLogFlow" class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"        ref="moduleName" />
+        <property name="name"               value="Ftp to Log" />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="consumer">
+            <bean class="org.ikasan.builder.FlowElementFactory">
+                <property name="name"       value="Ftp Consumer"/>
+                <property name="component"  ref="ftpConsumer"/>
+                <property name="transition" ref="converterFlowElement"/>
+            </bean>
+        </property>
+        <property name="monitor" ref="monitor"/>
+    </bean>
+
+    <bean id="converterFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name" value="FTP payload to String Converter"/>
+        <property name="component"  ref="payloadToStringConverter"/>
+        <property name="transition" ref="ignoreDevNullFlowElement"/>
+    </bean>
+
+    <bean id="ignoreDevNullFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name" value="Not Recognised Message Type"/>
+        <property name="component">
+            <bean id="ignoreDevNullComponent" class="org.ikasan.component.endpoint.util.producer.DevNull"/>
+        </property>
+    </bean>
+
+    <!--  ================================================================== -->
+    <!--  component implementations                                          -->
+    <!--  ================================================================== -->
+
+    <bean id="ftpConsumer" class="org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <constructor-arg ref="scheduler"/>
+        <property name="messageProvider" ref="ftpMessageProvider"/>
+        <property name="jobDetail">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="scheduledJobFactory"/>
+                <property name="targetMethod" value="createJobDetail"/>
+                <property name="arguments">
+                    <list>
+                        <ref bean="ftpConsumer"/>
+                        <value type="java.lang.Class">
+                            org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer
+                        </value>
+                        <value>ftpConsumer</value>
+                        <value>ftpToJbossHornetQFlow</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="configuration" ref="ftpConsumerConfiguration"/>
+        <property name="configuredResourceId" value="ftpToLogFlow-ftpConsumerConfiguration"/>
+    </bean>
+
+    <bean id="ftpConsumerConfiguration" class="org.ikasan.endpoint.ftp.consumer.FtpConsumerConfiguration">
+        <property name="cronExpression" value="0 0/1 * * * ?"/>
+        <property name="clientID" value="ftpToLogFlow"/>
+        <property name="username" value="majean"/>
+        <property name="remoteHost" value="adl-cmi20"/>
+        <property name="sourceDirectory" value="/home2/majean/ftp"/>
+        <property name="filenamePattern" value=".*.txt"/>
+        <property name="chronological" value="true"/>
+        <property name="cleanupJournalOnComplete" value="false"/>
+        <property name="ageOfFiles" value="30"/>
+        <property name="filterOnLastModifiedDate" value="false"/>
+        <property name="renameOnSuccess" value="true"/>
+        <property name="renameOnSuccessExtension" value=".tmp"/>
+        <property name="destructive" value="false"/>
+        <property name="chunking" value="false"/>
+    </bean>
+
+    <bean id="fileBasedPasswordHelper" class="org.ikasan.endpoint.ftp.util.FileBasedPasswordHelper"></bean>
+
+    <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/ftp/SimpleFtpConnectionFactory"/>
+    </bean>
+
+    <bean id="ftpMessageProvider" class="org.ikasan.endpoint.ftp.consumer.FtpMessageProvider">
+        <constructor-arg name="connectionFactory" ref="connectionFactory"/>
+        <constructor-arg name="fileBasedPasswordHelper" ref="fileBasedPasswordHelper"/>
+        <property name="configuration" ref="ftpConsumerConfiguration"/>
+    </bean>
+
+    <bean id="payloadToStringConverter" class="org.ikasan.sample.ftp.component.converter.PayloadToStringConverter"/>
+
+</beans>

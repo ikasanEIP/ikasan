@@ -96,8 +96,26 @@
       </dependency>
 
       <dependency>
+          <groupId>org.ikasan</groupId>
+          <artifactId>ikasan-spec-flow</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
           <groupId>com.esotericsoftware</groupId>
           <artifactId>kryo</artifactId>
+      </dependency>
+
+      <dependency>
+          <groupId>geronimo-spec</groupId>
+          <artifactId>geronimo-spec-j2ee</artifactId>
+      </dependency>
+
+      <!-- IKASAN-822 FIXME - remove this dependency and implement our own Message concrete classes for JMS -->
+      <dependency>
+          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-core</artifactId>
+          <scope>provided</scope>
       </dependency>
 
       <!-- Test dependencies -->
@@ -148,12 +166,30 @@
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <scope>test</scope>
+          <exclusions>
+              <exclusion>
+                  <artifactId>hamcrest-core</artifactId>
+                  <groupId>org.hamcrest</groupId>
+              </exclusion>
+          </exclusions>
       </dependency>
 
       <!-- Hibernate dependency -->
       <dependency>
           <groupId>org.javassist</groupId>
           <artifactId>javassist</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-all</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
           <scope>test</scope>
       </dependency>
 

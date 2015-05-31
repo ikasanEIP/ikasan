@@ -73,6 +73,7 @@ import org.ikasan.spec.component.transformation.Translator;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.*;
@@ -832,6 +833,12 @@ public class FlowBuilder
 
                 Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
                 flow.setFlowListener(flowEventListener);
+
+                // pass handle to the error reporting service if flow needs to be aware of this
+                if(flow instanceof IsErrorReportingServiceAware)
+                {
+                    ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
+                }
 
                 if(monitor != null && flow instanceof MonitorSubject)
                 {
