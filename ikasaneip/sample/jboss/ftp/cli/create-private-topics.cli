@@ -1,0 +1,16 @@
+
+#
+# Creates all the private topics required by this module if they dont exist already
+#
+
+#
+# test.file
+#
+if (outcome != success) of /profile=eai-default/subsystem=messaging/hornetq-server=default/jms-topic=test.file:read-resource
+  jms-topic --profile=eai-default add --topic-address=test.file --entries=java:jboss/exported/jms/topic/test.file
+end-if
+
+#
+# Rollback 
+#
+#   jms-topic --profile=eai-default remove --topic-address=test.file

@@ -43,6 +43,7 @@ package org.ikasan.flow.visitorPattern;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
 
@@ -70,6 +71,10 @@ public class AbstractFlowConfiguration
     /** dynamically configured resources within the flow */
     protected List<FlowElement<DynamicConfiguredResource>> dynamicConfiguredReourceFlowElements =
         new ArrayList<FlowElement<DynamicConfiguredResource>>();
+
+    /** errorReportingServiceAware resources within the flow */
+    protected List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements =
+            new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
 
     /** handle to configuration service */
     protected ConfigurationService configurationService;
@@ -108,6 +113,10 @@ public class AbstractFlowConfiguration
             {
                 this.dynamicConfiguredReourceFlowElements.add(flowElement);
             }
+            if(flowComponent instanceof IsErrorReportingServiceAware)
+            {
+                this.errorReportingServiceAwareFlowElements.add(flowElement);
+            }
         }
     }
 
@@ -124,6 +133,11 @@ public class AbstractFlowConfiguration
     public List<FlowElement<ManagedResource>> getManagedResourceFlowElements()
     {
         return this.managedReourceFlowElements;
+    }
+
+    public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements()
+    {
+        return this.errorReportingServiceAwareFlowElements;
     }
 
     public void configure(ConfiguredResource configuredResource)
