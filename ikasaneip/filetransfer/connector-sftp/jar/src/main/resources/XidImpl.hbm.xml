@@ -50,7 +50,7 @@
 <hibernate-mapping>
 
   <class name="org.ikasan.connector.base.command.XidImpl"
-    table="Xid" >
+    table="FTXid" >
 
     <id name="id" type="long" column="Id">
       <generator class="identity" />
@@ -61,8 +61,14 @@
     <property name="branchQualifierString" type="java.lang.String" column="BranchQualifier" not-null="true" />
     <property name="formatId" type="java.lang.Integer" column="FormatId" not-null="true" />
     <property name="clientId" type="java.lang.String" column="ClientId" not-null="true" />
-    <property name="createdDateTime" type="java.util.Date" column="CreatedDateTime" not-null="true" />
-    <property name="lastUpdatedDateTime" type="java.util.Date" column="LastUpdatedDateTime" not-null="true" />
+      <property name="createdDateTime"
+                type="long"
+                column="CreatedDateTime"
+                not-null="true" />
+      <property name="lastUpdatedDateTime"
+                type="long"
+                column="LastUpdatedDateTime"
+                not-null="true" />
   </class>
 
 </hibernate-mapping>

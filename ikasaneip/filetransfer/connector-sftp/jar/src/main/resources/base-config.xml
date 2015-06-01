@@ -54,26 +54,26 @@
 	<bean id="frameworkDefaultNoTxDs"
 		class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName"
-			value="java:ikasan/framework/default/ds" />
+			value="java:/datasource/ikasan/ds" />
 	</bean>
 	
 	<bean id="frameworkDefaultLocalTxDs"
 		class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName"
-			value="java:ikasan/framework/defaultLocal/localds" />
+			value="java:/datasource/ikasan/ds" />
 	</bean>
 
 	<bean id="frameworkDefaultXaTxDs"
 		class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName"
-			value="java:ikasan/framework/defaultXA/xads" />
+			value="java:/datasource/ikasan/xads" />
 	</bean>
 
   <!-- We lazily initialise as we don't always need large file support -->
   <bean id="connectorLargeNoTxDs" lazy-init="true"
 		class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName"
-			value="java:/ikasan/connector/file/ds" />
+			value="java:/datasource/ikasan/ds" />
 	</bean>
 
     <!-- ########################### -->
@@ -134,7 +134,7 @@
     <!-- ########### -->
 
 	<!--  supplier of MD5 algorithm support -->
-  <bean id="checksumSupplier" class="org.ikasan.common.util.checksum.Md5ChecksumSupplier" scope="singleton" />
+  <bean id="checksumSupplier" class="org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier" scope="singleton" />
 
   <!-- environment utility class -->
   <bean id="env" class="org.ikasan.common.util.Env" />
