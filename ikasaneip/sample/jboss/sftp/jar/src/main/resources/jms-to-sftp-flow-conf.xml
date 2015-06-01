@@ -6,63 +6,63 @@
     <!--  ================================================================== -->
     <!--  JMS to FTP Flow                                         -->
     <!--  ================================================================== -->
-    <bean id="jmsToFtpFlow" class="org.ikasan.builder.FlowFactory">
+    <bean id="jmsToSftpFlow" class="org.ikasan.builder.FlowFactory">
         <property name="moduleName"        ref="moduleName" />
-        <property name="name"               value="JMS To Ftp Flow" />
+        <property name="name"               value="JMS To Sftp Flow" />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="consumer">
             <bean class="org.ikasan.builder.FlowElementFactory">
                 <property name="name"       value="JMS Consumer"/>
-                <property name="component"  ref="jmsToFtpConsumer"/>
-                <property name="transition" ref="jmsToFtpConverterFlowElement"/>
+                <property name="component"  ref="jmsToSftpConsumer"/>
+                <property name="transition" ref="jmsToSftpConverterFlowElement"/>
             </bean>
         </property>
         <property name="monitor" ref="monitor"/>
     </bean>
 
-    <bean id="jmsToFtpConverterFlowElement" class="org.ikasan.builder.FlowElementFactory">
+    <bean id="jmsToSftpConverterFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name" value="Converter"/>
-        <property name="component"  ref="jmsToFtpConverter"/>
+        <property name="component"  ref="jmsToSftpConverter"/>
         <property name="transition" ref="ftpProducerElement"/>
     </bean>
 
     <bean id="ftpProducerElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name" value="FTP Producer"/>
-        <property name="component" ref="ftpProducer"/>
+        <property name="component" ref="sftpProducer"/>
     </bean>
 
     <!--  ================================================================== -->
     <!--  component implementations                                          -->
     <!--  ================================================================== -->
-    <bean id="jmsToFtpConsumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
-        <property name="messageProvider" ref="jmsToFtpConsumerListener"/>
+    <bean id="jmsToSftpConsumer" class="org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        <property name="messageProvider" ref="jmsToSftpConsumerListener"/>
         <property name="configuration">
             <bean class="org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration">
                 <property name="destinationJndiName" value="java:jboss/exported/jms/topic/test.file"/>
                 <property name="connectionFactoryName" value="java:/JmsXA"/>
-                <property name="durableSubscriptionName" value="jmsToFtpConsumer"/>
+                <property name="durableSubscriptionName" value="jmsToSftpConsumer"/>
                 <property name="pubSubDomain" value="true"/>
-                <property name="durable" value="false"/>
+                <property name="durable" value="true"/>
                 <property name="sessionTransacted" value="true"/>
             </bean>
         </property>
         <property name="configuredResourceId" value="jmsToFtpConsumer"/>
     </bean>
 
-    <bean id="jmsToFtpConsumerListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
-        <property name="messageListener" ref="jmsToFtpConsumer" />
-        <property name="exceptionListener" ref="jmsToFtpConsumer" />
-        <property name="errorHandler" ref="jmsToFtpConsumer" />
+    <bean id="jmsToSftpConsumerListener" class="org.springframework.jms.listener.IkasanMessageListenerContainer">
+        <property name="messageListener" ref="jmsToSftpConsumer" />
+        <property name="exceptionListener" ref="jmsToSftpConsumer" />
+        <property name="errorHandler" ref="jmsToSftpConsumer" />
         <property name="transactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="ftpProducer" class="org.ikasan.endpoint.ftp.producer.FtpProducer">
+    <bean id="sftpProducer" class="org.ikasan.endpoint.sftp.producer.SftpProducer">
         <constructor-arg ref="producerConnectionFactory"/>
-        <property name="configuration" ref="ftpProducerConfiguration"/>
-        <property name="configuredResourceId" value="ftpProducerConfiguration"/>
+        <property name="configuration" ref="sftpProducerConfiguration"/>
+        <property name="configuredResourceId" value="sftpProducerConfiguration"/>
     </bean>
 
-    <bean id="ftpProducerConfiguration" class="org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration">
+    <bean id="sftpProducerConfiguration" class="org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration">
         <property name="clientID" value="jmsToFtpFlow"/>
         <property name="username" value="joe"/>
         <property name="password" value="password"/>
@@ -73,9 +73,9 @@
      </bean>
 
     <bean id="producerConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/ftp/SimpleFtpConnectionFactory"/>
+        <property name="jndiName" value="java:/sftp/SimpleSftpConnectionFactory"/>
     </bean>
 
-    <bean id="jmsToFtpConverter" class="org.ikasan.sample.sftp.component.converter.JmsToFtpConverter"/>
+    <bean id="jmsToSftpConverter" class="org.ikasan.sample.sftp.component.converter.JmsToSftpConverter"/>
 
 </beans>

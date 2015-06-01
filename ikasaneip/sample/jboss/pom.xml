@@ -53,6 +53,7 @@
 
     <modules>
         <module>ftp</module>
+        <module>sftp</module>
     </modules>
 
 </project>

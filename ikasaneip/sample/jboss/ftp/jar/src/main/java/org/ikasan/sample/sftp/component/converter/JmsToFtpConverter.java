@@ -38,23 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.ftp.component.converter;
+package org.ikasan.sample.sftp.component.converter;
 
 import org.ikasan.filetransfer.Payload;
+import org.ikasan.filetransfer.component.DefaultPayload;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.component.transformation.TransformationException;
 
-import java.util.Map;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+
 
 /**
  * Get the payload content from the incoming message.
  * Created by Ikasan Development Team
  */
-public class PayloadToStringConverter implements Converter<Payload,String>
+public class JmsToFtpConverter implements Converter<MapMessage,Payload>
 {
 
     @Override
-    public String convert(Payload message)
+    public Payload convert(MapMessage message)
     {
-        return message.toString();
+
+        try {
+            String content = message.getString("content");
+            String filename = message.getString("fileName");
+            Payload payload = new DefaultPayload(filename,content.getBytes());
+            payload.setAttribute("fileName",filename);
+            return payload;
+
+        } catch (JMSException e) {
+            throw new TransformationException(e);
+        }
+
     }
 }

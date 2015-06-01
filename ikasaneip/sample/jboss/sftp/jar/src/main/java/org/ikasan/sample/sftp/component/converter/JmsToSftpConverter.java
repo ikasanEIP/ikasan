@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.sample.ftp.component.converter;
+package org.ikasan.sample.sftp.component.converter;
 
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.filetransfer.component.DefaultPayload;
@@ -53,7 +53,7 @@ import javax.jms.MapMessage;
  * Get the payload content from the incoming message.
  * Created by Ikasan Development Team
  */
-public class JmsToFtpConverter implements Converter<MapMessage,Payload>
+public class JmsToSftpConverter implements Converter<MapMessage,Payload>
 {
 
     @Override
