@@ -4,16 +4,15 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-sample-ftp-parent</artifactId>
+        <artifactId>ikasan-sample-sftp-parent</artifactId>
         <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-sample-ftp</artifactId>
+    <artifactId>ikasan-sample-sftp</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0-rc5-SNAPSHOT</version>
-    <name>ikasan-sample-ftp Integration Module</name>
-    <description>Describe the purpose of this Integration Module</description>
+    <name>ikasan-sample-sftp Integration Module</name>
 
     <dependencies>
         <!-- Ikasan EIP Engine -->
@@ -41,13 +40,13 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-client-ftp-endpoint</artifactId>
+            <artifactId>ikasan-client-sftp-endpoint</artifactId>
             <version>${pom.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-ftp-classes</artifactId>
+            <artifactId>ikasan-connector-sftp-classes</artifactId>
             <version>${pom.version}</version>
             <scope>provided</scope>
         </dependency>
