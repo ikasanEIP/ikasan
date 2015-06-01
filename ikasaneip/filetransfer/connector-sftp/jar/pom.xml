@@ -49,9 +49,8 @@
     <!-- standard parent -->
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-filetransfer</artifactId>
+        <artifactId>ikasan-connector-sftp-parent</artifactId>
         <version>1.0.0-rc5-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
     
     <artifactId>ikasan-connector-sftp-classes</artifactId>
@@ -59,6 +58,15 @@
     <name>Ikasan Enterprise Integration File Transfer / Connector SFTP Classes</name>
 
     <dependencies>
+
+        <!-- Used for the common functionality for the ikasan platform, e.g. Ikasan Exceptions -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-filetransfer-common</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>

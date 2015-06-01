@@ -30,9 +30,8 @@
 	
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-connector-filetransfer-parent</artifactId>
+        <artifactId>ikasan-filetransfer</artifactId>
         <version>1.0.0-rc5-SNAPSHOT</version>
-        <relativePath>../connector-filetransfer-parent/pom.xml</relativePath>
     </parent>
 
 
@@ -43,8 +42,8 @@
 
 	<modules>
 		<module>jar</module>
-		<module>client</module>
 		<module>rar</module>
+        <module>client</module>
 	</modules>
 
 </project>
