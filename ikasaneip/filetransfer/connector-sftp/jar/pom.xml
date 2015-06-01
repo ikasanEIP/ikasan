@@ -80,12 +80,10 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>${version.com.jcraft.jsch}</version>
         </dependency>
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
-            <version>2.2</version>
         </dependency>
 
         <dependency>
