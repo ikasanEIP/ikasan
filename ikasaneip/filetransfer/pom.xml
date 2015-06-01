@@ -46,7 +46,6 @@
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
         <version>1.0.0-rc5-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
     <artifactId>ikasan-filetransfer</artifactId>
@@ -68,13 +67,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${version.org.springframework}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>${version.org.springframework}</version>
             <scope>provided</scope>
         </dependency>
         <!-- J2EE -->
@@ -87,7 +84,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${version.org.hibernate}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -131,7 +127,6 @@
         <dependency>
             <groupId>org.jboss.transaction</groupId>
             <artifactId>jboss-jta</artifactId>
-            <version>${version.org.jboss.transaction.jboss-jta}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
