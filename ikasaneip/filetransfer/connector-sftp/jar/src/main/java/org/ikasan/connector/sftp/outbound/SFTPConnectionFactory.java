@@ -67,6 +67,14 @@ public class SFTPConnectionFactory extends EISConnectionFactoryImpl
     private static Logger logger = Logger.getLogger(SFTPConnectionFactory.class);
 
     /**
+     * Default constructor required by JCA 1.6
+     */
+    public SFTPConnectionFactory()
+    {
+        super();
+    }
+
+    /**
      * This Constructor is called when the SFTPManagedConnectionFactory
      * instantiates this object. It passes in a reference to itself and
      * to the connection manager. The connection manager will, in
