@@ -58,8 +58,6 @@
     <artifactId>ikasan-client-sftp-endpoint</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration File Transfer / Ikasan Client Endpoint for SFTP</name>
-    <description>The client endpoint for SFTP within the Ikasan Enterprise Integration Platform</description>
-
 
     <dependencies>
         <dependency>
@@ -136,5 +134,4 @@
         </dependency>
 
     </dependencies>
-
 </project>

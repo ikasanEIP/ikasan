@@ -48,10 +48,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-connector-filetransfer-parent</artifactId>
+        <artifactId>ikasan-filetransfer</artifactId>
         <version>1.0.0-rc5-SNAPSHOT</version>
-        <relativePath>../connector-filetransfer-parent/pom.xml</relativePath>
-    </parent>
+   </parent>
 
     <artifactId>ikasan-connector-ftp-parent</artifactId>
     <packaging>pom</packaging>
@@ -62,4 +61,38 @@
         <module>rar</module>
         <module>client</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jarCreation</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-rar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>rarCreation</id>
+                        <goals>
+                            <goal>rar</goal>
+                        </goals>
+                        <configuration>
+                            <includeJar>true</includeJar>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

@@ -139,12 +139,6 @@
             <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- CGLib, used for testing assitance to jmock -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- Objenesis, used for testing assitance to jmock -->
         <dependency>
             <groupId>org.objenesis</groupId>
