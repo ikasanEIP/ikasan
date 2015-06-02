@@ -144,6 +144,12 @@ public class AbstractFlowConfiguration
     {
         this.configurationService.configure(configuredResource);
     }
+    
+  
+    public void update(DynamicConfiguredResource configuredResource)
+    {
+        this.configurationService.update(configuredResource);
+    }
 
     public List<FlowElement<?>> getFlowElements()
     {

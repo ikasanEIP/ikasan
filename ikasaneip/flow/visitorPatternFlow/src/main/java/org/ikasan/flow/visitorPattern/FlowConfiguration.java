@@ -68,4 +68,11 @@ public interface FlowConfiguration
      * @param configuredResource
      */
     public void configure(ConfiguredResource configuredResource);
+    
+    /**
+     * Allow for the saving of a DynamicConfiguredResources changed configuration
+     * 
+     * @param dynamicConfiguredResource
+     */
+    public void update(DynamicConfiguredResource dynamicConfiguredResource);
 }

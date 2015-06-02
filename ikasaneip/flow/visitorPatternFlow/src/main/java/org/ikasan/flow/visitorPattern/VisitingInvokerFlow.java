@@ -564,24 +564,14 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
             else
             {
-                for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
-                {
-                    try
-                    {
-                        this.flowConfiguration.configure(flowElement.getFlowComponent());
-                    }
-                    catch(RuntimeException e)
-                    {
-                        flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
-                        throw e;
-                    }
-                }
-
+                configureDynamicConfiguredResources(flowInvocationContext);
                 invoke(moduleName, name, flowInvocationContext, event, this.flowConfiguration.getConsumerFlowElement());
+                updateDynamicConfiguredResources(flowInvocationContext);
                 if(this.recoveryManager.isRecovering())
                 {
                     this.recoveryManager.cancel();
                 }
+                
             }
         }
         catch(Throwable throwable)
@@ -591,6 +581,38 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         finally
         {
             this.notifyMonitor();
+        }
+    }
+
+    private void configureDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+    {
+        for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+        {
+            try
+            {
+                this.flowConfiguration.configure(flowElement.getFlowComponent());
+            }
+            catch(RuntimeException e)
+            {
+                flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+                throw e;
+            }
+        }
+    }
+    
+    private void updateDynamicConfiguredResources(FlowInvocationContext flowInvocationContext)
+    {
+        for(FlowElement<DynamicConfiguredResource> flowElement:this.flowConfiguration.getDynamicConfiguredResourceFlowElements())
+        {
+            try
+            {
+                this.flowConfiguration.update(flowElement.getFlowComponent());
+            }
+            catch(RuntimeException e)
+            {
+                flowInvocationContext.addInvokedComponentName(flowElement.getComponentName());
+                throw e;
+            }
         }
     }
 
