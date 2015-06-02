@@ -155,35 +155,4 @@
 		<!-- END: Added extra stuff to make it compile without original <parent /> -->
     </dependencies>
 
-	
-	<!-- START: Added extra stuff to make it compile without original <parent /> -->
-	<build>
-	<resources>
-      <resource>
-        <!-- We explicitly include and exclude, because we want to know *why* -->
-        <directory>src/main/resources</directory>
-        <includes>
-          <!-- Holds JNDI references and Class names for common connector configuration -->
-          <include>connectorResource.xml</include>
-        </includes>
-        <excludes>
-          <!-- Connector DS file, needs to be external to the JAR -->
-          <exclude>ikasan-connector-default-ds.xml</exclude>
-        </excludes>
-      </resource>
-    </resources>
-    <plugins>
-	    <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-            <descriptors>
-                <descriptor>src/main/assemble/distribution.xml</descriptor>
-            </descriptors>
-            <filters>
-                <filter>src/main/assemble/filter.properties</filter>
-            </filters>
-            </configuration>
-        </plugin>
-    </plugins>
-    </build>
 </project>
