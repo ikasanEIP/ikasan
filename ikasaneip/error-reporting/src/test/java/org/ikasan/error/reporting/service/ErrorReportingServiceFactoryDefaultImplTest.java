@@ -41,10 +41,9 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
+import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,22 +64,12 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations={
         "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
-        "/mock-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
         })
 
 public class ErrorReportingServiceFactoryDefaultImplTest
 {
-    @Resource
-    Mockery mockery;
-
-    @Resource
-    Serialiser serialiser;
-
-    @Resource
-    SerialiserFactory serialiserFactory;
-
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
 
@@ -96,6 +85,7 @@ public class ErrorReportingServiceFactoryDefaultImplTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_errorReportingServiceDao()
     {
+        SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
         new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, null);
     }
 

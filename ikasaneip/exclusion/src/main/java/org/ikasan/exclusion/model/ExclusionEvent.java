@@ -69,9 +69,6 @@ public class ExclusionEvent
     /** timestamp indicating when this event was created */
     long timestamp;
 
-    /** expiry of this event */
-    long expiry;
-
     /** error uri reported as part of this excluded event */
     String errorUri;
 
@@ -84,20 +81,6 @@ public class ExclusionEvent
      * @param errorUri
      */
     public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri)
-    {
-        this(moduleName, flowName, eventLifeIdentifier, event, errorUri, ExclusionService.DEFAULT_TIME_TO_LIVE);
-    }
-
-    /**
-     * Constructor
-     * @param moduleName
-     * @param flowName
-     * @param eventLifeIdentifier
-     * @param event
-     * @param errorUri
-     * @param timeToLive
-     */
-    public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri, long timeToLive)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -123,7 +106,6 @@ public class ExclusionEvent
         this.errorUri = errorUri;
         long now = System.currentTimeMillis();
         this.timestamp = now;
-        this.expiry = now + timeToLive;
     }
 
     /**
@@ -179,14 +161,6 @@ public class ExclusionEvent
         this.timestamp = timestamp;
     }
 
-    public long getExpiry() {
-        return expiry;
-    }
-
-    protected void setExpiry(long expiry) {
-        this.expiry = expiry;
-    }
-
     public String getErrorUri() {
         return errorUri;
     }
@@ -226,7 +200,6 @@ public class ExclusionEvent
                 ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
                 ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
-                ", expiry=" + expiry +
                 ", errorUri='" + errorUri + '\'' +
                 '}';
     }
