@@ -140,7 +140,7 @@ public class LdapLocalAuthenticationProvider implements AuthenticationProvider
 			}
 		}
 
-        return new IkasanAuthentication(true, user, authorities, user.getPassword());
+        return new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials());
 	}
 
 	/* (non-Javadoc)

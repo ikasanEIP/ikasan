@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,16 +38,76 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.hospital.service;
+package org.ikasan.rest.submit;
 
-import org.springframework.security.provisioning.UserDetailsManager;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+
+import org.apache.log4j.Logger;
+import org.ikasan.hospital.service.HospitalService;
 
 /**
- * User and Authority service interface
  * 
  * @author Ikasan Development Team
- * 
+ *
  */
-public interface HospitalService extends UserDetailsManager
+@Path("/resubmission")
+public class ResubmissionApplication
 {
+	private static Logger logger = Logger.getLogger(ResubmissionApplication.class);
+	
+	private HospitalService hospitalService;
+
+	/**
+	 * @param hospitalService
+	 */
+	public ResubmissionApplication(HospitalService hospitalService)
+	{
+		super();
+		this.hospitalService = hospitalService;
+		if(this.hospitalService == null)
+		{
+			throw new IllegalArgumentException("hospitalService cannot be null!");
+		}
+	}
+
+	/**
+	 * TODO: work out how to get annotation security working.
+	 * 
+	 * @param context
+	 * @param moduleName
+	 * @param flowName
+	 * @param is
+	 * @return
+	 */
+	@PUT
+	@Path("/submit/{moduleName}/{flowName}")
+	@Consumes("application/octet-stream")	
+	public Response submitIs(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName, byte[] is)
+	{		
+		if(!context.isUserInRole("WebServiceAdminUser"))
+		{
+			return Response.status(403).type("text/plain")
+	                .entity("You are not authorised to access this resource.").build();
+		}
+		
+		try
+		{
+			this.hospitalService.resubmit(moduleName, flowName, is, context.getUserPrincipal());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+
+			return Response.status(404).type("text/plain")
+	                .entity("An error has occurred on the server when trying to resubmit the event.").build();
+		}
+		
+		return Response.ok("Event resubmitted!").build();
+	}
 }

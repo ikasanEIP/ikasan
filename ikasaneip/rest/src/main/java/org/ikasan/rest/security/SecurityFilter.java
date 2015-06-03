@@ -43,6 +43,7 @@ package org.ikasan.rest.security;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -67,6 +68,7 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
  * A Jersey ContainerRequestFilter that provides a SecurityContext for all
  * requests processed by this application.
  */
+@PreMatching
 public class SecurityFilter implements ContainerRequestFilter {
  
 	private static Logger logger = Logger.getLogger(SecurityFilter.class);
@@ -109,10 +111,7 @@ public class SecurityFilter implements ContainerRequestFilter {
         
         try
         {
-        	logger.info("Username: " + username);
-        	logger.info("Password: " + password);
         	authentication = authenticationService.login(username, password);
-        	logger.info("authentication: " + authentication);
         }
         catch(AuthenticationServiceException e)
         {
@@ -123,7 +122,7 @@ public class SecurityFilter implements ContainerRequestFilter {
     }
  
     /**
-     * SecurityContext used to perform authorization checks.
+     * SecurityContext used to perform authorisation checks.
      */
     public class Authorizer implements SecurityContext 
     {
@@ -143,7 +142,7 @@ public class SecurityFilter implements ContainerRequestFilter {
          * @param role Role to be checked
          */
         public boolean isUserInRole(String role) 
-        {
+        {       	
             for(GrantedAuthority authority: this.authentication.getAuthorities())
             {
             	if(role.equals(authority.getAuthority()))

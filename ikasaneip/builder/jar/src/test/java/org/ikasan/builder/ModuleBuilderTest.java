@@ -46,6 +46,7 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -82,6 +83,9 @@ public class ModuleBuilderTest
 
     /** Mock Producer */
     final ExclusionServiceFactory exclusionServiceFactory = mockery.mock(ExclusionServiceFactory.class, "mockExclusionServiceFactory");
+    
+    /** Mock serialiserFactory */
+    final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "mockSerialiserFactory");
 
     @Before
     public void setup()
@@ -107,11 +111,11 @@ public class ModuleBuilderTest
     public void test_successful_flowCreation() 
     {
     	Module module = ModuleBuilder.newModule("module name").withDescription("module description")
-    	.addFlow(newFlow("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory)
+    	.addFlow(newFlow("flowName1", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory)
                 .consumer("consumer", consumer)
                 .publisher("producer", producer)
                 .build())
-    	.addFlow(newFlow("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory)
+    	.addFlow(newFlow("flowName2", "moduleName").withExclusionServiceFactory(exclusionServiceFactory).withSerialiserFactory(serialiserFactory)
                 .consumer("consumer", consumer)
                 .publisher("producer", producer)
                 .build())

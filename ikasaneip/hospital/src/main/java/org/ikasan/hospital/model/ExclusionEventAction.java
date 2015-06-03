@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,43 +38,100 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern;
+package org.ikasan.hospital.model;
 
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.resubmission.ResubmissionService;
+import java.util.Date;
 
 /**
- * Default implementation of a Flow
  * 
  * @author Ikasan Development Team
+ *
  */
-public class DefaultFlowConfiguration extends AbstractFlowConfiguration implements FlowConfiguration
+public class ExclusionEventAction
 {
-    /**
-     * Constructor
-     * 
-     * @param consumerFlowElement
-     * @param configurationService
-     * @param resubmisionService
-     */
-    public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService
-    		, ResubmissionService resubmisionService)
-    {
-        super(consumerFlowElement, configurationService, resubmisionService);
+	private long id;
+	private String errorUri;
+	private String actionedBy;
+	private Date timestamp;
+	private boolean replayed;
 
-        // TODO - remove as this should already be checked elsewhere
-        if(consumerFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME) == null)
-        {
-            throw new IllegalArgumentException("consumerFlowElement must have a valid flowElement default transition");
-        }
-    }
+	/**
+	 * @return the id
+	 */
+	public long getId()
+	{
+		return id;
+	}
 
-    @Override
-    public FlowElement<Consumer> getConsumerFlowElement()
-    {
-        return this.leadFlowElement;
-    }
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(long id)
+	{
+		this.id = id;
+	}
+
+	/**
+	 * @return the errorUri
+	 */
+	public String getErrorUri()
+	{
+		return errorUri;
+	}
+
+	/**
+	 * @param errorUri the errorUri to set
+	 */
+	public void setErrorUri(String errorUri)
+	{
+		this.errorUri = errorUri;
+	}
+
+	/**
+	 * @return the actionedBy
+	 */
+	public String getActionedBy()
+	{
+		return actionedBy;
+	}
+
+	/**
+	 * @param actionedBy the actionedBy to set
+	 */
+	public void setActionedBy(String actionedBy)
+	{
+		this.actionedBy = actionedBy;
+	}
+
+	/**
+	 * @return the timestamp
+	 */
+	public Date getTimestamp()
+	{
+		return timestamp;
+	}
+
+	/**
+	 * @param timestamp the timestamp to set
+	 */
+	public void setTimestamp(Date timestamp)
+	{
+		this.timestamp = timestamp;
+	}
+
+	/**
+	 * @return the replayed
+	 */
+	public boolean isReplayed()
+	{
+		return replayed;
+	}
+
+	/**
+	 * @param replayed the replayed to set
+	 */
+	public void setReplayed(boolean replayed)
+	{
+		this.replayed = replayed;
+	}
 }

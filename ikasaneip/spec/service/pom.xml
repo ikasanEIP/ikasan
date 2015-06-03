@@ -92,5 +92,6 @@
        <module>error-reporting</module>
        <module>exclusion</module>
        <module>resubmission</module>
+	   <module>hospital</module>
     </modules>
 </project>

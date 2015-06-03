@@ -59,6 +59,8 @@ import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
 import org.ikasan.topology.model.BusinessStreamFlow;
@@ -178,8 +180,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	private ErrorReportingService errorReportingService;
 	private ExclusionManagementService<ExclusionEvent> exclusionManagementService;
 	
+	private SerialiserFactory serialiserFactory;
+	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
-			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent> exclusionManagementService)
+			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent> exclusionManagementService,
+			 SerialiserFactory serialiserFactory)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -205,6 +210,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.exclusionManagementService == null)
 		{
 			throw new IllegalArgumentException("exclusionManagementService cannot be null!");
+		}
+		this.serialiserFactory = serialiserFactory;
+		if(this.serialiserFactory == null)
+		{
+			throw new IllegalArgumentException("serialiserFactory cannot be null!");
 		}
 
 		init();
@@ -1379,7 +1389,7 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    public void itemClick(ItemClickEvent itemClickEvent) {
 		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence);
+		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory);
 		    
 		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    }

@@ -43,6 +43,7 @@
         <constructor-arg ref="wiretapDao" />
         <constructor-arg ref="errorReportingService" />
         <constructor-arg ref="exclusionManagementService" />
+        <constructor-arg ref="ikasanSerialiserFactory" />
     </bean>
     
     <bean id="componentConfigurationWindow" class="org.ikasan.dashboard.ui.topology.window.ComponentConfigurationWindow" scope="session">
