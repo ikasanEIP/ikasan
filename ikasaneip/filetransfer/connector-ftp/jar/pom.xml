@@ -80,7 +80,6 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>${version.commons.net}</version>
         </dependency>
     </dependencies>
 

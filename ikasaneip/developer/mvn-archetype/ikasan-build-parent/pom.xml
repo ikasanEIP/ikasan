@@ -51,6 +51,15 @@
     <packaging>maven-plugin</packaging>
     <name>IkasanEIP Maven Archetype for a build parent</name>
 
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-plugin-plugin</artifactId>
+			<version>3.2</version>
+		</dependency>
+	</dependencies>
+	
     <build>
         <plugins>
             <plugin>
