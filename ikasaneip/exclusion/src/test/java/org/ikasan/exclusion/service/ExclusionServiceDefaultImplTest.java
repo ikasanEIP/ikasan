@@ -42,6 +42,7 @@ package org.ikasan.exclusion.service;
 
 import org.ikasan.exclusion.dao.BlackListDao;
 import org.ikasan.exclusion.dao.ExclusionEventDao;
+import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
@@ -88,7 +89,7 @@ public class ExclusionServiceDefaultImplTest
     BlackListDao exclusionServiceBlacklistDao;
 
     @Resource
-    ExclusionEventDao exclusionServiceExclusionEventDao;
+    ExclusionEventDao<String,ExclusionEvent> exclusionServiceExclusionEventDao;
 
     @Resource
     SerialiserFactory serialiserFactory;
@@ -181,7 +182,7 @@ public class ExclusionServiceDefaultImplTest
      */
     @DirtiesContext
     @Test
-    public void test_exclusionService_housekeep()
+    public void test_exclusionService_housekeep_with_housekeepable()
     {
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(-1L);
@@ -215,6 +216,86 @@ public class ExclusionServiceDefaultImplTest
 
         exclusionService.housekeep();
         Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test exclusion housekeep
+     */
+    @DirtiesContext
+    @Test
+    public void test_exclusionService_housekeep_without_housekeepable()
+    {
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
+        exclusionService.setTimeToLive(10000L);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // when checked in the backlist
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+
+                // when added to the backlist
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+
+                // when checked in the backlist
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+
+                // housekeep with remove from the backlist
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+            }
+        });
+
+        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        exclusionService.addBlacklisted(flowEvent, "uri");
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        exclusionService.housekeep();
+        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        this.mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test exclusion housekeep
+     */
+    @DirtiesContext
+    @Test
+    public void test_exclusionService_park()
+    {
+        final String payload = "this is payload content";
+
+        ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // when pulling from blacklist
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+
+                // when creating exclusionEvent
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+           }
+        });
+
+        exclusionService.addBlacklisted(flowEvent, "uri");
+        exclusionService.park(flowEvent);
+        ExclusionEvent exclusionEvent = exclusionServiceExclusionEventDao.find("moduleName", "flowName", "123456");
+        Object exclusionEventPayloadBytes = exclusionEvent.getEvent();
+        Object exclusionEventPayload = serialiserFactory.getDefaultSerialiser().deserialise(exclusionEventPayloadBytes);
+        Assert.assertTrue("Should be equal", exclusionEventPayload.equals(payload));
 
         this.mockery.assertIsSatisfied();
     }

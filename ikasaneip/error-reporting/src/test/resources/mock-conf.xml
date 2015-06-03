@@ -13,25 +13,4 @@
         </property>
     </bean>
 
-    <!--bean id="serialiserFactory" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject" ref="mockery" />
-        <property name="targetMethod" value="mock" />
-        <property name="arguments">
-            <list>
-                <value>org.ikasan.spec.serialiser.SerialiserFactory</value>
-            </list>
-        </property>
-    </bean-->
-
-    <bean id="serialiser" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject" ref="mockery" />
-        <property name="targetMethod" value="mock" />
-        <property name="arguments">
-            <list>
-                <value>org.ikasan.spec.serialiser.Serialiser</value>
-            </list>
-        </property>
-    </bean>
-
-
 </beans>

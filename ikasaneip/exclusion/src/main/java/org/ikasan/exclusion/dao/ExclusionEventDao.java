@@ -70,9 +70,4 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public EVENT find(String moduleName, String flowName, IDENTIFIER identifier);
-
-    /**
-     * Support delete of expired exclusionEvents
-     */
-    public void deleteExpired();
 }
