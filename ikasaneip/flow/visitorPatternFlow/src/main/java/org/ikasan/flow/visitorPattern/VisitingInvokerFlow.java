@@ -378,7 +378,16 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     {
         try
         {
-            stopConsumer();
+            // stop any active recovery
+            if(this.recoveryManager.isRecovering())
+            {
+                this.recoveryManager.cancel();
+            }
+
+            // stop consumer and remove the listener
+            Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
+            consumer.stop();
+
             this.consumerPaused = true;
             logger.info("Paused Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
@@ -446,23 +455,6 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         {
             this.recoveryManager.recover(consumerFlowElement.getComponentName(), e);
         }
-    }
-    
-    /**
-     * Stop the consumer component.
-     */
-    protected void stopConsumer()
-    {
-        // stop any active recovery
-        if(this.recoveryManager.isRecovering())
-        {
-            this.recoveryManager.cancel();
-        }
-
-        // stop consumer and remove the listener
-        Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
-        consumer.stop();
-        consumer.setListener(null);
     }
     
     /**
@@ -546,7 +538,18 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         try
         {
             this.consumerPaused = false;
-            stopConsumer();
+
+            // stop any active recovery
+            if(this.recoveryManager.isRecovering())
+            {
+                this.recoveryManager.cancel();
+            }
+
+            // stop consumer and remove the listener
+            Consumer<?,?> consumer = this.flowConfiguration.getConsumerFlowElement().getFlowComponent();
+            consumer.stop();
+            consumer.setListener(null);
+
             stopManagedResources();
             logger.info("Stopped Flow[" + this.name + "] in Module[" + this.moduleName + "]");
         }
