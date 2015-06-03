@@ -132,6 +132,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** errorReportingService handle */
     private ErrorReportingService errorReportingService;
 
+    /** serialiserFactory handle */
     private SerialiserFactory serialiserFactory;
 
     /**

@@ -82,30 +82,31 @@ public class ResubmissionApplication
 	 * @param context
 	 * @param moduleName
 	 * @param flowName
-	 * @param is
+	 * @param event
 	 * @return
 	 */
 	@PUT
-	@Path("/submit/{moduleName}/{flowName}")
+	@Path("/resubmit/{moduleName}/{flowName}/{errorUri}")
 	@Consumes("application/octet-stream")	
-	public Response submitIs(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName, byte[] is)
+	public Response resubmit(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
+			@PathParam("errorUri") String errorUri, byte[] event)
 	{		
 		if(!context.isUserInRole("WebServiceAdminUser"))
 		{
-			return Response.status(403).type("text/plain")
+			return Response.status(Response.Status.FORBIDDEN).type("text/plain")
 	                .entity("You are not authorised to access this resource.").build();
 		}
 		
 		try
 		{
-			this.hospitalService.resubmit(moduleName, flowName, is, context.getUserPrincipal());
+			this.hospitalService.resubmit(moduleName, flowName, errorUri, event, context.getUserPrincipal());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 
-			return Response.status(404).type("text/plain")
-	                .entity("An error has occurred on the server when trying to resubmit the event.").build();
+			return Response.status(Response.Status.NOT_FOUND).type("text/plain")
+	                .entity("An error has occurred on the server when trying to resubmit the event. " + e.getMessage()).build();
 		}
 		
 		return Response.ok("Event resubmitted!").build();

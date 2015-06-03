@@ -49,16 +49,45 @@ import java.util.Date;
  */
 public class ExclusionEventAction
 {
-	private long id;
+	public static final String RESUBMIT = "re-submit";
+	public static final String IGNORED = "ignored";
+
+	private Long id;
 	private String errorUri;
 	private String actionedBy;
-	private Date timestamp;
-	private boolean replayed;
+	private String action;
+	private Date timestamp;	
+	
+	/**
+	 * Default constructor for Hibernate
+	 */
+	@SuppressWarnings("unused")
+	private ExclusionEventAction()
+	{
+		
+	}
+
+	/**
+	 * @param id
+	 * @param errorUri
+	 * @param actionedBy
+	 * @param state
+	 * @param timestamp
+	 */
+	public ExclusionEventAction(String errorUri, String actionedBy,
+			String action)
+	{
+		super();
+		this.errorUri = errorUri;
+		this.actionedBy = actionedBy;
+		this.action = action;
+		this.timestamp = new Date();
+	}
 
 	/**
 	 * @return the id
 	 */
-	public long getId()
+	public Long getId()
 	{
 		return id;
 	}
@@ -66,7 +95,7 @@ public class ExclusionEventAction
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id)
+	public void setId(Long id)
 	{
 		this.id = id;
 	}
@@ -120,18 +149,95 @@ public class ExclusionEventAction
 	}
 
 	/**
-	 * @return the replayed
+	 * @return the action
 	 */
-	public boolean isReplayed()
+	public String getAction()
 	{
-		return replayed;
+		return action;
 	}
 
 	/**
-	 * @param replayed the replayed to set
+	 * @param action the action to set
 	 */
-	public void setReplayed(boolean replayed)
+	public void setAction(String action)
 	{
-		this.replayed = replayed;
+		this.action = action;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result
+				+ ((actionedBy == null) ? 0 : actionedBy.hashCode());
+		result = prime * result
+				+ ((errorUri == null) ? 0 : errorUri.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((timestamp == null) ? 0 : timestamp.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ExclusionEventAction other = (ExclusionEventAction) obj;
+		if (action == null)
+		{
+			if (other.action != null)
+				return false;
+		} else if (!action.equals(other.action))
+			return false;
+		if (actionedBy == null)
+		{
+			if (other.actionedBy != null)
+				return false;
+		} else if (!actionedBy.equals(other.actionedBy))
+			return false;
+		if (errorUri == null)
+		{
+			if (other.errorUri != null)
+				return false;
+		} else if (!errorUri.equals(other.errorUri))
+			return false;
+		if (id == null)
+		{
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (timestamp == null)
+		{
+			if (other.timestamp != null)
+				return false;
+		} else if (!timestamp.equals(other.timestamp))
+			return false;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "ExclusionEventAction [id=" + id + ", errorUri=" + errorUri
+				+ ", actionedBy=" + actionedBy + ", action=" + action
+				+ ", timestamp=" + timestamp + "]";
+	}
+
 }

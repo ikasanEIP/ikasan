@@ -28,5 +28,15 @@
              </bean>
         </property>
     </bean>
+    
+    <bean id="moduleContainer"  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="mockery" />
+		<property name="targetMethod" value="mock" />
+		<property name="arguments">
+			<list>
+				<value>org.ikasan.spec.module.ModuleContainer</value>
+			</list>
+		</property>
+	</bean>
 
 </beans>

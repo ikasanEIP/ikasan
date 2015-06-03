@@ -41,8 +41,11 @@
 package org.ikasan.hospital.service;
 
 import java.security.Principal;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.ikasan.hospital.dao.HospitalDao;
+import org.ikasan.hospital.model.ExclusionEventAction;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.module.Module;
@@ -59,22 +62,43 @@ import org.ikasan.spec.serialiser.Serialiser;
  */
 public class HospitalServiceImpl implements HospitalService<byte[]>
 {
+	/** running state string constant */
+    private static String RUNNING = "running";
+    
+    /** stopped state string constant */
+    private static String STOPPED = "stopped";
+    
+    /** recovering state string constant */
+    private static String RECOVERING = "recovering";
+    
+    /** stoppedInError state string constant */
+    private static String STOPPED_IN_ERROR = "stoppedInError";
+    
+    /** paused state string constant */
+    private static String PAUSED = "paused";
+    
 	private static Logger logger = Logger.getLogger(HospitalServiceImpl.class);
 	
 	private ModuleContainer moduleContainer;
+	private HospitalDao hospitalDao;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param moduleContainer
 	 */
-	public HospitalServiceImpl(ModuleContainer moduleContainer)
+	public HospitalServiceImpl(ModuleContainer moduleContainer, HospitalDao hospitalDao)
 	{
 		super();
 		this.moduleContainer = moduleContainer;
 		if(this.moduleContainer == null)
 		{
 			throw new IllegalArgumentException("moduleContainer cannot be null!");
+		}
+		this.hospitalDao = hospitalDao;
+		if(this.hospitalDao == null)
+		{
+			throw new IllegalArgumentException("hospitalDao cannot be null!");
 		}
 	}
 
@@ -83,12 +107,18 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 	 * @see org.ikasan.hospital.service.HospitalService#resubmit(java.lang.String, java.lang.String, java.lang.Object, java.security.Principal)
 	 */
 	@Override
-	public void resubmit(String moduleName, String flowName, byte[] event,
+	public void resubmit(String moduleName, String flowName, String errorUri, byte[] event,
 			Principal principal)
 	{
 		Module<Flow> module = moduleContainer.getModule(moduleName);
 		
 		Flow flow = module.getFlow(flowName);
+		
+		if(flow.getState().equals(STOPPED) || flow.getState().equals(STOPPED_IN_ERROR))
+		{
+			throw new RuntimeException("Events cannot be resubmitted when the flow that is being resubmitted to is in a " +
+					flow.getState() + " state.  Module[" + moduleName +"] Flow[" + flowName + "]");
+		}
 		
 		FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
 		
@@ -100,7 +130,24 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 		
 		logger.info("deserialisedEvent" + deserialisedEvent);
 		
-//		TODO sort out the re-submission
-//		resubmissionService.submit(event);
+		resubmissionService.submit(deserialisedEvent);
+		
+		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
+				ExclusionEventAction.RESUBMIT);
+		
+		this.hospitalDao.saveOrUpdate(action);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.service.HospitalService#ignore(java.lang.String, java.security.Principal)
+	 */
+	@Override
+	public void ignore(String errorUri, Principal principal)
+	{
+		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
+				ExclusionEventAction.IGNORED);
+		
+		this.hospitalDao.saveOrUpdate(action);
 	}
 }

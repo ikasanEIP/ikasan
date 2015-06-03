@@ -254,6 +254,14 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 	{
 		this.ikasanSerialiserFactory = ikasanSerialiserFactory;
 	}
+	
+	/**
+	 * @param resubmissionService the resubmissionService to set
+	 */
+	public void setResubmissionService(ResubmissionService resubmissionService)
+	{
+		this.resubmissionService = resubmissionService;
+	}
 
     /*
      * (non-Javadoc)
@@ -390,4 +398,5 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             throw new RuntimeException(e);
         }
     }
+
 }
