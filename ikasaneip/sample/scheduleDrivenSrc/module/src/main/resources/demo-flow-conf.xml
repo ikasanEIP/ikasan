@@ -12,6 +12,7 @@
         <property name="description"        value="Demonstrates scheduled callbacks for a flow." />
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="consumer"           ref="demoScheduledConsumerFlowElement" />
+        <property name="resubmissionService"           ref="demoScheduledConsumer" />
         <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
     </bean>
 

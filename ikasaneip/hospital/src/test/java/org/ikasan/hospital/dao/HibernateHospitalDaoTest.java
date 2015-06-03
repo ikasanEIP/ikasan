@@ -40,7 +40,10 @@
  */
 package org.ikasan.hospital.dao;
 
-import org.junit.Ignore;
+import javax.annotation.Resource;
+
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -53,13 +56,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "/security-conf.xml",
+        "/hospital-conf.xml",
         "/hsqldb-config.xml",
         "/substitute-components.xml",
         "/mock-components.xml"
 })
-@Ignore
 public class HibernateHospitalDaoTest
 {
 
+	@Resource HospitalDao xaHospitalDao;
+	
+	@Test
+	public void testSaveExclusionEvent_success()
+	{
+		ExclusionEventAction action = new ExclusionEventAction("errorUri", "actionedBy", "state");
+		
+		this.xaHospitalDao.saveOrUpdate(action);
+	}
 }

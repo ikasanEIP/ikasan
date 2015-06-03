@@ -202,7 +202,12 @@ public class ExclusionEventViewWindow extends Window
         		logger.info("Event " + new String(testPayload));
         		
         		
-        	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/submit/Sample Scheduled Module/Demo Scheduled Flow");
+        	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/resubmit/"
+        	    		+ exclusionEvent.getModuleName() 
+        	    		+ "/"
+        	    		+ exclusionEvent.getFlowName()
+        	    		+ "/"
+        	    		+ exclusionEvent.getErrorUri());
         	    Response response = webTarget.request().put(Entity.entity(testPayload, MediaType.APPLICATION_OCTET_STREAM));
         	    
         	    if(response.getStatus()  != 200)
@@ -262,15 +267,15 @@ public class ExclusionEventViewWindow extends Window
 
 		HorizontalLayout formLayout = new HorizontalLayout();
 		formLayout.setWidth("100%");
-		formLayout.setHeight(140, Unit.PIXELS);
+		formLayout.setHeight(180, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
-//		Label seperator = new Label("<hr />",ContentMode.HTML);
-//		wrapperLayout.addComponent(seperator, 0, 1);
-		wrapperLayout.addComponent(eventEditor, 0, 2);
-		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
-		wrapperLayout.addComponent(editor, 0, 3);
-		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
+		Label seperator = new Label("<hr />",ContentMode.HTML);
+		wrapperLayout.addComponent(seperator, 0, 1);
+//		wrapperLayout.addComponent(eventEditor, 0, 2);
+//		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
+//		wrapperLayout.addComponent(editor, 0, 3);
+//		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 
 		exclusionEventDetailsPanel.setContent(wrapperLayout);
 		return exclusionEventDetailsPanel;

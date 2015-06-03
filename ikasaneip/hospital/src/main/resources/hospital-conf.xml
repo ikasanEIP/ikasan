@@ -12,6 +12,22 @@
 
 	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
 		<constructor-arg ref="moduleContainer" />
+		<constructor-arg ref="xaHospitalDao" />
+	</bean>
+	
+	<bean id="xaHospitalDao" class="org.ikasan.hospital.dao.HibernateHospitalDao">
+		<property name="sessionFactory" ref="xaHospitalSessionFactory" />
+	</bean>
+
+	<bean id="xaHospitalSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.xads" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
 	</bean>
 
 </beans>

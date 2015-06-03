@@ -40,14 +40,28 @@
  */
 package org.ikasan.hospital.dao;
 
+import org.ikasan.hospital.model.ExclusionEventAction;
+
 
 /**
- * Data Access interface for <code>User</code> instances
+ * Data Access interface for <code>ExclusionEventAction</code> instances
  * 
  * @author Ikasan Development Team
  *
  */
 public interface HospitalDao
 {
-   
+	/**
+	 * Method to save or update an ExclusionEventAction.
+	 * 
+	 * @param exclusionEventAction
+	 */
+	public void saveOrUpdate(ExclusionEventAction exclusionEventAction);
+
+	/**
+	 * A method to return and ExclusionEventAction based on the event uri.
+	 * @param errorUri
+	 * @return
+	 */
+	public ExclusionEventAction getExclusionEventActionByErrorUri(String errorUri);
 }

@@ -40,6 +40,10 @@
  */
 package org.ikasan.hospital.dao;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 /**
@@ -51,80 +55,28 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 public class HibernateHospitalDao extends HibernateDaoSupport implements HospitalDao
 {
 
-    
-//    /* (non-Javadoc)
-//     * @see org.ikasan.framework.security.dao.UserDao#getUser(java.lang.String)
-//     */
-//    @SuppressWarnings("unchecked")
-//    public User getUser(String username)
-//    {
-//        List<User> results = (List<User>) getHibernateTemplate().find("from User where username  = ?",username);
-//        User result = null;
-//        if (!results.isEmpty()){
-//            result = results.get(0);
-//        }
-//        
-//        return result;
-//    }
-//
-//    /* (non-Javadoc)
-//     * @see org.ikasan.framework.security.dao.UserDao#getUsers()
-//     */
-//    @SuppressWarnings("unchecked")
-//    public List<User> getUsers()
-//    {
-//        return getHibernateTemplate().loadAll(User.class);
-//    }
-//
-//    public void save(User user)
-//    {
-//        getHibernateTemplate().saveOrUpdate(user);
-//    }
-//
-//    /* (non-Javadoc)
-//     * @see org.ikasan.framework.security.dao.UserDao#delete(org.ikasan.framework.security.model.User)
-//     */
-//    public void delete(User user)
-//    {
-//        getHibernateTemplate().delete(user);
-//        
-//    }
-//
-//	/* (non-Javadoc)
-//	 * @see org.ikasan.security.dao.UserDao#getUserByUsernameLike(java.lang.String)
-//	 */
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<User> getUserByUsernameLike(String username)
-//	{
-//		List<User> results = (List<User>) getHibernateTemplate().find("from User where username LIKE ?", username + '%');
-//
-//        return results;
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see org.ikasan.security.dao.UserDao#getUserByFirstnameLike(java.lang.String)
-//	 */
-//	@Override
-//	public List<User> getUserByFirstnameLike(String firstname)
-//	{
-//		@SuppressWarnings("unchecked")
-//		List<User> results = (List<User>) getHibernateTemplate().find("from User where firstName LIKE ?", firstname + '%');
-//
-//        return results;
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see org.ikasan.security.dao.UserDao#getUserBySurnameLike(java.lang.String)
-//	 */
-//	@Override
-//	public List<User> getUserBySurnameLike(String surname)
-//	{
-//		@SuppressWarnings("unchecked")
-//		List<User> results = (List<User>) getHibernateTemplate().find("from User where surname LIKE ?", surname + '%');
-//
-//        return results;
-//	}
-//
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.dao.HospitalDao#saveOrUpdate(org.ikasan.hospital.model.ExclusionEventAction)
+	 */
+	@Override
+	public void saveOrUpdate(ExclusionEventAction exclusionEventAction)
+	{
+		getHibernateTemplate().save(exclusionEventAction);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.dao.HospitalDao#getExclusionEventActionByErrorUri(java.lang.String)
+	 */
+	@Override
+	public ExclusionEventAction getExclusionEventActionByErrorUri(
+			String errorUri)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEventAction.class);
+        criteria.add(Restrictions.eq("errorUri", errorUri));
+        ExclusionEventAction principal = (ExclusionEventAction) DataAccessUtils
+        		.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
+
+        return principal;
+	}
     
 }

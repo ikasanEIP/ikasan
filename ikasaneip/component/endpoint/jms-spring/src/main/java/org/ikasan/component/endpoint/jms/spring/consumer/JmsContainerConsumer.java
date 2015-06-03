@@ -70,7 +70,7 @@ public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
         Consumer<EventListener<?>,EventFactory>,
         ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
-		, ResubmissionService<byte[]>
+		, ResubmissionService<Message>
 {
     /** Logger instance */
     private Logger logger = Logger.getLogger(JmsContainerConsumer.class);
@@ -251,18 +251,10 @@ public class JmsContainerConsumer
 	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
 	 */
 	@Override
-	public void submit(byte[] event)
+	public void submit(Message event)
 	{
-//		try
-//        {
-//            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
-//                    ( (this.managedEventIdentifierService != null) ? this.managedEventIdentifierService.getEventIdentifier(message) : message.hashCode()),
-//                    message);
-//            this.eventListener.invoke(flowEvent);
-//        }
-//        catch (ManagedEventIdentifierException e)
-//        {
-//            this.eventListener.invoke(e);
-//        }
+		logger.info("attempting to submit event: " + event);
+
+		this.onMessage(event);
 	}
 }

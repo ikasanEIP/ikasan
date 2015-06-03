@@ -16,18 +16,15 @@
 
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 	    <property name="sessionFactory">
-	        <ref bean="xaSecuritySessionFactory"/>
+	        <ref bean="xaHospitalSessionFactory"/>
 	    </property>
 	</bean>
 	
 	<aop:config>
         <aop:pointcut id="daoMethods"
-                expression="execution(* org.ikasan.security.dao.*.*(..))"/>
-        <aop:pointcut id="serviceMethods"
-                expression="execution(* org.ikasan.security.dao.service*.*(..))"/>
+                expression="execution(* org.ikasan.hospital.dao.*.*(..))"/>
                 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>
 
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
@@ -36,69 +33,6 @@
         </tx:attributes>
     </tx:advice>
 
-	<bean id="ldapServerUrl" class="java.lang.String">
-		<constructor-arg value="#{'ldap://' + ldapBindAddress.hostName + ':' + ldapBindPort}" />
-	</bean>
-
-	<bean id="principalPrefix" class="java.lang.String">
-		<constructor-arg value="MIP-LONDON\" />
-	</bean>
 	
-	<bean id="ldapUserDn" class="java.lang.String">
-		<constructor-arg value="cn=Directory Manager" />
-	</bean>
-	
-	<bean id="ldapPassword" class="java.lang.String">
-		<constructor-arg value="password" />
-	</bean>
-
-	<bean id="inMemoryDirectoryServer" class="com.unboundid.ldap.listener.InMemoryDirectoryServer" lazy-init="true">
-		<constructor-arg ref="inMemoryDirectoryServerConfig" />
-	</bean>
-
-	<bean id="inMemoryDirectoryServerConfig"
-		class="com.unboundid.ldap.listener.InMemoryDirectoryServerConfig">
-		<constructor-arg value="DC=uk,DC=mizuho-sc,DC=com" />
-		<property name="schema" value="#{ null }" />
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="inMemoryDirectoryServerConfig" />
-		<property name="targetMethod">
-			<value>setListenerConfigs</value>
-		</property>
-		<property name="arguments" ref="inMemoryListenerConfig" />
-	</bean>
-
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="inMemoryDirectoryServerConfig" />
-		<property name="targetMethod">
-			<value>addAdditionalBindCredentials</value>
-		</property>
-		<property name="arguments">
-			<list>
-				<value>cn=Directory Manager</value>
-				<value>password</value>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="inMemoryListenerConfig" class="com.unboundid.ldap.listener.InMemoryListenerConfig">
-		<constructor-arg value="ldapServerListener" />
-		<constructor-arg ref="ldapBindAddress" />
-		<constructor-arg ref="ldapBindPort" />
-		<constructor-arg value="#{ null }" />
-		<constructor-arg value="#{ null }" />
-		<constructor-arg value="#{ null }" />
-	</bean>
-
-	<bean id="ldapBindAddress" class="java.net.InetAddress"
-		factory-method="getLocalHost" />
-
-	<bean id="ldapBindPort" class="java.lang.Integer">
-		<constructor-arg value="33389" />
-	</bean>
 
 </beans>
