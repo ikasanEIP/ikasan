@@ -42,6 +42,7 @@ package org.ikasan.flow.visitorPattern;
 
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
  * Default implementation of an Exclusion Flow Configuration
@@ -55,9 +56,10 @@ public class DefaultExclusionFlowConfiguration extends AbstractFlowConfiguration
      * @param leadFlowElement
      * @param configurationService
      */
-    public DefaultExclusionFlowConfiguration(FlowElement<?> leadFlowElement, ConfigurationService configurationService)
+    public DefaultExclusionFlowConfiguration(FlowElement<?> leadFlowElement, ConfigurationService configurationService,
+    		ResubmissionService resubmisionService)
     {
-        super(leadFlowElement, configurationService);
+        super(leadFlowElement, configurationService, resubmisionService);
     }
 
     @Override

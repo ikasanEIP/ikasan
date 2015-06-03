@@ -66,7 +66,31 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-management</artifactId>
+            <artifactId>ikasan-spec-module</artifactId>
+            <scope>provided</scope>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+            <scope>provided</scope>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-hospital</artifactId>
+            <scope>provided</scope>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-resubmission</artifactId>
+            <scope>provided</scope>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-serialiser</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -88,11 +112,6 @@
             </exclusions>
         </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>

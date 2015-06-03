@@ -13,6 +13,7 @@
         <property name="exceptionResolver"  ref="exceptionResolver" />
         <property name="exclusionFlowHeadElement"  ref="exclusionProducerFlowElement" />
         <property name="consumer"           ref="demoExclusionScheduledConsumerFlowElement" />
+        <property name="ikasanSerialiserFactory" ref="ikasanSerialiserFactory" />
     </bean>
 
     <bean id="demoExclusionScheduledConsumerFlowElement" class="org.ikasan.builder.FlowElementFactory">

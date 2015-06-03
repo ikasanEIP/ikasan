@@ -106,7 +106,8 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
     @Override
     public T deserialise(byte[] source)
     {
-        Input input = new Input(new ByteArrayInputStream(source));
+    	byte[] cloneSource = source.clone();
+        Input input = new Input(new ByteArrayInputStream(cloneSource));
         Kryo kryo=pool.borrow();
 
         try

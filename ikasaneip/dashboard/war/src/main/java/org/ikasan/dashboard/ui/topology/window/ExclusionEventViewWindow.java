@@ -49,12 +49,15 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
@@ -67,6 +70,8 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -79,6 +84,8 @@ import com.vaadin.ui.Window;
  */
 public class ExclusionEventViewWindow extends Window
 {
+	private static Logger logger = Logger.getLogger(ExclusionEventViewWindow.class);
+	
 	/**
 	 * 
 	 */
@@ -88,16 +95,17 @@ public class ExclusionEventViewWindow extends Window
 	private TextField roleDescription;
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
-	
+	private SerialiserFactory serialiserFactory;
 
 	/**
 	 * @param policy
 	 */
-	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence)
+	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
 		this.errorOccurrence = errorOccurrence;
+		this.serialiserFactory = serialiserFactory;
 		
 		this.init();
 	}
@@ -178,14 +186,37 @@ public class ExclusionEventViewWindow extends Window
             	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
         	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
             	
-            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "admin");
+            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
             	
             	ClientConfig clientConfig = new ClientConfig();
             	clientConfig.register(feature) ;
             	
             	Client client = ClientBuilder.newClient(clientConfig);
-        	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/submit/testFlowName");
-        	    Response response = webTarget.request().put(Entity.entity("this is a test!", MediaType.APPLICATION_OCTET_STREAM));
+            	
+            	Serialiser serialiser = serialiserFactory.getSerialiser(String.class);
+            	
+        		byte[] testPayload = (byte[])serialiser.serialise("This is a test string!");
+        		
+        		logger.info("Event " + testPayload);
+        		logger.info("Event " + testPayload.length);
+        		logger.info("Event " + new String(testPayload));
+        		
+        		
+        	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/submit/Sample Scheduled Module/Demo Scheduled Flow");
+        	    Response response = webTarget.request().put(Entity.entity(testPayload, MediaType.APPLICATION_OCTET_STREAM));
+        	    
+        	    if(response.getStatus()  != 200)
+        	    {
+        	    	response.bufferEntity();
+        	        
+        	        String responseMessage = response.readEntity(String.class);
+        	    	Notification.show("An error was received trying to resubmit event: " 
+        	    			+ responseMessage, Type.ERROR_MESSAGE);
+        	    }
+        	    else
+        	    {
+        	    	Notification.show("Event resumitted successfully.");
+        	    }
             }
         });
 		
@@ -221,7 +252,8 @@ public class ExclusionEventViewWindow extends Window
 		
 		AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
-		eventEditor.setValue(new String((byte[])this.exclusionEvent.getEvent()));
+		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
+		eventEditor.setValue(new String(this.exclusionEvent.getEvent()));
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);
@@ -233,8 +265,8 @@ public class ExclusionEventViewWindow extends Window
 		formLayout.setHeight(140, Unit.PIXELS);
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
-		Label seperator = new Label("<hr />",ContentMode.HTML);
-		wrapperLayout.addComponent(seperator, 0, 1);
+//		Label seperator = new Label("<hr />",ContentMode.HTML);
+//		wrapperLayout.addComponent(seperator, 0, 1);
 		wrapperLayout.addComponent(eventEditor, 0, 2);
 		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
 		wrapperLayout.addComponent(editor, 0, 3);

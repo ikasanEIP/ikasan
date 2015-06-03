@@ -1,7 +1,7 @@
-/*
- * $Id$  
+/* 
+ * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,57 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.rest.submit;
+package org.ikasan.spec.flow;
 
-import java.io.IOException;
+import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-
-import org.apache.log4j.Logger;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
+import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
+ * Default implementation of a Flow
  * 
  * @author Ikasan Development Team
- *
  */
-@Path("/resubmission")
-public class ResubmissionService
+public interface FlowConfiguration
 {
-	private static Logger logger = Logger.getLogger(ResubmissionService.class);
+    public FlowElement<Consumer> getConsumerFlowElement();
+    public List<FlowElement<?>> getFlowElements();
+    public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
+    public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
+    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
+    public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
+    public ResubmissionService getResubmissionService();
 
-	@PUT
-	@Path("/submit/{flowName}")
-	@Consumes("application/octet-stream")
-	
-	public Response submitIs(@Context SecurityContext context, @PathParam("flowName") String flowName, byte[] is)
-	{
-		logger.info("Principal: " + context.getAuthenticationScheme());
-		logger.info("Flow name! " + flowName);
-		logger.info("Resubmission event received! " + is.length);
-		
-		logger.info("Is User in ALL" + context.isUserInRole("ALL"));
-		
-		return Response.ok("<result>File was uploaded</result>").build();
-	}
-
-	public static void main(String args[]) throws IOException, InterruptedException 
-	{
-	    Client client = ClientBuilder.newClient();
-	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/submit/testFlowName");
-	    Response response = webTarget.request(MediaType.TEXT_PLAIN_TYPE)
-	                    .put(Entity.entity("this is a test!", MediaType.APPLICATION_OCTET_STREAM));
-	    
-	    System.out.println(response);
-	  }
+    /**
+     * Provision for the configuration of anything passed as a configuredResource
+     * @param configuredResource
+     */
+    public void configure(ConfiguredResource configuredResource);
 }

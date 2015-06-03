@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,34 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern;
+package org.ikasan.hospital.service;
 
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.DynamicConfiguredResource;
-import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.management.ManagedResource;
+import java.security.Principal;
 
-import java.util.List;
 
 /**
- * Default implementation of a Flow
+ * Hospital service interface
  * 
  * @author Ikasan Development Team
+ * 
  */
-public interface FlowConfiguration
+public interface HospitalService<EVENT>
 {
-    public FlowElement<Consumer> getConsumerFlowElement();
-    public List<FlowElement<?>> getFlowElements();
-    public List<FlowElement<ManagedResource>> getManagedResourceFlowElements();
-    public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
-    public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
-    public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
-
-    /**
-     * Provision for the configuration of anything passed as a configuredResource
-     * @param configuredResource
-     */
-    public void configure(ConfiguredResource configuredResource);
+	/**
+	 * Method to resubmit an event to the appropriate module flow.
+	 * 
+	 * @param moduleName The name of the module we are re-submitting to.
+	 * @param flowName The name of the flow we are re-submitting to.
+	 * @param event The event we are resubmitting.
+	 * @param principal The principal object of the user we are resubmitting on behalf of.
+	 */
+	public void resubmit(String moduleName, String flowName, EVENT event, Principal principal);
 }

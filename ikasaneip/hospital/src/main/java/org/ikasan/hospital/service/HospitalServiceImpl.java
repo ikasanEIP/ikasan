@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,43 +38,69 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.flow.visitorPattern;
+package org.ikasan.hospital.service;
 
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.configuration.ConfigurationService;
+import java.security.Principal;
+
+import org.apache.log4j.Logger;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
-import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.resubmission.ResubmissionService;
+import org.ikasan.spec.serialiser.Serialiser;
+
 
 /**
- * Default implementation of a Flow
+ * User and Authority service interface
  * 
  * @author Ikasan Development Team
+ * 
  */
-public class DefaultFlowConfiguration extends AbstractFlowConfiguration implements FlowConfiguration
+public class HospitalServiceImpl implements HospitalService<byte[]>
 {
-    /**
-     * Constructor
-     * 
-     * @param consumerFlowElement
-     * @param configurationService
-     * @param resubmisionService
-     */
-    public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService
-    		, ResubmissionService resubmisionService)
-    {
-        super(consumerFlowElement, configurationService, resubmisionService);
+	private static Logger logger = Logger.getLogger(HospitalServiceImpl.class);
+	
+	private ModuleContainer moduleContainer;
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param moduleContainer
+	 */
+	public HospitalServiceImpl(ModuleContainer moduleContainer)
+	{
+		super();
+		this.moduleContainer = moduleContainer;
+		if(this.moduleContainer == null)
+		{
+			throw new IllegalArgumentException("moduleContainer cannot be null!");
+		}
+	}
 
-        // TODO - remove as this should already be checked elsewhere
-        if(consumerFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME) == null)
-        {
-            throw new IllegalArgumentException("consumerFlowElement must have a valid flowElement default transition");
-        }
-    }
 
-    @Override
-    public FlowElement<Consumer> getConsumerFlowElement()
-    {
-        return this.leadFlowElement;
-    }
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.service.HospitalService#resubmit(java.lang.String, java.lang.String, java.lang.Object, java.security.Principal)
+	 */
+	@Override
+	public void resubmit(String moduleName, String flowName, byte[] event,
+			Principal principal)
+	{
+		Module<Flow> module = moduleContainer.getModule(moduleName);
+		
+		Flow flow = module.getFlow(flowName);
+		
+		FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
+		
+		ResubmissionService resubmissionService = flowConfiguration.getResubmissionService();
+		
+		Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
+			
+		Object deserialisedEvent = serialiser.deserialise(event);
+		
+		logger.info("deserialisedEvent" + deserialisedEvent);
+		
+//		TODO sort out the re-submission
+//		resubmissionService.submit(event);
+	}
 }

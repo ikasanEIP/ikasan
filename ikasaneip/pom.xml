@@ -784,6 +784,12 @@
                 <artifactId>ikasan-spec-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-hospital</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
@@ -890,6 +896,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-component</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-resubmission</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -47,26 +47,32 @@ import junit.framework.Assert;
 
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow.ManagedResourceRecoveryManagerFactory;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
-import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.*;
-import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowElementInvoker;
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -184,6 +190,9 @@ public class VisitingInvokerFlowTest
 
     /** Mock exclusionService */
     final ExclusionService exclusionService = mockery.mock(ExclusionService.class, "mockExclusionService");
+    
+    /** Mock serialiserFactory */
+    final SerialiserFactory serialiserFactory = mockery.mock(SerialiserFactory.class, "mockSerialiserFactory");
 
     /** is recovering status */
     boolean isRecovering = false;
@@ -208,7 +217,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullName()
     {
-        new VisitingInvokerFlow(null, null, null, null, null, null);
+        new VisitingInvokerFlow(null, null, null, null, null, null, null);
     }
 
     /**
@@ -217,7 +226,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullModuleName()
     {
-        new VisitingInvokerFlow("flowName", null, null, null, null, null);
+        new VisitingInvokerFlow("flowName", null, null, null, null, null, null);
     }
 
     /**
@@ -226,7 +235,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowConfiguration()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", null, null, null, null);
+        new VisitingInvokerFlow("flowName", "moduleName", null, null, null, null, null);
     }
 
     /**
@@ -235,7 +244,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullExclusionFlowConfigurationInvoker()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null, null);
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null, null, null);
     }
 
     /**
@@ -244,7 +253,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowRecoveryManager()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, null, null);
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, null, null, null);
     }
 
     /**
@@ -253,7 +262,7 @@ public class VisitingInvokerFlowTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructorDueToNullFlowExclusionService()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, recoveryManager, null);
+        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, recoveryManager, null, null);
     }
 
     /**
@@ -262,7 +271,7 @@ public class VisitingInvokerFlowTest
     @Test
     public void test_successful_VisitingInvokerFlow_instantiation()
     {
-        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+        Flow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         Assert.assertEquals("flowName setter failed", "flowName", flow.getName());
         Assert.assertEquals("moduleName setter failed", "moduleName", flow.getModuleName());
     }
@@ -275,7 +284,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
@@ -451,7 +460,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
@@ -628,7 +637,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -668,7 +677,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -707,7 +716,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
@@ -808,7 +817,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -958,7 +967,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<FlowElement<ManagedResource>>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -1034,7 +1043,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
@@ -1218,7 +1227,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<IsErrorReportingServiceAware>> errorReportingServiceAwareFlowElements = new ArrayList<FlowElement<IsErrorReportingServiceAware>>();
@@ -1514,7 +1523,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         isRunning = true;
@@ -1652,7 +1661,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         isRunning = true;
@@ -1791,7 +1800,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         setGetStateExpectations(isRecovering, isRunning, isUnrecoverable);
@@ -1929,7 +1938,7 @@ public class VisitingInvokerFlowTest
 
         // container for the complete flow
         VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", 
-            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
 
         // set the monitor
         isUnrecoverable = true;
@@ -2420,7 +2429,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
-                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceExclusionFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -2579,7 +2588,7 @@ public class VisitingInvokerFlowTest
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName",
-                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+                flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         flow.setManagedResourceRecoveryManagerFactory(managedResourceRecoveryManagerFactory);
 
         final List<FlowElement<ManagedResource>> managedResourceExclusionFlowElements = new ArrayList<FlowElement<ManagedResource>>();
@@ -2823,7 +2832,7 @@ public class VisitingInvokerFlowTest
         public ExtendedVisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
                 RecoveryManager<FlowEvent<?,?>> recoveryManager, ExclusionService exclusionService)
         {
-            super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+            super(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, serialiserFactory);
         }
      
         @Override
