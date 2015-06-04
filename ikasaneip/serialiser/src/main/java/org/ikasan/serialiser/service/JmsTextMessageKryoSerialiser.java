@@ -44,7 +44,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.apache.activemq.command.ActiveMQTextMessage;
+import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -65,7 +65,7 @@ public class JmsTextMessageKryoSerialiser extends Serializer<TextMessage>
 
     public TextMessage read(Kryo kryo, Input input, Class<TextMessage> message)
     {
-        TextMessage textMessage = new ActiveMQTextMessage();
+        TextMessage textMessage = new JmsTextMessageDefaultImpl();
         try
         {
             String deserialisedPayload = (String) kryo.readClassAndObject(input);
