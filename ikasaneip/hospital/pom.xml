@@ -54,7 +54,7 @@
 
     <artifactId>ikasan-hospital</artifactId>
     <packaging>jar</packaging>
-    <name>Ikasan Security</name>
+    <name>Ikasan Hospital Service</name>
     <description>The hostipal library for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>

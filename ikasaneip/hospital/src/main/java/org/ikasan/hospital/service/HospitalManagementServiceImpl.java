@@ -38,39 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.hospital.dao;
+package org.ikasan.hospital.service;
 
-import javax.annotation.Resource;
-
+import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.ikasan.spec.module.ModuleContainer;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-@SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hospital-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
-})
-public class HibernateHospitalDaoTest
+public class HospitalManagementServiceImpl implements
+		HospitalManagementService<ExclusionEventAction>
 {
 
-	@Resource HospitalDao hospitalDao;
-	
-	@Test
-	public void testSaveExclusionEvent_success()
+	private HospitalDao hospitalDao;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param moduleContainer
+	 */
+	public HospitalManagementServiceImpl(HospitalDao hospitalDao)
 	{
-		ExclusionEventAction action = new ExclusionEventAction("errorUri", "actionedBy", "state");
-		
-		this.hospitalDao.saveOrUpdate(action);
+		super();
+		this.hospitalDao = hospitalDao;
+		if(this.hospitalDao == null)
+		{
+			throw new IllegalArgumentException("hospitalDao cannot be null!");
+		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.hospital.service.HospitalManagementService#getExclusionEventActionByErrorUri(java.lang.String)
+	 */
+	@Override
+	public ExclusionEventAction getExclusionEventActionByErrorUri(
+			String errorUri)
+	{
+		return hospitalDao.getExclusionEventActionByErrorUri(errorUri);
+	}
+
 }

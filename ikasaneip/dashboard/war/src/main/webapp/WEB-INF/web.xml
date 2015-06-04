@@ -29,7 +29,10 @@
         			 /WEB-INF/topology-context.xml, 
         			 classpath:platform-service-conf.xml, 
         			 classpath:serialiser-service-conf.xml, 
+        			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
+        			 classpath:hospital-conf.xml,
+        			 classpath:module-service-conf.xml,
         			 classpath:providers-properties.xml
         </param-value>
     </context-param>

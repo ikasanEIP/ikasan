@@ -56,10 +56,11 @@ import org.ikasan.dashboard.ui.topology.window.NewBusinessStreamWindow;
 import org.ikasan.dashboard.ui.topology.window.WiretapPayloadViewWindow;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.topology.model.BusinessStream;
@@ -179,12 +180,13 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 	
 	private ErrorReportingService errorReportingService;
 	private ExclusionManagementService<ExclusionEvent> exclusionManagementService;
+	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 	
 	private SerialiserFactory serialiserFactory;
 	
 	public TopologyViewPanel(TopologyService topologyService, ComponentConfigurationWindow componentConfigurationWindow,
 			 WiretapDao wiretapDao, ErrorReportingService errorReportingService, ExclusionManagementService<ExclusionEvent> exclusionManagementService,
-			 SerialiserFactory serialiserFactory)
+			 SerialiserFactory serialiserFactory, HospitalManagementService<ExclusionEventAction> hospitalManagementService)
 	{
 		this.topologyService = topologyService;
 		if(this.topologyService == null)
@@ -215,6 +217,11 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		if(this.serialiserFactory == null)
 		{
 			throw new IllegalArgumentException("serialiserFactory cannot be null!");
+		}
+		this.hospitalManagementService = hospitalManagementService;
+		if(this.hospitalManagementService == null)
+		{
+			throw new IllegalArgumentException("hospitalManagementService cannot be null!");
 		}
 
 		init();
@@ -1382,6 +1389,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		this.exclusionsTable.setCellStyleGenerator(new IkasanCellStyleGenerator());
 		this.exclusionsTable.addContainerProperty("Module Name", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Flow Name", String.class,  null);
+		this.exclusionsTable.addContainerProperty("Action", String.class,  null);
+		this.exclusionsTable.addContainerProperty("Actioned By", String.class,  null);
 		this.exclusionsTable.addContainerProperty("Timestamp", String.class,  null);
 		
 		this.exclusionsTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
@@ -1389,7 +1398,9 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
 		    public void itemClick(ItemClickEvent itemClickEvent) {
 		    	ExclusionEvent exclusionEvent = (ExclusionEvent)itemClickEvent.getItemId();
 		    	ErrorOccurrence errorOccurrence = (ErrorOccurrence)errorReportingService.find(exclusionEvent.getErrorUri());
-		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory);
+		    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+		    	ExclusionEventViewWindow exclusionEventViewWindow = new ExclusionEventViewWindow(exclusionEvent, errorOccurrence, serialiserFactory
+		    			, action, hospitalManagementService);
 		    
 		    	UI.getCurrent().addWindow(exclusionEventViewWindow);
 		    }
@@ -1402,6 +1413,8 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	exclusionsTable.removeAllItems();
+            	
             	List<ExclusionEvent> exclusionEvents = exclusionManagementService.findAll();
 
             	for(ExclusionEvent exclusionEvent: exclusionEvents)
@@ -1410,7 +1423,18 @@ public class TopologyViewPanel extends Panel implements View, Action.Handler
             		SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             	    String timestamp = format.format(date);
             	    
-            	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(),
+            	    ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+            	    
+            	    String actionString = "";
+            	    String actionedByString = "";
+            	    
+            	    if(action != null)
+            	    {
+            	    	actionString = action.getAction();
+            	    	actionedByString = action.getActionedBy();
+            	    }
+            	    
+            	    exclusionsTable.addItem(new Object[]{exclusionEvent.getModuleName(), exclusionEvent.getFlowName(), actionString, actionedByString,
             				timestamp}, exclusionEvent);
             	}
             }

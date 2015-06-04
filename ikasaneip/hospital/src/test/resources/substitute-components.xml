@@ -16,7 +16,7 @@
 
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 	    <property name="sessionFactory">
-	        <ref bean="xaHospitalSessionFactory"/>
+	        <ref bean="hospitalSessionFactory"/>
 	    </property>
 	</bean>
 	
