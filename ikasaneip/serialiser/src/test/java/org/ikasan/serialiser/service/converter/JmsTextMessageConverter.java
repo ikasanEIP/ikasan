@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.serialiser.service;
+package org.ikasan.serialiser.service.converter;
 
 import java.util.Enumeration;
 
@@ -46,58 +46,47 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
+import org.ikasan.spec.serialiser.Converter;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-public class JmsTextMessageKryoSerialiser extends Serializer<TextMessage>
-{
-    public void write(Kryo kryo, Output output, TextMessage message)
-    {
-        try
-        {
-        	JmsTextMessageDefaultImpl textMessage = this.convert(message);
-            kryo.writeClassAndObject(output, textMessage);
-        }
-        catch (JMSException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public TextMessage read(Kryo kryo, Input input, Class<TextMessage> message)
-    {
-    	return (TextMessage)kryo.readClassAndObject(input);
-    }
-    
-    private JmsTextMessageDefaultImpl convert(TextMessage message) throws JMSException
+public class JmsTextMessageConverter implements Converter<TextMessage, JmsTextMessageDefaultImpl>
+{   
+    public JmsTextMessageDefaultImpl convert(TextMessage message)
     {
     	JmsTextMessageDefaultImpl jmsTextMessageDefault = new JmsTextMessageDefaultImpl();
     	
-    	jmsTextMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-    	jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
-    	jmsTextMessageDefault.setJMSExpiration(jmsTextMessageDefault.getJMSExpiration());
-    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
-    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
-    	jmsTextMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-    	jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-    	jmsTextMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-    	jmsTextMessageDefault.setJMSType(jmsTextMessageDefault.getJMSType());
-    	    	
-    	Enumeration<String> names  = message.getPropertyNames();
-    	
-    	while(names.hasMoreElements())
-    	{
-    		String name = names.nextElement();
-
-    		jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+    	try
+    	{	    	
+	    	jmsTextMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
+	    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
+	    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
+	    	jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
+	    	jmsTextMessageDefault.setJMSExpiration(jmsTextMessageDefault.getJMSExpiration());
+	    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
+	    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
+	    	jmsTextMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
+	    	jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+	    	jmsTextMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
+	    	jmsTextMessageDefault.setJMSType(jmsTextMessageDefault.getJMSType());
+	    	    	
+	    	Enumeration<String> names  = message.getPropertyNames();
+	    	
+	    	while(names.hasMoreElements())
+	    	{
+	    		String name = names.nextElement();
+	
+	    		jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+	    	}
+	    	
+	    	jmsTextMessageDefault.setText(message.getText());
     	}
-    	
-    	jmsTextMessageDefault.setText(message.getText());
+    	catch (JMSException e)
+    	{
+    		throw new RuntimeException(e);
+    	}
     	
     	return jmsTextMessageDefault;
     }

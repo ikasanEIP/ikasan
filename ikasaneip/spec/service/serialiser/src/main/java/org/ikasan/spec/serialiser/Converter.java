@@ -1,7 +1,7 @@
-/* 
- * $Id$
+/*
+ * $Id$  
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,51 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.dao;
-
-import org.ikasan.exclusion.model.ExclusionEvent;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
+package org.ikasan.spec.serialiser;
 
 /**
- * Test class for HibernateExclusionServiceDao.
  * 
  * @author Ikasan Development Team
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
-        "/h2db-datasource-conf.xml",
-        "/substitute-components.xml"
-    })
-
-public class HibernateExclusionEventDaoTest
+public interface Converter<IN, OUT>
 {
-    @Resource
-    ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
-
-    /**
-     * Test exclusion
-     */
-    @DirtiesContext
-    @Test
-    public void test_contains_save_find_delete_operations()
-    {
-        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
-
-        exclusionEventDao.save(exclusionEvent);
-        Assert.assertTrue("Should be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier").equals(exclusionEvent));
-
-        exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
-    }
-
+	/**
+	 * Method to convert from one object type to another.
+	 * 
+	 * @param in
+	 * @return
+	 */
+	public OUT convert(IN in);
 }

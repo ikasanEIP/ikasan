@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,65 +38,69 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.error.reporting.service;
+package org.ikasan.serialiser.model;
 
-import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
-import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
 
 /**
- * Test class for ErrorReportingServiceDefaultImpl based on
- * the implementation of a ErrorReportingServiceFactory contract.
+ * Light JMS text message implementation purely for serialiser usage.
  * 
  * @author Ikasan Development Team
+ * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/ikasan-transaction-conf.xml",
-        "/error-reporting-service-conf.xml",
-        "/substitute-components.xml",
-        "/h2db-datasource-conf.xml"
-        })
-
-public class ErrorReportingServiceFactoryDefaultImplTest
+public class JmsTextMessageDefaultImpl extends JmsMessageDefaultImpl implements TextMessage
 {
-    @Resource
-    ErrorReportingServiceDao errorReportingServiceDao;
-
-    @Resource
-    ErrorReportingService errorReportingService;
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_serialiserFactory()
+    /** text msg content */
+    String content;
+    
+    public JmsTextMessageDefaultImpl()
     {
-        new ErrorReportingServiceFactoryDefaultImpl(null, null);
+    	super();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_errorReportingServiceDao()
+    @Override
+    public void setText(String content) throws JMSException
     {
-        SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
-        new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, null);
+        this.content = content;
     }
 
-    /**
-     * Test notify
-     */
-    @DirtiesContext
-    @Test
-    public void test_errorReportingServiceFactory_getErrorReportingService()
-    {
-        Assert.assertTrue("errorReportingService not correctly proxied through a pointcut", errorReportingService.getClass().getName().startsWith("com.sun.proxy.$Proxy"));
+    @Override
+    public String getText() throws JMSException {
+        return this.content;
     }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JmsTextMessageDefaultImpl other = (JmsTextMessageDefaultImpl) obj;
+		if (content == null)
+		{
+			if (other.content != null)
+				return false;
+		} else if (!content.equals(other.content))
+			return false;
+		return true;
+	}
 }

@@ -40,38 +40,26 @@
  */
 package org.ikasan.exclusion.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.ExclusionEvent;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
+import java.util.List;
+
 /**
- * Hibernate implementation of the ExclusionEventeDao.
+ * Hibernate implementation of the ExclusionEventDao.
  * @author Ikasan Development Team
  */
 public class HibernateExclusionEventDao extends HibernateDaoSupport
         implements ExclusionEventDao<String,ExclusionEvent>
 {
-    /** default batch size */
-    private static Integer housekeepingBatchSize = Integer.valueOf(100);
-
     /** batch delete statement */
-    private static final String BATCHED_HOUSEKEEP_QUERY = "delete ExclusionEvent s where s.identifier in (:event_ids)";
-
-    /** batch delete statement */
-    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
+    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.eventLifeIdentifier = :eventLifeIdentifier";
 
 
     @Override
@@ -81,7 +69,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
     @Override
-    public void delete(final String moduleName, final String flowName, final String identifier)
+    public void delete(final String moduleName, final String flowName, final String eventLifeIdentifier)
     {
         getHibernateTemplate().execute(new HibernateCallback()
         {
@@ -91,7 +79,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 Query query = session.createQuery(DELETE_QUERY);
                 query.setParameter("moduleName", moduleName);
                 query.setParameter("flowName", flowName);
-                query.setParameter("identifier", identifier);
+                query.setParameter("eventLifeIdentifier", eventLifeIdentifier);
                 query.executeUpdate();
                 return null;
         }
@@ -99,110 +87,30 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
     @Override
-    public void deleteExpired()
+    public ExclusionEvent find(String moduleName, String flowName, String eventLifeIdentifier)
     {
-        while(housekeepablesExist()){
-            final List<String> housekeepableBatch = getHousekeepableBatch();
+        DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+        criteria.add(Restrictions.eq("moduleName", moduleName));
+        criteria.add(Restrictions.eq("flowName", flowName));
+        criteria.add(Restrictions.eq("eventLifeIdentifier", eventLifeIdentifier));
 
-            getHibernateTemplate().execute(new HibernateCallback()
-            {
-                public Object doInHibernate(Session session) throws HibernateException
-                {
-
-                    Query query = session.createQuery(BATCHED_HOUSEKEEP_QUERY);
-                    query.setParameterList("event_ids", housekeepableBatch);
-                    query.executeUpdate();
-                    return null;
-                }
-            });
+        List<ExclusionEvent> results = (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+        if(results == null || results.size() == 0)
+        {
+            return null;
         }
-    }
 
-    /**
-     * Identifies a batch (List of Ids) of housekeepable items
-     *
-     * @return List of ids
-     */
-    @SuppressWarnings("unchecked")
-    private List<String> getHousekeepableBatch()
-    {
-        return (List<String>) getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                List<String> ids = new ArrayList<String>();
-
-                Criteria criteria = session.createCriteria(BlackListEvent.class);
-                criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
-                criteria.setMaxResults(housekeepingBatchSize);
-
-                for (Object exclusionEventObj : criteria.list())
-                {
-                    BlackListEvent blackListEvent = (BlackListEvent)exclusionEventObj;
-                    ids.add(blackListEvent.getIdentifier());
-                }
-
-                return ids;
-            }
-        });
-    }
-
-    private boolean housekeepablesExist() {
-        return (Boolean) getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Criteria criteria = session.createCriteria(BlackListEvent.class);
-                criteria.add(Restrictions.lt("expiry", System.currentTimeMillis()));
-                criteria.setProjection(Projections.rowCount());
-                Long rowCount = new Long(0);
-                List<Long> rowCountList = criteria.list();
-                if (!rowCountList.isEmpty())
-                {
-                    rowCount = rowCountList.get(0);
-                }
-                return new Boolean(rowCount>0);
-
-            }
-        });
+        return results.get(0);
     }
 
 	/* (non-Javadoc)
 	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#findAll()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExclusionEvent> findAll()
 	{
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
-		criteria.addOrder(Order.desc("timestamp"));
-
+		
         return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
 	}
-
-	@Override
-    public ExclusionEvent find(String moduleName, String flowName, String identifier)
-    {
-		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
-		
-		if(moduleName != null && moduleName.length() > 0)
-		{
-			criteria.add(Restrictions.eq("moduleName", moduleName));
-		}
-		
-		if(flowName != null && flowName.length() > 0)
-		{
-			criteria.add(Restrictions.eq("flowName", flowName));
-		}
-		
-		if(identifier != null && identifier.length() > 0)
-		{
-			criteria.add(Restrictions.eq("eventLifeIdentifier", identifier));
-		}
-
-		
-		criteria.addOrder(Order.desc("timestamp"));
-
-        return (ExclusionEvent)DataAccessUtils.uniqueResult(this.getHibernateTemplate().findByCriteria(criteria));
-    }
 }
