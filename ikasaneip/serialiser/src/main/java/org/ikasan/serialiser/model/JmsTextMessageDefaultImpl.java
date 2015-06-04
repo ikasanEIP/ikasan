@@ -38,57 +38,30 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.serialiser.service;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import org.apache.activemq.command.ActiveMQMapMessage;
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
+package org.ikasan.serialiser.model;
 
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import javax.jms.TextMessage;
 
-public class JmsMapMessageKryoSerialiser extends Serializer<MapMessage>
+/**
+ * Light JMS text message implementation purely for serialiser usage.
+ * 
+ * @author Ikasan Development Team
+ * 
+ */
+public class JmsTextMessageDefaultImpl extends JmsMessageDefaultImpl implements TextMessage
 {
-    public void write(Kryo kryo, Output output, MapMessage message)
+    /** text msg content */
+    String content;
+
+    @Override
+    public void setText(String content) throws JMSException
     {
-        try
-        {
-            Map<Object, Object> mapMessageContent = new HashMap<Object, Object>();
-            Enumeration en = message.getMapNames();
-            while (en != null && en.hasMoreElements())
-            {
-                String name = (String) en.nextElement();
-                mapMessageContent.put(name, message.getObject(name));
-            }
-            kryo.writeClassAndObject(output, mapMessageContent);
-        }
-        catch (JMSException e)
-        {
-            throw new RuntimeException(e);
-        }
+        this.content = content;
     }
 
-    public MapMessage read(Kryo kryo, Input input, Class<MapMessage> message)
-    {
-        MapMessage mapMessage = new ActiveMQMapMessage();
-        Map<Object, Object> deserialisedMap = (Map) kryo.readClassAndObject(input);
-        try
-        {
-            for (Object key : deserialisedMap.keySet())
-            {
-                mapMessage.setObject((String) key, deserialisedMap.get(key));
-            }
-            return mapMessage;
-        }
-        catch (JMSException e)
-        {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public String getText() throws JMSException {
+        return this.content;
     }
 }
