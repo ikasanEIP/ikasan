@@ -1,7 +1,7 @@
-/* 
+/*
  * $Id$
  * $URL$
- *
+ * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
  * 
@@ -38,51 +38,60 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.exclusion.dao;
+package org.ikasan.serialiser.service.converter;
 
-import org.ikasan.exclusion.model.ExclusionEvent;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import java.util.Enumeration;
 
-import javax.annotation.Resource;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
 
-/**
- * Test class for HibernateExclusionServiceDao.
- * 
- * @author Ikasan Development Team
- */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
-        "/h2db-datasource-conf.xml",
-        "/substitute-components.xml"
-    })
+import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
+import org.ikasan.spec.serialiser.Converter;
 
-public class HibernateExclusionEventDaoTest
+public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessageDefaultImpl>
 {
-    @Resource
-    ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
-
-    /**
-     * Test exclusion
-     */
-    @DirtiesContext
-    @Test
-    public void test_contains_save_find_delete_operations()
+    
+    public JmsMapMessageDefaultImpl convert(MapMessage message)
     {
-        ExclusionEvent exclusionEvent = new ExclusionEvent("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
-
-        exclusionEventDao.save(exclusionEvent);
-        Assert.assertTrue("Should be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier").equals(exclusionEvent));
-
-        exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
+    	
+    	try
+    	{
+	    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
+	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
+	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
+	    	jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
+	    	jmsMapMessageDefault.setJMSExpiration(jmsMapMessageDefault.getJMSExpiration());
+	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
+	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
+	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
+	    	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
+	    	jmsMapMessageDefault.setJMSType(jmsMapMessageDefault.getJMSType());
+	    	    	
+	    	Enumeration<String> names  = message.getPropertyNames();
+	    	
+	    	while(names.hasMoreElements())
+	    	{
+	    		String name = names.nextElement();
+	
+	    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+	    	}
+	    	
+	    	names  = message.getMapNames();
+	    	
+	    	while(names.hasMoreElements())
+	    	{
+	    		String name = names.nextElement();
+	
+	    		jmsMapMessageDefault.setObject(name, message.getObject(name));
+	    	}
+    	}
+    	catch (JMSException e)
+    	{
+    		throw new RuntimeException(e);
+    	}
+    	
+    	return jmsMapMessageDefault;
     }
-
 }

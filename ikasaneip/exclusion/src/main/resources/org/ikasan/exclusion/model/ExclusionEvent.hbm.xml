@@ -81,11 +81,6 @@
                   column="Timestamp"
                   not-null="true" />
 
-        <property name="expiry"
-                  type="long"
-                  column="Expiry"
-                  not-null="true" />
-
         <property name="errorUri"
                   type="java.lang.String"
                   column="ErrorUri"

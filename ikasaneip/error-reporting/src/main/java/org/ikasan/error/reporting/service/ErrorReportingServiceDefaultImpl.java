@@ -69,7 +69,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
     Long timeToLive = ErrorReportingService.DEFAULT_TIME_TO_LIVE;
 
     /** need a serialiser to serialise the incoming event payload of T */
-    Serialiser<EVENT,byte[]> serialiser;
+    Serialiser<Object,byte[]> serialiser;
 
     /**
      * Constructor
@@ -78,7 +78,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param serialiser
      * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(String moduleName, String flowName, Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
     {
         this(serialiser,errorReportingServiceDao);
         this.moduleName = moduleName;
@@ -99,7 +99,7 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      * @param serialiser
      * @param errorReportingServiceDao
      */
-    public ErrorReportingServiceDefaultImpl(Serialiser<EVENT,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
+    public ErrorReportingServiceDefaultImpl(Serialiser<Object,byte[]> serialiser, ErrorReportingServiceDao<ErrorOccurrence> errorReportingServiceDao)
     {
         this.serialiser = serialiser;
         if(serialiser == null)
@@ -188,15 +188,16 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      */
     private ErrorOccurrence newErrorOccurrence(String flowElementName, EVENT event, Throwable throwable)
     {
-        ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
         if(event instanceof FlowEvent)
         {
-            FlowEvent<String,?> flowEvent = (FlowEvent)event;
+            FlowEvent<String,Object> flowEvent = (FlowEvent)event;
+            ErrorOccurrence errorOccurrence = new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()));
             errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
             errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
+            return errorOccurrence;
         }
 
-        return errorOccurrence;
+        return new ErrorOccurrence(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), this.timeToLive, this.serialiser.serialise(event));
     }
 
     /**

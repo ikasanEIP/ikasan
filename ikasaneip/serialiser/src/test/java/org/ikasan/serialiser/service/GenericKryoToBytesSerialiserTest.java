@@ -40,14 +40,23 @@
  */
 package org.ikasan.serialiser.service;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoSerializable;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
+import java.util.HashMap;
+
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.TextMessage;
+
+import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
+import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
+import org.ikasan.serialiser.service.converter.JmsMapMessageConverter;
+import org.ikasan.serialiser.service.converter.JmsTextMessageConverter;
+import org.ikasan.spec.serialiser.Converter;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.esotericsoftware.kryo.Serializer;
 
 /**
  * Test class for SerialiserFactoryKryoImpl.
@@ -57,7 +66,6 @@ import org.junit.Test;
 public class GenericKryoToBytesSerialiserTest
 {
     /** one serialiser service should provide all serialiser instances */
-    SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
 
     /**
      * Test
@@ -65,7 +73,13 @@ public class GenericKryoToBytesSerialiserTest
     @Test
     public void test_getSerialiser_for_string_successful()
     {
-
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
         // object for serialise/deserialise test
         String str = new String("test");
 
@@ -86,6 +100,12 @@ public class GenericKryoToBytesSerialiserTest
     @Test
     public void test_getSerialiser_for_integer_successful()
     {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);    	
         // object for serialise/deserialise test
         Integer myInt = new Integer(10);
 
@@ -106,6 +126,13 @@ public class GenericKryoToBytesSerialiserTest
     @Test
     public void test_getSerialiser_for_primitiveClass_successful()
     {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
         // object for serialise/deserialise test
         PrimitiveClass primitiveClass = new PrimitiveClass();
 
@@ -118,5 +145,64 @@ public class GenericKryoToBytesSerialiserTest
         // deserialise it
         PrimitiveClass restored = serialiser.deserialise(bytes);
         Assert.assertTrue(restored.equals(primitiveClass));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_textMessage_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+        JmsTextMessageDefaultImpl message = new JmsTextMessageDefaultImpl();
+        message.setText("This is some text");
+
+        // get a serialiser
+        Serialiser<JmsTextMessageDefaultImpl,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(message);
+
+        // deserialise it
+        JmsTextMessageDefaultImpl restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(message));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_mapMessage_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+        JmsMapMessageDefaultImpl message = new JmsMapMessageDefaultImpl();
+        message.setString("testString1", "string 1");
+        message.setString("testString1", "string 1");
+        message.setBoolean("Boolean1", true);
+        message.setBoolean("Boolean2", false);
+
+        // get a serialiser
+        Serialiser<JmsMapMessageDefaultImpl,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(message);
+
+        // deserialise it
+        JmsMapMessageDefaultImpl restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(message));
     }
 }

@@ -42,10 +42,10 @@ package org.ikasan.error.reporting.service;
 
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
+import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.serialiser.Serialiser;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,18 +65,13 @@ import javax.annotation.Resource;
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
         "/error-reporting-service-conf.xml",
-        "/mock-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
 })
 
 public class ErrorReportingServiceDefaultImplTest
 {
-    @Resource
-    Mockery mockery;
-
-    @Resource
-    Serialiser serialiser;
+    SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
 
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
@@ -90,7 +85,7 @@ public class ErrorReportingServiceDefaultImplTest
     @Test(expected = IllegalArgumentException.class)
     public void test_failed_constructor_null_dao()
     {
-        new ErrorReportingServiceDefaultImpl(serialiser, null);
+        new ErrorReportingServiceDefaultImpl(serialiserFactory.getDefaultSerialiser(), null);
     }
 
     /**
@@ -100,6 +95,7 @@ public class ErrorReportingServiceDefaultImplTest
     @Test
     public void test_errorReporting_notify_no_inflight_event()
     {
+        Serialiser serialiser = serialiserFactory.getDefaultSerialiser();
         ErrorReportingService<?,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
         String uri = errorReportingService.notify("flowElementName", new Exception("test"));
         ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
@@ -114,20 +110,15 @@ public class ErrorReportingServiceDefaultImplTest
     public void test_errorReporting_notify_with_inflight_string_event()
     {
         final String event = new String("string based event");
-        final byte[] bytes = event.getBytes();
 
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(serialiser).serialise(event);
-                will(returnValue(bytes));
-            }
-        });
-
+        Serialiser serialiser = serialiserFactory.getDefaultSerialiser();
         ErrorReportingService<String,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
-        String uri = errorReportingService.notify("flowElementName", "string based event", new Exception("test"));
+        String uri = errorReportingService.notify("flowElementName", event, new Exception("test"));
         ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
         Assert.assertNotNull("Should not be null", errorOccurrence);
+        Object failedEventBytes = errorOccurrence.getEvent();
+        Object failedEvent = serialiser.deserialise(failedEventBytes);
+        Assert.assertTrue("Should be equals", failedEvent.equals(event));
     }
 
     /**
@@ -138,18 +129,10 @@ public class ErrorReportingServiceDefaultImplTest
     public void test_exclusionService_housekeep()
     {
         final String event = new String("string based event");
-        final byte[] bytes = event.getBytes();
 
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(serialiser).serialise(event);
-                will(returnValue(bytes));
-            }
-        });
-
+        Serialiser serialiser = serialiserFactory.getDefaultSerialiser();
         ErrorReportingService<String,ErrorOccurrence> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
-        String uri = errorReportingService.notify("flowElementName", "string based event", new Exception("test"));
+        String uri = errorReportingService.notify("flowElementName", event, new Exception("test"));
         ErrorOccurrence errorOccurrence = errorReportingService.find(uri);
         Assert.assertNotNull("Should not be null", errorOccurrence);
         errorReportingService.housekeep();

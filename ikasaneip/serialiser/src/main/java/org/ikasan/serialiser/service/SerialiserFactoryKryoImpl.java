@@ -44,6 +44,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.pool.KryoFactory;
 import com.esotericsoftware.kryo.pool.KryoPool;
+
+import org.ikasan.spec.serialiser.Converter;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 
@@ -60,18 +62,25 @@ import java.util.Map;
 public class SerialiserFactoryKryoImpl implements SerialiserFactory
 {
     /** additional registered serializers */
-    Map<Class,Serializer> serializers;
+    private Map<Class,Serializer> serializers;
+    private Map<Class, Converter> converters;
 
     /**
      * Constructor
      * @param serializers
      */
-    public SerialiserFactoryKryoImpl(Map<Class, Serializer> serializers)
+    public SerialiserFactoryKryoImpl(Map<Class, Serializer> serializers,
+    		Map<Class, Converter> converters)
     {
         this.serializers = serializers;
         if(serializers == null)
         {
             throw new IllegalArgumentException("serializers cannot be 'null'");
+        }
+        this.converters = converters;
+        if(converters == null)
+        {
+            throw new IllegalArgumentException("converters cannot be 'null'");
         }
     }
 
@@ -85,7 +94,7 @@ public class SerialiserFactoryKryoImpl implements SerialiserFactory
     @Override
     public Serialiser getDefaultSerialiser()
     {
-        return new GenericKryoToBytesSerialiser(getPool());
+        return new GenericKryoToBytesSerialiser(this.getPool(), this.converters);
     }
 
     @Override

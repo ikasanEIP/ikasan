@@ -67,11 +67,11 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     /** handle to the underlying DAO */
     ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
-    /** allow override of timeToLive */
-    Long timeToLive = ExclusionService.DEFAULT_TIME_TO_LIVE;
-
     /** need a serialiser to serialise the incoming event payload of T */
     Serialiser<Object,byte[]> serialiser;
+
+    /** time to live in the blacklist */
+    long timeToLive = ExclusionService.DEFAULT_TIME_TO_LIVE;
 
     /**
      * Constructor
@@ -119,15 +119,18 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     @Override
     public void park(FlowEvent<String,?> event)
     {
-        BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, event.getIdentifier());
-        ExclusionEvent exclusionEvent = newExclusionEvent(event.getIdentifier(), serialiser.serialise(event.getPayload()), blacklistEvent.getErrorUri());
+        String lifeIdentifier = event.getIdentifier();
+        BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, lifeIdentifier);
+        byte[] bytes = serialiser.serialise(event.getPayload());
+        String uri = blacklistEvent.getErrorUri();
+        ExclusionEvent exclusionEvent = newExclusionEvent(lifeIdentifier, bytes, uri);
         this.exclusionEventDao.save(exclusionEvent);
     }
 
     @Override
     public void addBlacklisted(FlowEvent<String,?> event, String errorUri)
     {
-        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, event.getIdentifier(), errorUri, timeToLive.longValue());
+        BlackListEvent blackListEvent = new BlackListEvent(this.moduleName, this.flowName, event.getIdentifier(), errorUri, this.timeToLive);
         this.blackListDao.insert(blackListEvent);
     }
 
@@ -158,7 +161,7 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
      */
     protected ExclusionEvent newExclusionEvent(String identifier, byte[] eventBytes, String errorUri)
     {
-        return new ExclusionEvent(moduleName, flowName, identifier, eventBytes, errorUri, timeToLive.longValue());
+        return new ExclusionEvent(moduleName, flowName, identifier, eventBytes, errorUri);
 
     }
 }
