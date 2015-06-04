@@ -130,7 +130,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 		
 		logger.info("deserialisedEvent" + deserialisedEvent);
 		
-		resubmissionService.submit(deserialisedEvent);
+//		resubmissionService.submit(deserialisedEvent);
 		
 		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
 				ExclusionEventAction.RESUBMIT);

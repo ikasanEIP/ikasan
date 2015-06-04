@@ -90,7 +90,8 @@ public class ResubmissionApplication
 	@Consumes("application/octet-stream")	
 	public Response resubmit(@Context SecurityContext context, @PathParam("moduleName") String moduleName, @PathParam("flowName") String flowName,
 			@PathParam("errorUri") String errorUri, byte[] event)
-	{		
+	{
+		logger.info("re-submitting event " + errorUri);
 		if(!context.isUserInRole("WebServiceAdminUser"))
 		{
 			return Response.status(Response.Status.FORBIDDEN).type("text/plain")
@@ -107,6 +108,42 @@ public class ResubmissionApplication
 
 			return Response.status(Response.Status.NOT_FOUND).type("text/plain")
 	                .entity("An error has occurred on the server when trying to resubmit the event. " + e.getMessage()).build();
+		}
+		
+		return Response.ok("Event resubmitted!").build();
+	}
+	
+	/**
+	 * TODO: work out how to get annotation security working.
+	 * 
+	 * @param context
+	 * @param moduleName
+	 * @param flowName
+	 * @param event
+	 * @return
+	 */
+	@PUT
+	@Path("/ignore")
+	@Consumes("text/plain")	
+	public Response ignore(@Context SecurityContext context, String errorUri)
+	{
+		logger.info("ignoring event " + errorUri);
+		if(!context.isUserInRole("WebServiceAdminUser"))
+		{
+			return Response.status(Response.Status.FORBIDDEN).type("text/plain")
+	                .entity("You are not authorised to access this resource.").build();
+		}
+		
+		try
+		{
+			this.hospitalService.ignore(errorUri, context.getUserPrincipal());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+
+			return Response.status(Response.Status.NOT_FOUND).type("text/plain")
+	                .entity("An error has occurred on the server when trying to ignore the event. " + e.getMessage()).build();
 		}
 		
 		return Response.ok("Event resubmitted!").build();

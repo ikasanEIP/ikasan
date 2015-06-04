@@ -49,7 +49,7 @@ import java.util.Date;
  */
 public class ExclusionEventAction
 {
-	public static final String RESUBMIT = "re-submit";
+	public static final String RESUBMIT = "re-submitted";
 	public static final String IGNORED = "ignored";
 
 	private Long id;

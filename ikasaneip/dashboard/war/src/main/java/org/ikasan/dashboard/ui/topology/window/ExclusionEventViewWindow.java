@@ -55,6 +55,8 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.ikasan.dashboard.ui.mappingconfiguration.util.MappingConfigurationUISessionValueConstants;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.exclusion.model.ExclusionEvent;
+import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.hospital.service.HospitalManagementService;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -96,16 +98,21 @@ public class ExclusionEventViewWindow extends Window
 	private ExclusionEvent exclusionEvent;
 	private ErrorOccurrence errorOccurrence;
 	private SerialiserFactory serialiserFactory;
+	private ExclusionEventAction action;
+	private HospitalManagementService<ExclusionEventAction> hospitalManagementService;
 
 	/**
 	 * @param policy
 	 */
-	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory)
+	public ExclusionEventViewWindow(ExclusionEvent exclusionEvent, ErrorOccurrence errorOccurrence, SerialiserFactory serialiserFactory, ExclusionEventAction action,
+			HospitalManagementService<ExclusionEventAction> hospitalManagementService)
 	{
 		super();
 		this.exclusionEvent = exclusionEvent;
 		this.errorOccurrence = errorOccurrence;
 		this.serialiserFactory = serialiserFactory;
+		this.action = action;
+		this.hospitalManagementService = hospitalManagementService;
 		
 		this.init();
 	}
@@ -121,22 +128,22 @@ public class ExclusionEventViewWindow extends Window
 		layout.setSizeFull();
 		layout.setMargin(true);
 		
-		layout.addComponent( createWiretapDetailsPanel());
+		layout.addComponent( createExclusionEventDetailsPanel());
 			
 		this.setContent(layout);
 	}
 
-	protected Panel createWiretapDetailsPanel()
+	protected Panel createExclusionEventDetailsPanel()
 	{
 		Panel exclusionEventDetailsPanel = new Panel("Exclusion Event");
 		exclusionEventDetailsPanel.setSizeFull();
 		exclusionEventDetailsPanel.setStyleName("dashboard");
 		
-		GridLayout layout = new GridLayout(2, 6);
+		GridLayout layout = new GridLayout(4, 6);
 		layout.setSizeFull();
 		layout.setMargin(true);
-		layout.setColumnExpandRatio(0, 0.3f);
-		layout.setColumnExpandRatio(1, 0.7f);
+//		layout.setColumnExpandRatio(0, 0.3f);
+//		layout.setColumnExpandRatio(1, 0.7f);
 		layout.addComponent(new Label("Module Name"), 0, 0);
 		
 		TextField tf1 = new TextField();
@@ -177,7 +184,42 @@ public class ExclusionEventViewWindow extends Window
 		tf5.setWidth("80%");
 		layout.addComponent(tf5, 1, 4);
 		
-		Button resubmitButton = new Button("Re-submit");
+		layout.addComponent(new Label("Action"), 2, 0);
+		
+		final TextField tf6 = new TextField();
+		if(this.action != null)
+		{
+			tf6.setValue(action.getAction());
+		}
+		tf6.setReadOnly(true);
+		tf6.setWidth("80%");
+		layout.addComponent(tf6, 3, 0);
+		
+		layout.addComponent(new Label("Actioned By"), 2, 1);
+		
+		final TextField tf7 = new TextField();
+		if(this.action != null)
+		{
+			tf7.setValue(action.getActionedBy());
+		}
+		tf7.setReadOnly(true);
+		tf7.setWidth("80%");
+		layout.addComponent(tf7, 3, 1);
+		
+		layout.addComponent(new Label("Actioned Time"), 2, 2);
+		
+		final TextField tf8 = new TextField();
+		if(this.action != null)
+		{   	    
+			tf8.setValue(action.getTimestamp().toString());
+		}
+		tf8.setReadOnly(true);
+		tf8.setWidth("80%");
+		layout.addComponent(tf8, 3, 2);
+		
+		final Button resubmitButton = new Button("Re-submit");
+		final Button ignoreButton = new Button("Ignore");
+		
 		resubmitButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
@@ -201,13 +243,16 @@ public class ExclusionEventViewWindow extends Window
         		logger.info("Event " + testPayload.length);
         		logger.info("Event " + new String(testPayload));
         		
+        		String url = "http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/resubmit/"
+        	    		+ "Sample Scheduled Module" 
+        	    		+ "/"
+        	    		+ "Demo Scheduled Flow"
+        	    		+ "/"
+        	    		+ exclusionEvent.getErrorUri();
         		
-        	    WebTarget webTarget = client.target("http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/resubmit/"
-        	    		+ exclusionEvent.getModuleName() 
-        	    		+ "/"
-        	    		+ exclusionEvent.getFlowName()
-        	    		+ "/"
-        	    		+ exclusionEvent.getErrorUri());
+        		logger.info("Url: " + url);
+        		
+        	    WebTarget webTarget = client.target(url);
         	    Response response = webTarget.request().put(Entity.entity(testPayload, MediaType.APPLICATION_OCTET_STREAM));
         	    
         	    if(response.getStatus()  != 200)
@@ -221,16 +266,70 @@ public class ExclusionEventViewWindow extends Window
         	    else
         	    {
         	    	Notification.show("Event resumitted successfully.");
+        	    	resubmitButton.setVisible(false);
+        	    	ignoreButton.setVisible(false);
+        	    	
+        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+        	    	tf6.setReadOnly(false);
+        			tf7.setReadOnly(false);
+        			tf8.setReadOnly(false);
+        	    	tf6.setValue(action.getAction());
+        			tf7.setValue(action.getActionedBy());
+        			tf8.setValue(action.getTimestamp().toString());
+        			tf6.setReadOnly(true);
+        			tf7.setReadOnly(true);
+        			tf8.setReadOnly(true);
         	    }
             }
         });
 		
-		Button ignoreButton = new Button("Ignore");
 		ignoreButton.addClickListener(new Button.ClickListener() 
     	{
             @SuppressWarnings("unchecked")
 			public void buttonClick(ClickEvent event) 
             {
+            	IkasanAuthentication authentication = (IkasanAuthentication)VaadinService.getCurrentRequest().getWrappedSession()
+        	        	.getAttribute(MappingConfigurationUISessionValueConstants.USER);
+            	
+            	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(authentication.getName(), (String)authentication.getCredentials());
+            	
+            	ClientConfig clientConfig = new ClientConfig();
+            	clientConfig.register(feature) ;
+            	
+            	Client client = ClientBuilder.newClient(clientConfig);
+            	
+            	String url = "http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/ignore/";
+        		
+        		logger.info("Url: " + url);
+        		
+        	    WebTarget webTarget = client.target(url);
+        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getErrorUri(), MediaType.TEXT_PLAIN));
+        	    
+        	    if(response.getStatus()  != 200)
+        	    {
+        	    	response.bufferEntity();
+        	        
+        	        String responseMessage = response.readEntity(String.class);
+        	    	Notification.show("An error was received trying to resubmit event: " 
+        	    			+ responseMessage, Type.ERROR_MESSAGE);
+        	    }
+        	    else
+        	    {
+        	    	Notification.show("Event ignored successfully.");
+        	    	resubmitButton.setVisible(false);
+        	    	ignoreButton.setVisible(false);
+        	    	
+        	    	ExclusionEventAction action = hospitalManagementService.getExclusionEventActionByErrorUri(exclusionEvent.getErrorUri());
+        	    	tf6.setReadOnly(false);
+        			tf7.setReadOnly(false);
+        			tf8.setReadOnly(false);
+        	    	tf6.setValue(action.getAction());
+        			tf7.setValue(action.getActionedBy());
+        			tf8.setValue(action.getTimestamp().toString());
+        			tf6.setReadOnly(true);
+        			tf7.setReadOnly(true);
+        			tf8.setReadOnly(true);
+        	    }
             }
         });
 		
@@ -240,7 +339,11 @@ public class ExclusionEventViewWindow extends Window
 		buttonLayout.setMargin(true);
 		buttonLayout.addComponent(resubmitButton);
 		buttonLayout.addComponent(ignoreButton);
-		layout.addComponent(buttonLayout, 0, 5, 1, 5);
+		
+		if(this.action == null)
+		{
+			layout.addComponent(buttonLayout, 0, 5, 1, 5);
+		}
 		
 		GridLayout wrapperLayout = new GridLayout(1, 4);
 		wrapperLayout.setMargin(true);
@@ -272,10 +375,10 @@ public class ExclusionEventViewWindow extends Window
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		Label seperator = new Label("<hr />",ContentMode.HTML);
 		wrapperLayout.addComponent(seperator, 0, 1);
-//		wrapperLayout.addComponent(eventEditor, 0, 2);
-//		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
-//		wrapperLayout.addComponent(editor, 0, 3);
-//		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
+		wrapperLayout.addComponent(eventEditor, 0, 2);
+		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
+		wrapperLayout.addComponent(editor, 0, 3);
+		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 
 		exclusionEventDetailsPanel.setContent(wrapperLayout);
 		return exclusionEventDetailsPanel;

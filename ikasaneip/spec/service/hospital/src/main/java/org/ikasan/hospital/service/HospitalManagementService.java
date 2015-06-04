@@ -38,39 +38,20 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.hospital.dao;
+package org.ikasan.hospital.service;
 
-import javax.annotation.Resource;
-
-import org.ikasan.hospital.model.ExclusionEventAction;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-@SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hospital-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
-})
-public class HibernateHospitalDaoTest
+public interface HospitalManagementService<ACTION>
 {
-
-	@Resource HospitalDao hospitalDao;
-	
-	@Test
-	public void testSaveExclusionEvent_success()
-	{
-		ExclusionEventAction action = new ExclusionEventAction("errorUri", "actionedBy", "state");
-		
-		this.hospitalDao.saveOrUpdate(action);
-	}
+	/**
+	 * A method to return an ACTION based on the event uri.
+	 * @param errorUri
+	 * @return
+	 */
+	public ACTION getExclusionEventActionByErrorUri(String errorUri);
 }
