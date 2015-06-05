@@ -1059,7 +1059,7 @@
 					ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     EventLifeIdentifier VARCHAR(255) NOT NULL,
-                    Event BINARY NULL,
+                    Event IMAGE NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL
 					)
@@ -1081,7 +1081,7 @@
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
-                    Event BINARY NULL,
+                    Event IMAGE NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL,
                     Expiry NUMERIC NOT NULL
                     )
