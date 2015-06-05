@@ -119,11 +119,11 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     @Override
     public void park(FlowEvent<String,?> event)
     {
-        String lifeIdentifier = event.getIdentifier();
-        BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, lifeIdentifier);
+        String identifier = event.getIdentifier();
+        BlackListEvent blacklistEvent = this.blackListDao.find(this.moduleName, this.flowName, identifier);
         byte[] bytes = serialiser.serialise(event.getPayload());
         String uri = blacklistEvent.getErrorUri();
-        ExclusionEvent exclusionEvent = newExclusionEvent(lifeIdentifier, bytes, uri);
+        ExclusionEvent exclusionEvent = newExclusionEvent(identifier, bytes, uri);
         this.exclusionEventDao.save(exclusionEvent);
     }
 

@@ -59,7 +59,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
         implements ExclusionEventDao<String,ExclusionEvent>
 {
     /** batch delete statement */
-    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.eventLifeIdentifier = :eventLifeIdentifier";
+    private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
 
 
     @Override
@@ -69,7 +69,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
     @Override
-    public void delete(final String moduleName, final String flowName, final String eventLifeIdentifier)
+    public void delete(final String moduleName, final String flowName, final String identifier)
     {
         getHibernateTemplate().execute(new HibernateCallback()
         {
@@ -79,7 +79,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 Query query = session.createQuery(DELETE_QUERY);
                 query.setParameter("moduleName", moduleName);
                 query.setParameter("flowName", flowName);
-                query.setParameter("eventLifeIdentifier", eventLifeIdentifier);
+                query.setParameter("identifier", identifier);
                 query.executeUpdate();
                 return null;
         }
@@ -87,12 +87,12 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
     }
 
     @Override
-    public ExclusionEvent find(String moduleName, String flowName, String eventLifeIdentifier)
+    public ExclusionEvent find(String moduleName, String flowName, String identifier)
     {
         DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
         criteria.add(Restrictions.eq("moduleName", moduleName));
         criteria.add(Restrictions.eq("flowName", flowName));
-        criteria.add(Restrictions.eq("eventLifeIdentifier", eventLifeIdentifier));
+        criteria.add(Restrictions.eq("identifier", identifier));
 
         List<ExclusionEvent> results = (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
         if(results == null || results.size() == 0)
