@@ -361,7 +361,8 @@ public class ExclusionEventViewWindow extends Window
 		AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
 		logger.info("Setting exclusion event to: " + new String(this.exclusionEvent.getEvent()));
-		eventEditor.setValue(new String(this.exclusionEvent.getEvent()));
+		Object event = this.serialiserFactory.getDefaultSerialiser().deserialise(this.exclusionEvent.getEvent());
+		eventEditor.setValue(event.toString());
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);

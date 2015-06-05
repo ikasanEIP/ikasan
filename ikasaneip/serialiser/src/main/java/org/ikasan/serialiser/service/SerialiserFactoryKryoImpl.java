@@ -66,6 +66,14 @@ public class SerialiserFactoryKryoImpl implements SerialiserFactory
     private Map<Class, Converter> converters;
 
     /**
+     * Default constructor
+     */
+    public SerialiserFactoryKryoImpl()
+    {
+    	
+    }
+
+    /**
      * Constructor
      * @param serializers
      */
@@ -82,13 +90,6 @@ public class SerialiserFactoryKryoImpl implements SerialiserFactory
         {
             throw new IllegalArgumentException("converters cannot be 'null'");
         }
-    }
-
-    /**
-     * Constructor
-     */
-    public SerialiserFactoryKryoImpl()
-    {
     }
 
     @Override
