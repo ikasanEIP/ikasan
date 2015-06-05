@@ -57,7 +57,7 @@
             </bean>
         </property>
         <property name="configuration" ref="sftpConsumerConfiguration"/>
-        <property name="configuredResourceId" value="ftpToLogFlow-ftpConsumerConfiguration"/>
+        <property name="configuredResourceId" value="sftpToLogFlow-ftpConsumerConfiguration"/>
     </bean>
 
     <bean id="sftpConsumerConfiguration" class="org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration">
