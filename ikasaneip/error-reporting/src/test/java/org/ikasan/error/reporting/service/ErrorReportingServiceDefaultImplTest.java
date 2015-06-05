@@ -71,7 +71,8 @@ import javax.annotation.Resource;
 
 public class ErrorReportingServiceDefaultImplTest
 {
-    SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
+    @Resource
+    SerialiserFactory serialiserFactory;
 
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;

@@ -156,7 +156,12 @@ public class ErrorOccurrenceViewWindow extends Window
 		
 		AceEditor eventEditor = new AceEditor();
 		eventEditor.setCaption("Event Payload");
-		eventEditor.setValue(new String((byte[])this.errorOccurrence.getEvent()));
+		
+		if(this.errorOccurrence.getEvent() != null)
+		{
+			eventEditor.setValue(new String((byte[])this.errorOccurrence.getEvent()));
+		}
+		
 		eventEditor.setReadOnly(true);
 		eventEditor.setMode(AceMode.java);
 		eventEditor.setTheme(AceTheme.eclipse);

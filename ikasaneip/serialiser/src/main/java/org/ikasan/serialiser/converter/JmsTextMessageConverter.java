@@ -38,36 +38,35 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.serialiser.service.converter;
+package org.ikasan.serialiser.converter;
 
 import java.util.Enumeration;
 
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import javax.jms.TextMessage;
 
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
+import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessageDefaultImpl>
-{
-    
-    public JmsMapMessageDefaultImpl convert(MapMessage message)
+public class JmsTextMessageConverter implements Converter<TextMessage, JmsTextMessageDefaultImpl>
+{   
+    public JmsTextMessageDefaultImpl convert(TextMessage message)
     {
-    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
+    	JmsTextMessageDefaultImpl jmsTextMessageDefault = new JmsTextMessageDefaultImpl();
     	
     	try
-    	{
-	    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-	    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-	    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-	    	jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
-	    	jmsMapMessageDefault.setJMSExpiration(jmsMapMessageDefault.getJMSExpiration());
-	    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
-	    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
-	    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-	    	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-	    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-	    	jmsMapMessageDefault.setJMSType(jmsMapMessageDefault.getJMSType());
+    	{	    	
+	    	jmsTextMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
+	    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
+	    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
+	    	jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
+	    	jmsTextMessageDefault.setJMSExpiration(jmsTextMessageDefault.getJMSExpiration());
+	    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
+	    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
+	    	jmsTextMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
+	    	jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+	    	jmsTextMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
+	    	jmsTextMessageDefault.setJMSType(jmsTextMessageDefault.getJMSType());
 	    	    	
 	    	Enumeration<String> names  = message.getPropertyNames();
 	    	
@@ -75,23 +74,16 @@ public class JmsMapMessageConverter implements Converter<MapMessage, JmsMapMessa
 	    	{
 	    		String name = names.nextElement();
 	
-	    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+	    		jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
 	    	}
 	    	
-	    	names  = message.getMapNames();
-	    	
-	    	while(names.hasMoreElements())
-	    	{
-	    		String name = names.nextElement();
-	
-	    		jmsMapMessageDefault.setObject(name, message.getObject(name));
-	    	}
+	    	jmsTextMessageDefault.setText(message.getText());
     	}
     	catch (JMSException e)
     	{
     		throw new RuntimeException(e);
     	}
     	
-    	return jmsMapMessageDefault;
+    	return jmsTextMessageDefault;
     }
 }

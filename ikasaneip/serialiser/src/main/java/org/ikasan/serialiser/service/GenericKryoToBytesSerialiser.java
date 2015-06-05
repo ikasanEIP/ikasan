@@ -77,10 +77,6 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
             throw new IllegalArgumentException("pool cannot be 'null'");
         }
         this.converters = converters;
-        if(converters == null)
-        {
-            throw new IllegalArgumentException("converters cannot be 'null'");
-        }
     }
 
     /**
@@ -142,6 +138,11 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
     
     private Converter getConverter(Class cls)
     {
+    	if(this.converters == null)
+    	{
+    		return null;
+    	}
+
     	Converter converter = this.converters.get(cls);
     	
     	if(converter == null)

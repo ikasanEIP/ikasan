@@ -40,21 +40,25 @@
  */
 package org.ikasan.serialiser.service;
 
+import java.io.File;
 import java.util.HashMap;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.TextMessage;
 
+import org.ikasan.serialiser.converter.JmsMapMessageConverter;
+import org.ikasan.serialiser.converter.JmsTextMessageConverter;
+import org.ikasan.serialiser.converter.JobExecutionContextConverter;
 import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
 import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
-import org.ikasan.serialiser.service.converter.JmsMapMessageConverter;
-import org.ikasan.serialiser.service.converter.JmsTextMessageConverter;
+import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.quartz.impl.JobExecutionContextImpl;
 
 import com.esotericsoftware.kryo.Serializer;
 
@@ -204,5 +208,96 @@ public class GenericKryoToBytesSerialiserTest
         // deserialise it
         JmsMapMessageDefaultImpl restored = serialiser.deserialise(bytes);
         Assert.assertTrue(restored.equals(message));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_jobContextMessage_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	converters.put(JobExecutionContextImpl.class, new JobExecutionContextConverter());
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+    	JobExecutionContextDefaultImpl message = new JobExecutionContextDefaultImpl();
+        
+
+        // get a serialiser
+        Serialiser<JobExecutionContextDefaultImpl,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(message);
+
+        // deserialise it
+        JobExecutionContextDefaultImpl restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(message));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_file_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+    	File file = new File(".");
+        
+
+        // get a serialiser
+        Serialiser<File,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(file);
+
+        // deserialise it
+        File restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(file));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_hashmap_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+    	HashMap<String, Object> hashMap = new HashMap<String, Object>();
+    	hashMap.put("string 1", new Integer(1));
+    	hashMap.put("string 2", new Long(1));
+    	hashMap.put("string 3", new String("1"));
+    	hashMap.put("string 4", new Integer(1));
+    	hashMap.put("string 5", new Character('1'));
+
+        // get a serialiser
+        Serialiser<HashMap<String, Object>,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(hashMap);
+
+        // deserialise it
+        HashMap<String, Object> restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(hashMap));
     }
 }
