@@ -1,8 +1,8 @@
 <!--
 # //
 # //
-# // $Id: pom.xml 43331 2015-02-12 17:55:42Z stewmi $
-# // $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/pom.xml $
+# //$Id$
+# //$URL$
 # //
 # // ====================================================================
 # // Ikasan Enterprise Integration Platform
@@ -137,12 +137,6 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- CGLib, used for testing assitance to jmock -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Objenesis, used for testing assitance to jmock -->
