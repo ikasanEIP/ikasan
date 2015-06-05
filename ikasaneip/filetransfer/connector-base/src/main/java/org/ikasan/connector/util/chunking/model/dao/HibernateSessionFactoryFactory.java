@@ -1,6 +1,6 @@
 /*
- * $Id: HibernateSessionFactoryFactory.java 38543 2014-08-15 11:20:04Z majean $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/src/main/java/org/ikasan/connector/util/chunking/model/dao/HibernateSessionFactoryFactory.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
