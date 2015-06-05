@@ -55,6 +55,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.Session;
 import org.ikasan.connector.base.command.state.State;
+import org.ikasan.connector.util.HexConverter;
 
 /**
  * Hibernate Implementation of the <Code>TransactionalResourceCommandDAO</code>
@@ -211,8 +212,10 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         {
             session = startSession();
             Query query = session.createQuery(FIND_XID_BY_XID);
-            query.setParameter(GLOBAL_TRANSACTION_ID_PARAMETER, new String(xid.getGlobalTransactionId()));
-            query.setParameter(BRANCH_TRANSACTION_ID_PARAMETER, new String(xid.getBranchQualifier()));
+            String globalTransactionId = HexConverter.byteArrayToHex(xid.getGlobalTransactionId());
+            String branchQualifier = HexConverter.byteArrayToHex(xid.getBranchQualifier());
+            query.setParameter(GLOBAL_TRANSACTION_ID_PARAMETER,globalTransactionId);
+            query.setParameter(BRANCH_TRANSACTION_ID_PARAMETER, branchQualifier);
             List<XidImpl> xids = query.list();
             if (xids.size() > 1)
             {

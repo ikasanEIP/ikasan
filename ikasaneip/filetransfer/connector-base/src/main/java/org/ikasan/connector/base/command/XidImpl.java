@@ -40,6 +40,8 @@
  */
 package org.ikasan.connector.base.command;
 
+import org.ikasan.connector.util.HexConverter;
+
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -136,7 +138,7 @@ public class XidImpl implements Xid
      */
     protected String getBranchQualifierString()
     {
-        return new String(branchQualifier);
+        return HexConverter.byteArrayToHex(branchQualifier);
     }
     
     public int getFormatId()
@@ -155,9 +157,9 @@ public class XidImpl implements Xid
      */
     protected String getGlobalTransactionIdString()
     {
-        return new String(globalTransactionId);
+        return HexConverter.byteArrayToHex(globalTransactionId);
     }
-    
+
     /**
      * Setter method - required by Hibernate
      * 
@@ -165,7 +167,7 @@ public class XidImpl implements Xid
      */
     protected void setBranchQualifierString(String branchQualifierAsString)
     {
-        this.branchQualifier = branchQualifierAsString.getBytes();
+                this.branchQualifier = HexConverter.hexStringToByteArray(branchQualifierAsString);
     }
 
     /**
@@ -175,7 +177,7 @@ public class XidImpl implements Xid
      */
     protected void setGlobalTransactionIdString(String globalTransactionIdAsString)
     {
-        this.globalTransactionId = globalTransactionIdAsString.getBytes();
+            this.globalTransactionId = HexConverter.hexStringToByteArray(globalTransactionIdAsString);
     }
 
     /**
@@ -245,8 +247,8 @@ public class XidImpl implements Xid
     public String toString()
     {
     	StringBuffer sb = new StringBuffer("XidImpl [");
-    	sb.append("formattedGlobalTransactionId");sb.append( this.getFormattedGlobalTransactionId());sb.append(",");
-    	sb.append("formattedBranchQualifier");sb.append(  this.getFormattedBranchQualifier());sb.append(",");
+    	sb.append("formattedGlobalTransactionId");sb.append( this.getGlobalTransactionIdString());sb.append(",");
+    	sb.append("formattedBranchQualifier");sb.append(  this.getBranchQualifierString());sb.append(",");
     	sb.append("commands");sb.append(this.commands);sb.append(",");
     	
         sb.append("formatId");sb.append( this.formatId);sb.append(",");
