@@ -1,6 +1,6 @@
 /*
- * $Id: TransactionalCommandConnection.java 43504 2015-02-19 13:49:17Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/src/main/java/org/ikasan/connector/base/command/TransactionalCommandConnection.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform

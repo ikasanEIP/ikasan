@@ -1,6 +1,6 @@
 /*
- * $Id: DeliverBatchCommand.java 43331 2015-02-12 17:55:42Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/main/java/org/ikasan/connector/basefiletransfer/outbound/command/DeliverBatchCommand.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
