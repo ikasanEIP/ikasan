@@ -1,6 +1,6 @@
 /*
- * $Id: CleanupChunksCommandTest.java 43183 2015-02-06 11:15:54Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-basefiletransfer/src/test/java/org/ikasan/connector/basefiletransfer/outbound/command/CleanupChunksCommandTest.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform

@@ -1,6 +1,6 @@
 /*
- * $Id: TransactionJournalImpl.java 43451 2015-02-17 17:41:41Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/src/main/java/org/ikasan/connector/base/journal/TransactionJournalImpl.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform

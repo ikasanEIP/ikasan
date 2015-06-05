@@ -53,8 +53,8 @@ CREATE TABLE FTXid
 (
     Id              numeric(18,0) IDENTITY,
     State           varchar(255)  NOT NULL,
-    GlobalTransactionId      unichar(255)  NOT NULL,
-    BranchQualifier          unichar (255)  NOT NULL,
+    GlobalTransactionId      varchar(255)  NOT NULL,
+    BranchQualifier          varchar (255)  NOT NULL,
     FormatId          numeric(18,0)  NOT NULL,
     ClientId           varchar(255)  NOT NULL,
     CreatedDateTime  numeric(18,0) NOT NULL,

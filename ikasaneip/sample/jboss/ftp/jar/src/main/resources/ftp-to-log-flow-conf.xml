@@ -89,6 +89,6 @@
         <property name="configuration" ref="ftpConsumerConfiguration"/>
     </bean>
 
-    <bean id="payloadToStringConverter" class="org.ikasan.sample.ftp.component.converter.PayloadToStringConverter"/>
+    <bean id="payloadToStringConverter" class="org.ikasan.sample.sftp.component.converter.PayloadToStringConverter"/>
 
 </beans>

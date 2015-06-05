@@ -22,21 +22,6 @@
             <artifactId>ikasan-eip</artifactId>
         </dependency>
 
-        <!-- Optional component implementing default multi-recipient router behaviour -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-component-multiRecipient-router</artifactId>
-            <version>${pom.version}</version>
-        </dependency>
-
-        <!-- Optional component implementing default splitter behaviour -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-component-splitter</artifactId>
-            <version>${pom.version}</version>
-
-        </dependency>
-
         <!-- Default builder uses Spring builder -->
         <dependency>
             <groupId>org.ikasan</groupId>

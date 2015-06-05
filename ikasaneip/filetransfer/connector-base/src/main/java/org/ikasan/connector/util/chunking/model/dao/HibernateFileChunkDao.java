@@ -1,6 +1,6 @@
 /*
- * $Id: HibernateFileChunkDao.java 39679 2014-10-03 12:32:47Z elliga $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/src/main/java/org/ikasan/connector/util/chunking/model/dao/HibernateFileChunkDao.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform
