@@ -40,8 +40,6 @@
  */
 package org.ikasan.exclusion.model;
 
-import org.ikasan.spec.exclusion.ExclusionService;
-
 import java.util.Arrays;
 
 /**
@@ -61,7 +59,7 @@ public class ExclusionEvent
     String flowName;
 
     /** identifier for this event */
-    String eventLifeIdentifier;
+    String identifier;
 
     /** original form of the event being excluded */
     byte[] event;
@@ -76,11 +74,11 @@ public class ExclusionEvent
      * Constructor
      * @param moduleName
      * @param flowName
-     * @param eventLifeIdentifier
+     * @param identifier
      * @param event
      * @param errorUri
      */
-    public ExclusionEvent(String moduleName, String flowName, String eventLifeIdentifier, byte[] event, String errorUri)
+    public ExclusionEvent(String moduleName, String flowName, String identifier, byte[] event, String errorUri)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -93,10 +91,10 @@ public class ExclusionEvent
         {
             throw new IllegalArgumentException("flowName cannot be 'null'");
         }
-        this.eventLifeIdentifier = eventLifeIdentifier;
-        if(eventLifeIdentifier == null)
+        this.identifier = identifier;
+        if(identifier == null)
         {
-            throw new IllegalArgumentException("eventLifeIdentifier cannot be 'null'");
+            throw new IllegalArgumentException("identifier cannot be 'null'");
         }
         this.event = event;
         if(event == null)
@@ -137,12 +135,12 @@ public class ExclusionEvent
         this.flowName = flowName;
     }
 
-    public String getEventLifeIdentifier() {
-        return eventLifeIdentifier;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    protected void setEventLifeIdentifier(String eventLifeIdentifier) {
-        this.eventLifeIdentifier = eventLifeIdentifier;
+    protected void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public byte[] getEvent() {
@@ -178,7 +176,7 @@ public class ExclusionEvent
 
         if (id != that.id) return false;
         if (!flowName.equals(that.flowName)) return false;
-        if (!eventLifeIdentifier.equals(that.eventLifeIdentifier)) return false;
+        if (!identifier.equals(that.identifier)) return false;
         if (!moduleName.equals(that.moduleName)) return false;
 
         return true;
@@ -188,7 +186,7 @@ public class ExclusionEvent
     public int hashCode() {
         int result = moduleName.hashCode();
         result = 31 * result + flowName.hashCode();
-        result = 31 * result + eventLifeIdentifier.hashCode();
+        result = 31 * result + identifier.hashCode();
         return result;
     }
 
@@ -198,7 +196,7 @@ public class ExclusionEvent
                 "id='" + id + '\'' +
                 ", moduleName='" + moduleName + '\'' +
                 ", flowName='" + flowName + '\'' +
-                ", eventLifeIdentifier='" + eventLifeIdentifier + '\'' +
+                ", identifier='" + identifier + '\'' +
                 ", event=" + Arrays.toString(event) +
                 ", timestamp=" + timestamp +
                 ", errorUri='" + errorUri + '\'' +

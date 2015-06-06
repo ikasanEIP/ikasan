@@ -66,9 +66,9 @@
                   column="FlowName"
                   not-null="true" />
 
-        <property name="eventLifeIdentifier"
+        <property name="identifier"
                   type="java.lang.String"
-                  column="EventLifeIdentifier"
+                  column="Identifier"
                   not-null="true" />
 
         <property name="event"
