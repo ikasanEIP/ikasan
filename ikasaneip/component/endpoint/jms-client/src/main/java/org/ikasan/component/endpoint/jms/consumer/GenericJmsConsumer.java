@@ -78,7 +78,7 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>,EventFactory>,
         ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message,Throwable>,
-        ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<byte[]>
+        ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
@@ -430,14 +430,15 @@ public class GenericJmsConsumer
         return new InitialContext(env);
     }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
 	 */
 	@Override
-	public void submit(byte[] event)
+	public void submit(Message event)
 	{
-		// TODO Auto-generated method stub
-		
+		logger.info("attempting to submit event: " + event);
+
+		this.onMessage(event);
 	}
 
 }

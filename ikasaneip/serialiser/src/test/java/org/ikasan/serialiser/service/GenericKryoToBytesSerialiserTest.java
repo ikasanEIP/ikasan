@@ -40,7 +40,8 @@
  */
 package org.ikasan.serialiser.service;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.jms.JMSException;
@@ -244,35 +245,6 @@ public class GenericKryoToBytesSerialiserTest
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_file_successful() throws JMSException
-    {
-    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
-    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
-    	converters.put(TextMessage.class, new JmsTextMessageConverter());
-    	converters.put(MapMessage.class, new JmsMapMessageConverter());
-
-    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
-    	
-        // object for serialise/deserialise test
-    	File file = new File(".");
-        
-
-        // get a serialiser
-        Serialiser<File,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
-
-        // serialise it
-        byte[] bytes = serialiser.serialise(file);
-
-        // deserialise it
-        File restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(file));
-    }
-    
-    /**
-     * Test
-     * @throws JMSException 
-     */
-    @Test
     public void test_getSerialiser_for_hashmap_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
@@ -299,5 +271,78 @@ public class GenericKryoToBytesSerialiserTest
         // deserialise it
         HashMap<String, Object> restored = serialiser.deserialise(bytes);
         Assert.assertTrue(restored.equals(hashMap));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_arraylist_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+    	ArrayList<Object> arrayList = new ArrayList<Object>();
+    	arrayList.add(new Integer(1));
+    	arrayList.add(new Long(1));
+    	arrayList.add(new String("1"));
+    	arrayList.add(new Integer(1));
+    	arrayList.add(new Character('1'));
+    	arrayList.add(new Date());
+
+        // get a serialiser
+        Serialiser<ArrayList<Object>,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(arrayList);
+
+        // deserialise it
+        ArrayList<Object> restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored.equals(arrayList));
+    }
+    
+    /**
+     * Test
+     * @throws JMSException 
+     */
+    @Test
+    public void test_getSerialiser_for_array_successful() throws JMSException
+    {
+    	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
+    	converters.put(TextMessage.class, new JmsTextMessageConverter());
+    	converters.put(MapMessage.class, new JmsMapMessageConverter());
+
+    	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
+    	
+        // object for serialise/deserialise test
+    	Object[] array = new Object[6];
+    	array[0] = new Integer(1);
+    	array[1] = (new Long(1));
+    	array[2] = (new String("1"));
+    	array[3] = (new Integer(1));
+    	array[4] = (new Character('1'));
+    	array[5] = (new Date());
+
+        // get a serialiser
+        Serialiser<Object[] ,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
+
+        // serialise it
+        byte[] bytes = serialiser.serialise(array);
+
+        // deserialise it
+        Object[] restored = serialiser.deserialise(bytes);
+        Assert.assertTrue(restored[0].equals(array[0]));
+        Assert.assertTrue(restored[1].equals(array[1]));
+        Assert.assertTrue(restored[2].equals(array[2]));
+        Assert.assertTrue(restored[3].equals(array[3]));
+        Assert.assertTrue(restored[4].equals(array[4]));
+        Assert.assertTrue(restored[5].equals(array[5]));
     }
 }
