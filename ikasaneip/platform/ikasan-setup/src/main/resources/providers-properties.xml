@@ -126,7 +126,7 @@
                     Id NUMERIC IDENTITY NOT NULL,
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
-                    EventLifeIdentifier VARCHAR(255) NOT NULL,
+                    Identifier VARCHAR(255) NOT NULL,
                     Event BINARY NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL
@@ -136,7 +136,7 @@
 
 					CREATE UNIQUE INDEX
 					IkasanExclusionEvent01u ON
-					ExclusionEvent(Id,ModuleName,FlowName,EventLifeIdentifier)
+					ExclusionEvent(Id,ModuleName,FlowName,Identifier)
 				</prop>
 
                 <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
@@ -1058,7 +1058,7 @@
                     Id NUMERIC IDENTITY NOT NULL,
 					ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
-                    EventLifeIdentifier VARCHAR(255) NOT NULL,
+                    Identifier VARCHAR(255) NOT NULL,
                     Event IMAGE NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL
@@ -1068,7 +1068,7 @@
 
 					CREATE UNIQUE INDEX
 					IkasanExclusionEvent01u ON
-					ExclusionEvent(Id,ModuleName,FlowName,EventLifeIdentifier)
+					ExclusionEvent(Id,ModuleName,FlowName,Identifier)
 				</prop>
 
                 <prop key="create.errorOccurrence">CREATE TABLE ErrorOccurrence
@@ -2036,7 +2036,7 @@
                     [Id]                    [numeric](18)  IDENTITY NOT NULL,
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
-                    [EventLifeIdentifier]   [varchar](255) NOT NULL,
+                    [Identifier]   			[varchar](255) NOT NULL,
                     [Event]                 [binary] NULL,
                     [ErrorUri]              [varchar](255) NOT NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
@@ -3142,14 +3142,14 @@
                     Id IDENTITY NOT NULL PRIMARY KEY,
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
-                    EventLifeIdentifier VARCHAR(255) NOT NULL,
+                    Identifier VARCHAR(255) NOT NULL,
                     Event BINARY NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL
 					);
 
 					CREATE UNIQUE INDEX IkasanExclusionEvent01u ON
-					ExclusionEvent(Id,ModuleName,FlowName,EventLifeIdentifier)
+					ExclusionEvent(Id,ModuleName,FlowName,Identifier)
 				</prop>
 
 				<prop key="create.users">CREATE TABLE Users
