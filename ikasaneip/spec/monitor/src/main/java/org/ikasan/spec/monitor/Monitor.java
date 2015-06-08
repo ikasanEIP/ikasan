@@ -53,41 +53,46 @@ public interface Monitor<NOTIFICATION>
      * Invoke the monitor with the given notification
      * @param notification
      */
-    public void invoke(NOTIFICATION notification);
+    void invoke(NOTIFICATION notification);
 
     /**
      * Set the name of this monitor
      * @param monitorName
      */
-    public void setName(String monitorName);
+    void setName(String monitorName);
 
     /**
      * Get the name of this monitor
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Set the runtime environment name this monitor is associated with
      * @param environmentName
      */
-    public void setEnvironment(String environmentName);
+    void setEnvironment(String environmentName);
 
     /**
      * Get the runtime environment name this monitor is associated with
      * @return
      */
-    public String getEnvironment();
+    String getEnvironment();
 
     /**
      * Set the notifiers to which the monitor brokers notifications
      * @param notifiers
      */
-    public void setNotifiers(List<Notifier> notifiers);
+    void setNotifiers(List<Notifier> notifiers);
 
     /**
      * Get the notifiers registered with this monitor
      * @return
      */
-    public List<Notifier> getNotifiers();
+    List<Notifier> getNotifiers();
+
+    /**
+     * Destroys the monitor internal, rendering this Monitor defunct.
+     */
+    void destroy();
 }

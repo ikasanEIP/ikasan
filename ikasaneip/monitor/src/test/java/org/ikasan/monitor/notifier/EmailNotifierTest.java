@@ -40,11 +40,11 @@
  */
 package org.ikasan.monitor.notifier;
 
-import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Notifier;
+import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
