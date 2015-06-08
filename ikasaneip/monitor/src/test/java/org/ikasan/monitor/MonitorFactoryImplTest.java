@@ -43,6 +43,9 @@ package org.ikasan.monitor;
 import org.ikasan.spec.monitor.Monitor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -60,10 +63,17 @@ import javax.annotation.Resource;
         "/monitor-factory.xml"
 })
 
+@DirtiesContext
 public class MonitorFactoryImplTest
 {
     @Resource
     Monitor monitor;
+
+    @Resource
+    MonitorFactory monitorFactory;
+
+    @Autowired
+    AbstractApplicationContext context;
 
     /**
      * Test successful invoke.
@@ -73,4 +83,12 @@ public class MonitorFactoryImplTest
     {
         // nothing to do as the auto-wiring either works or fails
     }
+
+    @Test(expected = RuntimeException.class)
+    public void test_successful_destroy()
+    {
+        context.close();
+        monitorFactory.getMonitor();
+    }
+
 }
