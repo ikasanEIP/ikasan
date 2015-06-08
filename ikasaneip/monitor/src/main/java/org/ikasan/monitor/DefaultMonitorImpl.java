@@ -77,10 +77,10 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
     private String monitorName;
 
     /** has the state changed */
-    private Map<String,T> states = new ConcurrentHashMap<String,T>();
+    private Map<String,T> states = new ConcurrentHashMap<>();
 
     /** list of notifiers to be informed */
-    protected List<Notifier> notifiers = new ArrayList<Notifier>();
+    protected List<Notifier> notifiers = new ArrayList<>();
 
     /**
      * Constructor
@@ -128,6 +128,11 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
                 return;
             }
 
+            if (executorService == null || executorService.isShutdown())
+            {
+                logger.warn("Cannot invoke Monitor after destroy has been called - executorService is null or shutdown");
+                return;
+            }
             boolean stateChanged = hasStateChanged(environment + monitorName, status);
 
             for(final Notifier notifier:notifiers)
@@ -171,6 +176,16 @@ public class DefaultMonitorImpl<T> implements Monitor<T>, ConfiguredResource<Mon
         }
 
         return false;
+    }
+
+    @Override
+    public void destroy()
+    {
+        if (executorService != null)
+        {
+            logger.info("Monitor shutting down executorService");
+            executorService.shutdown();
+        }
     }
 
     @Override
