@@ -87,6 +87,8 @@
         <module>wiretap</module>
         <module>security</module>
         <module>filter</module>
+		<module>rest</module>
+		
 
         <!-- ikasan test harness -->
         <module>test</module>
@@ -111,6 +113,7 @@
         <module>management</module>
         <module>webconsole</module>
         <module>console</module>
+		<module>dashboard</module>
 
         <!-- developer tooling -->
         <module>developer</module>
