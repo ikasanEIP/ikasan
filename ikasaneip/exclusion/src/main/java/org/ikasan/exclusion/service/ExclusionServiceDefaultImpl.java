@@ -135,6 +135,18 @@ public class ExclusionServiceDefaultImpl implements ExclusionService<FlowEvent<S
     }
 
     @Override
+    public String getErrorUri(FlowEvent<String, ?> event) {
+
+        BlackListEvent blackListEvent = this.blackListDao.find(this.moduleName, this.flowName, event.getIdentifier());
+
+        if (blackListEvent == null) {
+            return null;
+        }
+
+        return blackListEvent.getErrorUri();
+    }
+
+    @Override
     public void removeBlacklisted(FlowEvent<String,?> event)
     {
         this.blackListDao.delete(this.moduleName, this.flowName, event.getIdentifier());

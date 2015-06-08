@@ -59,11 +59,16 @@ public interface ExclusionService<ENTITY>
     public boolean isBlackListed(ENTITY entity);
 
     /**
-     * An this entity to the blacklist
+     * Add this entity to the blacklist
      * @param entity
      * @param uri of the associated error
      */
     public void addBlacklisted(ENTITY entity, String uri);
+
+    /**
+     * Get the errorUri from the blacklist associated with the entity.
+     */
+    public String getErrorUri(ENTITY entity);
 
     /**
      * Park this entity
