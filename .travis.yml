@@ -1,3 +1,6 @@
 language: java
 after_success:
   - mvn clean test cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
+cache:
+  directories:
+  - $HOME/.m2
