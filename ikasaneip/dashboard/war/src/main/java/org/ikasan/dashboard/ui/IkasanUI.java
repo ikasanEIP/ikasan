@@ -43,6 +43,7 @@ package org.ikasan.dashboard.ui;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.framework.display.IkasanUIView;
 import org.ikasan.dashboard.ui.framework.display.ViewComponentContainer;
 import org.ikasan.dashboard.ui.framework.event.AlertEvent;
@@ -56,16 +57,15 @@ import org.ikasan.security.service.AuthenticationService;
 import org.ikasan.security.service.UserService;
 
 import com.google.common.eventbus.EventBus;
-import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.ClientConnector;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.communication.PushMode;
-import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ConnectorTracker;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -75,7 +75,7 @@ import com.vaadin.ui.VerticalLayout;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
-@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
+//@Push(value=PushMode.AUTOMATIC, transport=Transport.STREAMING)
 /**
  * 
  * @author CMI2 Development Team
@@ -83,6 +83,8 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class IkasanUI extends UI implements Broadcaster.BroadcastListener
 {   
+	private Logger logger = Logger.getLogger(IkasanUI.class);
+	
     private HashMap<String, IkasanUINavigator> views;
     private ViewComponentContainer viewComponentContainer;
     private UserService userService;
@@ -98,6 +100,8 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
     private final Table table = new Table();
     private Container container = new IndexedContainer();
     private FeederThread feederThread = new FeederThread();
+    
+    private ConnectorTracker tracker;
 
     /**
      * Constructor 
@@ -270,6 +274,30 @@ public class IkasanUI extends UI implements Broadcaster.BroadcastListener
         Broadcaster.unregister(this);
         feederThread.stop();
         super.detach();
+    }
+    
+    @Override
+    public ConnectorTracker getConnectorTracker() {
+      if (this.tracker == null) {
+        this.tracker =  new ConnectorTracker(this) {
+
+          @Override
+          public void registerConnector(ClientConnector connector) 
+          {
+            try 
+            {
+              super.registerConnector(connector);
+            } catch (RuntimeException e) 
+            {
+              logger.info("Failed connector: " + connector.getClass().getSimpleName());
+              throw e;
+            }
+          }
+
+        };
+      }
+
+      return tracker;
     }
 
 	public EventBus getEventBus() {

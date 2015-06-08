@@ -40,11 +40,11 @@
  */
 package org.ikasan.serialiser.model;
 
+import java.util.Enumeration;
+import java.util.Properties;
+
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Light JMS map message implementation purely for serialiser usage.
@@ -55,130 +55,189 @@ import java.util.Map;
 public class JmsMapMessageDefaultImpl extends JmsMessageDefaultImpl implements MapMessage
 {
     /** map being maintained */
-    Map content = new HashMap();
+    private Properties content = new Properties();
 
     @Override
-    public boolean getBoolean(String s) throws JMSException {
-        return false;
+    public boolean getBoolean(String s) throws JMSException 
+    {
+        return (Boolean) this.content.get(s);
     }
 
     @Override
-    public byte getByte(String s) throws JMSException {
-        return 0;
+    public byte getByte(String s) throws JMSException 
+    {
+        return (Byte) this.content.get(s);
     }
 
     @Override
-    public short getShort(String s) throws JMSException {
-        return 0;
+    public short getShort(String s) throws JMSException 
+    {
+        return (Short) this.content.get(s);
     }
 
     @Override
-    public char getChar(String s) throws JMSException {
-        return 0;
+    public char getChar(String s) throws JMSException
+    {
+        return (Character) this.content.get(s);
     }
 
     @Override
-    public int getInt(String s) throws JMSException {
-        return 0;
+    public int getInt(String s) throws JMSException 
+    {
+        return (Integer) this.content.get(s);
     }
 
     @Override
-    public long getLong(String s) throws JMSException {
-        return 0;
+    public long getLong(String s) throws JMSException
+    {
+        return (Long) this.content.get(s);
     }
 
     @Override
-    public float getFloat(String s) throws JMSException {
-        return 0;
+    public float getFloat(String s) throws JMSException 
+    {
+        return (Float) this.content.get(s);
     }
 
     @Override
-    public double getDouble(String s) throws JMSException {
-        return 0;
+    public double getDouble(String s) throws JMSException
+    {
+        return (Double) this.content.get(s);
     }
 
     @Override
-    public String getString(String s) throws JMSException {
-        return null;
+    public String getString(String s) throws JMSException 
+    {
+        return (String) this.content.get(s);
     }
 
     @Override
-    public byte[] getBytes(String s) throws JMSException {
-        return new byte[0];
+    public byte[] getBytes(String s) throws JMSException 
+    {
+        return (byte[]) this.content.get(s);
     }
 
     @Override
-    public Object getObject(String s) throws JMSException {
-        return null;
+    public Object getObject(String s) throws JMSException
+    {
+        return this.content.get(s);
     }
 
     @Override
-    public Enumeration getMapNames() throws JMSException {
-        return null;
+    public Enumeration getMapNames() throws JMSException 
+    {
+        return this.content.keys();
     }
 
     @Override
-    public void setBoolean(String s, boolean b) throws JMSException {
-
+    public void setBoolean(String s, boolean b) throws JMSException
+    {
+    	this.content.put(s, b);
     }
 
     @Override
-    public void setByte(String s, byte b) throws JMSException {
-
+    public void setByte(String s, byte b) throws JMSException 
+    {
+    	this.content.put(s, b);
     }
 
     @Override
-    public void setShort(String s, short i) throws JMSException {
-
+    public void setShort(String s, short i) throws JMSException 
+    {
+    	this.content.put(s, i);
     }
 
     @Override
-    public void setChar(String s, char c) throws JMSException {
-
+    public void setChar(String s, char c) throws JMSException 
+    {
+    	this.content.put(s, c);
     }
 
     @Override
-    public void setInt(String s, int i) throws JMSException {
-
+    public void setInt(String s, int i) throws JMSException 
+    {
+    	this.content.put(s, i);
     }
 
     @Override
-    public void setLong(String s, long l) throws JMSException {
-
+    public void setLong(String s, long l) throws JMSException 
+    {
+    	this.content.put(s, l);
     }
 
     @Override
-    public void setFloat(String s, float v) throws JMSException {
-
+    public void setFloat(String s, float v) throws JMSException 
+    {
+    	this.content.put(s, v);
     }
 
     @Override
-    public void setDouble(String s, double v) throws JMSException {
-
+    public void setDouble(String s, double v) throws JMSException 
+    {
+    	this.content.put(s, v);
     }
 
     @Override
-    public void setString(String s, String s1) throws JMSException {
-
+    public void setString(String s, String s1) throws JMSException 
+    {
+    	this.content.put(s, s1);
     }
 
     @Override
-    public void setBytes(String s, byte[] bytes) throws JMSException {
-
+    public void setBytes(String s, byte[] bytes) throws JMSException
+    {
+    	this.content.put(s, bytes);
     }
 
     @Override
-    public void setBytes(String s, byte[] bytes, int i, int i1) throws JMSException {
-
+    public void setBytes(String s, byte[] bytes, int i, int i1) throws JMSException 
+    {
+    	this.content.put(s, bytes);
     }
 
     @Override
-    public void setObject(String s, Object o) throws JMSException {
-
+    public void setObject(String s, Object o) throws JMSException 
+    {
+    	this.content.put(s, o);
     }
 
     @Override
-    public boolean itemExists(String s) throws JMSException {
-        return false;
+    public boolean itemExists(String s) throws JMSException 
+    {
+        return this.content.containsKey(s);
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JmsMapMessageDefaultImpl other = (JmsMapMessageDefaultImpl) obj;
+		if (content == null)
+		{
+			if (other.content != null)
+				return false;
+		} else if (!content.equals(other.content))
+			return false;
+		return true;
+	}
 }

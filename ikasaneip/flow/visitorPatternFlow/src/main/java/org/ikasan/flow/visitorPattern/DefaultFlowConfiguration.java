@@ -42,7 +42,9 @@ package org.ikasan.flow.visitorPattern;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
  * Default implementation of a Flow
@@ -53,12 +55,15 @@ public class DefaultFlowConfiguration extends AbstractFlowConfiguration implemen
 {
     /**
      * Constructor
+     * 
      * @param consumerFlowElement
      * @param configurationService
+     * @param resubmisionService
      */
-    public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService)
+    public DefaultFlowConfiguration(FlowElement<Consumer> consumerFlowElement, ConfigurationService configurationService
+    		, ResubmissionService resubmisionService)
     {
-        super(consumerFlowElement, configurationService);
+        super(consumerFlowElement, configurationService, resubmisionService);
 
         // TODO - remove as this should already be checked elsewhere
         if(consumerFlowElement.getTransition(FlowElement.DEFAULT_TRANSITION_NAME) == null)

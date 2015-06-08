@@ -80,7 +80,7 @@ import com.unboundid.ldif.LDIFReader;
         "/substitute-components.xml",
         "/mock-components.xml"
 })
-@Ignore // FIXME - Reactivate this test once the test data is fixed.
+@Ignore
 public class AuthenticationServiceTest
 {
 	private InMemoryDirectoryServer inMemoryDirectoryServer;
@@ -327,9 +327,9 @@ public class AuthenticationServiceTest
 		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		authMethod.setLdapServerUrl(ldapServerUrl);
-		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
 		authMethod.setLdapBindUserPassword("password");
-		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
 		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
 		
 		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
@@ -351,9 +351,9 @@ public class AuthenticationServiceTest
 		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		authMethod.setLdapServerUrl(ldapServerUrl);
-		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
 		authMethod.setLdapBindUserPassword("password");
-		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=mizuho-sc,DC=com");
+		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
 		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
 		
 		this.localTxSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);

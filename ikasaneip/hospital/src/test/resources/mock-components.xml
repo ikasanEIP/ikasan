@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * $Id: mock-components.xml 40199 2014-10-22 09:18:28Z stewmi $
+ * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/projects/securityModelService/api/src/test/resources/mock-components.xml $
+ *
+ * ====================================================================
+ *
+ * Copyright (c) 2000-2012 by Mizuho International plc.
+ * All Rights Reserved.
+ *
+ * ====================================================================
+ *
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <!-- mockery interfaces -->
+    <bean id="mockery"
+        class="org.jmock.Mockery" >
+        <property name="imposteriser" >
+            <bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+                   <property name="staticField" value="org.jmock.lib.legacy.ClassImposteriser.INSTANCE"/>
+             </bean>
+        </property>
+    </bean>
+    
+    <bean id="moduleContainer"  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="mockery" />
+		<property name="targetMethod" value="mock" />
+		<property name="arguments">
+			<list>
+				<value>org.ikasan.spec.module.ModuleContainer</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>

@@ -50,9 +50,9 @@ import java.util.Map;
  */
 public class PrimitiveClass
 {
-    int one = 1;
-    long two = 2;
-    String three = "3";
+    private int one = 1;
+    private long two = 2;
+    private String three = "3";
 
     Map<String,String> map = new HashMap<String,String>();
     {

@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.component.endpoint;
 
+
+
 /**
  * Component consumer for retrieving from an endpoint.
  * 

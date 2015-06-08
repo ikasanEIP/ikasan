@@ -102,4 +102,15 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 
         return results.get(0);
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#findAll()
+	 */
+	@Override
+	public List<ExclusionEvent> findAll()
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
+		
+        return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
 }

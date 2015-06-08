@@ -45,6 +45,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
@@ -52,6 +53,7 @@ import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -82,7 +84,46 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
         return results.get(0);
 
     }
+    
+    /* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<ErrorOccurrence<byte[]>> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate)
+	{
+		DetachedCriteria criteria = DetachedCriteria.forClass(ErrorOccurrence.class);
+		
+		if(moduleName != null && moduleName.size() > 0)
+		{
+			criteria.add(Restrictions.in("moduleName", moduleName));
+		}
+		
+		if(flowName != null && flowName.size() > 0)
+		{
+			criteria.add(Restrictions.in("flowName", flowName));
+		}
+		
+		if(flowElementname != null && flowElementname.size() > 0)
+		{
+			criteria.add(Restrictions.in("flowElementName", flowElementname));
+		}
+		
+		if(startDate != null)
+		{
+			criteria.add(Restrictions.gt("expiry", startDate.getTime()));
+		}
+		
+		if(endDate != null)
+		{
+			criteria.add(Restrictions.gt("expiry", endDate.getTime()));
+		}
+		
+		criteria.addOrder(Order.desc("expiry"));
 
+        return (List<ErrorOccurrence<byte[]>>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+    
     @Override
     public void save(ErrorOccurrence errorOccurrence)
     {

@@ -33,4 +33,6 @@
     <inherits name="com.zybnet.autocomplete.AutocompleteWidgetSet" />
 
     <inherits name="com.vaadin.DefaultWidgetSet" />
+
+    <inherits name="org.vaadin.aceeditor.AceEditorWidgetSet" />
 </module>

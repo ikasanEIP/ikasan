@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,4 +111,16 @@ public class MapErrorReportingServiceDao<T>
             logger.info("Deleted expired errorOccurrences events for identifiers[" + expiredIdentifiers + "]");
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.error.reporting.dao.ErrorReportingServiceDao#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ErrorOccurrence> find(List<String> moduleName,
+			List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
