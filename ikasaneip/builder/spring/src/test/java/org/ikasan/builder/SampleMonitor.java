@@ -91,4 +91,9 @@ public class SampleMonitor implements Monitor
     public void setNotifiers(List list) {
 
     }
+
+    @Override
+    public void destroy()
+    {
+    }
 }

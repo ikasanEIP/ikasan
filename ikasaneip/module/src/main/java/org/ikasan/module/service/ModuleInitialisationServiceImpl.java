@@ -48,6 +48,7 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
+import org.ikasan.spec.monitor.Monitor;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.BeansException;
@@ -207,11 +208,13 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
 
         // TODO - find a more generic way of managing this for platform resources
         shutdownSchedulers(platformContext);
+        shutdownMonitors(platformContext);
         // close our inner loaded contexts
         for (AbstractApplicationContext context : innerContexts)
         {
             logger.debug("closing and destroying inner context: " + context.getDisplayName());
             shutdownSchedulers(context);
+            shutdownMonitors(context);
             context.close();
         }
         innerContexts.clear();
@@ -233,6 +236,19 @@ public class ModuleInitialisationServiceImpl implements ModuleInitialisationServ
                 {
                     logger.warn("Exception shutting down Quartz scheduler. Will continue shutdown", e);
                 }
+            }
+        }
+    }
+
+    private void shutdownMonitors(ApplicationContext context)
+    {
+        Map<String, Monitor> monitors = context.getBeansOfType(Monitor.class);
+        if (monitors != null)
+        {
+            for (Map.Entry<String, Monitor> entry : monitors.entrySet())
+            {
+                logger.info("Shutting down Monitor with bean name: " + entry.getKey());
+                entry.getValue().destroy();
             }
         }
     }

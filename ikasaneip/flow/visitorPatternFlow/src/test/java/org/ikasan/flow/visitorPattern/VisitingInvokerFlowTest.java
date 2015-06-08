@@ -166,6 +166,9 @@ public class VisitingInvokerFlowTest
     /** mock managed resource */
     final ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockConfiguredResource");
 
+    /** mock managed resource */
+    final DynamicConfiguredResource dynamicConfiguredResource = mockery.mock(DynamicConfiguredResource.class, "mockDynamicConfiguredResource");
+
     /** Mock consumer flowElement */
     final FlowElement<Consumer<EventListener<FlowEvent<?,?>>,EventFactory>> consumerFlowElement
             = mockery.mock(FlowElement.class, "mockConsumerFlowElement");
@@ -1972,9 +1975,9 @@ public class VisitingInvokerFlowTest
                 will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
 
                 exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
-                will(returnValue(configuredResource));
+                will(returnValue(dynamicConfiguredResource));
 
-                exactly(2).of(flowConfiguration).configure(configuredResource);
+                exactly(2).of(flowConfiguration).configure(dynamicConfiguredResource);
 
                 one(flowConfiguration).getConsumerFlowElement();
                 will(returnValue(consumerFlowElement));
@@ -1986,6 +1989,16 @@ public class VisitingInvokerFlowTest
                 exactly(1).of(exclusionService).isBlackListed(flowEvent);
                 will(returnValue(false));
 
+                one(flowConfiguration).getDynamicConfiguredResourceFlowElements();
+                will(returnValue(dynamicConfiguredResourceFlowElements));
+                one(dynamicConfiguredResourceFlowElements).iterator();
+                will(returnIterator(dynamicConfiguredResourceFlowElement, dynamicConfiguredResourceFlowElement));
+
+                exactly(2).of(dynamicConfiguredResourceFlowElement).getFlowComponent();
+                will(returnValue(dynamicConfiguredResource));
+
+                exactly(2).of(flowConfiguration).update(dynamicConfiguredResource);
+                
                 // in this test we do not need to cancel recovery
                 one(recoveryManager).isRecovering();
                 will(returnValue(false));

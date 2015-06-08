@@ -104,6 +104,11 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-monitor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <scope>provided</scope>
