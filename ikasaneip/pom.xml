@@ -111,9 +111,11 @@
 	    <!-- top level services / applications -->
         <module>mapping</module>
         <module>management</module>
+        <module>hospital</module>
         <module>webconsole</module>
         <module>console</module>
-		<module>dashboard</module>
+		<module>topology</module>
+        <module>dashboard</module>
 
         <!-- developer tooling -->
         <module>developer</module>
