@@ -125,13 +125,15 @@ public class ExclusionServiceDefaultImplTest
     }
 
     /**
-     * Test exclusion add, contains, remove
+     * Test exclusion add, contains, remove, get
      */
     @DirtiesContext
     @Test
     public void test_exclusionService_operations()
     {
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDao, exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
+
+        final FlowEvent expiredFlowEvent = mockery.mock(FlowEvent.class, "expired-flow-event");
 
         // expectations
         mockery.checking(new Expectations()
@@ -153,6 +155,13 @@ public class ExclusionServiceDefaultImplTest
                 exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue("123456"));
 
+                // when retrieved from backlist
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("123456"));
+
+                exactly(1).of(expiredFlowEvent).getIdentifier();
+                will(returnValue("11111"));
+
                 // when re-checked in the backlist
                 exactly(2).of(flowEvent).getIdentifier();
                 will(returnValue("123456"));
@@ -169,6 +178,13 @@ public class ExclusionServiceDefaultImplTest
 
         exclusionService.addBlacklisted(flowEvent, "uri");
         Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed(flowEvent));
+
+        // this flowEvent should exist in blacklist
+        Assert.assertEquals("uri", exclusionService.getErrorUri(flowEvent));
+
+        // this flowEvent does not exist in blacklist
+        String errorUri = exclusionService.getErrorUri(expiredFlowEvent);
+        Assert.assertEquals(null, errorUri);
 
         exclusionService.removeBlacklisted(flowEvent);
         exclusionService.removeBlacklisted(flowEvent);

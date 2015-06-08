@@ -545,6 +545,11 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
+        public String getErrorUri(Object o) {
+            return null;
+        }
+
+        @Override
         public void park(Object o) {
 
         }

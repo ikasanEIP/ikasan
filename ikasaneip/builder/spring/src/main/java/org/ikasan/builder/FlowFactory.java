@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -46,10 +46,8 @@ import org.apache.log4j.Logger;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.flow.visitorPattern.DefaultExclusionFlowConfiguration;
-import org.ikasan.flow.visitorPattern.DefaultFlowConfiguration;
-import org.ikasan.flow.visitorPattern.ExclusionFlowConfiguration;
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
+import org.ikasan.exclusion.service.IsExclusionServiceAware;
+import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -72,6 +70,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.ikasan.spec.flow.FlowEventListener;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.
@@ -318,6 +317,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
         }
 
+        // pass handle to the exclusion service to the excluded event flow if this is needed
+        injectExclusionService(exclusionFlowConfiguration, exclusionService);
+
         if(monitor != null && flow instanceof MonitorSubject)
         {
             if(monitor.getEnvironment() == null)
@@ -342,6 +344,20 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             + "]");
         
         return flow;
+    }
+
+    private void injectExclusionService(ExclusionFlowConfiguration flow, ExclusionService exclusionService) {
+
+        // The exclusion flow is optionally configured so may be null
+        if (flow == null) {
+            return;
+        }
+
+        for (FlowElement flowElement : flow.getFlowElements()) {
+            if (flowElement.getFlowComponent() instanceof IsExclusionServiceAware) {
+                ((IsExclusionServiceAware)flowElement.getFlowComponent()).setExclusionService(exclusionService);
+            }
+        }
     }
 
     /*
