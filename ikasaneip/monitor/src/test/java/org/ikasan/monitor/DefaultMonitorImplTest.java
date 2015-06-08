@@ -40,13 +40,14 @@
  */
 package org.ikasan.monitor;
 
-import junit.framework.Assert;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ public class DefaultMonitorImplTest
     private Mockery mockery = new Mockery()
     {
         {
+            setThreadingPolicy(new Synchroniser());
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
@@ -89,12 +91,45 @@ public class DefaultMonitorImplTest
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(false);
 
-        Monitor<String> monitor = new DefaultMonitorImpl(executorService);
+        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
 
         monitor.invoke("stopped");
         mockery.assertIsSatisfied();
     }
+
+    @Test
+    public void test_successful_monitor_after_destroy()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(executorService).shutdown();
+                exactly(1).of(executorService).isShutdown();
+                will(returnValue(true));
+                // executor service execute should not be called
+                exactly(0).of(executorService).execute(with(any(Runnable.class)));
+            }
+        });
+
+        MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
+        monitorConfiguration.setActive(true);
+
+        List<Notifier> notifiers = new ArrayList<>();
+        Notifier notifier = new StubbedNotifier("myNotifierName", "state is stopped");
+        notifier.setNotifyStateChangesOnly(false);
+        notifiers.add(notifier);
+
+        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        ((Configured)monitor).setConfiguration(monitorConfiguration);
+        monitor.setNotifiers(notifiers);
+        monitor.destroy();
+
+        monitor.invoke("stopped");
+        mockery.assertIsSatisfied();
+    }
+
 
     /**
      * Test successful invoke.
@@ -113,7 +148,7 @@ public class DefaultMonitorImplTest
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(true);
 
-        Monitor<String> monitor = new DefaultMonitorImpl(executorService);
+        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
 
         monitor.invoke("stopped");
@@ -130,18 +165,20 @@ public class DefaultMonitorImplTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(executorService).isShutdown();
+                will(returnValue(false));
                 exactly(1).of(executorService).execute(with(any(Runnable.class)));
             }
         });
 
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(true);
-        List<Notifier> notifiers = new ArrayList<Notifier>();
+        List<Notifier> notifiers = new ArrayList<>();
         Notifier notifier = new StubbedNotifier("myNotifierName", "state is stopped");
         notifier.setNotifyStateChangesOnly(false);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl(executorService);
+        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 
@@ -159,18 +196,20 @@ public class DefaultMonitorImplTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(executorService).isShutdown();
+                will(returnValue(false));
                 exactly(1).of(executorService).execute(with(any(Runnable.class)));
             }
         });
 
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(true);
-        List<Notifier> notifiers = new ArrayList<Notifier>();
+        List<Notifier> notifiers = new ArrayList<>();
         Notifier notifier = new StubbedNotifier("myNotifierName", "state is stopped");
         notifier.setNotifyStateChangesOnly(true);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl(executorService);
+        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 
@@ -188,18 +227,20 @@ public class DefaultMonitorImplTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(6).of(executorService).isShutdown();
+                will(returnValue(false));
                 exactly(3).of(executorService).execute(with(any(Runnable.class)));
             }
         });
 
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(true);
-        List<Notifier> notifiers = new ArrayList<Notifier>();
+        List<Notifier> notifiers = new ArrayList<>();
         Notifier notifier = new StubbedNotifier("myNotifierName", "state is stopped");
         notifier.setNotifyStateChangesOnly(true);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl(executorService);
+        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 

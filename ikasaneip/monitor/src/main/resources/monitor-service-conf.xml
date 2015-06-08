@@ -52,7 +52,7 @@
     <!-- load default ikasan environment properties if available -->
     <context:property-placeholder ignore-resource-not-found="true" ignore-unresolvable="true" location="classpath:ikasan-environment.properties" />
 
-    <bean id="monitorFactory" class="org.ikasan.monitor.MonitorFactoryImpl"/>
+    <bean id="monitorFactory" class="org.ikasan.monitor.MonitorFactoryImpl" destroy-method="destroy"/>
 
     <bean id="notifierFactory" class="org.ikasan.monitor.notifier.NotifierFactoryImpl"/>
 
