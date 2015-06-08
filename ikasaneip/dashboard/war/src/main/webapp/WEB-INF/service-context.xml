@@ -10,7 +10,16 @@
         http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-	 <bean id="keyLocationQueryProcessorFactory" class="org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory">
+	<bean id="topologyService"
+        class="org.ikasan.topology.service.TopologyServiceImpl">
+        <constructor-arg ref="topologyDao"/>
+    </bean>
+
+	<bean id="topologyDao" class="org.ikasan.topology.dao.HibernateTopologyDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="keyLocationQueryProcessorFactory" class="org.ikasan.mapping.keyQueryProcessor.KeyLocationQueryProcessorFactory">
         <constructor-arg ref="mappingConfigurationDao"/>
         <constructor-arg ref="keyLocationProcessorMap"/>
     </bean>
@@ -79,6 +88,62 @@
 	<bean id="securityDao" class="org.ikasan.security.dao.HibernateSecurityDao">
 		<property name="sessionFactory" ref="ikasanSessionFactory" />
 	</bean>
+	
+	<bean id="configurationService"
+		class="org.ikasan.configurationService.service.ConfiguredResourceConfigurationService">
+		<constructor-arg ref="configurationServiceDao"/>
+		<constructor-arg ref="xaConfigurationServiceDao"/>
+	</bean>
+
+	<bean id="xaConfigurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+		<property name="sessionFactory" ref="xaConfigurationServiceSessionFactory"/>
+	</bean>
+
+	<bean id="configurationServiceDao" class="org.ikasan.configurationService.dao.ConfigurationHibernateImpl">
+		<property name="sessionFactory" ref="ikasanSessionFactory"/>
+	</bean>
+	
+	<bean id="xaConfigurationServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.xads" />
+		<property name="mappingResources">
+			<list>
+				<value>org/ikasan/configurationService/model/Configuration.hbm.xml
+				</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+	
+	<bean id="wiretapDao"
+		class="org.ikasan.wiretap.dao.HibernateWiretapDao">
+        <constructor-arg value="true"/>
+        <constructor-arg value="1000"/>
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+
+	<bean id="triggerDao"
+		class="org.ikasan.trigger.dao.HibernateTriggerDao">
+		<property name="sessionFactory" ref="ikasanSessionFactory" />
+	</bean>
+	
+	<bean id="errorReportingService" factory-bean="errorReportingServiceFactory" factory-method="getErrorReportingService" />
+
+    <bean id="errorReportingServiceFactory" class="org.ikasan.error.reporting.service.ErrorReportingServiceFactoryDefaultImpl">
+        <constructor-arg ref="ikasanSerialiserFactory"/>
+        <constructor-arg ref="errorReportingServiceDao"/>
+    </bean>
+
+    <bean id="errorReportingServiceDao" class="org.ikasan.error.reporting.dao.HibernateErrorReportingServiceDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
+    
+    <bean id="exclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+    </bean>
+
+    <bean id="exclusionServiceExclusionEventDao" class="org.ikasan.exclusion.dao.HibernateExclusionEventDao">
+        <property name="sessionFactory" ref="ikasanSessionFactory"/>
+    </bean>
 
     <bean id="ikasanSessionFactory"
         class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -103,6 +168,18 @@
 			   <value>/org/ikasan/security/model/AuthenticationMethod.hbm.xml</value>
 			   <value>/org/ikasan/security/model/PolicyLink.hbm.xml</value>
 			   <value>/org/ikasan/security/model/PolicyLinkType.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/BusinessStream.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/BusinessStreamFlow.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Component.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Flow.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Module.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/Server.hbm.xml</value>
+			   <value>/org/ikasan/topology/model/UserBusinessStream.hbm.xml</value>
+			   <value>org/ikasan/configurationService/model/Configuration.hbm.xml</value>
+			   <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
+			   <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
+			   <value>org/ikasan/error/reporting/model/ErrorOccurrence.hbm.xml</value>
+			   <value>org/ikasan/exclusion/model/ExclusionEvent.hbm.xml</value>
            </list>
         </property>
         <property name="hibernateProperties" ref="platformHibernateProperties"/>

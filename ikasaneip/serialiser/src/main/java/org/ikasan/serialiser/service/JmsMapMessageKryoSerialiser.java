@@ -40,18 +40,17 @@
  */
 package org.ikasan.serialiser.service;
 
+import java.util.Enumeration;
+
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+
+import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.apache.activemq.command.ActiveMQMapMessage;
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
-
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JmsMapMessageKryoSerialiser extends Serializer<MapMessage>
 {
@@ -59,14 +58,8 @@ public class JmsMapMessageKryoSerialiser extends Serializer<MapMessage>
     {
         try
         {
-            Map<Object, Object> mapMessageContent = new HashMap<Object, Object>();
-            Enumeration en = message.getMapNames();
-            while (en != null && en.hasMoreElements())
-            {
-                String name = (String) en.nextElement();
-                mapMessageContent.put(name, message.getObject(name));
-            }
-            kryo.writeClassAndObject(output, mapMessageContent);
+        	JmsMapMessageDefaultImpl mapMessage = this.convert(message);
+            kryo.writeClassAndObject(output, mapMessage);
         }
         catch (JMSException e)
         {
@@ -76,19 +69,43 @@ public class JmsMapMessageKryoSerialiser extends Serializer<MapMessage>
 
     public MapMessage read(Kryo kryo, Input input, Class<MapMessage> message)
     {
-        MapMessage mapMessage = new ActiveMQMapMessage();
-        Map<Object, Object> deserialisedMap = (Map) kryo.readClassAndObject(input);
-        try
-        {
-            for (Object key : deserialisedMap.keySet())
-            {
-                mapMessage.setObject((String) key, deserialisedMap.get(key));
-            }
-            return mapMessage;
-        }
-        catch (JMSException e)
-        {
-            throw new RuntimeException(e);
-        }
+    	return (MapMessage)kryo.readClassAndObject(input);
+    }
+    
+    private JmsMapMessageDefaultImpl convert(MapMessage message) throws JMSException
+    {
+    	JmsMapMessageDefaultImpl jmsMapMessageDefault = new JmsMapMessageDefaultImpl();
+    	
+    	jmsMapMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
+    	jmsMapMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
+    	jmsMapMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
+    	jmsMapMessageDefault.setJMSDestination(message.getJMSDestination());
+    	jmsMapMessageDefault.setJMSExpiration(jmsMapMessageDefault.getJMSExpiration());
+    	jmsMapMessageDefault.setJMSMessageID(message.getJMSMessageID());
+    	jmsMapMessageDefault.setJMSPriority(message.getJMSPriority());
+    	jmsMapMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
+    	jmsMapMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
+    	jmsMapMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
+    	jmsMapMessageDefault.setJMSType(jmsMapMessageDefault.getJMSType());
+    	    	
+    	Enumeration<String> names  = message.getPropertyNames();
+    	
+    	while(names.hasMoreElements())
+    	{
+    		String name = names.nextElement();
+
+    		jmsMapMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
+    	}
+    	
+    	names  = message.getMapNames();
+    	
+    	while(names.hasMoreElements())
+    	{
+    		String name = names.nextElement();
+
+    		jmsMapMessageDefault.setObject(name, message.getObjectProperty(name));
+    	}
+    	
+    	return jmsMapMessageDefault;
     }
 }

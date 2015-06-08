@@ -56,4 +56,39 @@
     <packaging>jar</packaging>
     <name>Ikasan Specification Flow Contracts</name>
     <description>The specification flow contracts for the Ikasan Enterprise Integration Platform</description>
+	
+	 <dependencies>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-component</artifactId>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-configuration</artifactId>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-error-reporting</artifactId>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-resubmission</artifactId>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-serialiser</artifactId>
+        </dependency>
+
+	</dependencies>
+
 </project>

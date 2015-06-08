@@ -25,9 +25,14 @@
         			 /WEB-INF/transaction-context.xml,
         			 /WEB-INF/administration-context.xml,
         			 /WEB-INF/policy-context.xml,
-        			 /WEB-INF/service-context.xml, 
+        			 /WEB-INF/service-context.xml,
+        			 /WEB-INF/topology-context.xml, 
         			 classpath:platform-service-conf.xml, 
+        			 classpath:serialiser-service-conf.xml, 
+        			 classpath:systemevent-service-conf.xml, 
         			 classpath:providers-conf.xml,
+        			 classpath:hospital-conf.xml,
+        			 classpath:module-service-conf.xml,
         			 classpath:providers-properties.xml
         </param-value>
     </context-param>
@@ -96,7 +101,7 @@
     <context-param>
         <description>Vaadin production mode</description>
         <param-name>productionMode</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
     </context-param>
 
     <!-- Static mapping -->
@@ -105,8 +110,26 @@
         <url-pattern>/static/*</url-pattern>
     </servlet-mapping>
 
-    <!-- session-config>
+	<context-param>
+	  <param-name>heartbeatInterval</param-name>
+	  <param-value>300</param-value>
+	</context-param>
+	
+	<context-param>
+	    <param-name>resteasy.scan</param-name>
+	    <param-value>false</param-value>
+	</context-param>
+	<context-param>
+	    <param-name>resteasy.scan.providers</param-name>
+	    <param-value>false</param-value>
+	</context-param>
+	<context-param>
+	    <param-name>resteasy.scan.resources</param-name>
+	    <param-value>false</param-value>
+	</context-param>
+
+    <session-config>
         <session-timeout>30</session-timeout>
-    </session-config -->
+    </session-config>
 
 </web-app>

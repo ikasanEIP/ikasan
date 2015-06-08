@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- * $Id$
+	$ * $URL$ 
+	$ * * ==================================================================== 
+	* * Copyright (c) 2000-2010 by Mizuho International plc. * All Rights Reserved. 
+	* * ==================================================================== 
+	* -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
+		<constructor-arg ref="hospitalDao" />
+	</bean>
+
+	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
+		<constructor-arg ref="moduleContainer" />
+		<constructor-arg ref="hospitalDao" />
+	</bean>
+	
+	<bean id="hospitalDao" class="org.ikasan.hospital.dao.HibernateHospitalDao">
+		<property name="sessionFactory" ref="hospitalSessionFactory" />
+	</bean>
+
+	<bean id="hospitalSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ikasan.xads" />
+		<property name="mappingResources">
+			<list>
+				<value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties" ref="platformHibernateProperties" />
+	</bean>
+
+</beans>

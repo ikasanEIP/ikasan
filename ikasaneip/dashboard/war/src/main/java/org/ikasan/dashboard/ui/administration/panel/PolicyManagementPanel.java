@@ -46,7 +46,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.ikasan.dashboard.ui.administration.window.NewPolicyWindow;
+import org.ikasan.dashboard.ui.administration.window.PolicyAssociationBusinessStreamSearchWindow;
+import org.ikasan.dashboard.ui.administration.window.PolicyAssociationFlowSearchWindow;
 import org.ikasan.dashboard.ui.administration.window.PolicyAssociationMappingSearchWindow;
+import org.ikasan.dashboard.ui.administration.window.PolicyAssociationModuleSearchWindow;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.ikasan.security.model.PolicyLinkType;
@@ -112,7 +115,11 @@ public class PolicyManagementPanel extends Panel implements View
 	private Button newButton = new Button("New");
 	private Button saveButton = new Button("Save");
 	private Button deleteButton = new Button("Delete");
+	private Button cancelButton = new Button("Cancel");
 	private PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow;
+	private PolicyAssociationModuleSearchWindow policyAssociationModuleSearchWindow;
+	private PolicyAssociationFlowSearchWindow policyAssociationFlowSearchWindow;
+	private PolicyAssociationBusinessStreamSearchWindow policyAssociationBusinessStreamSearchWindow;
 	private Policy policy = new Policy();
 	private AutocompleteField<Policy> policyNameField;
 	private TextArea descriptionField;
@@ -126,7 +133,9 @@ public class PolicyManagementPanel extends Panel implements View
 	 * @param ikasanModuleService
 	 */
 	public PolicyManagementPanel(UserService userService, SecurityService securityService,
-			PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow)
+			PolicyAssociationMappingSearchWindow policyAssociationMappingSearchWindow,
+			PolicyAssociationFlowSearchWindow policyAssociationFlowSearchWindow,
+			PolicyAssociationModuleSearchWindow policyAssociationModuleSearchWindow)
 	{
 		super();
 		this.userService = userService;
@@ -141,10 +150,22 @@ public class PolicyManagementPanel extends Panel implements View
 					"securityService cannot be null!");
 		}
 		this.policyAssociationMappingSearchWindow = policyAssociationMappingSearchWindow;
-		if (this.securityService == null)
+		if (this.policyAssociationMappingSearchWindow == null)
 		{
 			throw new IllegalArgumentException(
 					"policyAssociationMappingSearchWindow cannot be null!");
+		}
+		this.policyAssociationFlowSearchWindow = policyAssociationFlowSearchWindow;
+		if (this.policyAssociationFlowSearchWindow == null)
+		{
+			throw new IllegalArgumentException(
+					"policyAssociationFlowSearchWindow cannot be null!");
+		}
+		this.policyAssociationModuleSearchWindow = policyAssociationModuleSearchWindow;
+		if (this.policyAssociationModuleSearchWindow == null)
+		{
+			throw new IllegalArgumentException(
+					"policyAssociationModuleSearchWindow cannot be null!");
 		}
 
 		init();
@@ -225,8 +246,28 @@ public class PolicyManagementPanel extends Panel implements View
     	{
             public void buttonClick(ClickEvent event) 
             {
-            	policyAssociationMappingSearchWindow.clear();
-                UI.getCurrent().addWindow(policyAssociationMappingSearchWindow);
+            	PolicyLinkType policyLinkType = (PolicyLinkType)PolicyManagementPanel.this.linkTypeCombo.getValue();
+            	
+            	if(policyLinkType.getName().equals("Mapping Configuration"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationMappingSearchWindow);
+            	}
+            	else if(policyLinkType.getName().equals("Module"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationModuleSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationModuleSearchWindow);
+            	}
+            	else if(policyLinkType.getName().equals("Flow"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationFlowSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationFlowSearchWindow);
+            	}
+            	else if(policyLinkType.getName().equals("Business Stream"))
+            	{
+            		PolicyManagementPanel.this.policyAssociationMappingSearchWindow.clear();
+            		UI.getCurrent().addWindow(PolicyManagementPanel.this.policyAssociationBusinessStreamSearchWindow);
+            	}
             }
         });
     	linkLayout.addComponent(this.linkButton, 1, 0);
@@ -248,6 +289,26 @@ public class PolicyManagementPanel extends Panel implements View
             		(policyAssociationMappingSearchWindow.getMappingConfiguration().toStringLite());
             	PolicyManagementPanel.this.associatedEntityId 
             		= PolicyManagementPanel.this.policyAssociationMappingSearchWindow.getMappingConfiguration().getId();
+            }
+        });
+
+    	this.policyAssociationFlowSearchWindow.addCloseListener(new Window.CloseListener() {
+            // inline close-listener
+            public void windowClose(CloseEvent e) {
+            	PolicyManagementPanel.this.linkedEntity.setValue
+            		(policyAssociationFlowSearchWindow.getFlow().toString());
+            	PolicyManagementPanel.this.associatedEntityId 
+            		= PolicyManagementPanel.this.policyAssociationFlowSearchWindow.getFlow().getId();
+            }
+        });
+    	
+    	this.policyAssociationModuleSearchWindow.addCloseListener(new Window.CloseListener() {
+            // inline close-listener
+            public void windowClose(CloseEvent e) {
+            	PolicyManagementPanel.this.linkedEntity.setValue
+            		(policyAssociationModuleSearchWindow.getModule().toString());
+            	PolicyManagementPanel.this.associatedEntityId 
+            		= PolicyManagementPanel.this.policyAssociationModuleSearchWindow.getModule().getId();
             }
         });
 		
@@ -573,6 +634,11 @@ public class PolicyManagementPanel extends Panel implements View
 					roleTable.addItem(new Object[]
 							{ role.getName(), deleteButton }, role);
 				}
+				
+				PolicyManagementPanel.this.saveButton.setVisible(false);
+        		PolicyManagementPanel.this.cancelButton.setVisible(false);
+        		PolicyManagementPanel.this.newButton.setVisible(true);
+        		PolicyManagementPanel.this.deleteButton.setVisible(true);
 			}
 		});
 		
@@ -584,7 +650,11 @@ public class PolicyManagementPanel extends Panel implements View
 	 */
 	protected Layout initControlLayout()
 	{
-		this.newButton.setStyleName(Reindeer.BUTTON_LINK);
+		this.saveButton.setVisible(false);
+		this.cancelButton.setVisible(false);
+		this.deleteButton.setVisible(false);
+		
+		this.newButton.setStyleName(Reindeer.BUTTON_LINK);		
     	this.newButton.addClickListener(new Button.ClickListener() 
     	{
             public void buttonClick(ClickEvent event) 
@@ -608,6 +678,11 @@ public class PolicyManagementPanel extends Panel implements View
                 		PolicyManagementPanel.this.linkedEntity.setVisible(false);
 
                 		PolicyManagementPanel.this.roleTable.removeAllItems();
+                		
+                		PolicyManagementPanel.this.saveButton.setVisible(true);
+                		PolicyManagementPanel.this.cancelButton.setVisible(true);
+                		PolicyManagementPanel.this.newButton.setVisible(false);
+                		PolicyManagementPanel.this.deleteButton.setVisible(false);
                     }
                 });
             }
@@ -623,6 +698,11 @@ public class PolicyManagementPanel extends Panel implements View
             		PolicyManagementPanel.this.save();
             		
             		Notification.show("Saved");
+            		
+            		PolicyManagementPanel.this.saveButton.setVisible(false);
+            		PolicyManagementPanel.this.cancelButton.setVisible(false);
+            		PolicyManagementPanel.this.newButton.setVisible(true);
+            		PolicyManagementPanel.this.deleteButton.setVisible(false);
             	}
             	catch(RuntimeException e)
             	{
@@ -654,6 +734,11 @@ public class PolicyManagementPanel extends Panel implements View
             		PolicyManagementPanel.this.linkButton.setVisible(false);
             		
             		Notification.show("Deleted");
+            		
+            		PolicyManagementPanel.this.saveButton.setVisible(false);
+            		PolicyManagementPanel.this.cancelButton.setVisible(false);
+            		PolicyManagementPanel.this.newButton.setVisible(true);
+            		PolicyManagementPanel.this.deleteButton.setVisible(false);
             	}
             	catch(RuntimeException e)
             	{
@@ -667,17 +752,38 @@ public class PolicyManagementPanel extends Panel implements View
             }
         });
     	
+    	this.cancelButton.setStyleName(Reindeer.BUTTON_LINK);
+    	this.cancelButton.addClickListener(new Button.ClickListener() 
+    	{
+            public void buttonClick(ClickEvent event) 
+            {
+        		PolicyManagementPanel.this.policyNameField.setText("");
+        		PolicyManagementPanel.this.descriptionField.setValue("");
+        		PolicyManagementPanel.this.linkTypeCombo.setValue(null);
+        		PolicyManagementPanel.this.linkedEntity.setValue("");
+        		PolicyManagementPanel.this.linkedEntity.setVisible(false);
+        		PolicyManagementPanel.this.linkButton.setVisible(false);
+        		
+        		PolicyManagementPanel.this.saveButton.setVisible(false);
+        		PolicyManagementPanel.this.cancelButton.setVisible(false);
+        		PolicyManagementPanel.this.newButton.setVisible(true);
+        		PolicyManagementPanel.this.deleteButton.setVisible(false);
+            }
+        });
+    	
     	HorizontalLayout controlLayout =new HorizontalLayout();
     	controlLayout.setWidth("100%");
     	Label spacerLabel = new Label("");
     	controlLayout.addComponent(spacerLabel);
-    	controlLayout.setExpandRatio(spacerLabel, 0.865f);
+    	controlLayout.setExpandRatio(spacerLabel, 0.82f);
     	controlLayout.addComponent(newButton);
     	controlLayout.setExpandRatio(newButton, 0.045f);
     	controlLayout.addComponent(saveButton);
     	controlLayout.setExpandRatio(saveButton, 0.045f);
     	controlLayout.addComponent(deleteButton);
     	controlLayout.setExpandRatio(deleteButton, 0.045f);
+    	controlLayout.addComponent(cancelButton);
+    	controlLayout.setExpandRatio(cancelButton, 0.045f);
     	
     	return controlLayout;
 	}

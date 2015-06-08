@@ -40,10 +40,13 @@
  */
 package org.ikasan.serialiser.model;
 
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Properties;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import java.util.Enumeration;
 
 /**
  * Light JMS message implementation purely for serialiser usage.
@@ -53,228 +56,387 @@ import java.util.Enumeration;
  */
 public class JmsMessageDefaultImpl implements Message
 {
+	protected String jmsMessageId;
+	private long timestamp;
+	private byte[] jmsCorrelationIdAsBytes;
+	private String jmsCorrelationId;
+	private Destination jmsReplyTo;
+	private Destination destination;
+	private int deliveryMode;
+	private boolean jmsRedelivered;
+	private String jmsType;
+	private long jmsExpiration;
+	private int jmsPriority;
+	private Properties properties;
+	
+	public JmsMessageDefaultImpl()
+    {
+    	super();
+    	properties = new Properties();
+    }
+	
     @Override
-    public String getJMSMessageID() throws JMSException {
-        return null;
+    public String getJMSMessageID() throws JMSException 
+    {
+        return this.jmsMessageId;
     }
 
     @Override
-    public void setJMSMessageID(String s) throws JMSException {
-
+    public void setJMSMessageID(String jmsMessageId) throws JMSException 
+    {
+    	this.jmsMessageId = jmsMessageId;
     }
 
     @Override
-    public long getJMSTimestamp() throws JMSException {
-        return 0;
+    public long getJMSTimestamp() throws JMSException 
+    {
+        return this.timestamp;
     }
 
     @Override
-    public void setJMSTimestamp(long l) throws JMSException {
-
+    public void setJMSTimestamp(long timestamp) throws JMSException 
+    {
+    	this.timestamp = timestamp;
     }
 
     @Override
-    public byte[] getJMSCorrelationIDAsBytes() throws JMSException {
-        return new byte[0];
+    public byte[] getJMSCorrelationIDAsBytes() throws JMSException 
+    {
+        return this.jmsCorrelationIdAsBytes;
     }
 
     @Override
-    public void setJMSCorrelationIDAsBytes(byte[] bytes) throws JMSException {
-
+    public void setJMSCorrelationIDAsBytes(byte[] jmsCorrelationIdAsBytes) throws JMSException 
+    {
+    	this.jmsCorrelationIdAsBytes = jmsCorrelationIdAsBytes;
     }
 
     @Override
-    public void setJMSCorrelationID(String s) throws JMSException {
-
+    public void setJMSCorrelationID(String jmsCorrelationId) throws JMSException 
+    {
+    	this.jmsCorrelationId = jmsCorrelationId;
     }
 
     @Override
-    public String getJMSCorrelationID() throws JMSException {
-        return null;
+    public String getJMSCorrelationID() throws JMSException 
+    {
+        return this.jmsCorrelationId;
     }
 
     @Override
-    public Destination getJMSReplyTo() throws JMSException {
-        return null;
+    public Destination getJMSReplyTo() throws JMSException 
+    {
+        return this.jmsReplyTo;
     }
 
     @Override
-    public void setJMSReplyTo(Destination destination) throws JMSException {
-
+    public void setJMSReplyTo(Destination jmsReplyTo) throws JMSException 
+    {
+    	this.jmsReplyTo = jmsReplyTo;
     }
 
     @Override
-    public Destination getJMSDestination() throws JMSException {
-        return null;
+    public Destination getJMSDestination() throws JMSException 
+    {
+        return this.destination;
     }
 
     @Override
-    public void setJMSDestination(Destination destination) throws JMSException {
-
+    public void setJMSDestination(Destination destination) throws JMSException 
+    {
+    	this.destination = destination;
     }
 
     @Override
-    public int getJMSDeliveryMode() throws JMSException {
-        return 0;
+    public int getJMSDeliveryMode() throws JMSException 
+    {
+        return this.deliveryMode;
     }
 
     @Override
-    public void setJMSDeliveryMode(int i) throws JMSException {
-
+    public void setJMSDeliveryMode(int deliveryMode) throws JMSException 
+    {
+    	this.deliveryMode = deliveryMode;
     }
 
     @Override
-    public boolean getJMSRedelivered() throws JMSException {
-        return false;
+    public boolean getJMSRedelivered() throws JMSException 
+    {
+        return this.jmsRedelivered;
     }
 
     @Override
-    public void setJMSRedelivered(boolean b) throws JMSException {
-
+    public void setJMSRedelivered(boolean jmsRedelivered) throws JMSException 
+    {
+    	this.jmsRedelivered = jmsRedelivered;
     }
 
     @Override
-    public String getJMSType() throws JMSException {
-        return null;
+    public String getJMSType() throws JMSException 
+    {
+        return this.jmsType;
     }
 
     @Override
-    public void setJMSType(String s) throws JMSException {
-
+    public void setJMSType(String jmsType) throws JMSException 
+    {
+    	this.jmsType = jmsType;
     }
 
     @Override
-    public long getJMSExpiration() throws JMSException {
-        return 0;
+    public long getJMSExpiration() throws JMSException 
+    {
+        return this.jmsExpiration;
     }
 
     @Override
-    public void setJMSExpiration(long l) throws JMSException {
-
+    public void setJMSExpiration(long jmsExpiration) throws JMSException 
+    {
+    	this.jmsExpiration = jmsExpiration;
     }
 
     @Override
-    public int getJMSPriority() throws JMSException {
-        return 0;
+    public int getJMSPriority() throws JMSException 
+    {
+        return this.jmsPriority;
     }
 
     @Override
-    public void setJMSPriority(int i) throws JMSException {
-
+    public void setJMSPriority(int jmsPriority) throws JMSException 
+    {
+    	this.jmsPriority = jmsPriority;
     }
 
     @Override
-    public void clearProperties() throws JMSException {
-
+    public void clearProperties() throws JMSException 
+    {
+    	this.properties.clear();
     }
 
     @Override
-    public boolean propertyExists(String s) throws JMSException {
-        return false;
+    public boolean propertyExists(String s) throws JMSException 
+    {
+        return this.propertyExists(s);
     }
 
     @Override
-    public boolean getBooleanProperty(String s) throws JMSException {
-        return false;
+    public boolean getBooleanProperty(String s) throws JMSException 
+    {
+        return (Boolean)this.properties.get(s);
     }
 
     @Override
-    public byte getByteProperty(String s) throws JMSException {
-        return 0;
+    public byte getByteProperty(String s) throws JMSException 
+    {
+        return (Byte)this.properties.get(s);
     }
 
     @Override
-    public short getShortProperty(String s) throws JMSException {
-        return 0;
+    public short getShortProperty(String s) throws JMSException
+    {
+        return (Short)this.properties.get(s);
     }
 
     @Override
-    public int getIntProperty(String s) throws JMSException {
-        return 0;
+    public int getIntProperty(String s) throws JMSException 
+    {
+        return (Integer)this.properties.get(s);
     }
 
     @Override
-    public long getLongProperty(String s) throws JMSException {
-        return 0;
+    public long getLongProperty(String s) throws JMSException 
+    {
+        return (Long)this.properties.get(s);
     }
 
     @Override
-    public float getFloatProperty(String s) throws JMSException {
-        return 0;
+    public float getFloatProperty(String s) throws JMSException 
+    {
+        return (Float)this.properties.get(s);
     }
 
     @Override
-    public double getDoubleProperty(String s) throws JMSException {
-        return 0;
+    public double getDoubleProperty(String s) throws JMSException 
+    {
+        return (Double)this.properties.get(s);
     }
 
     @Override
-    public String getStringProperty(String s) throws JMSException {
-        return null;
+    public String getStringProperty(String s) throws JMSException 
+    {
+        return (String)this.properties.get(s);
     }
 
     @Override
-    public Object getObjectProperty(String s) throws JMSException {
-        return null;
+    public Object getObjectProperty(String s) throws JMSException 
+    {
+        return this.properties.get(s);
     }
 
     @Override
-    public Enumeration getPropertyNames() throws JMSException {
-        return null;
+    public Enumeration getPropertyNames() throws JMSException 
+    {
+        return this.properties.keys();
     }
 
     @Override
-    public void setBooleanProperty(String s, boolean b) throws JMSException {
-
+    public void setBooleanProperty(String s, boolean b) throws JMSException 
+    {
+    	this.properties.put(s, b);
     }
 
     @Override
-    public void setByteProperty(String s, byte b) throws JMSException {
-
+    public void setByteProperty(String s, byte b) throws JMSException
+    {
+    	this.properties.put(s, b);
     }
 
     @Override
-    public void setShortProperty(String s, short i) throws JMSException {
-
+    public void setShortProperty(String s, short i) throws JMSException 
+    {
+    	this.properties.put(s, i);
     }
 
     @Override
-    public void setIntProperty(String s, int i) throws JMSException {
-
+    public void setIntProperty(String s, int i) throws JMSException
+    {
+    	this.properties.put(s, i);
     }
 
     @Override
-    public void setLongProperty(String s, long l) throws JMSException {
-
+    public void setLongProperty(String s, long l) throws JMSException 
+    {
+    	this.properties.put(s, l);
     }
 
     @Override
-    public void setFloatProperty(String s, float v) throws JMSException {
-
+    public void setFloatProperty(String s, float v) throws JMSException 
+    {
+    	this.properties.put(s, v);
     }
 
     @Override
-    public void setDoubleProperty(String s, double v) throws JMSException {
-
+    public void setDoubleProperty(String s, double v) throws JMSException 
+    {
+    	this.properties.put(s, v);
     }
 
     @Override
-    public void setStringProperty(String s, String s1) throws JMSException {
-
+    public void setStringProperty(String s, String s1) throws JMSException 
+    {
+    	this.properties.put(s, s1);
     }
 
     @Override
-    public void setObjectProperty(String s, Object o) throws JMSException {
-
+    public void setObjectProperty(String s, Object o) throws JMSException 
+    {
+    	this.properties.put(s, o);
     }
 
     @Override
-    public void acknowledge() throws JMSException {
-
+    public void acknowledge() throws JMSException 
+    {
+    	// Not implemented
     }
 
     @Override
-    public void clearBody() throws JMSException {
-
+    public void clearBody() throws JMSException 
+    {
+    	// Not implemented
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + deliveryMode;
+		result = prime * result
+				+ ((destination == null) ? 0 : destination.hashCode());
+		result = prime
+				* result
+				+ ((jmsCorrelationId == null) ? 0 : jmsCorrelationId.hashCode());
+		result = prime * result + Arrays.hashCode(jmsCorrelationIdAsBytes);
+		result = prime * result
+				+ (int) (jmsExpiration ^ (jmsExpiration >>> 32));
+		result = prime * result
+				+ ((jmsMessageId == null) ? 0 : jmsMessageId.hashCode());
+		result = prime * result + jmsPriority;
+		result = prime * result + (jmsRedelivered ? 1231 : 1237);
+		result = prime * result
+				+ ((jmsReplyTo == null) ? 0 : jmsReplyTo.hashCode());
+		result = prime * result + ((jmsType == null) ? 0 : jmsType.hashCode());
+		result = prime * result
+				+ ((properties == null) ? 0 : properties.hashCode());
+		result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JmsMessageDefaultImpl other = (JmsMessageDefaultImpl) obj;
+		if (deliveryMode != other.deliveryMode)
+			return false;
+		if (destination == null)
+		{
+			if (other.destination != null)
+				return false;
+		} else if (!destination.equals(other.destination))
+			return false;
+		if (jmsCorrelationId == null)
+		{
+			if (other.jmsCorrelationId != null)
+				return false;
+		} else if (!jmsCorrelationId.equals(other.jmsCorrelationId))
+			return false;
+		if (!Arrays.equals(jmsCorrelationIdAsBytes,
+				other.jmsCorrelationIdAsBytes))
+			return false;
+		if (jmsExpiration != other.jmsExpiration)
+			return false;
+		if (jmsMessageId == null)
+		{
+			if (other.jmsMessageId != null)
+				return false;
+		} else if (!jmsMessageId.equals(other.jmsMessageId))
+			return false;
+		if (jmsPriority != other.jmsPriority)
+			return false;
+		if (jmsRedelivered != other.jmsRedelivered)
+			return false;
+		if (jmsReplyTo == null)
+		{
+			if (other.jmsReplyTo != null)
+				return false;
+		} else if (!jmsReplyTo.equals(other.jmsReplyTo))
+			return false;
+		if (jmsType == null)
+		{
+			if (other.jmsType != null)
+				return false;
+		} else if (!jmsType.equals(other.jmsType))
+			return false;
+		if (properties == null)
+		{
+			if (other.properties != null)
+				return false;
+		} else if (!properties.equals(other.properties))
+			return false;
+		if (timestamp != other.timestamp)
+			return false;
+		return true;
+	}
 }

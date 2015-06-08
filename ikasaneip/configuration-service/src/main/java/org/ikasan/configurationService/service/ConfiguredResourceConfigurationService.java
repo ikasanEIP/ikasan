@@ -286,4 +286,13 @@ public class ConfiguredResourceConfigurationService implements ConfigurationServ
     {
         return this.staticConfigurationDao.findByConfigurationId(configuredResource.getConfiguredResourceId());
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.configuration.ConfigurationManagement#getConfiguration(java.lang.String)
+	 */
+	@Override
+	public Configuration getConfiguration(String configuredResourceId)
+	{
+		return this.staticConfigurationDao.findByConfigurationId(configuredResourceId);
+	}
 }

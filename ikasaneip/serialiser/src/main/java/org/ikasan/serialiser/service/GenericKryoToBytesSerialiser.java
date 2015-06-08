@@ -40,14 +40,17 @@
  */
 package org.ikasan.serialiser.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
+
+import org.ikasan.spec.serialiser.Converter;
+import org.ikasan.spec.serialiser.Serialiser;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.pool.KryoPool;
-import org.ikasan.spec.serialiser.Serialiser;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 
 /**
@@ -60,18 +63,20 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
 {
     /** pool of kryo instanances */
     private KryoPool pool;
+    private Map<Class, Converter> converters;
 
     /**
      * Constructor
      * @param pool
      */
-    public GenericKryoToBytesSerialiser(KryoPool pool)
+    public GenericKryoToBytesSerialiser(KryoPool pool,  Map<Class, Converter> converters)
     {
         this.pool = pool;
         if(pool == null)
         {
             throw new IllegalArgumentException("pool cannot be 'null'");
         }
+        this.converters = converters;
     }
 
     /**
@@ -88,7 +93,18 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
 
         try
         {
-            kryo.writeClassAndObject(output, source);
+        	Converter converter = this.getConverter(source.getClass());
+        	
+        	if(converter != null)
+        	{
+        		Object newObject = converter.convert(source);
+        		kryo.writeClassAndObject(output, newObject);
+        	}
+        	else
+        	{
+        		kryo.writeClassAndObject(output, source);
+        	}
+            
             output.flush();
             return byteArrayOutputStream.toByteArray();
         }
@@ -106,7 +122,8 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
     @Override
     public T deserialise(byte[] source)
     {
-        Input input = new Input(new ByteArrayInputStream(source));
+    	byte[] cloneSource = source.clone();
+        Input input = new Input(new ByteArrayInputStream(cloneSource));
         Kryo kryo=pool.borrow();
 
         try
@@ -117,6 +134,33 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
         {
             pool.release(kryo);
         }
+    }
+    
+    private Converter getConverter(Class cls)
+    {
+    	if(this.converters == null)
+    	{
+    		return null;
+    	}
+
+    	Converter converter = this.converters.get(cls);
+    	
+    	if(converter == null)
+    	{
+    		Class interfaceClasses[] = cls.getInterfaces();
+    		
+    		for(Class interfaceClass: interfaceClasses)
+    		{
+    			converter = this.converters.get(interfaceClass);
+    			
+    			if(converter != null)
+    	    	{
+    				return converter;
+    	    	}
+    		}
+    	}
+    	
+    	return converter;
     }
 
 }

@@ -9,6 +9,10 @@
         <constructor-arg ref="exclusionServiceExclusionEventDao"/>
         <constructor-arg ref="ikasanSerialiserFactory"/>
     </bean>
+    
+    <bean id="exclusionManagementService" class="org.ikasan.exclusion.service.ExclusionManagementServiceImpl">
+        <constructor-arg ref="exclusionServiceExclusionEventDao"/>
+    </bean>
 
     <bean id="exclusionServiceBlacklistDao" class="org.ikasan.exclusion.dao.MapBlackListDao">
         <constructor-arg>

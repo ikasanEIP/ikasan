@@ -42,6 +42,8 @@ package org.ikasan.spec.flow;
 
 import java.util.List;
 
+import org.ikasan.spec.serialiser.SerialiserFactory;
+
 /**
  * Interface representing a business path for a <code>FlowEvent<code>
  * 
@@ -82,6 +84,13 @@ public interface Flow
       * @return list of flow elements
       */
       public FlowElement<?> getFlowElement(String name);
+      
+      /**
+       * Method to get the configuration for the given flow. 
+       * 
+       * @return the flow configuration.
+       */
+      public FlowConfiguration getFlowConfiguration();
 
       /**
        * Setter for a listener for flow events
@@ -126,4 +135,11 @@ public interface Flow
      * String - runtime state
      */
     public String getState();
+ 
+    /**
+     * Get the serialiser factory associated with this flow.
+     * 
+     * @return
+     */
+    public SerialiserFactory getSerialiserFactory();
 }

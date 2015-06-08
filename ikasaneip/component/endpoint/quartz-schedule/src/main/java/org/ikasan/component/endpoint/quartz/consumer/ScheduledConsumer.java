@@ -52,6 +52,7 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.ikasan.spec.resubmission.ResubmissionService;
 import org.quartz.*;
 
 import java.text.ParseException;
@@ -67,7 +68,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @DisallowConcurrentExecution
 public class ScheduledConsumer<T>
-        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job
+        implements ManagedResource, Consumer<EventListener, EventFactory>, ConfiguredResource<ScheduledConsumerConfiguration>, Job, ResubmissionService<T>
 {
     /**
      * logger
@@ -399,4 +400,15 @@ public class ScheduledConsumer<T>
     {
         this.jobDetail = jobDetail;
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
+	 */
+	@Override
+	public void submit(T event)
+	{
+		logger.info("attempting to submit event: " + event);
+		
+		this.invoke(event);
+	}
 }

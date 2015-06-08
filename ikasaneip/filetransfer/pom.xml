@@ -58,8 +58,8 @@
         <module>connector-base</module>
         <module>client-filetransfer</module>
         <module>connector-basefiletransfer</module>
-        <module>connector-filetransfer-parent</module>
         <module>connector-ftp</module>
+        <module>connector-sftp</module>
     </modules>
 
     <dependencies>
