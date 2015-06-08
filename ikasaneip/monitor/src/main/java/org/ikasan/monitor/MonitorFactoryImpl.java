@@ -40,6 +40,7 @@
  */
 package org.ikasan.monitor;
 
+import org.apache.log4j.Logger;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Monitor;
 
@@ -56,12 +57,18 @@ public class MonitorFactoryImpl implements MonitorFactory
     /** default executor service is a single thread executor */
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    private static final Logger logger = Logger.getLogger(MonitorFactoryImpl.class);
+
     /**
      * Get an instance of a monitor
      * @return
      */
     public Monitor getMonitor()
     {
+        if (executorService == null || executorService.isShutdown())
+        {
+            throw new RuntimeException("Cannot get new Monitor after destroy method called");
+        }
         Monitor monitor = new DefaultMonitorImpl(executorService);
         if(monitor instanceof Configured)
         {
@@ -78,5 +85,15 @@ public class MonitorFactoryImpl implements MonitorFactory
     public void setExecutorService(ExecutorService executorService)
     {
         this.executorService = executorService;
+    }
+
+    /**
+     * Convenience method to shutdown the underlying executorService
+     * Subsequent calls to getMethod will cause a RuntimeException
+     */
+    public void destroy()
+    {
+        logger.info("MonitorFactory shutting down executorService");
+        executorService.shutdown();
     }
 }
