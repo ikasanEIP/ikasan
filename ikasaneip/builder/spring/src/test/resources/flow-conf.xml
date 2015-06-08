@@ -17,6 +17,16 @@
         <property name="consumer"           ref="consumerFlowElement" />
     </bean>
 
+    <bean id="flowWithExclusionFlow" class="org.ikasan.builder.FlowFactory">
+        <property name="moduleName"         value="moduleName" />
+        <property name="name"               value="flowName" />
+        <property name="description"        value="flowDescription" />
+        <property name="monitor"            ref="monitor" />
+        <property name="exceptionResolver"  ref="exceptionResolver" />
+        <property name="consumer"           ref="consumerFlowElement" />
+        <property name="exclusionFlowHeadElement" ref="exclusionServiceAwareFlowElement"/>
+    </bean>
+
     <bean id="consumerFlowElement" class="org.ikasan.builder.FlowElementFactory">
         <property name="name"       value="consumer"/>
         <property name="component"  ref="consumer"/>
@@ -83,5 +93,11 @@
         <property name="name"       value="producerB"/>
         <property name="component"  ref="producer"/>
     </bean>
-    
+
+    <bean id="exclusionServiceAwareFlowElement" class="org.ikasan.builder.FlowElementFactory">
+        <property name="name"       value="converter"/>
+        <property name="component"  ref="exclusionServiceAwareConverter"/>
+        <property name="transition" ref="producerAFlowElement"/>
+    </bean>
+
 </beans>

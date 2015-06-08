@@ -18,6 +18,7 @@
     <bean id="splitter"   class="org.ikasan.builder.sample.SampleSplitter" />
     <bean id="translator"  class="org.ikasan.builder.sample.SampleTranslator" />
     <bean id="filter"      class="org.ikasan.builder.sample.SampleFilter" />
+    <bean id="exclusionServiceAwareConverter" class="org.ikasan.builder.sample.SampleExclusionServiceAwareConverter"/>
 
     <!--  ================================================================== -->
     <!--  Sample monitor implementation for testing                          -->
