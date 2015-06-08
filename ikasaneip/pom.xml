@@ -627,6 +627,8 @@
                     <version>2.6</version>
 					<configuration>
 						<argLine>-XX:-UseSplitVerifier</argLine>
+                        <!-- Detailed logs in reportsDirectory/testName-output.txt instead of stdout -->
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
 					</configuration>
                 </plugin>
                 <plugin>
