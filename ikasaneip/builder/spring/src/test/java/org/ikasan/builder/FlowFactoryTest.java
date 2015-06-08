@@ -44,6 +44,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.ikasan.builder.sample.SampleExclusionServiceAwareConverter;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -56,6 +57,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -91,10 +93,17 @@ public class FlowFactoryTest
     @Resource
     Flow flow;
 
+    @Resource
+    Flow flowWithExclusionFlow;
+
+    @Resource
+    SampleExclusionServiceAwareConverter exclusionServiceAwareConverter;
+
     /**
      * Test successful flow creation.
      */
     @Test
+    @DirtiesContext
     public void test_successful_flowCreation()
     {
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
@@ -155,6 +164,16 @@ public class FlowFactoryTest
         Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
         Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
+    }
+
+    /**
+     * Exclusion service should be injected into isExclusionServiceAware exclusion flow elements
+     * that exist in the exclusion flow.
+     */
+    @DirtiesContext
+    public void test_injectExclusionService_exclusionFlowElement() {
+        Assert.assertNotNull(flowWithExclusionFlow);
+        Assert.assertNotNull(exclusionServiceAwareConverter.getExclusionService());
     }
 
 }
