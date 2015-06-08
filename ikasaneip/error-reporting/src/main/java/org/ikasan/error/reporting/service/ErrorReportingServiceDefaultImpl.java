@@ -40,6 +40,9 @@
  */
 package org.ikasan.error.reporting.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.ikasan.error.reporting.dao.ErrorReportingServiceDao;
 import org.ikasan.error.reporting.model.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -230,5 +233,17 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
         }
         return flattenedBuffer.toString();
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.error.reporting.ErrorReportingService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+	 */
+	@Override
+	public List<ErrorOccurrence> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate)
+	{
+		return this.errorReportingServiceDao.find(moduleName, flowName, flowElementname, startDate, endDate);
+	}
+
+	
 
 }

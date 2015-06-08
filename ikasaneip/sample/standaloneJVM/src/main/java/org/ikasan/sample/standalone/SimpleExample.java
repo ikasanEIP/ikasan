@@ -46,9 +46,10 @@ import org.ikasan.sample.component.consumer.SimpleConsumer;
 import org.ikasan.sample.component.converter.SimpleConverter;
 import org.ikasan.sample.component.producer.SimpleProducer;
 import org.ikasan.sample.component.router.SimpleRouter;
-import org.ikasan.sample.flow.listener.SimpleFlowListener;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.serialiser.Serialiser;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
  * Simple Standalone JVM Example of Ikasan i9.
@@ -69,7 +70,7 @@ public class SimpleExample
     public Module createModule(String moduleName)
     {
         return ModuleBuilder.newModule(moduleName)
-                .addFlow(FlowBuilder.newFlow("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService())
+                .addFlow(FlowBuilder.newFlow("flowName", moduleName).withDescription("Simple Module Example").withExclusionService(new StubbedExclusionService()).withSerialiserFactory(new StubbedSerialiserFactory())
                         .consumer("consumerName", new SimpleConsumer())     // of Integer
                         .converter("converterName", new SimpleConverter()) // to String
                         .singleRecipientRouter("routerName", new SimpleRouter())
@@ -77,6 +78,31 @@ public class SimpleExample
                         .otherise().publisher("evenValuePublisher", new SimpleProducer())
                         .build())
             .build();
+    }
+    
+    class StubbedSerialiserFactory implements SerialiserFactory
+    {
+
+		/* (non-Javadoc)
+		 * @see org.ikasan.spec.serialiser.SerialiserFactory#getDefaultSerialiser()
+		 */
+		@Override
+		public Serialiser getDefaultSerialiser()
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.ikasan.spec.serialiser.SerialiserFactory#getSerialiser(java.lang.Class)
+		 */
+		@Override
+		public Serialiser getSerialiser(Class cls)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
     }
 
     /**

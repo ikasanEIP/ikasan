@@ -43,9 +43,7 @@ package org.ikasan.security.service;
 import org.apache.log4j.Logger;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
-import org.ikasan.security.service.authentication.LocalAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -110,15 +108,13 @@ public class AuthenticationServiceImpl implements AuthenticationService
 			{
 				logger.info("Attempting local authentication for user " + username);
 				
-				String currentAuthMethod = authMethod.getMethod();
+				AuthenticationMethod authenticationMethod = new AuthenticationMethod();
 				
-				authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+				authenticationMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
 
-				authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
+				authProvider = authenticationProviderFactory.getAuthenticationProvider(authenticationMethod);
 				
 				authentication = authProvider.authenticate(auth);
-				
-				authMethod.setMethod(currentAuthMethod);
 			}
 		}
 

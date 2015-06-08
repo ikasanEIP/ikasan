@@ -40,22 +40,27 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.event.*;
+import org.ikasan.spec.event.EventFactory;
+import org.ikasan.spec.event.EventListener;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.event.ManagedEventIdentifierException;
+import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
+import org.ikasan.spec.resubmission.ResubmissionService;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
-
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
 
 /**
  * Consumer wrapping Spring's JMS Container.
@@ -65,6 +70,7 @@ public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
         Consumer<EventListener<?>,EventFactory>,
         ManagedIdentifierService<ManagedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>
+		, ResubmissionService<Message>
 {
     /** Logger instance */
     private Logger logger = Logger.getLogger(JmsContainerConsumer.class);
@@ -240,4 +246,15 @@ public class JmsContainerConsumer
             ((Configured<SpringMessageConsumerConfiguration>)this.messageProvider).setConfiguration(configuration);
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
+	 */
+	@Override
+	public void submit(Message event)
+	{
+		logger.info("attempting to submit event: " + event);
+
+		this.onMessage(event);
+	}
 }

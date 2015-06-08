@@ -1,6 +1,6 @@
 /*
- * $Id: TransactionalResourceCommand.java 43199 2015-02-06 17:18:00Z stewmi $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/src/main/java/org/ikasan/connector/base/command/TransactionalResourceCommand.java $
+ * $Id:$
+ * $URL:$
  * 
  * ====================================================================
  * Ikasan Enterprise Integration Platform

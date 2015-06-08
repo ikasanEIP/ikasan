@@ -100,6 +100,11 @@
           <artifactId>ikasan-spec-flow</artifactId>
           <scope>provided</scope>
       </dependency>
+      
+      <dependency>
+		  <groupId>org.quartz-scheduler</groupId>
+		  <artifactId>quartz</artifactId>
+	  </dependency>
 
       <dependency>
           <groupId>com.esotericsoftware</groupId>
@@ -176,7 +181,7 @@
 
       <!-- Hibernate dependency -->
       <dependency>
-          <groupId>javassist</groupId>
+          <groupId>org.javassist</groupId>
           <artifactId>javassist</artifactId>
           <scope>test</scope>
       </dependency>

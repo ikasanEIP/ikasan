@@ -40,15 +40,16 @@
  */
 package org.ikasan.flow.visitorPattern;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
  * Abstract implementation of a flow configuration
@@ -78,13 +79,19 @@ public class AbstractFlowConfiguration
 
     /** handle to configuration service */
     protected ConfigurationService configurationService;
+    
+    /** handle to the re-submission service */
+    protected ResubmissionService resubmissionService;
 
     /**
      * Constructor
+     * 
      * @param leadFlowElement
      * @param configurationService
+     * @param resubmisionService
      */
-    public AbstractFlowConfiguration(FlowElement leadFlowElement, ConfigurationService configurationService)
+    public AbstractFlowConfiguration(FlowElement leadFlowElement, ConfigurationService configurationService,
+    		ResubmissionService resubmisionService)
     {
         this.leadFlowElement = leadFlowElement;
         if(leadFlowElement == null)
@@ -97,6 +104,9 @@ public class AbstractFlowConfiguration
         {
             throw new IllegalArgumentException("configurationService cannot be 'null'");
         }
+        
+        // It is possible that the re-submission service is NULL.
+        this.resubmissionService = resubmisionService;
         
         for(FlowElement flowElement:getFlowElements())
         {
@@ -168,5 +178,13 @@ public class AbstractFlowConfiguration
         }
         return result;
     }
+
+	/**
+	 * @return the resubmissionService
+	 */
+	public ResubmissionService getResubmissionService()
+	{
+		return resubmissionService;
+	}
 
 }

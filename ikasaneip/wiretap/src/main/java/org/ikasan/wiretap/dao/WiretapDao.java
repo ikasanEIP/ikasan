@@ -81,6 +81,27 @@ public interface WiretapDao
      */
     public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, final Set<String> moduleNames,
             final String moduleFlow, final String componentName, final String eventId, final String payloadId, Date fromDate, Date untilDate, String payloadContent);
+    
+    /**
+     * Perform a paged search for <code>WiretapFlowEvent</code>s
+     * 
+     * @param pageNo - The page number to retrieve
+     * @param pageSize - The size of the page
+     * @param orderBy - order by field
+     * @param orderAscending - ascending flag
+     * @param moduleNames - The list of module names
+     * @param moduleFlow - The name of Flow internal to the Module
+     * @param componentName - The component name
+     * @param eventId - The event id
+     * @param payloadId - The payload id
+     * @param fromDate - The from date
+     * @param untilDate - The to date
+     * @param payloadContent - The payload content
+     * 
+     * @return PagedSearchResult
+     */
+    public PagedSearchResult<WiretapEvent> findWiretapEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending, final Set<String> moduleNames,
+            final Set<String> moduleFlow, final Set<String> componentName, final String eventId, final String payloadId, Date fromDate, Date untilDate, String payloadContent);
 
     /**
      * Find wiretap entry by identifier

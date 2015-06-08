@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration debug="false" xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${jboss.server.log.dir}/ikasan-sample-ftp.log"/>
+        <param name="maxFileSize" value="20MB" />
+        <param name="maxBackupIndex" value="5" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyyMMdd HH:mm:ss SSS} %-5p [%t]: %x %m%n"/>
+        </layout>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</log4j:configuration>

@@ -54,6 +54,13 @@ public interface ConfigurationManagement<RESOURCE,MODEL>
      * @return
      */
     public MODEL getConfiguration(RESOURCE configuredResource);
+    
+    /**
+     * Create a configuration instance for the given configured resource id.
+     * @param configuredResource
+     * @return
+     */
+    public MODEL getConfiguration(String configuredResourceId);
 
     /**
      * Allow the setting (override) of the configurationFactory

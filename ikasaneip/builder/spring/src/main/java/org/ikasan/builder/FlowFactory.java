@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id$
  * $URL$
  *
@@ -40,11 +40,12 @@
  */
 package org.ikasan.builder;
 
+import javax.annotation.Resource;
+
 import org.apache.log4j.Logger;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.exclusion.service.IsExclusionServiceAware;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -54,19 +55,21 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.resubmission.ResubmissionService;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import javax.annotation.Resource;
+import org.ikasan.spec.flow.FlowEventListener;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.
@@ -118,6 +121,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     /** default configuration service which can be overridden */
     @Resource
     ConfigurationService configurationService;
+    
+    @Resource
+    SerialiserFactory ikasanSerialiserFactory;
 
     /** flow monitor */
     Monitor monitor;
@@ -127,6 +133,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
     /** head flow element of the exclusion flow */
     FlowElement<?> exclusionFlowHeadElement;
+    
+    /** handle to the re-submission service */
+    ResubmissionService resubmissionService;
 
     /**
      * Setter for moduleName
@@ -235,6 +244,22 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     {
         this.exceptionResolver = exceptionResolver;
     }
+    
+    /**
+	 * @param ikasanSerialiserFactory the ikasanSerialiserFactory to set
+	 */
+	public void setIkasanSerialiserFactory(SerialiserFactory ikasanSerialiserFactory)
+	{
+		this.ikasanSerialiserFactory = ikasanSerialiserFactory;
+	}
+	
+	/**
+	 * @param resubmissionService the resubmissionService to set
+	 */
+	public void setResubmissionService(ResubmissionService resubmissionService)
+	{
+		this.resubmissionService = resubmissionService;
+	}
 
     /*
      * (non-Javadoc)
@@ -242,7 +267,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
      */
     public Flow getObject()
     {
-        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumer, configurationService);
+        FlowConfiguration flowConfiguration = new DefaultFlowConfiguration(consumer, configurationService, resubmissionService);
 
         if(exclusionService == null)
         {
@@ -279,10 +304,10 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         ExclusionFlowConfiguration exclusionFlowConfiguration = null;
         if(exclusionFlowHeadElement != null)
         {
-            exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, configurationService);
+            exclusionFlowConfiguration = new DefaultExclusionFlowConfiguration(this.exclusionFlowHeadElement, configurationService, resubmissionService);
         }
 
-        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService);
+        Flow flow = new VisitingInvokerFlow(name, moduleName, flowConfiguration, exclusionFlowConfiguration, recoveryManager, exclusionService, ikasanSerialiserFactory);
         flow.setFlowListener(flowEventListener);
 
         // pass handle to the error reporting service if flow needs to be aware of this
@@ -388,4 +413,5 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
             throw new RuntimeException(e);
         }
     }
+
 }

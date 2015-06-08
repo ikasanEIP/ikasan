@@ -41,6 +41,7 @@
 package org.ikasan.recovery.integrationTest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -609,6 +610,17 @@ public class ScheduledRecoveryManagerIntegrationTest
         public void housekeep() {
 
         }
+
+		/* (non-Javadoc)
+		 * @see org.ikasan.spec.error.reporting.ErrorReportingService#find(java.util.List, java.util.List, java.util.List, java.util.Date, java.util.Date)
+		 */
+		@Override
+		public List find(List moduleName, List flowName, List flowElementname,
+				Date startDate, Date endDate)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     /**

@@ -127,7 +127,7 @@
                     ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     Identifier VARCHAR(255) NOT NULL,
-                    Event BINARY NULL,
+					Event IMAGE NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
 					Timestamp NUMERIC DEFAULT 0 NOT NULL
 					)
@@ -149,7 +149,7 @@
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
-                    Event BINARY NULL,
+					Event IMAGE NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL,
                     Expiry NUMERIC NOT NULL
                     )
@@ -1059,7 +1059,7 @@
 					ModuleName VARCHAR(255) NOT NULL,
                     FlowName VARCHAR(255) NOT NULL,
                     Identifier VARCHAR(255) NOT NULL,
-                    Event BINARY NULL,
+                    Event IMAGE NULL,
                     ErrorUri VARCHAR(255) NOT NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL
 					)
@@ -1081,7 +1081,7 @@
                     EventLifeIdentifier VARCHAR(255) NULL,
                     EventRelatedIdentifier VARCHAR(255) NULL,
                     Action VARCHAR(255) NULL,
-                    Event BINARY NULL,
+                    Event IMAGE NULL,
                     Timestamp NUMERIC DEFAULT 0 NOT NULL,
                     Expiry NUMERIC NOT NULL
                     )
@@ -2037,7 +2037,7 @@
                     [ModuleName]            [varchar](255) NOT NULL,
                     [FlowName]              [varchar](255) NOT NULL,
                     [Identifier]   			[varchar](255) NOT NULL,
-                    [Event]                 [binary] NULL,
+                    [Event]                 [varbinary] (max) NULL,
                     [ErrorUri]              [varchar](255) NOT NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     CONSTRAINT              [PK_ExclusionEvent_Module_Flow_Id] PRIMARY KEY CLUSTERED
@@ -2057,7 +2057,7 @@
                     [EventLifeIdentifier]   [varchar](255) NULL,
                     [EventRelatedIdentifier] [varchar](255) NULL,
                     [Action]                [varchar](255) NULL,
-                    [Event]                 [binary] NULL,
+					[Event]                 [varbinary] (max) NULL,
                     [Timestamp]             [numeric] DEFAULT 0 NOT NULL,
                     [Expiry]                [numeric] NOT NULL,
                     CONSTRAINT              [PK_ErrorOccurrence_Module_Flow_Uri] PRIMARY KEY CLUSTERED

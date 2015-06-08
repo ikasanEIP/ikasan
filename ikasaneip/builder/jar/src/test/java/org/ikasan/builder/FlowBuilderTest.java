@@ -44,7 +44,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.ikasan.flow.visitorPattern.invoker.*;
+import org.ikasan.flow.visitorPattern.invoker.BrokerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConsumerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ConverterFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.ProducerFlowElementInvoker;
+import org.ikasan.flow.visitorPattern.invoker.TranslatorFlowElementInvoker;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;

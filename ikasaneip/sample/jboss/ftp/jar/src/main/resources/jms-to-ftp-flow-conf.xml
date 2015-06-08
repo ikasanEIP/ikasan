@@ -76,6 +76,6 @@
         <property name="jndiName" value="java:/ftp/SimpleFtpConnectionFactory"/>
     </bean>
 
-    <bean id="jmsToFtpConverter" class="org.ikasan.sample.ftp.component.converter.JmsToFtpConverter"/>
+    <bean id="jmsToFtpConverter" class="org.ikasan.sample.sftp.component.converter.JmsToFtpConverter"/>
 
 </beans>

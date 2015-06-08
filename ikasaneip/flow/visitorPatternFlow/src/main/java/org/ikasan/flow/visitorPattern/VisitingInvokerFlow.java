@@ -40,6 +40,10 @@
  */
 package org.ikasan.flow.visitorPattern;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -50,17 +54,19 @@ import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.*;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowConfiguration;
+import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.flow.FlowEvent;
+import org.ikasan.spec.flow.FlowEventListener;
+import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.ikasan.spec.serialiser.SerialiserFactory;
 
 /**
  * Default implementation of a Flow
@@ -126,6 +132,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
     /** errorReportingService handle */
     private ErrorReportingService errorReportingService;
 
+    /** serialiserFactory handle */
+    private SerialiserFactory serialiserFactory;
+
     /**
      * Constructor
      * @param name
@@ -136,9 +145,9 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration,
                                RecoveryManager<FlowEvent<?,?>> recoveryManager,
-                               ExclusionService exclusionService)
+                               ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
-        this(name, moduleName, flowConfiguration, null, recoveryManager, exclusionService);
+        this(name, moduleName, flowConfiguration, null, recoveryManager, exclusionService, serialiserFactory);
     }
 
     /**
@@ -152,7 +161,7 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
      */
     public VisitingInvokerFlow(String name, String moduleName, FlowConfiguration flowConfiguration, ExclusionFlowConfiguration exclusionFlowConfiguration,
                                RecoveryManager<FlowEvent<?,?>> recoveryManager,
-                               ExclusionService exclusionService)
+                               ExclusionService exclusionService, SerialiserFactory serialiserFactory)
     {
         this.name = name;
         if(name == null)
@@ -184,6 +193,12 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
         if(exclusionService == null)
         {
             throw new IllegalArgumentException("exclusionService cannot be 'null'");
+        }
+        
+        this.serialiserFactory = serialiserFactory;
+        if(serialiserFactory == null)
+        {
+            throw new IllegalArgumentException("serialiserFactory cannot be 'null'");
         }
     }
 
@@ -830,5 +845,23 @@ public class VisitingInvokerFlow implements Flow, EventListener<FlowEvent<?,?>>,
             }
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.flow.Flow#getConsumerFlowElement()
+	 */
+	@Override
+	public FlowConfiguration getFlowConfiguration()
+	{
+		return this.flowConfiguration;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.flow.Flow#getSerialiserFactory()
+	 */
+	@Override
+	public SerialiserFactory getSerialiserFactory()
+	{
+		return this.serialiserFactory;
+	}
 
 }

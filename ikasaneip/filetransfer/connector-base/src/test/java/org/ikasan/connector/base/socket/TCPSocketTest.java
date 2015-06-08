@@ -1,6 +1,6 @@
 /*
- * $Id: TCPSocketTest.java 38544 2014-08-15 11:22:41Z majean $
- * $URL: https://svc-vcs-prd.uk.mizuho-sc.com:18080/svn/architecture/cmi2/trunk/Ikasan-0.8.4.x/connector-base/src/test/java/org/ikasan/connector/base/socket/TCPSocketTest.java $
+ * $Id:$
+ * $URL:$
  *
  * ====================================================================
  * Ikasan Enterprise Integration Platform

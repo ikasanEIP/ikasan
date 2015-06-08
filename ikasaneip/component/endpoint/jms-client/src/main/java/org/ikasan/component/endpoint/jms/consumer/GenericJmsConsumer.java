@@ -40,6 +40,22 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
+import java.util.Hashtable;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.Session;
+import javax.jms.Topic;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.apache.log4j.Logger;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
@@ -52,12 +68,7 @@ import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
-
-import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.util.Hashtable;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 /**
  * Implementation of a generic client consumer based on the JMS specification.
@@ -67,7 +78,7 @@ import java.util.Hashtable;
 public class GenericJmsConsumer 
     implements Consumer<EventListener<?>,EventFactory>,
         ManagedIdentifierService<ManagedEventIdentifierService>, EndpointListener<Message,Throwable>,
-        ConfiguredResource<GenericJmsConsumerConfiguration>
+        ConfiguredResource<GenericJmsConsumerConfiguration>, ResubmissionService<Message>
 {
     /** class logger */
     private static Logger logger = Logger.getLogger(GenericJmsConsumer.class);
@@ -418,5 +429,16 @@ public class GenericJmsConsumer
 
         return new InitialContext(env);
     }
+
+    /* (non-Javadoc)
+	 * @see org.ikasan.spec.resubmission.ResubmissionService#submit(java.lang.Object)
+	 */
+	@Override
+	public void submit(Message event)
+	{
+		logger.info("attempting to submit event: " + event);
+
+		this.onMessage(event);
+	}
 
 }
