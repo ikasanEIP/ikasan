@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.ikasan.error.reporting.service.ErrorReportingServiceDefaultImpl;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
+import org.ikasan.exclusion.service.IsExclusionServiceAware;
 import org.ikasan.flow.visitorPattern.*;
 import org.ikasan.recovery.RecoveryManagerFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
