@@ -40,6 +40,9 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * Error Reporting Service Data Access Contract.
  * @author Ikasan Development Team
@@ -52,6 +55,21 @@ public interface ErrorReportingServiceDao<EVENT>
      * @return EVENT
      */
     public EVENT find(String uri);
+
+    /**
+     * Find an error reporting events based on a list of moduleName, flowName and flowElementName
+     * as well as a date range.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param flowElementname
+     * @param startDate
+     * @param endDate
+     * 
+     * @return
+     */
+    public List<EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+			Date startDate, Date endDate);
 
     /**
      * Save the incoming EVENT.

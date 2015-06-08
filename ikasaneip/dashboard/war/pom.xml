@@ -4,13 +4,13 @@
 	<groupId>org.ikasan</groupId>
 	<artifactId>ikasan-dashboard-war</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-rc4-SNAPSHOT</version>
+	<version>1.0.0-rc5-SNAPSHOT</version>
 	<name>Ikasan Dashboard</name>
 
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-dashboard</artifactId>
-		<version>1.0.0-rc4-SNAPSHOT</version>
+		<version>1.0.0-rc5-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -88,6 +88,13 @@
 		   <version>4.0.2</version>
 		   <scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+		   <groupId>org.vaadin.addons</groupId>
+		   <artifactId>aceeditor</artifactId>
+		   <version>0.8.13</version>
+		</dependency>
+		
 	
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -112,71 +119,140 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.0.2.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.9.Final</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.18.1-GA</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-mapping</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
+			<version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-topology</artifactId>
+			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-security</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
+			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-setup</artifactId>
-			<version>1.0.0-rc4-SNAPSHOT</version>
+			<version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip</artifactId>
-            <version>1.0.0-rc4-SNAPSHOT</version>
+            <version>1.0.0-rc5-SNAPSHOT</version>
 			<scope>compile</scope>
         </dependency>
+ 
+ 		<dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-configuration-service</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-hospital</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-module</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-system-event</artifactId>
+            <version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-error-reporting-service</artifactId>
+			<version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-exclusion-service</artifactId>
+			<version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-serialiser</artifactId>
+			<version>1.0.0-rc5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>3.2.6.RELEASE</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
 			<version>3.2.6.RELEASE</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
@@ -186,54 +262,17 @@
 		   <scope>compile</scope>
 		</dependency>
 		
-		<!-- JBoss and Messaging -->
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-		</dependency>
 		
 		<dependency>
-			<groupId>org.jboss.remoting</groupId>
-			<artifactId>jboss-remoting</artifactId>
-			<version>2.2.3</version>
-			<scope>provided</scope>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.17</version>
 		</dependency>
-		
+
 		<dependency>
-			<groupId>jboss.aop</groupId>
-			<artifactId>jboss-aop-jdk50</artifactId>
-			<version>1.5.5.GA</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>trove</groupId>
-			<artifactId>trove</artifactId>
-			<version>1.0.2</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss.messaging</groupId>
-			<artifactId>jboss-messaging-client</artifactId>
-			<version>1.4.29</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.9.0.GA</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jbossall-client</artifactId>
-			<version>4.3.0.GA_CP04</version>
-			<scope>provided</scope>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
 		</dependency>
 		
 		<!-- Test dependencies-->

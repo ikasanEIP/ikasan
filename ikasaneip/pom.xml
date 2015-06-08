@@ -87,6 +87,8 @@
         <module>wiretap</module>
         <module>security</module>
         <module>filter</module>
+		<module>rest</module>
+		
 
         <!-- ikasan test harness -->
         <module>test</module>
@@ -111,6 +113,7 @@
         <module>management</module>
         <module>webconsole</module>
         <module>console</module>
+		<module>dashboard</module>
 
         <!-- developer tooling -->
         <module>developer</module>
@@ -449,7 +452,7 @@
         <version.commons-collections>3.2.1</version.commons-collections>
         <version.commons-logging>1.1.1</version.commons-logging>
         <version.org.hsqldb>1.8.0.10</version.org.hsqldb>
-        <version.javassist>3.12.1.GA</version.javassist>
+        <version.javassist>3.18.1-GA</version.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
         <version.org.apache.directory.server.apached-server-unit>1.5.5</version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>2.3.4</version.com.unboundid>
@@ -786,6 +789,12 @@
                 <artifactId>ikasan-spec-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-hospital</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
@@ -894,10 +903,22 @@
                 <artifactId>ikasan-spec-component</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-resubmission</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-wiretap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			
+			<dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-spec-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1311,7 +1332,7 @@
 
             <!-- TODO: Upgrade to 3.12.0 at some stage -->
             <dependency>
-                <groupId>javassist</groupId>
+                <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${version.javassist}</version>
             </dependency>

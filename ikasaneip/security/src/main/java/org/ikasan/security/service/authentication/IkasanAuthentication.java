@@ -44,6 +44,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.directory.api.ldap.aci.UserClass.ThisEntry;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.PolicyLink;
 import org.springframework.security.core.Authentication;
@@ -60,6 +61,7 @@ public class IkasanAuthentication implements Authentication
 	private boolean isAuthenticated;
 	private List<GrantedAuthority> authorities;
 	private Principal principal;
+	private String credentials;
 	
 	/**
 	 * @param isAuthenticated
@@ -67,12 +69,14 @@ public class IkasanAuthentication implements Authentication
 	 * @param principal
 	 */
 	public IkasanAuthentication(boolean isAuthenticated,
-			Principal principal, List<GrantedAuthority> authorities)
+			Principal principal, List<GrantedAuthority> authorities,
+			String credentials)
 	{
 		super();
 		this.isAuthenticated = isAuthenticated;
 		this.authorities = authorities;
 		this.principal = principal;
+		this.credentials = credentials;
 	}
 	
     /* (non-Javadoc)
@@ -99,7 +103,7 @@ public class IkasanAuthentication implements Authentication
     @Override
     public Object getCredentials()
     {
-        throw new UnsupportedOperationException();
+        return this.credentials;
     }
 
     /* (non-Javadoc)

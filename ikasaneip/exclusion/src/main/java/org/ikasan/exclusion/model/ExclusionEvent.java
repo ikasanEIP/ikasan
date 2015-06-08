@@ -174,6 +174,7 @@ public class ExclusionEvent
 
         ExclusionEvent that = (ExclusionEvent) o;
 
+        if (id != that.id) return false;
         if (!flowName.equals(that.flowName)) return false;
         if (!identifier.equals(that.identifier)) return false;
         if (!moduleName.equals(that.moduleName)) return false;

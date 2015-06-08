@@ -41,6 +41,9 @@
 
 package org.ikasan.spec.error.reporting;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * This contract represents a platform level service for the heavyweight logging of
  * Errors
@@ -60,6 +63,20 @@ public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
      * @return EVENT for this uri
      */
     public ERROR_REPORTING_EVENT find(String uri);
+    
+    /**
+     * Find an error reporting events based on a list of moduleName, flowName and flowElementName
+     * as well as a date range.
+     * 
+     * @param moduleName
+     * @param flowName
+     * @param flowElementname
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<ERROR_REPORTING_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
+    		Date startDate, Date endDate);
 
     /**
      * Logs an Error where there is an inflight Event involved in a Flow
