@@ -40,18 +40,12 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.Session;
-import javax.jms.Topic;
+import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -368,16 +362,26 @@ public class GenericJmsConsumer
         {
             throw new RuntimeException("No active eventListeners registered!");
         }
-        
+
         try
         {
-            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( this.managedEventIdentifierService.getEventIdentifier(message), message);
+            FlowEvent<?,?> flowEvent = flowEventFactory.newEvent( this.managedEventIdentifierService.getEventIdentifier(message), extractContent(message));
             this.eventListener.invoke(flowEvent);
         }
-        catch (ManagedEventIdentifierException e)
+        catch (ManagedEventIdentifierException|JMSException e)
         {
             this.eventListener.invoke(e);
         }
+    }
+
+    protected Object extractContent(Message message) throws JMSException
+    {
+        if(!this.configuration.isAutoContentConversion())
+        {
+            return message;
+        }
+
+        return JmsMessageConverter.extractContent(message);
     }
 
     /**
