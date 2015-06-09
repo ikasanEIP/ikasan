@@ -94,6 +94,9 @@ public class GenericJmsConsumerConfiguration
     /** are we using local JNDI (false) or a remote JNDI (true) */
     private boolean remoteJNDILookup = false;
 
+    /** do we automatically pull the payload content from the JMS message */
+    private boolean autoContentConversion = false;
+
     public boolean isRemoteJNDILookup() {
         return remoteJNDILookup;
     }
@@ -230,5 +233,15 @@ public class GenericJmsConsumerConfiguration
     public boolean isNoLocal()
     {
         return this.noLocal;
+    }
+
+    public void setAutoContentConversion(boolean autoContentConversion)
+    {
+        this.autoContentConversion = autoContentConversion;
+    }
+
+    public boolean isAutoContentConversion()
+    {
+        return this.isAutoContentConversion();
     }
 }
