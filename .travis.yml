@@ -1,0 +1,6 @@
+language: java
+after_success:
+  - mvn clean test
+cache:
+  directories:
+  - $HOME/.m2

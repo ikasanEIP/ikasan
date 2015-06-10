@@ -608,6 +608,7 @@
                         <include>**/*Test.java</include>
                     </includes>
                     <forkMode>once</forkMode>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
         </plugins>
@@ -644,6 +645,7 @@
                     <excludes>
                         <exclude>**/integrationTest/**</exclude>
                     </excludes>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
