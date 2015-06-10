@@ -248,7 +248,7 @@ public interface MappingConfigurationService
             String description);
 
     /**
-     * This method retrieves a MappingConfiguration based on its id.
+     * This method retrieves a {@link MappingConfiguration} based on its id.
      * 
      * @param id
      * @return
@@ -256,6 +256,7 @@ public interface MappingConfigurationService
     public MappingConfiguration getMappingConfigurationById(Long id);
 
     /**
+     * This method retrieves a list of {@link MappingConfiguration} based on their configurationServiceClientId.
      * 
      * @param configurationServiceClientId
      * @return
@@ -263,6 +264,7 @@ public interface MappingConfigurationService
     public List<MappingConfiguration> getMappingConfigurationsByConfigurationServiceClientId(Long configurationServiceClientId);
 
     /**
+     * This method retrieves a list of {@link MappingConfiguration} based on their configurationTypeId.
      * 
      * @param configurationTypeId
      * @return
@@ -270,6 +272,7 @@ public interface MappingConfigurationService
     public List<MappingConfiguration> getMappingConfigurationsByConfigurationTypeId(Long configurationTypeId);
 
     /**
+     * This method retrieves a list of {@link MappingConfiguration} based on their sourceContextId.
      * 
      * @param sourceContextId
      * @return
@@ -277,6 +280,7 @@ public interface MappingConfigurationService
     public List<MappingConfiguration> getMappingConfigurationsBySourceContextId(Long sourceContextId);
 
     /**
+     * This method retrieves a list of {@link MappingConfiguration} based on their targetContextId.
      * 
      * @param targetContextId
      * @return
@@ -284,8 +288,8 @@ public interface MappingConfigurationService
     public List<MappingConfiguration> getMappingConfigurationsByTargetContextId(Long targetContextId);
 
     /**
-     * This method retrieves a mapping configuration context by client name, configuration type as well as the
-     * source and target contests.
+     * This method retrieves a {@link MappingConfiguration} context by client name, configuration type as well as the
+     * source and target contexts.
      * 
      * @param clientName
      * @param mappingConfigurationType
@@ -297,8 +301,8 @@ public interface MappingConfigurationService
             String targetContextName);
 
     /**
-     * This method retrieves a mapping configuration context by client name, configuration type as well as the
-     * source and target contests.
+     * This method retrieves a  list of {@link MappingConfiguration} by client name, configuration type as well as the
+     * source and target contexts.
      * 
      * @param clientName
      * @param mappingConfigurationType
@@ -310,6 +314,8 @@ public interface MappingConfigurationService
             String targetContextName);
 
     /**
+     * This method retrieves a list of {@link MappingConfigurationLite} by client name, configuration type as well as the
+     * source and target contexts.
      * 
      * @param clientName
      * @param mappingConfigurationType
@@ -321,6 +327,7 @@ public interface MappingConfigurationService
         String targetContextName);
 
     /**
+     * This method retrieves a {@link ConfigurationContext} based on its id.
      * 
      * @param id
      * @return
@@ -328,6 +335,7 @@ public interface MappingConfigurationService
     public ConfigurationContext getConfigurationContextById(Long id);
 
     /**
+     * This method retrieves a {@link ConfigurationServiceClient} based on its id.
      * 
      * @param id
      * @return
@@ -335,6 +343,7 @@ public interface MappingConfigurationService
     public ConfigurationServiceClient getConfigurationServiceClientById(Long id);
 
     /**
+     * This method retrieves a {@link ConfigurationType} based on its id.
      * 
      * @param id
      * @return
@@ -342,20 +351,23 @@ public interface MappingConfigurationService
     public ConfigurationType getConfigurationTypeById(Long id);
 
     /**
-     * 
+     * This method retrieves a list of {@link KeyLocationQuery} based on the mappingConfigurationId
+     *  
      * @param mappingConfigurationId
      * @return
      */
     public List<KeyLocationQuery> getKeyLocationQueriesByMappingConfigurationId(Long mappingConfigurationId);
 
     /**
-     * 
+     * This method retrieves a list of {@link SourceConfigurationValue} based on the mappingConfigurationId
+     *  
      * @param mappingConfigurationId
      * @return
      */
     public List<SourceConfigurationValue> getSourceConfigurationValueByMappingConfigurationId(Long mappingConfigurationId);
 
     /**
+     * This method retrieves a {@link TargetConfigurationValue} based on its id.
      * 
      * @param id
      * @return
@@ -363,36 +375,43 @@ public interface MappingConfigurationService
     public TargetConfigurationValue getTargetConfigurationValueById(Long id);
 
     /**
-     * 
-     * @param mappingConfigurationId
+     * This method retrieves a list of {@link SourceConfigurationValue} based on the targetConfigurationValueId
+     *  
+     * @param targetConfigurationValueId
      * @return
      */
     public List<SourceConfigurationValue> getSourceConfigurationValuesByTargetConfigurationValueId(Long targetConfigurationValueId);
 
     /**
+     * Method to delete a {@link SourceConfigurationValue}
      * 
      * @param sourceConfigurationValue
      */
     public void deleteSourceConfigurationValue(SourceConfigurationValue sourceConfigurationValue);
 
     /**
+     * Method to delete a {@link TargetConfigurationValue}
      * 
      * @param sourceConfigurationValue
      */
     public void deleteTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
 
     /**
-     * 
+     *  Method to delete a {@link MappingConfiguration}
+     *  
      * @param mappingConfiguration
      */
     public void deleteMappingConfiguration(MappingConfiguration mappingConfiguration);
 
     /**
+     * Get the next sequence number.
+     * 
      * @return
      */
     public Long getNextSequenceNumber();
 
     /**
+     * The the number of {@link SourceConfigurationValue} referencing a {@link TargetConfigurationValue}
      * 
      * @param targetConfigurationValue
      * @return
@@ -400,6 +419,7 @@ public interface MappingConfigurationService
     public Long getNumberOfSourceConfigurationValuesReferencingTargetConfigurationValue(TargetConfigurationValue targetConfigurationValue);
 
     /**
+     * This method retrieves a list of {@link ConfigurationType} based on the client name
      * 
      * @param clientname
      * @return
@@ -407,6 +427,7 @@ public interface MappingConfigurationService
     public List<ConfigurationType> getConfigurationTypesByClientName(final String clientname);
 
     /**
+     * This method retrieves a list of {@link ConfigurationContext} based on the client name and the configuration type.
      * 
      * @param clientName
      * @param type
@@ -415,6 +436,7 @@ public interface MappingConfigurationService
     public List<ConfigurationContext> getSourceConfigurationContextsByClientNameAndType(final String clientName, final String type);
 
     /**
+     * This method retrieves a list of {@link ConfigurationContext} based on the client name and the configuration type and source context name.
      * 
      * @param clientName
      * @param type
@@ -424,6 +446,9 @@ public interface MappingConfigurationService
     public List<ConfigurationContext> getTargetConfigurationContextByClientNameTypeAndSourceContext(final String clientName, final String type, final String sourceContext);
 
     /**
+     * TODO the method needs a new home!
+     * 
+     * This method returns the platform configuration by name.
      * 
      * @param name
      * @return
