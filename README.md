@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ikasanEIP/ikasan.svg?branch=IKASAN-838)](https://travis-ci.org/ikasanEIP/ikasan)
+[![Build Status](https://travis-ci.org/ikasanEIP/ikasan.svg?branch=master)](https://travis-ci.org/ikasanEIP/ikasan)
 ikasan
 ======
 
