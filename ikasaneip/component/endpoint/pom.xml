@@ -59,6 +59,7 @@
         <module>jms-spring</module>
         <module>quartz-schedule</module>
         <module>mongo-endpoint</module>
+        <module>mongo-endpoint-test</module>
     </modules>
 
 </project>
