@@ -15,6 +15,9 @@ It is the intention of the Ikasan Enterprise Integration Platform
 to address this domain as commoditised configurable solutions rather 
 than another development framework.
 
+
+Type change
+
 Using Eclipse
 -------------
 1. Install the latest version of eclipse
