@@ -786,36 +786,77 @@ public class FileTransferProtocolClient implements FileTransferProtocol {
         {
             String startDir = this.ftpClient.printWorkingDirectory();
             logger.debug("Start directory [" + startDir + "].");
-            if(!this.ftpClient.changeWorkingDirectory(path))
+            if (!this.ftpClient.changeWorkingDirectory(path))
             {
-                throw new ClientException("Unable to change dir to: [" + path + "]");
-            }
-            String currentDir = this.ftpClient.printWorkingDirectory();
-            logger.debug("Listing directory [" + currentDir + "]");
-            // Get a list the files, if it's empty, return null
-            FTPFile[] ftpFiles = this.ftpClient.listFiles(".");
-            if(ftpFiles == null)
-            {
-                logger.debug("Directory was empty.");
-                return list;
-            }
-            // initialise an array of ClientListEntries
-            list = new ArrayList<ClientListEntry>(ftpFiles.length);
-            // Create a complete list of all files and directories as bespoke
-            // entries
-            for (FTPFile ftpFile : ftpFiles)
-            {
-                // Apache net library can return null elements in list for
-                // unparsed items
-                if(ftpFile != null)
+                // is FILE
+                int fs = path.lastIndexOf('/');
+                String dir = null;// path.substring(0, fs);
+                if (path.startsWith(System.getProperty("file.separator"))) //$NON-NLS-1$
                 {
-                    URI fileUri = this.getURI(currentDir, ftpFile.getName());
-                    ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri);
-                    list.add(entry);
+                    dir = path.substring(0, fs);
                 }
                 else
                 {
-                    logger.warn("One of the ftp file listings could not be parsed.");
+                    // assume relative to whatever path we currently are
+                    dir = startDir + path.substring(0, fs);
+                }
+                String file = path.substring(fs);
+                if (!this.ftpClient.changeWorkingDirectory(dir))
+                {
+                    throw new ClientException("Unable to change dir to: [" + path + "]");
+                }
+                FTPFile[] ftpFiles = this.ftpClient.listFiles(file);
+                list = new ArrayList<ClientListEntry>(1);
+                if (ftpFiles == null)
+                {
+                    logger.debug("Directory was empty.");
+                    return list;
+                }
+                String currentDir = this.ftpClient.printWorkingDirectory();
+                for (FTPFile ftpFile : ftpFiles)
+                {
+                    // Apache net library can return null elements in list for
+                    // unparsed items
+                    if (ftpFile != null)
+                    {
+                        URI fileUri = this.getURI(currentDir, ftpFile.getName());
+                        ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri);
+                        list.add(entry);
+                    }
+                    else
+                    {
+                        logger.warn("One of the ftp file listings could not be parsed.");
+                    }
+                }
+            } else {
+                // is Directory
+                String currentDir = this.ftpClient.printWorkingDirectory();
+                logger.debug("Listing directory [" + currentDir + "]");
+                // Get a list the files, if it's empty, return null
+                FTPFile[] ftpFiles = this.ftpClient.listFiles(".");
+                if (ftpFiles == null)
+                {
+                    logger.debug("Directory was empty.");
+                    return list;
+                }
+                // initialise an array of ClientListEntries
+                list = new ArrayList<ClientListEntry>(ftpFiles.length);
+                // Create a complete list of all files and directories as bespoke
+                // entries
+                for (FTPFile ftpFile : ftpFiles)
+                {
+                    // Apache net library can return null elements in list for
+                    // unparsed items
+                    if (ftpFile != null)
+                    {
+                        URI fileUri = this.getURI(currentDir, ftpFile.getName());
+                        ClientListEntry entry = convertFTPFileToClientListEntry(ftpFile, fileUri);
+                        list.add(entry);
+                    }
+                    else
+                    {
+                        logger.warn("One of the ftp file listings could not be parsed.");
+                    }
                 }
             }
             // Return to the calling directory
