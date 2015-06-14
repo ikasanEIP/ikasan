@@ -3,10 +3,14 @@ package org.ikasan.connector.ftp.net;
 import org.ikasan.connector.ftp.outbound.FTPConnectionRequestInfo;
 import org.ikasan.connector.ftp.outbound.FTPManagedConnection;
 import org.ikasan.connector.ftp.outbound.FTPManagedConnectionFactory;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class FTPManagedConnectionTest {
 
-    public static void main(String[] args) throws Exception {
+    @Test
+    @Ignore
+    public void test() throws Exception {
 
         System.out.println("################ Starting Test ################################");
 
