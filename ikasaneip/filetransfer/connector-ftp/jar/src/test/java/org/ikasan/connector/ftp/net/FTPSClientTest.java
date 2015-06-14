@@ -6,6 +6,8 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.io.Util;
 import org.apache.commons.net.util.TrustManagerUtils;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
@@ -15,7 +17,9 @@ import java.security.KeyStoreException;
 
 public class FTPSClientTest {
 
-    public static void main(String[] args) throws Exception {
+    @Test
+    @Ignore
+    public  void test() throws Exception {
 
         String server = "141.231.2.10";
         String username = "IBJIFTP";
