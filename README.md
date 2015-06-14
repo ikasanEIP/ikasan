@@ -15,6 +15,15 @@ It is the intention of the Ikasan Enterprise Integration Platform
 to address this domain as commoditised configurable solutions rather 
 than another development framework.
 
+Contributor Best Practices
+--------------------------
+1. Ensure logging output from performing ```mvn clean install``` is kept to an absolute minimum, 
+   as we have a 4MB limit on log output on our ci builds. 
+2. Ensure the max log level is INFO for all code
+3. Likewise ```hibernate.show_sql``` should always be ```false``` 
+2. If adding a new component do add a README.md page to explain its configuration and use
+3. For each new component ensure this is demonstrated in a sample module / flow. 
+   
 Using Eclipse
 -------------
 1. Install the latest version of eclipse
