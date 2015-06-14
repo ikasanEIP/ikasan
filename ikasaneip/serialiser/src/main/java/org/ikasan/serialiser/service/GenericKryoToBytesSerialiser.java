@@ -136,6 +136,12 @@ public class GenericKryoToBytesSerialiser<T> implements Serialiser<T,byte[]>
         }
     }
     
+    /**
+     * Helper method to get the appropriate converter.
+     * 
+     * @param cls
+     * @return
+     */
     private Converter getConverter(Class cls)
     {
     	if(this.converters == null)

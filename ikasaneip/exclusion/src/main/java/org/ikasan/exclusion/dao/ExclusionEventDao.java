@@ -63,6 +63,13 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @return
      */
     public void delete(String moduleName, String flowName, IDENTIFIER identifier);
+    
+    /**
+     * Remove the event
+     * @param errorUri
+     * @return
+     */
+    public void delete(String errorUri);
 
     /**
      * Find a specific excluded event

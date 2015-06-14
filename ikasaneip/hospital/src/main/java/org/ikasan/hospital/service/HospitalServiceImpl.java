@@ -41,11 +41,11 @@
 package org.ikasan.hospital.service;
 
 import java.security.Principal;
-import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.ikasan.hospital.dao.HospitalDao;
 import org.ikasan.hospital.model.ExclusionEventAction;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.module.Module;
@@ -81,13 +81,15 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 	
 	private ModuleContainer moduleContainer;
 	private HospitalDao hospitalDao;
+	private ExclusionManagementService exclusionManagementService;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param moduleContainer
 	 */
-	public HospitalServiceImpl(ModuleContainer moduleContainer, HospitalDao hospitalDao)
+	public HospitalServiceImpl(ModuleContainer moduleContainer, HospitalDao hospitalDao,
+			ExclusionManagementService exclusionManagementService)
 	{
 		super();
 		this.moduleContainer = moduleContainer;
@@ -99,6 +101,11 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 		if(this.hospitalDao == null)
 		{
 			throw new IllegalArgumentException("hospitalDao cannot be null!");
+		}
+		this.exclusionManagementService = exclusionManagementService;
+		if(this.exclusionManagementService == null)
+		{
+			throw new IllegalArgumentException("exclusionManagementService cannot be null!");
 		}
 	}
 
@@ -128,12 +135,14 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
 			
 		Object deserialisedEvent = serialiser.deserialise(event);
 		
-		logger.info("deserialisedEvent" + deserialisedEvent);
+		logger.info("deserialisedEvent " + deserialisedEvent);
 		
-//		resubmissionService.submit(deserialisedEvent);
+		resubmissionService.submit(deserialisedEvent);
 		
 		ExclusionEventAction action = new ExclusionEventAction(errorUri, principal.getName(),
 				ExclusionEventAction.RESUBMIT);
+		
+		exclusionManagementService.delete(errorUri);
 		
 		this.hospitalDao.saveOrUpdate(action);
 	}

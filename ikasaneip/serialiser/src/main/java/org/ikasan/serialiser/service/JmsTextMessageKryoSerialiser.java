@@ -40,8 +40,6 @@
  */
 package org.ikasan.serialiser.service;
 
-import java.util.Enumeration;
-
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
@@ -52,14 +50,14 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
+
 public class JmsTextMessageKryoSerialiser extends Serializer<TextMessage>
 {
-    public void write(Kryo kryo, Output output, TextMessage message)
-    {
+
+    public void write(Kryo kryo, Output output, TextMessage message) {
         try
         {
-        	JmsTextMessageDefaultImpl textMessage = this.convert(message);
-            kryo.writeClassAndObject(output, textMessage);
+            kryo.writeClassAndObject(output, message.getText());
         }
         catch (JMSException e)
         {
@@ -69,36 +67,17 @@ public class JmsTextMessageKryoSerialiser extends Serializer<TextMessage>
 
     public TextMessage read(Kryo kryo, Input input, Class<TextMessage> message)
     {
-    	return (TextMessage)kryo.readClassAndObject(input);
-    }
-    
-    private JmsTextMessageDefaultImpl convert(TextMessage message) throws JMSException
-    {
-    	JmsTextMessageDefaultImpl jmsTextMessageDefault = new JmsTextMessageDefaultImpl();
-    	
-    	jmsTextMessageDefault.setJMSCorrelationID(message.getJMSCorrelationID());
-    	jmsTextMessageDefault.setJMSCorrelationIDAsBytes(message.getJMSCorrelationIDAsBytes());
-    	jmsTextMessageDefault.setJMSDeliveryMode(message.getJMSDeliveryMode());
-    	jmsTextMessageDefault.setJMSDestination(message.getJMSDestination());
-    	jmsTextMessageDefault.setJMSExpiration(jmsTextMessageDefault.getJMSExpiration());
-    	jmsTextMessageDefault.setJMSMessageID(message.getJMSMessageID());
-    	jmsTextMessageDefault.setJMSPriority(message.getJMSPriority());
-    	jmsTextMessageDefault.setJMSRedelivered(message.getJMSRedelivered());
-    	jmsTextMessageDefault.setJMSReplyTo(message.getJMSReplyTo());
-    	jmsTextMessageDefault.setJMSTimestamp(message.getJMSTimestamp());
-    	jmsTextMessageDefault.setJMSType(jmsTextMessageDefault.getJMSType());
-    	    	
-    	Enumeration<String> names  = message.getPropertyNames();
-    	
-    	while(names.hasMoreElements())
-    	{
-    		String name = names.nextElement();
+        TextMessage textMessage = new JmsTextMessageDefaultImpl();
+        try
+        {
+            String deserialisedPayload = (String) kryo.readClassAndObject(input);
+            textMessage.setText(deserialisedPayload);
+            return textMessage;
+        }
+        catch (JMSException e)
+        {
+            throw new RuntimeException(e);
+        }
 
-    		jmsTextMessageDefault.setObjectProperty(name, message.getObjectProperty(name));
-    	}
-    	
-    	jmsTextMessageDefault.setText(message.getText());
-    	
-    	return jmsTextMessageDefault;
     }
 }

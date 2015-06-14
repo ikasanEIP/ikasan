@@ -60,6 +60,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 {
     /** batch delete statement */
     private static final String DELETE_QUERY = "delete ExclusionEvent s where s.moduleName = :moduleName and s.flowName = :flowName and s.identifier = :identifier";
+    private static final String DELETE_QUERY_BY_ERROR_URI = "delete ExclusionEvent s where s.errorUri = :errorUri";
 
 
     @Override
@@ -112,5 +113,24 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
 		DetachedCriteria criteria = DetachedCriteria.forClass(ExclusionEvent.class);
 		
         return (List<ExclusionEvent>)this.getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.exclusion.dao.ExclusionEventDao#delete(java.lang.String)
+	 */
+	@Override
+	public void delete(final String errorUri)
+	{
+		getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+
+                Query query = session.createQuery(DELETE_QUERY_BY_ERROR_URI);
+                query.setParameter("errorUri", errorUri);
+                query.executeUpdate();
+                return null;
+        }
+        });
 	}
 }

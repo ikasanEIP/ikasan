@@ -17,6 +17,7 @@
 	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
 		<constructor-arg ref="moduleContainer" />
 		<constructor-arg ref="hospitalDao" />
+		<constructor-arg ref="exclusionManagementService" />
 	</bean>
 	
 	<bean id="hospitalDao" class="org.ikasan.hospital.dao.HibernateHospitalDao">

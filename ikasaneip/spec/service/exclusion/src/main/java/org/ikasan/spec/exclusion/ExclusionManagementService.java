@@ -48,7 +48,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface ExclusionManagementService<ENTITY>
+public interface ExclusionManagementService<ENTITY, IDENTIFIER>
 {
 	/**
 	 * Find and exclusion event entity.
@@ -58,7 +58,7 @@ public interface ExclusionManagementService<ENTITY>
 	 * @param identifier
 	 * @return
 	 */
-    public ENTITY find(String moduleName, String flowName, String identifier);
+    public ENTITY find(String moduleName, String flowName, IDENTIFIER identifier);
 
     /**
 	 * Find all exclusion event entities.
@@ -66,4 +66,20 @@ public interface ExclusionManagementService<ENTITY>
 	 * @return
 	 */
     public List<ENTITY> findAll();
+    
+    /**
+     * Remove the event
+     * @param moduleName
+     * @param flowName
+     * @param identifier
+     * @return
+     */
+    public void delete(String moduleName, String flowName, IDENTIFIER identifier);
+    
+    /**
+     * Remove the event
+     * @param errorUri
+     * @return
+     */
+    public void delete(String errorUri);
 }
