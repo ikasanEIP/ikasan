@@ -45,6 +45,7 @@ import org.ikasan.spec.configuration.DynamicConfiguredResource;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.resubmission.ResubmissionService;
 
 import java.util.List;
 
@@ -66,4 +67,5 @@ public interface ExclusionFlowConfiguration
     public List<FlowElement<ConfiguredResource>> getConfiguredResourceFlowElements();
     public List<FlowElement<DynamicConfiguredResource>> getDynamicConfiguredResourceFlowElements();
     public List<FlowElement<IsErrorReportingServiceAware>> getErrorReportingServiceAwareFlowElements();
+    public ResubmissionService getResubmissionService();
 }

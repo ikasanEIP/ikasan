@@ -40,6 +40,7 @@
  */
 package org.ikasan.serialiser.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,6 +80,9 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_string_successful()
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
@@ -106,6 +110,9 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_integer_successful()
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
@@ -132,6 +139,9 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_primitiveClass_successful()
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
@@ -160,9 +170,13 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_textMessage_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	
     	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
     	
         // object for serialise/deserialise test
@@ -188,9 +202,13 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_mapMessage_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
+    	
     	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
     	
         // object for serialise/deserialise test
@@ -219,10 +237,13 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_jobContextMessage_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
-    	converters.put(JobExecutionContextImpl.class, new JobExecutionContextConverter());
+    	
     	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);
     	
         // object for serialise/deserialise test
@@ -248,6 +269,9 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_hashmap_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
@@ -281,6 +305,9 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_arraylist_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());
@@ -315,6 +342,9 @@ public class GenericKryoToBytesSerialiserTest
     public void test_getSerialiser_for_array_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
+    	serialisers.put(File.class, new FileKryoSerialiser());
+    	serialisers.put(MapMessage.class, new JmsMapMessageKryoSerialiser());
+    	serialisers.put(TextMessage.class, new JmsTextMessageKryoSerialiser());
     	HashMap<Class,Converter> converters = new HashMap<Class,Converter>();
     	converters.put(TextMessage.class, new JmsTextMessageConverter());
     	converters.put(MapMessage.class, new JmsMapMessageConverter());

@@ -51,7 +51,7 @@ import org.ikasan.spec.exclusion.ExclusionManagementService;
  * @author Ikasan Development Team
  *
  */
-public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent>
+public class ExclusionManagementServiceImpl implements ExclusionManagementService<ExclusionEvent, String>
 {
 	private ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
@@ -81,5 +81,23 @@ public class ExclusionManagementServiceImpl implements ExclusionManagementServic
 	public List<ExclusionEvent> findAll()
 	{
 		return this.exclusionEventDao.findAll();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.exclusion.ExclusionManagementService#delete(java.lang.String, java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public void delete(String moduleName, String flowName, String identifier)
+	{
+		this.exclusionEventDao.delete(moduleName, flowName, identifier);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ikasan.spec.exclusion.ExclusionManagementService#delete(java.lang.String)
+	 */
+	@Override
+	public void delete(String errorUri)
+	{
+		this.exclusionEventDao.delete(errorUri);
 	}
 }

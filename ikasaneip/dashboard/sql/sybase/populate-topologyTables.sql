@@ -10,7 +10,7 @@ insert into Server (
 ) VALUES (
    'ESB 01'  -- Name - IN varchar(256)
   ,'Initial ESB Server'  -- Description - IN varchar(1024)
-  ,'svc-esb01d'  -- Url - IN varchar(256)
+  ,'svc-stewmi'  -- Url - IN varchar(256)
   ,8380   -- Port - IN numeric(18, 0)
 )
 

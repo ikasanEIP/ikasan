@@ -69,6 +69,12 @@
             <artifactId>ikasan-spec-module</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-exclusion</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		
 		<dependency>
             <groupId>org.ikasan</groupId>

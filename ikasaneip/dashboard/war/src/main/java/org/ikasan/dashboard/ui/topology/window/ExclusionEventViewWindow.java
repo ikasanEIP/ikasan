@@ -236,24 +236,20 @@ public class ExclusionEventViewWindow extends Window
             	Client client = ClientBuilder.newClient(clientConfig);
             	
             	Serialiser serialiser = serialiserFactory.getSerialiser(String.class);
-            	
-        		byte[] testPayload = (byte[])serialiser.serialise("This is a test string!");
         		
-        		logger.info("Event " + testPayload);
-        		logger.info("Event " + testPayload.length);
-        		logger.info("Event " + new String(testPayload));
-        		
-        		String url = "http://svc-stewmi:8080/sample-scheduleDrivenSrc/rest/resubmission/resubmit/"
-        	    		+ "Sample Scheduled Module" 
+        		String url = "http://svc-stewmi:8380/"
+        				+ exclusionEvent.getModuleName()
+        				+ "/rest/resubmission/resubmit/"
+        	    		+ exclusionEvent.getModuleName() 
         	    		+ "/"
-        	    		+ "Demo Scheduled Flow"
+        	    		+ exclusionEvent.getFlowName()
         	    		+ "/"
         	    		+ exclusionEvent.getErrorUri();
         		
         		logger.info("Url: " + url);
         		
         	    WebTarget webTarget = client.target(url);
-        	    Response response = webTarget.request().put(Entity.entity(testPayload, MediaType.APPLICATION_OCTET_STREAM));
+        	    Response response = webTarget.request().put(Entity.entity(exclusionEvent.getEvent(), MediaType.APPLICATION_OCTET_STREAM));
         	    
         	    if(response.getStatus()  != 200)
         	    {
@@ -375,11 +371,11 @@ public class ExclusionEventViewWindow extends Window
 		formLayout.addComponent(layout);
 		wrapperLayout.addComponent(formLayout, 0, 0);
 		Label seperator = new Label("<hr />",ContentMode.HTML);
-		wrapperLayout.addComponent(seperator, 0, 1);
-		wrapperLayout.addComponent(eventEditor, 0, 2);
-		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
-		wrapperLayout.addComponent(editor, 0, 3);
-		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
+//		wrapperLayout.addComponent(seperator, 0, 1);
+//		wrapperLayout.addComponent(eventEditor, 0, 2);
+//		wrapperLayout.setComponentAlignment(eventEditor, Alignment.TOP_LEFT);
+//		wrapperLayout.addComponent(editor, 0, 3);
+//		wrapperLayout.setComponentAlignment(editor, Alignment.TOP_LEFT);
 
 		exclusionEventDetailsPanel.setContent(wrapperLayout);
 		return exclusionEventDetailsPanel;

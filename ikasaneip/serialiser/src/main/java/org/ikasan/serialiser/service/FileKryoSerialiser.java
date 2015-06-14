@@ -40,9 +40,8 @@
  */
 package org.ikasan.serialiser.service;
 
+import java.io.File;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -54,44 +53,15 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-public class JmsMapMessageKryoSerialiser extends Serializer<MapMessage>
+public class FileKryoSerialiser extends Serializer<File>
 {
-
-    public void write (Kryo kryo, Output output, MapMessage message) {
-        try
-        {
-            Map<Object, Object> mapMessageContent = new HashMap<Object, Object>();
-            Enumeration en = message.getMapNames();
-            while (en != null && en.hasMoreElements())
-            {
-                String name = (String) en.nextElement();
-                mapMessageContent.put(name, message.getObject(name));
-            }
-
-            kryo.writeClassAndObject(output, mapMessageContent);
-        }
-        catch (JMSException e)
-        {
-            throw new RuntimeException(e);
-        }
+	@Override
+    public void write(Kryo kryo, Output output, File object) {
+        output.writeString(object.getPath());
     }
 
-    public MapMessage read(Kryo kryo, Input input, Class<MapMessage> message)
-    {
-        MapMessage mapMessage = new JmsMapMessageDefaultImpl();
-        Map<Object, Object> deserialisedMap = (Map) kryo.readClassAndObject(input);
-        try
-        {
-            for (Object key : deserialisedMap.keySet())
-            {
-                mapMessage.setObject((String) key, deserialisedMap.get(key));
-            }
-            return mapMessage;
-        }
-        catch (JMSException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+    @Override
+    public File read(Kryo kryo, Input input, Class type) {
+        return new File(input.readString());
     }
 }

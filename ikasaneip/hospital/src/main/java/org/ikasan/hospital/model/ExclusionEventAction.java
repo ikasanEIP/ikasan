@@ -68,6 +68,8 @@ public class ExclusionEventAction
 	}
 
 	/**
+	 * Constructor 
+	 * 
 	 * @param id
 	 * @param errorUri
 	 * @param actionedBy
