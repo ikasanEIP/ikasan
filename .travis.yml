@@ -3,7 +3,9 @@ jdk:
   - oraclejdk7
 after_success:
   - echo "<settings><servers><server><id>ikasaneip-snapshots</id><username>\${env.OSS_IKASAN_USER}</username><password>\${env.OSS_IKASAN_PASS}</password></server></servers></settings>" > ~/settings.xml
-  - mvn clean deploy --settings ~/settings.xml
+  - "[[ $TRAVIS_BRANCH == \"master\" ]] && { mvn clean deploy --settings ~/settings.xml; };"
+  - "[[ $TRAVIS_BRANCH != \"master\" ]] && { mvn clean install --settings ~/settings.xml; };"
 cache:
   directories:
   - $HOME/.m2
+  
