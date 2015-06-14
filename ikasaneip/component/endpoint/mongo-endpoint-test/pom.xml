@@ -43,23 +43,50 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-component</artifactId>
+        <artifactId>ikasan-endpoint-parent</artifactId>
         <version>1.0.0-rc5-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-endpoint-parent</artifactId>
-    <version>1.0.0-rc5-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Endpoints</name>
+    <artifactId>ikasan-mongo-endpoint-test</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration Mongo Test</name>
 
-    <modules>
-        <module>utility-endpoint</module>
-        <module>jms-client</module>
-        <module>jms-spring</module>
-        <module>quartz-schedule</module>
-        <module>mongo-endpoint</module>
-        <module>mongo-endpoint-test</module>
-    </modules>
+    <dependencies>
 
+        <!-- logging -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- MongoDB Java Driver is a tight dependency -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+        </dependency>
+
+        <dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>
