@@ -38,5 +38,15 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="exclusionManagementService"  class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="mockery" />
+		<property name="targetMethod" value="mock" />
+		<property name="arguments">
+			<list>
+				<value>org.ikasan.spec.exclusion.ExclusionManagementService</value>
+			</list>
+		</property>
+	</bean>
 
 </beans>

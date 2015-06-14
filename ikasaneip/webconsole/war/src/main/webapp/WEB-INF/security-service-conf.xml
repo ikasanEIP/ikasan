@@ -129,12 +129,12 @@
 		</beans:property>
 	</beans:bean>
 	
-	<beans:bean id="wiretapServiceTransactionManager"
+	<!-- beans:bean id="wiretapServiceTransactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<beans:property name="sessionFactory">
 			<beans:ref bean="wiretapHibernateSessionFactory" />
 		</beans:property>
-	</beans:bean>
+	</beans:bean -->
 
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
@@ -147,10 +147,10 @@
 			expression="execution(* org.ikasan.module.startup.dao.*.*(..))" />
 		<aop:pointcut id="hospitalServiceMethods"
 			expression="execution(* org.ikasan.hospital.service.*.*(..))" />
-		<aop:pointcut id="wiretapDaoMethods"
-			expression="execution(* org.ikasan.wiretap.dao.*.*(..))" />
-		<aop:pointcut id="triggerDaoMethods"
-			expression="execution(* org.ikasan.trigger.dao.*.*(..))" />
+		<!-- aop:pointcut id="wiretapDaoMethods"
+			expression="execution(* org.ikasan.wiretap.dao.*.*(..))" / -->
+		<!-- aop:pointcut id="triggerDaoMethods"
+			expression="execution(* org.ikasan.trigger.dao.*.*(..))" / -->
 			
 		<aop:advisor advice-ref="security-required-TransactionAdvice"
 			pointcut-ref="securityServiceMethods" />
@@ -162,18 +162,18 @@
 			pointcut-ref="moduleServiceServiceMethods" />
 		<aop:advisor advice-ref="hospital-service-required-TransactionAdvice"
 			pointcut-ref="hospitalServiceMethods" />
-		<aop:advisor advice-ref="wiretap-required-TransactionAdvice"
-			pointcut-ref="triggerDaoMethods" />
-		<aop:advisor advice-ref="wiretap-required-TransactionAdvice"
-			pointcut-ref="wiretapDaoMethods" />
+		<!-- aop:advisor advice-ref="wiretap-required-TransactionAdvice"
+			pointcut-ref="triggerDaoMethods" / -->
+		<!-- aop:advisor advice-ref="wiretap-required-TransactionAdvice"
+			pointcut-ref="wiretapDaoMethods" / -->
 	</aop:config>
 
-	<tx:advice id="wiretap-required-TransactionAdvice"
-		transaction-manager="securityTransactionManager">
+	<!-- tx:advice id="wiretap-required-TransactionAdvice"
+		transaction-manager="wiretapServiceTransactionManager">
 		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
+		<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
-	</tx:advice>
+	</tx:advice -->
 
 	<tx:advice id="security-required-TransactionAdvice"
 		transaction-manager="securityTransactionManager">
